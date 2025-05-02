@@ -1,0 +1,59 @@
+<span id="markdown-mermaid" aria-hidden="true"
+                    data-dark-mode-theme="dark"
+                    data-light-mode-theme="default"
+                    data-max-text-size="50000"></span>
+                <h1 id="layout-flexibel">Layout Flexibel</h1>
+<pre><code class="language-dart"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:flutter/material.dart&#x27;</span>;
+
+<span class="hljs-keyword">void</span> main() =&gt; runApp(My());
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">My</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatelessWidget</span> </span>{
+  <span class="hljs-keyword">const</span> My({<span class="hljs-keyword">super</span>.key});
+
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text(<span class="hljs-string">&#x27;Layout Flexibel&#x27;</span>)),
+        body: Center(
+          child: Column(
+            children: [
+              Flexible(
+                flex: <span class="hljs-number">1</span>,
+                child: Row(
+                  children: [
+                    Flexible(
+                      flex: <span class="hljs-number">1</span>,
+                      child: Container(
+                        margin: EdgeInsets.all(<span class="hljs-number">5</span>),
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                    Flexible(
+                      flex: <span class="hljs-number">1</span>,
+                      child: Container(
+                        margin: EdgeInsets.all(<span class="hljs-number">5</span>),
+                        color: Colors.indigo,
+                      ),
+                    ),
+                    Flexible(
+                      flex: <span class="hljs-number">1</span>,
+                      child: Container(
+                        margin: EdgeInsets.all(<span class="hljs-number">5</span>),
+                        color: Colors.tealAccent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(flex: <span class="hljs-number">1</span>, child: Container(color: Colors.red)),
+              Flexible(flex: <span class="hljs-number">2</span>, child: Container(color: Colors.amber)),
+              Flexible(flex: <span class="hljs-number">1</span>, child: Container(color: Colors.blue)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+</code></pre>

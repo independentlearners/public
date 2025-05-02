@@ -1,0 +1,65 @@
+<span id="markdown-mermaid" aria-hidden="true"
+                    data-dark-mode-theme="dark"
+                    data-light-mode-theme="default"
+                    data-max-text-size="50000"></span>
+                <pre><code class="language-dart"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;package:flutter/material.dart&#x27;</span>;
+
+<span class="hljs-keyword">void</span> main() =&gt; runApp(<span class="hljs-keyword">const</span> MyApp());
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyApp</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">StatefulWidget</span> </span>{
+  <span class="hljs-keyword">const</span> MyApp({<span class="hljs-keyword">super</span>.key});
+
+  <span class="hljs-meta">@override</span>
+  State&lt;MyApp&gt; createState() =&gt; _MyAppState();
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_MyAppState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span>&lt;<span class="hljs-title">MyApp</span>&gt; </span>{
+  <span class="hljs-comment">// Menyimpan widget teks yang akan ditampilkan</span>
+  <span class="hljs-built_in">List</span>&lt;Widget&gt; widgets = [];
+  <span class="hljs-comment">// Counter untuk menampilkan nomor data</span>
+  <span class="hljs-built_in">int</span> counter = <span class="hljs-number">1</span>;
+
+  <span class="hljs-meta">@override</span>
+  Widget build(BuildContext context) {
+    <span class="hljs-keyword">return</span> MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: <span class="hljs-keyword">const</span> Text(<span class="hljs-string">&#x27;List View&#x27;</span>)),
+        body: ListView(
+          children: [
+            <span class="hljs-comment">// Baris tombol untuk tambah dan hapus data</span>
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      <span class="hljs-comment">// Menambahkan widget teks baru dan menaikkan counter</span>
+                      widgets.add(Text(<span class="hljs-string">&quot;data ke - <span class="hljs-subst">${counter.toString()}</span>&quot;</span>));
+                      ++counter;
+                    });
+                  },
+                  child: <span class="hljs-keyword">const</span> Text(<span class="hljs-string">&#x27;tambah data&#x27;</span>),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      <span class="hljs-comment">// Menghapus widget terakhir bila list tidak kosong</span>
+                      <span class="hljs-keyword">if</span> (widgets.isNotEmpty) {
+                        widgets.removeLast();
+                        --counter;
+                      }
+                    });
+                  },
+                  child: <span class="hljs-keyword">const</span> Text(<span class="hljs-string">&#x27;hapus data&#x27;</span>),
+                ),
+              ],
+            ),
+            <span class="hljs-comment">// Menampilkan semua widget teks yang telah ditambahkan</span>
+            ...widgets,
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
