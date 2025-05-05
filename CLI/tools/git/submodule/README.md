@@ -228,4 +228,66 @@ git -C repo-kontribusi status      # di submodule juga “clean”
 
 ---
 
-🔑 **Kunci**: **commit & push di public terlebih dahulu**, baru **commit pointer** di privat. Itu memastikan semua commit ada di remote sebelum pointer diperbarui. Semoga workflow ini berjalan mulus! 🚀
+🔑 **Kunci**: **commit & push di public terlebih dahulu**, baru **commit pointer** di privat. Itu memastikan semua commit ada di remote sebelum pointer diperbarui. Kalau kamu melakukan `git pull` untuk menarik perubahan terbaru, **urutan pengerjaan tergantung dari di repo mana perubahan itu terjadi duluan**. Ini urutan umumnya:
+
+---
+
+## 🔁 **Jika ada perubahan di repo publik (`repo-kontribusi`) yang ingin kamu tarik:**
+
+1. **Masuk ke folder submodule**
+
+   ```powershell
+   cd C:\Users\username\workspace\repo-privat\repo-kontribusi
+   ```
+
+2. **Tarik perubahan terbaru dari remote**
+
+   ```bash
+   git checkout main             # Pastikan kamu di branch yang benar
+   git pull origin main
+   ```
+
+3. **Kembali ke repo privat dan update pointer SHA-nya**
+
+   ```powershell
+   cd ..  # kembali ke root repo privat
+   git add repo-kontribusi
+   git commit -m "Update submodule repo-kontribusi to latest changes"
+   git push origin main
+   ```
+
+---
+
+## 🔁 **Jika ada perubahan di repo privat (`repo-privat`) termasuk submodule pointer:**
+
+1. **Tarik repo privat utama beserta submodule-nya**
+
+   ```powershell
+   cd C:\Users\username\workspace
+   git pull origin main
+   git submodule update --init --recursive --remote
+   ```
+
+2. **Verifikasi di folder submodule apakah sudah berada di commit yang benar**
+
+   ```powershell
+   cd repo-privat\repo-kontribusi
+   git status   # harusnya "HEAD detached at [commit]" jika pointer belum di-checkout ke branch
+   ```
+
+3. **Jika perlu mengedit di public**, checkout ke branch:
+
+   ```bash
+   git checkout main
+   ```
+
+---
+
+## 🔄 Singkatnya:
+
+| Kasus                                      | Tarik/Update Duluan                                                           |
+| ------------------------------------------ | ----------------------------------------------------------------------------- |
+| Ada update di **public** (repo-kontribusi) | ✅ `git pull` di **repo-kontribusi** dulu, lalu update pointer di repo-privat |
+| Ada update di **privat** (repo-privat)     | ✅ `git pull` di **repo-privat**, lalu `git submodule update --recursive`     |
+
+![](image.png "gambar dihasilkan GPT-4o")

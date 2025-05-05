@@ -132,7 +132,7 @@ https://www.youtube.com
 
 # Amirkulal
 
-![korup](https://cdn-sdotid.adg.id/images/e370beb3-a4af-463e-a5b2-e746c6b205e1_980x980.webp.jpeg "Amirkhalilzain")
+![gambar](https://avatars.githubusercontent.com/u/70124885?v=4)
 
 | No. | Nama    | Deskripsi |
 | --- | ------- | --------- |
