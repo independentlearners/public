@@ -1,4 +1,3 @@
-import 'dart:collection';
 
 void main() {
   List<int> stack = [];

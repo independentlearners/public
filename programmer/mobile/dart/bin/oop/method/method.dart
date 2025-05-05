@@ -15,10 +15,8 @@ class KelasPersonal {
   }
 
   String getName(String paramCountry) {
-    if (paramCountry is String) {
-      print('Kota $paramCountry, di $country');
-    }
-
+    print('Kota $paramCountry, di $country');
+  
     return paramCountry;
   }
 }
