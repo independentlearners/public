@@ -59,48 +59,38 @@ String angkaString = doubleToInt.toString();
 
 ```Dart
 void main() {
-  // ^ Berikut adalah konversi tipe data yang implisit:
-  String inputString =
-      '1000'; // ! Warning: Jangan menulis nilai selain angka  jika ingin mengkonversi ke int atau double
-  var inputInt = int.parse(inputString); // ? Konversi tipe data string ke int
-  var inputDouble = double.parse(inputString); // ? Konversi tipe data string ke double
-  var inputStringInt = inputInt.toString(); // ? Konversi tipe data int ke string
+  print('\n' * 5);
 
-  print(
-      "$tab$enter$inputInt => Ini adalah String aslinya" // ! Output: 1000 berarti masih dalam bentuk string dan tidak berwarna
-      "$enter$garis$enter$biru$inputDouble => Di konversi ke Double $reset$enter$garis" // ! Output: 1000.0 berarti sudah menjadi double dan tidak ada koma serta berwarna biru
-      "$enter$kuning$inputStringInt => Dari Double dikembalikan lagi ke String$reset$enter$garis" // ! Output: 1000 berarti sudah kembali ke string dan berwarna kuning
-      );
+  // ^ Berikut adalah konversi tipe data yang implisit:
+  String inputString = '1000';
+  print(inputString);
+
+  var inputInt = int.parse(inputString);
+  print(inputInt);
+
+  var inputDouble = double.parse(inputString);
+  print(inputDouble);
+
+  var inputStringInt = inputInt.toString();
+  print(inputStringInt);
+
+  print('\n' * 1);
+  print('=' * 10);
+  print('\n' * 1);
 
   // ^ Contoh Konversi Tipe Data secara eksplisit
   int intToDouble = 1000;
+  print(intToDouble);
+
   double angkaDouble = intToDouble.toDouble();
+  print(angkaDouble);
+
   int doubleToInt = angkaDouble.toInt();
+  print(doubleToInt);
+
   String angkaString = doubleToInt.toString();
+  print(angkaString);
 
-  print("$enter$merah$angkaDouble => Dari Int dikonversi ke Double$reset$enter"
-      "$garis$enter$hijau$doubleToInt => Dari Double dikonversi ke Int$reset$enter$garis"
-      "$enter$ungu$angkaString => Dari Int dikonversi ke String$reset$enter$garis");
+  print('\n' * 5);
 }
-```
-
-**Output**
-
-Di terminal, output berikut akan memiliki warna masing-masing
-
-```PS
-
-1000 => Ini adalah String aslinya
-------------------------
-1000.0 => Di konversi ke Double
-------------------------
-1000 => Dari Double dikembalikan lagi ke String
-------------------------
-
-1000.0 => Dari Int dikonversi ke Double
-------------------------
-1000 => Dari Double dikonversi ke Int
-------------------------
-1000 => Dari Int dikonversi ke String
-------------------------
 ```
