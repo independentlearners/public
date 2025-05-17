@@ -44,8 +44,9 @@ Kumpulan konsep dalam pemrograman yang mencakup istilah‑istilah. Daftar ini di
 14. **OOP (Object-Oriented Programming/Pemrograman Berorientasi Objek)**  
     Paradigma yang menggunakan objek dan kelas untuk mengorganisasikan kode dengan prinsip-prinsip abstraksi, enkapsulasi, pewarisan, dan polimorfisme.
 
-15. **Algoritma dan Struktur Data**  
-    - **Algoritma:** Rangkaian langkah logis untuk menyelesaikan masalah secara sistematis.  
+15. **Algoritma dan Struktur Data**
+
+    - **Algoritma:** Rangkaian langkah logis untuk menyelesaikan masalah secara sistematis.
     - **Struktur Data:** Cara pengorganisasian data agar dapat diakses dan dimodifikasi secara efisien.
 
 16. **Testing**  
@@ -72,12 +73,14 @@ Kumpulan konsep dalam pemrograman yang mencakup istilah‑istilah. Daftar ini di
 23. **Modularity**  
     Pendekatan desain yang membagi aplikasi ke dalam modul-modul independen, memungkinkan komponen dikembangkan, diuji, dan digantikan secara terpisah.
 
-24. **Loose Coupling & High Cohesion**  
-    - **Loose Coupling:** Mendesain komponen sedemikian rupa supaya sangat sedikit bergantung satu sama lain.  
+24. **Loose Coupling & High Cohesion**
+
+    - **Loose Coupling:** Mendesain komponen sedemikian rupa supaya sangat sedikit bergantung satu sama lain.
     - **High Cohesion:** Memastikan setiap modul atau komponen memiliki tujuan tunggal yang jelas dan fungsi yang saling berkaitan.
 
 25. **SOLID Principles**  
-    Sepuluhet prinsip desain berorientasi objek untuk menciptakan sistem yang mudah dipelihara dan dikembangkan, termasuk:  
+    Sepuluhet prinsip desain berorientasi objek untuk menciptakan sistem yang mudah dipelihara dan dikembangkan, termasuk:
+
     - **Single Responsibility Principle (SRP)**
     - **Open/Closed Principle (OCP)**
     - **Liskov Substitution Principle (LSP)**
@@ -94,14 +97,22 @@ Kumpulan konsep dalam pemrograman yang mencakup istilah‑istilah. Daftar ini di
     Prinsip yang mengingatkan pengembang untuk tidak menambahkan fitur atau kompleksitas yang tidak diperlukan, sehingga fokus tetap pada kebutuhan inti.
 
 29. **Programming Paradigms**  
-    Konsep mendasar tentang pendekatan berbeda dalam menulis kode, seperti:  
-    - **Procedural Programming:** Pendekatan berbasis fungsi atau prosedur.  
-    - **Functional Programming:** Paradigma yang menggunakan fungsi murni, mengutamakan immutability dan komposisi fungsi.  
+    Konsep mendasar tentang pendekatan berbeda dalam menulis kode, seperti:
+
+    - **Procedural Programming:** Pendekatan berbasis fungsi atau prosedur.
+    - **Functional Programming:** Paradigma yang menggunakan fungsi murni, mengutamakan immutability dan komposisi fungsi.
     - **Declarative vs Imperative Programming:** Perbedaan antara mendeklarasikan apa yang diinginkan dengan memberikan perintah langkah‑langkah untuk mencapainya.
 
-30. **Event-Driven & Reactive Programming**  
-    - **Event-Driven Programming:** Pendekatan di mana alur eksekusi aplikasi dikendalikan oleh peristiwa (event), seperti input pengguna atau pesan sistem.  
+30. **Event-Driven & Reactive Programming**
+
+    - **Event-Driven Programming:** Pendekatan di mana alur eksekusi aplikasi dikendalikan oleh peristiwa (event), seperti input pengguna atau pesan sistem.
     - **Reactive Programming:** Paradigma yang fokus pada pengelolaan aliran data secara real‑time dan responsif terhadap perubahan, sering digunakan untuk aplikasi interaktif dan dinamis.
+
+31. **Chunk (kode)**
+    Di Lua (dan beberapa bahasa skrip lain), chunk adalah satu unit kode yang dimuat dan dieksekusi sekaligus—bisa berupa file .lua, string kode, atau blok do … end. Setiap chunk memiliki scope-nya sendiri, jadi variabel lokal di satu chunk nggak bakal bocor ke chunk lain.
+
+    **Chunk (memori)**
+    Di level rendah, chunk bisa berarti unit alokasi memori: sepotong blok memori yang di-malloc/free (C) atau diatur oleh garbage collector (Java, Go).
 
 ---
 
