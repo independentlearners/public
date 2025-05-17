@@ -22,6 +22,10 @@ Lua 5.4.6  Copyright (C) 1994-2023 Lua.org, PUC-Rio
 > print("halo dunia") # << tulis seperti berikut
 
 halo dunia # << output akan muncul
+
+# untuk keluar dari mode ini bisa gunakan ctrl + C atau dengan mengetik seperti berikut untuk windows atau ctrl + D di Unix
+
+> os.exit()
 ```
 
 **Debugging**
