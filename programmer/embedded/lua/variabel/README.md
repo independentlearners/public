@@ -1,7 +1,9 @@
 # **1. Konsep Dasar Variabel di Lua**
+
 Variabel adalah tempat penyimpanan data yang memiliki nama dan nilai. Di Lua, variabel bersifat **dinamis** (tipe data ditentukan otomatis) dan **case-sensitive** (huruf besar/kecil berpengaruh).
 
 # **2. Jenis Variabel**
+
 - **Global**: Bisa diakses dari mana saja (default)
 - **Local**: Hanya bisa diakses dalam scope/blok tertentu
 - **Table fields**: Variabel dalam struktur tabel
@@ -21,7 +23,9 @@ print(murid.nama) --> Ani
 ```
 
 # **3. Tipe Data yang Dapat Disimpan**
+
 Variabel di Lua bisa menyimpan berbagai tipe data:
+
 ```lua
 a = 15          -- Number
 b = 3.14        -- Float
@@ -33,12 +37,14 @@ g = function() end -- Function
 ```
 
 # **4. Aturan Penamaan Variabel**
+
 - Boleh mengandung huruf, angka, dan underscore
 - Tidak boleh diawali angka
 - Contoh valid: `nilai1`, `sensorA`, `_temp`
 - Contoh invalid: `2nilai`, `nilai-tinggi`
 
 # **5. Deklarasi dan Assignment**
+
 ```lua
 -- Assignment sederhana
 panjang = 10
@@ -59,6 +65,7 @@ print(type(nilai)) --> string
 ```
 
 # **6. Scope dan Blok Kode**
+
 ```lua
 -- Variabel global
 counter = 0
@@ -75,15 +82,18 @@ print(temp) --> nil (error karena local)
 ```
 
 # **7. Best Practices untuk Pemula**
+
 1. Selalu gunakan `local` kecuali benar-benar perlu global
 2. Gunakan nama deskriptif: `sensorSuhu` lebih baik dari `s1`
 3. Inisialisasi variabel sebelum digunakan
 4. Kelola scope dengan baik untuk menghindari konflik
 
 # **8. Contoh Embedded System**
+
 Dalam sistem embedded (seperti ESP32/Arduino dengan Lua), variabel sering digunakan untuk:
 
 **Contoh GPIO Control:**
+
 ```lua
 local pinLED = 4 -- Deklarasi pin
 local statusLED = false
@@ -98,6 +108,7 @@ tmr.alarm(0, 1000, tmr.ALARM_AUTO, toggleLED)
 ```
 
 **Contoh Sensor Reading:**
+
 ```lua
 local pinSensor = 5
 local threshold = 30.5
@@ -112,7 +123,8 @@ end
 ```
 
 # **9. Pola Penggunaan dalam Embedded**
-1. **Konfigurasi Perangkat**: 
+
+1. **Konfigurasi Perangkat**:
    ```lua
    local config = {
        ssid = "WifiSaya",
@@ -120,11 +132,11 @@ end
        timeout = 30
    }
    ```
-   
 2. **State Machine**:
+
    ```lua
    local state = "IDLE"
-   
+
    function updateState(newState)
        local prev = state
        state = newState
@@ -133,26 +145,30 @@ end
    ```
 
 3. **Data Logging**:
+
    ```lua
    local logData = {}
-   
+
    function addLog(timestamp, value)
        table.insert(logData, {time = timestamp, val = value})
    end
    ```
 
 # **10. Latihan Pemahaman**
+
 1. Buat variabel untuk menyimpan:
+
    - Suhu ruangan
    - Status alarm (on/off)
    - Daftar nama sensor
 
 2. Implementasikan fungsi untuk menghitung rata-rata dari 3 nilai sensor:
+
    ```lua
    local sensor1 = 25.4
    local sensor2 = 26.1
    local sensor3 = 24.9
-   
+
    function rataRata()
        return (sensor1 + sensor2 + sensor3)/3
    end
@@ -164,6 +180,7 @@ end
    - Counter untuk jumlah blink saat ini
 
 # **Tips untuk Belajar Lebih Lanjut**
+
 1. Eksperimen dengan mengubah nilai variabel dalam berbagai scope
 2. Coba kombinasi variabel dengan struktur kontrol (if, for, while)
 3. Implementasikan variabel tabel untuk data kompleks
@@ -171,3 +188,32 @@ end
 5. Praktekkan dengan simulator embedded seperti TINAH atau ESP32 emulator
 
 Pemahaman variabel yang baik akan menjadi fondasi untuk mempelajari konsep Lua lanjutan seperti fungsi, tabel, dan OOP sederhana. Dalam embedded system, pengelolaan variabel yang efisien sangat penting karena keterbatasan resource.
+
+### Kode saya:
+
+```lua
+
+a = 10
+b = 20
+c = a + b
+
+print('nilai: a',a)
+print('nilai: b',b)
+print('nilai: c',c)
+
+local a = "lua"
+print(a)
+
+a = 40
+print(a)
+
+if true then
+	local indside = "hidden"
+end
+print(inside)
+
+if true then
+	local ins = true
+	print(ins)
+end
+```
