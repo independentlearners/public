@@ -189,6 +189,36 @@ end
 
 Pemahaman variabel yang baik akan menjadi fondasi untuk mempelajari konsep Lua lanjutan seperti fungsi, tabel, dan OOP sederhana. Dalam embedded system, pengelolaan variabel yang efisien sangat penting karena keterbatasan resource.
 
+### Variabel Muti
+
+```lua
+local i = {}
+
+do
+	local a = "teks"
+	table.insert(i, a)
+end
+
+local a = 10
+do
+	table.insert(i, a)
+end
+
+do
+	local a = false
+	table.insert(i, a)
+end
+
+do
+	local a = 5.5
+	table.insert(i, a)
+end
+
+for x, v in ipairs(i) do
+	print(x, v)
+end
+```
+
 ### Kode saya:
 
 ```lua
