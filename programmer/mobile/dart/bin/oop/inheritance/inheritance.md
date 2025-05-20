@@ -1,5 +1,3 @@
-
-
 ```Dart
 class Inheritance {
   String name;
@@ -14,9 +12,7 @@ class Child extends Inheritance {
 
   void say(String name) => print('Hello $name, my name is ${this.name}');
 }
-```
 
-```Dart
 void main() {
 
   var a = Inheritance('World');

@@ -100,55 +100,55 @@ Untuk informasi lebih lanjut dan lengkap mengenai berbagai operator di Dart, bis
 ### Kode saya
 
 ```dart
-import '../../saya.dart';
+// # Operator logika dalam dart adalah operator yang digunakan untuk melakukan operasi logika seperti AND, OR, dan NOT. Untuk melakukan operasi logika, kita dapat menggunakan operator && (AND), || (OR), dan ! (NOT). Operator logika mengembalikan nilai boolean, yaitu true atau false. Untuk info lebih lanjut tentang operator logika, silahkan kunjungi: https://dart.dev/guides/language/language-tour#logical-operators
 
 void main() {
-var nilaiAkhir = 80;
-var nilaiAbsen = 50;
+  var nilaiAkhir = 80;
+  var nilaiAbsen = 50;
 
-var nilaiAkhirBagus = nilaiAkhir >= 75;
-var nilaiAbsenBagus = nilaiAbsen >= 75;
+  var nilaiAkhirBagus = nilaiAkhir >= 75;
+  var nilaiAbsenBagus = nilaiAbsen >= 75;
 
-print('$merah$nilaiAkhirBagus$rege');
-  print('$biru$nilaiAbsenBagus$rege');
+  print(nilaiAkhirBagus);
+  print(nilaiAbsenBagus);
 
-var lulus = nilaiAkhirBagus && nilaiAbsenBagus;
-print('$hijau$lulus$rege');
+  var lulus = nilaiAkhirBagus && nilaiAbsenBagus;
+  print(lulus);
 
-lulus = nilaiAkhirBagus || nilaiAbsenBagus;
-print('$kuning$lulus$rege');
-  print('$ungu${!true}$rege');
-print('$cyan${!false}$rege');
+  lulus = nilaiAkhirBagus || nilaiAbsenBagus;
+  print(lulus);
+  print(!true);
+  print(!false);
 
-print(enter + garis + enter);
-// AND
-print('AND');
-print(true && true); // true
-print(true && false); // false
+  print('=' * 5 + '\n');
 
-// ignore: dead_code
-print(false && true); // false
-// ignore: dead_code
-print(false && false); // false
+  print('AND');
+  print(true && true); // true
+  print(true && false); // false
 
-// OR
-print('OR');
+  // ignore: dead_code
+  print(false && true); // false
+  // ignore: dead_code
+  print(false && false); // false
 
-// ignore: dead_code
-print(true || true); // true
+  // OR
+  print('OR');
 
-// ignore: dead_code
-print(true || false); // true
+  // ignore: dead_code
+  print(true || true); // true
 
-print(false || true); // true
-print(false || false); // false
+  // ignore: dead_code
+  print(true || false); // true
 
-// NOT
-print('NOT');
-print(!true); // false
-print(!false); // true
+  print(false || true); // true
+  print(false || false); // false
 
-// Operator AND dan OR juga bisa digunakan untuk mengecek nilai null
-print('Operator AND dan OR juga bisa digunakan untuk mengecek nilai null');
+  // NOT
+  print('NOT');
+  print(!true); // false
+  print(!false); // true
+
+  // Operator AND dan OR juga bisa digunakan untuk mengecek nilai null
+  print('Operator AND dan OR juga bisa digunakan untuk mengecek nilai null');
 }
 ```

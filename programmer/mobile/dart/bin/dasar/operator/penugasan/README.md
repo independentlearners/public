@@ -38,19 +38,19 @@ print(a);
 #### Kode Saya
 
 ```dart
-import '../../saya.dart';
-
 void main() {
+  print('\n' * 5);
+
   var a = 10;
   var b = 20;
   var c = 10;
   var d = 2.0;
   var e = 10;
   var f = 20;
-  var g = 10;
-  var h = 10;
-  var i = 10;
-  var j = 10;
+  var g = 0;
+  var h = 0;
+  var i = 0;
+  var j = 0;
 
   a += 5;
   b -= 10;
@@ -58,22 +58,29 @@ void main() {
   d /= 2.0;
   e %= 3;
   f ~/= 2;
-  g++;
-  h--;
+
+  'Increment';
   ++i;
   --j;
 
-  print('$merah $a =>  a += 5 $reg'
-      '$biru $b => b -= 10 $reg'
-      '$kuning $c => c *= 5 $reg'
-      '$hijau $d => d /= 2.0 $reg'
-      '$ungu $e => e %= 3 $reg'
-      '$cyan $f => f ~/= 2 $reg'
-      '$merah$tebal $g => g++ $reg'
-      '$biru$tebal $h => h-- $reg'
-      '$kuning$tebal $i => ++i $reg'
-      '$hijau$tebal $j => --j $reg');
+  'Decrement';
+  g++;
+  h--;
+
+  print(' $a =>  a += 5 '
+      ' $b => b -= 10 '
+      ' $c => c *= 5 '
+      ' $d => d /= 2.0 '
+      ' $e => e %= 3 '
+      ' $f => f ~/= 2 '
+      ' $g => g++ Decrement'
+      ' $h => h-- '
+      ' $i => ++i Increment'
+      ' $j => --j ');
+
+  print('\n' * 5);
 }
+
 ```
 
 > Dokumentasi resmi tentang [tentang operator](https://dart.dev/guides/language/language-tour#assignment-operators "dart.dev")
