@@ -113,12 +113,40 @@ end
 #### A. `while … do … end`
 
 ```lua
+local a = 1 -- variabel kontrol
+while a < 5 do -- awal looping
+
+  ---[[ dua baris ini disebut (Satu Iterasi)
+  print(a, "ulangi")
+  a = a + 10
+  --]]
+
+end -- akhir dari kode looping
+```
+
+- Kode diatas menghasilkan satu input seperti berikut:
+  > 1 ulangi
+- Jika ingin mengulang hingga lima baris output maka buang angka kosong `0`
+
+Ketika kita menduplikasi menjadi dua iterasi maka akan menghasilkan perulangan ganda seperti berikut:
+
+```lua
 local a = 1
-while a <= 5 do
+while a < 5 do
 	print(a, "ulangi")
-	a = a + 10
-	print(a, "selesai")
+	a = a + 1
+	print(a, "selsai")
+	a = a + 1
 end
+```
+
+- Output yang dihasilkan:
+
+```
+1       ulangi
+2       selsai
+3       ulangi
+4       selsai
 ```
 
 ## _Perhatian Penting!_
@@ -160,7 +188,7 @@ end
 > end
 > ```
 >
-> ##### _Materi mengenai ini sangat penting untuk diperhatikan demi menghidari **KESALAHAN FATAL!**_
+> ##### _Materi mengenai ini sangat penting untuk diperhatikan demi menghidari **KESALAHAN FATAL!**. Pada intinya, buatlah untuk **mengarah pada satu tujuan dan jangan sampai membuat logika yang membingungkan!.**_
 
 #
 
@@ -176,6 +204,8 @@ end
 
   - Ketika jumlah iterasi **tergantung** hasil perhitungan atau input yang bisa berubah-ubah.
   - Contoh: baca baris file sampai akhir, tunggu sinyal masuk, dsb.
+
+### Lebih Lanjut
 
 ---
 
