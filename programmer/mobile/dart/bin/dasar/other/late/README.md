@@ -168,21 +168,39 @@ Temukan informasi lebih lanjut tentang kata kunci `late` dalam Dart di [FlutterX
 **Kode saya**
 
 ```dart
-import '../../../saya.dart';
+String getTag() {
+  print('fungsi getTag() dipanggil');
+  return 'Hello Flutter';
+}
+
+class Example {
+  late String? name;
+
+  void initializeName() {
+    name = "Dart Developer"; // Variabel diinisialisasi sebelum digunakan
+  }
+
+  void printName() {
+    print(name); // Akan error jika `name` belum diinisialisasi
+  }
+}
 
 void main() {
-  print(bawah);
+  print('\n' * 5);
 
-  var value = getTag();
+  late var value = getTag();
   print('variabel dipanggil');
   print(value);
 
-  print(atas);
-}
+  print(
+    '\n' * 1 + '=' * 10 + '\n' * 1,
+  );
 
-String getTag() {
-  print('${merah}fungsi getTag() dipanggil$reset');
-  return 'Hello Flutter';
+  var example = Example();
+  example.initializeName();
+  example.printName();
+
+  print('\n' * 5);
 }
 ```
 

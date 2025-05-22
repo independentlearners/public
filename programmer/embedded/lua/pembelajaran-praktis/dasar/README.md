@@ -205,8 +205,6 @@ end
   - Ketika jumlah iterasi **tergantung** hasil perhitungan atau input yang bisa berubah-ubah.
   - Contoh: baca baris file sampai akhir, tunggu sinyal masuk, dsb.
 
-### Lebih Lanjut
-
 ---
 
 #### B. `repeat … until …`
