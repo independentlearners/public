@@ -236,7 +236,7 @@ for i = 1, 5, 2 do  -- nilai i: 1, 3, 5
 end
 ```
 
-- **Deterministik**:
+- **[Deterministik](https://kbbi.kemdikbud.go.id/Entri/determinisme)**:
 
   - `i` dimulai dari `start` (1), hingga melewati `limit` (5) dengan kenaikan `step` (2).
   - Jika step tidak dispesifikkan, default `1`.
@@ -325,3 +325,21 @@ end
 ---
 
 > Setiap pelajaran dilengkapi contoh kode praktis dan istilah penting. Coba jalankan sendiri, modifikasi, dan catat pertanyaan apa pun yang muncul!
+
+# Kode Saya
+
+```lua
+local i = 0
+repeat
+	print(i)
+	i = i + 1
+until i > 5
+
+print("-------")
+
+local i = 0
+while i <= 5 do
+	print(i)
+	i = i + 1
+end
+```
