@@ -236,7 +236,7 @@ for i = 1, 5, 2 do  -- nilai i: 1, 3, 5
 end
 ```
 
-- **[Deterministik](https://kbbi.kemdikbud.go.id/Entri/determinisme)**:
+- **[Deterministik](https://github.com/ameerkulal/public/tree/main/programmer/embedded/lua/deterministik "public/tree/main/programmer/embedded/lua/deterministik")**:
 
   - `i` dimulai dari `start` (1), hingga melewati `limit` (5) dengan kenaikan `step` (2).
   - Jika step tidak dispesifikkan, default `1`.
