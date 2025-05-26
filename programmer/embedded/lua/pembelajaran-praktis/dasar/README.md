@@ -283,44 +283,103 @@ end
 
 ### Pelajaran 5: Fungsi & Closure
 
-1. **Definisi Fungsi**
+1.  **Definisi Fungsi**
 
-   ```lua
-   function tambah(a, b)
-     return a + b
-   end
-   print(tambah(2,3))  -- 5
-   ```
+    ```lua
+    function tambah(a, b)
+      return a + b
+    end
+    print(tambah(2,3))  -- 5
+    ```
 
-2. **Anonymous Function & Variadic**
+2.  **Anonymous Function & Variadic**
 
-   ```lua
-   local f = function(...)
-     local args = {...}
-     print(#args)     -- jumlah argumen
-   end
-   f(1,2,3)          -- 3
-   ```
+    Dalam Lua, **Variadic** merujuk pada fungsi yang dapat menerima jumlah argumen yang bervariasi. Ini memungkinkan fungsi untuk menangani input dengan jumlah argumen yang tidak tetap.
+    Di Lua, fungsi variadic didefinisikan dengan menggunakan tanda titik tiga `(...)` sebagai parameter terakhir dalam definisi fungsi.
+    Contohnya:
 
-3. **Closure**
+    ```lua
+    function contohVariadic(a, ...)
+        print(a)
+        for i, v in ipairs({...}) do
+            print(v)
+        end
+    end
 
-   ```lua
-   function makeCounter()
-     local count = 0
-     return function()
-       count = count + 1
-       return count
-     end
-   end
-   c = makeCounter()
-   print(c())  -- 1
-   print(c())  -- 2
-   ```
+    contohVariadic(1, 2, 3, 4, 5)
+    ```
 
-4. **Istilah Spesifik**
+    Pada contoh diatas, `a` akan bernilai `1,` dan `...` akan menangkap argumen `2, 3, 4,` dan `5`. Kemudian, kita menggunakan `{...}` untuk mengakses argumen-argumen tersebut sebagai tabel.
 
-   - **First-class function**: fungsi bisa disimpan variabel, dilewat ke fungsi lain, dll.
-   - **Closure**: fungsi yang "mengingat" lingkungan (upvalue) tempat ia dibuat.
+    **Contoh lainnya:**
+
+    ```lua
+    local f = function(...)
+      local args = {...}
+      print(#args)     -- jumlah argumen
+    end
+    f(1,2,3)          -- 3
+    ```
+
+    **Penjelasan:**
+
+    - **`local f = function(...)`:**
+
+      Ini mendefinisikan sebuah fungsi anonim **(anonymous function)** dan menyimpannya dalam variabel `lokal f`.
+
+    - Tanda `...` dalam parameter fungsi menunjukkan bahwa fungsi ini adalah variadic, artinya fungsi ini dapat menerima jumlah argumen yang bervariasi.
+
+    - **`local args = {...}`:**
+
+      Di dalam fungsi, `{...}` digunakan untuk mengakses semua argumen yang diteruskan ke fungsi dan menyimpannya dalam sebuah tabel **(table)**.
+
+    - Tabel ini kemudian disimpan dalam variabel `local args`.
+
+    - **`print(#args)`:**
+
+      `#args` digunakan untuk mendapatkan jumlah elemen dalam tabel args.
+
+    - Operator `#` dalam Lua digunakan untuk mendapatkan panjang **(length)** dari sebuah string atau tabel.
+
+    - Dalam konteks tabel, `#` mengembalikan indeks dari elemen terakhir dalam tabel yang memiliki indeks numerik berurutan dimulai dari `1`
+
+    - **`f(1, 2, 3)`:**
+
+      Ini memanggil fungsi `f()` dengan tiga argumen: `1, 2, dan 3.`
+
+      **Eksekusi:**
+
+    - Ketika `f(1, 2, 3)` dipanggil, argumen `1, 2,` dan `3` ditangkap oleh `...` dalam definisi fungsi.
+
+    - Argumen-argumen ini kemudian disimpan dalam tabel args sebagai `{1, 2, 3}`.
+
+    - Ketika `print(#args)` dijalankan,`#args` mengembalikan `3` karena ada tiga elemen dalam tabel `args`.
+
+    - Oleh karena itu, output dari kode ini akan menjadi `3`, yang merupakan jumlah argumen yang diteruskan ke fungsi `f()`
+
+    - Dengan demikian, kode tersebut mendemonstrasikan cara menggunakan fungsi variadic di Lua untuk menangkap dan menghitung jumlah argumen yang diteruskan ke sebuah fungsi.
+
+    > Variadic sangat berguna ketika kita tidak tahu pasti berapa banyak argumen yang akan diterima oleh sebuah fungsi. Contoh nyata penggunaannya adalah dalam fungsi **`print()`** pada contoh pertama bawaan Lua, yang dapat menerima sejumlah argumen dan mencetaknya semua, contoh kedua seperti fungsi **`f()`** yang sudah kita bahas sebelumnya
+
+3.  **Closure**
+
+    ```lua
+    function makeCounter()
+      local count = 0
+      return function()
+        count = count + 1
+        return count
+      end
+    end
+    c = makeCounter()
+    print(c())  -- 1
+    print(c())  -- 2
+    ```
+
+4.  **Istilah Spesifik**
+
+    - **First-class function**: fungsi bisa disimpan variabel, dilewat ke fungsi lain, dll.
+    - **Closure**: fungsi yang "mengingat" lingkungan (upvalue) tempat ia dibuat.
 
 ---
 
@@ -342,4 +401,63 @@ while i <= 5 do
 	print(i)
 	i = i + 1
 end
+
+print("-------")
+
+for i = 1, 10, 4 do
+	print(i)
+end
+
+print("-------")
+
+function tambah(a, b)
+	return a + b
+end
+print(tambah(2, 3))
+
+print("-------")
+
+function variadic(a, ...)
+	print(a)
+	for i, v in ipairs({ ... }) do
+		print(v)
+	end
+end
+variadic(1, 2, tambah(2, 3), 4.4, false, "Oke Goole")
+
+print("-------")
+
+local f = function(...)
+	local args = { ... }
+	print(#args)
+end
+f(3, 2, 1, 0)
+
+print("-------")
+
+function makeCounter()
+	local count = 0
+	return function()
+		count = count + 1
+		return count
+	end
+end
+
+c = makeCounter()
+
+print(c(), c(), c(), c(), c())
+print(c())
+print(c())
+print(c())
+print(c())
+print(c())
+
+------- Output:
+
+-- 1       2       3       4       5
+-- 6
+-- 7
+-- 8
+-- 9
+-- 10
 ```
