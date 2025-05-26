@@ -2,13 +2,9 @@
 
 ## _The Ultimate Journey from Scripting to AI & Everything Between_
 
----
-
 ## 📚 **CURRICULUM OVERVIEW**
 
 > **650+ Comprehensive Topics | 40 Advanced Modules | Real-World Applications**
-
----
 
 ## 🌟 **FOUNDATION LEVEL**
 
