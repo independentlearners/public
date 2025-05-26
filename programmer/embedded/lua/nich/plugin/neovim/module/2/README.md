@@ -1,6 +1,4 @@
-Berikut **Modul 2: Sintaks Dasar & Tipe Data** sesuai daftar yang sudah kamu susun. Aku jabarkan tiap istilah spesifik, kenapa penting, dan contoh kode yang bisa kamu praktekkan langsung.
-
----
+# Modul 2: Sintaks Dasar & Tipe Data
 
 ## 🔤 1. Token & Identifiers
 
