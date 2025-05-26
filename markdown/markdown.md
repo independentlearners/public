@@ -195,3 +195,76 @@ Atau bisa disingkat:
 
 - Gunakan `/` bukan `\` untuk path di Markdown agar lintas platform dan valid secara URL.
 - Gunakan tautan relatif jika file tersebut masih dalam repositori lokal atau GitHub repo yang sama. -->
+
+Kalau kamu ingin **menampilkan karakter backtick (`` ` ``)** di dalam Markdown, **tapi tetap menggunakan Markdown code block atau inline code**, kamu harus **"melarikan" (escape) atau mengapit dengan tanda backtick lebih banyak dari yang kamu gunakan di dalamnya.**
+
+---
+
+### ✅ Kasus 1: Ingin menampilkan satu backtick di inline code
+
+Misalnya kamu ingin menampilkan:
+
+> tampilan seperti \`ini\`
+
+Gunakan tiga backtick:
+
+```markdown
+`` ` ``
+```
+
+Hasilnya: `` ` ``
+
+---
+
+### ✅ Kasus 2: Ingin menampilkan tiga backtick dalam blok kode
+
+Markdown biasa tidak bisa pakai tiga backtick di dalam tiga backtick. Solusinya:
+
+- Gunakan **empat backtick sebagai pembuka dan penutup**:
+
+`````markdown
+```markdown
+
+```
+`````
+
+kode diapit tiga backtick
+
+```
+
+```
+
+```
+
+Hasilnya:
+
+```
+
+kode diapit tiga backtick
+
+```
+
+---
+
+### ✅ Tambahan: Menampilkan kombinasi karakter aneh lainnya
+
+Jika kamu ingin menampilkan teks Markdown seperti:
+
+```
+
+# Judul [teks](link)
+
+````
+
+Kamu cukup bungkus dengan tiga backtick biasa:
+
+    ```markdown
+    # Judul [teks](link)
+    ```
+
+Markdown **tidak akan merender isi di dalam blok kode** sebagai format. Semua dianggap teks mentah.
+
+---
+
+Kalau kamu sebutkan situasi spesifiknya (di dalam dokumen, dalam kode Lua, atau di dalam komentar), aku bisa bantu lebih presisi. Markdown bisa tricky kadang, tapi gampang kalau udah ngerti polanya 💪
+````

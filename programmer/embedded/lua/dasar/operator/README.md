@@ -203,14 +203,14 @@ Operator bitwise diperkenalkan di Lua 5.3 untuk operasi bit-level pada bilangan 
 
 ### Operator Bitwise Dasar
 
-| Operator | Deskripsi           | Contoh     | Hasil |
-| -------- | ------------------- | ---------- | ----- | --- | --- |
-| `&`      | Bitwise AND         | `5 & 3`    | `1`   |
-| `        | `                   | Bitwise OR | `5    | 3`  | `7` |
-| `~`      | Bitwise XOR         | `5 ~ 3`    | `6`   |
-| `>>`     | Right shift         | `8 >> 1`   | `4`   |
-| `<<`     | Left shift          | `4 << 1`   | `8`   |
-| `~`      | Bitwise NOT (unary) | `~5`       | `-6`  |
+| Operator | Deskripsi           | Contoh   | Hasil |
+| -------- | ------------------- | -------- | ----- |
+| `&`      | Bitwise AND         | `5 & 3`  | `1`   |
+| `\|`     | Bitwise OR          | `5\|3`   | `7`   |
+| `~`      | Bitwise XOR         | `5 ~ 3`  | `6`   |
+| `>>`     | Right shift         | `8 >> 1` | `4`   |
+| `<<`     | Left shift          | `4 << 1` | `8`   |
+| `~`      | Bitwise NOT (unary) | `~5`     | `-6`  |
 
 ### Contoh Penggunaan
 
@@ -447,20 +447,20 @@ Urutan prioritas operator dalam Lua (dari tertinggi ke terendah):
 
 ### Tabel Precedence
 
-| Precedence | Operator                          | Associativity |
+| Precedence | Operator                          | Associativity |      |
 | ---------- | --------------------------------- | ------------- | ---- |
-| 8          | `^`                               | Right         |
-| 7          | `not` `#` `-` (unary) `~` (unary) | Right         |
-| 6          | `*` `/` `//` `%`                  | Left          |
-| 5          | `+` `-`                           | Left          |
-| 4          | `..`                              | Right         |
-| 3          | `<<` `>>`                         | Left          |
-| 2          | `&`                               | Left          |
-| 1          | `~` (binary)                      | Left          |
-| 0          | `                                 | `             | Left |
-| -1         | `<` `>` `<=` `>=` `~=` `==`       | Left          |
-| -2         | `and`                             | Left          |
-| -3         | `or`                              | Left          |
+| 8          | `^`                               | Right         |      |
+| 7          | `not` `#` `-` (unary) `~` (unary) | Right         |      |
+| 6          | `*` `/` `//` `%`                  | Left          |      |
+| 5          | `+` `-`                           | Left          |      |
+| 4          | `..`                              | Right         |      |
+| 3          | `<<` `>>`                         | Left          |      |
+| 2          | `&`                               | Left          |      |
+| 1          | `~` (binary)                      | Left          |      |
+| 0          | `` ` ``                           | `` ` ``       | Left |
+| -1         | `<` `>` `<=` `>=` `~=` `==`       | Left          |      |
+| -2         | `and`                             | Left          |      |
+| -3         | `or`                              | Left          |      |
 
 ### Contoh Precedence
 
@@ -499,7 +499,7 @@ Lua memungkinkan overloading operator melalui metamethods, memberikan fleksibili
 ### Metamethods untuk Operator
 
 | Operator     | Metamethod | Deskripsi          |
-| ------------ | ---------- | ------------------ | ---------- |
+| ------------ | ---------- | ------------------ |
 | `+`          | `__add`    | Penjumlahan        |
 | `-`          | `__sub`    | Pengurangan        |
 | `*`          | `__mul`    | Perkalian          |
@@ -509,7 +509,7 @@ Lua memungkinkan overloading operator melalui metamethods, memberikan fleksibili
 | `^`          | `__pow`    | Eksponensial       |
 | `-` (unary)  | `__unm`    | Negasi             |
 | `&`          | `__band`   | Bitwise AND        |
-| `            | `          | `__bor`            | Bitwise OR |
+| `\|`         | `__bor`    | Bitwise OR         |
 | `~` (binary) | `__bxor`   | Bitwise XOR        |
 | `~` (unary)  | `__bnot`   | Bitwise NOT        |
 | `<<`         | `__shl`    | Left shift         |
