@@ -10,72 +10,87 @@
 
 ### 🚀 **Module 1: Environment & Setup**
 
-```
-001. Welcome to the Python Universe
-002. Python Philosophy: The Zen of Python
-003. History and Evolution of Python
-004. Why Python Rules the World
-005. Python Versions (2.x vs 3.x)
-006. Installation Methods
-007. Virtual Environments (venv, conda)
-008. Package Management (pip, poetry)
-009. IDE Setup (PyCharm, VS Code, Jupyter)
-010. Command Line Mastery
-011. Python REPL Usage
-012. IPython Enhanced Shell
-013. Environment Variables
-014. PATH Configuration
-015. Cross-Platform Considerations
-016. Docker for Python Development
-017. Development Workflow Setup
-```
+| Kode | Topik                      | Referensi Resmi                                                                                                                                      |
+| ---- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 001  | Welcome to Python Universe | [Python.org](https://www.python.org/)                                                                                                                |
+| 002  | Zen of Python              | [PEP 20](https://peps.python.org/pep-0020/)                                                                                                          |
+| 003  | History of Python          | [Python History](https://docs.python.org/3/tutorial/appendix.html#history)                                                                           |
+| 004  | Why Python Rules           | [Python Success Stories](https://www.python.org/about/success/)                                                                                      |
+| 005  | Python 2 vs 3              | [Python 3 Docs](https://docs.python.org/3/whatsnew/3.0.html)                                                                                         |
+| 006  | Installation               | [Python Downloads](https://www.python.org/downloads/)                                                                                                |
+| 007  | Virtual Environments       | [venv](https://docs.python.org/3/library/venv.html), [conda](https://docs.conda.io/)                                                                 |
+| 008  | Package Management         | [pip](https://pip.pypa.io/), [poetry](https://python-poetry.org/docs/)                                                                               |
+| 009  | IDE Setup                  | [PyCharm](https://www.jetbrains.com/pycharm/), [VS Code](https://code.visualstudio.com/docs/python/python-tutorial), [Jupyter](https://jupyter.org/) |
+| 010  | Command Line               | [Python CLI](https://docs.python.org/3/using/cmdline.html)                                                                                           |
+| 011  | Python REPL                | [Interactive Mode](https://docs.python.org/3/tutorial/interpreter.html)                                                                              |
+| 012  | IPython                    | [IPython Docs](https://ipython.readthedocs.io/)                                                                                                      |
+| 013  | Environment Variables      | [os.environ](https://docs.python.org/3/library/os.html#os.environ)                                                                                   |
+| 014  | PATH Config                | [sys.path](https://docs.python.org/3/library/sys.html#sys.path)                                                                                      |
+| 015  | Cross-Platform             | [Python Portability](https://docs.python.org/3/using/windows.html)                                                                                   |
+| 016  | Docker                     | [Docker Python Guide](https://docs.docker.com/language/python/)                                                                                      |
+| 017  | Workflow Setup             | [Python Dev Guide](https://devguide.python.org/)                                                                                                     |
+
+---
 
 ### 💎 **Module 2: Basic Syntax & Data Types**
 
-```
-018. Python Syntax Fundamentals
-019. Indentation and Code Structure
-020. Comments and Docstrings
-021. PEP 8 Style Guide
-022. Variables and Naming Conventions
-023. Keywords and Reserved Words
-024. Dynamic Typing System
-025. Type Hints Introduction
-026. None Type Understanding
-027. Boolean Logic
-028. Numeric Types (int, float, complex)
-029. Decimal and Fractions
-030. String Fundamentals
-031. String Methods Arsenal
-032. String Formatting Techniques
-033. f-strings Mastery
-034. Raw Strings and Escape Sequences
-035. Unicode and Encoding
-036. Binary Data Handling
-037. Memory Management Basics
-038. Garbage Collection
-039. Object Identity and Equality
-```
+| Kode | Topik               | Referensi Resmi                                                                                                          |
+| ---- | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 018  | Syntax Fundamentals | [Python Tutorial](https://docs.python.org/3/tutorial/)                                                                   |
+| 019  | Indentation         | [PEP 8](https://peps.python.org/pep-0008/#indentation)                                                                   |
+| 020  | Comments/Docstrings | [PEP 257](https://peps.python.org/pep-0257/)                                                                             |
+| 021  | PEP 8               | [PEP 8 Full](https://peps.python.org/pep-0008/)                                                                          |
+| 022  | Variables           | [Naming Conventions](https://peps.python.org/pep-0008/#naming-conventions)                                               |
+| 023  | Keywords            | [Keywords List](https://docs.python.org/3/reference/lexical_analysis.html#keywords)                                      |
+| 024  | Dynamic Typing      | [Python Types](https://docs.python.org/3/library/stdtypes.html)                                                          |
+| 025  | Type Hints          | [PEP 484](https://peps.python.org/pep-0484/)                                                                             |
+| 026  | None Type           | [None Documentation](https://docs.python.org/3/library/constants.html#None)                                              |
+| 027  | Boolean Logic       | [Boolean Operations](https://docs.python.org/3/library/stdtypes.html#boolean-operations)                                 |
+| 028  | Numeric Types       | [Numbers](https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex)                               |
+| 029  | Decimal/Fractions   | [Decimal](https://docs.python.org/3/library/decimal.html), [Fractions](https://docs.python.org/3/library/fractions.html) |
+| 030  | Strings             | [String Methods](https://docs.python.org/3/library/stdtypes.html#string-methods)                                         |
+| 031  | String Methods      | [String Operations](https://docs.python.org/3/library/string.html)                                                       |
+| 032  | String Formatting   | [Formatting Guide](https://docs.python.org/3/tutorial/inputoutput.html#fancier-output-formatting)                        |
+| 033  | f-strings           | [PEP 498](https://peps.python.org/pep-0498/)                                                                             |
+| 034  | Raw Strings         | [String Literals](https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals)                   |
+| 035  | Unicode             | [Unicode HOWTO](https://docs.python.org/3/howto/unicode.html)                                                            |
+| 036  | Binary Data         | [Bytes Objects](https://docs.python.org/3/library/stdtypes.html#bytes-objects)                                           |
+| 037  | Memory Management   | [Memory Management](https://docs.python.org/3/c-api/memory.html)                                                         |
+| 038  | Garbage Collection  | [gc Module](https://docs.python.org/3/library/gc.html)                                                                   |
+| 039  | Object Identity     | [id() Function](https://docs.python.org/3/library/functions.html#id)                                                     |
+
+---
 
 ### ⚡ **Module 3: Operators & Expressions**
 
-```
-040. Arithmetic Operators
-041. Comparison Operators
-042. Logical Operators
-043. Bitwise Operations
-044. Assignment Operators
-045. Identity Operators (is, is not)
-046. Membership Operators (in, not in)
-047. Operator Precedence
-048. Operator Overloading
-049. Walrus Operator (:=)
-050. Ternary Conditional Operator
-051. Expression Evaluation
-052. Short-Circuit Evaluation
-```
+| Kode | Topik           | Referensi Resmi                                                                                         |
+| ---- | --------------- | ------------------------------------------------------------------------------------------------------- |
+| 040  | Arithmetic      | [Arithmetic Ops](https://docs.python.org/3/library/stdtypes.html#numeric-types-int-float-complex)       |
+| 041  | Comparison      | [Comparisons](https://docs.python.org/3/reference/expressions.html#comparisons)                         |
+| 042  | Logical         | [Boolean Operations](https://docs.python.org/3/reference/expressions.html#boolean-operations)           |
+| 043  | Bitwise         | [Bitwise Ops](https://docs.python.org/3/reference/expressions.html#binary-bitwise-operations)           |
+| 044  | Assignment      | [Assignment Ops](https://docs.python.org/3/reference/simple_stmts.html#assignment-statements)           |
+| 045  | Identity Ops    | [is operator](https://docs.python.org/3/reference/expressions.html#is)                                  |
+| 046  | Membership Ops  | [in operator](https://docs.python.org/3/reference/expressions.html#in)                                  |
+| 047  | Precedence      | [Operator Precedence](https://docs.python.org/3/reference/expressions.html#operator-precedence)         |
+| 048  | Overloading     | [Operator Overloading](https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types)      |
+| 049  | Walrus Operator | [PEP 572](https://peps.python.org/pep-0572/)                                                            |
+| 050  | Ternary         | [Conditional Expressions](https://docs.python.org/3/reference/expressions.html#conditional-expressions) |
+| 051  | Evaluation      | [Expression Evaluation](https://docs.python.org/3/reference/expressions.html#evaluation-order)          |
+| 052  | Short-Circuit   | [Boolean Operations](https://docs.python.org/3/library/stdtypes.html#boolean-operations)                |
 
 ---
+
+**Catatan Khusus**:
+
+1. Untuk tools eksternal (conda, poetry, PyCharm, dll.), referensi mengarah ke dokumentasi resmi masing-masing
+2. PEP (Python Enhancement Proposals) adalah dokumen standar untuk fitur Python
+3. Gunakan `python -m venv myenv` untuk membuat virtual environment
+4. Contoh penggunaan walrus operator:
+   ```python
+   while (n := input("Enter number: ")) != "stop":
+       print(f"You entered: {n}")
+   ```
 
 ## 🎯 **INTERMEDIATE LEVEL**
 

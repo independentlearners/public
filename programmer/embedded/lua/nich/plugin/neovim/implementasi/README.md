@@ -2,7 +2,7 @@ Semua artikel ini merupakan hasil dari Generate AI
 
 # Panduan Lengkap Lua untuk Pengembangan Plugin Neovim
 
-## 1. Fondasi Dasar Lua
+## [1. Fondasi Dasar Lua][1]
 
 ### 1.1 Pengenalan Lua
 
@@ -42,7 +42,7 @@ print("Hello")
 local result = x + 5  -- x + 5 adalah expression
 ```
 
-## 2. Tipe Data dan Variabel
+## [2. Tipe Data dan Variabel][2]
 
 ### 2.1 Tipe Data Primitif
 
@@ -115,7 +115,7 @@ end
 
 **Best Practice**: Selalu gunakan `local` untuk variabel dalam plugin development untuk menghindari namespace pollution.
 
-## 3. Operator dan Kontrol Flow
+## [3. Operator dan Kontrol Flow][3]
 
 ### 3.1 Operator Aritmatika
 
@@ -205,7 +205,7 @@ for index, fruit in ipairs(fruits) do
 end
 ```
 
-## 4. Struktur Data Kompleks
+## [4. Struktur Data Kompleks][4]
 
 ### 4.1 Tables - Struktur Data Utama Lua
 
@@ -321,7 +321,7 @@ for index, fruit in ipairs(fruits) do
 end
 ```
 
-## 5. Functions - Konsep Mendalam
+## [5. Functions - Konsep Mendalam][5]
 
 ### 5.1 Function Definition dan Calling
 
@@ -2110,3 +2110,9 @@ Materi Lua yang telah dijelaskan mencakup semua aspek yang diperlukan untuk peng
 7. **Performance optimization**: Memory management, async patterns
 
 Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenuhi kebutuhan IDE terminal-based, tetapi juga dapat diperluas dengan fitur-fitur additional sesuai kebutuhan spesifik Anda. Setiap konsep telah dijelaskan dengan detail syntax, terminology, dan implementasi praktis yang dapat langsung diaplikasikan dalam pengembangan plugin.
+
+[1]: ../implementasi/1-dasar/README.md
+[2]: ../implementasi/2-variable/README.md
+[3]: ../implementasi/3-operator-kontrolFlow/README.md
+[4]: ../implementasi/4-struktur-data-kompleks/README.md
+[5]: ../implementasi/5-function/README.md
