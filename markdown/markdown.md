@@ -222,11 +222,11 @@ Markdown biasa tidak bisa pakai tiga backtick di dalam tiga backtick. Solusinya:
 
 - Gunakan **empat backtick sebagai pembuka dan penutup**:
 
-`````markdown
+````markdown
 ```markdown
 
 ```
-`````
+````
 
 kode diapit tiga backtick
 
@@ -268,3 +268,16 @@ Markdown **tidak akan merender isi di dalam blok kode** sebagai format. Semua di
 
 Kalau kamu sebutkan situasi spesifiknya (di dalam dokumen, dalam kode Lua, atau di dalam komentar), aku bisa bantu lebih presisi. Markdown bisa tricky kadang, tapi gampang kalau udah ngerti polanya 💪
 ````
+
+# Daftar Isi
+
+- [Pengantar Lua](#pengantar-bahasa-lua)
+- [Struktur Dasar](#struktur-dasar)
+
+## Pengantar Bahasa Lua
+
+Penjelasan tentang Lua...
+
+## Struktur Dasar
+
+Bagian ini membahas struktur kode...

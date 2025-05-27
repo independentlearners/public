@@ -92,61 +92,112 @@
        print(f"You entered: {n}")
    ```
 
+#
+
 ## 🎯 **INTERMEDIATE LEVEL**
 
 ### 🔄 **Module 4: Control Flow & Loops**
 
-```
-053. Conditional Statements (if, elif, else)
-054. Match-Case Statements (Python 3.10+)
-055. Pattern Matching
-056. Guard Clauses
-057. While Loops
-058. For Loops
-059. Range Function Mastery
-060. Enumerate Function
-061. Zip Function
-062. Nested Loops
-063. Loop Control (break, continue)
-064. Pass Statement
-065. Else Clauses in Loops
-066. Comprehension Syntax
-067. Exception Handling in Loops
-```
+| Kode | Topik                  | Referensi Resmi                                                                                                                 |
+| ---- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 053  | Conditional Statements | [if/elif/else](https://docs.python.org/3/tutorial/controlflow.html#if-statements)                                               |
+| 054  | Match-Case (3.10+)     | [PEP 634](https://peps.python.org/pep-0634/)                                                                                    |
+| 055  | Pattern Matching       | [Structural Pattern Matching](https://docs.python.org/3/whatsnew/3.10.html#pep-634-structural-pattern-matching)                 |
+| 056  | Guard Clauses          | [Guards in Patterns](https://peps.python.org/pep-0634/#guards)                                                                  |
+| 057  | While Loops            | [while Loop](https://docs.python.org/3/reference/compound_stmts.html#while)                                                     |
+| 058  | For Loops              | [for Loop](https://docs.python.org/3/tutorial/controlflow.html#for-statements)                                                  |
+| 059  | range()                | [range Type](https://docs.python.org/3/library/stdtypes.html#range)                                                             |
+| 060  | enumerate()            | [enumerate()](https://docs.python.org/3/library/functions.html#enumerate)                                                       |
+| 061  | zip()                  | [zip()](https://docs.python.org/3/library/functions.html#zip)                                                                   |
+| 062  | Nested Loops           | [Nested Loops Example](https://docs.python.org/3/tutorial/controlflow.html#nested-list-comprehensions)                          |
+| 063  | Loop Control           | [break/continue](https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements)                             |
+| 064  | pass                   | [pass Statement](https://docs.python.org/3/reference/simple_stmts.html#pass)                                                    |
+| 065  | Else in Loops          | [Loop Else Clause](https://docs.python.org/3/tutorial/controlflow.html#break-and-continue-statements-and-else-clauses-on-loops) |
+| 066  | Comprehensions         | [List Comprehensions](https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions)                               |
+| 067  | Exception Handling     | [try/except in Loops](https://docs.python.org/3/tutorial/errors.html)                                                           |
+
+---
 
 ### 🧩 **Module 5: Functions & Functional Programming**
 
+| Kode | Topik               | Referensi Resmi                                                                                                                                     |
+| ---- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 068  | Function Basics     | [Defining Functions](https://docs.python.org/3/tutorial/controlflow.html#defining-functions)                                                        |
+| 069  | Parameters/Args     | [Function Arguments](https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions)                                                |
+| 070  | Default Args        | [Default Values](https://docs.python.org/3/tutorial/controlflow.html#default-argument-values)                                                       |
+| 071  | Keyword Args        | [Keyword Arguments](https://docs.python.org/3/tutorial/controlflow.html#keyword-arguments)                                                          |
+| 072  | \*args              | [Arbitrary Args](https://docs.python.org/3/tutorial/controlflow.html#arbitrary-argument-lists)                                                      |
+| 073  | \*\*kwargs          | [Keyword Args](https://docs.python.org/3/tutorial/controlflow.html#keyword-arguments)                                                               |
+| 074  | Argument Unpacking  | [Unpacking Args](https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists)                                                      |
+| 075  | Return              | [return Statement](https://docs.python.org/3/reference/simple_stmts.html#return)                                                                    |
+| 076  | Multiple Returns    | [Return Tuples](https://docs.python.org/3/tutorial/controlflow.html#defining-functions)                                                             |
+| 077  | LEGB Rule           | [Scopes/Nested](https://docs.python.org/3/tutorial/classes.html#python-scopes-and-namespaces)                                                       |
+| 078  | global/nonlocal     | [global](https://docs.python.org/3/reference/simple_stmts.html#global), [nonlocal](https://docs.python.org/3/reference/simple_stmts.html#nonlocal)  |
+| 079  | Nested Functions    | [Nested Scopes](https://docs.python.org/3/tutorial/classes.html#scopes-and-namespaces-example)                                                      |
+| 080  | Closures            | [Closure Example](https://docs.python.org/3/faq/programming.html#why-do-lambdas-defined-in-a-loop-with-different-values-all-return-the-same-result) |
+| 081  | First-Class         | [First-Class Objects](https://docs.python.org/3/tutorial/controlflow.html#first-class-functions)                                                    |
+| 082  | HOF                 | [Higher-Order Functions](https://docs.python.org/3/howto/functional.html#higher-order-functions)                                                    |
+| 083  | Lambda              | [Lambda Expressions](https://docs.python.org/3/tutorial/controlflow.html#lambda-expressions)                                                        |
+| 084  | Decorators          | [Primer on Decorators](https://peps.python.org/pep-0318/)                                                                                           |
+| 085  | Built-in Decorators | [@classmethod/@staticmethod](https://docs.python.org/3/library/functions.html#classmethod)                                                          |
+| 086  | Custom Decorators   | [Writing Decorators](https://realpython.com/primer-on-python-decorators/)                                                                           |
+| 087  | Decorator w/Args    | [Decorator Syntax](https://peps.python.org/pep-0318/#current-syntax)                                                                                |
+| 088  | Class Decorators    | [Class Decorators](https://docs.python.org/3/reference/datamodel.html#class-decorators)                                                             |
+| 089  | functools           | [functools](https://docs.python.org/3/library/functools.html)                                                                                       |
+| 090  | Partial             | [partial()](https://docs.python.org/3/library/functools.html#functools.partial)                                                                     |
+| 091  | Map/Filter/Reduce   | [Functional Tools](https://docs.python.org/3/howto/functional.html#built-in-functions)                                                              |
+| 092  | Generators          | [Generator Functions](https://docs.python.org/3/tutorial/classes.html#generators)                                                                   |
+| 093  | Yield               | [yield Statement](https://docs.python.org/3/reference/expressions.html#yieldexpr)                                                                   |
+| 094  | Gen Expressions     | [Generator Expressions](https://docs.python.org/3/glossary.html#term-generator-expression)                                                          |
+| 095  | Coroutines          | [Coroutines](https://docs.python.org/3/glossary.html#term-coroutine)                                                                                |
+| 096  | Recursion           | [Recursion Example](https://docs.python.org/3/tutorial/controlflow.html#defining-functions)                                                         |
+
+---
+
+**Contoh Implementasi Kunci**:
+
+1. **Pattern Matching (Python 3.10+)**:
+
+```python
+match status:
+    case 400:
+        print("Bad request")
+    case 404:
+        print("Not found")
+    case _:
+        print("Unknown status")
 ```
-068. Function Definition and Calling
-069. Parameters and Arguments
-070. Default Arguments
-071. Keyword Arguments
-072. Variable-Length Arguments (*args)
-073. Keyword Variable Arguments (**kwargs)
-074. Argument Unpacking
-075. Return Statements
-076. Multiple Return Values
-077. Scope and LEGB Rule
-078. Global and Nonlocal Keywords
-079. Nested Functions
-080. Closures and Lexical Scoping
-081. First-Class Functions
-082. Higher-Order Functions
-083. Lambda Functions
-084. Decorators Fundamentals
-085. Built-in Decorators
-086. Custom Decorator Creation
-087. Decorator with Arguments
-088. Class Decorators
-089. Functools Module
-090. Partial Functions
-091. Map, Filter, Reduce
-092. Generator Functions
-093. Yield Statement
-094. Generator Expressions
-095. Coroutines Introduction
-096. Recursion and Memoization
+
+2. **Decorator dengan Argumen**:
+
+```python
+def repeat(n):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            for _ in range(n):
+                func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@repeat(3)
+def greet(name):
+    print(f"Hello {name}")
+
+greet("Alice")  # Output 3x
 ```
+
+3. **Generator Expression**:
+
+```python
+gen = (x**2 for x in range(10))
+print(list(gen))  # [0, 1, 4, 9, ..., 81]
+```
+
+**Sumber Tambahan**:
+
+- [Python Functional Programming HOWTO](https://docs.python.org/3/howto/functional.html)
+- [Real Python Decorators Guide](https://realpython.com/primer-on-python-decorators/)
+- [PEP 484 - Type Hints](https://peps.python.org/pep-0484/)
 
 ---
 

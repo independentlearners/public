@@ -15,7 +15,7 @@
 
 ```lua
 local _count = 10      -- `_count` dan `count` beda
-local userName = "Ameer"
+local userName = "Lua"
 ```
 
 ---
