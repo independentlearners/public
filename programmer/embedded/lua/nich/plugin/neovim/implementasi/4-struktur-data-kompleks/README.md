@@ -1,4 +1,4 @@
-## 4\. Struktur Data Kompleks
+## [4\. Struktur Data Kompleks][4]
 
 Lua hanya memiliki satu mekanisme untuk membuat struktur data kompleks, yaitu `table`. Fleksibilitasnya memungkinkan `table` untuk digunakan sebagai array, dictionary (hash map), objek, dan berbagai struktur data lainnya.
 
@@ -373,3 +373,5 @@ end
 ---
 
 Tabel adalah struktur data yang sangat fundamental dan serbaguna di Lua. Penguasaan cara kerja tabel, termasuk berbagai cara untuk membuat, memodifikasi, dan mengiterasinya, adalah esensial untuk pengembangan plugin Neovim yang efektif.
+
+[4]: ../README.md/#4-struktur-data-kompleks

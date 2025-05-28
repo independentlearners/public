@@ -1,4 +1,4 @@
-## 7\. Modules dan Package Management (Modul dan Manajemen Paket)
+## [7\. Modules dan Package Management (Modul dan Manajemen Paket)][7]
 
 Seiring dengan bertambahnya kompleksitas program, penting untuk memecah kode menjadi unit-unit yang lebih kecil dan terkelola. Lua menyediakan sistem modul sederhana namun kuat untuk tujuan ini. Modules dan Package Management. Ini adalah aspek penting dalam pengembangan perangkat lunak yang lebih besar, termasuk plugin Neovim, karena membantu mengorganisir kode menjadi bagian-bagian yang logis dan dapat digunakan kembali.
 
@@ -260,3 +260,5 @@ Jika Anda menjalankan ini setelah menjalankan `main_program.lua` dalam interpret
 ---
 
 Sistem modul Lua, meskipun sederhana, sangat efektif untuk membangun aplikasi yang terstruktur dan dapat dipelihara. Dalam konteks Neovim, ini adalah cara standar untuk mengatur kode plugin Anda.
+
+[7]: ../README.md/#7-modules-dan-package-management

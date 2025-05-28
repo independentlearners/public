@@ -1,4 +1,4 @@
-## 8\. Error Handling dan Debugging (Penanganan Kesalahan dan Debugging)
+## [8\. Error Handling dan Debugging (Penanganan Kesalahan dan Debugging)][8]
 
 Bagian ini akan membahas mekanisme penanganan kesalahan di Lua, cara memunculkan dan menangkap kesalahan, serta beberapa alat dasar untuk debugging kode Lua Anda. Error Handling dan Debugging. Kemampuan untuk menangani kesalahan secara efektif dan melakukan debug adalah keterampilan penting untuk membangun perangkat lunak yang andal dan stabil, termasuk plugin Neovim.
 
@@ -406,3 +406,5 @@ outer_function_for_caller_inspection()
     - Ketika `outer_function_for_caller_inspection` memanggil `inspect_callers_locals`, maka `inspect_callers_locals` akan dapat melihat dan mencetak variabel lokal `outer_var1` dan `outer_var2` dari `outer_function_for_caller_inspection`.
 
 Pustaka `debug` bisa sangat membantu, tetapi seringkali untuk debugging plugin Neovim, kombinasi `print` yang cerdas, `vim.notify`, dan mungkin alat debugging eksternal (jika masalahnya sangat kompleks) lebih umum digunakan. Namun, mengetahui keberadaan `debug` library adalah aset.
+
+[8]: ../README.md/#8-error-handling-dan-debugging

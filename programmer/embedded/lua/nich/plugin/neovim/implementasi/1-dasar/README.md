@@ -1,4 +1,4 @@
-## 1. Fondasi Dasar Lua
+## [1. Fondasi Dasar Lua][1]
 
 Bagian ini akan memperkenalkan Anda pada bahasa pemrograman Lua, menjelaskan karakteristik utamanya, serta sintaks dasar dan struktur kode yang digunakan dalam Lua. Pemahaman yang kuat terhadap fondasi ini sangat penting sebelum melangkah ke konsep yang lebih kompleks.
 
@@ -115,3 +115,5 @@ local result = x + 5   -- 'x + 5' adalah sebuah expression.
     - `-- x + 5 adalah expression`: Ini adalah komentar yang menjelaskan bahwa bagian `x + 5` dari statement tersebut merupakan sebuah expression.
 
 Dengan memahami konsep dasar ini, Anda telah memiliki landasan awal untuk mempelajari aspek-aspek lain dari Lua yang lebih mendalam.
+
+[1]: ../README.md/#1-fondasi-dasar-lua

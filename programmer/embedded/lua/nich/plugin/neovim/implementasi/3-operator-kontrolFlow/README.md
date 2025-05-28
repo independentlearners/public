@@ -1,4 +1,4 @@
-## 3\. Operator dan Kontrol Flow
+## [3\. Operator dan Kontrol Flow][3]
 
 Operator digunakan untuk melakukan operasi pada variabel dan nilai, sedangkan struktur kontrol alur (kontrol flow) digunakan untuk mengatur urutan eksekusi pernyataan dalam program berdasarkan kondisi atau iterasi tertentu.
 
@@ -440,3 +440,5 @@ end
 ---
 
 Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yang diperlukan untuk membangun logika yang kompleks dan dinamis dalam plugin Neovim Anda.
+
+[3]: ../README.md/#3-operator-dan-kontrol-flow

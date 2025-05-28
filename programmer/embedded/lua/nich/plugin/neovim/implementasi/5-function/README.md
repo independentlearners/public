@@ -1,4 +1,4 @@
-## 5\. Functions - Konsep Mendalam
+## [5\. Functions - Konsep Mendalam][5]
 
 Bagian ini akan membahas secara mendalam tentang definisi fungsi, cara pemanggilan, fitur-fitur canggih seperti nilai kembali ganda, argumen variabel (varargs), closure, serta konsep fungsi sebagai _first-class citizen_ di Lua.
 
@@ -387,3 +387,5 @@ print("Angka stringified:", table.concat(stringified_numbers, ", ")) -- Output: 
 ---
 
 Pemahaman yang solid tentang fungsi, termasuk fitur-fitur canggihnya dan sifatnya sebagai _first-class citizen_, akan sangat memberdayakan Anda dalam menulis kode Lua yang ekspresif, modular, dan kuat untuk plugin Neovim.
+
+[5]: ../README.md/#5-functions---konsep-mendalam
