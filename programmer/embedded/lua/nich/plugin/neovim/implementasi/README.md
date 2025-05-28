@@ -441,7 +441,7 @@ local squared = map(numbers, function(x) return x * x end)
 -- squared = {1, 4, 9, 16, 25}
 ```
 
-## 6. Object-Oriented Programming (OOP) di Lua
+## [6. Object-Oriented Programming (OOP) di Lua][6]
 
 ### 6.1 Table sebagai Objects
 
@@ -571,7 +571,7 @@ buddy:speak()  -- "Buddy barks!"
 print(buddy:get_breed())  -- "Golden Retriever"
 ```
 
-## 7. Modules dan Package Management
+## [7. Modules dan Package Management][7]
 
 ### 7.1 Module System
 
@@ -624,7 +624,7 @@ package.path = package.path .. ";/custom/path/?.lua"
 print(package.loaded["math_utils"])  -- module info setelah di-load
 ```
 
-## 8. Error Handling dan Debugging
+## [8. Error Handling dan Debugging][8]
 
 ### 8.1 Error Types dan Handling
 
@@ -700,7 +700,7 @@ end
 
 ## 9. Advanced Lua Concepts
 
-### 9.1 Coroutines - Cooperative Multithreading
+### [9.1 Coroutines - Cooperative Multithreading][9]
 
 **Coroutine** adalah function yang dapat di-suspend dan di-resume.
 
@@ -2116,3 +2116,7 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 [3]: ../implementasi/3-operator-kontrolFlow/README.md
 [4]: ../implementasi/4-struktur-data-kompleks/README.md
 [5]: ../implementasi/5-function/README.md
+[6]: ../implementasi/6-oop/README.md
+[7]: ../implementasi/7-modules-dan-manajemenPaket/README.md
+[8]: ../implementasi/8-error-handling-dan-debugging/README.md
+[9]: ../implementasi/9-coroutines-konkurensi/README.md
