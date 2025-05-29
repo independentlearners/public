@@ -1,4 +1,4 @@
-### **1. Dasar Komentar**
+### **[1. Dasar Komentar][1]**
 
 Komentar digunakan untuk menjelaskan kode atau menonaktifkan bagian kode sementara.
 
@@ -158,7 +158,7 @@ end
 ---[[
   Uncomment blok ini untuk testing:
   print(factorial(3))  -- Output: 6
-]]
+--]]
 ```
 
 ---
@@ -172,3 +172,5 @@ end
   - Toggle komentar dengan `---[[`.
   - Komentar dokumentasi dengan `---`.
 - **Best Practices**: Komentar untuk klarifikasi, dokumentasi, dan debugging.
+
+[1]: ../../README.md/#

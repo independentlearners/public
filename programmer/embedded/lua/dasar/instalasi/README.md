@@ -1,4 +1,4 @@
-# Instalasi
+# [Instalasi][0]
 
 **Windows**
 
@@ -84,3 +84,5 @@ Pastikan sudah install extension **[Lua](https://marketplace.visualstudio.com/it
 ```
 
 #### Restart VS Code sekali.
+
+[0]: ../../README.md/#instalasi-lua
