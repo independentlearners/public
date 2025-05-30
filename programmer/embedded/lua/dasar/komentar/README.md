@@ -173,4 +173,13 @@ end
   - Komentar dokumentasi dengan `---`.
 - **Best Practices**: Komentar untuk klarifikasi, dokumentasi, dan debugging.
 
+#
+
+**Kembali ke:**
+
+1. - [Halaman Fondasi Awal Pembuatan Plugin Novim][2]
+
+1. - [Kembali Ke Atas](#1-dasar-komentar)
+
 [1]: ../../README.md/#
+[2]: ../../nich/plugin/neovim/module/1-dasar/README.md

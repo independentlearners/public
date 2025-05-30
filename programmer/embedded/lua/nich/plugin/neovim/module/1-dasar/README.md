@@ -65,7 +65,7 @@ Komentar adalah bagian dari kode sumber yang diabaikan oleh interpreter Lua. Kom
 - `-- Ini adalah komentar satu baris.`
   - Baris ini adalah contoh komentar satu baris. Interpreter Lua akan mengabaikan seluruh teks mulai dari `--` hingga akhir baris ini.
 - `--[[ ... ]]`
-  - Blok ini mendemonstrasikan komentar multi-baris. Semua teks yang berada di antara `--[[` dan `]]` dianggap sebagai komentar.
+  - Blok ini mendemonstrasikan komentar multi-baris. Semua teks yang berada di antara `--[[` dan `]]` dianggap sebagai komentar. Untuk memahami bagaimana contoh penggunaan secara mendalam, coba kunjungi **[disini][2]**
 
 #### Statement dan Expression
 
@@ -117,3 +117,4 @@ local result = x + 5   -- 'x + 5' adalah sebuah expression.
 Dengan memahami konsep dasar ini, Anda telah memiliki landasan awal untuk mempelajari aspek-aspek lain dari Lua yang lebih mendalam.
 
 [1]: ../../README.md/#1-fondasi-dasar-lua
+[2]: ../../../../../dasar/komentar/README.md
