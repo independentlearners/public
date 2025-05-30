@@ -878,7 +878,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
 
 ## 11. Plugin Architecture dan Design Patterns
 
-### 11.1 Plugin Structure Standards
+### [11.1 Plugin Structure Standards][11]
 
 #### Standard Plugin Layout
 
@@ -1028,7 +1028,7 @@ events:emit('file_opened', 'init.lua')
 
 ## 12. Performance dan Optimization
 
-### 12.1 Lua Performance Best Practices
+### [12.1 Lua Performance Best Practices][12]
 
 #### Local Variables
 
@@ -1100,7 +1100,7 @@ end
 
 ## 13. Testing dan Quality Assurance
 
-### 13.1 Unit Testing dengan Busted
+### [13.1 Unit Testing dengan Busted][13]
 
 ```lua
 -- spec/my_plugin_spec.lua
@@ -1149,7 +1149,7 @@ end)
 
 ## 14. Advanced Plugin Development Patterns
 
-### 14.1 Async Programming
+### [14.1 Async Programming][14]
 
 ```lua
 -- Menggunakan vim.loop (libuv binding)
@@ -2325,3 +2325,7 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 [8]: ../neovim/module/8-error-handling-dan-debugging/README.md
 [9]: ../neovim/module/9-coroutines-konkurensi/README.md
 [10]: ../neovim/module/10-metatables/README.md
+[11]: ../neovim/module/11-plugin-structure-standards/README.md/#11-interaksi-dengan-sistem-file-dan-os
+[12]: ../neovim/module/12-lua-performance-best-practices/README.md/
+[13]: ../neovim/module/13-unit-testing-dengan-busted/README.md/
+[14]: ../neovim/module/14-async-programming/README.md/
