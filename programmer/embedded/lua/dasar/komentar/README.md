@@ -1,3 +1,5 @@
+# Komentar
+
 ### **[1. Dasar Komentar][1]**
 
 Komentar digunakan untuk menjelaskan kode atau menonaktifkan bagian kode sementara.

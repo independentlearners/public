@@ -920,3 +920,7 @@ String dalam Lua adalah tipe data yang sangat powerful dengan library function y
 5. **Security practices** - selalu escape dan sanitize input
 
 Dengan memahami semua konsep di atas, Anda akan menjadi expert dalam manipulasi string Lua untuk segala kebutuhan pemrograman Anda!
+
+> [Daftar Kurikulum][1]
+
+[1]: ../../README.md

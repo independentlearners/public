@@ -247,3 +247,8 @@ if true then
 	print(ins)
 end
 ```
+
+> - **[Kembali Ke Atas](#)**
+> - **[Daftar Kurikulum][1]**
+
+[1]: ../../README.md
