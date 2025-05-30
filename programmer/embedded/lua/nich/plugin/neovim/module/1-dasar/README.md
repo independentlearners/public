@@ -116,5 +116,8 @@ local result = x + 5   -- 'x + 5' adalah sebuah expression.
 
 Dengan memahami konsep dasar ini, Anda telah memiliki landasan awal untuk mempelajari aspek-aspek lain dari Lua yang lebih mendalam.
 
+> - [Kembali Ke Atas](#1-fondasi-dasar-lua)
+> - [Selanjut Ke Bagian Dua](../2-variable/README.md)
+
 [1]: ../../README.md/#1-fondasi-dasar-lua
 [2]: ../../../../../dasar/komentar/README.md

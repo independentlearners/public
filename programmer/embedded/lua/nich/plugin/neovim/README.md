@@ -1,5 +1,3 @@
-Semua artikel ini merupakan hasil dari Generate AI
-
 # Panduan Lengkap Lua untuk Pengembangan Plugin Neovim
 
 ## [1. Fondasi Dasar Lua][1]

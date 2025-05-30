@@ -327,4 +327,8 @@ print(_G.global_var) -- Output: Saya adalah variabel global
 
 Pemahaman yang baik tentang tipe data dan variabel, khususnya perbedaan antara variabel lokal dan global serta bagaimana scope bekerja, adalah kunci untuk menulis kode Lua yang bersih, efisien, dan mudah dikelola, terutama dalam konteks pengembangan plugin Neovim yang kompleks.
 
+> - [Kembali Ke Atas](#2-tipe-data-dan-variabel)
+> - [Lanjut Ke Bagian Tiga](../3-operator-kontrolFlow/README.md)
+> - [Kembali Sebelumnya](../1-dasar/README.md)
+
 [2]: ../../README.md/#2-tipe-data-dan-variabel
