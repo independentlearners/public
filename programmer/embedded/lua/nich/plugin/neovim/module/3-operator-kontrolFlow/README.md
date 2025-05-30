@@ -441,4 +441,4 @@ end
 
 Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yang diperlukan untuk membangun logika yang kompleks dan dinamis dalam plugin Neovim Anda.
 
-[3]: ../README.md/#3-operator-dan-kontrol-flow
+[3]: ../../README.md/#3-operator-dan-kontrol-flow

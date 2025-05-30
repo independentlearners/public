@@ -374,4 +374,4 @@ end
 
 Tabel adalah struktur data yang sangat fundamental dan serbaguna di Lua. Penguasaan cara kerja tabel, termasuk berbagai cara untuk membuat, memodifikasi, dan mengiterasinya, adalah esensial untuk pengembangan plugin Neovim yang efektif.
 
-[4]: ../README.md/#4-struktur-data-kompleks
+[4]: ../../README.md/#4-struktur-data-kompleks

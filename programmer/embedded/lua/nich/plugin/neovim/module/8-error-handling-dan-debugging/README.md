@@ -407,4 +407,4 @@ outer_function_for_caller_inspection()
 
 Pustaka `debug` bisa sangat membantu, tetapi seringkali untuk debugging plugin Neovim, kombinasi `print` yang cerdas, `vim.notify`, dan mungkin alat debugging eksternal (jika masalahnya sangat kompleks) lebih umum digunakan. Namun, mengetahui keberadaan `debug` library adalah aset.
 
-[8]: ../README.md/#8-error-handling-dan-debugging
+[8]: ../../README.md/#8-error-handling-dan-debugging

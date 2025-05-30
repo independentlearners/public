@@ -292,4 +292,4 @@ Coroutine sangat berguna dalam plugin Neovim, terutama untuk operasi yang bisa m
 
 Memahami coroutine membuka pintu untuk menulis plugin Neovim yang lebih responsif dan canggih, terutama saat berhadapan dengan operasi yang memakan waktu. Mereka adalah dasar dari banyak pola pemrograman asinkron.
 
-[9]: ../README.md/#9-advanced-lua-concepts
+[9]: ../../README.md/#9-advanced-lua-concepts

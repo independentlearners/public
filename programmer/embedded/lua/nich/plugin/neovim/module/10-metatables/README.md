@@ -538,4 +538,4 @@ print(obj_proxy("arg1_for_call", 77))
 
 Metatable adalah alat yang sangat ekspresif di Lua. Dengan memahaminya, Anda dapat membuat abstraksi data dan perilaku yang sangat canggih, yang bisa sangat berguna dalam merancang plugin Neovim yang kompleks dan elegan.
 
-[10]: ../README.md/#10-neovim-integration-fundamentals
+[10]: ../../README.md/#10-neovim-integration-fundamentals

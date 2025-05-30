@@ -388,4 +388,4 @@ print("Angka stringified:", table.concat(stringified_numbers, ", ")) -- Output: 
 
 Pemahaman yang solid tentang fungsi, termasuk fitur-fitur canggihnya dan sifatnya sebagai _first-class citizen_, akan sangat memberdayakan Anda dalam menulis kode Lua yang ekspresif, modular, dan kuat untuk plugin Neovim.
 
-[5]: ../README.md/#5-functions---konsep-mendalam
+[5]: ../../README.md/#5-functions---konsep-mendalam

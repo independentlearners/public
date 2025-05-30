@@ -422,4 +422,4 @@ buddy:eat("dog food") -- Output: Buddy is eating dog food.
 
 Pola OOP di Lua, meskipun tidak memiliki sintaks kelas bawaan, sangat fleksibel dan kuat berkat tabel dan metatable. Memahaminya akan membuka banyak kemungkinan dalam merancang plugin Neovim yang terstruktur dengan baik.
 
-[6]: ../README.md/#6-object-oriented-programming-oop-di-lua
+[6]: ../../README.md/#6-object-oriented-programming-oop-di-lua

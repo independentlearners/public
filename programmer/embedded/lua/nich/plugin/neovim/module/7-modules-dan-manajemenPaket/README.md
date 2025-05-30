@@ -261,4 +261,4 @@ Jika Anda menjalankan ini setelah menjalankan `main_program.lua` dalam interpret
 
 Sistem modul Lua, meskipun sederhana, sangat efektif untuk membangun aplikasi yang terstruktur dan dapat dipelihara. Dalam konteks Neovim, ini adalah cara standar untuk mengatur kode plugin Anda.
 
-[7]: ../README.md/#7-modules-dan-package-management
+[7]: ../../README.md/#7-modules-dan-package-management
