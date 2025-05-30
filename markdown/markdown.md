@@ -212,6 +212,8 @@ Gunakan tiga backtick:
 `` ` ``
 ```
 
+<h3 id="fungsi-print"></h3>
+
 Hasilnya: `` ` ``
 
 ---
@@ -281,3 +283,7 @@ Penjelasan tentang Lua...
 ## Struktur Dasar
 
 Bagian ini membahas struktur kode...
+
+Lalu link ke:
+
+[**Kembali ke fungsi `print`**](#fungsi-print)
