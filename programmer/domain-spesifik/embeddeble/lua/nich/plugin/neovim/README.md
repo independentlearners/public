@@ -63,7 +63,7 @@ local is_false = false
 -- Truthy values: semua selain false dan nil (termasuk 0 dan "")
 ```
 
-#### Number
+#### [Number][number1]
 
 Lua hanya memiliki satu tipe numerik yang merepresentasikan floating-point numbers.
 
@@ -2335,3 +2335,4 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 <!-- ------------- -->
 
 [string1]: ../../../dasar/string/README.md
+[number1]: ../../../dasar/number/README.md
