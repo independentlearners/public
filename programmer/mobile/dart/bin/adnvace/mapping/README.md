@@ -1,3 +1,0 @@
-# Mapping
-
-Pemetaan Kumpulan data
