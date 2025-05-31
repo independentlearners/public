@@ -714,7 +714,7 @@ local function processLargeNumbers(numbers)
 end
 ```
 
-## Kesimpulan
+## **Kesimpulan**
 
 Penguasaan number dalam Lua memerlukan pemahaman mendalam tentang:
 
@@ -725,6 +725,20 @@ Penguasaan number dalam Lua memerlukan pemahaman mendalam tentang:
 5. **Precision handling** - mengatasi masalah floating-point
 6. **Performance optimization** - memilih approach yang tepat
 7. **Error handling** - menangani edge cases dengan baik
+
+## **Poin-poin kunci yang perlu Anda fokuskan:**
+
+1. **Pahami bahwa Lua hanya memiliki satu tipe `number`** - ini berbeda dengan bahasa lain yang memiliki int, float, double terpisah.
+
+2. **Kuasai berbagai format penulisan** - decimal, hexadecimal, binary, octal, scientific notation, dan hexadecimal float.
+
+3. **Pelajari presisi floating-point** - ini sangat penting untuk menghindari bug yang sulit ditemukan.
+
+4. **Manfaatkan math library** - Lua memiliki fungsi matematika yang sangat lengkap.
+
+5. **Pahami bitwise operations** (Lua 5.3+) - berguna untuk manipulasi data tingkat rendah.
+
+6. **Praktikkan error handling** - selalu antisipasi edge cases seperti division by zero, overflow, NaN, dan infinity.
 
 Dengan memahami semua aspek ini, Anda akan mampu menangani berbagai skenario pemrograman yang melibatkan angka dengan confidence dan efficiency.
 
