@@ -42,7 +42,7 @@ Setiap bagian dilengkapi dengan contoh kode praktis yang bisa langsung Anda guna
 
 ### Definisi dan Karakteristik
 
-String dalam Lua adalah sequence of bytes yang immutable (tidak dapat diubah). Setiap operasi string menghasilkan string baru.
+String dalam Lua adalah _sequence of bytes_ atau urutan byte yang immutable (tidak dapat diubah). Setiap operasi string menghasilkan string baru.
 
 ### Cara Membuat String
 
