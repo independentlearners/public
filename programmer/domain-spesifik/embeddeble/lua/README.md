@@ -29,24 +29,24 @@
 
 ### 💎 **Modul 2: Sintaks Dasar & Tipe Data**
 
-| Kode | Topik                   | Referensi Resmi                                                                  |
-| ---- | ----------------------- | -------------------------------------------------------------------------------- |
-| 013  | Dasar Sintaks Lua       | [Konvensi Leksikal](https://www.lua.org/manual/5.4/manual.html#3.1)              |
-| 014  | [Komentar][014]         | [Sintaks Komentar](https://www.lua.org/manual/5.4/manual.html#3.1)               |
-| 015  | [Variabel][015]         | [Variabel](https://www.lua.org/manual/5.4/manual.html#3.2)                       |
-| 016  | Kata Kunci              | [Kata Kunci](https://www.lua.org/manual/5.4/manual.html#3.1)                     |
-| 017  | Sifat Dinamis           | [Nilai dan Tipe](https://www.lua.org/manual/5.4/manual.html#3.3.1)               |
-| 018  | Kekuatan Nil            | [Tipe `nil`](https://www.lua.org/manual/5.4/manual.html#3.3.1)                   |
-| 019  | Logika Boolean          | [Tipe `boolean`](https://www.lua.org/manual/5.4/manual.html#3.3.2)               |
-| 020  | Sistem Angka            | [Angka](https://www.lua.org/manual/5.4/manual.html#3.4.1)                        |
-| 021  | Penguasaan String       | [String](https://www.lua.org/manual/5.4/manual.html#3.4.3)                       |
-| 022  | Literal String          | [Literal String](https://www.lua.org/manual/5.4/manual.html#3.1)                 |
-| 023  | Metode String           | [Library `string`](https://www.lua.org/manual/5.4/manual.html#6.4)               |
-| 024  | Sistem Tipe             | [Tipe Data](https://www.lua.org/manual/5.4/manual.html#3.3)                      |
-| 025  | Konversi Tipe           | [`tonumber`/`tostring`](https://www.lua.org/manual/5.4/manual.html#pdf-tonumber) |
-| 026  | Keunggulan Tipe Dinamis | [Nilai dan Tipe](https://www.lua.org/manual/5.4/manual.html#3.3)                 |
-| 027  | Pengecekan Tipe         | [Fungsi `type()`](https://www.lua.org/manual/5.4/manual.html#pdf-type)           |
-| 028  | Praktik Terbaik         | [Programming in Lua (Buku)](https://www.lua.org/pil/) (Rujukan sekunder)         |
+| Kode | Topik                    | Referensi Resmi                                                                  |
+| ---- | ------------------------ | -------------------------------------------------------------------------------- |
+| 013  | Dasar Sintaks Lua        | [Konvensi Leksikal](https://www.lua.org/manual/5.4/manual.html#3.1)              |
+| 014  | [Komentar][014]          | [Sintaks Komentar](https://www.lua.org/manual/5.4/manual.html#3.1)               |
+| 015  | [Variabel][015]          | [Variabel](https://www.lua.org/manual/5.4/manual.html#3.2)                       |
+| 016  | Kata Kunci               | [Kata Kunci](https://www.lua.org/manual/5.4/manual.html#3.1)                     |
+| 017  | Sifat Dinamis            | [Nilai dan Tipe](https://www.lua.org/manual/5.4/manual.html#3.3.1)               |
+| 018  | Kekuatan Nil             | [Tipe `nil`](https://www.lua.org/manual/5.4/manual.html#3.3.1)                   |
+| 019  | Logika Boolean           | [Tipe `boolean`](https://www.lua.org/manual/5.4/manual.html#3.3.2)               |
+| 020  | [Sistem Angka][002]      | [Angka](https://www.lua.org/manual/5.4/manual.html#3.4.1)                        |
+| 021  | [Penguasaan String][001] | [String](https://www.lua.org/manual/5.4/manual.html#3.4.3)                       |
+| 022  | Literal String           | [Literal String](https://www.lua.org/manual/5.4/manual.html#3.1)                 |
+| 023  | Metode String            | [Library `string`](https://www.lua.org/manual/5.4/manual.html#6.4)               |
+| 024  | Sistem Tipe              | [Tipe Data](https://www.lua.org/manual/5.4/manual.html#3.3)                      |
+| 025  | Konversi Tipe            | [`tonumber`/`tostring`](https://www.lua.org/manual/5.4/manual.html#pdf-tonumber) |
+| 026  | Keunggulan Tipe Dinamis  | [Nilai dan Tipe](https://www.lua.org/manual/5.4/manual.html#3.3)                 |
+| 027  | Pengecekan Tipe          | [Fungsi `type()`](https://www.lua.org/manual/5.4/manual.html#pdf-type)           |
+| 028  | Praktik Terbaik          | [Programming in Lua (Buku)](https://www.lua.org/pil/) (Rujukan sekunder)         |
 
 ---
 
@@ -1226,6 +1226,10 @@ warn("Ini hanya peringatan")
 
 #
 
+<!-- ------------------------- -->
+
+[001]: ../lua/dasar/string/README.md
+[002]: ../lua/dasar/number/README.md
 [005]: ../lua/dasar/instalasi/README.md/#instalasi
 [014]: ../lua/dasar/komentar/README.md/#1-dasar-komentar
 [015]: ../lua/dasar/variabel/README.md

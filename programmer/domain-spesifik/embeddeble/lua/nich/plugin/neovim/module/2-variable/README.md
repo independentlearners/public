@@ -15,7 +15,7 @@ Tipe data primitif adalah tipe data dasar yang disediakan oleh bahasa pemrograma
   - **Nil:** Secara harfiah berarti "tidak ada" atau "nol".
 - **Implementasi dalam Neovim:** Dalam pengembangan plugin Neovim, `nil` sering digunakan untuk memeriksa apakah suatu konfigurasi telah diatur oleh pengguna, apakah suatu fungsi mengembalikan hasil yang valid, atau untuk mengindikasikan bahwa suatu sumber daya tidak tersedia.
 - **Sumber Dokumentasi Lua:**
-  - Lua 5.1 Reference Manual (Basis LuaJIT yang digunakan Neovim): [https://www.lua.org/manual/5.1/manual.html\#2.2](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.2) (Bagian "Values and Types")
+  - Lua 5.1 Reference Manual (Basis LuaJIT yang digunakan Neovim) [https://www.lua.org/manual/5.1/manual.html\#2.2](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.2) (Bagian "Values and Types")
 
 **Contoh Kode:**
 

@@ -74,7 +74,7 @@ local scientific = 1.23e-4  -- Scientific notation
 local hex = 0xFF  -- Hexadecimal (255)
 ```
 
-#### String
+#### [String][string1]
 
 ```lua
 local single_quote = 'Hello World'
@@ -2331,3 +2331,7 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 [16]: ../neovim/module/16-floating-windows/README.md
 [17]: ../neovim/module/17-lsp/README.md
 [18]: ../neovim/module/18-testing/README.md
+
+<!-- ------------- -->
+
+[string1]: ../../../dasar/string/README.md

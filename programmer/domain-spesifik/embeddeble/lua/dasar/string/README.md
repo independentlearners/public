@@ -19,7 +19,9 @@
 - UTF-8 support
 - Search dan replace functions
 
-**Level Mahir:**
+<h3 id="tiga"></h3>
+
+**[Level Mahir:](#7-performance-optimization)**
 
 - Performance optimization techniques
 - Advanced algorithms (Levenshtein distance, Boyer-Moore search)
@@ -399,7 +401,7 @@ local function utf8Reverse(str)
 end
 ```
 
-## 7. PERFORMANCE OPTIMIZATION
+## [7. PERFORMANCE OPTIMIZATION](#tiga)
 
 ### 7.1 String Concatenation Optimization
 
