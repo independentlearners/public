@@ -720,7 +720,6 @@ def secret_function():
 ```
 
 </details>
-```
 
 ---
 
