@@ -1323,3 +1323,106 @@ Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir
    - Performance profiling & optimasi (Flutter DevTools)
 
 ---
+
+# Peta Jalan Pembelajaran (Roadmap)
+
+Memulai dari nol hingga menjadi **Flutter–Firebase fullstack developer** senior (kerja remote internasional) memerlukan pembelajaran bertahap. Tahapan umumnya mencakup: menguasai _fundamental_ pemrograman dan **Dart**, membangun UI dasar dengan Flutter, integrasi API dan backend (Firebase), menguasai _state management_, arsitektur aplikasi, serta praktik lanjut seperti pengujian, CI/CD, dan proyek nyata. Berdasarkan pengalaman pengembang, tahapan ini dijelaskan sebagai berikut:
+
+- **Tahap Dasar (Fundamental):** Pelajari konsep dasar pemrograman berorientasi objek (OOP), struktur data dasar (List, Map), sintaks Dart (fungsi, `async/await`, mixin), dan penggunaan Git. Menurut Google Developer Expert Abhishek Doshi, mengenal OOP, bahasa Dart, dan alat versi kontrol (Git) adalah prasyarat sebelum ke Flutter. Durasi estimasi: **2–3 bulan** (⊕≈300–450 jam studi).
+- **Tahap UI Flutter Dasar:** Mulai eksperimen dengan widget Flutter: membuat layout, form, tombol, navigasi sederhana (Navigator 1.0), dan _hot reload_. Lakukan proyek kecil seperti membuat klon antarmuka (misalnya aplikasi chat atau daftar tugas) untuk memotivasi belajar. Durasi estimasi: **3 bulan** (\~450 jam).
+- **Tahap Integrasi API & Firebase:** Pelajari cara melakukan _network request_ (gunakan paket `http`, `dio`, dsb) dan mengubah JSON ke model Dart. Selanjutnya, fokus ke backend Firebase: otentikasi (Auth), database NoSQL (Cloud Firestore/Realtimedb), _Storage_, dan fungsi (Cloud Functions). Latihan membuat aplikasi sederhana (misal aplikasi **Notes** dengan sinkronisasi cloud). Durasi estimasi: **4 bulan** (\~600 jam).
+- **Tahap Manajemen State dan Arsitektur:** Kuasai teknik _state management_ (Provider, Bloc, Riverpod, GetX, dsb) agar aplikasi skala besar tetap terstruktur. Pelajari arsitektur & pola desain (MVC, MVVM, Clean Architecture) untuk membuat kode yang mudah dipelihara. Selain itu, pelajari pengujian (unit/widget), CI/CD (misal GitHub Actions, CodeMagic), optimisasi performa, serta fitur lanjutan seperti animasi dan responsivitas UI. Durasi estimasi: **4–6 bulan** (\~600–900 jam).
+- **Tahap Praktik dan Kepemimpinan (Menuju Senior):** Setelah menguasai aspek teknis, dibutuhkan pengalaman nyata. Buatlah proyek portofolio kompleks (misalnya aplikasi e‑commerce lengkap dengan otentikasi, notifikasi push, pembayaran). Latihan kolaborasi tim (GitFlow, _code review_) dan pengembangan berkelanjutan. Secara industri, untuk menjabat _Senior Developer_ biasanya diperlukan **≥5 tahun pengalaman** (menurut DEPT® minimal 5+ tahun dengan kemampuan manajemen proyek dan arsitektur sistem). Dengan asumsi belajar intensif (\~35 jam/minggu), mencapai level ini bisa memakan sekitar **3–4 tahun** belajar plus kerja nyata.
+
+Tabel estimasi waktu dan fokus tiap tahap:
+
+| Tahap                     | Estimasi Waktu              | Fokus Pembelajaran / Keterampilan Utama                                                  |
+| ------------------------- | --------------------------- | ---------------------------------------------------------------------------------------- |
+| **1. Dasar**              | 2–3 bulan                   | Konsep OOP, sintaks Dart (variabel, list/map, fungsi, async), Git                        |
+| **2. UI Flutter**         | \~3 bulan                   | Widgets dasar (layout, input, tombol), navigasi, _hot reload_, Flutter Docs              |
+| **3. Backend/API**        | \~4 bulan                   | HTTP/JSON (paket http/dio), Firebase Auth, Firestore/RealtimeDB, Storage, dsb            |
+| **4. State & Arsitektur** | \~4–6 bulan                 | State management (Provider/Bloc, dsb), MVC/MVVM/Clean Arch, testing, CI/CD, deploy       |
+| **5. Senior Readiness**   | ≥3 tahun (pengalaman kerja) | Full-stack mastery (Flutter & Firebase end-to-end), arsitektur skala besar, _leadership_ |
+
+## Keterampilan Teknis dan Non-Teknis
+
+### Keterampilan Teknis
+
+Sebagai **Flutter–Firebase fullstack developer**, penguasaan teknis meliputi:
+
+- **Bahasa Pemrograman:** Dart (syntax lanjutan, OOP, pengelolaan _async/await_).
+- **Framework/UI:** Flutter widgets (Material/Cupertino), layout responsif, animasi, aksesibilitas.
+- **State Management:** Memahami dan menggunakan solusi populer (misal Provider, Riverpod, Bloc) untuk mengelola state aplikasi skala besar.
+- **Backend & API:** Firebase: Authentication (Google, email, dsb), Cloud Firestore/Realtimedb (model data, query, security rules), Cloud Functions, Storage, Messaging (push), dsb. Juga kemampuan integrasi RESTful API eksternal. Misalnya, menurut deskripsi pekerjaan senior Flutter, penguasaan Flutter/Dart plus pengalaman dengan pustaka pihak ketiga dan native Android/iOS adalah syarat.
+- **DevOps & Testing:** Pengujian (unit, widget, integrasi), penggunaan Git/GitHub, CI/CD pipelines (CodeMagic, GitHub Actions, dsb), deployment ke App Store/Play Store dan pengelolaan rilis.
+- **Desain & UI/UX:** Prinsip desain UI mobile (desain atomik, Material Design), aksesibilitas, pengalaman pengguna; debug performa (profiling, memory management).
+- **Platform Native:** Meski utama Flutter, memahami dasar Android/iOS (lifecycle, permission, integrasi native modules) sangat membantu.
+
+Referensi _job description_ senior Flutter (Pesto) menekankan: “pengalaman terbukti dalam Flutter, pemahaman kuat bahasa Dart, pemahaman lifecycle mobile, Git, dan familiar dengan API eksternal serta prinsip UI/UX”. Intinya, level senior menguasai semua aspek pengembangan aplikasi mobile cross-platform **dari ujung ke ujung**.
+
+### Keterampilan Non-Teknis (Soft Skills)
+
+Selain keahlian teknis, pengembang senior harus menguasai kemampuan non-teknis:
+
+- **Komunikasi dan Kolaborasi:** Kemampuan menyampaikan ide dengan jelas (lisan/tertulis), berkoordinasi dalam tim (termasuk lintas zona waktu), dan dokumentasi kode/proyek. DEPT® menyebut developer senior _“harus memiliki keterampilan komunikasi yang hebat”_ serta manajemen proyek dan arsitektur.
+- **Bahasa Inggris:** Untuk bekerja remote internasional, fasih berbahasa Inggris (membaca dokumentasi, diskusi teknis, presentasi) sangat penting.
+- **Manajemen Waktu dan Disiplin:** Bekerja remote memerlukan disiplin diri, proaktif menyelesaikan tugas, serta penggunaan alat kolaborasi (Slack, Zoom, Jira).
+- **Pemecahan Masalah dan Analisis:** Kemampuan analitik untuk mengidentifikasi bug/performance issue dan merancang solusi.
+- **Kepemimpinan dan Mentoring:** Mengarahkan tim (menunjuk arsitektur, melakukan _code review_), membimbing anggota junior, dan mengambil keputusan teknis strategis.
+
+## Sertifikasi dan Proyek Portofolio
+
+### Sertifikasi
+
+Saat ini **belum ada sertifikasi resmi khusus Flutter** dari Google. Namun, untuk meningkatkan kredibilitas dapat mempertimbangkan:
+
+- **Google Associate Android Developer:** Meski fokusnya Android native, sertifikat ini menunjukkan kemampuan mobile fundamental.
+- **Google Cloud – Professional Cloud Developer:** Sertifikasi Google Cloud ini mencakup pengembangan aplikasi cloud-native (termasuk Firebase). Google merekomendasikan pengalaman industri ≥3 tahun sebelum ujian ini.
+- **Kursus/TCP Online:** Banyak platform (Coursera, Udemy, Pluralsight) menawarkan kursus Flutter/Firebase dengan sertifikat. Meskipun sertifikat kursus bukan formal, ini bisa melengkapi portofolio. Google Developer Certification menyebut materi pelatihan tersedia online sebagai persiapan sertifikat mereka.
+
+### Proyek Portofolio
+
+Portofolio projek sangat krusial. Beberapa ide yang direkomendasikan:
+
+- **Proyek Pemula:** Aplikasi _to-do list_, kalkulator, pemutar musik sederhana, atau aplikasi cuaca dasar. Tujuannya menguasai UI Flutter dan logika sederhana.
+- **Proyek Menengah:** Tambahkan kompleksitas seperti sinkronisasi cloud atau fitur latar belakang. Misalnya _aplikasi catatan dengan sinkronisasi Firebase_, _to-do list dengan notifikasi_ atau _aplikasi berita (API eksternal)_. Integrasi API/JSON dan Firebase Auth disarankan.
+- **Proyek Lanjutan:** Aplikasi full-stack: e‑commerce, media sosial mini, atau platform berbagi konten. Fitur otentikasi pengguna, database terstruktur, penyimpanan file (gambar/video), push notification, dan logic bisnis komplek. Projek ini menunjukkan penguasaan Flutter dan Firebase secara menyeluruh (full-stack).
+
+Portofolio harus dipajang di **GitHub** (untuk programmer) dengan dokumentasi jelas. Buat situs pribadi atau blog untuk menampilkan demo aplikasi. Sebuah riset menunjukkan portofolio nyata (aplikasi yang sudah dibuat) sangat menentukan saat melamar posisi programmer.
+
+## Standar Industri: Senior Flutter Remote
+
+Untuk posisi _Senior Flutter Developer_ (kerja remote internasional), standar industri umumnya mensyaratkan pengalaman dan kemampuan sebagai berikut:
+
+- **Pengalaman:** Umumnya **5+ tahun pengalaman pengembangan** (sesuai studi DEPT®, Pesto Tech mensyaratkan 5–7 tahun). Pengalaman ini mencakup setidaknya beberapa tahun dalam domain mobile/Flutter.
+- **Keahlian Teknis Lanjutan:** Menguasai Flutter dan ekosistemnya, mahir optimasi performa, dan penguasaan Firebase end-to-end. Mampu merancang arsitektur aplikasi yang skalabel (Flutter & backend) dan mengintegrasikan layanan cloud (misal Firebase, RESTful API).
+- **Pengalaman Proyek Lengkap:** Terbukti berkontribusi pada proyek besar, termasuk perencanaan, pelaksanaan, deployment, hingga maintenance. Harus mampu “**Design and build advanced applications**” serta memastikan “kode berkualitas dan maintainable”.
+- **Leadership:** Mampu memimpin tim teknis, memberikan arahan arsitektur, serta berkomunikasi dengan stakeholder non-teknis (marketing, product owner). Pekerjaan senior biasanya juga melibatkan mentoring developer lain dan kemampuan decision-making teknis.
+
+Contoh lowongan senior di perusahaan global menekankan: `“Proven experience in Flutter development… strong understanding of Dart… solid understanding of full mobile development lifecycle”`. Kandidat senior juga diharapkan memahami manajemen proyek (Agile/Scrum) dan dapat bekerja otonom dalam tim terdistribusi.
+
+## Tantangan dan Tips Mendapatkan Pekerjaan Remote
+
+Bekerja remote internasional menawarkan fleksibilitas namun kompetisi tinggi. Beberapa tips dan tantangan:
+
+- **Portofolio Kuat:** Tampilkan proyek relevan di GitHub atau situs portfolio. Pastikan aplikasi Anda live (misal di Play Store/TestFlight) atau mempunyai demo screencast.
+- **Networking dan Komunitas:** Bergabunglah dalam komunitas Flutter (Slack/Discord, forum) dan forum remote-job. Forum seperti Reddit atau Slack Flutter dapat membantu mendapatkan referensi pekerjaan. Ikuti grup Facebook/LinkedIn Flutter atau telegram developer Indonesia. Rekomendasi internal banyak terjadi melalui networking.
+- **Platform Pencarian Kerja Remote:** Gunakan situs job remote seperti WeWorkRemotely, Remote OK, Stack Overflow Jobs, serta platform freelance (Upwork, Freelancer) untuk proyek jangka pendek. LinkedIn juga penting—perbarui profil dengan kata kunci “Flutter” dan “remote”.
+- **Persiapan Wawancara:** Siapkan CV dan cover letter sesuai standar internasional. Tekankan kemampuan bekerja secara mandiri (remote), serta tunjukkan soft skill komunikasi. Beberapa perusahaan asing mengutamakan pelamar yang sudah terbiasa bekerja virtual.
+- **Manajemen dan Etika Kerja:** Tunjukkan disiplin (menghormati tenggat, zona waktu), kejujuran (laporkan jam kerja), dan kesiapan mengikuti _work culture_ internasional (bahasa, budaya kerja). Misalnya, ketahui tata cara kolaborasi tim remote.
+- **Legalitas & Pajak:** Ketahui peraturan pajak lokal untuk penghasilan luar negeri. Menurut HRnesia, pendapatan dari luar negeri harus dilaporkan ke DJP. Pastikan juga persyaratan kontrak kerja asing (misal status sebagai kontraktor atau WFH) sebelum meneken.
+
+## Sumber Belajar dan Komunitas Pendukung
+
+- **Dokumentasi Resmi:** [Flutter.dev](https://flutter.dev) dan [Firebase Docs](https://firebase.google.com/docs) adalah sumber utama. Di Flutter terdapat _cookbook_ dan tutorial komprehensif.
+- **Kursus Online:** Platform e‑learning populer (Udemy, Coursera, Pluralsight) banyak menawarkan kursus Flutter–Firebase. Google Cloud Skills Boost menyediakan kuis/Qwiklabs Flutter (mis. “Flutter Development” quest) untuk latihan praktis.
+- **Youtube & Blog:** Channel YouTube (The Net Ninja, Flutter Community, Google Developers) serta blog pengembang (Medium, resmi Google Flutter blog) kaya tutorial. Teamcubate menyarankan belajar melalui **kursus online, video, dokumentasi, dan praktik contoh**.
+- **Komunitas Global:** Ikuti Discord _Flutter Community_, Slack Flutter Dev, dan forum seperti StackOverflow atau Reddit r/FlutterDev. Google juga mendukung Google Developer Expert (GDE) dan Flutter Meetups virtual.
+- **Komunitas Lokal:** Di Indonesia terdapat forum seperti _Sekolah Koding – Komunitas Flutter_ dan grup Facebook Flutter Indonesia. Komunitas ini membantu saling berbagi masalah dan solusi dalam bahasa Indonesia.
+- **Proyek Open Source:** Kontribusi ke proyek Flutter open-source atau membuat plugin di [pub.dev](https://pub.dev) dapat meningkatkan kredibilitas. Juga, ikuti event hackathon atau _Flutter Engage_ untuk menambah pengalaman.
+
+Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemula intensif (5+ jam/hari) dapat berkembang menjadi developer Flutter–Firebase berpengalaman dalam beberapa tahun. Kunci utamanya adalah **praktik konsisten**, pembentukan portofolio nyata, serta keterlibatan aktif di komunitas teknis untuk terus belajar dan menemukan peluang kerja remote internasional.
+
+**Sumber:** Informasi di atas disusun berdasarkan dokumentasi resmi Flutter/Firebase, pengalaman praktisi dan pakar industri.
+
+#
