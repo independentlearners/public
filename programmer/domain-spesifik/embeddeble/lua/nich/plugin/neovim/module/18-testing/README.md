@@ -306,14 +306,11 @@ Pengujian adalah investasi yang akan terbayar dalam jangka panjang dengan mengha
 #
 
 > - **[Ke Atas](#)**
-
-<!-- > - **[Selanjutnya][4]** -->
-
+> - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
 
-<!-- [4]: -->
-
+[4]: ../19-struktur/README.md
 [3]: ../../module/17-lsp/README.md
 [2]: ../../../../../README.md
 [0896]: ../../README.md/#18-configuration-dan-persistence

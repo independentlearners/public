@@ -1672,7 +1672,7 @@ function Session.load_state()
 end
 ```
 
-## 19. User Interface Components
+## **[19. User Interface Components][19]**
 
 ### 19.1 Menu System
 
@@ -1862,7 +1862,7 @@ function Progress:close()
 end
 ```
 
-## 20. Plugin Integration Examples
+## **[20. Plugin Integration Examples][20]**
 
 ### 20.1 Telescope Integration
 
@@ -1975,7 +1975,7 @@ local function get_treesitter_integration()
 end
 ```
 
-## 21. Deployment dan Distribution
+## **[21. Deployment dan Distribution][21]**
 
 ### 21.1 Plugin Packaging
 
@@ -2065,7 +2065,7 @@ local function generate_docs()
 end
 ```
 
-## 22. Best Practices Summary
+## **[22. Best Practices Summary][22]**
 
 ### 22.1 Code Organization
 
@@ -2331,6 +2331,10 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 [16]: ../neovim/module/16-floating-windows/README.md
 [17]: ../neovim/module/17-lsp/README.md
 [18]: ../neovim/module/18-testing/README.md
+[19]: ../neovim/module/19-struktur/README.md
+[20]: ../neovim/module/20-rilis/README.md
+[21]: ../neovim/module/21-bastpractice/README.md
+[22]: ../neovim/module/22-tips/README.md
 
 <!-- ------------- -->
 
