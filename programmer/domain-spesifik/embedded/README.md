@@ -1341,3 +1341,7 @@ Setiap bahasa memiliki tempat dan kegunaan spesifik dalam embedded systems. Pema
 - Multi-language project integration
 
 #
+
+> #### [Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../README.md

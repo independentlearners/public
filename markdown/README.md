@@ -2487,7 +2487,6 @@ function complexCalculation() {
   ```
   
 </details>
-```
 
 ### 📊 Bundle Size Optimization
 

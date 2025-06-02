@@ -1,6 +1,6 @@
 # **Pendahuluan**
 
-Lua menyediakan mekanisme _pattern matching_ (pencocokan pola) yang lebih sederhana dibandingkan dengan _regular expressions_ (regex) pada umumnya. Meskipun tidak menyediakan sintaks selengkap atau sekuat regex, pola-pola di Lua cukup fleksibel untuk sebagian besar keperluan pemrosesan teks. Pada penjelasan ini, kita akan membahas secara mendetail semua elemen utama dalam pola Lua, cara menggunakannya, serta kapan pola ini mencukupi tanpa perlu membawa beban kompleksitas regex penuh.
+Lua menyediakan mekanisme _pattern matching_ (pencocokan pola) yang lebih sederhana dibandingkan dengan _[regular expressions][1]_ (regex) pada umumnya. Meskipun tidak menyediakan sintaks selengkap atau sekuat regex, pola-pola di Lua cukup fleksibel untuk sebagian besar keperluan pemrosesan teks. Pada penjelasan ini, kita akan membahas secara mendetail semua elemen utama dalam pola Lua, cara menggunakannya, serta kapan pola ini mencukupi tanpa perlu membawa beban kompleksitas regex penuh.
 
 ---
 
@@ -559,3 +559,5 @@ Dengan memahami karakter “_magic_,” kelas karakter (`%a, %d, %s, %p`), kuant
 ### Penutup
 
 Dengan memanfaatkan daftar sumber di atas—mulai dokumentasi resmi, tutorial komunitas, hingga contoh kode nyata—Anda dapat membangun pemahaman mendalam tentang _pattern matching_ di Lua.
+
+[1]: ../../../../../../istilah/konsep/regex/README.md

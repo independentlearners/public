@@ -1542,7 +1542,7 @@
 485. **Safety Checks (Sanity Guards)**
      Pemeriksaan kondisi awal atau batas (assertions, guards) pada input, state, atau konfigurasi untuk mencegah eksekusi kode lebih lanjut jika terdeteksi kondisi yang tidak valid.
 
-486. **Regular Expression (Regex)**
+486. **[Regular Expression (Regex)][486]**
      Sintaksis untuk mendefinisikan pola pencarian dan transformasi teks, menggunakan metakarakter (mis. `^`, `*`, `?`, `[]`, `()`) untuk mencocokkan dan memanipulasi string.
 
 487. **Backus–Naur Form (BNF)**
@@ -3780,3 +3780,5 @@ Masalah yang muncul ketika terlalu banyak entitas dideklarasikan dalam satu name
 Timer sistem yang mendeteksi dan mengatasi program yang hang atau tidak merespons dengan melakukan restart atau tindakan korektif lainnya.
 
 ---
+
+[486]: ../../../istilah/konsep/regex/README.md

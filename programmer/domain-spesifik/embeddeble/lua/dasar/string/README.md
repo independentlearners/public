@@ -923,6 +923,9 @@ String dalam Lua adalah tipe data yang sangat powerful dengan library function y
 
 Dengan memahami semua konsep di atas, Anda akan menjadi expert dalam manipulasi string Lua untuk segala kebutuhan pemrograman Anda!
 
-> [Daftar Kurikulum][1]
+[Daftar Kurikulum][1]
 
+[Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../../../../README.md
 [1]: ../../README.md

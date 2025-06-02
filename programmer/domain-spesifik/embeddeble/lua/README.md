@@ -1233,3 +1233,7 @@ warn("Ini hanya peringatan")
 [005]: ../lua/dasar/instalasi/README.md/#instalasi
 [014]: ../lua/dasar/komentar/README.md/#1-dasar-komentar
 [015]: ../lua/dasar/variabel/README.md
+
+> #### [Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../README.md

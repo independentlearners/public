@@ -1426,3 +1426,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 **Sumber:** Informasi di atas disusun berdasarkan dokumentasi resmi Flutter/Firebase, pengalaman praktisi dan pakar industri.
 
 #
+
+> #### [Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../README.md

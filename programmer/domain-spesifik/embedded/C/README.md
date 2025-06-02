@@ -715,3 +715,7 @@ Kurikulum ini mencakup semua aspek C programming dari dasar hingga tingkat exper
 - **Capstone Projects** untuk portfolio profesional
 
 Kurikulum ini dirancang untuk menghasilkan C programmer yang tidak hanya memahami syntax, tetapi juga dapat membangun sistem-sistem kompleks seperti OS kernel, database engine, game engine, dan embedded systems!
+
+> #### [Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../../README.md

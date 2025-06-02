@@ -1560,3 +1560,7 @@ Python benar-benar adalah bahasa "serba bisa" yang mendominasi hampir semua bida
 Kurikulum ini dirancang untuk menghasilkan Python developer yang tidak hanya mahir teknis, tetapi juga siap menghadapi semua tantangan industri modern - dari startup hingga enterprise, dari research hingga production systems!
 
 **Python benar-benar adalah bahasa yang "rules the world" saat ini! 🐍👑**
+
+> #### [Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../../README.md

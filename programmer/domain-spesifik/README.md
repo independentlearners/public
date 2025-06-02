@@ -1,26 +1,138 @@
-Dalam dunia pemrograman, **domain spesifik** merujuk pada **area atau konteks tertentu yang memiliki kebutuhan, aturan, dan istilah khusus** yang berbeda dari area lainnya. Istilah ini sering muncul dalam konsep seperti _Domain-Specific Language_ (DSL) atau _Domain-Driven Design_ (DDD).
+<details>
+  <summary>🌐 DSL</summary>
+
+<div style="font-size: 10px;">
+📍Domain Spesifik Languages
+</div>
+
+  <div style=
+  "padding-left: 20px">
+  <details>
+    <summary>
+    <a href=
+    "../domain-spesifik/embedded/README.md">
+    🔌 Embedded
+    </a>
+    </summary>
+    <div style=
+    "padding-left: 20px">
+      <ul>
+            <li>
+            <a href=
+    "../domain-spesifik/embedded/C/README.md"
+    >C
+            </a>
+            </li>
+      </ul>
+    </div>
+  </details>
+
+#
+
+  <details>
+    <summary>
+    <a href=
+    "../domain-spesifik/embeddeble/README.md"
+    >🧩 Embeddeble
+    </a>
+    </summary>
+    <div style=
+            "padding-left: 20px"
+            >
+      <ul>
+        <li>
+        <a href=
+                "../domain-spesifik/embeddeble/lua/README.md">Lua
+        </a></li>
+            <li><a href=
+                "../domain-spesifik/embeddeble/python/README.md">Python
+            </a></li>
+      </ul>
+    </div>
+  </details>
+
+#
+
+  <details>
+    <summary><a href=
+    "../domain-spesifik/mobile/README.md"
+    >📱 Mobile
+    </a></summary>
+    <div style=
+    "padding-left: 20px">
+      <ul>
+        <li>
+        <a href=
+        "../domain-spesifik/mobile/README.md"
+        >Flutter
+        </a>
+        </li>
+        <li>
+        <a href="../domain-spesifik/mobile/README.md/#1-pondasi-dart"
+        >Dart
+        </a>
+        </li>
+      </ul>
+    </div>
+  </details>
+
+#
+
+  <details>
+    <summary><a href="../domain-spesifik/crypto/README.md"
+    >🪙 Crypto
+    </a></summary>
+    <div style=
+    "padding-left: 20px">
+      <ul>
+        <li>
+        <a href="../domain-spesifik/crypto/solidity/README.md"
+        >Solidity
+        </a>
+        </li>
+      </ul>
+    </div>
+  </details>
+
+#
+
+  </div>
+<h3 id="satu"></h3>
+</details>
+
+<details>
+  <summary>
+  🎯 Niche
+    </summary>
+    <div style="font-size: 10px;">
+ 🚀Bidang
+</div>
+
+  <div style=
+  "padding-left: 20px">
+      <ul>
+        <li>
+    <a href="../domain-spesifik/embeddeble/lua/nich/plugin/neovim/README.md">
+    📝 Neovim Plugin
+    </a>
+        </li>
+      </ul>
+   </summary>
+<h3 id="batas"></h3>
+</details>
+
+<details>
+  <summary>ℹ️ Tentang</summary>
+
+# **Domain spesifik**
+
+Dalam dunia pemrograman, **Domain Spesifik** merujuk pada **area atau konteks tertentu yang memiliki kebutuhan, aturan, dan istilah khusus** yang berbeda dari area lainnya. Istilah ini sering muncul dalam konsep seperti _Domain-Specific Language_ (DSL) atau _Domain-Driven Design_ (DDD).
 
 ---
-
-## 1. **Pengertian Singkat**
-
-**Domain spesifik** = fokus pada **masalah atau kebutuhan di bidang tertentu**, misalnya:
-
-| Domain    | Contoh Kebutuhan                                       |
-| --------- | ------------------------------------------------------ |
-| Finansial | Hitung bunga, validasi nomor rekening                  |
-| Game      | Fisika game, sistem level, AI musuh                    |
-| Web       | Routing, autentikasi pengguna, validasi form           |
-| Jaringan  | Protokol komunikasi, enkripsi data                     |
-| Medis     | Pengolahan data pasien, ICD-10, rekam medis elektronik |
-
----
-
-## 2. **Contoh Implementasi di Pemrograman**
 
 ### ✳️ **Domain-Specific Language (DSL)**
 
-Bahasa pemrograman atau sintaks yang dibuat khusus untuk satu domain saja.
+Fokus pada **masalah atau kebutuhan di bidang tertentu** seperti dalam bahasa pemrograman atau sintaks yang dibuat khusus untuk satu domain saja.
 
 | DSL                 | Digunakan untuk                     |
 | ------------------- | ----------------------------------- |
@@ -52,14 +164,52 @@ Sebuah pendekatan desain perangkat lunak yang menekankan pada **pemodelan sesuai
 
 ---
 
-## 4. **Tips Buat Kamu**
+# **[Niche](#satu)**
 
-Karena kamu sedang belajar Dart, Flutter, dan Lua — kamu bisa mulai paham domain seperti ini:
+### ✅ **"Domain spesifik" ≈ "Niche"**
 
-| Teknologi          | Domain Spesifik                       |
-| ------------------ | ------------------------------------- |
-| Flutter            | UI/UX mobile apps                     |
-| Lua (untuk Neovim) | Plugin editor teks                    |
-| Dart CLI           | Tools terminal khusus dev atau sistem |
+Dalam konteks **pemrograman dan teknologi**, **domain spesifik** tersebut memang **bisa dianggap sebagai "niche"** (ceruk), tapi dengan **nuansa teknis** yang lebih terarah.
+
+### Perbandingan cepat:
+
+| Istilah             | Makna Umum                                  | Makna di Pemrograman                                                                                           |
+| ------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Niche**           | Ceruk pasar, topik spesifik                 | Fokus sempit di area tertentu (misal: plugin Neovim, UI Flutter, automation pipeline, dsb)                     |
+| **Domain Spesifik** | Area permasalahan atau pengetahuan tertentu | Masalah atau kebutuhan teknis dalam bidang tertentu (misal: pengolahan teks, data finansial, sistem game, dll) |
 
 ---
+
+## 🧠 **Contoh Lebih Nyata**
+
+### Ketika anda berbicara:
+
+> ✅ _Saya sedang mendalami niche pengembangan plugin Neovim pakai Lua_
+
+### Sama seperti:
+
+> "Saya sedang mendalami **domain spesifik** pengembangan plugin editor teks"
+
+---
+
+## 💡 Inti Penting:
+
+- Semua **niche teknis** (topik sempit yang kamu tekuni) bisa dianggap sebagai **domain spesifik**.
+- Tapi **tidak semua domain spesifik adalah niche yang sempit** — beberapa bisa sangat luas (contoh: domain _web development_).
+
+---
+
+## 🔧 Kesimpulan
+
+- **Domain spesifik = Niche**, dalam konteks pemrograman dan teknologi.
+- Keduanya bicara soal **fokus pada satu area masalah atau keahlian tertentu**.
+- Semakin kamu ahli di niche/domain itu, semakin kamu bisa membuat tools, DSL, atau sistem yang **relevan dan powerfull**.
+
+---
+
+**[Ke Atas](#)**
+
+</details>
+
+###
+
+> _Ingat satu hal bahwa semua konten disini adalah hasil buatan AI_

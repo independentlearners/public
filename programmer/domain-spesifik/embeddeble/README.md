@@ -662,3 +662,7 @@ Beberapa bahasa bisa keduanya:
 - **C++**: Embedded (untuk sistem real-time) DAN Embeddable (sebagai DLL/library)
 
 #
+
+> #### [Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../../domain-spesifik/README.md
