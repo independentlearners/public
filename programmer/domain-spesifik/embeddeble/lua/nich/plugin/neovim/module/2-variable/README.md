@@ -113,7 +113,7 @@ if function() end then print("Ini akan tercetak (fungsi adalah truthy)") end
 - `if not has_permission then ... end`: Operator `not` adalah operator logika negasi. `not has_permission` akan dievaluasi menjadi `not false`, yaitu `true`. Jadi, blok di dalamnya dieksekusi.
 - Baris-baris berikutnya mendemonstrasikan bagaimana `false`, `nil`, `0`, `""`, tabel kosong `{}`, dan fungsi diperlakukan dalam konteks boolean. Hanya `false` dan `nil` yang tidak akan menjalankan blok `print`.
 
-#### Number
+#### [Number][3]
 
 - **Deskripsi:** Lua secara tradisional hanya memiliki satu tipe data numerik, yaitu `number`. Secara default, tipe `number` ini merepresentasikan angka _floating-point_ presisi ganda (double-precision floating-point numbers). Meskipun demikian, LuaJIT (yang digunakan oleh Neovim, berdasarkan Lua 5.1) dan versi Lua yang lebih baru dapat melakukan optimasi untuk merepresentasikan bilangan bulat (integer) secara internal jika memungkinkan, demi efisiensi. Anda dapat menulis angka dalam format desimal, notasi ilmiah, dan heksadesimal (dimulai dengan `0x`).
 - **Terminologi:**
@@ -336,3 +336,4 @@ Pemahaman yang baik tentang tipe data dan variabel, khususnya perbedaan antara v
 [5]: ../../../../../../../README.md
 [4]: ../../../../../README.md
 [2]: ../../README.md/#2-tipe-data-dan-variabel
+[3]: ../../../../../dasar/number/README.md

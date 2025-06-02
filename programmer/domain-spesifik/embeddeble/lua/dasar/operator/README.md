@@ -94,10 +94,10 @@ Operator relasional digunakan untuk membandingkan dua nilai dan mengembalikan bo
 | -------- | --------------------- | -------- | ------ |
 | `==`     | Sama dengan           | `5 == 5` | `true` |
 | `~=`     | Tidak sama dengan     | `5 ~= 3` | `true` |
-| `<`      | Lebih kecil           | `3 < 5`  | `true` |
-| `>`      | Lebih besar           | `5 > 3`  | `true` |
-| `<=`     | Lebih kecil atau sama | `3 <= 5` | `true` |
-| `>=`     | Lebih besar atau sama | `5 >= 5` | `true` |
+| `<`      | Lebih dari            | `3 < 5`  | `true` |
+| `>`      | kurang dari           | `5 > 3`  | `true` |
+| `<=`     | Lebih dari atau sama  | `3 <= 5` | `true` |
+| `>=`     | kurang dari atau sama | `5 >= 5` | `true` |
 
 ### Aturan Perbandingan
 

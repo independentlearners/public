@@ -50,6 +50,8 @@ local hex1 = 0xFF        -- 255
 local hex2 = 0xDEADBEEF  -- 3735928559
 local hex3 = 0xff        -- case insensitive
 
+-- Dibawah ini tidak ada yang mendukung untuk lua 5.4
+-- Jadi sebaiknya komentari saja jika ingin dijalankan
 -- Binary (base 2) - Lua 5.3+
 local bin1 = 0b1010      -- 10
 local bin2 = 0B11110000  -- 240
@@ -57,6 +59,13 @@ local bin2 = 0B11110000  -- 240
 -- Octal (base 8) - Lua 5.3+
 local oct1 = 0o777       -- 511
 local oct2 = 0O644       -- 420
+
+print(type(decimal), decimal)
+print(type(negative), negative)
+print(type(zero), zero)
+print(type(hex1), hex1)
+print(type(hex2), hex2)
+print(type(hex3), hex3)
 ```
 
 ### 2.2 Float Literals
@@ -77,6 +86,19 @@ local sci4 = 1.23e+2     -- 123.0
 -- Hexadecimal float (Lua 5.2+)
 local hexfloat1 = 0x1.8p3    -- 1.5 * 2^3 = 12.0
 local hexfloat2 = 0xA.Bp2    -- (10 + 11/16) * 2^2 = 42.75
+
+
+print(type(float1), float1)
+print(type(float2), float2)
+print(type(float3), float3)
+print(type(float4), float4)
+print(type(sci1), sci1)
+print(type(sci2), sci2)
+print(type(sci3), sci3)
+print(type(sci4), sci4)
+print(type(hexfloat1), hexfloat1)
+print(type(hexfloat2), hexfloat2)
+
 ```
 
 ### 2.3 Special Values
