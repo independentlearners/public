@@ -854,5 +854,5 @@ Terus berlatih dengan contoh-contoh praktis dan jangan ragu untuk merujuk ke dok
 > - [Domain Spesifik][domain-spesifik]
 > - [Kurikulum][kurikulum]
 
-[domain-spesifik]: ../README.md
+[domain-spesifik]: ../../../../README.md
 [kurikulum]: ../../README.md
