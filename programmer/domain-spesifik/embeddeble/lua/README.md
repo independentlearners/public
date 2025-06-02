@@ -1236,4 +1236,4 @@ warn("Ini hanya peringatan")
 
 > #### [Domain Spesifik][domain-spesifik]
 
-[domain-spesifik]: ../README.md
+[domain-spesifik]: ../../README.md
