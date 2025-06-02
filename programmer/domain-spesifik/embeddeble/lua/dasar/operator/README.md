@@ -13,10 +13,12 @@
 9. [Precedence dan Associativity](#precedence-dan-associativity)
 10. [Operator Khusus dan Metamethods](#operator-khusus-dan-metamethods)
 11. [Tips dan Trik Lanjutan](#tips-dan-trik-lanjutan)
+12. [Refernsi](#referensi-lengkap)
+13. [Kesimpulan](#kesimpulan)
 
 ---
 
-## Pengantar Operator
+## [Pengantar Operator](#daftar-isi)
 
 Operator dalam Lua adalah simbol atau kata kunci yang digunakan untuk melakukan operasi pada operand (nilai atau variabel). Lua mendukung berbagai jenis operator yang dapat dikelompokkan berdasarkan fungsinya.
 
@@ -24,7 +26,7 @@ Operator dalam Lua adalah simbol atau kata kunci yang digunakan untuk melakukan 
 
 ---
 
-## Operator Aritmatika
+## [Operator Aritmatika](#daftar-isi)
 
 Operator aritmatika digunakan untuk melakukan operasi matematika dasar.
 
@@ -82,7 +84,7 @@ print(-2 ^ 3)       -- -8 (unary minus memiliki precedence rendah)
 
 ---
 
-## Operator Relasional
+## [Operator Relasional](#daftar-isi)
 
 Operator relasional digunakan untuk membandingkan dua nilai dan mengembalikan boolean.
 
@@ -133,7 +135,7 @@ print(nan > 5)          -- false
 
 ---
 
-## Operator Logika
+## [Operator Logika](#daftar-isi)
 
 Operator logika digunakan untuk operasi boolean dan memiliki sifat short-circuit evaluation.
 
@@ -197,7 +199,7 @@ local value = obj and obj.property and obj.property.value
 
 ---
 
-## Operator Bitwise
+## [Operator Bitwise](#daftar-isi)
 
 Operator bitwise diperkenalkan di Lua 5.3 untuk operasi bit-level pada bilangan bulat.
 
@@ -262,7 +264,7 @@ print(checkBit(flags, 2))   -- true
 
 ---
 
-## Operator String
+## [Operator String](#daftar-isi)
 
 Lua menyediakan operator khusus untuk manipulasi string.
 
@@ -318,7 +320,7 @@ local result = table.concat(parts, " ")
 
 ---
 
-## Operator Panjang
+## [Operator Panjang](#daftar-isi)
 
 Operator `#` digunakan untuk mendapatkan panjang dari string atau tabel.
 
@@ -377,7 +379,7 @@ end
 
 ---
 
-## Operator Tabel
+## [Operator Tabel](#daftar-isi)
 
 Meskipun Lua tidak memiliki operator khusus untuk tabel, ada beberapa operasi penting terkait tabel.
 
@@ -441,7 +443,7 @@ print(a, b, c)  -- 1    2    3
 
 ---
 
-## Precedence dan Associativity
+## [Precedence dan Associativity](#daftar-isi)
 
 Urutan prioritas operator dalam Lua (dari tertinggi ke terendah):
 
@@ -492,7 +494,7 @@ print(20 / 4 / 2)       -- 2.5 (dibaca sebagai (20/4)/2)
 
 ---
 
-## Operator Khusus dan Metamethods
+## [Operator Khusus dan Metamethods](#daftar-isi)
 
 Lua memungkinkan overloading operator melalui metamethods, memberikan fleksibilitas untuk mendefinisikan perilaku operator pada tipe data custom.
 
@@ -647,7 +649,7 @@ print(counter())        -- 17
 
 ---
 
-## Tips dan Trik Lanjutan
+## [Tips dan Trik Lanjutan](#daftar-isi)
 
 ### 1. Short-Circuit Evaluation untuk Performance
 
@@ -782,7 +784,7 @@ end
 
 ---
 
-## Referensi Lengkap
+## [Referensi Lengkap](#daftar-isi)
 
 ### Dokumentasi Resmi Lua
 
@@ -809,7 +811,7 @@ end
 
 ---
 
-## Kesimpulan
+## [Kesimpulan](#daftar-isi)
 
 Operator dalam Lua menyediakan fondasi yang kuat untuk manipulasi data dan kontrol alur program. Memahami perilaku setiap operator, precedence, dan kemampuan metamethods akan membantu Anda menulis code Lua yang lebih efisien dan ekspresif.
 
@@ -847,3 +849,10 @@ Kunci untuk menguasai operator Lua adalah:
 - [Lua Users Wiki](http://lua-users.org/wiki/) - Komunitas dan tutorial
 
 Terus berlatih dengan contoh-contoh praktis dan jangan ragu untuk merujuk ke dokumentasi resmi Lua untuk detail implementasi yang lebih mendalam.
+
+> - [Ke Atas](#)
+> - [Domain Spesifik][domain-spesifik]
+> - [Kurikulum][kurikulum]
+
+[domain-spesifik]: ../README.md
+[kurikulum]: ../../README.md

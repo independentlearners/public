@@ -18,4 +18,8 @@
 ---
 
 💡 **Pesan penyemangat:**
-Jalan panjang enggak bikin gentar: nikmati tiap lapisan, dokumentasikan progress, dan jangan ragu “break things to learn things.” Selamat berjuang jadi _polyglot_ sejati di dunia pemrograman!
+Jangan takut dengan perjalanan panjang: nikmati tiap lapisan, dokumentasikan progress, dan jangan ragu “break things to learn things.” Selamat berjuang jadi _polyglot_ sejati di dunia pemrograman!
+
+> #### [Domain Spesifik][domain-spesifik]
+
+[domain-spesifik]: ../programmer/domain-spesifik/README.md
