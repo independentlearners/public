@@ -237,14 +237,14 @@ Menerapkan tips dan praktik terbaik ini akan membantu Anda bertransformasi dari 
 
 #### Selamat! Anda sekarang memiliki fondasi yang sangat kuat dalam pengembangan plugin Neovim menggunakan Lua.
 
-<!-- > - **[Selanjutnya][4]** -->
-
 > - **[Ke Atas](#)**
+> - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
+> - **[Domain Spesifik][5]**
 
-<!-- [4]: ../19-struktur/README.md -->
-
-[3]: ../21-bastpractice/README.md
+[5]: ../../../../../../../README.md
+[4]: ../23-kesimpulan/README.md
+[3]: ../21-bastpractice/READE.md
 [2]: ../../../../../README.md
 [1]: ../../../neovim/README.md/#22-best-practices-summary

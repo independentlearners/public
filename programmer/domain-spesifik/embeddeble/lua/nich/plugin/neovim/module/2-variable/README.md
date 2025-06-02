@@ -331,6 +331,8 @@ Pemahaman yang baik tentang tipe data dan variabel, khususnya perbedaan antara v
 > - **[Selanjutnya](../3-operator-kontrolFlow/README.md)**
 > - **[Sebelumnya](../1-dasar/README.md)**
 > - **[Kurikulum][4]**
+> - **[Domain Spesifik][5]**
 
-[2]: ../../README.md/#2-tipe-data-dan-variabel
+[5]: ../../../../../../../README.md
 [4]: ../../../../../README.md
+[2]: ../../README.md/#2-tipe-data-dan-variabel

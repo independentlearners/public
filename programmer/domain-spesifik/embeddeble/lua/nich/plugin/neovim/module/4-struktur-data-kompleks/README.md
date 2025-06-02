@@ -378,7 +378,9 @@ Tabel adalah struktur data yang sangat fundamental dan serbaguna di Lua. Penguas
 > - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
+> - **[Domain Spesifik][5]**
 
+[5]: ../../../../../../../README.md
 [1]: ../../README.md/#4-struktur-data-kompleks
 [2]: ../../../../../README.md
 [3]: ../3-operator-kontrolFlow/README.md

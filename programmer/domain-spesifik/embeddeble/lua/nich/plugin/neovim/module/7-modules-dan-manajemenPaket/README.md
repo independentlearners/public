@@ -265,7 +265,9 @@ Sistem modul Lua, meskipun sederhana, sangat efektif untuk membangun aplikasi ya
 > - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
+> - **[Domain Spesifik][5]**
 
+[5]: ../../../../../../../README.md
 [1]: ../../README.md/#7-modules-dan-package-management
 [2]: ../../../../../README.md
 [3]: ../../module/6-oop/README.md

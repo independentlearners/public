@@ -426,7 +426,9 @@ Pola OOP di Lua, meskipun tidak memiliki sintaks kelas bawaan, sangat fleksibel 
 > - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
+> - **[Domain Spesifik][5]**
 
+[5]: ../../../../../../../README.md
 [4]: ../../module/7-modules-dan-manajemenPaket/README.md
 [3]: ../../module/5-function/README.md
 [2]: ../../../../../README.md

@@ -296,7 +296,9 @@ Memahami coroutine membuka pintu untuk menulis plugin Neovim yang lebih responsi
 > - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
+> - **[Domain Spesifik][5]**
 
+[5]: ../../../../../../../README.md
 [1]: ../../README.md/#9-advanced-lua-concepts
 [2]: ../../../../../README.md
 [3]: ../../module/8-error-handling-dan-debugging/README.md

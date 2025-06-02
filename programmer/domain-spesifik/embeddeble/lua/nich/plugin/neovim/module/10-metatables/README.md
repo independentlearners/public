@@ -542,7 +542,9 @@ Metatable adalah alat yang sangat ekspresif di Lua. Dengan memahaminya, Anda dap
 > - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
+> - **[Domain Spesifik][5]**
 
+[5]: ../../../../../../../README.md
 [1]: ../../README.md/#10-neovim-integration-fundamentals
 [2]: ../../../../../README.md
 [3]: ../../module/9-coroutines-konkurensi/README.md

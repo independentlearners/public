@@ -2253,7 +2253,7 @@ end
   - Buku “Designing Data-Intensive Applications” (Bab dependency graphs)
   - Artikel tentang package managers (npm, pip)
 
-## Kesimpulan
+## [Kesimpulan][23]
 
 Materi Lua yang telah dijelaskan mencakup semua aspek yang diperlukan untuk pengembangan plugin Neovim yang sophisticated. Dengan pemahaman mendalam tentang:
 
@@ -2335,6 +2335,7 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 [20]: ../neovim/module/20-rilis/README.md
 [21]: ../neovim/module/21-bastpractice/README.md
 [22]: ../neovim/module/22-tips/README.md
+[23]: ../neovim/module/23-kesimpulan/README.md
 
 <!-- ------------- -->
 

@@ -550,7 +550,9 @@ Interaksi dengan sistem file dan OS adalah kemampuan dasar yang penting. Namun, 
 > - **[Selanjutnya][4]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][2]**
+> - **[Domain Spesifik][5]**
 
+[5]: ../../../../../../../README.md
 [4]: ../12-lua-performance-best-practices/README.md
 [3]: ../10-metatables/README.md
 [2]: ../../../../../README.md

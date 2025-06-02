@@ -119,7 +119,9 @@ Dengan memahami konsep dasar ini, Anda telah memiliki landasan awal untuk mempel
 > - **[Ke Atas](#)**
 > - **[Selanjutnya](../2-variable/README.md)**
 > - **[Kurikulum][3]**
+> - **[Domain Spesifik][5]**
 
 [1]: ../../README.md/#1-fondasi-dasar-lua
 [2]: ../../../../../dasar/komentar/README.md
 [3]: ../../../../../README.md
+[5]: ../../../../../../../README.md
