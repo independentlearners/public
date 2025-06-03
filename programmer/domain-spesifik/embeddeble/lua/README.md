@@ -1228,11 +1228,11 @@ warn("Ini hanya peringatan")
 
 <!-- ------------------------- -->
 
-[001]: ../lua/dasar/string/README.md
-[002]: ../lua/dasar/number/README.md
-[005]: ../lua/dasar/instalasi/README.md/#instalasi
-[014]: ../lua/dasar/komentar/README.md/#1-dasar-komentar
-[015]: ../lua/dasar/variabel/README.md
+[001]: ../lua/materi/string/README.md
+[002]: ../lua/materi/number/README.md
+[005]: ../lua/materi/instalasi/README.md/#instalasi
+[014]: ../lua/materi/komentar/README.md/#1-dasar-komentar
+[015]: ../lua/materi/variabel/README.md
 
 > #### [Domain Spesifik][domain-spesifik]
 
