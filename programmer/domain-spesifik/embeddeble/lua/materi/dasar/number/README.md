@@ -768,5 +768,5 @@ Dengan memahami semua aspek ini, Anda akan mampu menangani berbagai skenario pem
 > - **[Kurikulum][1]**
 > - **[Domain Spesifik][domain-spesifik]**
 
-[domain-spesifik]: ../../../../README.md
+[domain-spesifik]: ../../../../../README.md
 [1]: ../../README.md
