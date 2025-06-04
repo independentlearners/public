@@ -1,3 +1,5 @@
+> **[Ke Bawah](#bawah)**
+
 # **[Kurikulum Lengkap][lengkap] [Variabel di Lua][dasar]**
 
 ## Overview Kurikulum
@@ -477,6 +479,8 @@ Pilih salah satu:
 - Minimize table lookups
 - Efficient memory usage
 - Garbage collection awareness
+
+<h3 id="bawah"></h3>
 
 ### Code Quality
 

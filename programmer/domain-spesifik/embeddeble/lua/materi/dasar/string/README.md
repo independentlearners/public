@@ -1,3 +1,5 @@
+> - **[Reference Guide][2]**
+
 # **[KURIKULUM LENGKAP STRING LUA (REVISI 2025)][1]**
 
 _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resmi_
@@ -327,7 +329,6 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 #
 
-> - **[Reference Guide][2]**
 > - **[Ke Atas](#)**
 
 [1]: ../../README.md
