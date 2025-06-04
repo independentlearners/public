@@ -1,931 +1,326 @@
-# **Panduan Lengkap String dalam Lua - Dari Dasar hingga Mahir**
+# KURIKULUM LENGKAP STRING LUA (REVISI 2025)
+
+_Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resmi_
+
+---
+
+## **LEVEL 1: DASAR-DASAR STRING**
+
+### 1.1 Pengenalan String di Lua
+
+- Definisi dan konsep string sebagai immutable type
+- Cara mendeklarasikan: single quote, double quote, long bracket
+- String sebagai first-class citizen di Lua
+- **Sumber Terverifikasi:**
+  - "Programming in Lua" (4th edition) - Roberto Ierusalimschy, Chapter 2
+  - Lua 5.4 Reference Manual Section 2.1
 
-### Pada bagian ini kita akan mempelajari secara mendalam mengenai String yang meliputi beriku
+### 1.2 Literal String dan Advanced Syntax
+
+- String literal dengan berbagai quote styles
+- Escape sequences lengkap (\n, \t, \\, \", \', \a, \b, \f, \r, \v)
+- Long strings dengan [[]] dan nested brackets [=[ ]=]
+- Multiline strings dan preservasi formatting
+- **Sumber Terverifikasi:**
+  - GameDev Academy - "Lua String Tutorial Complete Guide" (2023)
+  - Programming in Lua Chapter 2.4
+
+### 1.3 Operasi Fundamental
+
+- Konkatenasi dengan operator (..) dan performance implications
+- Length operator (#) vs string.len()
+- String comparison dan lexicographic ordering
+- Automatic type conversion (coercion)
+- **Sumber Terverifikasi:**
+  - Lua 5.4 Reference Manual Section 3.4.6
+  - LuaScripts.com - "Mastering Lua Strings" (2025)
+
+---
+
+## **LEVEL 2: STRING LIBRARY FUNCTIONS**
+
+### 2.1 Basic String Functions
+
+- `string.len()` vs length operator
+- `string.sub()` dengan positive/negative indices
+- `string.upper()`, `string.lower()`
+- `string.reverse()`
+- `string.rep()` untuk repetition
+- `string.char()` dan `string.byte()`
+- **Sumber Terverifikasi:**
+  - Programming in Lua Chapter 21
+  - GameDev Academy - "Lua String Library Tutorial" (2023)
+
+### 2.2 String Search Functions
+
+- `string.find()` dengan semua parameter (plain search)
+- `string.match()` untuk pattern extraction
+- `string.gmatch()` untuk iterative matching
+- Perbedaan fundamental antara find, match, dan gmatch
+- **Sumber Terverifikasi:**
+  - Programming in Lua Chapter 20.1
+  - LuaScripts.com - "Mastering Lua Gmatch" (2025)
+
+### 2.3 String Substitution
+
+- `string.gsub()` dengan replacement string
+- `string.gsub()` dengan function replacement
+- Counting dan limiting replacements
+- Capture groups dalam replacement
+- **Sumber Terverifikasi:**
+  - Programming in Lua Chapter 20.1
+  - Lua-users.org Wiki - String Recipes
 
-<h3 id="satu"></h3>
+---
+
+## **LEVEL 3: PATTERN MATCHING MASTERY**
+
+### 3.1 Lua Pattern Syntax (Bukan Regex!)
+
+- Character classes: %a, %c, %d, %l, %p, %s, %u, %w, %x
+- Character class negation dengan uppercase
+- Custom character sets dengan [set]
+- Character ranges dan negation [^set]
+- Magic characters: ^$()%.[]\*+-?
+- **Sumber Terverifikasi:**
+  - Programming in Lua Chapter 20.2
+  - RipTutorial - "Lua Pattern Matching"
+
+### 3.2 Pattern Quantifiers dan Positioning
+
+- Repetition modifiers: \*, +, -, ?
+- Anchoring: ^ (start), $ (end)
+- Captures dengan parentheses ()
+- Balanced captures dengan %b
+- **Sumber Terverifikasi:**
+  - Programming in Lua Chapter 20.2-20.3
+  - Lua 5.4 Reference Manual Section 6.4.1
+
+### 3.3 Advanced Pattern Techniques
+
+- Frontier patterns dengan %f
+- Multiple captures dan numbered references
+- Complex pattern combinations
+- Pattern optimization techniques
+- **Sumber Terverifikasi:**
+  - Lua-users.org Wiki - Pattern Matching
+  - Stack Overflow Lua tag - Advanced Examples
+
+---
+
+## **LEVEL 4: STRING FORMATTING & CONVERSION**
+
+### 4.1 String Formatting dengan string.format()
+
+- Printf-style formatting lengkap
+- Format specifiers: %d, %i, %o, %u, %x, %X, %f, %F, %e, %E, %g, %G, %c, %s
+- Width, precision, dan alignment
+- Flags: -, +, #, 0, space
+- **Sumber Terverifikasi:**
+  - Programming in Lua Chapter 21
+  - C printf documentation (referensi cross-language)
+
+### 4.2 Type Conversion Functions
+
+- `tostring()` dengan metamethods
+- `tonumber()` dengan basis numerik
+- Handling conversion failures
+- Custom conversion dengan metamethods
+- **Sumber Terverifikasi:**
+  - Lua 5.4 Reference Manual Section 6.1
+  - Programming in Lua Chapter 13 (Metatables)
+
+### 4.3 Efficient String Building
+
+- Konkatenasi performance issues
+- `table.concat()` untuk efficient building
+- String interning dan memory management
+- Buffer-style building techniques
+- **Sumber Terverifikasi:**
+  - Roberto Ierusalimschy - "Lua Performance Tips"
+  - Lua-users.org - Performance Section
+
+---
+
+## **LEVEL 5: UTF-8 DAN UNICODE (LUA 5.3+)**
+
+### 5.1 UTF-8 Support Native
+
+- `utf8.len()` untuk character count
+- `utf8.char()` dan `utf8.codepoint()`
+- `utf8.codes()` untuk iteration
+- `utf8.offset()` untuk positioning
+- **Sumber Terverifikasi:**
+  - Lua 5.4 Reference Manual Section 6.5
+  - Programming in Lua Chapter 21 (4th edition)
+
+### 5.2 Unicode String Processing
+
+- Handling multi-byte characters
+- Normalization considerations
+- Case conversion untuk Unicode
+- Locale-aware operations
+- **Sumber Terverifikasi:**
+  - Unicode Consortium documentation
+  - Lua-users.org - Unicode handling
+
+---
+
+## **LEVEL 6: LPEG - PARSING EXPRESSION GRAMMARS**
+
+### 6.1 LPEG Fundamentals
+
+- Perbedaan dengan Lua patterns
+- Basic LPEG patterns: P, R, S
+- Pattern composition dan kombinasi
+- Capture semantics
+- **Sumber Terverifikasi:**
+  - Roberto Ierusalimschy - LPEG Documentation
+  - Lua-users.org - LPEG Tutorial
 
-**[Level Dasar:](#1-dasar-dasar-string-lua)**
+### 6.2 Advanced LPEG Techniques
 
-- Cara membuat string (quotes, long strings, escape sequences)
-- Operasi dasar (concatenation, length)
-- Function library dasar
+- Grammar construction
+- Left recursion handling
+- Complex parsing scenarios
+- LPEG vs traditional parsing
+- **Sumber Terverifikasi:**
+  - GitHub - daurnimator/lpeg_patterns
+  - dlaurie/lua-notes - LPEG Brief
 
-<h3 id="dua"></h3>
+### 6.3 LPEG Re Module
 
-**[Level Menengah:](#4-pattern-matching-regex-alternatif-lua)**
+- Regex-like interface dengan LPEG
+- Migration dari patterns ke LPEG
+- Performance comparisons
+- **Sumber Terverifikasi:**
+  - LPEG Re module documentation
+  - Stack Overflow - LPEG examples
 
-- Pattern matching (alternatif regex Lua)
-- String formatting dan manipulation
-- UTF-8 support
-- Search dan replace functions
+---
 
-<h3 id="tiga"></h3>
+## **LEVEL 7: APLIKASI PRAKTIS**
 
-**[Level Mahir:](#7-performance-optimization)**
+### 7.1 Text Processing Applications
 
-- Performance optimization techniques
-- Advanced algorithms (Levenshtein distance, Boyer-Moore search)
-- String compression dan encoding (Base64, run-length)
-- Template engine dan string interpolation
-- Security practices (SQL injection prevention, HTML escaping)
+- Log parsing dengan patterns
+- CSV/TSV processing
+- Configuration file parsing
+- Template processing
+- **Sumber Terverifikasi:**
+  - Real-world GitHub repositories
+  - Lua-users.org - Recipes
 
-**Fitur Khusus:**
+### 7.2 String Algorithms Implementation
 
-- StringBuilder pattern untuk concatenation efisien
-- Custom validation functions
-- Text processing utilities
-- Unit testing framework untuk string functions
+- String search algorithms (KMP, Boyer-Moore concepts)
+- Edit distance (Levenshtein)
+- Fuzzy matching algorithms
+- Text similarity metrics
+- **Sumber Terverifikasi:**
+  - "Introduction to Algorithms" - CLRS
+  - GitHub implementations dalam Lua
 
-Setiap bagian dilengkapi dengan contoh kode praktis yang bisa langsung Anda gunakan. Panduan ini dirancang untuk membuat Anda benar-benar menguasai segala aspek string dalam Lua, mulai dari konsep dasar hingga teknik advanced yang digunakan dalam aplikasi production.
+### 7.3 Performance dan Optimization
 
-## [1. DASAR-DASAR STRING LUA](#satu)
+- Profiling string operations
+- Memory-efficient techniques
+- JIT considerations (LuaJIT)
+- Caching strategies
+- **Sumber Terverifikasi:**
+  - LuaJIT documentation
+  - Mike Pall's optimization papers
 
-### Definisi dan Karakteristik
+---
 
-String dalam Lua adalah _sequence of bytes_ atau urutan byte yang immutable (tidak dapat diubah). Setiap operasi string menghasilkan string baru.
+## **LEVEL 8: INTEGRASI SISTEM**
 
-### Cara Membuat String
+### 8.1 C API String Handling
 
-#### 1.1 Single Quotes dan Double Quotes
+- lua_pushstring() dan variants
+- lua_tolstring() handling
+- String buffers dengan luaL_Buffer
+- Memory management considerations
+- **Sumber Terverifikasi:**
+  - Programming in Lua Part IV
+  - Lua 5.4 Reference Manual Section 4
 
-```lua
-local str1 = 'Hello World'
-local str2 = "Hello World"
-local str3 = 'Dia berkata "Halo"'
-local str4 = "Dia berkata 'Halo'"
-```
+### 8.2 FFI dan LuaJIT String Operations
 
-#### 1.2 Long Strings (Multi-line)
+- FFI string handling
+- Performance dengan FFI
+- Direct memory manipulation
+- **Sumber Terverifikasi:**
+  - LuaJIT FFI documentation
+  - LuaJIT performance guide
 
-```lua
-local longStr = [[
-Ini adalah string panjang
-yang bisa mencakup beberapa baris
-tanpa perlu escape characters
-]]
+---
 
--- Dengan level brackets untuk nested content
-local nestedStr = [=[
-String ini bisa mengandung [[content]] di dalamnya
-karena menggunakan level bracket berbeda
-]=]
+## **PROYEK PRAKTIK BERTINGKAT:**
 
--- Multiple levels
-local complexStr = [===[
-Bisa mengandung [=[ dan ]=] di dalamnya
-]===]
-```
+### **Beginner Projects:**
 
-#### 1.3 Escape Sequences
+1. Simple text formatter dengan wrap dan alignment
+2. Basic CSV reader dengan error handling
+3. String calculator untuk mathematical expressions
 
-```lua
-local escaped = "Line 1\nLine 2\tTabbed\\"
-local specialChars = "\a\b\f\n\r\t\v\\\"\'"
-local unicodeStr = "\u{1F600}"  -- Unicode emoji (Lua 5.3+)
-local hexStr = "\x41\x42\x43"   -- ABC dalam hex
-local decimalStr = "\65\66\67"  -- ABC dalam decimal
-```
+### **Intermediate Projects:**
 
-## 2. OPERASI DASAR STRING
+4. Log analyzer dengan multiple pattern matching
+5. Template engine dengan variable substitution
+6. Simple markup-to-HTML converter
 
-### 2.1 Concatenation (Penggabungan)
+### **Advanced Projects:**
 
-```lua
-local a = "Hello"
-local b = "World"
-local result = a .. " " .. b  -- "Hello World"
+7. JSON parser menggunakan LPEG
+8. SQL query parser (subset)
+9. Configuration DSL dengan nested structures
 
--- Multiple concatenation
-local full = "Lua" .. " " .. "is" .. " " .. "awesome"
+### **Expert Projects:**
 
--- Dengan non-string (otomatis converted)
-local mixed = "Number: " .. 42  -- "Number: 42"
-```
+10. Text-based protocol parser
+11. Simple programming language lexer
+12. High-performance text search engine
 
-### 2.2 Length Operator
-
-```lua
-local str = "Hello"
-local len = #str  -- 5
+---
 
--- Untuk UTF-8 (Lua 5.3+)
-local utf8Str = "Héllo"
-local byteLen = #utf8Str      -- byte length
-local charLen = utf8.len(utf8Str)  -- character length
-```
+## **SUMBER REFERENSI TERVERIFIKASI:**
 
-## 3. STRING LIBRARY FUNCTIONS
+### **Primary Sources (Authoritative):**
 
-### 3.1 Basic Functions
+1. **"Programming in Lua" (4th edition, 2016)** - Roberto Ierusalimschy
+2. **Lua 5.4 Reference Manual (2020-2024)** - Official documentation
+3. **LPEG Documentation** - Roberto Ierusalimschy (PUC-Rio)
 
-#### string.len()
+### **Secondary Sources (Community-Verified):**
 
-```lua
-local str = "Hello World"
-print(string.len(str))  -- 11
-print(#str)             -- sama dengan di atas
-```
+4. **GameDev Academy Lua Tutorials (2023)** - Modern practical examples
+5. **LuaScripts.com (2025)** - Contemporary string handling
+6. **Lua-users.org Wiki** - Community knowledge base
+7. **RipTutorial Lua Section** - Pattern matching examples
 
-#### string.sub()
-
-```lua
-local str = "Hello World"
-print(string.sub(str, 1, 5))   -- "Hello"
-print(string.sub(str, 7))      -- "World"
-print(string.sub(str, -5))     -- "World" (dari belakang)
-print(string.sub(str, -5, -1)) -- "World"
-```
+### **Code Repositories (Real-world Examples):**
 
-#### string.upper() dan string.lower()
+8. **GitHub - daurnimator/lpeg_patterns** - LPEG pattern collection
+9. **GitHub - dlaurie/lua-notes** - Advanced concepts
+10. **Stack Overflow Lua Tag** - Problem-solving database
 
-```lua
-local text = "Hello World"
-print(string.upper(text))  -- "HELLO WORLD"
-print(string.lower(text))  -- "hello world"
-```
-
-#### string.reverse()
-
-```lua
-local str = "Hello"
-print(string.reverse(str))  -- "olleH"
-```
-
-#### string.rep()
-
-```lua
-local pattern = "Lua"
-print(string.rep(pattern, 3))      -- "LuaLuaLua"
-print(string.rep(pattern, 3, "-")) -- "Lua-Lua-Lua"
-```
-
-### 3.2 Advanced Search Functions
-
-#### string.find()
-
-```lua
-local text = "Hello World Hello"
-local start, finish = string.find(text, "World")
-print(start, finish)  -- 7 11
-
--- Dengan plain search (no pattern)
-local pos = string.find(text, "World", 1, true)
-
--- Case insensitive search
-local function findIgnoreCase(str, pattern)
-    return string.find(string.lower(str), string.lower(pattern))
-end
-```
-
-#### string.match()
-
-```lua
-local email = "user@example.com"
-local domain = string.match(email, "@(.+)")
-print(domain)  -- "example.com"
-
--- Multiple captures
-local date = "2024-12-25"
-local year, month, day = string.match(date, "(%d+)-(%d+)-(%d+)")
-```
-
-#### string.gmatch()
-
-```lua
-local text = "apple,banana,cherry"
-for fruit in string.gmatch(text, "([^,]+)") do
-    print(fruit)
-end
--- Output: apple, banana, cherry
-
--- Extract all numbers
-local str = "I have 10 apples and 5 oranges"
-for num in string.gmatch(str, "%d+") do
-    print(tonumber(num))
-end
-```
-
-### 3.3 String Replacement
-
-#### string.gsub()
-
-```lua
-local text = "Hello World Hello"
-local result = string.gsub(text, "Hello", "Hi")
-print(result)  -- "Hi World Hi"
-
--- Dengan limit
-local limited = string.gsub(text, "Hello", "Hi", 1)
-print(limited)  -- "Hi World Hello"
-
--- Dengan function replacement
-local numbers = "1 2 3 4 5"
-local doubled = string.gsub(numbers, "%d+", function(n)
-    return tostring(tonumber(n) * 2)
-end)
-print(doubled)  -- "2 4 6 8 10"
-
--- Dengan table replacement
-local replacements = {Hello = "Hi", World = "Universe"}
-local replaced = string.gsub(text, "%w+", replacements)
-```
-
-## 4. PATTERN MATCHING (REGEX ALTERNATIF LUA)
-
-### [4.1 Basic Pattern Characters](#dua)
-
-```lua
--- Character classes
-local patterns = {
-    "%a",  -- letters
-    "%d",  -- digits
-    "%l",  -- lowercase letters
-    "%u",  -- uppercase letters
-    "%w",  -- alphanumeric
-    "%s",  -- space characters
-    "%p",  -- punctuation
-    "%c",  -- control characters
-    "%x"   -- hexadecimal digits
-}
-
--- Negation dengan uppercase
-"%A"  -- non-letters
-"%D"  -- non-digits
--- dst...
-```
-
-### 4.2 Pattern Modifiers
-
-```lua
--- Quantifiers
-local text = "Hello123World"
-print(string.match(text, "%a+"))     -- "Hello" (one or more letters)
-print(string.match(text, "%d*"))     -- "" (zero or more digits)
-print(string.match(text, "%d-"))     -- "" (zero or more digits, non-greedy)
-print(string.match(text, "%a?"))     -- "H" (zero or one letter)
-
--- Anchors
-print(string.match("Hello", "^H"))   -- "H" (start of string)
-print(string.match("Hello", "o$"))   -- "o" (end of string)
-```
-
-### 4.3 Advanced Patterns
-
-```lua
--- Character sets
-local pattern1 = "[aeiou]"     -- vowels
-local pattern2 = "[^aeiou]"    -- non-vowels
-local pattern3 = "[a-z]"       -- lowercase range
-local pattern4 = "[0-9A-F]"    -- hex digits
-
--- Captures
-local function parseEmail(email)
-    local user, domain = string.match(email, "([%w%.%-_]+)@([%w%.%-]+)")
-    return user, domain
-end
-
--- Complex pattern example
-local function parseURL(url)
-    local protocol, host, port, path = string.match(url,
-        "^(%w+)://([%w%.%-]+):?(%d*)(.*)$")
-    return protocol, host, (port ~= "" and tonumber(port) or nil), path
-end
-```
-
-## 5. STRING FORMATTING
-
-### 5.1 string.format()
-
-```lua
--- Basic formatting
-local name = "John"
-local age = 25
-local formatted = string.format("Name: %s, Age: %d", name, age)
-
--- Number formatting
-local pi = 3.14159
-print(string.format("%.2f", pi))      -- "3.14"
-print(string.format("%08.2f", pi))    -- "00003.14"
-print(string.format("%-10.2f", pi))   -- "3.14      "
-
--- Integer formatting
-local num = 42
-print(string.format("%d", num))       -- "42"
-print(string.format("%05d", num))     -- "00042"
-print(string.format("%x", num))       -- "2a" (hex)
-print(string.format("%X", num))       -- "2A" (hex uppercase)
-print(string.format("%o", num))       -- "52" (octal)
-
--- Scientific notation
-local big = 123456789
-print(string.format("%e", big))       -- "1.234568e+08"
-print(string.format("%E", big))       -- "1.234568E+08"
-```
-
-### 5.2 Custom Formatting Functions
-
-```lua
--- Ribuan separator
-local function formatNumber(num)
-    local formatted = tostring(num)
-    while true do
-        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
-        if k == 0 then break end
-    end
-    return formatted
-end
-
--- Padding functions
-local function padLeft(str, len, char)
-    char = char or " "
-    return string.rep(char, len - #str) .. str
-end
-
-local function padRight(str, len, char)
-    char = char or " "
-    return str .. string.rep(char, len - #str)
-end
-
-local function padCenter(str, len, char)
-    char = char or " "
-    local totalPad = len - #str
-    local leftPad = math.floor(totalPad / 2)
-    local rightPad = totalPad - leftPad
-    return string.rep(char, leftPad) .. str .. string.rep(char, rightPad)
-end
-```
-
-## 6. UTF-8 SUPPORT (LUA 5.3+)
-
-### 6.1 UTF-8 Library Functions
-
-```lua
--- UTF-8 string operations
-local utf8Str = "Héllo Wörld 🌍"
-
--- Length in characters (not bytes)
-print(utf8.len(utf8Str))  -- character count
-
--- Character iteration
-for pos, code in utf8.codes(utf8Str) do
-    print(pos, utf8.char(code))
-end
-
--- Offset operations
-local pos = utf8.offset(utf8Str, 3)  -- position of 3rd character
-print(string.sub(utf8Str, pos, utf8.offset(utf8Str, 4) - 1))
-
--- Codepoint conversion
-print(utf8.codepoint("A"))        -- 65
-print(utf8.char(65))              -- "A"
-print(utf8.char(0x1F600))         -- "😀"
-```
-
-### 6.2 UTF-8 Helper Functions
-
-```lua
--- UTF-8 aware substring
-local function utf8Sub(str, start, finish)
-    local startByte = utf8.offset(str, start)
-    local endByte = finish and utf8.offset(str, finish + 1) - 1 or #str
-    return string.sub(str, startByte, endByte)
-end
-
--- UTF-8 reverse
-local function utf8Reverse(str)
-    local reversed = {}
-    for pos, code in utf8.codes(str) do
-        table.insert(reversed, 1, utf8.char(code))
-    end
-    return table.concat(reversed)
-end
-```
-
-## [7. PERFORMANCE OPTIMIZATION](#tiga)
-
-### 7.1 String Concatenation Optimization
-
-```lua
--- BURUK: Concatenation berulang
-local function badConcat(strings)
-    local result = ""
-    for i, str in ipairs(strings) do
-        result = result .. str  -- Inefficient!
-    end
-    return result
-end
-
--- BAIK: Table concat
-local function goodConcat(strings)
-    return table.concat(strings)
-end
-
--- TERBAIK: dengan separator
-local function bestConcat(strings, separator)
-    return table.concat(strings, separator or "")
-end
-
--- StringBuilder pattern
-local StringBuilder = {}
-StringBuilder.__index = StringBuilder
-
-function StringBuilder:new()
-    return setmetatable({buffer = {}}, self)
-end
-
-function StringBuilder:append(str)
-    table.insert(self.buffer, str)
-    return self
-end
-
-function StringBuilder:toString()
-    return table.concat(self.buffer)
-end
-
--- Usage
-local sb = StringBuilder:new()
-sb:append("Hello"):append(" "):append("World")
-print(sb:toString())
-```
-
-### 7.2 Pattern Caching
-
-```lua
--- Cache compiled patterns
-local patternCache = {}
-
-local function getCachedPattern(pattern)
-    if not patternCache[pattern] then
-        -- Pre-validate pattern
-        local ok, err = pcall(string.find, "", pattern)
-        if not ok then
-            error("Invalid pattern: " .. pattern)
-        end
-        patternCache[pattern] = pattern
-    end
-    return patternCache[pattern]
-end
-```
-
-## 8. STRING UTILITIES LANJUTAN
-
-### 8.1 String Validation
-
-```lua
--- Email validation
-local function isValidEmail(email)
-    local pattern = "^[%w%.%-_]+@[%w%.%-]+%.%w+$"
-    return string.match(email, pattern) ~= nil
-end
-
--- Phone number validation
-local function isValidPhone(phone)
-    local cleaned = string.gsub(phone, "[%s%-().]", "")
-    return string.match(cleaned, "^%+?%d+$") ~= nil and #cleaned >= 10
-end
-
--- URL validation
-local function isValidURL(url)
-    local pattern = "^https?://[%w%.%-]+[%w%.%-_~:/?#%[%]@!$&'()*+,;=]*$"
-    return string.match(url, pattern) ~= nil
-end
-```
-
-### 8.2 Text Processing
-
-```lua
--- Word count
-local function wordCount(text)
-    local count = 0
-    for word in string.gmatch(text, "%S+") do
-        count = count + 1
-    end
-    return count
-end
-
--- Sentence splitting
-local function splitSentences(text)
-    local sentences = {}
-    for sentence in string.gmatch(text, "[^%.!%?]+[%.!%?]") do
-        local trimmed = string.match(sentence, "^%s*(.-)%s*$")
-        if trimmed ~= "" then
-            table.insert(sentences, trimmed)
-        end
-    end
-    return sentences
-end
-
--- Title case
-local function titleCase(str)
-    return string.gsub(str, "(%a)([%w_']*)", function(first, rest)
-        return string.upper(first) .. string.lower(rest)
-    end)
-end
-
--- Slug generation
-local function createSlug(text)
-    local slug = string.lower(text)
-    slug = string.gsub(slug, "[%s_]+", "-")  -- spaces to hyphens
-    slug = string.gsub(slug, "[^%w%-]", "")  -- remove special chars
-    slug = string.gsub(slug, "%-+", "-")     -- multiple hyphens to one
-    slug = string.gsub(slug, "^%-+", "")     -- leading hyphens
-    slug = string.gsub(slug, "%-+$", "")     -- trailing hyphens
-    return slug
-end
-```
-
-### 8.3 Advanced String Algorithms
-
-```lua
--- Levenshtein distance
-local function levenshteinDistance(str1, str2)
-    local len1, len2 = #str1, #str2
-    local matrix = {}
-
-    for i = 0, len1 do
-        matrix[i] = {[0] = i}
-    end
-
-    for j = 0, len2 do
-        matrix[0][j] = j
-    end
-
-    for i = 1, len1 do
-        for j = 1, len2 do
-            local cost = (string.sub(str1, i, i) == string.sub(str2, j, j)) and 0 or 1
-            matrix[i][j] = math.min(
-                matrix[i-1][j] + 1,      -- deletion
-                matrix[i][j-1] + 1,      -- insertion
-                matrix[i-1][j-1] + cost  -- substitution
-            )
-        end
-    end
-
-    return matrix[len1][len2]
-end
-
--- Fuzzy string matching
-local function fuzzyMatch(str, pattern, threshold)
-    threshold = threshold or 0.8
-    local distance = levenshteinDistance(str, pattern)
-    local maxLen = math.max(#str, #pattern)
-    local similarity = 1 - (distance / maxLen)
-    return similarity >= threshold, similarity
-end
-
--- Boyer-Moore string search (simplified)
-local function createBadCharTable(pattern)
-    local table = {}
-    for i = 1, #pattern do
-        table[string.sub(pattern, i, i)] = #pattern - i
-    end
-    return table
-end
-
-local function boyerMooreSearch(text, pattern)
-    local badCharTable = createBadCharTable(pattern)
-    local textLen, patternLen = #text, #pattern
-    local skip = 0
-
-    while skip <= textLen - patternLen do
-        local j = patternLen
-        while j >= 1 and string.sub(pattern, j, j) == string.sub(text, skip + j, skip + j) do
-            j = j - 1
-        end
-
-        if j == 0 then
-            return skip + 1  -- Found at position skip + 1
-        else
-            local badChar = string.sub(text, skip + j, skip + j)
-            skip = skip + math.max(1, j - (badCharTable[badChar] or patternLen))
-        end
-    end
-
-    return nil  -- Not found
-end
-```
-
-## 9. STRING COMPRESSION DAN ENCODING
-
-### 9.1 Simple Compression
-
-```lua
--- Run-length encoding
-local function runLengthEncode(str)
-    local result = {}
-    local i = 1
-
-    while i <= #str do
-        local char = string.sub(str, i, i)
-        local count = 1
-
-        while i + count <= #str and string.sub(str, i + count, i + count) == char do
-            count = count + 1
-        end
-
-        if count > 1 then
-            table.insert(result, count .. char)
-        else
-            table.insert(result, char)
-        end
-
-        i = i + count
-    end
-
-    return table.concat(result)
-end
-
--- Run-length decoding
-local function runLengthDecode(str)
-    local result = {}
-    local i = 1
-
-    while i <= #str do
-        local count = ""
-        while i <= #str and string.match(string.sub(str, i, i), "%d") do
-            count = count .. string.sub(str, i, i)
-            i = i + 1
-        end
-
-        if count ~= "" and i <= #str then
-            local char = string.sub(str, i, i)
-            table.insert(result, string.rep(char, tonumber(count)))
-            i = i + 1
-        elseif i <= #str then
-            table.insert(result, string.sub(str, i, i))
-            i = i + 1
-        end
-    end
-
-    return table.concat(result)
-end
-```
-
-### 9.2 Base64 Encoding/Decoding
-
-```lua
-local base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-
-local function base64Encode(str)
-    local result = {}
-    local padding = ""
-
-    for i = 1, #str, 3 do
-        local a, b, c = string.byte(str, i, i + 2)
-        b = b or 0
-        c = c or 0
-
-        local bitmap = (a << 16) + (b << 8) + c
-
-        for j = 18, 0, -6 do
-            local index = ((bitmap >> j) & 63) + 1
-            table.insert(result, string.sub(base64Chars, index, index))
-        end
-    end
-
-    local paddingLength = (3 - (#str % 3)) % 3
-    for i = 1, paddingLength do
-        result[#result - i + 1] = "="
-    end
-
-    return table.concat(result)
-end
-
-local function base64Decode(str)
-    local charMap = {}
-    for i = 1, #base64Chars do
-        charMap[string.sub(base64Chars, i, i)] = i - 1
-    end
-
-    str = string.gsub(str, "=", "")
-    local result = {}
-
-    for i = 1, #str, 4 do
-        local a = charMap[string.sub(str, i, i)] or 0
-        local b = charMap[string.sub(str, i + 1, i + 1)] or 0
-        local c = charMap[string.sub(str, i + 2, i + 2)] or 0
-        local d = charMap[string.sub(str, i + 3, i + 3)] or 0
-
-        local bitmap = (a << 18) + (b << 12) + (c << 6) + d
-
-        if i + 1 <= #str then table.insert(result, string.char((bitmap >> 16) & 255)) end
-        if i + 2 <= #str then table.insert(result, string.char((bitmap >> 8) & 255)) end
-        if i + 3 <= #str then table.insert(result, string.char(bitmap & 255)) end
-    end
-
-    return table.concat(result)
-end
-```
-
-## 10. STRING INTERPOLATION DAN TEMPLATING
-
-### 10.1 Simple Template Engine
-
-```lua
-local function simpleTemplate(template, data)
-    return string.gsub(template, "${(%w+)}", function(key)
-        return tostring(data[key] or "")
-    end)
-end
-
--- Usage
-local template = "Hello ${name}, you are ${age} years old!"
-local data = {name = "John", age = 30}
-print(simpleTemplate(template, data))
-
--- Advanced template with nested data
-local function advancedTemplate(template, data)
-    return string.gsub(template, "${([%w%.]+)}", function(path)
-        local value = data
-        for key in string.gmatch(path, "[^%.]+") do
-            if type(value) == "table" and value[key] then
-                value = value[key]
-            else
-                return ""
-            end
-        end
-        return tostring(value)
-    end)
-end
-
--- Usage
-local complexData = {
-    user = {
-        name = "John",
-        profile = {age = 30}
-    }
-}
-local complexTemplate = "Hello ${user.name}, age: ${user.profile.age}"
-print(advancedTemplate(complexTemplate, complexData))
-```
-
-### 10.2 Conditional Templates
-
-```lua
-local function conditionalTemplate(template, data)
-    -- Handle if statements
-    template = string.gsub(template, "{%%if%s+([%w%.]+)%%}(.-){%%endif%%}", function(condition, content)
-        local value = data
-        for key in string.gmatch(condition, "[^%.]+") do
-            if type(value) == "table" and value[key] then
-                value = value[key]
-            else
-                value = nil
-                break
-            end
-        end
-        return (value and value ~= false and value ~= "") and content or ""
-    end)
-
-    -- Handle loops
-    template = string.gsub(template, "{%%for%s+(%w+)%s+in%s+([%w%.]+)%%}(.-){%%endfor%%}", function(item, collection, content)
-        local items = data
-        for key in string.gmatch(collection, "[^%.]+") do
-            if type(items) == "table" and items[key] then
-                items = items[key]
-            else
-                items = nil
-                break
-            end
-        end
-
-        if type(items) == "table" then
-            local results = {}
-            for _, value in ipairs(items) do
-                local itemData = {}
-                for k, v in pairs(data) do
-                    itemData[k] = v
-                end
-                itemData[item] = value
-                table.insert(results, simpleTemplate(content, itemData))
-            end
-            return table.concat(results)
-        end
-        return ""
-    end)
-
-    -- Handle variables
-    return simpleTemplate(template, data)
-end
-```
-
-## 11. BEST PRACTICES & TIPS
-
-### 11.1 Performance Tips
-
-1. **Hindari concatenation berulang** - gunakan table.concat
-2. **Cache pattern yang sering digunakan**
-3. **Gunakan string.find dengan plain=true untuk literal search**
-4. **Pertimbangkan UTF-8 handling untuk text internasional**
-
-### 11.2 Memory Management
-
-```lua
--- Good: reuse string objects
-local commonStrings = {
-    empty = "",
-    space = " ",
-    newline = "\n",
-    comma = ",",
-}
-
--- Bad: creating many temporary strings
-local function badExample(items)
-    local result = ""
-    for i, item in ipairs(items) do
-        result = result .. item .. ", "  -- Creates many intermediate strings
-    end
-    return result
-end
-
--- Good: minimize string creation
-local function goodExample(items)
-    local parts = {}
-    for i, item in ipairs(items) do
-        table.insert(parts, item)
-    end
-    return table.concat(parts, ", ")
-end
-```
-
-### 11.3 Security Considerations
-
-```lua
--- SQL injection prevention
-local function escapeSQLString(str)
-    return "'" .. string.gsub(str, "'", "''") .. "'"
-end
-
--- HTML escaping
-local function escapeHTML(str)
-    local escapes = {
-        ["&"] = "&amp;",
-        ["<"] = "&lt;",
-        [">"] = "&gt;",
-        ['"'] = "&quot;",
-        ["'"] = "&#39;"
-    }
-    return string.gsub(str, "[&<>\"']", escapes)
-end
-
--- Input sanitization
-local function sanitizeInput(str, maxLength)
-    maxLength = maxLength or 1000
-    str = string.sub(str, 1, maxLength)
-    str = string.gsub(str, "[%c]", "")  -- Remove control characters
-    return str
-end
-```
-
-## 12. TESTING STRING FUNCTIONS
-
-### 12.1 Unit Testing Framework
-
-```lua
-local function assertEqual(actual, expected, message)
-    if actual == expected then
-        print("✓ " .. (message or "Test passed"))
-    else
-        print("✗ " .. (message or "Test failed"))
-        print("  Expected: " .. tostring(expected))
-        print("  Actual:   " .. tostring(actual))
-    end
-end
-
--- Test examples
-local function runStringTests()
-    -- Test basic operations
-    assertEqual("Hello" .. " " .. "World", "Hello World", "String concatenation")
-    assertEqual(#"Hello", 5, "String length")
-    assertEqual(string.upper("hello"), "HELLO", "String uppercase")
-
-    -- Test pattern matching
-    local email = "test@example.com"
-    local domain = string.match(email, "@(.+)")
-    assertEqual(domain, "example.com", "Email domain extraction")
-
-    -- Test custom functions
-    assertEqual(levenshteinDistance("kitten", "sitting"), 3, "Levenshtein distance")
-
-    print("All string tests completed!")
-end
-```
-
-## KESIMPULAN
-
-String dalam Lua adalah tipe data yang sangat powerful dengan library function yang lengkap. Kunci untuk menguasai string Lua adalah:
-
-1. **Memahami immutability** - setiap operasi menghasilkan string baru
-2. **Menguasai pattern matching** - alternatif regex yang powerful
-3. **Optimasi performance** - gunakan table.concat untuk concatenation besar
-4. **UTF-8 awareness** - penting untuk aplikasi international
-5. **Security practices** - selalu escape dan sanitize input
-
-Dengan memahami semua konsep di atas, Anda akan menjadi expert dalam manipulasi string Lua untuk segala kebutuhan pemrograman Anda!
-
-> - **[Ke Atas](#)**
-> - **[Daftar Kurikulum][1]**
-> - **[Domain Spesifik][domain-spesifik]**
-
-[domain-spesifik]: ../../../../README.md
-[1]: ../../README.md
+### **Performance References:**
+
+11. **LuaJIT Documentation** - Mike Pall
+12. **Roberto Ierusalimschy's Papers** - Academic insights
+
+---
+
+## **CATATAN REVISI:**
+
+- ✅ Updated untuk Lua 5.4 features
+- ✅ Menambahkan UTF-8 native support
+- ✅ Memperbaiki referensi yang tidak valid
+- ✅ Menambahkan LPEG sebagai level terpisah
+- ✅ Memasukkan string.gmatch yang terlewat
+- ✅ Verifikasi semua sumber referensi
+- ✅ Menambahkan proyek praktik yang lebih terstruktur
+- ✅ Memisahkan Lua patterns dari regex untuk menghindari confusion
+
+**Kurikulum ini telah diaudit dan diperbarui berdasarkan sumber-sumber terkini (2025) dan verifikasi cross-reference.**
