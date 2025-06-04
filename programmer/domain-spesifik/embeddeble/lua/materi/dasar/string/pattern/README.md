@@ -560,4 +560,4 @@ Dengan memahami karakter “_magic_,” kelas karakter (`%a, %d, %s, %p`), kuant
 
 Dengan memanfaatkan daftar sumber di atas—mulai dokumentasi resmi, tutorial komunitas, hingga contoh kode nyata—Anda dapat membangun pemahaman mendalam tentang _pattern matching_ di Lua.
 
-[1]: ../../../../../../istilah/konsep/regex/README.md
+[1]: ../../../../../../../istilah/konsep/regex/README.md

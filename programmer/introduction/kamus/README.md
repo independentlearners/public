@@ -1,5 +1,3 @@
-
-
 # Kamus Sebagian Istilah Dalam Bahasa Pemrograman
 
 ## A. Istilah Umum Pemrograman
@@ -181,3 +179,7 @@
 10. **SQLite**: Database relasional ringan yang populer digunakan dalam aplikasi mobile.
 
 11. **Realm**: Database objek mobile.
+
+**[Lanjutan][1]**
+
+[1]: ../kamus/lanjutan/README.md

@@ -188,3 +188,7 @@ Contoh (JavaScript-style):
 Regular expressions adalah alat powerful untuk pencocokan pola dalam teks. Meskipun sintaksnya tampak kompleks di awal, regex sangat fleksibel dan menjadi alat wajib untuk pemrosesan teks tingkat lanjut. Pelajari secara bertahap, gunakan dokumentasi atau visualizer saat membuat pattern yang kompleks.
 
 ---
+
+**[Bahasa & Paradigma Masa Depan][1]**
+
+[1]: ../../../README.md
