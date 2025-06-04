@@ -1,6 +1,6 @@
 > #### Reference-Guide
 
-# **Panduan Lengkap String dalam Lua - Dari Dasar hingga Mahir**
+# **[Panduan Lengkap String dalam Lua - Dari Dasar hingga Mahir](#empat)**
 
 ### Pada bagian ini kita akan mempelajari secara mendalam mengenai String yang meliputi beriku
 
@@ -940,6 +940,8 @@ String dalam Lua adalah tipe data yang sangat powerful dengan library function y
 5. **Security practices** - selalu escape dan sanitize input
 
 Dengan memahami semua konsep di atas, Anda akan menjadi expert dalam manipulasi string Lua untuk segala kebutuhan pemrograman Anda!
+
+<h3 id="empat"></h3>
 
 > - **[Ke Atas](#)**
 > - **[Kembali][2]**
