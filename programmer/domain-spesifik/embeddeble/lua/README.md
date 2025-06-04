@@ -1,5 +1,5 @@
 > - [Ke Bawah](#satu)
-> - [Daftar 25 Kurikulum Dasar][kurikulum-dasar]
+> - [Daftar 25 Kurikulum Dasar][kurikulum-dasar] - reference-guide
 
 # 🌙 **MASTER LUA PROGRAMMING**
 

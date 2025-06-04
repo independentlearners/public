@@ -1,3 +1,5 @@
+> #### Reference-Guide
+
 # **Panduan Lengkap String dalam Lua - Dari Dasar hingga Mahir**
 
 ### Pada bagian ini kita akan mempelajari secara mendalam mengenai String yang meliputi beriku
@@ -943,5 +945,5 @@ Dengan memahami semua konsep di atas, Anda akan menjadi expert dalam manipulasi 
 > - **[Daftar Kurikulum][1]**
 > - **[Domain Spesifik][domain-spesifik]**
 
-[domain-spesifik]: ../../../../README.md
-[1]: ../../README.md
+[domain-spesifik]: ../../../../../../README.md
+[1]: ../../../README.md

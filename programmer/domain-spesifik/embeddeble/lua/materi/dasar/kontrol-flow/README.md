@@ -1,4 +1,4 @@
-# Kurikulum Lengkap Control Flow di Lua
+# **[Kurikulum Lengkap Control Flow di Lua][1]**
 
 ## 🎯 Tujuan Pembelajaran
 
@@ -585,3 +585,9 @@ Setelah menyelesaikan kurikulum ini, Anda harus mampu:
 - [ ] Memilih struktur kontrol yang tepat untuk setiap situasi
 
 Kurikulum ini dirancang untuk membuat Anda menjadi expert dalam control flow Lua tanpa perlu merujuk ke dokumentasi resmi untuk hal-hal dasar, sambil tetap memberikan akses ke sumber-sumber terpercaya untuk pembelajaran yang mendalam.
+
+#
+
+**[Ke Atas](#)**
+
+[1]: ../../README.md

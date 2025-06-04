@@ -1,4 +1,4 @@
-# KURIKULUM LENGKAP STRING LUA (REVISI 2025)
+# **[KURIKULUM LENGKAP STRING LUA (REVISI 2025)][1]**
 
 _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resmi_
 
@@ -324,3 +324,11 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 - ✅ Memisahkan Lua patterns dari regex untuk menghindari confusion
 
 **Kurikulum ini telah diaudit dan diperbarui berdasarkan sumber-sumber terkini (2025) dan verifikasi cross-reference.**
+
+#
+
+> - **[Reference Guide][2]**
+> - **[Ke Atas](#)**
+
+[1]: ../../README.md
+[2]: ../string/reference-guide/README.md
