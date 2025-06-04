@@ -1,3 +1,6 @@
+> - [Ke Bawah](#satu)
+> - [Daftar 25 Kurikulum Dasar][kurikulum-dasar]
+
 # 🌙 **MASTER LUA PROGRAMMING**
 
 ## _The Ultimate Journey from Scripting to System Architecture_
@@ -1219,21 +1222,24 @@ warn("Ini hanya peringatan")
 
 > Selain itu, setiap rilis juga membawa **puluhan–ratusan** perbaikan bug, optimasi kinerja, dan tweak kecil di API C yang tidak tercatat sebagai “fitur utama”. Jadi jika ditotal keseluruhan — termasuk semua minor tweaks — jumlahnya jelas jauh lebih banyak, tetapi secara ringkas ada empat “loncatan” versi dengan **32 fitur baru utama**. Dengan cara iteratif—menjalankan, mengamati, dan mencatat—pelajar akan memahami **evolusi gaya koding** dan **peningkatan mekanisme** di tiap versi Lua. Jika menemui ketidakcocokan, dokumentasikan di catatan pribadi agar proses migrasi proyek nyata lebih mulus. Semangat eksperimen!
 
+#
+
+<h3 id="satu"></h3>
+
+- **[Ke Atas](#)**
+- **[Domain Spesifik][domain-spesifik]**
+
 [1]: https://www.lua.org/versions.html?utm_source=chatgpt.com "version history - Lua"
 [2]: https://www.lua.org/manual/5.2/readme.html?utm_source=chatgpt.com "Lua 5.2 readme"
 [3]: https://www.lua.org/manual/5.3/readme.html?utm_source=chatgpt.com "Lua 5.3 readme"
 [4]: https://www.lua.org/manual/5.4/readme.html?utm_source=chatgpt.com "Lua 5.4 readme"
 
-#
-
 <!-- ------------------------- -->
 
-[001]: ../lua/materi/string/README.md
-[002]: ../lua/materi/number/README.md
-[005]: ../lua/materi/instalasi/README.md/#instalasi
-[014]: ../lua/materi/komentar/README.md/#1-dasar-komentar
-[015]: ../lua/materi/variabel/README.md
-
-> #### [Domain Spesifik][domain-spesifik]
-
+[001]: ../lua/materi/dasar/string/README.md
+[002]: ../lua/materi/dasar/number/README.md
+[005]: ../lua/materi/dasar/instalasi/README.md/#instalasi
+[014]: ../lua/materi/dasar/komentar/README.md/#1-dasar-komentar
+[015]: ../lua/materi/dasar/variabel/README.md
 [domain-spesifik]: ../../README.md
+[kurikulum-dasar]: ../lua/materi/README.md

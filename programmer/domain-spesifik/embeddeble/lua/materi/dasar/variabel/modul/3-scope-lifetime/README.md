@@ -824,9 +824,7 @@ Pembahasan Modul 3 mengenai Scope dan Lifetime telah selesai. Konsep-konsep ini,
 #
 
 > - **[Ke Atas](#)**
-
-<!-- > - **[Selanjutnya][2]** -->
-
+> - **[Selanjutnya][2]**
 > - **[Sebelumnya][3]**
 > - **[Kurikulum][4]**
 > - **[Domain Spesifik][5]**
@@ -834,7 +832,5 @@ Pembahasan Modul 3 mengenai Scope dan Lifetime telah selesai. Konsep-konsep ini,
 [5]: ../../../../../../README.md
 [4]: ../../../../README.md
 [3]: ../2-assignment-patterns/README.md
-
-<!-- [2]: ../ -->
-
+[2]: ../4-advanced-variable-concepts/README.md
 [1]: ../../README.md/#31-variable-scope

@@ -2339,8 +2339,8 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 
 <!-- ------------- -->
 
-[string1]: ../../../materi/string/README.md
-[number1]: ../../../materi/number/README.md
+[string1]: ../../../materi/dasar/string/README.md
+[number1]: ../../../materi/dasar/number/README.md
 
 #### [Domain Spesifik][domain-spesifik]
 

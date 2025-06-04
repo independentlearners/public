@@ -1,4 +1,4 @@
-# Panduan Lengkap String dalam Lua - Dari Dasar hingga Mahir
+# **Panduan Lengkap String dalam Lua - Dari Dasar hingga Mahir**
 
 ### Pada bagian ini kita akan mempelajari secara mendalam mengenai String yang meliputi beriku
 
@@ -923,9 +923,9 @@ String dalam Lua adalah tipe data yang sangat powerful dengan library function y
 
 Dengan memahami semua konsep di atas, Anda akan menjadi expert dalam manipulasi string Lua untuk segala kebutuhan pemrograman Anda!
 
-[Daftar Kurikulum][1]
-
-[Domain Spesifik][domain-spesifik]
+> - **[Ke Atas](#)**
+> - **[Daftar Kurikulum][1]**
+> - **[Domain Spesifik][domain-spesifik]**
 
 [domain-spesifik]: ../../../../README.md
 [1]: ../../README.md

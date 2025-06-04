@@ -1,4 +1,4 @@
-# [Modul 2: Variable Assignment dan Operations (Minggu 2)][1]
+# **[Modul 2: Variable Assignment dan Operations (Minggu 2)][1]**
 
 Modul ini akan memperdalam pemahaman Anda tentang bagaimana nilai ditugaskan (assigned) ke variabel di Lua, termasuk berbagai pola penugasan, dan bagaimana melakukan operasi dasar pada variabel-variabel tersebut.
 

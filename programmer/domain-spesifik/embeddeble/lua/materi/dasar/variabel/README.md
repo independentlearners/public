@@ -1,4 +1,4 @@
-# **Kurikulum Lengkap Variabel di Lua**
+# **[Kurikulum Lengkap][lengkap] [Variabel di Lua][dasar]**
 
 ## Overview Kurikulum
 
@@ -171,7 +171,7 @@ Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang variabel dal
 
 ---
 
-## Modul 4: Advanced Variable Concepts (Minggu 4)
+## [Modul 4: Advanced Variable Concepts (Minggu 4)][4]
 
 ### 4.1 Variable References dan Aliasing
 
@@ -224,7 +224,7 @@ Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang variabel dal
 
 ---
 
-## Modul 5: Specialized Variable Usage (Minggu 5)
+## [Modul 5: Specialized Variable Usage (Minggu 5)][5]
 
 ### 5.1 Variable dalam Closures
 
@@ -490,7 +490,14 @@ Kurikulum ini memberikan fondasi yang kuat untuk memahami dan menguasai pengguna
 > - **[Ke Atas](#)**
 > - **[Kurikulum][1]**
 
-[1]: ../../README.md
+[1]: ../../../README.md
 [modul-1]: ../variabel/modul/1-fondasi-variabel/README.md
 [2]: ../variabel/modul/2-assignment-patterns/README.md
 [3]: ../variabel/modul/3-scope-lifetime/README.md
+[4]: ../variabel/modul/4-advanced-variable-concepts/README.md
+[5]: ../variabel/modul/5-specialized-variable-usage/README.md
+
+<!-- ___________________________________________ -->
+
+[dasar]: ../../README.md
+[lengkap]: ../../../README.md

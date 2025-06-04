@@ -184,5 +184,5 @@ end
 > - **[Fondasi Plugin Novim][2]**
 
 [1]: ../../../README.md/#
-[2]: ../../nich/plugin/neovim/README.md
+[2]: ../../../nich/plugin/neovim/README.md
 [3]: ../../README.md

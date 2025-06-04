@@ -351,7 +351,7 @@ print(#gapped)           -- 2 (berhenti di nil pertama)
 
 -- Tabel dengan key non-numerik
 local mixed = {a = 1, b = 2, [1] = "first"}
-print(#mixed)            -- 1 (hanya menghitung array part"../../../../../embedded/lua/operator")
+print(#mixed)            -- 1 (hanya menghitung array part"../../../../../../embedded/lua/operator")
 ```
 
 ### Perilaku Tidak Terdefinisi
