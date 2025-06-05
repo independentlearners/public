@@ -1,6 +1,6 @@
-# **[Kurikulum Komprehensif Tipe Data Lua - Master Level][1]**
+# **[Kurikulum Komprehensif Tipe Data Lua - Master Level][0]**
 
-## **1. Fondasi Sistem Tipe Lua**
+## **[1. Fondasi Sistem Tipe Lua][1]**
 
 ### **1.1 Filosofi Dynamic Typing**
 
@@ -29,7 +29,7 @@
   - Sumber: https://www.lua.org/manual/5.4/manual.html#pdf-getmetatable
   - Sumber: http://lua-users.org/wiki/MetatableEvents
 
-## **2. Tipe Data Primitif - Deep Dive**
+## **[2. Tipe Data Primitif - Deep Dive][2]**
 
 ### **2.1 Tipe Nil - Advanced Concepts**
 
@@ -97,7 +97,7 @@
   - Sumber: https://www.lua.org/pil/11.6.html
   - Sumber: http://lua-users.org/wiki/StringBufferTutorial
 
-## **3. Tipe Data Kompleks - Advanced**
+## **[3. Tipe Data Kompleks - Advanced][3]**
 
 ### **3.1 Tipe Function - Function Internals**
 
@@ -151,7 +151,7 @@
   - Sumber: https://www.lua.org/gems/sample.pdf
   - Sumber: http://lua-users.org/wiki/OptimisationTips
 
-## **4. Tipe Data Lanjutan - Expert Level**
+## **[4. Tipe Data Lanjutan - Expert Level][4]**
 
 ### **4.1 Tipe Userdata - Complete Guide**
 
@@ -195,7 +195,7 @@
   - Sumber: https://www.lua.org/pil/9.4.html
   - Sumber: http://lua-users.org/wiki/ErrorHandling
 
-## **5. Sistem Metatable - Complete Mastery**
+## **[5. Sistem Metatable - Complete Mastery][5]**
 
 ### **5.1 Metatable Architecture**
 
@@ -234,7 +234,7 @@
   - Sumber: https://www.lua.org/manual/5.4/manual.html#2.4
   - Sumber: http://lua-users.org/wiki/FinalizationRegistry
 
-## **6. Type Coercion dan Conversion - Expert**
+## **[6. Type Coercion dan Conversion - Expert][6]**
 
 ### **6.1 Implicit Type Conversion Rules**
 
@@ -258,7 +258,7 @@
   - Sumber: https://www.lua.org/manual/5.4/manual.html#pdf-tostring
   - Sumber: http://lua-users.org/wiki/StringsTutorial
 
-## **7. Memory Management - Deep Dive**
+## **[7. Memory Management - Deep Dive][7]**
 
 ### **7.1 Garbage Collection dan Data Types**
 
@@ -287,7 +287,7 @@
   - Sumber: https://speakerdeck.com/pmusa/profiling-memory-in-lua
   - Sumber: https://www.lua.org/gems/sample.pdf
 
-## **8. FFI dan Native Data Types**
+## **[8. FFI dan Native Data Types][8]**
 
 ### **8.1 LuaJIT FFI Library**
 
@@ -311,7 +311,7 @@
   - Sumber: https://github.com/jmckaskill/luaffi
   - Sumber: https://stackoverflow.com/questions/52306139/how-does-luajit-wrap-c-data-types-with-the-ffi
 
-## **9. Advanced Debugging dan Profiling**
+## **[9. Advanced Debugging dan Profiling][9]**
 
 ### **9.1 Type-Specific Debugging**
 
@@ -335,7 +335,7 @@
   - Sumber: https://github.com/pmusa/luamemprofiler
   - Sumber: https://speakerdeck.com/pmusa/profiling-memory-in-lua
 
-## **10. Advanced Concepts dan Patterns**
+## **[10. Advanced Concepts dan Patterns][10]**
 
 ### **10.1 Object-Oriented Programming**
 
@@ -359,7 +359,7 @@
   - Sumber: http://lua-users.org/wiki/ObserverPattern
   - Sumber: http://lua-users.org/wiki/VisitorPattern
 
-## **11. Environment dan Sandboxing**
+## **[11. Environment dan Sandboxing][11]**
 
 ### **11.1 Global Environment Management**
 
@@ -378,7 +378,7 @@
   - Sumber: https://www.lua.org/pil/15.html
   - Sumber: http://lua-users.org/wiki/ModulesTutorial
 
-## **12. Security dan Best Practices**
+## **[12. Security dan Best Practices][12]**
 
 ### **12.1 Type Safety Practices**
 
@@ -402,7 +402,7 @@
   - Sumber: http://lua-users.org/wiki/OptimisationTips
   - Sumber: http://lua-users.org/wiki/OptimisationCodingTips
 
-## **13. Version Differences dan Compatibility**
+## **[13. Version Differences dan Compatibility][13]**
 
 ### **13.1 Type System Evolution Across Versions**
 
@@ -421,7 +421,7 @@
   - Sumber: http://lua-users.org/wiki/VersionPortability
   - Sumber: http://lua-users.org/wiki/CompatibilityTips
 
-## **14. Testing dan Quality Assurance**
+## **[14. Testing dan Quality Assurance][14]**
 
 ### **14.1 Type-Aware Testing Strategies**
 
@@ -440,7 +440,7 @@
   - Sumber: http://lua-users.org/wiki/LuaStaticAnalysis
   - Sumber: http://lua-users.org/wiki/CodeAnalysisTools
 
-## **15. Advanced Integration Patterns**
+## **[15. Advanced Integration Patterns][15]**
 
 ### **15.1 C/C++ Integration**
 
@@ -459,13 +459,33 @@ Kurikulum ini menyediakan coverage yang sangat komprehensif untuk semua aspek ti
 #
 
 > - **[Ke Atas](#)**
-> - **[Selanjutnya][2]**
-> - **[Sebelumnya][3]**
-> - **[Kurikulum][4]**
-> - **[Domain Spesifik][5]**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
 
-[5]: ../../../../../README.md
-[4]: ../../../README.md
-[3]: ../string/README.md
-[2]: ../input-output/README.md
-[1]: ../../README.md/#
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../string/README.md
+[selanjutnya]: ../input-output/README.md
+
+#
+
+<!----------------------------------------------------->
+
+[0]: ../../README.md
+[1]: ../tipe-data/bagian-1/README.md
+[2]: ../tipe-data/bagian-2/README.md
+[3]: ../tipe-data/bagian-3/README.md
+[4]: ../tipe-data/bagian-4/README.md
+[5]: ../tipe-data/bagian-5/README.md
+[6]: ../tipe-data/bagian-6/README.md
+[7]: ../tipe-data/bagian-7/README.md
+[8]: ../tipe-data/bagian-8/README.md
+[9]: ../tipe-data/bagian-9/README.md
+[10]: ../tipe-data/bagian-10/README.md
+[11]: ../tipe-data/bagian-11/README.md
+[12]: ../tipe-data/bagian-12/README.md
+[13]: ../tipe-data/bagian-13/README.md
+[14]: ../tipe-data/bagian-14/README.md
+[15]: ../tipe-data/bagian-15/README.md

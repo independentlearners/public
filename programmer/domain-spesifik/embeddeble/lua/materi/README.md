@@ -43,6 +43,7 @@
 Setiap topik akan memiliki struktur kurikulum yang sama seperti yang sudah saya buat untuk Variables dan Control Flow - lengkap dengan modul, sub-topik, praktik, dan assessment.
 
 > - **[Ke Atasa](#)**
+> - **[Domain Spesifik][domain]**
 
 [0]: ../README.md
 [1]: ../materi/dasar/variabel/README.md
@@ -70,3 +71,4 @@ Setiap topik akan memiliki struktur kurikulum yang sama seperti yang sudah saya 
 [23]: ../materi/advanced/web-development/README.md
 [24]: ../materi/advanced/game-development/README.md
 [25]: ../materi/advanced/embedded-systems/README.md
+[domain]: ../../../README.md
