@@ -4,7 +4,7 @@
 
 ### **FUNDAMENTAL (Beginner - 6 topik)**
 
-1. **[Variables][1]** - 5 minggu, 35 jam
+1. **[Variables][1]** - 5 minggu, 35 jam ✅
 2. **[Control Flow][2]** - 8 minggu, 50 jam
 3. **[Functions][3]** - 6 minggu, 40 jam
 4. **[Strings][4]** - 4 minggu, 30 jam
