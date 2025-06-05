@@ -716,3 +716,38 @@ Standar IEEE 754 juga mendefinisikan nilai-nilai khusus untuk menangani situasi 
   - Tutorial tentang pustaka `math` sering membahas nilai-nilai spesial ini.
 
 Kita telah menyelesaikan _deep dive_ pada tipe `number`. Selanjutnya dalam kurikulum Anda adalah **"2.4 Tipe String - _Deep String Mechanics_"**. Siap untuk melanjutkan?
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../../README.md
+[sebelumnya]: ../bagian-1/README.md
+[selanjutnya]: ../bagian-3/README.md
+
+<!----------------------------------------------------->
+
+[0]: ../README.md
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../
