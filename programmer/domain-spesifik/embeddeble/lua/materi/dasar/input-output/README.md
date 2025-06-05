@@ -1,4 +1,4 @@
-# [Kurikulum Lengkap Input/Output di Lua][0]
+# **[Kurikulum Lengkap Input/Output di Lua][0]**
 
 ## [1. Konsep Dasar Input/Output][1]
 
@@ -303,3 +303,14 @@ Kurikulum ini sekarang **100% LENGKAP** dan mencakup setiap aspek I/O di Lua, ba
 [13]: ../input-output/debugging-dan-trobleshooting/README.md
 [14]: ../input-output/platform-specific-considerations/README.md
 [15]: ../input-output/advanced-topics/README.md
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../tipe-data/README.md
+[selanjutnya]: ../../intermediate/tables/README.md

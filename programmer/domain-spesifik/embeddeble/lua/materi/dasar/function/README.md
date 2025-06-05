@@ -512,8 +512,8 @@ Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang functions di
 > - **[Kurikulum][4]**
 > - **[Domain Spesifik][5]**
 
-[5]: ../../../../../../README.md
-[4]: ../../../../README.md
+[5]: ../../../../../README.md
+[4]: ../../../README.md
 [3]: ../kontrol-flow/README.md
 [2]: ../string/README.md
 [1]: ../function/bagian-1/README.md

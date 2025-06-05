@@ -1,4 +1,4 @@
-## **KURIKULUM TABLES LUA - LENGKAP DAN KOMPREHENSIF**
+# **[KURIKULUM TABLES LUA - LENGKAP DAN KOMPREHENSIF][0]**
 
 ### **1. DASAR-DASAR TABLES**
 
@@ -202,3 +202,38 @@
 - **Safe Table Access Patterns**
 
 Kurikulum ini mencakup semua aspek Tables di Lua, termasuk topik-topik krusial seperti raw operations, garbage collection, finalizers, dan version-specific features. Ini adalah kurikulum yang benar-benar komprehensif untuk menguasai Tables di Lua secara mendalam.
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../dasar/input-output/README.md
+[selanjutnya]: ../../intermediate/modules-and-packages/README.md
+
+<!-- ------------------------------------------------- -->
+
+[0]: ../../README.md
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../

@@ -1,4 +1,4 @@
-# Kurikulum Lengkap: Modules & Packages di Lua
+# **[Kurikulum Lengkap: Modules & Packages di Lua][0]**
 
 ## 📚 **Tingkat 1: Fondasi Dasar**
 
@@ -351,3 +351,30 @@
 5. **Future-Proof** - Mencakup trend terbaru (IoT, embedded systems)
 
 **Tips**: Praktikkan setiap konsep dengan membuat project kecil, dan jangan ragu untuk mengeksplorasi source code dari project open source yang menggunakan Lua!
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../intermediate/tables/README.md
+[selanjutnya]: ../../intermediate/pattern-matching/README.md
+
+<!-- ------------------------------------------------- -->
+
+[0]: ../../README.md
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../

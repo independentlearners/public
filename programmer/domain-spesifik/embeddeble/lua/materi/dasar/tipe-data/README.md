@@ -1,4 +1,4 @@
-# Kurikulum Komprehensif Tipe Data Lua - Master Level
+# **[Kurikulum Komprehensif Tipe Data Lua - Master Level][1]**
 
 ## **1. Fondasi Sistem Tipe Lua**
 
@@ -54,7 +54,6 @@
   - Sumber: http://lua-users.org/wiki/BooleanLogic
 
 ### **2.3 Tipe Number - Internal Representation**
-
 
 - **IEEE 754 Double Precision Implementation**
 
@@ -456,3 +455,17 @@
   - Sumber: http://lua-users.org/wiki/SqliteSimple
 
 Kurikulum ini menyediakan coverage yang sangat komprehensif untuk semua aspek tipe data Lua, mulai dari konsep dasar hingga implementasi internal yang sangat advanced, termasuk topik-topik yang jarang dibahas dalam dokumentasi resmi.
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][2]**
+> - **[Sebelumnya][3]**
+> - **[Kurikulum][4]**
+> - **[Domain Spesifik][5]**
+
+[5]: ../../../../../README.md
+[4]: ../../../README.md
+[3]: ../string/README.md
+[2]: ../input-output/README.md
+[1]: ../../README.md/#

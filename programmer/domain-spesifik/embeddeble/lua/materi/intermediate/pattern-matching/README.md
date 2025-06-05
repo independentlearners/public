@@ -336,3 +336,18 @@
 [15]: ../pattern-matching/real-world-applications/README.md
 [16]: ../pattern-matching/cross-platform-implementation/README.md
 [17]: ../pattern-matching/assessment-dan-praktik/README.md
+
+<!--------------------------------------------------- -->
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../intermediate/modules-and-packages/README.md
+[selanjutnya]: ../../intermediate/file-system-operations/README.md

@@ -1,4 +1,4 @@
-# Daftar Kurikulum File System Operations di Lua (Versi Lengkap)
+# **[Daftar Kurikulum File System Operations di Lua (Versi Lengkap)][0]**
 
 ### 1. Dasar-Dasar File I/O Lua Standard
 
@@ -225,3 +225,42 @@
   - Disaster recovery
 
 Kurikulum ini sekarang mencakup **semua aspek file system operations** yang tersedia di ekosistem Lua, termasuk library-library advanced seperti Nixio yang menyediakan implementasi Windows dan POSIX dengan dukungan large file dan berbagai library lainnya yang tidak tercakup dalam dokumentasi resmi Lua standar.
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../intermediate/pattern-matching/README.md
+[selanjutnya]: ../../intermediate/standard-libraries/README.md
+
+<!-- ------------------------------------------------- -->
+
+[0]: ../../README.md
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../
+[19]: ../
+[20]: ../
+[21]: ../
+[22]: ../

@@ -1,4 +1,4 @@
-# Kurikulum Lengkap Standard Libraries Lua
+# **[Kurikulum Lengkap Standard Libraries Lua][0]**
 
 ## Modul 1: Dasar-Dasar Standard Library Lua
 
@@ -581,3 +581,38 @@
 ✅ **Version compatibility** dan migration guides
 
 Kurikulum ini sekarang **sangat komprehensif** dan mencakup tidak hanya standard libraries, tetapi juga **ecosystem**, **advanced patterns**, **performance optimization**, **security**, dan **real-world applications** yang membuat seorang pemula bisa menjadi **expert-level** dalam Lua standard libraries tanpa perlu dokumentasi resmi.
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../intermediate/file-system-operations/README.md
+[selanjutnya]: ../../intermediate/testing-and-debugging/README.md
+
+<!-- ------------------------------------------------- -->
+
+[0]: ../../README.md
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../

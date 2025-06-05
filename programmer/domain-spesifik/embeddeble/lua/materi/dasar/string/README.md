@@ -335,8 +335,8 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 > - **[Kurikulum][4]**
 > - **[Domain Spesifik][5]**
 
-[5]: ../../../../../../README.md
-[4]: ../../../../README.md
+[5]: ../../../../../README.md
+[4]: ../../../README.md
 [3]: ../function/README.md
 [2]: ../string/reference-guide/README.md
 [1]: ../../README.md

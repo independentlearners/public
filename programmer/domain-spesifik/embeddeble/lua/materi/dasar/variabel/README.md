@@ -493,6 +493,9 @@ Kurikulum ini memberikan fondasi yang kuat untuk memahami dan menguasai pengguna
 
 > - **[Ke Atas](#)**
 > - **[Kurikulum][1]**
+> - **[Selanjutnya][6]**
+> - **[Sebelumnya][7]**
+> - **[Domain Spesifik][domain]**
 
 [1]: ../../../README.md
 [modul-1]: ../variabel/modul/1-fondasi-variabel/README.md
@@ -500,8 +503,11 @@ Kurikulum ini memberikan fondasi yang kuat untuk memahami dan menguasai pengguna
 [3]: ../variabel/modul/3-scope-lifetime/README.md
 [4]: ../variabel/modul/4-advanced-variable-concepts/README.md
 [5]: ../variabel/modul/5-specialized-variable-usage/README.md
+[6]: ../kontrol-flow/README.md
+[7]: ../../advanced/embedded-systems/README.md
 
 <!-- ___________________________________________ -->
 
 [dasar]: ../../README.md
 [lengkap]: ../../../README.md
+[domain]: ../../../../../README.md

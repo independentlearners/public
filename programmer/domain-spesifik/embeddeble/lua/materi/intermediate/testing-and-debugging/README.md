@@ -1,4 +1,4 @@
-# Kurikulum Lengkap Testing & Debugging di Lua
+# **[Kurikulum Lengkap Testing & Debugging di Lua][0]**
 
 ## MODUL 1: DASAR-DASAR DEBUGGING LUA
 
@@ -505,3 +505,38 @@ Kurikulum ini sekarang **melebihi dokumentasi resmi** dengan mencakup:
 - Real-world case studies dari berbagai domains
 
 **Catatan**: Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang testing dan debugging di Lua tanpa perlu merujuk ke dokumentasi resmi. Setiap topik dilengkapi dengan sumber yang dapat diakses untuk pembelajaran lebih lanjut.
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../intermediate/standard-libraries/README.md
+[selanjutnya]: ../../advanced/metatables-and-metamethods/README.md
+
+<!--------------------------------------------------- -->
+
+[0]: ../../README.md
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../
