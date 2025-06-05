@@ -1,6 +1,6 @@
-# Kurikulum Lengkap Function di Lua
+# **[Kurikulum Lengkap Function di Lua][0]**
 
-## **Bagian 1: Dasar-Dasar Function**
+## **[Bagian 1: Dasar-Dasar Function][1]**
 
 ### 1.1 Pengenalan Function
 
@@ -38,7 +38,7 @@
 - [Programming in Lua - Local Variables and Blocks](https://www.lua.org/pil/4.2.html)
 - [Lua Users Wiki - Scope Tutorial](http://lua-users.org/wiki/ScopeTutorial)
 
-## **Bagian 2: Parameter dan Return Values**
+## **[Bagian 2: Parameter dan Return Values][bagian2]**
 
 ### 2.1 Parameter Handling
 
@@ -505,3 +505,17 @@ Buat environment untuk menjalankan functions secara aman.
 **Minggu 15-16:** Proyek praktik dan review mendalam
 
 Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang functions di Lua, mulai dari konsep dasar hingga teknik advanced yang tidak selalu tercakup dalam dokumentasi resmi.
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][2]**
+> - **[Sebelumnya][3]**
+> - **[Kurikulum][4]**
+> - **[Domain Spesifik][5]**
+
+[5]: ../../../../../../README.md
+[4]: ../../../../README.md
+[3]: ../kontrol-flow/README.md
+[2]: ../string/README.md
+[1]: ../function/bagian-1/README.md
+[0]: ../../README.md
+[bagian2]: ../function/bagian-2/README.md

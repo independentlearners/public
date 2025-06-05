@@ -588,6 +588,14 @@ Kurikulum ini dirancang untuk membuat Anda menjadi expert dalam control flow Lua
 
 #
 
-**[Ke Atas](#)**
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][2]**
+> - **[Sebelumnya][3]**
+> - **[Kurikulum][4]**
+> - **[Domain Spesifik][5]**
 
+[5]: ../../../../../../README.md
+[4]: ../../../../README.md
+[3]: ../variabel/README.md
+[2]: ../function/README.md
 [1]: ../../README.md

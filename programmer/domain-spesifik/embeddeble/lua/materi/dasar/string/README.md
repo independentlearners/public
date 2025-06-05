@@ -330,6 +330,14 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 #
 
 > - **[Ke Atas](#)**
+> - **[Selanjutnya][0]**
+> - **[Sebelumnya][3]**
+> - **[Kurikulum][4]**
+> - **[Domain Spesifik][5]**
 
-[1]: ../../README.md
+[5]: ../../../../../../README.md
+[4]: ../../../../README.md
+[3]: ../function/README.md
 [2]: ../string/reference-guide/README.md
+[1]: ../../README.md
+[0]: ../tipe-data/README.md

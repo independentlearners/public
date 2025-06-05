@@ -998,5 +998,5 @@ Operasi yang berkaitan dengan nilai boolean dan logika kondisional.
 [5]: ../../../../../../README.md
 [4]: ../../../../README.md
 [3]: ../1-fondasi-variabel/README.md
-[2]: ../
+[2]: ../3-scope-lifetime/README.md
 [1]: ../../README.md/#21-assignment-patterns

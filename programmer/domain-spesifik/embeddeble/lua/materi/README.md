@@ -8,7 +8,7 @@
 2. **[Control Flow][2]** - 8 minggu, 50 jam
 3. **[Functions][3]** - 6 minggu, 40 jam
 4. **[Strings][4]** - 4 minggu, 30 jam
-5. **[Numbers & Math][5]** - 3 minggu, 25 jam
+5. **[Data Type (Numbers & Math)][5]** - 3 minggu, 25 jam
 6. **[Input/Output][6]** - 3 minggu, 20 jam
 
 ### **INTERMEDIATE (6 topik)**
@@ -49,7 +49,7 @@ Setiap topik akan memiliki struktur kurikulum yang sama seperti yang sudah saya 
 [2]: ../materi/dasar/kontrol-flow/README.md
 [3]: ../materi/dasar/function/README.md
 [4]: ../materi/dasar/string/README.md
-[5]: ../materi/dasar/number/README.md
+[5]: ../materi/dasar/tipe-data/README.md
 [6]: ../materi/dasar/input-output/README.md
 [7]: ../materi/intermediate/tables/README.md
 [8]: ../materi/intermediate/modules-and-packages/README.md
