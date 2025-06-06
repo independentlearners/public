@@ -502,6 +502,7 @@ Ini menunjukkan bagaimana Anda dapat memiliki kontrol yang lebih halus bahkan da
   - [Lua 5.4 Manual - `io` library](<https://www.google.com/search?q=%5Bhttps://www.lua.org/manual/5.4/manual.html%236.8%5D(https://www.lua.org/manual/5.4/manual.html%236.8)>)
 
 Dengan ini, kita telah mencakup dasar-dasar Simple Model I/O. Model ini sangat berguna untuk tugas-tugas cepat dan skrip sederhana. Namun, untuk aplikasi yang lebih kompleks yang memerlukan pengelolaan file yang lebih robust dan fleksibel, kita akan beralih ke **Complete Model I/O**, yang akan menjadi topik berikutnya.
+
 #
 
 > - **[Ke Atas](#)**
@@ -510,14 +511,14 @@ Dengan ini, kita telah mencakup dasar-dasar Simple Model I/O. Model ini sangat b
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../../README.md
-[kurikulum]: ../../../README.md
-[sebelumnya]: ../bagian-2/README.md
-[selanjutnya]: ../bagian-4/README.md
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../../README.md
+[sebelumnya]: ../input-dasar-dari-pengguna/README.md
+[selanjutnya]: ../complete-model-I-O/README.md
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../README.md#3-simple-model-io-implicit-file-descriptors
 [1]: ../
 [2]: ../
 [3]: ../

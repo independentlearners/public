@@ -1,4 +1,4 @@
-# **[4. Complete Model I/O (Explicit File Descriptors)][1]**
+# **[4. Complete Model I/O (Explicit File Descriptors)][0]**
 
 Berbeda dengan Simple Model yang mengandalkan file input/output default, Complete Model mengharuskan Anda untuk secara eksplisit membuka file, melakukan operasi padanya menggunakan _file handle_ yang dikembalikan, dan kemudian secara eksplisit menutupnya. Ini memberikan fleksibilitas dan kontrol yang jauh lebih besar.
 
@@ -423,18 +423,293 @@ end
   - `file:seek`
     (Lihat [Lua 5.4 Manual - 6.8.1 – Functions for the Complete Model](https://www.google.com/search?q=https://www.lua.org/manual/5.4/manual.html%236.8.1) atau bagian yang menjelaskan metode `file`.)
 
-Dengan operasi-operasi ini, Anda memiliki perangkat lengkap untuk memanipulasi konten file secara detail menggunakan Complete Model. Berikutnya kita akan melanjutkan ke "File Status dan Metadata"
+#
+
+Dengan operasi-operasi ini, Anda memiliki perangkat lengkap untuk memanipulasi konten file secara detail menggunakan Complete Model.
+
+#
+
+### 4.3 File Status dan Metadata
+
+**Deskripsi Konkret:**
+Setelah Anda memiliki file handle, seringkali Anda perlu mengetahui statusnya—apakah file tersebut masih terbuka? Atau Anda mungkin perlu melakukan operasi tingkat rendah seperti memaksa data untuk ditulis ke disk. Bagian ini mencakup utilitas untuk mengelola dan memeriksa status file handle Anda.
+
+**`file:flush()` untuk memaksa penulisan:**
+
+- **Konsep**: Untuk alasan efisiensi, ketika Anda menggunakan `file:write()`, data yang Anda tulis tidak selalu langsung disimpan ke media fisik (seperti hard disk atau SSD). Sebaliknya, sistem operasi seringkali menyimpannya terlebih dahulu di sebuah area memori sementara yang disebut **buffer**. Data dalam buffer ini baru akan "dibersihkan" (flushed) atau ditulis ke disk ketika buffer penuh, ketika file ditutup (`file:close()`), atau ketika program berakhir. Metode `file:flush()` memungkinkan Anda untuk secara manual memaksa sistem operasi untuk segera menulis semua data yang tertahan di buffer ke file.
+- **Terminologi**:
+  - **Buffer**: Area penyimpanan sementara di memori. Mengumpulkan data dalam buffer sebelum menulisnya dalam satu blok besar ke disk jauh lebih cepat daripada menulis setiap potongan data kecil secara terpisah.
+  - **Flush**: Operasi untuk membersihkan buffer dengan menulis isinya ke tujuan akhir (file).
+- **Sintaks**: `local success, errorMessage = filehandle:flush()`
+  - `filehandle`: File handle yang valid dan terbuka untuk penulisan.
+- **Return Value**: Mengembalikan `true` jika berhasil, atau `nil` dan pesan error jika gagal.
+- **Kapan digunakan?**
+  - **Logging**: Jika Anda menulis file log, Anda mungkin ingin pesan log segera terlihat di file, terutama saat men-debug, tanpa harus menunggu file ditutup.
+  - **Komunikasi Antar-Proses**: Jika satu program menulis ke file (atau pipe) yang sedang dibaca oleh program lain, `flush()` memastikan bahwa program kedua akan segera melihat data yang baru ditulis.
+  - **Ketahanan Data**: Dalam aplikasi kritis, memanggil `flush()` setelah penulisan data penting dapat mengurangi risiko kehilangan data jika program crash sebelum file ditutup secara normal.
+
+**`io.type()` untuk mengecek status file handle:**
+
+- **Konsep**: Fungsi `io.type()` adalah alat diagnostik yang sangat berguna. Ia memeriksa sebuah variabel dan mengembalikan string yang mendeskripsikan tipenya. Ini sangat berguna untuk file handle karena ia dapat membedakan antara file yang masih terbuka dan file yang sudah ditutup.
+- **Sintaks**: `local typeString = io.type(object)`
+  - `object`: Variabel yang ingin Anda periksa (misalnya, file handle).
+- **Return Value yang Relevan untuk I/O**:
+  - **`"file"`**: Jika `object` adalah file handle yang sedang **terbuka**.
+  - **`"closed file"`**: Jika `object` adalah file handle yang sudah **ditutup**.
+  - `nil`: Jika `object` adalah `nil`.
+  - String lain untuk tipe data lain (`"number"`, `"string"`, dll.).
+
+**Mengecek apakah file terbuka atau tertutup:**
+Cara paling langsung untuk memeriksa status file handle adalah dengan menggunakan `io.type()`.
+
+```lua
+local file = io.open("test.txt", "w")
+print(io.type(file))  -- Akan mencetak: "file"
+
+file:close()
+print(io.type(file))  -- Akan mencetak: "closed file"
+```
+
+**Mendapatkan Informasi File (Metadata):**
+Pustaka `io` standar Lua cukup minimalis dalam hal mendapatkan metadata file (seperti ukuran file, tanggal modifikasi, dll.) secara langsung. Namun, ada beberapa trik dan fungsi dari pustaka `os` yang bisa digunakan:
+
+- **Mendapatkan Ukuran File**: Cara paling umum untuk mendapatkan ukuran file menggunakan file handle yang terbuka adalah dengan `seek`:
+  1.  Simpan posisi kursor saat ini: `local current_pos = file:seek()`
+  2.  Pindahkan kursor ke akhir file: `local size = file:seek("end")`
+  3.  Kembalikan kursor ke posisi semula: `file:seek("set", current_pos)`
+- **Mendapatkan Informasi Lain**: Untuk metadata yang lebih kaya (seperti tanggal modifikasi, izin akses), pustaka `io` tidak menyediakannya. Anda biasanya akan memerlukan pustaka eksternal seperti **LuaFileSystem (LFS)**, yang menyediakan fungsi `lfs.attributes(filepath)` untuk mendapatkan informasi ini. Pustaka `os` standar juga memiliki beberapa fungsi terkait waktu, tetapi tidak secara langsung untuk mendapatkan waktu modifikasi file.
+
+**Contoh Kode (`file_status.lua`):**
+
+```lua
+-- Membuka file untuk demonstrasi
+local file, err = io.open("status_demo.txt", "w+")
+if not file then
+    io.stderr:write("Gagal membuka file: " .. (err or "") .. "\n")
+    return
+end
+
+-- 1. Mengecek tipe file handle yang terbuka
+print("--- Status Awal ---")
+print("Tipe handle setelah dibuka:", io.type(file)) -- Seharusnya "file"
+
+-- 2. Menggunakan file:flush()
+print("\n--- Menggunakan file:flush() ---")
+file:write("Data pertama yang akan di-flush.\n")
+print("Data ditulis ke buffer...")
+-- Pada titik ini, data mungkin belum ada di disk.
+
+local ok, flush_err = file:flush()
+-- Penjelasan Sintaks file:flush():
+-- file: File handle.
+-- :flush(): Memanggil metode 'flush' untuk memaksa penulisan dari buffer ke disk.
+if ok then
+    print("file:flush() berhasil. Data sekarang seharusnya ada di disk.")
+else
+    io.stderr:write("Gagal melakukan flush: " .. (flush_err or "") .. "\n")
+end
+
+file:write("Data kedua setelah flush.\n")
+print("Data kedua ditulis ke buffer...")
+
+
+-- 3. Mendapatkan ukuran file menggunakan seek
+print("\n--- Mendapatkan Ukuran File ---")
+local current_pos = file:seek()
+print("Posisi saat ini sebelum cek ukuran:", current_pos)
+
+local file_size = file:seek("end")
+-- Penjelasan Sintaks file:seek("end"):
+-- :seek("end"): Memindahkan kursor ke akhir file dan mengembalikan posisi tersebut,
+--              yang secara efektif adalah ukuran file dalam byte.
+print("Ukuran file (dari seek 'end'):", file_size, "bytes")
+
+file:seek("set", current_pos) -- Kembalikan kursor ke posisi semula
+print("Posisi setelah dikembalikan:", file:seek())
+
+
+-- 4. Menutup file dan mengecek statusnya
+print("\n--- Menutup File dan Pengecekan Akhir ---")
+file:close()
+print("File telah ditutup.")
+
+print("Tipe handle setelah ditutup:", io.type(file)) -- Seharusnya "closed file"
+
+-- 5. Mencoba operasi pada file yang sudah ditutup
+print("\nMencoba operasi pada handle yang sudah ditutup...")
+-- Operasi pada file yang sudah ditutup akan menghasilkan error.
+-- Kita gunakan pcall (Protected Call) untuk menangkap error ini tanpa menghentikan skrip.
+local status, error_msg = pcall(function()
+    file:write("Mencoba menulis lagi.")
+end)
+
+-- Penjelasan Sintaks pcall():
+-- pcall(func): Menjalankan fungsi 'func' dalam mode terproteksi.
+-- status: Akan 'false' jika terjadi error di dalam 'func'.
+-- error_msg: Akan berisi pesan error jika status adalah 'false'.
+
+if not status then
+    print("Operasi gagal seperti yang diharapkan.")
+    print("Pesan error:", error_msg)
+else
+    print("Ini tidak seharusnya terjadi!")
+end
+
+-- Membersihkan file demo
+local os = require("os")
+os.remove("status_demo.txt")
+print("\nFile 'status_demo.txt' telah dihapus.")
+```
+
+**Penjelasan Kode `file_status.lua`:**
+
+- **`io.type(file)`**: Pertama kali dipanggil setelah `io.open()`, ia mengembalikan `"file"`. Setelah `file:close()`, ia mengembalikan `"closed file"`. Ini adalah cara yang jelas dan andal untuk memeriksa apakah file handle masih dapat digunakan.
+- **`file:flush()`**: Mendemonstrasikan bagaimana Anda bisa memaksa penulisan. Dalam skrip sederhana seperti ini, efeknya mungkin tidak terlihat jelas, tetapi konsepnya sangat penting untuk aplikasi yang lebih besar.
+- **Mendapatkan Ukuran File**: Kode ini menunjukkan "trik" `seek` untuk mendapatkan ukuran file. Ini adalah pola yang sangat umum di Lua karena pustaka standar tidak memiliki fungsi `filesize()`.
+- **Operasi pada File Tertutup**: Bagian ini menunjukkan apa yang terjadi jika Anda mencoba menggunakan file handle yang sudah ditutup. Ini akan menyebabkan error. Menggunakan `pcall` adalah cara standar untuk menangani potensi error seperti ini dengan anggun, daripada membiarkan program Anda crash. Pesan error yang umum adalah "attempt to use a closed file".
+
+**Sumber Referensi dari Kurikulum:**
+
+- [CoderscratchPad: File I/O in Lua](https://coderscratchpad.com/file-i-o-in-lua-reading-and-writing-files/) (Sumber ini kemungkinan membahas siklus hidup file, termasuk `flush` dan `close`).
+- [Wizards of Lua: io.type Documentation](https://www.wizards-of-lua.net/modules/io/) (Sumber ini secara spesifik mendokumentasikan `io.type` dan nilai-nilai yang dikembalikannya).
+- Dokumentasi Resmi Lua:
+  - `file:flush`
+  - `io.type`
+    (Lihat bagian metode `file` dan fungsi `io` di manual referensi Lua).
 
 ---
 
-> - **[Ke Atas](#)**
-> - **[Selanjutnya][2]**
-> - **[Sebelumnya][3]**
-> - **[Kurikulum][4]**
-> - **[Domain Spesifik][5]**
+### 4.4 Temporary Files
 
-[5]: ../../../../../../README.md
-[4]: ../../../../README.md
-[3]: ../README.md/#3-simple-model-io-implicit-file-descriptors
-[2]: ../error-handling-I-O/README.md
-[1]: ../README.md/#4-complete-model-io-explicit-file-descriptors
+**Deskripsi Konkret:**
+Kadang-kadang, program Anda memerlukan file untuk menyimpan data sementara selama eksekusi, tetapi Anda tidak ingin file tersebut meninggalkan "sampah" di sistem file setelah program selesai. Untuk kebutuhan ini, Lua menyediakan fungsi `io.tmpfile()` yang membuat file sementara yang akan dihapus secara otomatis.
+
+**`io.tmpfile()` untuk membuat temporary files:**
+
+- **Konsep**: Fungsi `io.tmpfile()` membuat sebuah file sementara dan membukanya dalam mode baca/tulis (`w+b`). File ini berperilaku seperti file biasa—Anda mendapatkan file handle dan bisa menggunakan `read`, `write`, `seek`, dll. padanya.
+- **Sintaks**: `local temp_file, errorMessage = io.tmpfile()`
+- **Return Value**:
+  - Jika berhasil: mengembalikan file handle untuk file sementara tersebut.
+  - Jika gagal: mengembalikan `nil` dan pesan error.
+
+**Karakteristik dan lifecycle temporary files:**
+
+- **Mode**: File sementara selalu dibuka dalam mode `"w+b"` (write-plus-binary). Ini berarti Anda bisa membaca dan menulis data biner apa adanya.
+- **Lokasi**: Lokasi fisik file sementara ini ditentukan oleh sistem operasi. Anda tidak perlu tahu atau peduli di mana file ini dibuat.
+- **Lifecycle (Siklus Hidup)**: Keajaiban `io.tmpfile()` adalah **penghapusan otomatis**. File sementara ini akan secara otomatis dihapus dari sistem file ketika:
+  1.  File handle-nya ditutup secara eksplisit (`temp_file:close()`).
+  2.  Program Lua berakhir (jika Anda tidak menutupnya secara manual).
+
+**Use cases untuk temporary files:**
+
+- **Data Antara**: Menyimpan hasil antara dari sebuah proses komputasi yang besar yang tidak muat di memori.
+- **Input untuk Program Eksternal**: Anda bisa menulis data ke file sementara, lalu memberikan path file tersebut ke program atau perintah command-line lain yang membutuhkan input dari file. (Catatan: mendapatkan path dari `io.tmpfile` tidak trivial, seringkali lebih mudah menggunakan `os.tmpname()` untuk mendapatkan nama file sementara, lalu membukanya dengan `io.open()`). Namun, untuk data yang hanya diproses di dalam Lua, `io.tmpfile()` lebih aman.
+- **Sorting Data Besar**: Membaca data dari sumber, menulisnya ke file sementara, melakukan sorting dengan membaca dan menulis antar beberapa file sementara, lalu menulis hasilnya ke tujuan akhir.
+- **Pengujian**: Membuat data "mock" atau palsu dalam sebuah file sementara untuk diuji oleh suatu fungsi, tanpa harus membuat dan membersihkan file secara manual di direktori proyek Anda.
+
+**Contoh Kode (`temporary_file.lua`):**
+
+```lua
+print("--- Membuat dan Menggunakan File Sementara ---")
+
+-- Membuat file sementara
+local tmpf, err = io.tmpfile()
+
+-- Penjelasan Sintaks io.tmpfile():
+-- io.tmpfile(): Fungsi yang tidak memerlukan argumen.
+--               Mengembalikan file handle jika berhasil, atau nil dan error jika gagal.
+-- tmpf: Variabel untuk menampung file handle sementara.
+
+if not tmpf then
+    io.stderr:write("Gagal membuat file sementara: " .. (err or "unknown error") .. "\n")
+    return
+end
+
+print("Berhasil membuat file sementara. Handle:", tmpf)
+print("Tipe handle:", io.type(tmpf)) -- Akan "file"
+
+-- Menulis data ke file sementara
+tmpf:write("Ini adalah data rahasia yang disimpan sementara.\n")
+tmpf:write("Data ini tidak akan meninggalkan jejak.\n")
+tmpf:write(string.rep("x", 100)) -- Menulis 100 karakter 'x'
+
+print("Data telah ditulis ke file sementara.")
+
+-- Mendapatkan ukuran data yang ditulis
+local size = tmpf:seek("end")
+print("Ukuran data di file sementara:", size, "bytes.")
+
+-- Membaca kembali data tersebut
+tmpf:seek("set", 0) -- Kembali ke awal untuk membaca
+local content = tmpf:read("*a")
+
+print("\n--- Konten yang dibaca kembali dari file sementara ---")
+print(content)
+print("-----------------------------------------------------")
+
+
+-- Menutup file sementara
+-- Saat baris ini dieksekusi, file fisik di disk akan dihapus oleh sistem operasi.
+tmpf:close()
+print("\nFile sementara telah ditutup. Pada titik ini, file fisik sudah dihapus.")
+print("Tipe handle setelah ditutup:", io.type(tmpf)) -- Akan "closed file"
+
+-- Setelah ditutup, file tersebut benar-benar hilang.
+-- Tidak ada file 'sampah' yang tersisa di direktori Anda.
+```
+
+**Penjelasan Kode `temporary_file.lua`:**
+
+- `io.tmpfile()`: Dipanggil untuk mendapatkan file handle (`tmpf`). Anda tidak perlu menyediakan nama file.
+- **Operasi Baca/Tulis/Seek**: Anda dapat menggunakan `tmpf` sama seperti file handle lain yang didapat dari `io.open()`. Kode ini menulis beberapa baris data, lalu menggunakan `seek` dan `read` untuk memverifikasi kontennya.
+- **`tmpf:close()`**: Ini adalah bagian kuncinya. Saat metode `close()` dipanggil pada file handle dari `io.tmpfile()`, file tersebut tidak hanya ditutup, tetapi juga dihapus dari sistem file. Ini adalah perilaku yang dijamin oleh pustaka standar Lua.
+- **Tidak Ada Pembersihan Manual**: Perhatikan bahwa tidak ada panggilan `os.remove()`. `io.tmpfile()` menangani seluruh siklus hidup file dari pembuatan hingga pemusnahan.
+
+**Sumber Referensi dari Kurikulum:**
+
+- [TutorialsPoint: Lua File I/O](https://www.tutorialspoint.com/lua/lua_file_io.htm) (Sumber ini seringkali mencakup fungsi-fungsi standar seperti `io.tmpfile`).
+- [Gammon: io.tmpfile Documentation](https://www.gammon.com.au/scripts/doc.php?lua=io.tmpfile)
+- [Stack Overflow: Using io.tmpfile](https://stackoverflow.com/questions/72272594/using-io-tmpfile-with-shell-command-ran-via-io-popen-in-lua) (Diskusi ini bisa memberikan konteks penggunaan yang lebih spesifik).
+- Dokumentasi Resmi Lua:
+  - [`io.tmpfile`](<https://www.google.com/search?q=%5Bhttps://www.lua.org/manual/5.4/manual.html%23pdf-io.tmpfile%5D(https://www.lua.org/manual/5.4/manual.html%23pdf-io.tmpfile)>)
+
+Dengan ini, kita telah menyelesaikan eksplorasi Complete Model I/O. Anda sekarang memiliki pengetahuan untuk membuka, menutup, membaca, menulis, menavigasi, dan mengelola status file dengan kontrol penuh.
+
+#
+
+#### Selanjutnya kita akan membahas topik yang sangat penting: **Penanganan Error dalam I/O**.
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../../README.md
+[sebelumnya]: ../simple-model-I-O/README.md
+[selanjutnya]: ../error-handling-I-O/README.md
+
+<!----------------------------------------------------->
+
+[0]: ../README.md#4-complete-model-io-explicit-file-descriptors
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../
