@@ -529,7 +529,7 @@ end
 
 ---
 
-### 🎮 **Modul 17: Pengembangan Game**
+### 🎮 **[Modul 17: Pengembangan Game][modul17]**
 
 | Kode | Topik                  | Referensi Resmi                                                           |
 | ---- | ---------------------- | ------------------------------------------------------------------------- |
@@ -1243,3 +1243,4 @@ warn("Ini hanya peringatan")
 [015]: ../lua/materi/dasar/variabel/README.md
 [domain-spesifik]: ../../README.md
 [kurikulum-dasar]: ../lua/materi/README.md
+[modul17]: ../lua/framework/README.md
