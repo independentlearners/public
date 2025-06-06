@@ -1,3 +1,5 @@
+# LEVEL 1
+
 <details>
 <summary>Gemini 2.5 Pro</summary>
 Sebelum kita membedah kurikulum string ini, mari kita lihat gambaran besarnya. Untuk benar-benar menguasai Lua, kamu perlu memahami beberapa pilar utama:
@@ -1152,7 +1154,7 @@ Ini adalah akhir dari pembahasan **LEVEL 1: DASAR-DASAR STRING**. Kita telah men
 > - **[Domain Spesifik][domain]**
 
 [domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[kurikulum]: ../README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->

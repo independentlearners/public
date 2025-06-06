@@ -6,7 +6,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 1: DASAR-DASAR STRING**
+## **[LEVEL 1: DASAR-DASAR STRING][bagian1]**
 
 ### 1.1 Pengenalan String di Lua
 
@@ -39,7 +39,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 2: STRING LIBRARY FUNCTIONS**
+## **[LEVEL 2: STRING LIBRARY FUNCTIONS][bagian2]**
 
 ### 2.1 Basic String Functions
 
@@ -75,7 +75,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 3: PATTERN MATCHING MASTERY**
+## **[LEVEL 3: PATTERN MATCHING MASTERY][bagian3]**
 
 ### 3.1 Lua Pattern Syntax (Bukan Regex!)
 
@@ -110,7 +110,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 4: STRING FORMATTING & CONVERSION**
+## **[LEVEL 4: STRING FORMATTING & CONVERSION][bagian4]**
 
 ### 4.1 String Formatting dengan string.format()
 
@@ -144,7 +144,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 5: UTF-8 DAN UNICODE (LUA 5.3+)**
+## **[LEVEL 5: UTF-8 DAN UNICODE (LUA 5.3+)][bagian5]**
 
 ### 5.1 UTF-8 Support Native
 
@@ -168,7 +168,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 6: LPEG - PARSING EXPRESSION GRAMMARS**
+## **[LEVEL 6: LPEG - PARSING EXPRESSION GRAMMARS][bagian6]**
 
 ### 6.1 LPEG Fundamentals
 
@@ -201,7 +201,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 7: APLIKASI PRAKTIS**
+## **[LEVEL 7: APLIKASI PRAKTIS][bagian7]**
 
 ### 7.1 Text Processing Applications
 
@@ -235,7 +235,7 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 
 ---
 
-## **LEVEL 8: INTEGRASI SISTEM**
+## **[LEVEL 8: INTEGRASI SISTEM][bagian8]**
 
 ### 8.1 C API String Handling
 
@@ -341,3 +341,13 @@ _Dirancang untuk menguasai string manipulation tanpa bergantung dokumentasi resm
 [2]: ../string/reference-guide/README.md
 [1]: ../../README.md
 [0]: ../tipe-data/README.md
+
+
+[bagian1]:../string/bagian-1/README.md
+[bagian2]:../string/bagian-2/README.md
+[bagian3]:../string/bagian-3/README.md
+[bagian4]:../string/bagian-4/README.md
+[bagian5]:../string/bagian-5/README.md
+[bagian6]:../string/bagian-6/README.md
+[bagian7]:../string/bagian-7/README.md
+[bagian8]:../string/bagian-8/README.md
