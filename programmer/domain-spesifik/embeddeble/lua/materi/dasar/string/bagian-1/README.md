@@ -1,5 +1,550 @@
 <details>
 <summary>Gemini 2.5 Pro</summary>
+Sebelum kita membedah kurikulum string ini, mari kita lihat gambaran besarnya. Untuk benar-benar menguasai Lua, kamu perlu memahami beberapa pilar utama:
+
+1.  **Dasar-dasar Bahasa:** Variabel, tipe data (termasuk string), operator, kontrol alur (if, for, while), dan fungsi.
+2.  **Struktur Data Inti:** **Tables**. Ini adalah satu-satunya struktur data di Lua dan bisa digunakan untuk membuat array, dictionary (hash maps), dan objek. Menguasai _tables_ adalah kunci menguasai Lua.
+3.  **Paradigma Pemrograman:** Pemrograman prosedural, fungsional, dan berorientasi objek (menggunakan metatables).
+4.  **Standard Libraries:** Pustaka standar seperti `string`, `table`, `math`, `io`, dan `os`. Kurikulum yang kamu berikan ini adalah pendalaman _total_ untuk `string` library.
+5.  **Manajemen Modul & Lingkungan:** `require`, `modules`, dan cara kerja lingkungan (_environments_) di Lua.
+6.  **Integrasi Lanjutan:** C API untuk menyematkan Lua ke dalam aplikasi lain dan LuaJIT FFI untuk berinteraksi dengan kode C dari dalam Lua.
+
+---
+
+## **LEVEL 1: DASAR-DASAR STRING**
+
+Level ini adalah fondasi mutlak. Memahaminya dengan benar akan membuat semua level berikutnya jauh lebih mudah. Ini tentang bagaimana Lua "melihat" dan "memperlakukan" teks.
+
+### **1.1 Pengenalan String di Lua**
+
+#### **Definisi dan konsep string sebagai immutable type**
+
+- **Deskripsi Konkret:**
+  **String** adalah urutan karakter yang digunakan untuk merepresentasikan teks. Pikirkan string sebagai "wadah" untuk huruf, angka, dan simbol. Contohnya: `"Halo Dunia"`, `"harga = 1000"`, atau `"!@#$%"`.
+
+  Konsep terpenting di sini adalah **immutable** (tidak dapat diubah). Artinya, sekali kamu membuat sebuah string di Lua, kamu _tidak bisa mengubah isi dari string itu sendiri_. Jika kamu melakukan operasi yang terlihat seperti "mengubah" string (misalnya, menggabungkannya dengan string lain), Lua sebenarnya membuat string _baru_ di memori yang berisi hasil operasi tersebut.
+
+  **Analogi:** Bayangkan kamu menulis sesuatu di selembar kertas dengan spidol permanen. Kamu tidak bisa menghapus atau mengubah tulisan itu. Jika kamu ingin "memperbaikinya", kamu harus mengambil selembar kertas baru dan menulis ulang semuanya dengan perbaikan tersebut. String di Lua bekerja seperti itu.
+
+- **Terminologi:**
+
+  - **String:** Tipe data untuk menyimpan teks.
+  - **Immutable:** Nilainya tidak dapat diubah setelah dibuat.
+  - **Karakter:** Satu unit tunggal dari teks, seperti 'a', 'B', atau '?'.
+
+- **Contoh Kode & Penjelasan Sintaks:**
+  Mari kita lihat bagaimana sifat _immutable_ ini bekerja.
+
+  ```lua
+  -- [[ Penjelasan Sintaks ]]
+  -- local: Kata kunci untuk mendeklarasikan variabel lokal. Ini praktik yang baik
+  --        untuk menjaga variabel agar tidak "bocor" ke lingkup global.
+  -- nama: Nama variabel yang kita buat.
+  -- =: Operator penugasan (assignment), untuk memberikan nilai ke variabel.
+  -- "Budi": Nilai string yang kita berikan ke variabel 'nama'.
+
+  local nama = "Budi"
+
+  -- Sekarang, kita akan coba "mengubah" string ini.
+  -- Operasi di bawah ini TIDAK mengubah string "Budi" yang asli.
+  -- Sebaliknya, ia membuat string BARU ("Budi Luhur") dan menugaskannya
+  -- kembali ke variabel 'nama'. Variabel 'nama' sekarang menunjuk ke
+  -- string baru ini, sementara string "Budi" yang lama akan dihapus
+  -- oleh garbage collector Lua jika tidak ada variabel lain yang menggunakannya.
+  nama = nama .. " Luhur" -- '..' adalah operator konkatenasi (penggabungan)
+
+  print(nama) -- Outputnya adalah "Budi Luhur"
+  ```
+
+  _Sumber Referensi: Programming in Lua (4th ed.), Chapter 2; Lua 5.4 Reference Manual, Section 2.1 & 3.4.6_
+
+#### **Cara mendeklarasikan: single quote, double quote, long bracket**
+
+- **Deskripsi Konkret:**
+  Lua sangat fleksibel dalam cara kamu menulis string. Kamu punya tiga pilihan utama, masing-masing dengan kegunaan spesifik.
+
+  1.  **Single Quotes (`'...'`):** Kutip tunggal. Berguna jika string-mu mengandung kutip ganda.
+  2.  **Double Quotes (`"..."`):** Kutip ganda. Berguna jika string-mu mengandung kutip tunggal.
+  3.  **Long Brackets (`[[...]]`):** Kurung siku ganda. Sangat berguna untuk string multi-baris atau string yang mengandung banyak kutip tunggal dan ganda, karena tidak ada karakter yang perlu di-"escape".
+
+- **Sintaks Dasar:**
+
+  - `'sebuah string'`
+  - `"string yang lain"`
+  - `[[string panjang atau multi-baris]]`
+
+- **Contoh Kode & Penjelasan:**
+
+  ```lua
+  -- [[ Penjelasan Sintaks ]]
+  -- '...' : Mendefinisikan string menggunakan kutip tunggal.
+  local kalimat1 = 'Dia berkata, "Halo!"'
+
+  -- "..." : Mendefinisikan string menggunakan kutip ganda.
+  local kalimat2 = "Ini adalah 'kutipan' penting."
+
+  -- [[...]] : Mendefinisikan string menggunakan long brackets.
+  -- Perhatikan bagaimana kita tidak perlu khawatir tentang kutip di dalamnya.
+  -- Baris baru juga akan dipertahankan persis seperti yang kita tulis.
+  local html_snippet = [[
+  <div>
+      <h1>Judul Halaman</h1>
+      <p>Dia berkata, "Ini 'mudah' sekali!"</p>
+  </div>
+  ]]
+
+  -- Mencetak semua variabel untuk melihat hasilnya
+  print(kalimat1)
+  print(kalimat2)
+  print(html_snippet)
+  ```
+
+  **Output:**
+
+  ```
+  Dia berkata, "Halo!"
+  Ini adalah 'kutipan' penting.
+
+  <div>
+      <h1>Judul Halaman</h1>
+      <p>Dia berkata, "Ini 'mudah' sekali!"</p>
+  </div>
+  ```
+
+  _Sumber Referensi: GameDev Academy - "Lua String Tutorial Complete Guide" (2023); Programming in Lua, Chapter 2.4_
+
+#### **String sebagai first-class citizen di Lua**
+
+- **Deskripsi Konkret:**
+  Istilah **"first-class citizen"** (warga kelas satu) dalam bahasa pemrograman berarti sebuah tipe data dapat diperlakukan sama seperti tipe data lainnya (seperti angka). Kamu bisa:
+
+  - Menyimpannya dalam variabel.
+  - Mengopernya sebagai argumen ke fungsi lain.
+  - Mengembalikannya sebagai hasil dari sebuah fungsi.
+  - Menyimpannya dalam _table_.
+
+  Di Lua, string memiliki semua hak istimewa ini, sama seperti angka, fungsi, dan tables. Ini membuat manipulasi string menjadi sangat kuat dan fleksibel.
+
+- **Terminologi:**
+
+  - **First-Class Citizen:** Entitas pemrograman yang mendukung semua operasi yang umumnya tersedia untuk entitas lain, seperti penugasan, pengiriman parameter, dan pengembalian nilai.
+
+- **Contoh Kode & Penjelasan:**
+
+  ```lua
+  -- [[ Penjelasan Sintaks ]]
+
+  -- 1. Menyimpan string dalam variabel (sudah kita lakukan)
+  local salam = "Selamat Pagi"
+
+  -- 2. Mengoper string sebagai argumen ke fungsi
+  -- 'print' adalah fungsi, dan kita memberikan variabel 'salam' sebagai argumennya.
+  print(salam)
+
+  -- 3. Mengembalikan string dari sebuah fungsi
+  -- function ... end: Mendefinisikan sebuah fungsi.
+  -- getPesan: Nama fungsi.
+  -- return: Kata kunci untuk mengembalikan nilai dari fungsi.
+  function getPesan()
+      return "Ini pesan dari dalam fungsi"
+  end
+
+  local pesanDariFungsi = getPesan()
+  print(pesanDariFungsi)
+
+  -- 4. Menyimpan string dalam sebuah table
+  -- {}: Sintaks untuk membuat table.
+  -- "kunci" = "nilai": Pasangan kunci-nilai dalam table.
+  local dataPengguna = {
+      nama = "Citra",
+      email = "citra@example.com",
+      level = "Admin"
+  }
+
+  print("Nama Pengguna: " .. dataPengguna.nama) -- Mengakses string dari table
+  ```
+
+  _Sumber Referensi: Programming in Lua (4th ed.), Chapter 2_
+
+---
+
+### **1.2 Literal String dan Advanced Syntax**
+
+Bagian ini memperdalam cara kita menulis string, terutama untuk kasus-kasus yang lebih rumit seperti menyertakan karakter "terlarang" atau teks yang membentang beberapa baris.
+
+#### **String literal dengan berbagai quote styles**
+
+- **Deskripsi Konkret:**
+  Seperti yang sudah kita bahas sebelumnya, Lua memberikanmu pilihan antara kutip tunggal (`'`) dan kutip ganda (`"`). Secara fungsional, tidak ada perbedaan di antara keduanya. Pilihan ini murni untuk kenyamanan. Aturan praktisnya adalah:
+
+  - Jika string-mu mengandung kutip tunggal (apostrof), gunakan kutip ganda untuk membungkusnya.
+  - Jika string-mu mengandung kutip ganda, gunakan kutip tunggal untuk membungkusnya.
+  - Ini menghindarimu dari keharusan menggunakan _escape sequences_ (yang akan kita bahas selanjutnya).
+
+- **Contoh Kode & Penjelasan:**
+
+  ```lua
+  -- [[ Situasi 1: String berisi apostrof (kutip tunggal) ]]
+  -- Menggunakan kutip ganda di luar membuat kita tidak perlu khawatir tentang ' di dalam.
+  local possessive_string = "Ini adalah buku milik Budi's."
+  print(possessive_string)
+
+  -- [[ Situasi 2: String berisi kutipan (kutip ganda) ]]
+  -- Menggunakan kutip tunggal di luar membuat kita tidak perlu khawatir tentang " di dalam.
+  local quote_string = 'Seseorang berteriak, "Tolong!"'
+  print(quote_string)
+
+  -- [[ Situasi 3: Apa yang terjadi jika kita tidak mengikuti aturan? ]]
+  -- Kode di bawah ini akan menghasilkan ERROR karena Lua mengira string selesai setelah Budi.
+  -- local error_string = 'Ini adalah buku milik Budi's.' -- INI AKAN GAGAL
+  ```
+
+  _Sumber Referensi: GameDev Academy - "Lua String Tutorial Complete Guide" (2023); Programming in Lua Chapter 2.4_
+
+#### **Escape sequences lengkap (\n, \t, \\, \", \', \a, \b, \f, \r, \v)**
+
+- **Deskripsi Konkret:**
+  **Escape Sequence** adalah cara untuk memberitahu Lua bahwa karakter berikutnya memiliki makna khusus. Ini diawali dengan _backslash_ (`\`). Kamu menggunakannya untuk memasukkan karakter yang tidak bisa diketik langsung, seperti baris baru, atau karakter yang memiliki makna sintaksis bagi Lua, seperti kutip itu sendiri.
+
+- **Terminologi:**
+
+  - **Escape Sequence:** Urutan karakter yang dimulai dengan `\` untuk merepresentasikan karakter lain.
+  - **Literal:** Nilai yang ditulis langsung di dalam kode (misalnya, `123` adalah literal angka, `"halo"` adalah literal string).
+
+- **Daftar Escape Sequence & Penjelasannya:**
+
+  - `\n`: **New Line** (Baris Baru). Memindahkan kursor ke awal baris berikutnya. Ini yang paling umum digunakan.
+  - `\t`: **Horizontal Tab**. Menambahkan spasi tab.
+  - `\\`: **Backslash**. Karena `\` digunakan untuk memulai escape sequence, kamu butuh `\\` untuk menulis karakter `\` secara harfiah.
+  - `\"`: **Double Quote**. Untuk menulis karakter `"` di dalam string yang dibungkus kutip ganda.
+  - `\'`: **Single Quote**. Untuk menulis karakter `'` di dalam string yang dibungkus kutip tunggal.
+  - `\a`: **Alert/Bell**. Menghasilkan suara "bip" singkat di terminal (tidak semua terminal mendukungnya).
+  - `\b`: **Backspace**. Memundurkan kursor satu karakter.
+  - `\f`: **Form Feed**. Karakter kontrol printer kuno, jarang digunakan sekarang.
+  - `\r`: **Carriage Return**. Memindahkan kursor ke awal baris _saat ini_ tanpa pindah baris. Berguna untuk membuat progress bar di terminal.
+  - `\v`: **Vertical Tab**. Jarang digunakan.
+
+- **Contoh Kode & Penjelasan Sintaks:**
+
+  ```lua
+  -- [[ Penjelasan Sintaks ]]
+  -- \n: Memasukkan baris baru
+  -- \t: Memasukkan tab
+  -- \": Memasukkan kutip ganda literal di dalam string kutip ganda
+  -- \\: Memasukkan backslash literal
+
+  local bio = "Nama:\tAndi\nProfesi:\t\"Programmer\"\nLokasi:\tC:\\Users\\Andi"
+
+  print(bio)
+  ```
+
+  **Output dari kode di atas akan terlihat seperti ini:**
+
+  ```
+  Nama:   Andi
+  Profesi:        "Programmer"
+  Lokasi: C:\Users\Andi
+  ```
+
+  _Sumber Referensi: Programming in Lua Chapter 2.4_
+
+#### **Long strings dengan `[[]]` dan nested brackets `[=[ ]=]`**
+
+- **Deskripsi Konkret:**
+  Kita sudah melihat `[[...]]` untuk string multi-baris. Tapi, bagaimana jika string multi-baris itu sendiri kebetulan mengandung teks `]]`? Ini akan membingungkan Lua, karena ia akan menganggap string sudah berakhir.
+
+  Untuk mengatasi ini, Lua memperbolehkan kita menempatkan satu atau lebih tanda sama dengan (`=`) di antara kurung siku pembuka dan penutup. Misalnya, `[=[...]=]` atau `[==[...]==]`. Lua akan mencari kurung siku penutup yang memiliki jumlah `=` yang _sama persis_ untuk mengakhiri string.
+
+- **Sintaks Dasar:**
+
+  - `[[ Konten string ]]`
+  - `[=[ Konten string yang mungkin berisi ]] ]=]`
+  - `[==[ Konten string yang mungkin berisi ]] dan ]=] ]==]`
+
+- **Contoh Kode & Penjelasan:**
+
+  ```lua
+  -- [[ Situasi 1: String biasa dengan long brackets ]]
+  local komentar_biasa = [[
+  Ini adalah blok komentar atau string multi-baris.
+  ]]
+
+  -- [[ Situasi 2: String yang mengandung "]]" ]]
+  -- Bayangkan kita sedang menulis dokumentasi tentang sintaks long brackets itu sendiri.
+  -- Jika kita menggunakan [[...]], kode ini akan error.
+
+  -- [[ Penjelasan Sintaks ]]
+  -- [=[ ... ]=]: Mendefinisikan string. Lua akan mencari sekuens penutup "]=]"
+  --              bukan "]]". Ini memungkinkan kita untuk memiliki "]]" di dalam string.
+  local komentar_kompleks = [=[
+  Untuk menutup sebuah long string, gunakan "]]".
+  Contoh: local s = [[contoh]]
+  Ini adalah contoh yang valid.
+  ]=]
+
+  print(komentar_kompleks)
+  ```
+
+  **Output:**
+
+  ```
+  Untuk menutup sebuah long string, gunakan "]]".
+  Contoh: local s = [[contoh]]
+  Ini adalah contoh yang valid.
+  ```
+
+  _Sumber Referensi: GameDev Academy - "Lua String Tutorial Complete Guide" (2023); Programming in Lua Chapter 2.4_
+
+#### **Multiline strings dan preservasi formatting**
+
+- **Deskripsi Konkret:**
+  Fitur utama dari _long brackets_ (`[[...]]`) adalah kemampuannya untuk menjaga format teks persis seperti saat kamu mengetiknya, termasuk semua spasi, tab, dan baris baru. Ini sangat berguna untuk menyematkan potongan kode, ASCII art, atau teks terformat lainnya langsung di dalam kodemu.
+
+- **Perilaku Penting:**
+  Satu hal yang perlu diperhatikan adalah _newline_ (baris baru) tepat setelah `[[`. Jika kamu menekan Enter setelah `[[`, baris baru itu akan menjadi bagian dari stringmu.
+
+- **Contoh Kode & Penjelasan:**
+
+  ```lua
+  -- [[ Contoh 1: ASCII Art ]]
+  -- Semua spasi dan baris baru akan dipertahankan.
+  local ascii_art = [[
+    / \
+   / _ \
+  ( o.o )
+   > ^ <
+  ]]
+  print(ascii_art)
+
+
+  -- [[ Contoh 2: Perilaku newline di awal ]]
+  -- Perhatikan perbedaan antara string_A dan string_B
+  local string_A = [[
+  Teks ini diawali dengan baris baru.]]
+
+  local string_B = [[Teks ini tidak diawali dengan baris baru.]]
+
+  print("--- String A ---")
+  print(string_A)
+  print("--- String B ---")
+  print(string_B)
+  ```
+
+  **Output:**
+
+  ```
+    / \
+   / _ \
+  ( o.o )
+   > ^ <
+
+  --- String A ---
+
+  Teks ini diawali dengan baris baru.
+  --- String B ---
+  Teks ini tidak diawali dengan baris baru.
+  ```
+
+  _Sumber Referensi: GameDev Academy - "Lua String Tutorial Complete Guide" (2023)_
+
+### **1.3 Operasi Fundamental**
+
+Di sini kita akan mempelajari operasi dasar yang paling sering kamu lakukan pada string: menggabungkannya, mengukur panjangnya, membandingkannya, dan bagaimana Lua secara ajaib dapat mengubahnya menjadi tipe lain.
+
+#### **Konkatenasi dengan operator (..) dan performance implications**
+
+- **Deskripsi Konkret:**
+  **Konkatenasi** adalah istilah teknis untuk "menggabungkan dua atau lebih string menjadi satu". Di Lua, kamu melakukan ini menggunakan operator dua titik (`..`). Ini adalah salah satu operasi string yang paling umum.
+
+  Namun, ada "implikasi performa" yang penting. Ingat, string di Lua itu _immutable_ (tidak bisa diubah). Saat kamu menggabungkan `stringA .. stringB`, Lua tidak mengubah `stringA`. Sebaliknya, ia membuat string _ketiga_ yang baru di memori, yang merupakan salinan dari `stringA` diikuti oleh salinan `stringB`.
+
+  Jika kamu hanya menggabungkan dua atau tiga string, ini bukan masalah. Tapi jika kamu melakukannya ratusan atau ribuan kali di dalam sebuah _loop_ (perulangan), ini bisa menjadi lambat dan boros memori karena Lua harus terus-menerus membuat string-string baru. (Kurikulum ini akan membahas solusi yang lebih efisien di Level 4.3).
+
+- **Terminologi:**
+
+  - **Konkatenasi (Concatenation):** Proses menggabungkan string dari ujung ke ujung.
+  - **Operator:** Simbol yang melakukan operasi pada satu atau lebih nilai (operan). Di sini, `..` adalah operatornya.
+
+- **Sintaks Dasar:**
+
+  - `string1 .. string2`
+
+- **Contoh Kode & Penjelasan Sintaks:**
+
+  ```lua
+  -- [[ Penjelasan Sintaks ]]
+  -- .. : Operator konkatenasi. Ia mengambil string di kiri dan kanannya,
+  --      lalu menghasilkan string baru yang merupakan gabungan keduanya.
+
+  local kata1 = "Selamat"
+  local kata2 = "Datang"
+  local spasi = " "
+
+  -- Menggabungkan tiga string menjadi satu string baru.
+  local kalimat = kata1 .. spasi .. kata2 .. " di Dunia Lua!"
+
+  print(kalimat)
+
+  -- Contoh di dalam loop (ilustrasi masalah performa)
+  local hasil = "" -- Mulai dengan string kosong
+  for i = 1, 5 do -- Lakukan perulangan 5 kali
+    -- Di setiap iterasi, sebuah string BARU dibuat.
+    -- Iterasi 1: "" .. "a" -> "a"
+    -- Iterasi 2: "a" .. "a" -> "aa" (string "a" dibuang)
+    -- Iterasi 3: "aa" .. "a" -> "aaa" (string "aa" dibuang)
+    -- dan seterusnya... ini tidak efisien untuk loop besar.
+    hasil = hasil .. "a"
+  end
+  print(hasil)
+  ```
+
+  **Output:**
+
+  ```
+  Selamat Datang di Dunia Lua!
+  aaaaa
+  ```
+
+  _Sumber Referensi: Lua 5.4 Reference Manual, Section 3.4.6; LuaScripts.com - "Mastering Lua Strings" (2025)_
+
+#### **Length operator (#) vs string.len()**
+
+- **Deskripsi Konkret:**
+  Untuk mengetahui panjang sebuah string, Lua menyediakan dua cara: operator panjang (`#`) dan fungsi dari pustaka string (`string.len()`). Keduanya melakukan hal yang sama persis: mengembalikan jumlah **byte** dalam string.
+
+  - **Operator `#`**: Ditempatkan sebelum string atau variabel string. Ini lebih singkat dan dianggap lebih "idiomatic" (gaya yang lebih umum dan disukai) oleh para programmer Lua.
+  - **Fungsi `string.len()`**: Cara yang lebih eksplisit, memanggil fungsi `len` dari _library_ `string`.
+
+  **Poin Sangat Penting:** Untuk karakter standar (ASCII, seperti A-Z, 0-9), satu karakter sama dengan satu byte. Namun, untuk karakter non-standar (seperti 'é', 'ล', atau emoji '😀'), satu karakter bisa memakan lebih dari satu byte (ini disebut UTF-8). Jadi, `#` dan `string.len()` akan menghitung jumlah byte, bukan jumlah karakter visual. Kita akan membahas cara menangani ini dengan benar di Level 5 (UTF-8).
+
+- **Sintaks Dasar:**
+
+  - `#namastring`
+  - `string.len(namastring)`
+
+- **Contoh Kode & Penjelasan Sintaks:**
+
+  ```lua
+  local teks = "Halo Dunia"
+
+  -- [[ Penjelasan Sintaks ]]
+  -- #teks : Menggunakan operator panjang untuk mendapatkan jumlah byte dari string
+  --         yang disimpan di variabel 'teks'.
+  local panjang1 = #teks
+  print("Panjang via #: " .. panjang1)
+
+  -- [[ Penjelasan Sintaks ]]
+  -- string.len(teks): Memanggil fungsi 'len' dari pustaka 'string' dan memberikan
+  --                    variabel 'teks' sebagai argumennya.
+  local panjang2 = string.len(teks)
+  print("Panjang via string.len(): " .. panjang2)
+
+  -- Contoh dengan karakter multi-byte (ilustrasi byte vs karakter)
+  local teks_utf8 = "你好" -- "nǐ hǎo", 2 karakter visual
+  print("Panjang byte dari '你好': " .. #teks_utf8) -- Outputnya akan 6, karena setiap karakter ini 3 byte.
+  ```
+
+  **Output:**
+
+  ```
+  Panjang via #: 10
+  Panjang via string.len(): 10
+  Panjang byte dari '你好': 6
+  ```
+
+  _Sumber Referensi: Lua 5.4 Reference Manual, Section 3.4.6 & 6.4_
+
+#### **String comparison dan lexicographic ordering**
+
+- **Deskripsi Konkret:**
+  Kamu bisa membandingkan string menggunakan operator perbandingan standar: `==` (sama dengan), `~=` (tidak sama dengan), `<` (kurang dari), `>` (lebih dari), `<=` (kurang dari atau sama dengan), dan `>=` (lebih dari atau sama dengan).
+
+  - `==` dan `~=`: Memeriksa apakah dua string identik secara keseluruhan.
+  - `<`, `>`, `<=`, `>=`: Bekerja berdasarkan **urutan leksikografis** (lexicographical order). Ini pada dasarnya adalah urutan "kamus", tetapi berdasarkan nilai numerik dari byte setiap karakter. Dalam standar yang paling umum (ASCII/UTF-8), urutan kasarnya adalah: karakter kontrol < spasi < angka < huruf besar < huruf kecil. Ini berarti `"Zebra"` akan dianggap "kurang dari" `"apple"`.
+
+- **Terminologi:**
+
+  - **Lexicographical Order:** Pengurutan berdasarkan nilai numerik dari karakter, satu per satu dari kiri ke kanan.
+
+- **Contoh Kode & Penjelasan:**
+
+  ```lua
+  -- Perbandingan kesetaraan
+  print("apel" == "apel")   -- true (sama persis)
+  print("apel" == "Apel")   -- false (case-sensitive, 'a' berbeda dari 'A')
+  print("apel" ~= "jeruk")  -- true (memang tidak sama)
+
+  -- Perbandingan leksikografis
+  print("apple" < "banana") -- true, karena 'a' < 'b'
+  print("Zebra" < "apple")  -- true, karena 'Z' (byte 90) < 'a' (byte 97)
+  print("cat" > "car")      -- true, karena pada karakter ke-3, 't' > 'r'
+  print("book" >= "book")   -- true, karena sama dengan
+  ```
+
+  **Output:**
+
+  ```
+  true
+  false
+  true
+  true
+  true
+  true
+  true
+  ```
+
+  _Sumber Referensi: Lua 5.4 Reference Manual, Section 3.4.5_
+
+#### **Automatic type conversion (coercion)**
+
+- **Deskripsi Konkret:**
+  **Coercion** (pemaksaan/konversi otomatis) adalah fitur di Lua di mana ia secara otomatis mengubah tipe data sebuah nilai agar sesuai dengan konteks operasi.
+
+  - Jika kamu menggunakan string yang berisi angka dalam operasi matematika (seperti `+`, `-`, `*`, `/`), Lua akan mencoba mengubah string itu menjadi angka.
+  - Jika kamu menggunakan angka dalam operasi konkatenasi string (`..`), Lua akan mengubah angka itu menjadi string.
+
+  Fitur ini membuat beberapa hal menjadi lebih nyaman, tetapi juga bisa berbahaya jika tidak hati-hati, karena dapat menyembunyikan kesalahan dalam logika programmu. Praktik yang lebih aman (terutama dalam proyek besar) adalah melakukan konversi secara manual menggunakan `tonumber()` dan `tostring()`, yang akan dibahas di Level 4.2.
+
+- **Terminologi:**
+
+  - **Coercion / Type Coercion:** Konversi tipe data otomatis oleh bahasa pemrograman.
+
+- **Contoh Kode & Penjelasan:**
+
+  ```lua
+  -- [[ Coercion: String ke Angka ]]
+  -- Lua melihat string "10" dan "5" digunakan dengan operator aritmatika '-'.
+  -- Ia secara otomatis mengubahnya menjadi angka 10 dan 5 sebelum melakukan pengurangan.
+  local hasil_angka = "10" - "5"
+  print(hasil_angka) -- Outputnya adalah angka 5, bukan string "5"
+  print(type(hasil_angka)) -- Outputnya akan "number"
+
+  -- [[ Coercion: Angka ke String ]]
+  -- Lua melihat angka 2025 digunakan dengan operator konkatenasi '..'.
+  -- Ia secara otomatis mengubahnya menjadi string "2025" sebelum menggabungkannya.
+  local kalimat = "Tahun sekarang adalah " .. 2025
+  print(kalimat)
+  print(type(kalimat)) -- Outputnya akan "string"
+
+  -- [[ Contoh di mana Coercion bisa gagal ]]
+  -- Baris di bawah ini akan menyebabkan error karena "sepuluh" tidak bisa diubah menjadi angka.
+  -- local error = "sepuluh" + 5
+  ```
+
+  **Output:**
+
+  ```
+  5
+  number
+  Tahun sekarang adalah 2025
+  string
+  ```
+
+  _Sumber Referensi: Lua 5.4 Reference Manual, Section 3.4.3_
+
+---
+
+Selamat! Kamu telah menyelesaikan **Level 1** dari kurikulum string Lua. Kamu sekarang memiliki fondasi yang kokoh tentang apa itu string, bagaimana cara membuatnya, dan operasi paling mendasar yang bisa dilakukan. Berikutnya, kita akan naik ke **Level 2: String Library Functions**, di mana kita akan mulai menjelajahi "perkakas" bawaan Lua yang sangat kuat untuk memanipulasi string secara lebih canggih.
 
 </details>
 
