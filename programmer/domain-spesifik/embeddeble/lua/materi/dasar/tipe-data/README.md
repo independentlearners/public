@@ -53,7 +53,7 @@
   - Sumber: https://www.lua.org/pil/3.3.html
   - Sumber: http://lua-users.org/wiki/BooleanLogic
 
-### **2.3 Tipe Number - Internal Representation**
+### **[2.3 Tipe Number](../tipe-data/number/README.md) - Internal Representation**
 
 - **IEEE 754 Double Precision Implementation**
 
@@ -74,7 +74,6 @@
   - Sumber: https://www.lua.org/manual/5.4/manual.html#pdf-math.huge
   - Sumber: http://lua-users.org/wiki/MathLibraryTutorial
 
-[(Kurikulum Number)](../tipe-data/number/README.md)
 
 ### **2.4 Tipe String - Deep String Mechanics**
 
