@@ -140,6 +140,8 @@ Ini adalah fungsi-fungsi dan konstanta paling umum yang akan Anda gunakan dari l
 
 ---
 
+<h3 id="duaaa"></h3>
+
 # LEVEL 2.5: COMPREHENSIVE MATH LIBRARY FUNCTIONS
 
 Level ini berfungsi sebagai inventaris lengkap dan pengenalan fungsi-fungsi yang lebih terspesialisasi.

@@ -1,26 +1,26 @@
-### **Panduan Belajar Lengkap: Numbers & Math di Lua**
+### **[Panduan Belajar Lengkap: Numbers & Math di Lua](#satuuu)**
 
 Selamat datang di panduan komprehensif untuk menguasai representasi angka, operasi matematika, dan konsep komputasi numerik di bahasa pemrograman Lua. Kurikulum ini dirancang untuk membawa Anda dari nol hingga menjadi seorang ahli yang tidak hanya bisa menggunakan Lua untuk tugas-tugas matematis, tetapi juga memahami seluk-beluk performa, presisi, dan arsitektur di baliknya.
 
 #### **Daftar Isi**
 
-- [Persiapan Awal: Fondasi Sebelum Memulai](#)
-- [LEVEL 1.5: VERSION COMPATIBILITY & DIFFERENCES](#)
-- [LEVEL 1: FUNDAMENTAL NUMBERS](#)
-- [LEVEL 2: MATH LIBRARY BASICS](#)
-- [LEVEL 2.5: COMPREHENSIVE MATH LIBRARY FUNCTIONS](#)
-- [LEVEL 3: ADVANCED ARITHMETIC](#)
-- [LEVEL 3.5: ERROR HANDLING & EDGE CASES](#)
-- [LEVEL 4: RANDOM NUMBERS & PROBABILITY](#)
-- [LEVEL 5: NUMBER MANIPULATION & FORMATTING](#)
-- [LEVEL 6: BIT OPERATIONS](#)
-- [LEVEL 6.5: MATHEMATICAL METAMETHODS](#)
-- [LEVEL 7: ADVANCED MATHEMATICAL CONCEPTS](#)
-- [LEVEL 8: PERFORMANCE & OPTIMIZATION](#)
-- [LEVEL 8.5: DEBUGGING & PROFILING MATHEMATICAL CODE](#)
-- [LEVEL 9: PRACTICAL APPLICATIONS](#)
-- [LEVEL 10: EXTERNAL LIBRARIES & TOOLS](#)
-- [Referensi Tambahan](#)
+- [Persiapan Awal: Fondasi Sebelum Memulai](#persiapan-awal-fondasi-sebelum-memulai)
+- [LEVEL 1.5: VERSION COMPATIBILITY & DIFFERENCES](#level-15-version-compatibility--differences)
+- [LEVEL 1: FUNDAMENTAL NUMBERS](#level-1-fundamental-numbers)
+- [LEVEL 2: MATH LIBRARY BASICS][1]
+- [LEVEL 2.5: COMPREHENSIVE MATH LIBRARY FUNCTIONS][2]
+- [LEVEL 3: ADVANCED ARITHMETIC][3]
+- [LEVEL 3.5: ERROR HANDLING & EDGE CASES][4]
+- [LEVEL 4: RANDOM NUMBERS & PROBABILITY][5]
+- [LEVEL 5: NUMBER MANIPULATION & FORMATTING][6]
+- [LEVEL 6: BIT OPERATIONS][7]
+- [LEVEL 6.5: MATHEMATICAL METAMETHODS][8]
+- [LEVEL 7: ADVANCED MATHEMATICAL CONCEPTS][9]
+- [LEVEL 8: PERFORMANCE & OPTIMIZATION][10]
+- [LEVEL 8.5: DEBUGGING & PROFILING MATHEMATICAL CODE][11]
+- [LEVEL 9: PRACTICAL APPLICATIONS][12]
+- [LEVEL 10: EXTERNAL LIBRARIES & TOOLS][13]
+- [Referensi Tambahan][14]
 
 ---
 
@@ -203,6 +203,8 @@ Ini adalah dasar-dasar yang harus Anda kuasai. Ini adalah blok bangunan dari sem
 
 #
 
+<h3 id="satuuu"></h3>
+
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Kurikulum][kurikulum]**
@@ -214,13 +216,13 @@ Ini adalah dasar-dasar yang harus Anda kuasai. Ini adalah blok bangunan dari sem
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
+[0]: ../README.md#-level-1-fundamental-numbers
+[1]: ../bagian-2/README.md
+[2]: ../bagian-2/README.md#level-25-comprehensive-math-library-functions
+[3]: ../bagian-3/README.md
+[4]: ../bagian-3/README.md#level-35-error-handling--edge-cases
+[5]: ../bagian-4/README.md
+[6]: ../bagian-5/README.md
 [7]: ../
 [8]: ../
 [9]: ../
