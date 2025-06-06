@@ -1,4 +1,4 @@
-# **[Kurikulum Lengkap Control Flow di Lua][1]**
+# **[Kurikulum Lengkap Control Flow di Lua][0]**
 
 ## 🎯 Tujuan Pembelajaran
 
@@ -6,7 +6,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 1: Fundamental Control Flow**
+## 📚 **[Bagian 1: Fundamental Control Flow][1]**
 
 ### 1.1 Pernyataan Kondisional (Conditional Statements)
 
@@ -44,7 +44,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 2: Loop Structures**
+## 📚 **[Bagian 2: Loop Structures][2]**
 
 ### 2.1 While dan Repeat-Until Loops
 
@@ -81,7 +81,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 3: Flow Control Statements**
+## 📚 **[Bagian 3: Flow Control Statements][3]**
 
 ### 3.1 Break Statement
 
@@ -134,7 +134,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 4: Advanced Control Flow Patterns**
+## 📚 **[Bagian 4: Advanced Control Flow Patterns][3]**
 
 ### 4.1 Table-Driven Control Flow
 
@@ -190,7 +190,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 5: Error Handling dan Exception Flow**
+## 📚 **[Bagian 5: Error Handling dan Exception Flow][5]**
 
 ### 5.1 Error Handling Fundamentals
 
@@ -226,7 +226,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 6: Coroutines - Advanced Asynchronous Control**
+## 📚 **[Bagian 6: Coroutines - Advanced Asynchronous Control][6]**
 
 ### 6.1 Coroutine Fundamentals
 
@@ -281,7 +281,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 7: Performance Optimization**
+## 📚 **[Bagian 7: Performance Optimization][7]**
 
 ### 7.1 Control Flow Performance Analysis
 
@@ -317,7 +317,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 8: Design Patterns dan Best Practices**
+## 📚 **[Bagian 8: Design Patterns dan Best Practices][8]**
 
 ### 8.1 Control Flow Design Patterns
 
@@ -353,7 +353,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 9: Domain-Specific Applications**
+## 📚 **[Bagian 9: Domain-Specific Applications][9]**
 
 ### 9.1 Game Development Control Flow
 
@@ -389,7 +389,9 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 11: Control Flow dalam Berbagai Versi Lua**
+## 📚 **[Bagian 10: Pola Kontrol Alur di Framework Populer][10]**
+
+## 📚 **[Bagian 11: Control Flow dalam Berbagai Versi Lua][11]**
 
 ### 11.1 Version-Specific Control Flow Features
 
@@ -427,7 +429,7 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 ---
 
-## 📚 **Bagian 12: Specialized Control Flow Patterns**
+## 📚 **[Bagian 12: Specialized Control Flow Patterns][12]**
 
 ### 12.1 Event-Driven Control Flow
 
@@ -477,6 +479,8 @@ Menguasai semua aspek kontrol alur program (control flow) di Lua mulai dari dasa
 
 - [Domain Specific Languages in Lua](http://lua-users.org/wiki/DomainSpecificLanguage)
 - [Meta-Programming Techniques](http://lua-users.org/wiki/MetaProgramming)
+
+## 📚 **[Bagian 13: Control][12]**
 
 ### 13.1 Control Flow Testing
 
@@ -589,13 +593,29 @@ Kurikulum ini dirancang untuk membuat Anda menjadi expert dalam control flow Lua
 #
 
 > - **[Ke Atas](#)**
-> - **[Selanjutnya][2]**
-> - **[Sebelumnya][3]**
-> - **[Kurikulum][4]**
-> - **[Domain Spesifik][5]**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
 
-[5]: ../../../../../../README.md
-[4]: ../../../../README.md
-[3]: ../variabel/README.md
-[2]: ../function/README.md
-[1]: ../../README.md
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../../README.md
+[sebelumnya]: ../variabel/README.md
+[selanjutnya]: ../function/README.md
+
+<!----------------------------------------------------->
+
+[0]: ../README.md
+[1]: ../kontrol-flow/bagian-1/README.md
+[2]: ../kontrol-flow/bagian-2/README.md
+[3]: ../kontrol-flow/bagian-3/README.md
+[4]: ../kontrol-flow/bagian-4/README.md
+[5]: ../kontrol-flow/bagian-5/README.md
+[6]: ../kontrol-flow/bagian-6/README.md
+[7]: ../kontrol-flow/bagian-7/README.md
+[8]: ../kontrol-flow/bagian-8/README.md
+[9]: ../kontrol-flow/bagian-9/README.md
+[10]: ../kontrol-flow/bagian-10/README.md
+[11]: ../kontrol-flow/bagian-11/README.md
+[12]: ../kontrol-flow/bagian-12/README.md
+[13]: ../kontrol-flow/bagian-13/README.md

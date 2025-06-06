@@ -488,3 +488,6 @@ Loop `for` di Lua hadir dalam dua bentuk utama: _numeric for_ dan _generic for_.
 ---
 
 Kita telah menyelesaikan pembahasan mengenai loop `while`, `repeat...until`, dan dua jenis loop `for` di Lua. Pemahaman yang baik tentang iterasi dan bagaimana `pairs` serta `ipairs` bekerja, termasuk konsep iterator, akan sangat membantu Anda dalam memproses data dan mengontrol alur program.
+
+
+

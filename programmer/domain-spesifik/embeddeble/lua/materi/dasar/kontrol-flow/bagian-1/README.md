@@ -1,4 +1,4 @@
-# 📚 **Bagian 1: Fundamental Control Flow**
+# 📚 **[Bagian 1: Fundamental Control Flow][0]**
 
 Bagian ini adalah fondasi dari bagaimana sebuah program membuat keputusan dan mengulang tugas. Tanpa pemahaman yang kuat di sini, akan sulit untuk membangun logika program yang kompleks.
 
@@ -374,3 +374,37 @@ Pola *switch-case* memungkinkan Anda memilih satu blok kode untuk dieksekusi dar
 ---
 
 Ini adalah penjelasan untuk Bagian 1 dari kurikulum. Kita telah membahas pernyataan kondisional dasar dan bagaimana menyimulasikan pola switch-case di Lua. Fondasi ini sangat penting.
+*"2.4 Tipe String - _Deep String Mechanics_"**. Siap untuk melanjutkan?
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../../README.md
+[selanjutnya]: ../bagian-2/README.md
+
+<!----------------------------------------------------->
+
+[0]: ../README.md
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../

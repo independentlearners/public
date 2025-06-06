@@ -76,7 +76,7 @@
 - [Lua Users Wiki - Function Overloading](http://lua-users.org/wiki/FunctionOverloading)
 - [Programming in Lua - Error Handling](https://www.lua.org/pil/8.html)
 
-## **Bagian 3: Function Types dan Styles**
+## **[Bagian 3: Function Types dan Styles][bagian3]**
 
 ### 3.1 Anonymous Functions
 
@@ -114,7 +114,7 @@
 - [Programming in Lua - Tail Calls](https://www.lua.org/pil/6.3.html)
 - [Lua Users Wiki - Recursion](http://lua-users.org/wiki/RecursiveFunctions)
 
-## **Bagian 4: Closures dan Upvalues**
+## **[Bagian 4: Closures dan Upvalues][bagian4]**
 
 ### 4.1 Understanding Closures
 
@@ -152,7 +152,7 @@
 - [Lua Users Wiki - Currying](http://lua-users.org/wiki/CurriedLua)
 - [Advanced Lua Programming Techniques](http://lua-users.org/wiki/LuaTutorial)
 
-## **Bagian 5: Metatables dan Functions**
+## **[Bagian 5: Metatables dan Functions][bagian5]**
 
 ### 5.1 \_\_call Metamethod
 
@@ -178,7 +178,7 @@
 - [Lua Users Wiki - Function Metatable](http://lua-users.org/wiki/FunctionMetatable)
 - [Programming in Lua - Debug Library](https://www.lua.org/pil/23.html)
 
-## **Bagian 6: Coroutines dan Functions**
+## **[Bagian 6: Coroutines dan Functions][bagian6]**
 
 ### 6.1 Coroutines Basics
 
@@ -211,7 +211,7 @@
 - [Lua Coroutines vs Python Generators](http://lua-users.org/wiki/LuaCoroutinesVersusPythonGenerators)
 - [Understanding Coroutines in Lua](https://softwarepatternslexicon.com/patterns-lua/9/1/)
 
-## **Bagian 7: Performance dan Optimization**
+## **[Bagian 7: Performance dan Optimization][bagian7]**
 
 ### 7.1 Function Performance
 
@@ -237,7 +237,7 @@
 - [Programming in Lua - Garbage Collection](https://www.lua.org/pil/17.html)
 - [Lua Manual - Garbage Collection](https://www.lua.org/manual/5.4/manual.html#2.5)
 
-## **Bagian 8: Advanced Function Techniques**
+## **[Bagian 8: Advanced Function Techniques][bagian8]**
 
 ### 8.1 Function Composition dan Chaining
 
@@ -280,7 +280,7 @@
 - [Programming in Lua - Debug Library](https://www.lua.org/pil/23.html)
 - [Lua Manual - Debug Interface](https://www.lua.org/manual/5.4/manual.html#4.7)
 
-## **Bagian 9: Patterns dan Best Practices**
+## **[Bagian 9: Patterns dan Best Practices][bagian9]**
 
 ### 9.1 Common Function Patterns
 
@@ -318,89 +318,7 @@
 - [Lua Unit Testing](http://lua-users.org/wiki/UnitTesting)
 - [Testing Frameworks untuk Lua](http://lua-users.org/wiki/TestingFrameworks)
 
-## **Bagian 11: Function Serialization dan Persistence**
-
-### 11.1 Function Serialization
-
-- **Dumping functions dengan string.dump**
-- **Loading serialized functions**
-- **Bytecode analysis dan manipulation**
-- **Cross-platform bytecode considerations**
-- **Security implications of function serialization**
-
-**Sumber:**
-
-- [Lua Manual - string.dump](https://www.lua.org/manual/5.4/manual.html#pdf-string.dump)
-- [Programming in Lua - Compilation, Execution, and Errors](https://www.lua.org/pil/8.html)
-- [Lua Users Wiki - Bytecode](http://lua-users.org/wiki/LuaBytecode)
-
-### 11.2 Persistent Function State
-
-- **Saving function state**
-- **Checkpoint dan resume patterns**
-- **Serializing closures dan upvalues**
-- **Function migration across processes**
-
-**Sumber:**
-
-- [Lua Users Wiki - Serialization](http://lua-users.org/wiki/TableSerialization)
-- [Function State Persistence Techniques](http://lua-users.org/wiki/PersistenceLibrary)
-
-## **Bagian 12: Generic for Loop dan Custom Iterators**
-
-### 12.1 Generic for Loop Internals
-
-- **Bagaimana generic for bekerja**
-- **Iterator protocol (next, state, control)**
-- **Stateless vs stateful iterators**
-- **Multiple values dari iterators**
-
-**Sumber:**
-
-- [Programming in Lua - Iterators and Closures](https://www.lua.org/pil/7.html)
-- [Lua Generic for Loop Tutorial](https://www.tutorialspoint.com/lua/lua_generic_for.htm)
-- [Lua Manual - Generic for Statement](https://www.lua.org/manual/5.4/manual.html#3.3.5)
-
-### 12.2 Custom Iterator Functions
-
-- **Stateless iterator functions**
-- **Closure-based iterators**
-- **Coroutine-based iterators**
-- **Complex iteration patterns**
-- **Performance considerations untuk iterators**
-
-**Sumber:**
-
-- [Programming in Lua - Iterators and Closures](https://www.lua.org/pil/7.html)
-- [Lua Users Wiki - Iterator Patterns](http://lua-users.org/wiki/IteratorsTutorial)
-- [Coroutines as Iterators Examples](https://gist.github.com/2413313)
-
-## **Bagian 13: Function Environments dan Sandboxing**
-
-### 13.1 Function Environments (Lua 5.1)
-
-- **setfenv dan getfenv**
-- **Per-function environments**
-- **Environment inheritance**
-- **Sandboxing dengan environments**
-
-**Sumber:**
-
-- [Programming in Lua - The Environment](https://www.lua.org/pil/14.html)
-- [Lua 5.1 Manual - Environments](https://www.lua.org/manual/5.1/manual.html#2.9)
-
-### 13.2 \_ENV dan Upvalues (Lua 5.2+)
-
-- **\_ENV sebagai upvalue**
-- **Modifying function environments**
-- **load dengan custom environments**
-- **Security dan sandboxing modern**
-
-**Sumber:**
-
-- [Lua 5.2 Manual - Environments](https://www.lua.org/manual/5.2/manual.html#2.2)
-- [Programming in Lua - Environments in Lua 5.2](https://www.lua.org/pil/15.html)
-- [Lua Users Wiki - Sandboxing](http://lua-users.org/wiki/SandBoxes)
+## **[Bagian 10: Devemopment Web, Game and Programming System][bagian10]**
 
 ### 10.1 Web Development
 
@@ -437,6 +355,90 @@
 
 - [Lua System Programming](http://lua-users.org/wiki/SystemProgramming)
 - [LuaRocks Function Libraries](https://luarocks.org/)
+
+## **[Bagian 11: Function Serialization dan Persistence][bagian11]**
+
+### 11.1 Function Serialization
+
+- **Dumping functions dengan string.dump**
+- **Loading serialized functions**
+- **Bytecode analysis dan manipulation**
+- **Cross-platform bytecode considerations**
+- **Security implications of function serialization**
+
+**Sumber:**
+
+- [Lua Manual - string.dump](https://www.lua.org/manual/5.4/manual.html#pdf-string.dump)
+- [Programming in Lua - Compilation, Execution, and Errors](https://www.lua.org/pil/8.html)
+- [Lua Users Wiki - Bytecode](http://lua-users.org/wiki/LuaBytecode)
+
+### 11.2 Persistent Function State
+
+- **Saving function state**
+- **Checkpoint dan resume patterns**
+- **Serializing closures dan upvalues**
+- **Function migration across processes**
+
+**Sumber:**
+
+- [Lua Users Wiki - Serialization](http://lua-users.org/wiki/TableSerialization)
+- [Function State Persistence Techniques](http://lua-users.org/wiki/PersistenceLibrary)
+
+## **[Bagian 12: Generic for Loop dan Custom Iterators][bagian12]**
+
+### 12.1 Generic for Loop Internals
+
+- **Bagaimana generic for bekerja**
+- **Iterator protocol (next, state, control)**
+- **Stateless vs stateful iterators**
+- **Multiple values dari iterators**
+
+**Sumber:**
+
+- [Programming in Lua - Iterators and Closures](https://www.lua.org/pil/7.html)
+- [Lua Generic for Loop Tutorial](https://www.tutorialspoint.com/lua/lua_generic_for.htm)
+- [Lua Manual - Generic for Statement](https://www.lua.org/manual/5.4/manual.html#3.3.5)
+
+### 12.2 Custom Iterator Functions
+
+- **Stateless iterator functions**
+- **Closure-based iterators**
+- **Coroutine-based iterators**
+- **Complex iteration patterns**
+- **Performance considerations untuk iterators**
+
+**Sumber:**
+
+- [Programming in Lua - Iterators and Closures](https://www.lua.org/pil/7.html)
+- [Lua Users Wiki - Iterator Patterns](http://lua-users.org/wiki/IteratorsTutorial)
+- [Coroutines as Iterators Examples](https://gist.github.com/2413313)
+
+## **[Bagian 13: Function Environments dan Sandboxing][bagian13]**
+
+### 13.1 Function Environments (Lua 5.1)
+
+- **setfenv dan getfenv**
+- **Per-function environments**
+- **Environment inheritance**
+- **Sandboxing dengan environments**
+
+**Sumber:**
+
+- [Programming in Lua - The Environment](https://www.lua.org/pil/14.html)
+- [Lua 5.1 Manual - Environments](https://www.lua.org/manual/5.1/manual.html#2.9)
+
+### 13.2 \_ENV dan Upvalues (Lua 5.2+)
+
+- **\_ENV sebagai upvalue**
+- **Modifying function environments**
+- **load dengan custom environments**
+- **Security dan sandboxing modern**
+
+**Sumber:**
+
+- [Lua 5.2 Manual - Environments](https://www.lua.org/manual/5.2/manual.html#2.2)
+- [Programming in Lua - Environments in Lua 5.2](https://www.lua.org/pil/15.html)
+- [Lua Users Wiki - Sandboxing](http://lua-users.org/wiki/SandBoxes)
 
 ## **Proyek Praktik**
 
@@ -519,3 +521,14 @@ Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang functions di
 [1]: ../function/bagian-1/README.md
 [0]: ../../README.md
 [bagian2]: ../function/bagian-2/README.md
+[bagian3]: ../function/bagian-3/README.md
+[bagian4]: ../function/bagian-4/README.md
+[bagian5]: ../function/bagian-5/README.md
+[bagian6]: ../function/bagian-6/README.md
+[bagian7]: ../function/bagian-7/README.md
+[bagian8]: ../function/bagian-8/README.md
+[bagian9]: ../function/bagian-9/README.md
+[bagian10]: ../function/bagian-10/README.md
+[bagian11]: ../function/bagian-11/README.md
+[bagian12]: ../function/bagian-12/README.md
+[bagian13]: ../function/bagian-13/README.md
