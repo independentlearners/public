@@ -13,7 +13,7 @@
 
 <!----------------------------------------------------->
 
-[0]: ../../README.md
+[0]: ../../function/README.md#bagian-12-generic-for-loop-dan-custom-iterators
 [1]: ../
 [2]: ../
 [3]: ../

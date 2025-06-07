@@ -9,11 +9,11 @@
 [domain]: ../../../../../README.md
 [kurikulum]: ../../../README.md
 [sebelumnya]: ../bagian-12/README.md
-[selanjutnya]: ../bagian-1/README.md
+[selanjutnya]: ../../string/bagian-1/README.md
 
 <!----------------------------------------------------->
 
-[0]: ../../README.md
+[0]: ../../function/README.md#bagian-13-function-environments-dan-sandboxing
 [1]: ../
 [2]: ../
 [3]: ../

@@ -1,4 +1,4 @@
-# **2. Tipe Data Primitif - _Deep Dive_**
+# **[2. Tipe Data Primitif - _Deep Dive_][0]**
 
 Tipe data primitif adalah blok bangunan dasar dari data dalam Lua. Meskipun terlihat sederhana, pemahaman mendalam tentang masing-masing tipe ini, termasuk perilaku dan representasi internalnya, sangat penting untuk penguasaan Lua.
 

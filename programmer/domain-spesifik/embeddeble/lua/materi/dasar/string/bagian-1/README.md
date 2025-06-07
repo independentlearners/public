@@ -1150,12 +1150,15 @@ Ini adalah akhir dari pembahasan **LEVEL 1: DASAR-DASAR STRING**. Kita telah men
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
 [domain]: ../../../../README.md
 [kurikulum]: ../README.md
+[sebelumnya]:../../function/bagian-13/README.md
 [selanjutnya]: ../bagian-2/README.md
+
 
 <!----------------------------------------------------->
 

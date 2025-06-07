@@ -13,7 +13,7 @@
 
 <!----------------------------------------------------->
 
-[0]: ../../README.md
+[0]: ../../function/README.md#bagian-11-function-serialization-dan-persistence
 [1]: ../
 [2]: ../
 [3]: ../

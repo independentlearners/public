@@ -295,7 +295,7 @@ Ini adalah pengantar untuk fondasi sistem tipe di Lua. Memahami konsep-konsep in
 
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
-[sebelumnya]: ../bagian-2/README.md
+[sebelumnya]: ../../string/bagian-7/README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->

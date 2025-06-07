@@ -748,6 +748,7 @@ Ini menandai akhir dari "Kurikulum Lengkap Variabel di Lua". Anda sekarang telah
 
 > - **[Ke Atas](#)**
 > - **[Sebelumnya][3]**
+> - **[Selanjutnya][selanjutnya]**
 > - **[Kurikulum Lengkap][2]**
 > - **[Kurikulum Dasar][4]**
 > - **[Domain Spesifik][5]**
@@ -757,3 +758,4 @@ Ini menandai akhir dari "Kurikulum Lengkap Variabel di Lua". Anda sekarang telah
 [3]: ../4-advanced-variable-concepts/README.md
 [2]: ../../../../../README.md
 [1]: ../../README.md/#51-variable-dalam-closures
+[selanjutnya]: ../../../kontrol-flow/materi/README.md

@@ -13,7 +13,7 @@
 
 <!----------------------------------------------------->
 
-[0]: ../../README.md
+[0]: ../../function/README.md#bagian-10-devemopment-web-game-and-programming-system
 [1]: ../
 [2]: ../
 [3]: ../

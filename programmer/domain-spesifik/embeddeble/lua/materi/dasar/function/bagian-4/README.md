@@ -1,8 +1,4 @@
-Tentu, mari kita lanjutkan. Bagian ini akan menjadi penyelaman mendalam ke dalam salah satu fitur paling fundamental dan kuat di Lua. Memahaminya dengan baik akan membuka tingkat pemrograman yang baru.
-
----
-
-## **Bagian 4: Closures dan Upvalues**
+# **[Bagian 4: Closures dan Upvalues][0]**
 
 Kita telah menyentuh konsep ini secara singkat, tetapi di sini kita akan membedahnya secara detail. Closures adalah mekanisme di balik banyak pola canggih di Lua, mulai dari privasi data hingga pemrograman fungsional.
 
@@ -287,7 +283,7 @@ Kita telah menyelesaikan penyelaman mendalam ke dalam closures. Ini adalah konse
 
 <!----------------------------------------------------->
 
-[0]: ../../README.md
+[0]: ../../function/README.md#bagian-4-closures-dan-upvalues
 [1]: ../
 [2]: ../
 [3]: ../

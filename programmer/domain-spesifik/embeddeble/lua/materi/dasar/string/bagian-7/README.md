@@ -297,7 +297,7 @@ Selamat mengerjakan proyek praktik Anda! Ini adalah langkah terakhir yang pentin
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-6/README.md
-[selanjutnya]: ../bagian-8/README.md
+[selanjutnya]: ../../tipe-data/bagian-1/README.md
 
 <!----------------------------------------------------->
 

@@ -810,6 +810,6 @@ Kita sudah menyelesaikan Bagian 1 dari kurikulum ini. Sejauh ini kita telah memb
 
 [5]: ../../../../../../README.md
 [4]: ../../../../README.md
-[3]: ../../kontrol-flow/README.md
+[3]: ../../kontrol-flow/materi/README.md
 [2]: ../bagian-2/README.md
 [1]: ../README.md

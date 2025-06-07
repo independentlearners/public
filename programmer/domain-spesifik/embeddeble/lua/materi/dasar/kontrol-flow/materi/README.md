@@ -3998,12 +3998,14 @@ Selamat\! Anda telah mencapai akhir dari kurikulum yang intensif ini. Perjalanan
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../../README.md
-[selanjutnya]: ../README.md
+[selanjutnya]: ../../function/bagian-1/README.md
+[sebelumnya]: ../../variabel/modul/5-specialized-variable-usage/README.md
 
 <!----------------------------------------------------->
 
