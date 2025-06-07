@@ -92,7 +92,7 @@ local name = "John"
 local message = string.format("Hello, %s!", name)
 ```
 
-### 2.2 Variabel dan Scope
+### [2.2 Variabel dan Scope][variabel]
 
 #### Local vs Global Variables
 
@@ -2311,7 +2311,9 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 
   21. Modul 21: Integrasi Database&#x20;
 
-> Untuk dapat melihat daftarnya secara lengkap kunjungi [berikut](../../../README.md)
+> - **[Ke Atas](#)**
+> - **[Kurikulum](../../../README.md)**
+> - **[Domain Spesifik][domain-spesifik]**
 
 [1]: ../neovim/module/1-dasar/README.md
 [2]: ../neovim/module/2-variable/README.md
@@ -2339,10 +2341,7 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 
 <!-- ------------- -->
 
+[domain-spesifik]: ../../../../../README.md
 [string1]: ../../../materi/dasar/string/README.md
 [number1]: ../../../materi/dasar/tipe-data/number/README.md
-
-- **[Ke Atas](#)**
-- **[Domain Spesifik][domain-spesifik]**
-
-[domain-spesifik]: ../../../../../README.md
+[variabel]: ../../../materi/dasar/variabel/README.md
