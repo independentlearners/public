@@ -36,6 +36,16 @@
 24. **[Game Development][24]** - 6 minggu, 40 jam
 25. **[Embedded Systems][25]** - 5 minggu, 35 jam
 
+### **OPSIONAL INTERPRETED**
+
+26. **[Chunk][26]**
+27. **[Repl][27]** ✅
+
+### **OPSIONAL NUMBER**
+
+28. **[Number & Math][28]** ✅
+29. **[Number Only][29]** ✅
+
 ---
 
 **TOTAL: 117 minggu | 820 jam pembelajaran**
@@ -71,4 +81,8 @@ Setiap topik akan memiliki struktur kurikulum yang sama seperti yang sudah saya 
 [23]: ../materi/advanced/web-development/README.md
 [24]: ../materi/advanced/game-development/README.md
 [25]: ../materi/advanced/embedded-systems/README.md
+[26]: ../materi/dasar/chunk/README.md
+[27]: ../materi/dasar/repl/README.md
+[28]: ../materi/dasar/tipe-data/number/README.md
+[29]: ../materi/dasar/tipe-data/number/reference-guide/README.md
 [domain]: ../../../README.md

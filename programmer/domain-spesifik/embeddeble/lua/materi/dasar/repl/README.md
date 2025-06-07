@@ -1,6 +1,6 @@
-# Kurikulum Lengkap REPL Lua untuk Pemula Hingga Mahir
+# [Kurikulum Lengkap REPL Lua untuk Pemula Hingga Mahir][0]
 
-## Bagian 1: Fondasi dan Konsep Dasar REPL
+## [Bagian 1: Fondasi dan Konsep Dasar REPL][1]
 
 ### 1.1 Pemahaman Fundamental REPL
 - Konsep Read-Eval-Print Loop dan filosofi interactive programming
@@ -287,3 +287,23 @@
 
 Kurikulum ini dirancang untuk memberikan pemahaman komprehensif tentang REPL Lua dari fondasi hingga aplikasi advanced, mencakup semua aspek yang diperlukan untuk menguasai interactive programming dalam Lua secara profesional.
 
+
+#
+
+#### Selamat Belajar!
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../dasar/chunk/README.md
+[selanjutnya]: ../../dasar/tipe-data/number/README.md
+
+<!--------------------------------------------------- -->
+
+[0]: ../../README.md/#
+[1]:../repl/materi/README.md

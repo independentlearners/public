@@ -715,7 +715,276 @@ Standar IEEE 754 juga mendefinisikan nilai-nilai khusus untuk menangani situasi 
   - Manual Lua mendokumentasikan `math.huge`.
   - Tutorial tentang pustaka `math` sering membahas nilai-nilai spesial ini.
 
-Kita telah menyelesaikan _deep dive_ pada tipe `number`. Selanjutnya dalam kurikulum Anda adalah **"2.4 Tipe String - _Deep String Mechanics_"**. Siap untuk melanjutkan?
+### **2.4 Tipe `string` - Mekanika String Mendalam**
+
+Tipe `string` di Lua digunakan untuk merepresentasikan urutan (sekuens) dari bita (_bytes_). Meskipun sering digunakan untuk menyimpan teks, penting untuk diingat bahwa secara fundamental, string Lua adalah koleksi bita dan tidak terikat pada _encoding_ karakter tertentu. Pemahaman tentang sifat internal string, seperti _immutability_ dan _interning_, sangat krusial untuk menulis kode yang efisien.
+
+#### **Internal String yang _Immutable_ dan _String Interning_**
+
+- **_Immutable Strings_ (String yang Tak Dapat Diubah)**:
+
+  - **Deskripsi**: Sifat paling fundamental dari string di Lua adalah **_immutable_** (tak dapat diubah). Ini berarti sekali sebuah string dibuat, konten di dalamnya tidak bisa diubah sama sekali.
+  - **Implikasi**: Setiap operasi yang tampaknya "memodifikasi" sebuah string, seperti konkatenasi (penggabungan) atau mengubah sub-string, sebenarnya tidak mengubah string asli. Sebaliknya, operasi tersebut akan membuat dan mengembalikan **string baru** di memori yang berisi hasil modifikasi.
+
+  - **Contoh**:
+
+    ```lua
+    local sapaan = "Halo"
+    print("ID objek sapaan awal:", tostring(sapaan)) -- Ini hanya untuk ilustrasi, tidak ada cara standar untuk mendapatkan ID objek
+
+    -- Operasi konkatenasi
+    local sapaanLengkap = sapaan .. ", Dunia!"
+
+    print("Sapaan asli setelah konkatenasi:", sapaan) -- Output: Sapaan asli setelah konkatenasi: Halo
+                                                     -- String asli tidak berubah.
+
+    print("Sapaan lengkap (string baru):", sapaanLengkap) -- Output: Sapaan lengkap (string baru): Halo, Dunia!
+
+    -- Operasi "mengubah" karakter (sebenarnya membuat string baru)
+    local sapaanBaru = string.gsub(sapaan, "o", "a")
+    print("Sapaan setelah gsub:", sapaanBaru) -- Output: Sapaan setelah gsub: Hala
+    print("Sapaan asli tetap:", sapaan)     -- Output: Sapaan asli tetap: Halo
+    ```
+
+    - **Penjelasan Sintaksis**:
+      - `..`: Operator konkatenasi string. Ia mengambil dua string (atau nilai yang bisa diubah menjadi string) dan mengembalikan string baru yang merupakan gabungan keduanya.
+      - `string.gsub(s, pattern, replacement)`: Fungsi dari pustaka `string` yang mencari `pattern` di dalam string `s` dan menggantinya dengan `replacement`. Ia mengembalikan string baru dengan hasil penggantian, serta jumlah penggantian yang dilakukan.
+
+  - **Keuntungan Immutability**:
+    - **Keamanan**: String dapat dibagikan dengan aman di berbagai bagian program tanpa khawatir ada bagian lain yang akan mengubahnya secara tidak terduga.
+    - **Efisiensi Perbandingan**: Karena string tak dapat diubah, Lua dapat melakukan optimisasi signifikan seperti _string interning_.
+
+- **_String Interning_ (Interning String)**:
+
+  - **Deskripsi**: Ini adalah sebuah teknik optimisasi memori dan performa yang digunakan oleh Lua secara internal. Idenya adalah Lua menyimpan satu salinan saja untuk setiap nilai string yang identik.
+  - **Cara Kerja**: Ketika Lua membuat sebuah string baru (misalnya dari literal kode seperti `"halo"`), ia akan terlebih dahulu memeriksa sebuah "kolam" (_pool_) internal berisi semua string yang sudah ada.
+    1.  Jika string dengan konten yang sama persis sudah ada di kolam, Lua tidak akan mengalokasikan memori baru. Sebaliknya, ia akan mengembalikan referensi (pointer) ke string yang sudah ada tersebut.
+    2.  Jika tidak ada, barulah Lua akan membuat string baru, menyimpannya di kolam, dan mengembalikan referensi ke sana.
+  - **Keuntungan _String Interning_**:
+
+    1.  **Menghemat Memori**: Puluhan atau ratusan string `"OK"` atau `"error"` yang tersebar di program Anda hanya akan memakan memori untuk satu string `"OK"` dan satu string `"error"`.
+    2.  **Perbandingan Super Cepat**: Karena dua string yang identik merujuk ke objek yang sama di memori, perbandingan kesetaraan (`==`) dapat dilakukan dengan sangat cepat. Lua hanya perlu membandingkan alamat memori (pointer), bukan membandingkan bita per bita dari kedua string tersebut.
+
+  - **Contoh Implikasi**:
+
+    ```lua
+    local a = "ini adalah string yang sangat panjang"
+    local b = "ini adalah string yang sangat panjang"
+    local c = "string lain"
+    local d = a -- d menunjuk ke objek yang sama dengan a
+
+    -- Karena string interning, a dan b kemungkinan besar menunjuk ke objek memori yang sama.
+    -- Perbandingan a == b sangat cepat.
+    if a == b then
+        print("a dan b sama.") -- Output: a dan b sama.
+    end
+
+    -- Perbandingan dengan string yang berbeda jelas false.
+    if a == c then
+        -- Tidak akan tercetak
+    end
+
+    -- Perbandingan dengan referensi langsung juga true.
+    if a == d then
+        print("a dan d sama.") -- Output: a dan d sama.
+    end
+    ```
+
+- **Sumber**:
+  - Buku "Programming in Lua" (PIL) memberikan penjelasan yang sangat baik tentang _immutability_ dan _interning_.
+  - Berbagai tutorial dasar juga menyentuh sifat-sifat dasar string ini.
+
+---
+
+#### **Dukungan UTF-8 dan Penanganan Unicode**
+
+- **Deskripsi**: Secara bawaan, string di Lua adalah sekuens bita 8-bit dan tidak memiliki pengetahuan tentang _encoding_ karakter (seperti ASCII, UTF-8, dll.). Fungsi-fungsi di pustaka `string` standar (seperti `string.len`, `string.sub`) beroperasi pada level bita, bukan karakter. Ini bekerja dengan baik untuk _encoding single-byte_ seperti ASCII, tetapi akan memberikan hasil yang salah untuk _encoding multi-byte_ seperti UTF-8.
+- **Masalah dengan UTF-8**: Dalam UTF-8, satu karakter Unicode (seperti 'é', '世', atau emoji '😊') dapat direpresentasikan oleh satu hingga empat bita.
+  ```lua
+  local teks = "你好" -- "Nǐ hǎo" dalam Mandarin
+  print("Panjang Bita (string.len):", string.len(teks)) -- Output: Panjang Bita (string.len): 6
+                                                        -- (Karena setiap karakter Mandarin ini butuh 3 bita di UTF-8)
+  ```
+- **Solusi: Pustaka `utf8` (Lua 5.3+)**:
+  Untuk mengatasi ini, **Lua 5.3 memperkenalkan pustaka `utf8`** yang menyediakan fungsi-fungsi untuk menangani string yang di-encode dalam UTF-8 dengan benar.
+
+  - **Terminologi**:
+    - **Unicode**: Standar universal yang memberikan nomor unik (disebut _code point_) untuk setiap karakter di hampir semua sistem tulisan di dunia.
+    - **UTF-8**: _Encoding_ paling populer untuk Unicode. Ini adalah _encoding_ dengan panjang variabel yang kompatibel dengan ASCII.
+
+- **Fungsi Kunci di Pustaka `utf8`**:
+
+  - `utf8.len(s)`: Menghitung jumlah _code points_ (karakter) Unicode dalam string `s`, bukan jumlah bita. Mengembalikan `nil` dan posisi bita pertama yang tidak valid jika string tersebut bukan UTF-8 yang valid.
+  - `utf8.codes(s)`: Mengembalikan sebuah iterator yang memungkinkan Anda untuk melakukan iterasi pada setiap _code point_ dalam string.
+  - `utf8.offset(s, n, i)`: Mengembalikan posisi bita dari karakter ke-`n`.
+  - `utf8.char(...)`: Mengambil nol atau lebih _code points_ (integer) dan mengubahnya menjadi string UTF-8.
+
+- **Contoh Perbandingan `string` dan `utf8`**:
+
+  ```lua
+  -- Jalankan di Lua 5.3+
+  local teks = "Nação" -- 'ç' dan 'ã' adalah karakter multi-byte di UTF-8
+  local emoji = "🚀"   -- Emoji juga karakter multi-byte
+
+  -- Menggunakan pustaka string standar (berbasis bita)
+  print("string.len(teks):", string.len(teks)) -- Output: string.len(teks): 7 (1+1+2+1+2 = 7 bita)
+  print("string.len(emoji):", string.len(emoji)) -- Output: string.len(emoji): 4 (emoji ini 4 bita)
+
+  -- Menggunakan pustaka utf8 (berbasis karakter)
+  print("utf8.len(teks):", utf8.len(teks))     -- Output: utf8.len(teks): 5 (N, a, ç, a, o)
+  print("utf8.len(emoji):", utf8.len(emoji))   -- Output: utf8.len(emoji): 1 (satu karakter emoji)
+
+  -- Iterasi karakter dengan benar
+  print("Iterasi dengan utf8.codes:")
+  for pos, code in utf8.codes(teks) do
+      print(string.format("Posisi bita: %d, Code Point: U+%X", pos, code))
+  end
+  -- Output akan menampilkan posisi bita awal dan nilai code point untuk setiap karakter
+  ```
+
+  - **Penjelasan Sintaksis**:
+    - `utf8.len(teks)`: Memanggil fungsi `len` dari pustaka `utf8` untuk mendapatkan jumlah karakter Unicode.
+    - `for pos, code in utf8.codes(teks) do ... end`: Loop `for` generik yang menggunakan iterator yang dihasilkan oleh `utf8.codes`. Di setiap iterasi, `pos` akan berisi posisi bita awal dari karakter, dan `code` akan berisi nilai numerik _code point_ Unicode.
+    - `U+%X`: Format string untuk menampilkan nomor _code point_ dalam notasi heksadesimal standar Unicode.
+
+- **Sumber**:
+  - Manual Lua adalah referensi resmi untuk pustaka `utf8`.
+  - Komunitas Lua Wiki juga menyediakan informasi tentang penanganan Unicode.
+
+---
+
+#### **_Pattern Matching_ vs _Regular Expressions_**
+
+- **Deskripsi**: Lua menyediakan fungsi manipulasi string yang kuat seperti `string.find`, `string.match`, dan `string.gsub`. Namun, penting untuk diketahui bahwa mekanisme yang mereka gunakan **bukanlah _Regular Expressions_ (Regex)** seperti yang ditemukan di Perl, Python, atau JavaScript. Lua menggunakan sistem pencocokan sendiri yang disebut **_patterns_**.
+- **Perbedaan Utama**:
+
+  - **Kompleksitas dan Ukuran**: _Patterns_ Lua jauh lebih sederhana dan memiliki _footprint_ (jejak memori) yang lebih kecil daripada mesin Regex lengkap. Ini sejalan dengan filosofi desain Lua yang ringan.
+  - **Sintaks**: Ada beberapa perbedaan sintaksis yang signifikan.
+    - **_Escape Character_**: Lua menggunakan `%` sebagai _escape character_, bukan `\` seperti pada Regex. Contoh: `%d` untuk digit, `%.` untuk titik literal.
+    - **Keterbatasan**: _Patterns_ Lua tidak mendukung beberapa fitur canggih dari Regex, seperti:
+      - Alternasi (pilihan `|`).
+      - _Look-ahead_ dan _look-behind assertions_.
+      - _Non-capturing groups_.
+      - Kuantifier _non-greedy_ (malas) yang canggih (meskipun `*` adalah _greedy_ dan `-` adalah _non-greedy_).
+
+- **Konsep Dasar _Patterns_ Lua**:
+
+  - **_Character Classes_**: Kelas karakter yang telah ditentukan untuk mencocokkan set karakter tertentu.
+    - `%a` - semua huruf
+    - `%d` - semua digit
+    - `%s` - semua karakter spasi
+    - `%w` - semua karakter alfanumerik (`%a` + `%d`)
+    - Versi huruf kapitalnya adalah kebalikannya (`%A` - bukan huruf, `%D` - bukan digit, dst.).
+  - **_Magic Characters_ (mirip meta-karakter di Regex)**:
+    - `.` : Mencocokkan karakter apa pun.
+    - `*` : Mencocokkan 0 atau lebih pengulangan dari kelas/karakter sebelumnya (perilaku _greedy_, mencocokkan sebanyak mungkin).
+    - `+` : Mencocokkan 1 atau lebih pengulangan.
+    - `?` : Mencocokkan 0 atau 1 pengulangan.
+    - `-` : Versi _non-greedy_ dari `*`. Mencocokkan 0 atau lebih pengulangan sesedikit mungkin.
+  - **_Captures_ (Penangkapan)**: Menggunakan tanda kurung `()` untuk menangkap bagian dari string yang cocok. `string.match` akan mengembalikan hasil tangkapan ini.
+
+- **Contoh Penggunaan `string.match`**:
+
+  ```lua
+  local teks = "Pengguna 'john_doe' memiliki ID: 12345."
+
+  -- Menangkap nama pengguna (urutan karakter alfanumerik dan underscore)
+  local username = string.match(teks, "%w+")
+  print("Username pertama ditemukan:", username) -- Output: Username pertama ditemukan: Pengguna
+
+  -- Cara yang lebih spesifik untuk nama pengguna di antara kutip
+  username = string.match(teks, "'(%w+)'")
+  print("Username di antara kutip:", username) -- Output: Username di antara kutip: john_doe
+
+  -- Menangkap ID (urutan digit)
+  local id = string.match(teks, "%d+")
+  print("ID:", id) -- Output: ID: 12345
+
+  -- Menangkap keduanya sekaligus
+  local u, i = string.match(teks, "'(%w+)'.- ID: (%d+)")
+  print(string.format("Pengguna: %s, ID: %s", u, i)) -- Output: Pengguna: john_doe, ID: 12345
+  ```
+
+  - **Penjelasan Sintaksis**:
+    - `string.match(s, pattern)`: Mencari kecocokan pertama dari `pattern` dalam string `s`.
+    - `'(%w+)'`:
+      - `'`: Mencocokkan karakter kutip tunggal literal.
+      - `(` dan `)`: Membuat sebuah _capture group_.
+      - `%w+`: Mencocokkan satu atau lebih (`+`) karakter alfanumerik (`%w`). Bagian yang cocok akan ditangkap.
+    - `"'(%w+)'.- ID: (%d+)"`:
+      - `'... '`: Mencocokkan teks literal.
+      - `(%w+)`: _Capture group_ pertama untuk nama pengguna.
+      - `.-`: Mencocokkan karakter apa pun (`.`), nol atau lebih kali (`*`), dengan cara _non-greedy_ (`-`). Ini penting agar `.` tidak "memakan" seluruh sisa string, tetapi berhenti pada kecocokan berikutnya.
+      - `ID: `: Mencocokkan teks literal " ID: ".
+      - `(%d+)`: _Capture group_ kedua untuk urutan digit.
+    - `local u, i = ...`: Melakukan penugasan ganda. Nilai _capture_ pertama akan masuk ke `u`, dan yang kedua ke `i`.
+
+- **Kapan Menggunakan _Patterns_?**
+  Gunakan _patterns_ bawaan Lua untuk sebagian besar tugas pencocokan teks. Mereka sangat cepat dan efisien. Jika Anda membutuhkan kekuatan penuh Regex untuk pola yang sangat kompleks, Anda perlu menggunakan pustaka pihak ketiga (seperti LPEG atau lua-regex).
+
+- **Sumber**:
+  - Bab 20 dari PIL adalah referensi terlengkap untuk _patterns_ Lua.
+  - Tutorial di Komunitas Lua Wiki juga sangat membantu.
+
+---
+
+#### **Teknik Optimisasi _String Buffer_**
+
+- **Masalah**: Seperti yang dibahas, string di Lua tidak dapat diubah (_immutable_). Ini menyebabkan masalah performa saat Anda membangun string besar dengan menggabungkan banyak potongan kecil di dalam sebuah _loop_.
+
+  ```lua
+  -- CARA YANG TIDAK EFISIEN
+  local list = {"satu", "dua", "tiga", "empat", "lima"}
+  local hasil = ""
+  for i = 1, #list do
+      hasil = hasil .. list[i] .. " " -- Setiap iterasi membuat string BARU!
+  end
+  ```
+
+  Pada kode di atas, di setiap iterasi, Lua membuat string `hasil` yang baru, menyalin seluruh konten `hasil` yang lama, dan menambahkan potongan baru. Jika `list` memiliki ribuan item, ini akan menjadi sangat lambat (kompleksitas kuadratik, O(n²)) dan menghasilkan banyak sampah memori yang harus dibersihkan oleh _garbage collector_.
+
+- **Solusi: Pola _String Buffer_**:
+  Solusi yang idiomatis dan efisien di Lua adalah dengan menggunakan tabel sebagai _buffer_ (penampung sementara).
+
+  1.  Kumpulkan semua potongan string ke dalam sebuah tabel.
+  2.  Setelah semua potongan terkumpul, gabungkan semuanya menjadi satu string tunggal dalam satu operasi menggunakan `table.concat()`.
+
+- **Implementasi yang Efisien**:
+
+  ```lua
+  -- CARA YANG EFISIEN
+  local list = {"satu", "dua", "tiga", "empat", "lima"}
+  local buffer = {}
+  for i = 1, #list do
+      buffer[i] = list[i]
+      -- Atau bisa juga menggunakan table.insert(buffer, list[i])
+      -- tetapi assignment langsung ke indeks biasanya sedikit lebih cepat.
+  end
+
+  -- Gabungkan semua potongan dalam satu operasi efisien
+  local hasil = table.concat(buffer, " ")
+
+  print(hasil) -- Output: satu dua tiga empat lima
+  ```
+
+  - **Penjelasan Sintaksis**:
+    - `local buffer = {}`: Membuat tabel kosong untuk digunakan sebagai _buffer_.
+    - `buffer[i] = list[i]`: Memasukkan setiap potongan string ke dalam tabel `buffer`. Operasi ini sangat cepat.
+    - `table.concat(tbl, [sep])`: Fungsi dari pustaka `table` yang menggabungkan semua elemen dalam tabel `tbl` menjadi sebuah string tunggal.
+      - `tbl`: Tabel yang berisi string-string yang akan digabungkan.
+      - `sep` (opsional): Sebuah string pemisah yang akan disisipkan di antara setiap elemen. Dalam contoh ini, kita menggunakan spasi `" "`.
+
+- **Mengapa Ini Lebih Cepat?**:
+  `table.concat` sangat dioptimalkan. Ia dapat menghitung total ukuran string akhir yang dibutuhkan terlebih dahulu, mengalokasikan memori yang cukup hanya satu kali, lalu menyalin semua potongan ke dalam memori tersebut. Ini menghindari pembuatan ulang string dan penyalinan data berulang kali.
+
+- **Aturan Praktis**:
+  Jika Anda perlu menggabungkan lebih dari beberapa string (terutama di dalam _loop_), selalu gunakan pola `table.concat`. Untuk penggabungan sederhana 2-3 string di luar _loop_, operator `..` baik-baik saja dan lebih mudah dibaca.
+
+- **Sumber**:
+  - PIL memberikan contoh yang sangat jelas tentang masalah ini dan solusinya.
+  - Komunitas Lua Wiki juga menyediakan tutorial tentang pola ini.
+
+Kita telah selesai membahas tipe-tipe data primitif. Selanjutnya akan masuk ke **"3. Tipe Data Kompleks - _Advanced_"**, dimulai dengan **"3.1 Tipe `function` - _Function Internals_"**.
 
 #
 

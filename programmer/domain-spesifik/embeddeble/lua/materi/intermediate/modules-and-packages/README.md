@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap: Modules & Packages di Lua][0]**
 
-## 📚 **Tingkat 1: Fondasi Dasar**
+## 📚 **[Tingkat 1: Fondasi Dasar][1]**
 
 ### 1.1 Pengenalan Konsep Modules
 
@@ -23,7 +23,7 @@
   - [Lua 5.4 Reference Manual - require](https://www.lua.org/manual/5.4/manual.html#pdf-require)
   - [Learn Lua in Y Minutes - Modules](https://learnxinyminutes.com/docs/lua/)
 
-## 📖 **Tingkat 2: Implementasi Module Sederhana**
+## 📖 **[Tingkat 2: Implementasi Module Sederhana][2]**
 
 ### 2.1 Membuat Module Pertama
 
@@ -46,7 +46,7 @@
   - [Lua Patterns - Module Patterns](http://lua-users.org/wiki/ModulePattern)
   - [GitHub: Lua Module Examples](https://github.com/luarocks/lua-modules-examples)
 
-## 🔧 **Tingkat 3: Teknik Advanced Module**
+## 🔧 **[Tingkat 3: Teknik Advanced Module][3]**
 
 ### 3.1 Module dengan State Management
 
@@ -78,7 +78,7 @@
   - [Custom Loader GitHub Gist](https://gist.github.com/stevedonovan/1297868)
   - [Loadkit - Arbitrary File Loading](https://github.com/leafo/loadkit)
 
-## 📦 **Tingkat 4: Package Management**
+## 📦 **[[Tingkat 4: Package Management][][5]4]**
 
 ### 4.1 LuaRocks - Package Manager
 
@@ -110,7 +110,7 @@
   - [GameDev Academy: Lua Modules](https://gamedevacademy.org/lua-modules-tutorial-complete-guide/)
   - [StackBay: Modules & Packages](https://stackbay.org/modules/chapter/learn-lua/modules-and-packages)
 
-## 🏗️ **Tingkat 5: Struktur Project Advanced**
+## 🏗️ **[Tingkat 5: Struktur Project Advanced][5]**
 
 ### 5.1 Multi-file Projects
 
@@ -140,7 +140,7 @@
   - [Lua Hot Reload Techniques](http://lua-users.org/wiki/HotCodeReloading)
   - [Live Development with Lua](https://kindatechnical.com/lua/using-modules.html)
 
-## 🔍 **Tingkat 6: Debugging dan Testing Modules**
+## 🔍 **[Tingkat 6: Debugging dan Testing Modules][6]**
 
 ### 6.1 Module Testing Strategies
 
@@ -163,7 +163,7 @@
   - [Lua Profiling Tools](http://lua-users.org/wiki/ProfilingLuaCode)
   - [LuaJIT Profiler](https://luajit.org/ext_profiler.html)
 
-## 🌐 **Tingkat 7: C Extensions dan Foreign Modules**
+## 🌐 **[Tingkat 7: C Extensions dan Foreign Modules][7]**
 
 ### 7.1 Lua C API untuk Modules
 
@@ -186,7 +186,7 @@
   - [SWIG Lua Bindings](http://www.swig.org/Doc4.0/Lua.html)
   - [Lua-users Wiki: Binding Code](http://lua-users.org/wiki/BindingCodeToLua)
 
-## 🚀 **Tingkat 8: Best Practices dan Patterns**
+## 🚀 **[Tingkat 8: Best Practices dan Patterns][8]**
 
 ### 8.1 Design Patterns untuk Modules
 
@@ -209,7 +209,7 @@
   - [Semantic Versioning](https://semver.org/)
   - [Lua Version Compatibility](http://lua-users.org/wiki/LuaVersionCompatibility)
 
-## 🏆 **Tingkat 9: Real-world Applications**
+## 🏆 **[Tingkat 9: Real-world Applications][9]**
 
 ### 9.1 Web Framework Modules
 
@@ -241,7 +241,7 @@
   - [ESP32 Lua Modules](https://github.com/loboris/MicroPython_ESP32_psRAM_LoBo)
   - [PiEmbSysTech Module Guide](https://piembsystech.com/working-with-modules-and-packages-in-lua-programming/)
 
-## 📋 **Tingkat 10: Mastery Projects**
+## 📋 **[Tingkat 10: Mastery Projects][10]**
 
 ### 10.1 Build Your Own Package Manager
 
@@ -368,13 +368,13 @@
 <!-- ------------------------------------------------- -->
 
 [0]: ../../README.md
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
+[1]: ../modules-and-packages/materi/README.md
+[2]: ../modules-and-packages/materi/README.md#tingkat-2-implementasi-module-sederhana
+[3]: ../modules-and-packages/materi/README.md#tingkat-3-teknik-advanced-module
+[4]: ../modules-and-packages/materi/README.md#tingkat-4-package-management
+[5]: ../modules-and-packages/materi/README.md#tingkat-5-struktur-project-advanced
+[6]: ../modules-and-packages/materi/README.md#tingkat-6-debugging-dan-testing-modules
+[7]: ../modules-and-packages/materi/README.md#tingkat-7-c-extensions-dan-foreign-modules
+[8]: ../modules-and-packages/materi/README.md#tingkat-8-best-practices-dan-patterns
+[9]: ../modules-and-packages/materi/README.md#tingkat-9-real-world-applications
+[10]: ../modules-and-packages/materi/README.md#tingkat-10-mastery-projects

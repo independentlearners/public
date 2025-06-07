@@ -221,10 +221,10 @@ Kurikulum ini mencakup semua aspek Tables di Lua, termasuk topik-topik krusial s
 [0]: ../../README.md
 [1]: ../tables/bagian-1/README.md#bagian-1-dasar-dasar-tables
 [2]: ../tables/bagian-1/README.md#bagian-2-operasi-dasar-tables
-[3]: ../tables/bagian-2/README.md#
-[4]: ../tables/bagian-3/README.md
-[5]: ../tables/bagian-4/README.md
-[6]: ../tables/bagian-6/README.md
+[3]: ../tables/bagian-2/README.md#bagian-3-raw-table-operations-tambahan-penting
+[4]: ../tables/bagian-3/README.md#bagian-4-table-library-dan-fungsi-built-in
+[5]: ../tables/bagian-4/README.md#bagian-5-metatables-dan-metamethods
+[6]: ../tables/bagian-5/README.md#bagian-6-metamethods-lengkap-tambahan-komprehensif
 [7]: ../tables/bagian-7/README.md
 [8]: ../tables/bagian-8/README.md
 [9]: ../tables/bagian-9/README.md

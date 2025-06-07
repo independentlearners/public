@@ -1,8 +1,8 @@
-# Kurikulum Lengkap Numbers & Math di Lua
+# **[Kurikulum Lengkap Numbers & Math di Lua][0]**
 
 _Dari Pemula hingga Mahir_
 
-## 🔍 **LEVEL 1.5: VERSION COMPATIBILITY & DIFFERENCES**
+## 🔍 **[LEVEL 1.5: VERSION COMPATIBILITY & DIFFERENCES][1]**
 
 ### 1.5.1 Lua Version Math Differences
 
@@ -122,7 +122,7 @@ _Dari Pemula hingga Mahir_
   - [Lua 5.3 Number System](https://www.lua.org/manual/5.3/manual.html#3.1)
   - [Type System Changes](http://lua-users.org/wiki/LuaFiveThree)
 
-## 📐 **LEVEL 2: MATH LIBRARY BASICS**
+## 📐 **[LEVEL 2: MATH LIBRARY BASICS][2]**
 
 ### 2.1 Konstanta Matematika
 
@@ -157,7 +157,7 @@ _Dari Pemula hingga Mahir_
 - **Materi**:
   - math.floor() vs math.ceil()
   - math.modf() untuk memisahkan integer dan fractional part
-  "../../number"- Implementasi custom rounding functions
+    "../../number"- Implementasi custom rounding functions
   - Banker's rounding dan teknik lainnya
 - **Sumber**:
   - [Stack Overflow - Lua Rounding](https://stackoverflow.com/questions/18313171/lua-rounding-numbers-and-then-truncate)
@@ -672,3 +672,24 @@ _Dari Pemula hingga Mahir_
 5. **Research-Level**: Advanced topics seperti arbitrary precision arithmetic
 
 _Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang Numbers & Math di Lua tanpa perlu merujuk ke dokumentasi resmi, namun setiap topik dilengkapi dengan sumber referensi untuk pembelajaran lebih lanjut._
+
+#
+
+#### Selamat Belajar!
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../repl/README.md
+[selanjutnya]: ../../variabel/README.md
+
+<!--------------------------------------------------- -->
+
+[0]: ../../../README.md/#
+[1]: ../number/bagian-1/README.md/#
+[2]: ../number/bagian-2/README.md/#

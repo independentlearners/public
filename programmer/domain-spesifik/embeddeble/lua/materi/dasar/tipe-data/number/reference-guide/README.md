@@ -1,4 +1,4 @@
-# Panduan Lengkap Number dalam Lua - Dari Dasar hingga Mahir
+# **[Panduan Lengkap Number dalam Lua - Dari Dasar hingga Mahir][0]**
 
 ## 1. Konsep Dasar Number di Lua
 
@@ -770,3 +770,4 @@ Dengan memahami semua aspek ini, Anda akan mampu menangani berbagai skenario pem
 
 [domain-spesifik]: ../../../../../README.md
 [1]: ../../README.md
+[0]:../../../../README.md

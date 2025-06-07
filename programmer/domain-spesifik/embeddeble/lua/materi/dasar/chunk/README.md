@@ -1,4 +1,4 @@
-# Kurikulum Lengkap: Menguasai Chunk dalam Lua
+# [Kurikulum Lengkap: Menguasai Chunk dalam Lua][0]
 
 ## Bagian I: Fondasi Chunk (Foundation)
 
@@ -671,3 +671,40 @@
 ✅ **Troubleshooting**: Common issues dan advanced debugging
 
 Kurikulum ini telah melebihi dokumentasi resmi dalam cakupan dan kedalaman, dengan **270+ sumber referensi** yang mencakup dokumentasi resmi, tutorial komunitas, research papers, tools, dan diskusi teknis mendalam. Setiap topik memiliki learning path yang jelas dan dapat dipelajari secara mandiri tanpa perlu merujuk dokumentasi resmi.
+
+#
+
+#### Selamat Belajar!
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../../advanced/embedded-systems/README.md
+[selanjutnya]: ../../dasar/repl/README.md
+
+<!--------------------------------------------------- -->
+
+[0]: ../../README.md/#
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../

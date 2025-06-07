@@ -1,8 +1,7 @@
 #
 
-<!-- > - **[Selanjutnya][selanjutnya]** -->
-
 > - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
@@ -10,8 +9,7 @@
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-14/README.md
-
-<!-- [selanjutnya]: ../bagian-3/README.md -->
+[selanjutnya]: ../../modules-and-packages/materi/README.md
 
 <!----------------------------------------------------->
 
