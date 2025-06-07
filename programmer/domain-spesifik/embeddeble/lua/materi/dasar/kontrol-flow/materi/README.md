@@ -1,4 +1,4 @@
-# 📚 **[Bagian 1: Fundamental Control Flow][0]**
+# 📚 **[Bagian 1: Fundamental Control Flow][1]**
 
 Bagian ini adalah fondasi dari bagaimana sebuah program membuat keputusan dan mengulang tugas. Tanpa pemahaman yang kuat di sini, akan sulit untuk membangun logika program yang kompleks.
 
@@ -406,7 +406,7 @@ Pola _switch-case_ memungkinkan Anda memilih satu blok kode untuk dieksekusi dar
 Ini adalah penjelasan untuk Bagian 1 dari kurikulum. Kita telah membahas pernyataan kondisional dasar dan bagaimana menyimulasikan pola switch-case di Lua. Fondasi ini sangat penting.
 \*"2.4 Tipe String - _Deep String Mechanics_"\*\*.
 
-# 📚 **Bagian 2: Loop Structures**
+# 📚 **[Bagian 2: Loop Structures][2]**
 
 Struktur perulangan (loop) memungkinkan Anda untuk menjalankan blok kode yang sama berulang kali, baik untuk jumlah iterasi tertentu maupun selama kondisi tertentu terpenuhi. Ini sangat penting untuk mengotomatisasi tugas-tugas yang repetitif.
 
@@ -897,7 +897,7 @@ Loop `for` di Lua hadir dalam dua bentuk utama: _numeric for_ dan _generic for_.
 
 Kita telah menyelesaikan pembahasan mengenai loop `while`, `repeat...until`, dan dua jenis loop `for` di Lua. Pemahaman yang baik tentang iterasi dan bagaimana `pairs` serta `ipairs` bekerja, termasuk konsep iterator, akan sangat membantu Anda dalam memproses data dan mengontrol alur program.
 
-# 📚 **Bagian 3: Flow Control Statements**
+# 📚 **[Bagian 3: Flow Control Statements][3]**
 
 Pernyataan kontrol alur (flow control statements) ini memberikan Anda cara untuk memodifikasi perilaku standar dari loop atau blok kode, seperti keluar dari loop lebih awal atau melompati bagian dari kode. Di Lua, ini melibatkan `break` dan `goto`, serta pola untuk menyimulasikan `continue`.
 
@@ -1394,7 +1394,7 @@ Statement `goto` (diperkenalkan di Lua 5.2) memungkinkan Anda untuk mentransfer 
 
 Kita telah membahas `break`, pola untuk `continue`, dan penggunaan `goto`. Ini adalah alat yang ampuh, tetapi `goto` khususnya harus digunakan dengan sangat hati-hati untuk menjaga kode tetap terbaca dan terpelihara.
 
-# 📚 **Bagian 4: Advanced Control Flow Patterns**
+# 📚 **[Bagian 4: Advanced Control Flow Patterns][4]**
 
 Bagian ini akan memperkenalkan Anda pada teknik-teknik yang lebih abstrak dan kuat untuk mengelola alur program. Ini seringkali melibatkan penggunaan fitur-fitur unik Lua seperti tabel dan fungsi sebagai nilai kelas satu (first-class values) serta metatabel untuk menciptakan logika kontrol yang fleksibel dan ekspresif.
 
@@ -2189,7 +2189,7 @@ Bagian ini berfungsi sebagai peta jalan Anda. Tautan di bawah ini akan membawa A
 
 ---
 
-# 📚 **Bagian 5: Error Handling dan Exception Flow**
+# 📚 **[Bagian 5: Error Handling dan Exception Flow][5]**
 
 Penanganan error adalah aspek krusial dalam membuat program yang tangguh (_robust_). Program yang baik tidak hanya berjalan dengan benar pada input yang sempurna, tetapi juga dapat menangani situasi tak terduga (error) dengan anggun tanpa langsung mogok (_crash_). Lua menyediakan beberapa mekanisme untuk menangani error.
 
@@ -2544,7 +2544,7 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 ---
 
-# 📚 **Bagian 6: Coroutines - Advanced Asynchronous Control**
+# 📚 **[Bagian 6: Coroutines - Advanced Asynchronous Control][6]**
 
 Coroutine adalah salah satu fitur paling kuat di Lua. Mereka mirip dengan _threads_ (utas) dalam pemrograman konkuren, tetapi perbedaannya krusial: coroutine menjalankan _cooperative multitasking_, bukan _preemptive multitasking_. Artinya, sebuah coroutine hanya akan berhenti berjalan dan memberikan kontrol ke coroutine lain jika ia secara eksplisit memintanya.
 
@@ -2989,7 +2989,7 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 ---
 
-# 📚 **Bagian 7: Performance Optimization**
+# 📚 **[Bagian 7: Performance Optimization][7]**
 
 Menulis kode yang benar adalah prioritas pertama, tetapi menulis kode yang cepat dan efisien juga penting, terutama untuk aplikasi yang sensitif terhadap performa seperti game atau sistem pemrosesan data bervolume tinggi. Bagian ini fokus pada bagaimana pilihan struktur kontrol alur Anda dan cara Anda mengelola memori dapat memengaruhi performa.
 
@@ -3298,7 +3298,7 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 ---
 
-# 📚 **Bagian 8: Design Patterns dan Best Practices**
+# 📚 **[Bagian 8: Design Patterns dan Best Practices][8]**
 
 Setelah memahami "bagaimana" cara kerja kontrol alur, bagian ini fokus pada "kapan" dan "mengapa" Anda harus menggunakan pola tertentu. Menerapkan pola desain yang tepat dan praktik terbaik akan membuat kode Anda tidak hanya berfungsi, tetapi juga elegan, dapat dipelihara (_maintainable_), dan dapat diskalakan (_scalable_).
 
@@ -3455,7 +3455,7 @@ Bagian ini membahas prinsip-prinsip untuk menulis kode yang bersih, mudah dibaca
 
 ---
 
-# 📚 **Bagian 9: Domain-Specific Applications**
+# 📚 **[Bagian 9: Domain-Specific Applications][9]**
 
 Bagian ini menerapkan semua konsep yang telah dipelajari ke dalam domain aplikasi tertentu, menunjukkan bagaimana pola kontrol alur yang berbeda lebih cocok untuk masalah yang berbeda.
 
@@ -3499,7 +3499,7 @@ Sistem tertanam (seperti mikrokontroler) memiliki kendala sumber daya (memori da
 
 ---
 
-# 📚 **Bagian 10: Pola Kontrol Alur di Framework Populer (Tambahan)**
+# 📚 **[Bagian 10: Pola Kontrol Alur di Framework Populer (Tambahan)][10]**
 
 Bagian ini ditambahkan untuk menunjukkan bagaimana konsep kontrol alur abstrak (seperti _event loop_ dan _non-blocking I/O_ berbasis coroutine) diwujudkan dalam pustaka dan framework dunia nyata.
 
@@ -3573,7 +3573,7 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 ---
 
-# 📚 **Bagian 11: Kontrol Alur dalam Berbagai Versi Lua**
+# 📚 **[Bagian 11: Kontrol Alur dalam Berbagai Versi Lua][11]**
 
 Lua terus berkembang. Meskipun perubahannya cenderung evolusioner daripada revolusioner, beberapa versi memperkenalkan fitur atau mengubah perilaku yang relevan dengan kontrol alur. Memahami ini penting untuk portabilitas dan memanfaatkan fitur terbaru.
 
@@ -3670,7 +3670,7 @@ LuaJIT adalah implementasi Lua yang sangat cepat. Ia memiliki fitur dan pertimba
 
 ---
 
-# 📚 **Bagian 12: Specialized Control Flow Patterns**
+# 📚 **[Bagian 12: Specialized Control Flow Patterns][12]**
 
 Bagian ini membahas pola-pola yang lebih abstrak atau teoretis, yang sering digunakan untuk membangun sistem yang sangat fleksibel atau bahasa khusus domain.
 
@@ -3771,7 +3771,7 @@ Menggunakan fleksibilitas sintaks Lua (misalnya, pemanggilan fungsi tanpa tanda 
 
 ---
 
-# 📚 **Bagian 13: Pengujian dan Debugging**
+# 📚 **[Bagian 13: Pengujian dan Debugging][13]**
 
 Menulis kode hanyalah separuh dari pekerjaan. Memastikan kode tersebut benar dan dapat menemukan masalah ketika terjadi error adalah bagian yang sama pentingnya.
 
@@ -4008,21 +4008,16 @@ Selamat\! Anda telah mencapai akhir dari kurikulum yang intensif ini. Perjalanan
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../README.md
+[2]: ../README.md#-bagian-2-loop-structures
+[3]: ../README.md#-bagian-3-flow-control-statements
+[4]: ../README.md#-bagian-4-advanced-control-flow-patterns
+[5]: ../README.md#-bagian-5-error-handling-dan-exception-flow
+[6]: ../README.md#-bagian-6-coroutines---advanced-asynchronous-control
+[7]: ../README.md#-bagian-7-performance-optimization
+[8]: ../README.md#-bagian-8-design-patterns-dan-best-practices
+[9]: ../README.md#-bagian-9-domain-specific-applications
+[10]: ../README.md#-bagian-10-pola-kontrol-alur-di-framework-populer
+[11]: ../README.md#-bagian-11-control-flow-dalam-berbagai-versi-lua
+[12]: ../README.md#-bagian-12-specialized-control-flow-patterns
+[13]: ../README.md#-bagian-13-control
