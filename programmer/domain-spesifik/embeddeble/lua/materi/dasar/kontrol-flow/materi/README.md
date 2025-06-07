@@ -2183,13 +2183,13 @@ Bagian ini berfungsi sebagai peta jalan Anda. Tautan di bawah ini akan membawa A
 
 - **Materi Saat Ini: Penanganan Error**
 
-  - [**Bagian 5: Error Handling dan Exception Flow**](bagian-5-error-handling-dan-exception-flow)
-    - [5.1 Dasar-Dasar Penanganan Error](1-dasar-dasar-penanganan-error)
-    - [5.2 Panggilan Terproteksi (`pcall`/`xpcall`)](2-panggilan-terproteksi-pcallxpcall)
+  - **Bagian 5: Error Handling dan Exception Flow**
+    - [5.1 Dasar-Dasar Penanganan Error](#51-dasar-dasar-penanganan-error)
+    - [5.2 Panggilan Terproteksi (`pcall`/`xpcall`)](#52-panggilan-terproteksi-pcallxpcall)
 
 ---
 
-## 📚 **Bagian 5: Error Handling dan Exception Flow**
+# 📚 **Bagian 5: Error Handling dan Exception Flow**
 
 Penanganan error adalah aspek krusial dalam membuat program yang tangguh (_robust_). Program yang baik tidak hanya berjalan dengan benar pada input yang sempurna, tetapi juga dapat menangani situasi tak terduga (error) dengan anggun tanpa langsung mogok (_crash_). Lua menyediakan beberapa mekanisme untuk menangani error.
 
@@ -2537,14 +2537,14 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 - **Materi Saat Ini: Coroutines**
 
-  - [**Bagian 6: Coroutines - Advanced Asynchronous Control**](bagian-6-coroutines---advanced-asynchronous-control)
-    - [6.1 Dasar-Dasar Coroutine](1-dasar-dasar-coroutine)
-    - [6.2 Pola Coroutine Tingkat Lanjut](2-pola-coroutine-tingkat-lanjut)
-    - [6.3 Pemrograman Asinkron dengan Coroutines](3-pemrograman-asinkron-dengan-coroutines)
+  - **Bagian 6: Coroutines - Advanced Asynchronous Control**
+    - [6.1 Dasar-Dasar Coroutine](#61-dasar-dasar-coroutine)
+    - [6.2 Pola Coroutine Tingkat Lanjut](#62-pola-coroutine-tingkat-lanjut)
+    - [6.3 Pemrograman Asinkron dengan Coroutines](#63-pemrograman-asinkron-dengan-coroutines)
 
 ---
 
-## 📚 **Bagian 6: Coroutines - Advanced Asynchronous Control**
+# 📚 **Bagian 6: Coroutines - Advanced Asynchronous Control**
 
 Coroutine adalah salah satu fitur paling kuat di Lua. Mereka mirip dengan _threads_ (utas) dalam pemrograman konkuren, tetapi perbedaannya krusial: coroutine menjalankan _cooperative multitasking_, bukan _preemptive multitasking_. Artinya, sebuah coroutine hanya akan berhenti berjalan dan memberikan kontrol ke coroutine lain jika ia secara eksplisit memintanya.
 
@@ -2983,13 +2983,13 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 - **Materi Saat Ini: Optimasi Performa**
 
-  - [**Bagian 7: Performance Optimization**](bagian-7-performance-optimization)
-    - [7.1 Analisis Performa Kontrol Alur](1-analisis-performa-kontrol-alur)
-    - [7.2 Manajemen Memori dalam Kontrol Alur](2-manajemen-memori-dalam-kontrol-alur)
+  - **Bagian 7: Performance Optimization**
+    - [7.1 Analisis Performa Kontrol Alur](#71-analisis-performa-kontrol-alur)
+    - [7.2 Manajemen Memori dalam Kontrol Alur](#72-manajemen-memori-dalam-kontrol-alur)
 
 ---
 
-## 📚 **Bagian 7: Performance Optimization**
+# 📚 **Bagian 7: Performance Optimization**
 
 Menulis kode yang benar adalah prioritas pertama, tetapi menulis kode yang cepat dan efisien juga penting, terutama untuk aplikasi yang sensitif terhadap performa seperti game atau sistem pemrosesan data bervolume tinggi. Bagian ini fokus pada bagaimana pilihan struktur kontrol alur Anda dan cara Anda mengelola memori dapat memengaruhi performa.
 
@@ -3286,19 +3286,19 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 - **Materi Saat Ini: Pola Desain, Aplikasi, dan Framework**
 
-  - [**Bagian 8: Design Patterns dan Best Practices**](bagian-8-design-patterns-dan-best-practices)
-    - [8.1 Pola Desain Kontrol Alur](1-pola-desain-kontrol-alur)
-    - [8.2 Kualitas dan Keterpeliharaan Kode](2-kualitas-dan-keterpeliharaan-kode)
-  - [**Bagian 9: Domain-Specific Applications**](bagian-9-domain-specific-applications)
-    - [9.1 Kontrol Alur Pengembangan Game](1-kontrol-alur-pengembangan-game)
-    - [9.2 Kontrol Alur Sistem Tertanam (Embedded)\*\*](2-kontrol-alur-sistem-tertanam-embedded)
-  - [**Bagian 10: Pola Kontrol Alur di Framework Populer (Tambahan)**](bagian-10-pola-kontrol-alur-di-framework-populer-tambahan)
-    - [10.1 Event Loop di LÖVE 2D](01-event-loop-di-lve-2d)
-    - [10.2 Kontrol Alur Non-Blocking di OpenResty](02-kontrol-alur-non-blocking-di-openresty)
+  - **Bagian 8: Design Patterns dan Best Practices**
+    - [8.1 Pola Desain Kontrol Alur](#81-pola-desain-kontrol-alur)
+    - [8.2 Kualitas dan Keterpeliharaan Kode](#82-kualitas-dan-keterpeliharaan-kode)
+  - [**Bagian 9: Domain-Specific Applications**](#-bagian-9-domain-specific-applications)
+    - [9.1 Kontrol Alur Pengembangan Game](#91-kontrol-alur-pengembangan-game)
+    - [9.2 Kontrol Alur Sistem Tertanam (Embedded)\*\*](#92-kontrol-alur-sistem-tertanam-embedded)
+  - [**Bagian 10: Pola Kontrol Alur di Framework Populer (Tambahan)**](#-bagian-10-pola-kontrol-alur-di-framework-populer-tambahan)
+    - [10.1 Event Loop di LÖVE 2D](#101-event-loop-di-löve-2d)
+    - [10.2 Kontrol Alur Non-Blocking di OpenResty](#102-kontrol-alur-non-blocking-di-openresty)
 
 ---
 
-## 📚 **Bagian 8: Design Patterns dan Best Practices**
+# 📚 **Bagian 8: Design Patterns dan Best Practices**
 
 Setelah memahami "bagaimana" cara kerja kontrol alur, bagian ini fokus pada "kapan" dan "mengapa" Anda harus menggunakan pola tertentu. Menerapkan pola desain yang tepat dan praktik terbaik akan membuat kode Anda tidak hanya berfungsi, tetapi juga elegan, dapat dipelihara (_maintainable_), dan dapat diskalakan (_scalable_).
 
@@ -3455,7 +3455,7 @@ Bagian ini membahas prinsip-prinsip untuk menulis kode yang bersih, mudah dibaca
 
 ---
 
-## 📚 **Bagian 9: Domain-Specific Applications**
+# 📚 **Bagian 9: Domain-Specific Applications**
 
 Bagian ini menerapkan semua konsep yang telah dipelajari ke dalam domain aplikasi tertentu, menunjukkan bagaimana pola kontrol alur yang berbeda lebih cocok untuk masalah yang berbeda.
 
@@ -3499,7 +3499,7 @@ Sistem tertanam (seperti mikrokontroler) memiliki kendala sumber daya (memori da
 
 ---
 
-## 📚 **Bagian 10: Pola Kontrol Alur di Framework Populer (Tambahan)**
+# 📚 **Bagian 10: Pola Kontrol Alur di Framework Populer (Tambahan)**
 
 Bagian ini ditambahkan untuk menunjukkan bagaimana konsep kontrol alur abstrak (seperti _event loop_ dan _non-blocking I/O_ berbasis coroutine) diwujudkan dalam pustaka dan framework dunia nyata.
 
@@ -3560,20 +3560,20 @@ Berikut adalah peta jalan untuk materi yang akan kita bahas. Tautan di bawah ini
 
 - **Materi Saat Ini: Fitur Spesifik, Pola Khusus, dan Pengujian**
 
-  - [**Bagian 11: Kontrol Alur dalam Berbagai Versi Lua**](bagian-11-kontrol-alur-dalam-berbagai-versi-lua)
-    - [11.1 Fitur Kontrol Alur Spesifik Versi](11-fitur-kontrol-alur-spesifik-versi)
-    - [11.2 Optimasi Spesifik LuaJIT](12-optimasi-spesifik-luajit)
-  - [**Bagian 12: Specialized Control Flow Patterns**](bagian-12-specialized-control-flow-patterns)
-    - [12.1 Kontrol Alur Berbasis Kejadian (Event-Driven)](21-kontrol-alur-berbasis-kejadian-event-driven)
-    - [12.2 Kontrol Alur Berbasis Kontinuasi (Continuation-Based)](22-kontrol-alur-berbasis-kontinuasi-continuation-based)
-    - [12.3 Kontrol Alur Domain-Specific Language (DSL)](23-kontrol-alur-domain-specific-language-dsl)
-  - [**Bagian 13: Pengujian dan Debugging**](bagian-13-pengujian-dan-debugging)
-    - [13.1 Pengujian Kontrol Alur](31-pengujian-kontrol-alur)
-    - [13.2 Debugging Kontrol Alur](32-debugging-kontrol-alur)
+  - [**Bagian 11: Kontrol Alur dalam Berbagai Versi Lua**](#-bagian-11-kontrol-alur-dalam-berbagai-versi-lua)
+    - [11.1 Fitur Kontrol Alur Spesifik Versi](#111-fitur-kontrol-alur-spesifik-versi)
+    - [11.2 Optimasi Spesifik LuaJIT](#112-optimasi-spesifik-luajit)
+  - [**Bagian 12: Specialized Control Flow Patterns**](#-bagian-12-specialized-control-flow-patterns)
+    - [12.1 Kontrol Alur Berbasis Kejadian (Event-Driven)](#121-kontrol-alur-berbasis-kejadian-event-driven)
+    - [12.2 Kontrol Alur Berbasis Kontinuasi (Continuation-Based)](#122-kontrol-alur-berbasis-kontinuasi-continuation-based)
+    - [12.3 Kontrol Alur Domain-Specific Language (DSL)](#23-kontrol-alur-domain-specific-language-dsl)
+  - [**Bagian 13: Pengujian dan Debugging**](#-bagian-13-pengujian-dan-debugging)
+    - [13.1 Pengujian Kontrol Alur](#131-pengujian-kontrol-alur)
+    - [13.2 Debugging Kontrol Alur](#132-debugging-kontrol-alur)
 
 ---
 
-## 📚 **Bagian 11: Kontrol Alur dalam Berbagai Versi Lua**
+# 📚 **Bagian 11: Kontrol Alur dalam Berbagai Versi Lua**
 
 Lua terus berkembang. Meskipun perubahannya cenderung evolusioner daripada revolusioner, beberapa versi memperkenalkan fitur atau mengubah perilaku yang relevan dengan kontrol alur. Memahami ini penting untuk portabilitas dan memanfaatkan fitur terbaru.
 
@@ -3670,7 +3670,7 @@ LuaJIT adalah implementasi Lua yang sangat cepat. Ia memiliki fitur dan pertimba
 
 ---
 
-## 📚 **Bagian 12: Specialized Control Flow Patterns**
+# 📚 **Bagian 12: Specialized Control Flow Patterns**
 
 Bagian ini membahas pola-pola yang lebih abstrak atau teoretis, yang sering digunakan untuk membangun sistem yang sangat fleksibel atau bahasa khusus domain.
 
@@ -3771,7 +3771,7 @@ Menggunakan fleksibilitas sintaks Lua (misalnya, pemanggilan fungsi tanpa tanda 
 
 ---
 
-## 📚 **Bagian 13: Pengujian dan Debugging**
+# 📚 **Bagian 13: Pengujian dan Debugging**
 
 Menulis kode hanyalah separuh dari pekerjaan. Memastikan kode tersebut benar dan dapat menemukan masalah ketika terjadi error adalah bagian yang sama pentingnya.
 
@@ -3812,6 +3812,189 @@ Teknik dan alat untuk melacak eksekusi program Anda langkah demi langkah, memeri
 ---
 
 Kita telah menyelesaikan semua materi pembelajaran dalam kurikulum. Anda sekarang memiliki panduan komprehensif dari dasar hingga konsep yang sangat canggih tentang kontrol alur di Lua.
+
+### Daftar Isi Pembelajaran
+
+- **Materi yang Telah Dibahas (Ringkasan)**
+
+  - **Bagian 1-13**: Mencakup seluruh spektrum kontrol alur di Lua, mulai dari `if/else` dasar, loop, coroutine, hingga pola desain, optimasi, dan pengujian.
+
+- **Materi Saat Ini: Proyek Akhir dan Penilaian Diri**
+
+  - [**Bagian 14: Proyek Akhir dan Evaluasi**](#-bagian-14-proyek-akhir-dan-evaluasi)
+    - [14.1 Proyek Akhir: Mengaplikasikan Pengetahuan](#141-proyek-akhir-mengaplikasikan-pengetahuan)
+    - [14.2 Evaluasi dan Refleksi Diri](#142-evaluasi-dan-refleksi-diri)
+  - [**Sumber Referensi Tambahan**](#-sumber-referensi-tambahan)
+  - [**Checklist Kemahiran**](#-checklist-kemahiran)
+
+---
+
+## 📚 **Bagian 14: Proyek Akhir dan Evaluasi**
+
+Ini adalah tahap di mana Anda beralih dari sekadar mempelajari konsep menjadi benar-benar _menggunakannya_ untuk memecahkan masalah. Proyek akhir adalah kesempatan Anda untuk berkreasi, menghadapi tantangan nyata, dan membuktikan pada diri sendiri bahwa Anda telah menguasai kontrol alur di Lua.
+
+### 14.1 Proyek Akhir: Mengaplikasikan Pengetahuan
+
+**Durasi:** Fleksibel (disarankan 10-20 jam)
+
+#### **Deskripsi Konkret**
+
+Tujuan proyek akhir adalah merancang dan membangun sebuah aplikasi kecil hingga menengah dari awal sampai akhir. Proyek ini harus secara sadar dirancang untuk menerapkan berbagai struktur kontrol alur yang telah Anda pelajari. Ini bukan hanya tentang membuat sesuatu yang berfungsi, tetapi tentang membuat sesuatu dengan desain kontrol alur yang disengaja dan efisien.
+
+---
+
+#### **Ide Proyek**
+
+Pilihlah proyek yang menarik bagi Anda. Minat pribadi akan menjadi motivator terbesar. Berikut adalah beberapa ide yang dikategorikan berdasarkan pola kontrol alur utama yang akan ditekankan:
+
+**A. Berbasis State Machine / Tabel Dispatch**
+Proyek-proyek ini sangat baik untuk melatih penggunaan pola **State**, **Command**, dan **Table-Driven Control Flow**.
+
+- **Game Petualangan Teks (Text-Based Adventure Game)**:
+
+  - **Deskripsi**: Buat sebuah dunia di mana pemain dapat bergerak antar ruangan, mengambil item, dan berinteraksi dengan lingkungan menggunakan perintah teks (misalnya, "pergi utara", "ambil kunci").
+  - **Kontrol Alur**: Setiap ruangan adalah sebuah _state_. Perintah pemain diproses menggunakan _tabel dispatch_. Inventaris dan interaksi item akan membutuhkan banyak logika kondisional.
+
+- **Turn-Based RPG Sederhana**:
+
+  - **Deskripsi**: Buat sistem pertarungan di mana pemain dan musuh bergiliran menyerang, bertahan, atau menggunakan item.
+  - **Kontrol Alur**: Alur pertarungan adalah _state machine_ yang jelas (giliran pemain, giliran musuh, menang, kalah). Aksi pemain dapat dikelola dengan pola **Command**.
+
+- **Simulasi Lalu Lintas**:
+
+  - **Deskripsi**: Buat simulasi persimpangan jalan dengan lampu lalu lintas dan mobil.
+  - **Kontrol Alur**: Lampu lalu lintas adalah _state machine_ (`merah` -\> `hijau` -\> `kuning`). Pergerakan mobil diatur oleh loop dan kondisi berdasarkan state lampu lalu lintas.
+
+**B. Berbasis Coroutine / Pemrograman Asinkron**
+Proyek-proyek ini akan memaksa Anda untuk berpikir secara asinkron dan mengelola tugas-tugas yang berjalan bersamaan.
+
+- **Web Scraper Sederhana**:
+
+  - **Deskripsi**: Buat program yang mengunduh beberapa halaman web secara bersamaan, mengekstrak informasi tertentu (misalnya, judul atau tautan), dan menyimpannya.
+  - **Kontrol Alur**: Setiap unduhan halaman web dijalankan dalam _coroutine_-nya sendiri. Sebuah _scheduler_ sederhana akan mengelola coroutine ini, menggunakan I/O non-blocking (jika Anda menggunakan pustaka seperti `copas` atau `lua-async`).
+
+- **Antrean Tugas (Task Queue Processor)**:
+
+  - **Deskripsi**: Buat sistem di mana tugas-tugas (misalnya, memproses gambar, mengirim email) dapat ditambahkan ke antrean dan dieksekusi oleh beberapa "pekerja" secara bersamaan.
+  - **Kontrol Alur**: Gunakan pola **Producer-Consumer**. "Pekerja" adalah _coroutine_ yang mengambil tugas dari antrean dan menjalankannya.
+
+- **Sistem Dialog atau Cutscene Game**:
+
+  - **Deskripsi**: Buat skrip untuk urutan dialog atau cutscene di mana teks muncul, karakter bergerak, ada jeda waktu, lalu berlanjut.
+  - **Kontrol Alur**: Seluruh cutscene adalah satu _coroutine_ besar. `yield` digunakan untuk menunggu input pemain, menunggu waktu tertentu, atau menunggu animasi selesai.
+
+**C. Berbasis DSL / Metaprogramming**
+Proyek-proyek ini melatih kemampuan Anda untuk "membengkokkan" bahasa Lua sesuai kebutuhan Anda.
+
+- **Parser File Konfigurasi Kustom**:
+
+  - **Deskripsi**: Lua sering digunakan sebagai file konfigurasi. Buat DSL Anda sendiri yang lebih spesifik untuk aplikasi Anda (misalnya, mendefinisikan level game atau perilaku AI) dan tulis parser-nya.
+  - **Kontrol Alur**: Anda akan mendefinisikan fungsi-fungsi yang menjadi "keyword" DSL Anda. Alur program saat memuat konfigurasi akan ditentukan oleh struktur file DSL tersebut.
+
+- **Sistem Build/Automasi Sederhana**:
+
+  - **Deskripsi**: Buat skrip seperti `Makefile` atau `Gulpfile` di Lua, di mana Anda dapat mendefinisikan tugas dan ketergantungannya.
+  - **Kontrol Alur**: Gunakan tabel dan metatabel untuk mendefinisikan tugas. Alur eksekusi akan melompati tugas yang tidak perlu dijalankan ulang dan menangani dependensi.
+
+---
+
+#### **Langkah-Langkah Pengerjaan**
+
+1.  **Perencanaan dan Desain (30%)**:
+
+    - Pilih ide dan definisikan cakupan (fitur apa saja yang harus ada).
+    - Gambarkan diagram alur atau state diagram untuk memvisualisasikan kontrol alur utama.
+    - Rancang struktur data yang akan Anda gunakan.
+    - Identifikasi di mana Anda akan menerapkan pola-pola spesifik yang telah dipelajari.
+
+2.  **Implementasi (50%)**:
+
+    - Mulai dengan kerangka dasar. Implementasikan loop utama atau state machine inti terlebih dahulu.
+    - Terapkan fitur satu per satu.
+    - Fokus pada penulisan kode yang bersih dan mudah dibaca. Terapkan praktik terbaik dari Bagian 8.
+    - Jangan takut untuk melakukan _refactoring_ jika desain awal Anda ternyata kurang optimal.
+
+3.  **Pengujian dan Debugging (20%)**:
+
+    - Uji setiap fitur saat Anda membuatnya.
+    - Tulis beberapa unit test untuk logika yang paling krusial menggunakan Busted atau LuaUnit.
+    - Lakukan pengujian kasus tepi (edge cases). Apa yang terjadi jika input salah atau tidak terduga?
+
+4.  **Dokumentasi**:
+
+    - Buat file `README.md` untuk proyek Anda. Jelaskan apa fungsi proyek, bagaimana cara menjalankannya, dan yang terpenting, jelaskan pilihan desain Anda terkait kontrol alur.
+
+---
+
+### 14.2 Evaluasi dan Refleksi Diri
+
+Tujuan dari tahap ini adalah untuk menginternalisasi apa yang telah Anda pelajari dengan meninjau kembali pekerjaan Anda dan mengidentifikasi kekuatan serta kelemahan Anda.
+
+#### **Proses Refleksi**
+
+Setelah proyek selesai, luangkan waktu untuk menjawab pertanyaan-pertanyaan berikut:
+
+1.  **Tinjauan Kode (Code Review)**:
+
+    - Bagian mana dari kode yang paling Anda banggakan? Mengapa?
+    - Bagian mana yang paling sulit untuk ditulis atau di-debug? Apa yang membuatnya sulit?
+    - Jika Anda memulai proyek ini lagi dari awal, apa yang akan Anda lakukan secara berbeda?
+    - Apakah ada penggunaan `goto` yang bisa diganti dengan struktur yang lebih baik? Apakah ada rantai `if/else` yang panjang yang seharusnya menjadi tabel dispatch?
+
+2.  **Penilaian Diri Berdasarkan Checklist**:
+
+    - Jujurlah pada diri sendiri dan tinjau kembali **Checklist Kemahiran** di bawah ini. Beri tanda centang pada poin-poin yang Anda rasa benar-benar sudah dikuasai.
+
+3.  **Identifikasi Kesenjangan (Gap)**:
+
+    - Berdasarkan tinjauan dan checklist, area mana yang masih terasa lemah? Apakah itu coroutine? Metatabel? Optimasi performa?
+
+4.  **Rencana Pembelajaran Selanjutnya**:
+
+    - Buat rencana konkret untuk memperkuat area yang lemah. Mungkin dengan membaca ulang bagian terkait, mencari tutorial tambahan, atau membuat proyek kecil lain yang berfokus pada area tersebut.
+    - Pikirkan tentang langkah selanjutnya: Apakah Anda ingin mendalami pengembangan game dengan LÖVE? Tertarik dengan pengembangan web performa tinggi dengan OpenResty? Atau mungkin berkontribusi pada proyek open-source Lua?
+
+---
+
+## 🔗 **Sumber Referensi Tambahan**
+
+Gunakan sumber daya ini secara berkelanjutan untuk memperdalam pengetahuan Anda.
+
+### Dokumentasi Resmi:
+
+- [Lua 5.4 Reference Manual](https://www.lua.org/manual/5.4/manual.html)
+- [Programming in Lua (4th Edition)](https://www.lua.org/pil/)
+
+### Komunitas dan Forum:
+
+- [Lua-users Wiki](http://lua-users.org/wiki/)
+- [Lua Subreddit](https://www.reddit.com/r/lua/)
+- [Stack Overflow Lua Questions](https://stackoverflow.com/questions/tagged/lua)
+
+### Tools dan Library:
+
+- [LuaJIT](https://luajit.org/) - Just-In-Time Compiler
+- [LuaRocks](https://luarocks.org/) - Package Manager
+- [ZeroBrane Studio](https://studio.zerobrane.com/) - IDE untuk Lua
+
+---
+
+## ✅ **Checklist Kemahiran**
+
+Gunakan checklist ini sebagai alat evaluasi akhir. Anda dianggap telah menguasai kurikulum ini jika Anda dapat dengan percaya diri mengatakan "ya" pada setiap poin berikut:
+
+- \[ ] **Mampu mengimplementasikan semua jenis kontrol alur di Lua dengan lancar** (termasuk `if`, `while`, `for`, `repeat`, `goto`, dan pola-pola berbasis tabel).
+- \[ ] **Memahami trade-offs performa** dari berbagai pendekatan (misalnya, kapan tabel dispatch lebih baik daripada `if/else`).
+- \[ ] **Mampu menangani error secara tangguh** menggunakan `pcall` dan `xpcall` untuk mencegah program crash.
+- \[ ] **Mampu menggunakan coroutines** untuk mengelola tugas-tugas konkuren dan mengimplementasikan pola asinkron.
+- \[ ] **Mampu mengoptimalkan kontrol alur untuk performa**, baik dari segi kecepatan CPU maupun penggunaan memori.
+- \[ ] **Mampu menerapkan pola desain yang tepat** (State, Command, Observer) untuk membuat kode lebih terstruktur.
+- \[ ] **Mampu melakukan debugging dan pengujian** pada logika kontrol alur yang kompleks.
+- \[ ] **Mampu memilih struktur kontrol yang paling tepat** untuk setiap situasi, dengan mempertimbangkan keterbacaan, keterpeliharaan, dan performa.
+
+---
+
+Selamat\! Anda telah mencapai akhir dari kurikulum yang intensif ini. Perjalanan untuk menjadi seorang ahli tidak pernah benar-benar berakhir, tetapi dengan menyelesaikan semua tahapan ini, Anda telah membangun fondasi yang luar biasa kuat. Anda kini memiliki pemahaman yang mendalam dan komprehensif tentang jantung dari setiap program—kontrol alur—dalam salah satu bahasa skrip yang paling elegan dan kuat. Teruslah berlatih, teruslah membangun, dan teruslah belajar\!
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
