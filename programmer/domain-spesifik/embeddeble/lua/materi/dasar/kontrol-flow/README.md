@@ -605,17 +605,17 @@ Kurikulum ini dirancang untuk membuat Anda menjadi expert dalam control flow Lua
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
-[1]: ../kontrol-flow/bagian-1/README.md
-[2]: ../kontrol-flow/bagian-2/README.md
-[3]: ../kontrol-flow/bagian-3/README.md
-[4]: ../kontrol-flow/bagian-4/README.md
-[5]: ../kontrol-flow/bagian-5/README.md
-[6]: ../kontrol-flow/bagian-6/README.md
-[7]: ../kontrol-flow/bagian-7/README.md
-[8]: ../kontrol-flow/bagian-8/README.md
-[9]: ../kontrol-flow/bagian-9/README.md
-[10]: ../kontrol-flow/bagian-10/README.md
-[11]: ../kontrol-flow/bagian-11/README.md
-[12]: ../kontrol-flow/bagian-12/README.md
-[13]: ../kontrol-flow/bagian-13/README.md
+[0]: ../../README.md
+[1]: ../kontrol-flow/materi/README.md#-bagian-1-fundamental-control-flow
+[2]: ../kontrol-flow/materi/README.md#-bagian-2-loop-structures
+[3]: ../kontrol-flow/materi/README.md#-bagian-3-flow-control-statements
+[4]: ../kontrol-flow/materi/README.md#-bagian-4-advanced-control-flow-patterns
+[5]: ../kontrol-flow/materi/README.md#-bagian-5-error-handling-dan-exception-flow
+[6]: ../kontrol-flow/materi/README.md#-bagian-6-coroutines---advanced-asynchronous-control
+[7]: ../kontrol-flow/materi/README.md#-bagian-7-performance-optimization
+[8]: ../kontrol-flow/materi/README.md#-bagian-8-design-patterns-dan-best-practices
+[9]: ../kontrol-flow/materi/README.md#-bagian-9-domain-specific-applications
+[10]: ../kontrol-flow/materi/README.md#-bagian-10-pola-kontrol-alur-di-framework-populer-tambahan
+[11]: ../kontrol-flow/materi/README.md#-bagian-11-kontrol-alur-dalam-berbagai-versi-lua
+[12]: ../kontrol-flow/materi/README.md#-bagian-12-specialized-control-flow-patterns
+[13]: ../kontrol-flow/materi/README.md#-bagian-13-pengujian-dan-debugging

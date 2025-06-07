@@ -1,4 +1,4 @@
-# **BAGIAN 4: TABLE LIBRARY DAN FUNGSI BUILT-IN**
+# **[BAGIAN 4: TABLE LIBRARY DAN FUNGSI BUILT-IN][0]**
 
 Sebelumnya kita telah memahami cara membuat, memanipulasi, dan bahkan "mengintip" cara kerja table di level rendah. Sekarang, kita akan melengkapinya dengan perangkat yang sangat berguna: **Pustaka `table` (Table Library)**. Pustaka ini adalah kumpulan fungsi bawaan Lua yang dirancang untuk melakukan operasi umum pada table, terutama yang digunakan sebagai **daftar** atau **array** (sequence). Menggunakan fungsi-fungsi ini lebih efisien dan tidak rentan kesalahan daripada menulis logikanya sendiri dari awal.
 
@@ -241,7 +241,7 @@ Langkah berikutnya dalam kurikulum ini adalah membahas satu topik paling kuat da
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../README.md#4-table-library-dan-fungsi-built-in
 [1]: ../
 [2]: ../
 [3]: ../

@@ -1,8 +1,8 @@
-# 6. Pattern dan Format I/O
+# **[6. Pattern dan Format I/O][0]**
 
 Sejauh ini kita telah membaca dan menulis data sebagai blok teks, baris per baris, atau sejumlah karakter. Namun, di dunia nyata, data seringkali memiliki struktur tertentu—seperti file CSV, file konfigurasi, atau log. Bagian ini akan membahas cara mengenali (parsing) pola data saat membaca dan cara memformat data secara presisi saat menulis.
 
-*(Catatan: Kurikulum Anda tidak menyertakan sumber referensi spesifik untuk bagian ini. Penjelasan berikut didasarkan pada pustaka `string` standar Lua, yang merupakan bagian inti dari bahasa tersebut. Anda selalu dapat merujuk ke Dokumentasi Resmi Lua untuk detail lebih lanjut tentang fungsi `string`.)*
+_(Catatan: Kurikulum Anda tidak menyertakan sumber referensi spesifik untuk bagian ini. Penjelasan berikut didasarkan pada pustaka `string` standar Lua, yang merupakan bagian inti dari bahasa tersebut. Anda selalu dapat merujuk ke Dokumentasi Resmi Lua untuk detail lebih lanjut tentang fungsi `string`.)_
 
 ### 6.1 Reading Patterns
 
@@ -10,41 +10,44 @@ Sejauh ini kita telah membaca dan menulis data sebagai blok teks, baris per bari
 Membaca pola berarti mengurai (parsing) data mentah (biasanya string) untuk mengekstrak informasi yang bermakna. Daripada hanya mendapatkan sebaris teks, Anda ingin mengambil bagian-bagian spesifik dari baris tersebut, seperti nama pengguna, ID, dan tanggal dari sebuah baris log. Alat utama untuk ini di Lua adalah fungsi `string.match()` yang dikombinasikan dengan operasi I/O.
 
 **Pattern untuk membaca data terstruktur:**
-* **Konsep**: Data terstruktur adalah data yang diorganisir dalam format yang dapat diprediksi. Contoh:
-    * **CSV (Comma-Separated Values)**: `Alice,30,alice@email.com`
-    * **Key-Value**: `hostname = server01`
-    * **Log**: `[2025-06-07 10:30:00] [INFO] User 'bob' logged in.`
-* **Strategi**: Pola umumnya adalah membaca file baris per baris (menggunakan `file:lines()`), lalu pada setiap baris, gunakan fungsi `string.match()` untuk mengekstrak data yang Anda butuhkan.
+
+- **Konsep**: Data terstruktur adalah data yang diorganisir dalam format yang dapat diprediksi. Contoh:
+  - **CSV (Comma-Separated Values)**: `Alice,30,alice@email.com`
+  - **Key-Value**: `hostname = server01`
+  - **Log**: `[2025-06-07 10:30:00] [INFO] User 'bob' logged in.`
+- **Strategi**: Pola umumnya adalah membaca file baris per baris (menggunakan `file:lines()`), lalu pada setiap baris, gunakan fungsi `string.match()` untuk mengekstrak data yang Anda butuhkan.
 
 **Menggunakan `string.match()` dengan I/O:**
-* **`string.match()`**: Fungsi ini mencoba mencocokkan sebuah *pattern* (pola) di dalam sebuah string.
-* **Sintaks**: `local capture1, capture2, ... = string.match(s, pattern)`
-    * `s`: String sumber tempat pencarian dilakukan.
-    * `pattern`: String yang mendeskripsikan pola yang dicari.
-    * `capture1, ...`: Jika pola mengandung *captures* `()`, fungsi ini akan mengembalikan bagian-bagian dari string yang cocok dengan *captures* tersebut. Jika tidak ada *captures*, ia mengembalikan seluruh bagian yang cocok. Jika tidak ada yang cocok, ia mengembalikan `nil`.
-* **Dasar-dasar Lua Patterns (Pola Lua)**:
-    * Pola di Lua mirip tetapi **tidak sama** dengan Regular Expressions (Regex) standar. Mereka lebih sederhana namun tetap kuat.
-    * **Karakter Dasar**: Cocok dengan dirinya sendiri (misalnya, `a` cocok dengan "a").
-    * **Class Karakter**:
-        * `%d`: cocok dengan digit (angka).
-        * `%w`: cocok dengan karakter alfanumerik (huruf dan angka).
-        * `%s`: cocok dengan spasi (spasi, tab, newline).
-        * `%a`: cocok dengan huruf.
-        * `.` (titik): cocok dengan karakter *apa pun*.
-    * **Pengulang (Repeats)**:
-        * `*`: cocok dengan 0 atau lebih pengulangan dari class sebelumnya. Bersifat *greedy* (mencoba mencocokkan sebanyak mungkin).
-        * `+`: cocok dengan 1 atau lebih pengulangan. *Greedy*.
-        * `-`: cocok dengan 0 atau lebih pengulangan. Bersifat *non-greedy* (mencoba mencocokkan sesedikit mungkin). Ini sangat berguna.
-        * `?`: cocok dengan 0 atau 1 pengulangan (opsional).
-    * **Captures `()`**: Menandai bagian dari pola yang ingin Anda ekstrak sebagai hasil.
-    * **Anchors**:
-        * `^`: Menandai awal dari string.
-        * `$`: Menandai akhir dari string.
+
+- **`string.match()`**: Fungsi ini mencoba mencocokkan sebuah _pattern_ (pola) di dalam sebuah string.
+- **Sintaks**: `local capture1, capture2, ... = string.match(s, pattern)`
+  - `s`: String sumber tempat pencarian dilakukan.
+  - `pattern`: String yang mendeskripsikan pola yang dicari.
+  - `capture1, ...`: Jika pola mengandung _captures_ `()`, fungsi ini akan mengembalikan bagian-bagian dari string yang cocok dengan _captures_ tersebut. Jika tidak ada _captures_, ia mengembalikan seluruh bagian yang cocok. Jika tidak ada yang cocok, ia mengembalikan `nil`.
+- **Dasar-dasar Lua Patterns (Pola Lua)**:
+  - Pola di Lua mirip tetapi **tidak sama** dengan Regular Expressions (Regex) standar. Mereka lebih sederhana namun tetap kuat.
+  - **Karakter Dasar**: Cocok dengan dirinya sendiri (misalnya, `a` cocok dengan "a").
+  - **Class Karakter**:
+    - `%d`: cocok dengan digit (angka).
+    - `%w`: cocok dengan karakter alfanumerik (huruf dan angka).
+    - `%s`: cocok dengan spasi (spasi, tab, newline).
+    - `%a`: cocok dengan huruf.
+    - `.` (titik): cocok dengan karakter _apa pun_.
+  - **Pengulang (Repeats)**:
+    - `*`: cocok dengan 0 atau lebih pengulangan dari class sebelumnya. Bersifat _greedy_ (mencoba mencocokkan sebanyak mungkin).
+    - `+`: cocok dengan 1 atau lebih pengulangan. _Greedy_.
+    - `-`: cocok dengan 0 atau lebih pengulangan. Bersifat _non-greedy_ (mencoba mencocokkan sesedikit mungkin). Ini sangat berguna.
+    - `?`: cocok dengan 0 atau 1 pengulangan (opsional).
+  - **Captures `()`**: Menandai bagian dari pola yang ingin Anda ekstrak sebagai hasil.
+  - **Anchors**:
+    - `^`: Menandai awal dari string.
+    - `$`: Menandai akhir dari string.
 
 **Parsing CSV dan format data lainnya:**
 Mari kita lihat contoh praktisnya.
 
 **1. File Contoh `produk.csv`:**
+
 ```
 ID,Nama Produk,Harga,Stok
 101,Buku Tulis,5000,150
@@ -52,9 +55,11 @@ ID,Nama Produk,Harga,Stok
 103,Penghapus,1000,250
 104,"Penggaris Besi, 30cm",7500,75
 ```
+
 Perhatikan baris terakhir memiliki koma di dalam nama produk yang diapit tanda kutip. Parsing CSV sederhana dengan `string.match` mungkin kesulitan dengan kasus seperti ini. Untuk contoh ini, kita akan fokus pada baris-baris sederhana terlebih dahulu.
 
 **2. File Contoh `server.conf`:**
+
 ```
 # File Konfigurasi Server
 hostname = webserver.example.com
@@ -64,6 +69,7 @@ enable_ssl = false
 ```
 
 **3. Skrip Lua (`parsing_data.lua`):**
+
 ```lua
 -- 1. Parsing file CSV sederhana
 print("--- Parsing produk.csv ---")
@@ -144,9 +150,11 @@ else
     end
 end
 ```
+
 **Penjelasan Kode**:
-* **Parsing CSV**: Skrip membaca file `produk.csv` baris per baris. Untuk setiap baris, ia mencoba mencocokkan pola `^([^,]+),([^,]+),([^,]+),([^,]+)$`. Pola `[^,]+` adalah trik yang sangat berguna, artinya "satu atau lebih karakter yang bukan koma". Setiap `([^,]+)` adalah *capture group* yang hasilnya disimpan ke variabel `id`, `nama`, `harga`, dan `stok`.
-* **Parsing Key-Value**: Untuk file `server.conf`, pola `^%w+%s*=%s*(.+)` digunakan. `^%w+` mencocokkan *key* di awal baris, `%s*=%s*` mencocokkan `=` dengan spasi opsional di sekitarnya, dan `(.+)` menangkap sisa baris sebagai *value*. Hasilnya disimpan dalam sebuah tabel Lua bernama `config`.
+
+- **Parsing CSV**: Skrip membaca file `produk.csv` baris per baris. Untuk setiap baris, ia mencoba mencocokkan pola `^([^,]+),([^,]+),([^,]+),([^,]+)$`. Pola `[^,]+` adalah trik yang sangat berguna, artinya "satu atau lebih karakter yang bukan koma". Setiap `([^,]+)` adalah _capture group_ yang hasilnya disimpan ke variabel `id`, `nama`, `harga`, dan `stok`.
+- **Parsing Key-Value**: Untuk file `server.conf`, pola `^%w+%s*=%s*(.+)` digunakan. `^%w+` mencocokkan _key_ di awal baris, `%s*=%s*` mencocokkan `=` dengan spasi opsional di sekitarnya, dan `(.+)` menangkap sisa baris sebagai _value_. Hasilnya disimpan dalam sebuah tabel Lua bernama `config`.
 
 ---
 
@@ -156,32 +164,35 @@ end
 Sama pentingnya dengan membaca data terstruktur, menulis data dalam format yang rapi dan konsisten juga krusial. Daripada hanya menggabungkan string dengan `..`, Anda bisa menggunakan `string.format()` untuk membuat string yang terformat dengan baik, yang kemudian bisa ditulis ke file atau ditampilkan di konsol.
 
 **`string.format()` untuk formatted output:**
-* **Konsep**: `string.format()` membuat string berdasarkan sebuah "string format" (template) dan serangkaian argumen. Ini sangat mirip dengan fungsi `printf` di bahasa C.
-* **Sintaks**: `local formattedString = string.format(formatstring, arg1, arg2, ...)`
-    * `formatstring`: String template yang berisi teks biasa dan *format specifiers* (penentu format) yang diawali dengan `%`.
-    * `arg1, arg2, ...`: Nilai-nilai yang akan dimasukkan ke dalam *specifiers*.
-* **Format Specifiers Umum**:
-    * `%s`: Menggantikan dengan string.
-    * `%d`: Menggantikan dengan angka integer (desimal).
-    * `%f`: Menggantikan dengan angka floating-point (pecahan).
-    * `%q`: Menggantikan dengan string yang diformat dengan aman sehingga bisa dibaca kembali oleh Lua (misalnya, menambahkan tanda kutip dan escape characters jika perlu).
-    * `%%`: Untuk memasukkan karakter `%` secara literal.
-* **Modifiers (Pengubah Format)**: Anda bisa menambahkan angka di antara `%` dan huruf specifier untuk mengontrol tampilan.
-    * `%5d`: Angka integer, diratakan kanan dalam ruang selebar 5 karakter.
-    * `%-10s`: String, diratakan kiri dalam ruang selebar 10 karakter.
-    * `%.2f`: Angka float, ditampilkan dengan tepat 2 angka di belakang koma.
-    * `%04d`: Angka integer, diberi awalan nol hingga totalnya 4 digit.
+
+- **Konsep**: `string.format()` membuat string berdasarkan sebuah "string format" (template) dan serangkaian argumen. Ini sangat mirip dengan fungsi `printf` di bahasa C.
+- **Sintaks**: `local formattedString = string.format(formatstring, arg1, arg2, ...)`
+  - `formatstring`: String template yang berisi teks biasa dan _format specifiers_ (penentu format) yang diawali dengan `%`.
+  - `arg1, arg2, ...`: Nilai-nilai yang akan dimasukkan ke dalam _specifiers_.
+- **Format Specifiers Umum**:
+  - `%s`: Menggantikan dengan string.
+  - `%d`: Menggantikan dengan angka integer (desimal).
+  - `%f`: Menggantikan dengan angka floating-point (pecahan).
+  - `%q`: Menggantikan dengan string yang diformat dengan aman sehingga bisa dibaca kembali oleh Lua (misalnya, menambahkan tanda kutip dan escape characters jika perlu).
+  - `%%`: Untuk memasukkan karakter `%` secara literal.
+- **Modifiers (Pengubah Format)**: Anda bisa menambahkan angka di antara `%` dan huruf specifier untuk mengontrol tampilan.
+  - `%5d`: Angka integer, diratakan kanan dalam ruang selebar 5 karakter.
+  - `%-10s`: String, diratakan kiri dalam ruang selebar 10 karakter.
+  - `%.2f`: Angka float, ditampilkan dengan tepat 2 angka di belakang koma.
+  - `%04d`: Angka integer, diberi awalan nol hingga totalnya 4 digit.
 
 **Template-based output:**
 Konsepnya adalah membuat sebuah template string, lalu mengisinya dengan data dinamis menggunakan `string.format()`. Ini membuat kode lebih bersih dan lebih mudah dikelola daripada penggabungan string yang panjang dan rumit.
 
 **Formatted writing ke file:**
 Pola kerjanya sederhana:
+
 1.  Siapkan data yang ingin Anda tulis.
 2.  Gunakan `string.format()` untuk membuat string yang rapi dari data tersebut.
 3.  Gunakan `file:write()` untuk menulis string yang sudah terformat itu ke file.
 
 **Contoh Kode (`formatted_writing.lua`):**
+
 ```lua
 -- Data yang akan kita tulis
 local laporan_penjualan = {
@@ -247,6 +258,7 @@ print("File 'laporan_penjualan.txt' telah berhasil dibuat.")
 ```
 
 **Isi `laporan_penjualan.txt` setelah skrip dijalankan:**
+
 ```
 ID    Nama Produk                 Terjual   Pendapatan (Rp)
 ----------------------------------------------------------
@@ -257,6 +269,42 @@ ID    Nama Produk                 Terjual   Pendapatan (Rp)
 ----------------------------------------------------------
 Total Pendapatan:                          655000
 ```
+
 Hasilnya adalah laporan teks yang rapi dan mudah dibaca, semuanya berkat `string.format()`.
 
 Dengan menggabungkan kemampuan membaca pola dan memformat output, Anda dapat membuat skrip I/O yang kuat untuk memproses, mengubah, dan menghasilkan file data terstruktur, yang merupakan tugas umum dalam banyak domain pemrograman.
+
+#
+
+> - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Kurikulum][kurikulum]**
+> - **[Domain Spesifik][domain]**
+
+[domain]: ../../../../../README.md
+[kurikulum]: ../../../README.md
+[sebelumnya]: ../error-handling-I-O/README.md
+[selanjutnya]: ../advanced-I-O-techniques/README.md
+
+<!----------------------------------------------------->
+
+[0]: ../../input-output/README.md#6-pattern-dan-format-io
+[1]: ../
+[2]: ../
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../

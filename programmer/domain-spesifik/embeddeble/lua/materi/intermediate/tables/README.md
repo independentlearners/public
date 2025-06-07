@@ -1,6 +1,6 @@
 # **[KURIKULUM TABLES LUA - LENGKAP DAN KOMPREHENSIF][0]**
 
-### **1. DASAR-DASAR TABLES**
+### **[1. DASAR-DASAR TABLES][1]**
 
 - **Pengenalan dan Konsep Tables**
 
@@ -11,7 +11,7 @@
   - Sumber: Lua-users Wiki: Tables Tutorial - http://lua-users.org/wiki/TablesTutorial
   - Sumber: W3Schools: Lua Tables - https://w3schools.tech/tutorial/lua/lua_tables
 
-### **2. OPERASI DASAR TABLES**
+### **[2. OPERASI DASAR TABLES][2]**
 
 - **Akses dan Modifikasi Elemen**
 
@@ -24,7 +24,7 @@
     - Sumber: LuaScripts: Pairs vs Ipairs - https://luascripts.com/lua-pairs-vs-ipairs
     - Sumber: Opensource.com: How to iterate over tables - https://opensource.com/article/22/11/iterate-over-tables-lua
 
-### **3. RAW TABLE OPERATIONS (TAMBAHAN PENTING)**
+### **[3. RAW TABLE OPERATIONS (TAMBAHAN PENTING)][3]**
 
 - **rawget, rawset, rawlen, rawequal**
 
@@ -35,7 +35,7 @@
 - **next() Function dan Generic for Loop**
   - Sumber: Programming in Lua: Stateless Iterators - https://www.lua.org/pil/7.3.html
 
-### **4. TABLE LIBRARY DAN FUNGSI BUILT-IN**
+### **[4. TABLE LIBRARY DAN FUNGSI BUILT-IN][4]**
 
 - **Fungsi table.insert, table.remove, table.sort**
 
@@ -49,7 +49,7 @@
 - **table.move (Lua 5.3+)**
   - Sumber: Lua 5.4 Reference Manual - https://www.lua.org/manual/5.4/manual.html
 
-### **5. METATABLES DAN METAMETHODS**
+### **[5. METATABLES DAN METAMETHODS][5]**
 
 - **Konsep Dasar Metatables**
 
@@ -60,7 +60,7 @@
   - Sumber: LuaScripts: Mastering setmetatable - https://luascripts.com/lua-setmetatable
   - Sumber: LuaScripts: Mastering Metatables - https://luascripts.com/metatables-lua
 
-### **6. METAMETHODS LENGKAP (TAMBAHAN KOMPREHENSIF)**
+### **[6. METAMETHODS LENGKAP (TAMBAHAN KOMPREHENSIF)][6]**
 
 - **Arithmetic Metamethods (**add, **sub, **mul, **div, **mod, **pow, \_\_unm)**
 
@@ -77,7 +77,7 @@
 - **Other Metamethods (**call, **tostring, **len, **concat)**
   - Sumber: Roblox Creator: Metatables - https://create.roblox.com/docs/luau/metatables
 
-### **7. GARBAGE COLLECTION DAN FINALIZERS (TOPIK PENTING YANG TERLEWAT)**
+### **[7. GARBAGE COLLECTION DAN FINALIZERS (TOPIK PENTING YANG TERLEWAT)][7]**
 
 - **\_\_gc Metamethod untuk Tables (Lua 5.2+)**
 
@@ -88,7 +88,7 @@
   - Sumber: ACM: Understanding Lua's Garbage Collection - https://dl.acm.org/doi/fullHtml/10.1145/3414080.3414093
   - Sumber: GitHub: LuaJIT \_\_gc on tables - https://github.com/LuaJIT/LuaJIT/issues/47
 
-### **8. WEAK TABLES (TOPIK KRUSIAL YANG DIPERLUAS)**
+### **[8. WEAK TABLES (TOPIK KRUSIAL YANG DIPERLUAS)][8]**
 
 - **Konsep Weak References**
   - Sumber: Programming in Lua: Weak Tables - https://www.lua.org/pil/17.html
@@ -104,7 +104,7 @@
 - **Weak Tables dengan C API**
   - Sumber: Stack Overflow: Weak table and GC finalizer - https://stackoverflow.com/questions/24087890/weak-table-and-gc-finalizer-using-c-api
 
-### **9. ADVANCED METATABLES**
+### **[9. ADVANCED METATABLES][9]**
 
 - **Operator Overloading dengan Tables**
 
@@ -114,7 +114,7 @@
   - Sumber: SRB2 Wiki: Lua Metatables - https://wiki.srb2.org/wiki/Lua/Metatables
   - Sumber: IBM Netezza: Metatables - https://www.ibm.com/docs/en/netezza?topic=lpl-metatables-1
 
-### **10. OBJECT-ORIENTED PROGRAMMING DENGAN TABLES**
+### **[10. OBJECT-ORIENTED PROGRAMMING DENGAN TABLES][10]**
 
 - **Class Implementation menggunakan Tables**
 
@@ -123,7 +123,7 @@
 - **Inheritance dan Polymorphism**
   - Sumber: Lua-users Wiki: Object Oriented Programming - http://lua-users.org/wiki/ObjectOrientedProgramming
 
-### **11. TABLES SEBAGAI STRUKTUR DATA**
+### **[11. TABLES SEBAGAI STRUKTUR DATA][11]**
 
 - **Array dan List Implementation**
 
@@ -135,7 +135,7 @@
 - **Set Implementation dengan Tables**
 - **Stack dan Queue Implementation**
 
-### **12. PERFORMANCE DAN OPTIMASI TABLES**
+### **[12. PERFORMANCE DAN OPTIMASI TABLES][12]**
 
 - **Memory Management Tables**
 
@@ -148,7 +148,7 @@
 - **Table Pre-allocation dan Sizing**
 - **Cache-Friendly Table Access Patterns**
 
-### **13. ADVANCED PATTERNS DAN TEKNIK**
+### **[13. ADVANCED PATTERNS DAN TEKNIK][13]**
 
 - **Serialization dan Persistence**
 
@@ -161,13 +161,13 @@
 - **Memoization dengan Tables**
 - **Lookup Tables dan Dispatch Tables**
 
-### **14. VERSION-SPECIFIC FEATURES (TAMBAHAN PENTING)**
+### **[14. VERSION-SPECIFIC FEATURES (TAMBAHAN PENTING)][14]**
 
 - **Lua 5.1 vs 5.2+ Differences**
 - **LuaJIT-specific Table Behaviors**
 - **Compatibility Issues dan Workarounds**
 
-### **15. DEBUGGING DAN TROUBLESHOOTING**
+### **[15. DEBUGGING DAN TROUBLESHOOTING][15]**
 
 - **Common Table Pitfalls**
 
@@ -180,7 +180,7 @@
 - **Memory Leaks dengan Tables**
 - **Circular Reference Detection**
 
-### **16. REAL-WORLD APPLICATIONS**
+### **[16. REAL-WORLD APPLICATIONS][16]**
 
 - **Configuration Tables**
 - **Data Processing dengan Tables**
@@ -188,14 +188,14 @@
 - **Web Development (OpenResty/Nginx)**
 - **Database Abstraction dengan Tables**
 
-### **17. ADVANCED TOPICS**
+### **[17. ADVANCED TOPICS][17]**
 
 - **Coroutines dengan Tables**
 - **FFI Integration dengan Tables**
 - **C API untuk Tables**
 - **Custom Iterators dengan Tables**
 
-### **18. SECURITY CONSIDERATIONS (TAMBAHAN KEAMANAN)**
+### **[18. SECURITY CONSIDERATIONS (TAMBAHAN KEAMANAN)][18]**
 
 - **Sandboxing dengan Tables**
 - **Preventing Prototype Pollution**
@@ -219,21 +219,21 @@ Kurikulum ini mencakup semua aspek Tables di Lua, termasuk topik-topik krusial s
 <!-- ------------------------------------------------- -->
 
 [0]: ../../README.md
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../tables/bagian-1/README.md#bagian-1-dasar-dasar-tables
+[2]: ../tables/bagian-1/README.md#bagian-2-operasi-dasar-tables
+[3]: ../tables/bagian-2/README.md#
+[4]: ../tables/bagian-3/README.md
+[5]: ../tables/bagian-4/README.md
+[6]: ../tables/bagian-6/README.md
+[7]: ../tables/bagian-7/README.md
+[8]: ../tables/bagian-8/README.md
+[9]: ../tables/bagian-9/README.md
+[10]: ../tables/bagian-10/README.md
+[11]: ../tables/bagian-11/README.md
+[12]: ../tables/bagian-12/README.md
+[13]: ../tables/bagian-13/README.md
+[14]: ../tables/bagian-14/README.md
+[15]: ../tables/bagian-15/README.md
+[16]: ../tables/bagian-16/README.md
+[17]: ../tables/bagian-17/README.md
+[18]: ../tables/bagian-18/README.md

@@ -1,4 +1,4 @@
-# **BAGIAN 3: RAW TABLE OPERATIONS (TAMBAHAN PENTING)**
+# **[BAGIAN 3: RAW TABLE OPERATIONS (TAMBAHAN PENTING)][0]**
 
 Ini adalah topik yang sangat penting untuk mencapai penguasaan sejati, karena ini memungkinkan Anda untuk melewati beberapa mekanisme tingkat tinggi Lua, memberikan kontrol yang lebih presisi.
 
@@ -190,7 +190,7 @@ Selanjutnya, kita akan menjelajahi **"4. TABLE LIBRARY DAN FUNGSI BUILT-IN"**, y
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../README.md#3-raw-table-operations-tambahan-penting
 [1]: ../
 [2]: ../
 [3]: ../

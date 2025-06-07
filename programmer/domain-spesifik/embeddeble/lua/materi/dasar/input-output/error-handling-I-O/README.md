@@ -262,7 +262,7 @@ Dengan menguasai teknik-teknik ini, kita dapat menulis program Lua yang tidak ha
 [domain]: ../../../../../README.md
 [kurikulum]: ../../../README.md
 [sebelumnya]: ../complete-model-I-O/README.md
-[selanjutnya]: ../bagian-4/README.md
+[selanjutnya]: ../pattern-dan-format-I-O/README.md
 
 <!----------------------------------------------------->
 

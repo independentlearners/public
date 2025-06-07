@@ -1,4 +1,4 @@
-# **BAGIAN 5: METATABLES DAN METAMETHODS**
+# **[BAGIAN 5: METATABLES DAN METAMETHODS][0]**
 
 Dibagian ini menunjukan bahwa kita telah sampai pada bagian yang bisa dibilang paling kuat dan unik dalam bahasa Lua. Setelah ini, cara Anda memandang `table` akan berubah total. Selamat datang di dunia metatables. Jika `table` adalah aktor di atas panggung, maka **metatable** adalah sutradara yang memberinya arahan dan perilaku yang tidak terduga. Ini adalah kunci untuk membuka _object-oriented programming_, _operator overloading_, dan berbagai teknik canggih lainnya di Lua.
 
@@ -164,7 +164,7 @@ Kini kita telah memahami konsep fundamental di balik metatables: mereka adalah t
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../README.md#5-metatables-dan-metamethods
 [1]: ../
 [2]: ../
 [3]: ../

@@ -1,4 +1,4 @@
-# **BAGIAN 1: DASAR-DASAR TABLES**
+# **[BAGIAN 1: DASAR-DASAR TABLES][0]**
 
 Bagian ini akan memperkenalkan Anda pada konsep `table`, cara membuatnya, dan mengisinya dengan data. Ini adalah fondasi dari semua yang akan kita pelajari tentang Lua.
 
@@ -90,7 +90,7 @@ local player = {
 
 ---
 
-## **BAGIAN 2: OPERASI DASAR TABLES**
+# **BAGIAN 2: OPERASI DASAR TABLES**
 
 Sekarang setelah Anda tahu cara membuat table, mari kita pelajari cara mengakses, memodifikasi, dan menelusuri (iterasi) elemen-elemen di dalamnya.
 
@@ -252,13 +252,14 @@ Ini adalah akhir dari pengantar dasar mengenai Tables. Anda sekarang memiliki pe
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
-
+[sebelumnya]:../../../dasar/input-output/advanced-topics/README.md
 <!----------------------------------------------------->
 
 [0]: ../README.md
