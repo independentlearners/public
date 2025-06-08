@@ -265,8 +265,6 @@ Untuk menggunakannya, ketik `lua-repl` di terminal, bukan `lua`.
 - [GitHub - hoelzro/lua-repl](https://github.com/hoelzro/lua-repl)
 - [lua-users wiki: Lua Repl](http://lua-users.org/wiki/LuaRepl)
 
-="3-2"\>\</a\>
-
 ### **3.2 Platform REPL Online**
 
 **Deskripsi Konkret:**

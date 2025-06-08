@@ -4,13 +4,13 @@ Bagian ini adalah puncak dari perjalanan kita dalam memahami function. Kita akan
 
 **Daftar Isi Bagian 8:**
 
-- [Komposisi dan Perantaian Function](https://www.google.com/search?q=%23composition-chaining)
-- [Generasi Function Dinamis dan Metaprogramming](https://www.google.com/search?q=%23dynamic-metaprogramming)
-- [Introspeksi Function](https://www.google.com/search?q=%23function-introspection)
+- [Komposisi dan Perantaian Function](#81-komposisi-dan-perantaian-function)
+- [Generasi Function Dinamis dan Metaprogramming](#82-generasi-function-dinamis-dan-metaprogramming)
+- [Introspeksi Function](#83-introspeksi-function)
 
 ---
 
-### 8.1 Komposisi dan Perantaian Function {https://www.google.com/search?q=%23composition-chaining}
+### 8.1 Komposisi dan Perantaian Function
 
 Teknik-teknik ini berakar pada gaya pemrograman fungsional, yang menekankan penggunaan function sebagai blok bangunan utama.
 
@@ -113,7 +113,7 @@ Mirip dengan komposisi, pipeline pattern menerapkan serangkaian transformasi pad
 
 ---
 
-### 8.2 Generasi Function Dinamis dan Metaprogramming {https://www.google.com/search?q=%23dynamic-metaprogramming}
+### 8.2 Generasi Function Dinamis dan Metaprogramming 
 
 Metaprogramming adalah ide tentang "kode yang menulis kode". Lua sangat cocok untuk ini berkat sifat dinamisnya dan function `load`.
 
@@ -207,7 +207,7 @@ Ini adalah bentuk metaprogramming yang paling canggih, seringkali bersifat ekspe
 
 ---
 
-### 8.3 Introspeksi Function {https://www.google.com/search?q=%23function-introspection}
+### 8.3 Introspeksi Function
 
 Introspeksi adalah kemampuan sebuah program untuk memeriksa dirinya sendiri saat runtime. Lua menyediakan `debug library` untuk melakukan introspeksi pada eksekusi kode, terutama pada function dan call stack.
 
@@ -286,14 +286,14 @@ Function `debug.traceback()` menghasilkan sebuah string yang berisi _call stack 
 
 **Sumber Referensi untuk Bagian 8:**
 
-1.  Lua-Users Wiki - Functional Programming: [http://lua-users.org/wiki/FunctionalProgramming](http://lua-users.org/wiki/FunctionalProgramming)
-2.  Lua-Users Wiki - Function Composition in Lua: [http://lua-users.org/wiki/FunctionComposition](http://lua-users.org/wiki/FunctionComposition)
-3.  Lua-Users Wiki - Dynamic Code Generation: [http://lua-users.org/wiki/DynamicCodeGeneration](http://lua-users.org/wiki/DynamicCodeGeneration)
-4.  Programming in Lua (1st Edition) - 8. Compilation, Execution, and Errors: [https://www.lua.org/pil/8.html](https://www.lua.org/pil/8.html)
-5.  Lua-Users Wiki - Meta Programming: [http://lua-users.org/wiki/MetaProgramming](http://lua-users.org/wiki/MetaProgramming)
-6.  mr.gy/blog - Experimental Meta-Programming for Lua: [https://mr.gy/blog/lua-meta-programming.html](https://mr.gy/blog/lua-meta-programming.html)
-7.  Programming in Lua (1st Edition) - 23. The Debug Library: [https://www.lua.org/pil/23.html](https://www.lua.org/pil/23.html)
-8.  Lua 5.4 Reference Manual - 4.7 The Debug Library: [https://www.lua.org/manual/5.4/manual.html\#4.7](https://www.lua.org/manual/5.4/manual.html#4.7)
+1.  Lua-Users Wiki - [Functional Programming](http://lua-users.org/wiki/FunctionalProgramming)
+2.  Lua-Users Wiki - [Function Composition in Lua](http://lua-users.org/wiki/FunctionComposition)
+3.  Lua-Users Wiki - [Dynamic Code Generation](http://lua-users.org/wiki/DynamicCodeGeneration)
+4.  Programming in Lua (1st Edition) - [8. Compilation, Execution, and Errors](https://www.lua.org/pil/8.html)
+5.  Lua-Users Wiki - [Meta Programming](http://lua-users.org/wiki/MetaProgramming)
+6.  mr.gy/blog - [Experimental Meta-Programming for Lua](https://mr.gy/blog/lua-meta-programming.html)
+7.  Programming in Lua (1st Edition) - [23. The Debug Library](https://www.lua.org/pil/23.html)
+8.  Lua 5.4 Reference Manual - [4.7 The Debug Library](https://www.lua.org/manual/5.4/manual.html#4.7)
 
 ---
 
