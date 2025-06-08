@@ -17,7 +17,7 @@
 8. **[Modules & Packages][8]** - 4 minggu, 30 jam ✅
 9. **[Pattern Matching][9]** - 4 minggu, 30 jam
 10. **[File System Operations][10]** - 3 minggu, 20 jam
-11. **[Standard Libraries][11]** - 4 minggu, 30 jam
+11. **[Standard Libraries][11]** - 4 minggu, 30 jam ✅
 12. **[Testing & Debugging][12]** - 4 minggu, 25 jam
 
 ### **ADVANCED (13 topik)**
@@ -38,7 +38,7 @@
 
 ### **OPSIONAL INTERPRETED**
 
-26. **[Chunk][26]**
+26. **[Chunk][26]** ✅
 27. **[Repl][27]** ✅
 
 ### **OPSIONAL NUMBER**

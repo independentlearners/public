@@ -2,11 +2,11 @@
 
 Berikut adalah uraian dari setiap bagian kurikulum tersebut. Anda bisa mengklik tautan untuk langsung menuju ke penjelasan yang relevan.
 
-1.  **[Bagian I: Fondasi Chunk (Foundation)](https://www.google.com/search?q=%23bagian-i-fondasi-chunk-foundation)**
+1.  **[Bagian I: Fondasi Chunk (Foundation)](#bagian-i-fondasi-chunk-foundation)**
 
     - Penjelasan mendalam tentang apa itu chunk, perbedaannya dengan block dan statement, serta berbagai jenisnya. Ini adalah titik awal yang paling krusial.
 
-2.  **[Ringkasan Bagian II - X: Peta Jalan Menuju Penguasaan](https://www.google.com/search?q=%23ringkasan-bagian-ii---x-peta-jalan-menuju-penguasaan)**
+2.  **[Ringkasan Bagian II - X: Peta Jalan Menuju Penguasaan](#ringkasan-bagian-ii---x-peta-jalan-menuju-penguasaan)**
 
     - Gambaran umum tentang apa yang akan Anda pelajari di bagian-bagian selanjutnya, mulai dari kompilasi, eksekusi, keamanan, hingga aplikasi di dunia nyata.
 

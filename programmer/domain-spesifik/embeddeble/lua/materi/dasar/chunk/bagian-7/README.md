@@ -1,6 +1,6 @@
-Anda telah membangun fondasi yang kokoh, memahami internal Lua, dan mempelajari teknik-teknik canggih. Sekarang saatnya melihat bagaimana semua pengetahuan ini menyatu dalam aplikasi dunia nyata. Bagian ini akan menunjukkan bagaimana konsep chunk menjadi tulang punggung dalam berbagai domain industri, mulai dari game hingga pengembangan web.
+# **[Bagian VII: Real-world Applications (Aplikasi Dunia Nyata)][0]**
 
-# **Bagian VII: Real-world Applications (Aplikasi Dunia Nyata)**
+Anda telah membangun fondasi yang kokoh, memahami internal Lua, dan mempelajari teknik-teknik canggih. Sekarang saatnya melihat bagaimana semua pengetahuan ini menyatu dalam aplikasi dunia nyata. Bagian ini akan menunjukkan bagaimana konsep chunk menjadi tulang punggung dalam berbagai domain industri, mulai dari game hingga pengembangan web.
 
 #### **18. Game Development (Pengembangan Game)**
 

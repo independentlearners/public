@@ -1,4 +1,4 @@
-# **Bagian VI: Performance dan Optimization (Kinerja dan Optimasi)**
+# **[Bagian VI: Performance dan Optimization (Kinerja dan Optimasi)][0]**
 
 Setelah Anda mengetahui cara mengintegrasikan Lua dengan lingkungan eksternal, fokus kita sekarang beralih ke efisiensi. Sebuah program yang fungsional tetapi lambat atau boros sumber daya akan memberikan pengalaman yang buruk. Bagian ini mengajarkan Anda cara mengukur, menganalisis, dan mengoptimalkan kinerja chunk Lua Anda agar berjalan secepat dan seringan mungkin.
 
