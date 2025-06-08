@@ -319,23 +319,23 @@
 #
 
 [0]: ../../README.md
-[1]: ../pattern-matching/dasar-dasar-pattern-matching/README.md
-[2]: ../pattern-matching/magic-characters-dan-escape-sequences/README.md
-[3]: ../pattern-matching/character-classes-dan-sets/README.md
-[4]: ../pattern-matching/quantifiers-dan-modifiers/README.md
-[5]: ../pattern-matching/anchors-dan-positioning/README.md
-[6]: ../pattern-matching/frontier-patterns-dan-fitur-lanjutan/README.md
-[7]: ../pattern-matching/balanced-delimiters/README.md
-[8]: ../pattern-matching/captures-dan-grouping/README.md
-[9]: ../pattern-matching/string-library-functions/README.md
-[10]: ../pattern-matching/pattern-composition-dan-modularitas/README.md
-[11]: ../pattern-matching/performance-dan-optimization/README.md
-[12]: ../pattern-matching/debugging-dan-troubleshooting/README.md
-[13]: ../pattern-matching/advanced-text-processing/README.md
-[14]: ../pattern-matching/lua-vs-other-pattern-systems/README.md
-[15]: ../pattern-matching/real-world-applications/README.md
-[16]: ../pattern-matching/cross-platform-implementation/README.md
-[17]: ../pattern-matching/assessment-dan-praktik/README.md
+[1]: ../pattern-matching/module/README.md#
+[2]: ../pattern-matching/module/README.md#
+[3]: ../pattern-matching/module/README.md#
+[4]: ../pattern-matching/module/README.md#
+[5]: ../pattern-matching/module/README.md#
+[6]: ../pattern-matching/module/README.md#
+[7]: ../pattern-matching/module/README.md#
+[8]: ../pattern-matching/module/README.md#
+[9]: ../pattern-matching/module/README.md#
+[10]: ../pattern-matching/module/README.md#
+[11]: ../pattern-matching/module/README.md#
+[12]: ../pattern-matching/module/README.md#
+[13]: ../pattern-matching/module/README.md#
+[14]: ../pattern-matching/module/README.md#
+[15]: ../pattern-matching/module/README.md#
+[16]: ../pattern-matching/module/README.md#
+[17]: ../pattern-matching/module/README.md#
 
 <!--------------------------------------------------- -->
 
