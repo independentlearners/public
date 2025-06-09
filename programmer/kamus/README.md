@@ -590,7 +590,7 @@
 119. **Declarative Programming**
      Gaya pemrograman yang menyatakan apa yang ingin dicapai tanpa menjabarkan langkah-langkah eksekusinya (contoh: SQL, HTML, React JSX).
 
-120. **Domain-Specific Language (DSL)**
+120. **[Domain-Specific Language (DSL)][dsl]**
      Bahasa pemrograman atau markup khusus untuk domain tertentu, disederhanakan agar lebih ekspresif dalam konteks tersebut (mis. SQL untuk database, HTML untuk markup web).
 
 121. **Module**
@@ -4339,3 +4339,4 @@ Semua aspek ini bersama-sama membantu bukan hanya dalam menciptakan pengalaman p
 **[Domain][1]**
 
 [1]: ../domain-spesifik/README.md
+[dsl]: ../konsep/domain/README.md

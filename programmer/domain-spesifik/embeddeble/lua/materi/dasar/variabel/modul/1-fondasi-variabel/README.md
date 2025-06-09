@@ -10,13 +10,13 @@ Bagian ini mengenalkan Anda pada apa itu variabel dalam konteks Lua, bagaimana m
 
 - **Definisi dan Fungsi Variabel**
 
-  - **Deskripsi Konkret**: Variabel adalah nama simbolis yang merepresentasikan atau merujuk ke sebuah nilai yang disimpan dalam memori komputer. Anggap saja variabel sebagai sebuah "wadah" atau "label" yang bisa Anda gunakan untuk menyimpan dan mengambil data. Fungsi utamanya adalah untuk menyimpan informasi yang dapat digunakan dan dimanipulasi selama program berjalan.
+  - **Deskripsi Konkret**: Variabel adalah nama simbolis yang merepresentasikan atau merujuk ke sebuah nilai yang disimpan dalam memori komputer, kita tidak akan pernah tau dimana komputer itu menyimpannya. Jadi anggap saja variabel sebagai sebuah "wadah" atau "label" yang bisa Anda gunakan untuk menyimpan dan mengambil data. Fungsi utamanya adalah untuk menyimpan informasi yang dapat digunakan dan dimanipulasi selama program berjalan.
   - **Terminologi & Konsep**:
-    - **Identifier**: Nama yang Anda berikan untuk variabel (misalnya, `umur`, `namaPengguna`).
+    - **Identifier**: kalimat atau nama yang Anda berikan untuk sebuah variabel (misalnya, `umur`, `namaPengguna`).
     - **Nilai (Value)**: Data aktual yang disimpan dalam variabel (misalnya, `25`, `"Alice"`).
-    - **Memori (Memory)**: Tempat di komputer di mana nilai disimpan. Variabel memberi kita cara yang mudah untuk merujuk ke lokasi memori ini.
+    - **Memori (Memory)**: Tempat dalam sistem komputer di mana nilai tersebut disimpan. Variabel memberi kita cara yang mudah untuk merujuk ke lokasi memori ini.
     - **Assignment (Penugasan)**: Proses memberikan nilai ke sebuah variabel.
-  - **Sintaks Dasar**: Di Lua, penugasan dilakukan menggunakan tanda sama dengan (`=`).
+  - **Sintaks Dasar**: Di Lua, penugasan dilakukan menggunakan tanda **_sama-dengan_** (`=`).
     ```lua
     namaVariabel = nilai
     ```
@@ -40,7 +40,7 @@ Bagian ini mengenalkan Anda pada apa itu variabel dalam konteks Lua, bagaimana m
     - **Mutable**: Dapat diubah nilainya setelah didefinisikan.
     - **Immutable**: Tidak dapat diubah nilainya setelah didefinisikan.
   - **Detail Lua**: Lua secara bawaan tidak memiliki kata kunci `const` atau mekanisme enforce konstanta seperti di beberapa bahasa lain (misalnya, `const` di JavaScript atau `final` di Dart). Variabel di Lua pada dasarnya bersifat mutable.
-  - **Konvensi untuk Konstanta**: Programmer Lua sering menggunakan konvensi penamaan untuk menandakan bahwa sebuah variabel sebaiknya diperlakukan sebagai konstanta, yaitu dengan menggunakan huruf kapital semua (snake_case atau camelCase).
+  - **Konvensi untuk Konstanta**: Oleh karenanya para Programmer Lua sering menggunakan konvensi penamaan untuk menandakan sifat dari sebuah variabel ketika diperlakukan sebagai konstanta, maka mereka menggunakan huruf kapital, hal semacam ini sering disebut sebagai "SCREAMING_SNAKE_CASE" atau "UPPER_CASE_WITH_UNDERSCORES" (bukan snake_case atau camelCase).
 
     ```lua
     NAMA_APLIKASI = "Kalkulator Super"
@@ -55,14 +55,14 @@ Bagian ini mengenalkan Anda pada apa itu variabel dalam konteks Lua, bagaimana m
 
 - **Variable Naming Conventions di Lua**
 
-  - **Deskripsi Konkret**: Aturan dan praktik umum yang diikuti programmer saat memberi nama variabel untuk meningkatkan keterbacaan dan pemeliharaan kode.
+  - **Deskripsi Konkret**: Karena secara default variabel di lua bersifat global atau dinamis serta tidak adanya sebuah tipe data yang menunjukan sifat akan suatu variabel maka terdapat sebuah aturan dan praktik umum yang dilakukan oleh para programmer saat memberi nama pada sebuah variabel untuk meningkatkan keterbacaan dan pemeliharaan kode dimana ini sangat berguna untuk mengidentifikasi sifat dari sebuah variabel di lua. Aturan-aturan lainnya juga berlaku untuk menghindari perbedaan antara variabel dengan kata kunci atau kode pada bahasa dimana bagian ini adalah sebuah bagian wajib 
   - **Aturan Dasar Lua**:
-    1.  Nama variabel bisa terdiri dari huruf, angka, dan garis bawah (`_`).
-    2.  Nama variabel tidak boleh dimulai dengan angka.
+    1.  Nama variabel bisa terdiri dari huruf, angka, dan garis bawah (`_`). _**Opsional | Bast-Practice**_
+    2.  Nama variabel tidak boleh dimulai dengan angka. **_Wajib_**
     3.  Nama variabel bersifat case-sensitive (lihat poin berikutnya).
     4.  Nama variabel tidak boleh sama dengan reserved words (kata kunci Lua).
   - **Konvensi Umum (Praktik Terbaik)**:
-    - **`snake_case`**: Kata-kata dipisahkan oleh garis bawah, semua huruf kecil. Ini sangat umum untuk variabel lokal.
+    - **`snake_case`**: Kata-kata dipisahkan oleh garis bawah, dan semuanya menggunakan huruf kecil. Ini sangat umum untuk variabel lokal.
       ```lua
       jumlah_item = 10
       nama_pengguna_aktif = "admin"
@@ -77,7 +77,7 @@ Bagian ini mengenalkan Anda pada apa itu variabel dalam konteks Lua, bagaimana m
       UserModule = {}
       GameSettings = {}
       ```
-    - **`UPPER_SNAKE_CASE`**: Semua huruf kapital, dipisahkan garis bawah. Seperti dibahas sebelumnya, ini sering digunakan untuk menandakan konstanta.
+    - **`UPPER_SNAKE_CASE`**: Semua huruf kapital, dipisahkan garis bawah. Seperti dibahas sebelumnya, ini sering digunakan untuk menandakan bahwa sebuah variabel tersebut didefinisikan sebagai konstanta.
       ```lua
       MAX_CONNECTIONS = 100
       DEFAULT_TIMEOUT = 5000
