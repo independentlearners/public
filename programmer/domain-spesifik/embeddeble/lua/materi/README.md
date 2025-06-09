@@ -6,10 +6,10 @@
 
 1. **[Variables][1]** - 5 minggu, 35 jam ✅
 2. **[Control Flow][2]** - 8 minggu, 50 jam ✅
-3. **[Functions][3]** - 6 minggu, 40 jam
+3. **[Functions][3]** - 6 minggu, 40 jam ✅
 4. **[Strings][4]** - 4 minggu, 30 jam ✅
 5. **[Data Type (Numbers & Math)][5]** - 3 minggu, 25 jam
-6. **[Input/Output][6]** - 3 minggu, 20 jam
+6. **[Input/Output][6]** - 3 minggu, 20 jam ✅
 
 ### **INTERMEDIATE (6 topik)**
 
@@ -18,14 +18,14 @@
 9. **[Pattern Matching][9]** - 4 minggu, 30 jam
 10. **[File System Operations][10]** - 3 minggu, 20 jam
 11. **[Standard Libraries][11]** - 4 minggu, 30 jam ✅
-12. **[Testing & Debugging][12]** - 4 minggu, 25 jam
+12. **[Testing & Debugging][12]** - 4 minggu, 25 jam ✅
 
 ### **ADVANCED (13 topik)**
 
 13. **[Metatables & Metamethods][13]** - 6 minggu, 40 jam
 14. **[Coroutines][14]** - 5 minggu, 35 jam
-15. **[Error Handling][15]** - 3 minggu, 25 jam
-16. **[Object-Oriented Programming][16]** - 5 minggu, 35 jam
+15. **[Error Handling][15]** - 3 minggu, 25 jam ✅
+16. **[Object-Oriented Programming][16]** - 5 minggu, 35 jam ✅
 17. **[Debug Library][17]** - 3 minggu, 20 jam
 18. **[C API Integration][18]** - 8 minggu, 60 jam
 19. **[Performance Optimization][19]** - 4 minggu, 30 jam

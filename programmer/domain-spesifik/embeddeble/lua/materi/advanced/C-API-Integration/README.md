@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap C API Integration di Lua][0]**
 
-## Bagian I: Fondasi dan Konsep Dasar
+## [Bagian I: Fondasi dan Konsep Dasar][1]
 
 ### 1. Pengenalan Lua C API
 
@@ -410,7 +410,7 @@ Kurikulum ini sekarang benar-benar comprehensive dan memberikan pembelajaran yan
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
+[1]: ../C-API-Integration/materi/README.md
 [2]: ../
 [3]: ../
 [4]: ../
