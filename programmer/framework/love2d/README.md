@@ -1,4 +1,4 @@
-# Kurikulum Lengkap Love2D: Dari Pemula Hingga Mahir (Versi Diperluas)
+# **[Kurikulum Lengkap Love2D: Dari Pemula Hingga Mahir (Versi Diperluas)][0]**
 
 Kurikulum ini disusun secara sistematis untuk membangun pengetahuan Anda dari dasar hingga mahir. Topik-topik telah diperkaya dengan pola desain, arsitektur, dan teknik modern untuk memastikan Anda tidak hanya dapat membuat game, tetapi juga merancangnya dengan baik.
 
@@ -267,7 +267,7 @@ Tempat untuk bertanya, belajar lebih lanjut, dan menemukan pustaka siap pakai.
 
 [0]: ../README.md
 [1]: ../
-[2]: ../
+<!-- [2]: ../
 [3]: ../
 [4]: ../
 [5]: ../
@@ -283,4 +283,4 @@ Tempat untuk bertanya, belajar lebih lanjut, dan menemukan pustaka siap pakai.
 [15]: ../
 [16]: ../
 [17]: ../
-[18]: ../
+[18]: ../ -->

@@ -1,17 +1,17 @@
-<pre>
+<!-- <pre>
   <code id="to-copy">
-  
-  
+
+
   teksnya disini
-  
-  
-  
+
+
+
   </code>
   <button onclick="navigator.clipboard.writeText(document.getElementById('to-copy').innerText)">Salin</button>
 </pre>
 
 <!-- ---------------------------------------- -->
-
+<!--
 <pre>
   <code id="copy-me">teksnya disini</code>
   <button onclick="copyText()">Salin</button>
@@ -27,4 +27,6 @@
 
 <!-- ---------------------------------------- -->
 
-<pre><code>teksnya disini</code></pre>
+<!-- <pre><code>teksnya disini</code></pre> -->
+
+<!-- <h3 id="satu"></h3> -->

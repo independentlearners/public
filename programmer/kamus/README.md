@@ -1,3 +1,189 @@
+**[Ke Bawah](#satu)**
+
+# Kamus Sebagian Istilah Dalam Bahasa Pemrograman
+
+## A. Istilah Umum Pemrograman
+
+1. **Algoritma**: Serangkaian langkah atau instruksi yang dirancang untuk menyelesaikan tugas tertentu.
+
+2. **Bahasa Pemrograman**: Bahasa formal yang digunakan untuk menulis instruksi yang dapat dieksekusi oleh komputer.
+
+3. **Variabel**: Tempat penyimpanan data dalam program yang dapat berubah nilainya.
+
+4. **Fungsi**: Blok kode yang melakukan tugas tertentu dan dapat dipanggil berulang kali.
+
+5. **Loop**: Struktur kontrol yang mengulang serangkaian instruksi.
+
+6. **Kondisional**: Pernyataan yang memungkinkan program mengambil keputusan berdasarkan kondisi tertentu.
+
+7. **Array**: Struktur data yang menyimpan kumpulan elemen dengan tipe data yang sama.
+
+8. **Object**: Instansi dari sebuah class yang memiliki properti dan metode.
+
+9. **Class**: Blueprint atau template untuk membuat objek dalam pemrograman berorientasi objek.
+
+10. **Debugging**: Proses menemukan dan memperbaiki kesalahan (bug) dalam kode.
+
+## B. Peran dan Spesialisasi dalam Pemrograman
+
+1. **Front-end Developer**: Pengembang yang fokus pada bagian aplikasi yang berinteraksi langsung dengan pengguna.
+
+2. **Back-end Developer**: Pengembang yang bekerja pada sisi server dan logika bisnis aplikasi.
+
+3. **Full-stack Developer**: Pengembang yang memiliki kemampuan baik di front-end maupun back-end.
+
+4. **DevOps Engineer**: Spesialis yang menggabungkan pengembangan software dan operasi IT.
+
+5. **Data Scientist**: Ahli yang menganalisis dan menginterpretasikan data kompleks.
+
+6. **Machine Learning Engineer**: Spesialis yang mengembangkan sistem yang dapat belajar dan meningkat dari pengalaman.
+
+7. **UI/UX Designer**: Desainer yang fokus pada pengalaman pengguna dan antarmuka aplikasi.
+
+## C. Teknologi dan Framework
+
+1. **React**: Library JavaScript untuk membangun antarmuka pengguna.
+
+2. **Angular**: Framework untuk membangun aplikasi web dinamis.
+
+3. **Vue.js**: Framework JavaScript progresif untuk membangun UI.
+
+4. **Node.js**: Runtime JavaScript yang memungkinkan eksekusi JavaScript di sisi server.
+
+5. **Django**: Framework web Python tingkat tinggi.
+
+6. **Flask**: Microframework web Python.
+
+7. **Spring**: Framework aplikasi untuk platform Java.
+
+8. **Ruby on Rails**: Framework aplikasi web yang menggunakan bahasa Ruby.
+
+9. **ASP.NET**: Framework untuk membangun aplikasi web dengan C#.
+
+10. **Laravel**: Framework PHP untuk pengembangan web.
+
+## D. Database dan Penyimpanan Data
+
+1. **SQL**: Structured Query Language, bahasa untuk mengelola database relasional.
+
+2. **MySQL**: Sistem manajemen database relasional open-source.
+
+3. **PostgreSQL**: Sistem database relasional open-source yang canggih.
+
+4. **MongoDB**: Database NoSQL yang berorientasi dokumen.
+
+5. **Redis**: Database key-value in-memory yang cepat.
+
+6. **Cassandra**: Database NoSQL terdistribusi yang sangat skalabel.
+
+7. **Elasticsearch**: Mesin pencari dan analisis terdistribusi.
+
+## E. Pengembangan Mobile
+
+1. **Android Studio**: Lingkungan pengembangan terintegrasi (IDE) resmi untuk pengembangan aplikasi Android.
+
+2. **Kotlin**: Bahasa pemrograman modern yang digunakan untuk pengembangan Android.
+
+3. **Swift**: Bahasa pemrograman untuk pengembangan aplikasi iOS.
+
+4. **React Native**: Framework untuk membangun aplikasi mobile lintas platform menggunakan React.
+
+5. **Flutter**: SDK dari Google untuk membangun aplikasi mobile, web, dan desktop dari satu basis kode.
+
+6. **Xamarin**: Platform pengembangan aplikasi mobile lintas platform menggunakan C#.
+
+## F. Cloud Computing dan Infrastruktur
+
+1. **AWS (Amazon Web Services)**: Platform cloud computing yang menyediakan berbagai layanan.
+
+2. **Google Cloud Platform**: Suite layanan cloud computing dari Google.
+
+3. **Microsoft Azure**: Platform cloud computing dari Microsoft.
+
+4. **Docker**: Platform untuk mengemas, mendistribusikan, dan menjalankan aplikasi dalam container.
+
+5. **Kubernetes**: Sistem orkestrasi container open-source.
+
+6. **Serverless Computing**: Model eksekusi komputasi di mana penyedia cloud mengelola alokasi sumber daya secara dinamis.
+
+## G. Version Control dan Kolaborasi
+
+1. **Git**: Sistem kontrol versi terdistribusi.
+
+2. **GitHub**: Platform hosting untuk repositori Git dan kolaborasi.
+
+3. **GitLab**: Platform DevOps berbasis web yang menyediakan kontrol versi dan CI/CD.
+
+4. **Bitbucket**: Layanan hosting repositori Git dan Mercurial.
+
+## H. Keamanan dan Pengujian
+
+1. **Penetration Testing**: Praktik menguji sistem komputer, jaringan, atau aplikasi web untuk menemukan kerentanan keamanan.
+
+2. **Encryption**: Proses mengubah informasi menjadi kode untuk mencegah akses yang tidak sah.
+
+3. **OAuth**: Protokol otorisasi open standard.
+
+4. **Unit Testing**: Metode pengujian perangkat lunak di mana unit individual kode diuji.
+
+5. **Integration Testing**: Fase dalam pengujian perangkat lunak di mana modul perangkat lunak individual digabungkan dan diuji sebagai sebuah grup.
+
+6. **Continuous Integration (CI)**: Praktik mengintegrasikan kode ke dalam repositori bersama secara rutin.
+
+7. **Continuous Deployment (CD)**: Praktik merilis perangkat lunak secara otomatis ke produksi.
+
+## I. Konsep dan Paradigma Pemrograman
+
+1. **Object-Oriented Programming (OOP)**: Paradigma pemrograman berdasarkan konsep "objek".
+
+2. **Functional Programming**: Paradigma pemrograman yang memperlakukan komputasi sebagai evaluasi fungsi matematika.
+
+3. **Reactive Programming**: Paradigma pemrograman dengan aliran data asynchronous dan propagasi perubahan.
+
+4. **Concurrency**: Kemampuan program untuk menjalankan beberapa komputasi secara bersamaan.
+
+5. **Parallelism**: Eksekusi simultan dari perhitungan independen.
+
+6. **Asynchronous Programming**: Model pemrograman yang memungkinkan operasi berjalan secara non-blocking.
+
+## J. Artificial Intelligence dan Machine Learning
+
+1. **Neural Network**: Model komputasi yang terinspirasi oleh sistem saraf biologis.
+
+2. **Deep Learning**: Subset dari machine learning yang menggunakan jaringan neural berlapis banyak.
+
+3. **Natural Language Processing (NLP)**: Cabang AI yang berfokus pada interaksi antara komputer dan bahasa manusia.
+
+4. **Computer Vision**: Bidang AI yang melatih komputer untuk menginterpretasikan dan memahami dunia visual.
+
+5. **Reinforcement Learning**: Area machine learning yang berfokus pada bagaimana agen harus mengambil tindakan dalam suatu lingkungan.
+
+## K. Istilah Spesifik yang Anda Sebutkan
+
+1. **Backend**: Bagian dari aplikasi yang menangani logika bisnis dan interaksi dengan database.
+
+2. **Widget (UI/User Interface)**: Elemen antarmuka pengguna yang dapat digunakan kembali.
+
+3. **XML (UI/User Interface)**: Bahasa markup yang sering digunakan untuk mendefinisikan layout UI dalam pengembangan Android.
+
+4. **Compose (UI/User Interface)**: Toolkit modern untuk membangun native UI di Android.
+
+5. **API (Application Programming Interface)**: Set definisi, protokol, dan alat untuk membangun software aplikasi.
+
+6. **Retrofit**: Library HTTP Client untuk Android dan Java.
+
+7. **Volley**: Library HTTP untuk mentransmisikan data jaringan pada aplikasi Android.
+
+8. **Fast Android Networking**: Library networking untuk Android.
+
+9. **Room**: Library persistence yang menyediakan lapisan abstraksi di atas SQLite.
+
+10. **SQLite**: Database relasional ringan yang populer digunakan dalam aplikasi mobile.
+
+11. **Realm**: Database objek mobile.
+
+# Lanjutan
+
 # Istilah
 
 - **Chunk (kode)**
@@ -3781,4 +3967,375 @@ Timer sistem yang mendeteksi dan mengatasi program yang hang atau tidak merespon
 
 ---
 
-[486]: ../../../istilah/konsep/regex/README.md
+# Coding
+
+# Kamus Sebagian Istilah Dalam Bahasa Pemrograman
+
+## A. Istilah Umum Pemrograman
+
+1. **Algoritma**: Serangkaian langkah atau instruksi yang dirancang untuk menyelesaikan tugas tertentu.
+
+2. **Bahasa Pemrograman**: Bahasa formal yang digunakan untuk menulis instruksi yang dapat dieksekusi oleh komputer.
+
+3. **Variabel**: Tempat penyimpanan data dalam program yang dapat berubah nilainya.
+
+4. **Fungsi**: Blok kode yang melakukan tugas tertentu dan dapat dipanggil berulang kali.
+
+5. **Loop**: Struktur kontrol yang mengulang serangkaian instruksi.
+
+6. **Kondisional**: Pernyataan yang memungkinkan program mengambil keputusan berdasarkan kondisi tertentu.
+
+7. **Array**: Struktur data yang menyimpan kumpulan elemen dengan tipe data yang sama.
+
+8. **Object**: Instansi dari sebuah class yang memiliki properti dan metode.
+
+9. **Class**: Blueprint atau template untuk membuat objek dalam pemrograman berorientasi objek.
+
+10. **Debugging**: Proses menemukan dan memperbaiki kesalahan (bug) dalam kode.
+
+## B. Peran dan Spesialisasi dalam Pemrograman
+
+1. **Front-end Developer**: Pengembang yang fokus pada bagian aplikasi yang berinteraksi langsung dengan pengguna.
+
+2. **Back-end Developer**: Pengembang yang bekerja pada sisi server dan logika bisnis aplikasi.
+
+3. **Full-stack Developer**: Pengembang yang memiliki kemampuan baik di front-end maupun back-end.
+
+4. **DevOps Engineer**: Spesialis yang menggabungkan pengembangan software dan operasi IT.
+
+5. **Data Scientist**: Ahli yang menganalisis dan menginterpretasikan data kompleks.
+
+6. **Machine Learning Engineer**: Spesialis yang mengembangkan sistem yang dapat belajar dan meningkat dari pengalaman.
+
+7. **UI/UX Designer**: Desainer yang fokus pada pengalaman pengguna dan antarmuka aplikasi.
+
+## C. Teknologi dan Framework
+
+1. **React**: Library JavaScript untuk membangun antarmuka pengguna.
+
+2. **Angular**: Framework untuk membangun aplikasi web dinamis.
+
+3. **Vue.js**: Framework JavaScript progresif untuk membangun UI.
+
+4. **Node.js**: Runtime JavaScript yang memungkinkan eksekusi JavaScript di sisi server.
+
+5. **Django**: Framework web Python tingkat tinggi.
+
+6. **Flask**: Microframework web Python.
+
+7. **Spring**: Framework aplikasi untuk platform Java.
+
+8. **Ruby on Rails**: Framework aplikasi web yang menggunakan bahasa Ruby.
+
+9. **ASP.NET**: Framework untuk membangun aplikasi web dengan C#.
+
+10. **Laravel**: Framework PHP untuk pengembangan web.
+
+## D. Database dan Penyimpanan Data
+
+1. **SQL**: Structured Query Language, bahasa untuk mengelola database relasional.
+
+2. **MySQL**: Sistem manajemen database relasional open-source.
+
+3. **PostgreSQL**: Sistem database relasional open-source yang canggih.
+
+4. **MongoDB**: Database NoSQL yang berorientasi dokumen.
+
+5. **Redis**: Database key-value in-memory yang cepat.
+
+6. **Cassandra**: Database NoSQL terdistribusi yang sangat skalabel.
+
+7. **Elasticsearch**: Mesin pencari dan analisis terdistribusi.
+
+## E. Pengembangan Mobile
+
+1. **Android Studio**: Lingkungan pengembangan terintegrasi (IDE) resmi untuk pengembangan aplikasi Android.
+
+2. **Kotlin**: Bahasa pemrograman modern yang digunakan untuk pengembangan Android.
+
+3. **Swift**: Bahasa pemrograman untuk pengembangan aplikasi iOS.
+
+4. **React Native**: Framework untuk membangun aplikasi mobile lintas platform menggunakan React.
+
+5. **Flutter**: SDK dari Google untuk membangun aplikasi mobile, web, dan desktop dari satu basis kode.
+
+6. **Xamarin**: Platform pengembangan aplikasi mobile lintas platform menggunakan C#.
+
+## F. Cloud Computing dan Infrastruktur
+
+1. **AWS (Amazon Web Services)**: Platform cloud computing yang menyediakan berbagai layanan.
+
+2. **Google Cloud Platform**: Suite layanan cloud computing dari Google.
+
+3. **Microsoft Azure**: Platform cloud computing dari Microsoft.
+
+4. **Docker**: Platform untuk mengemas, mendistribusikan, dan menjalankan aplikasi dalam container.
+
+5. **Kubernetes**: Sistem orkestrasi container open-source.
+
+6. **Serverless Computing**: Model eksekusi komputasi di mana penyedia cloud mengelola alokasi sumber daya secara dinamis.
+
+## G. Version Control dan Kolaborasi
+
+1. **Git**: Sistem kontrol versi terdistribusi.
+
+2. **GitHub**: Platform hosting untuk repositori Git dan kolaborasi.
+
+3. **GitLab**: Platform DevOps berbasis web yang menyediakan kontrol versi dan CI/CD.
+
+4. **Bitbucket**: Layanan hosting repositori Git dan Mercurial.
+
+## H. Keamanan dan Pengujian
+
+1. **Penetration Testing**: Praktik menguji sistem komputer, jaringan, atau aplikasi web untuk menemukan kerentanan keamanan.
+
+2. **Encryption**: Proses mengubah informasi menjadi kode untuk mencegah akses yang tidak sah.
+
+3. **OAuth**: Protokol otorisasi open standard.
+
+4. **Unit Testing**: Metode pengujian perangkat lunak di mana unit individual kode diuji.
+
+5. **Integration Testing**: Fase dalam pengujian perangkat lunak di mana modul perangkat lunak individual digabungkan dan diuji sebagai sebuah grup.
+
+6. **Continuous Integration (CI)**: Praktik mengintegrasikan kode ke dalam repositori bersama secara rutin.
+
+7. **Continuous Deployment (CD)**: Praktik merilis perangkat lunak secara otomatis ke produksi.
+
+## I. Konsep dan Paradigma Pemrograman
+
+1. **Object-Oriented Programming (OOP)**: Paradigma pemrograman berdasarkan konsep "objek".
+
+2. **Functional Programming**: Paradigma pemrograman yang memperlakukan komputasi sebagai evaluasi fungsi matematika.
+
+3. **Reactive Programming**: Paradigma pemrograman dengan aliran data asynchronous dan propagasi perubahan.
+
+4. **Concurrency**: Kemampuan program untuk menjalankan beberapa komputasi secara bersamaan.
+
+5. **Parallelism**: Eksekusi simultan dari perhitungan independen.
+
+6. **Asynchronous Programming**: Model pemrograman yang memungkinkan operasi berjalan secara non-blocking.
+
+## J. Artificial Intelligence dan Machine Learning
+
+1. **Neural Network**: Model komputasi yang terinspirasi oleh sistem saraf biologis.
+
+2. **Deep Learning**: Subset dari machine learning yang menggunakan jaringan neural berlapis banyak.
+
+3. **Natural Language Processing (NLP)**: Cabang AI yang berfokus pada interaksi antara komputer dan bahasa manusia.
+
+4. **Computer Vision**: Bidang AI yang melatih komputer untuk menginterpretasikan dan memahami dunia visual.
+
+5. **Reinforcement Learning**: Area machine learning yang berfokus pada bagaimana agen harus mengambil tindakan dalam suatu lingkungan.
+
+## K. Istilah Spesifik yang Anda Sebutkan
+
+1. **Backend**: Bagian dari aplikasi yang menangani logika bisnis dan interaksi dengan database.
+
+2. **Widget (UI/User Interface)**: Elemen antarmuka pengguna yang dapat digunakan kembali.
+
+3. **XML (UI/User Interface)**: Bahasa markup yang sering digunakan untuk mendefinisikan layout UI dalam pengembangan Android.
+
+4. **Compose (UI/User Interface)**: Toolkit modern untuk membangun native UI di Android.
+
+5. **API (Application Programming Interface)**: Set definisi, protokol, dan alat untuk membangun software aplikasi.
+
+6. **Retrofit**: Library HTTP Client untuk Android dan Java.
+
+7. **Volley**: Library HTTP untuk mentransmisikan data jaringan pada aplikasi Android.
+
+8. **Fast Android Networking**: Library networking untuk Android.
+
+9. **Room**: Library persistence yang menyediakan lapisan abstraksi di atas SQLite.
+
+10. **SQLite**: Database relasional ringan yang populer digunakan dalam aplikasi mobile.
+
+11. **Realm**: Database objek mobile.
+
+# Informmatika
+
+# Dalam Dunia Pemrograman
+
+Konsistensi dalam pemrograman sangat penting. Konsistensi membantu memastikan bahwa kode lebih mudah dipahami, didokumentasikan, dan diperawat oleh berbagai orang. Ini juga membantu dalam mengurangi kesalahan dan memudahkan integrasi dengan sistem lain.
+
+Konsistensi mencakup banyak aspek, seperti:
+
+- **Stil kode**: Menggunakan gaya penulisan yang konsisten (misalnya, pemilihan nama variabel, indentasi, dan struktur kode).
+- **Penggunaan teknologi**: Menggunakan teknologi dan alat yang konsisten (misalnya, framework, library, dan alat build).
+- **Proses kerja**: Mengikuti prosedur dan praktik kerja yang konsisten (misalnya, penggunaan versi control, testing, dan deployment).
+
+Dengan konsistensi, tim dapat bekerja lebih efisien dan produk akhir menjadi lebih stabil dan andal. Selain itu, beberapa hal lain yang juga sangat penting dalam pemrograman diantaranya mencakup berikut:
+
+1. **Kode yang Jelas dan Terstruktur**: Kode yang mudah dibaca dan dipahami oleh orang lain sangat penting. Ini termasuk penggunaan nama variabel yang deskriptif, komentar yang membantu, dan struktur kode yang logis.
+
+2. **Testing dan Debugging**: Menulis test cases dan melakukan debugging secara rutin membantu mengidentifikasi dan mengatasi masalah sejak dini. Ini juga memastikan bahwa perubahan tidak mengganggu fungsi yang sudah ada.
+
+3. **Dokumentasi yang Baik**: Dokumentasi yang jelas dan komprehensif membantu orang lain memahami bagaimana kode bekerja dan bagaimana cara memperbaikinya atau memperluasnya.
+
+4. **Pemeliharaan Kode**: Kode yang mudah diperbaiki dan diperbarui sangat penting untuk keberlanjutan proyek. Ini termasuk penggunaan desain modular dan menghindari pengkodean yang terlalu rumit.
+
+5. **Komunikasi yang Efektif**: Bekerja dalam tim memerlukan komunikasi yang baik. Memastikan bahwa semua anggota tim memahami tujuan dan bagaimana mereka dapat berkontribusi adalah kunci kesuksesan.
+
+6. **Pemahaman Teknologi dan Alat**: Memahami dan menggunakan alat yang tepat untuk tugas tertentu, seperti version control (misalnya Git), alat build, dan testing tools, sangat penting.
+
+7. **Pemahaman Masalah dan Desain**: Mampu memecahkan masalah dan merancang solusi yang efisien adalah keterampilan yang sangat berharga dalam pemrograman.
+
+Kombinasi dari semua hal ini membantu menciptakan kode yang tidak hanya berfungsi dengan baik tetapi juga mudah dipelihara dan diperluas.
+
+#
+
+Sebenarnya masih ada banyak hal lain yang bisa diperhatikan dalam pemrograman. Beberapa di antaranya adalah:
+
+1. **Pemahaman Prinsip-Prinsip Dasar**: Memahami konsep-konsep dasar seperti algoritma, struktur data, dan pemrograman berorientasi objek dapat membantu dalam menulis kode yang lebih efisien dan efektif.
+
+2. **Penggunaan Alat Version Control**: Memahami dan menggunakan alat version control seperti Git sangat penting untuk mengelola perubahan kode dan bekerja dalam tim.
+
+3. **Pemahaman Bahasa Pemrograman**: Memiliki pemahaman mendalam tentang bahasa pemrograman yang digunakan sangat penting. Ini termasuk pengetahuan tentang fitur-fitur, kelemahan, dan cara terbaik untuk menggunakan bahasa tersebut.
+
+4. **Pemahaman Arsitektur**: Memahami berbagai arsitektur pemrograman dan bagaimana menerapkannya dapat membantu dalam merancang sistem yang lebih skalabel dan mudah diperbaiki.
+
+5. **Keamanan**: Memastikan bahwa kode yang ditulis aman dari ancaman keamanan seperti SQL injection, cross-site scripting (XSS), dan lain-lain adalah hal yang sangat penting.
+
+6. **Pemahaman Teknologi Terbaru**: Terus belajar tentang teknologi dan tren terbaru dalam dunia pemrograman dapat membantu dalam mengembangkan keterampilan dan mempertahankan relevansi di industri.
+
+7. **Keterampilan Soft Skills**: Selain keterampilan teknis, kemampuan komunikasi, kerja tim, dan manajemen waktu juga sangat penting dalam karier sebagai programmer.
+
+8. **Pemahaman Pengguna**: Mengerti siapa pengguna akhir dan bagaimana mereka akan menggunakan produk dapat membantu dalam merancang antarmuka yang lebih intuitif dan memuaskan.
+
+Semua aspek ini bersama-sama membantu bukan hanya dalam menciptakan pengalaman pemrograman yang sangat baik tetapi juga untuk sebuah produk yang nantinya juga jauh lebih baik.
+
+# Pemrograman
+
+# Kamus Istilah Coding
+
+## A
+
+- **Algoritma**: Serangkaian langkah logis untuk menyelesaikan masalah atau tugas tertentu
+- **Array**: Struktur data yang menyimpan kumpulan elemen dengan tipe yang sama
+- **Abstraksi**: Proses menyederhanakan kompleksitas dengan menyembunyikan detail yang tidak perlu
+
+## B
+
+- **Backend**: Bagian server dari sebuah aplikasi yang mengatur logika, database, dan proses utama
+- **Boolean**: Tipe data dengan dua nilai: benar (true) atau salah (false)
+- **Bug**: Kesalahan atau defek dalam kode yang menyebabkan program tidak berfungsi dengan benar
+
+## C
+
+- **Compiler**: Program yang menerjemahkan kode sumber menjadi kode mesin
+- **Class**: Blueprint untuk membuat objek dalam pemrograman berorientasi objek
+- **Callback**: Fungsi yang dijalankan setelah fungsi lain selesai dieksekusi
+
+## D
+
+- **Database**: Kumpulan data terorganisir yang disimpan dan diakses secara elektronik
+- **Debugging**: Proses menemukan dan memperbaiki kesalahan dalam kode
+- **Deklarasi**: Pernyataan yang mendefinisikan variabel atau fungsi
+
+## E
+
+- **Enkapsulasi**: Konsep menyembunyikan detail internal suatu objek
+- **Exception**: Kejadian yang terjadi selama eksekusi program yang mengganggu aliran normal
+- **Ekspresi**: Kombinasi variabel, operator, dan nilai yang menghasilkan suatu nilai
+
+## F
+
+- **Framework**: Kerangka kerja yang menyediakan struktur dasar untuk pengembangan perangkat lunak
+- **Fungsi**: Blok kode yang dirancang untuk melakukan tugas tertentu
+- **Frontend**: Bagian antarmuka pengguna dari sebuah aplikasi
+
+## G
+
+- **Git**: Sistem kontrol versi terdistribusi untuk melacak perubahan kode
+- **Getter**: Metode untuk mengambil nilai properti dalam suatu kelas
+- **GUI**: Antarmuka pengguna grafis
+
+## H
+
+- **Hardware**: Komponen fisik dari sistem komputer
+- **Heap**: Area memori untuk alokasi dinamis
+- **HTTP**: Protokol transfer data untuk komunikasi di web
+
+## I
+
+- **Inheritance**: Mekanisme di mana sebuah kelas dapat mewarisi properti dan metode dari kelas lain
+- **Iterasi**: Proses pengulangan serangkaian instruksi
+- **Indeks**: Posisi elemen dalam array atau struktur data
+
+## J
+
+- **JSON**: Format pertukaran data ringan
+- **Java**: Bahasa pemrograman berorientasi objek
+- **JVM**: Mesin virtual Java untuk menjalankan bytecode
+
+## K
+
+- **Kompilasi**: Proses menerjemahkan kode sumber menjadi kode yang dapat dieksekusi
+- **Kelas Abstrak**: Kelas yang tidak dapat diinstansiasi secara langsung
+- **Kursor**: Penanda posisi dalam database atau struktur data
+
+## L
+
+- **Library**: Kumpulan kode siap pakai yang dapat digunakan dalam pengembangan
+- **Lingkup (Scope)**: Area di mana variabel dapat diakses
+- **Loop**: Struktur kontrol untuk mengulang serangkaian pernyataan
+
+## M
+
+- **Metode**: Fungsi yang terkait dengan suatu kelas
+- **Mutator**: Metode untuk mengubah nilai properti dalam suatu kelas
+- **Map**: Struktur data yang menyimpan pasangan kunci-nilai
+
+## N
+
+- **Namespace**: Ruang lingkup untuk mengorganisir kode dan menghindari konflik nama
+- **NULL**: Nilai yang menunjukkan tidak adanya objek atau nilai
+- **Node**: Struktur data dasar dalam graph atau tree
+
+## O
+
+- **Objek**: Instance dari suatu kelas
+- **Overloading**: Kemampuan membuat beberapa metode dengan nama yang sama tetapi parameter berbeda
+- **Open Source**: Perangkat lunak dengan kode sumber terbuka
+
+## P
+
+- **Pointer**: Variabel yang menyimpan alamat memori
+- **Polimorfisme**: Kemampuan objek untuk memiliki banyak bentuk
+- **Protokol**: Aturan komunikasi antara sistem komputer
+
+## R
+
+- **Rekursi**: Metode di mana fungsi memanggil dirinya sendiri
+- **Runtime**: Periode saat program sedang dieksekusi
+- **Refactoring**: Proses restrukturisasi kode tanpa mengubah perilaku eksternal
+
+## S
+
+- **String**: Tipe data untuk menyimpan teks
+- **Setter**: Metode untuk mengatur nilai properti dalam suatu kelas
+- **Sintaks**: Aturan penulisan kode dalam bahasa pemrograman
+
+## T
+
+- **Tipe Data**: Klasifikasi jenis data yang dapat disimpan
+- **Thread**: Unit eksekusi independen dalam sebuah program
+- **Tree**: Struktur data hierarkis
+
+## V
+
+- **Variabel**: Wadah untuk menyimpan data
+- **Versi**: Nomor atau penanda perubahan dalam perangkat lunak
+- **Virtual**: Konsep yang ada secara logis tetapi tidak secara fisik
+
+## W
+
+- **Web Service**: Metode komunikasi antara dua perangkat elektronik melalui web
+- **While Loop**: Perulangan yang mengeksekusi blok kode selama kondisi terpenuhi
+
+[486]: ../konsep/regex/README.md
+
+<h3 id="satu"></h3>
+
+**[Domain][1]**
+
+[1]: ../domain-spesifik/README.md

@@ -189,6 +189,8 @@ Regular expressions adalah alat powerful untuk pencocokan pola dalam teks. Meski
 
 ---
 
-**[Bahasa & Paradigma Masa Depan][1]**
+**[Domain][1]**
+**[Kamus][1]**
 
-[1]: ../../../README.md
+[1]: ../../domain-spesifik/README.md
+[2]:../../kamus/README.md

@@ -1,4 +1,4 @@
-# Framework dalam Dunia IT: Panduan Lengkap dan Mendalam
+# **[Framework dalam Dunia IT: Panduan Lengkap dan Mendalam](#satu)**
 
 ## 1. Definisi dan Terminologi Framework
 
@@ -93,3 +93,11 @@ Secara ringkas, pertimbangkan kebutuhan teknis proyek, keahlian tim, dukungan ek
 - Publikasi dan studi industri: statistik dan tren dari Survei Pengembang Stack Overflow, blog opencv tentang PyTorch vs TensorFlow, serta blog platform pembelajaran kode.
 - Benchmark performa (TechEmpower) dan studi kasus (penggunaan pada Netflix, Spotify, dll dalam microservices, dan aplikasi populer seperti Instagram, Alibaba).
 - Referensi lain mencakup Martin Fowler (pola Micro-frontend), dokumentasi JAMstack, dan panduan framework modern (Flutter vs React Native).
+
+<h3 id="satu"></h3>
+
+> - **[Ke Atas](#)**
+> - **[Domain][1]**
+
+
+[1]: ../domain-spesifik/README.md
