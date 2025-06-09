@@ -1,43 +1,29 @@
-Tentu, saya akan menguraikan secara mendalam kurikulum lengkap tentang Metatables dan Metamethods di Lua yang telah Anda sediakan. Analisis ini bertujuan untuk memberikan pemahaman yang kokoh, dari konsep fundamental hingga penguasaan tingkat lanjut, sesuai dengan tujuan Anda untuk melampaui sekadar penggunaan dasar dan mencapai kemampuan untuk rekayasa fitur yang kompleks.
-
-Mengingat latar belakang Anda dalam OOP (Object-Oriented Programming) dengan Dart, saya akan sering menarik paralel untuk membantu Anda menghubungkan konsep-konsep ini dengan pengetahuan yang sudah ada. Kurikulum yang Anda miliki sudah sangat luar biasa dan komprehensif. Tugas saya adalah "mengisinya" dengan penjelasan, konteks, dan contoh yang detail.
-
-### Audit Singkat Kurikulum
-
-Kurikulum ini sangat baik. Strukturnya logis, dimulai dari dasar, berlanjut ke detail implementasi, pola desain, hingga aplikasi dunia nyata dan optimisasi. Cakupannya, yang mencakup perbedaan versi, manajemen memori, dan integrasi C API, menunjukkan tingkat kedalaman yang jauh melampaui tutorial standar. Ini adalah fondasi yang sempurna untuk mencapai tingkat penguasaan.
-
-Berikut adalah uraian materi yang telah disesuaikan dan diperkaya, dirancang untuk menjadi referensi pembelajaran utama Anda.
-
----
-
 ### Daftar Isi
 
-- [**Pengantar: Analogi untuk Memahami Metatables**](https://www.google.com/search?q=%23pengantar)
-- [**FASE 1: DASAR-DASAR KONSEPTUAL**](https://www.google.com/search?q=%23fase-1)
-  - [1.1 Pemahaman Fundamental Metatables](https://www.google.com/search?q=%23fase-1-1)
-  - [1.2 Memahami Metamethods](https://www.google.com/search?q=%23fase-1-2)
-- [**FASE 2: FUNGSI DASAR DAN OPERASI**](https://www.google.com/search?q=%23fase-2)
-  - [2.1 Fungsi Inti: `setmetatable` dan `getmetatable`](https://www.google.com/search?q=%23fase-2-1)
-  - [2.2 Metamethods Dasar untuk Akses Data: `__index` dan `__newindex`](https://www.google.com/search?q=%23fase-2-2)
-- [**FASE 3: OPERATOR OVERLOADING**](https://www.google.com/search?q=%23fase-3)
-  - [3.1 Metamethods Aritmatika](https://www.google.com/search?q=%23fase-3-1)
-  - [3.2 Metamethods Perbandingan](https://www.google.com/search?q=%23fase-3-2)
-  - [3.3 Metamethods Operasi Khusus](https://www.google.com/search?q=%23fase-3-3)
-- [**FASE 4: TEKNIK LANJUTAN**](https://www.google.com/search?q=%23fase-4)
-  - [4.1 Metamethod Pemanggilan Fungsi: `__call`](https://www.google.com/search?q=%23fase-4-1)
-  - [4.2 Metamethods Garbage Collection: `__gc` dan `__mode`](https://www.google.com/search?q=%23fase-4-2)
-  - [4.3 Metamethods Iterator dan Perbedaan Versi](https://www.google.com/search?q=%23fase-4-3)
-- [**FASE 5: DESIGN PATTERNS DAN APLIKASI**](https://www.google.com/search?q=%23fase-5)
-  - [5.1 Pola Pewarisan (Inheritance)](https://www.google.com/search?q=%23fase-5-1)
-  - [5.2 Object-Oriented Programming (OOP) di Lua](https://www.google.com/search?q=%23fase-5-2)
-- [**FASE 6: KINERJA DAN OPTIMISASI**](https://www.google.com/search?q=%23fase-6)
-  - [6.1 Pertimbangan Kinerja](https://www.google.com/search?q=%23fase-6-1)
-  - [6.2 Manajemen Memori](https://www.google.com/search?q=%23fase-6-2)
-- [**Kesimpulan dan Langkah Selanjutnya**](https://www.google.com/search?q=%23kesimpulan)
+- [**Pengantar: Analogi untuk Memahami Metatables**](#pengantar-analogi-untuk-memahami-metatables)
+- [**FASE 1: DASAR-DASAR KONSEPTUAL**](#fase-1-dasar-dasar-konseptual)
+  - [1.1 Pemahaman Fundamental Metatables](#11-pemahaman-fundamental-metatables)
+  - [1.2 Memahami Metamethods](#12-memahami-metamethods)
+- [**FASE 2: FUNGSI DASAR DAN OPERASI**](#fase-2-fungsi-dasar-dan-operasi)
+  - [2.1 Fungsi Inti: `setmetatable` dan `getmetatable`](#21-fungsi-inti-setmetatable-dan-getmetatable)
+  - [2.2 Metamethods Dasar untuk Akses Data: `__index` dan `__newindex`](#22-metamethods-dasar-untuk-akses-data-__index-dan-__newindex)
+- [**FASE 3: OPERATOR OVERLOADING**](#fase-3-operator-overloading)
+  - [3.1 Metamethods Aritmatika](#31-metamethods-aritmatika)
+  - [3.2 Metamethods Perbandingan](#32-metamethods-perbandingan)
+  - [3.3 Metamethods Operasi Khusus](#33-metamethods-operasi-khusus)
+- [**FASE 4: TEKNIK LANJUTAN**](#fase-4-teknik-lanjutan)
+  - [4.1 Metamethod Pemanggilan Fungsi: `__call`](#41-metamethod-pemanggilan-fungsi-__call)
+  - [4.2 Metamethods Garbage Collection: `__gc` dan `__mode`](#42-metamethods-garbage-collection-__gc-dan-__mode)
+  - [4.3 Metamethods Iterator dan Perbedaan Versi](#43-metamethods-iterator-dan-perbedaan-versi)
+- [**FASE 5: DESIGN PATTERNS DAN APLIKASI**](#fase-5-design-patterns-dan-aplikasi)
+  - [5.1 Pola Pewarisan (Inheritance)](#51-pola-pewarisan-inheritance)
+  - [5.2 Object-Oriented Programming (OOP) di Lua](#52-object-oriented-programming-oop-di-lua)
+- [**FASE 6: KINERJA DAN OPTIMISASI**](#fase-6-kinerja-dan-optimisasi)
+  - [6.1 Pertimbangan Kinerja](#61-pertimbangan-kinerja)
+  - [6.2 Manajemen Memori](#62-manajemen-memori)
+- [**Kesimpulan dan Langkah Selanjutnya**](#kesimpulan-dan-langkah-selanjutnya)
 
 ---
-
-\<a name="pengantar"\>\</a\>
 
 ### Pengantar: Analogi untuk Memahami Metatables
 
@@ -55,13 +41,9 @@ Sekarang, bayangkan Anda membuat sebuah **"buku aturan"** ajaib untuk boneka itu
 
 Inilah inti kekuatan Metatables: **kemampuan untuk mendefinisikan ulang atau memperluas perilaku standar dari tables di Lua.** Bagi Anda yang datang dari Dart/OOP, ini adalah cara Lua untuk mengimplementasikan _operator overloading_, _inheritance_, _polymorphism_, dan konsep canggih lainnya, meskipun dengan cara yang lebih fleksibel dan berbasis prototipe.
 
-\<a name="fase-1"\>\</a\>
-
 ## **FASE 1: DASAR-DASAR KONSEPTUAL**
 
 Di fase ini, kita membangun fondasi mental tentang "apa" dan "mengapa" di balik metatables.
-
-\<a name="fase-1-1"\>\</a\>
 
 ### 1.1 Pemahaman Fundamental Metatables
 
@@ -78,8 +60,6 @@ Di fase ini, kita membangun fondasi mental tentang "apa" dan "mengapa" di balik 
 - **Konsep "Hidden Tables" dan bagaimana mereka mempengaruhi behavior**
 
   - "Hidden Tables" adalah cara konseptual untuk memandang metatables. Mereka "tersembunyi" karena tidak secara langsung menjadi bagian dari data table itu sendiri. Anda harus menggunakan `getmetatable()` untuk "melihat" mereka. Pengaruhnya sangat besar: semua operasi yang "gagal" pada table utama (seperti mencari key yang tidak ada) akan didelegasikan ke metatable-nya untuk melihat apakah ada aturan (metamethod) yang bisa menanganinya.
-
-\<a name="fase-1-2"\>\</a\>
 
 ### 1.2 Memahami Metamethods
 
@@ -100,13 +80,9 @@ Di fase ini, kita membangun fondasi mental tentang "apa" dan "mengapa" di balik 
 
 ---
 
-\<a name="fase-2"\>\</a\>
-
 ## **FASE 2: FUNGSI DASAR DAN OPERASI**
 
 Di sini kita mulai mempraktikkan konsep-konsep di atas dengan fungsi inti dan metamethods paling fundamental.
-
-\<a name="fase-2-1"\>\</a\>
 
 ### 2.1 Fungsi Inti: `setmetatable` dan `getmetatable`
 
@@ -139,8 +115,6 @@ mt.__metatable = "This metatable is locked!"
 local success, error_msg = pcall(setmetatable, myAccount, {})
 print(success, error_msg) -- Output: false, cannot change a protected metatable
 ```
-
-\<a name="fase-2-2"\>\</a\>
 
 ### 2.2 Metamethods Dasar untuk Akses Data: `__index` dan `__newindex`
 
@@ -223,7 +197,6 @@ protectedAcc.balance = 999 -- Mencoba menulis ke key 'balance' yg tidak ada -> _
 print(protectedAcc.balance) -- Output: nil (karena penugasan diblokir)
 ```
 
-\<a name="diagram-index"\>\</a\>
 **Representasi Visual Alur `__index`:**
 
 ```
@@ -250,13 +223,9 @@ print(protectedAcc.balance) -- Output: nil (karena penugasan diblokir)
 
 ---
 
-\<a name="fase-3"\>\</a\>
-
 ## **FASE 3: OPERATOR OVERLOADING**
 
 Di sini kita membuat table berperilaku seperti tipe data numerik atau lainnya dengan mendefinisikan ulang operator. Ini sangat mirip dengan _operator overloading_ di C++ atau Dart.
-
-\<a name="fase-3-1"\>\</a\>
 
 ### 3.1 Metamethods Aritmatika
 
@@ -295,8 +264,6 @@ print(vec3.x, vec3.y) -- Output: 13  24
 local vec4 = -vec1 -- Lua memanggil Vector.mt.__unm(vec1)
 print(vec4.x, vec4.y) -- Output: -10 -20
 ```
-
-\<a name="fase-3-2"\>\</a\>
 
 ### 3.2 Metamethods Perbandingan
 
@@ -337,8 +304,6 @@ print(vA < vC)  -- Output: true (karena getLengthSq(vA) < getLengthSq(vC))
 print(vC > vA)  -- Output: true (Lua mengubah ini menjadi vA < vC)
 ```
 
-\<a name="fase-3-3"\>\</a\>
-
 ### 3.3 Metamethods Operasi Khusus
 
 - `__concat`: Dipanggil untuk operator konkatenasi string (`..`).
@@ -374,13 +339,9 @@ print(myVec .. " is my vector.") -- Output: Vector(3, 4) is my vector. (karena _
 
 ---
 
-\<a name="fase-4"\>\</a\>
-
 ## **FASE 4: TEKNIK LANJUTAN**
 
 Fase ini membawa kita ke beberapa fitur paling kuat dan unik dari metatables.
-
-\<a name="fase-4-1"\>\</a\>
 
 ### 4.1 Metamethod Pemanggilan Fungsi: `__call`
 
@@ -414,8 +375,6 @@ setmetatable(Vector, VectorMeta)
 local v = Vector(7, 24) -- Terlihat seperti memanggil fungsi, padahal memicu __call
 print(v) -- Output: Vector(7, 24)
 ```
-
-\<a name="fase-4-2"\>\</a\>
 
 ### 4.2 Metamethods Garbage Collection: `__gc` dan `__mode`
 
@@ -487,8 +446,6 @@ local obj1_retrieved = getObject(1) -- akan membuat objek baru lagi
 -- Anda tidak bisa berasumsi kapan tepatnya GC akan berjalan.
 ```
 
-\<a name="fase-4-3"\>\</a\>
-
 ### 4.3 Metamethods Iterator dan Perbedaan Versi
 
 Cara Lua menangani iterasi kustom telah berevolusi. Ini adalah area di mana pemahaman versi menjadi krusial.
@@ -547,13 +504,9 @@ end
 
 ---
 
-\<a name="fase-5"\>\</a\>
-
 ## **FASE 5: DESIGN PATTERNS DAN APLIKASI**
 
 Di sini kita menggabungkan semua yang telah kita pelajari untuk membangun pola pemrograman tingkat tinggi.
-
-\<a name="fase-5-1"\>\</a\>
 
 ### 5.1 Pola Pewarisan (Inheritance)
 
@@ -591,8 +544,6 @@ s1:printArea() -- Metode ini dipanggil dari Shape!
 -- Output: The area is: 100
 ```
 
-\<a name="fase-5-2"\>\</a\>
-
 ### 5.2 Object-Oriented Programming (OOP) di Lua
 
 Lua tidak memiliki sintaks `class` seperti Dart, tetapi metatables memungkinkan kita untuk mensimulasikannya dengan sangat efektif. Pola di atas (`Square:new(...)`, `setmetatable(obj, {__index = self})`) adalah cara standar untuk membuat "konstruktor" dan "instance" di Lua.
@@ -603,20 +554,14 @@ Lua tidak memiliki sintaks `class` seperti Dart, tetapi metatables memungkinkan 
 
 ---
 
-\<a name="fase-6"\>\</a\>
-
 ## **FASE 6: KINERJA DAN OPTIMISASI**
 
 Ini adalah pertimbangan praktis saat menggunakan metatables secara ekstensif.
-
-\<a name="fase-6-1"\>\</a\>
 
 ### 6.1 Pertimbangan Kinerja
 
 - **Metatable Lookup Overhead**: Setiap kali metamethod dipanggil (misalnya, akses `__index`), ada sedikit overhead. Lua harus memeriksa key di table asli, gagal, menemukan metatable, dan kemudian memanggil metamethod.
 - **Caching Strategies**: Jika sebuah metamethod `__index` melakukan komputasi yang mahal, Anda bisa melakukan caching. Setelah nilai dihitung, simpan langsung di table instance (`rawset(tbl, key, value)`). Akses berikutnya akan menemukan nilai itu secara langsung tanpa memicu `__index` lagi.
-
-\<a name="fase-6-2"\>\</a\>
 
 ### 6.2 Manajemen Memori
 
@@ -624,8 +569,6 @@ Ini adalah pertimbangan praktis saat menggunakan metatables secara ekstensif.
 - **Avoiding Memory Leaks**: Pastikan Anda tidak secara tidak sengaja menciptakan _reference cycles_ (A menunjuk ke B, B menunjuk ke A) yang tidak dapat dipecah oleh weak tables, karena ini akan mencegah GC membersihkan objek-objek tersebut. Gunakan weak references (`__mode`) jika perlu untuk memutus siklus ini.
 
 ---
-
-\<a name="kesimpulan"\>\</a\>
 
 ### Kesimpulan dan Langkah Selanjutnya
 
@@ -647,25 +590,21 @@ Baik, mari kita lanjutkan dengan fase-fase berikutnya dari kurikulum Anda. Kita 
 
 ### Daftar Isi (Lanjutan)
 
-- [**FASE 7: ADVANCED TECHNIQUES DAN EDGE CASES**](https://www.google.com/search?q=%23fase-7)
-  - [7.1 Metatable Chaining](https://www.google.com/search?q=%23fase-7-1)
-  - [7.2 Integration dengan C API](https://www.google.com/search?q=%23fase-7-2)
-  - [7.3 Debugging dan Troubleshooting](https://www.google.com/search?q=%23fase-7-3)
-- [**FASE 8: REAL-WORLD APPLICATIONS**](https://www.google.com/search?q=%23fase-8)
-  - [8.1 Domain-Specific Languages (DSL)](https://www.google.com/search?q=%23fase-8-1)
-  - [8.2 Game Development Applications](https://www.google.com/search?q=%23fase-8-2)
-  - [8.3 Library dan Framework Design](https://www.google.com/search?q=%23fase-8-3)
-- [**Analisis Akhir Kurikulum dan Referensi**](https://www.google.com/search?q=%23analisis-akhir)
+- [**FASE 7: ADVANCED TECHNIQUES DAN EDGE CASES**](#fase-7)
+  - [7.1 Metatable Chaining](#fase-7-1)
+  - [7.2 Integration dengan C API](#fase-7-2)
+  - [7.3 Debugging dan Troubleshooting](#fase-7-3)
+- [**FASE 8: REAL-WORLD APPLICATIONS**](#fase-8)
+  - [8.1 Domain-Specific Languages (DSL)](#fase-8-1)
+  - [8.2 Game Development Applications](#fase-8-2)
+  - [8.3 Library dan Framework Design](#fase-8-3)
+- [**Analisis Akhir Kurikulum dan Referensi**](#analisis-akhir)
 
 ---
-
-\<a name="fase-7"\>\</a\>
 
 ## **FASE 7: ADVANCED TECHNIQUES DAN EDGE CASES**
 
 Fase ini adalah tentang mendorong batasan, memahami interaksi yang kompleks, dan belajar bagaimana menangani skenario yang tidak umum. Penguasaan di level ini membedakan seorang programmer Lua yang mahir dari yang biasa.
-
-\<a name="fase-7-1"\>\</a\>
 
 ### 7.1 Metatable Chaining
 
@@ -726,8 +665,6 @@ print("Can speak?", success) -- Output: Can speak? false
 p1:growl() -- Output: GRRRR!
 ```
 
-\<a name="fase-7-2"\>\</a\>
-
 ### 7.2 Integration dengan C API
 
 Ini adalah salah satu penggunaan metatables yang paling kuat, yaitu untuk menjembatani dunia Lua dengan kode C/C++.
@@ -740,8 +677,6 @@ Ini adalah salah satu penggunaan metatables yang paling kuat, yaitu untuk menjem
 - **C function integration patterns**: Fungsi-fungsi di dalam metatable `userdata` biasanya adalah fungsi C yang telah didaftarkan ke Lua (menggunakan `lua_pushcfunction`). Fungsi C ini dapat memanipulasi data di dalam `userdata` secara langsung, memberikan fungsionalitas penuh pada objek "kotak hitam" tersebut.
 
 - **Cross-language object binding**: Kombinasi `userdata` dan metatables adalah tulang punggung dari _binding_. Ini memungkinkan library C (seperti library grafis, fisika, atau AI) untuk diekspos ke skrip Lua dengan cara yang terasa alami dan "idiomatic" bagi programmer Lua, menyembunyikan semua detail implementasi C yang rumit.
-
-\<a name="fase-7-3"\>\</a\>
 
 ### 7.3 Debugging dan Troubleshooting
 
@@ -769,15 +704,11 @@ Kode yang sangat bergantung pada metatables bisa sulit untuk di-debug. Mengetahu
 
 ---
 
-\<a name="fase-8"\>\</a\>
-
 ## **FASE 8: REAL-WORLD APPLICATIONS**
 
 Di fase ini, kita melihat bagaimana semua konsep ini bersatu untuk membangun sistem yang kuat dan elegan.
 
-\<a name="fase-8-1"\>\</a\>
-
-### 8.1 Domain-Specific Languages (DSL)
+8.1 Domain-Specific Languages (DSL)
 
 Metatables memungkinkan Anda membengkokkan sintaks Lua untuk menciptakan "bahasa" kecil yang sangat ekspresif untuk domain masalah tertentu.
 
@@ -812,8 +743,6 @@ Metatables memungkinkan Anda membengkokkan sintaks Lua untuk menciptakan "bahasa
   print(userConfig.theme)   -- Output: dark (dari defaultConfig via __index)
   ```
 
-\<a name="fase-8-2"\>\</a\>
-
 ### 8.2 Game Development Applications
 
 Game adalah salah satu domain di mana fleksibilitas Lua dan metatables benar-benar bersinar.
@@ -828,8 +757,6 @@ Game adalah salah satu domain di mana fleksibilitas Lua dan metatables benar-ben
 
 - **Event handling frameworks**: Anda dapat membuat sistem di mana `event:listen(callback)` dan `event:fire(...)` dapat disederhanakan.
 
-\<a name="fase-8-3"\>\</a\>
-
 ### 8.3 Library dan Framework Design
 
 Prinsip-prinsip ini berlaku untuk pembuatan alat apa pun yang dapat digunakan kembali di Lua.
@@ -842,11 +769,7 @@ Prinsip-prinsip ini berlaku untuk pembuatan alat apa pun yang dapat digunakan ke
 
 ---
 
-\<a name="analisis-akhir"\>\</a\>
-
 ### Analisis Akhir Kurikulum dan Referensi
-
-Kurikulum yang Anda susun sangatlah luar biasa. Seperti yang dinyatakan di akhir file Anda:
 
 - **Historical Context**: Analisis perbedaan versi (misalnya, evolusi `__pairs`/`__ipairs`) sangat penting untuk menulis kode yang portabel dan memahami mengapa beberapa pola ada.
 - **Performance Deep Dive**: Memahami overhead lookup dan strategi caching memisahkan kode produksi dari kode prototipe.
@@ -857,4 +780,4 @@ Kurikulum yang Anda susun sangatlah luar biasa. Seperti yang dinyatakan di akhir
 
 Dengan menyelesaikan uraian ini, Anda sekarang memiliki dokumen referensi yang komprehensif, dibangun di atas kerangka kurikulum yang sudah solid. Langkah selanjutnya adalah yang paling penting: **praktik**. Terapkan konsep-konsep ini. Bangun sesuatu. Uji batasannya. Hanya dengan begitu pemahaman mendalam ini akan menjadi keahlian sejati.
 
-Semoga berhasil dalam perjalanan Anda menguasai salah satu fitur paling elegan dan kuat dalam bahasa Lua.
+##### Semoga berhasil dalam perjalanan Anda menguasai salah satu fitur paling elegan dan kuat dalam bahasa Lua.

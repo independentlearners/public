@@ -184,7 +184,6 @@
 
 # Lanjutan
 
-# Istilah
 
 - **Chunk (kode)**
   Di Lua (dan beberapa bahasa skrip lain), chunk adalah satu unit kode yang dimuat dan dieksekusi sekaligus—bisa berupa file `.lua`, string kode, atau blok `do … end`. Setiap chunk memiliki scope-nya sendiri, jadi variabel lokal di satu chunk nggak bakal bocor ke chunk lain.
@@ -4331,6 +4330,10 @@ Semua aspek ini bersama-sama membantu bukan hanya dalam menciptakan pengalaman p
 
 - **Web Service**: Metode komunikasi antara dua perangkat elektronik melalui web
 - **While Loop**: Perulangan yang mengeksekusi blok kode selama kondisi terpenuhi
+
+#
+
+**Incremental :** berarti meningkat atau berkembang secara bertahap dan terus-menerus dalam jumlah kecil atau langkah-langkah kecil.
 
 [486]: ../konsep/regex/README.md
 

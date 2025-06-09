@@ -55,7 +55,7 @@ Bagian ini mengenalkan Anda pada apa itu variabel dalam konteks Lua, bagaimana m
 
 - **Variable Naming Conventions di Lua**
 
-  - **Deskripsi Konkret**: Karena secara default variabel di lua bersifat global atau dinamis serta tidak adanya sebuah tipe data yang menunjukan sifat akan suatu variabel maka terdapat sebuah aturan dan praktik umum yang dilakukan oleh para programmer saat memberi nama pada sebuah variabel untuk meningkatkan keterbacaan dan pemeliharaan kode dimana ini sangat berguna untuk mengidentifikasi sifat dari sebuah variabel di lua. Aturan-aturan lainnya juga berlaku untuk menghindari perbedaan antara variabel dengan kata kunci atau kode pada bahasa dimana bagian ini adalah sebuah bagian wajib 
+  - **Deskripsi Konkret**: Karena secara default variabel di lua bersifat global atau dinamis serta tidak adanya sebuah tipe data yang menunjukan sifat akan suatu variabel maka terdapat sebuah aturan dan praktik umum yang dilakukan oleh para programmer saat memberi nama pada sebuah variabel untuk meningkatkan keterbacaan dan pemeliharaan kode dimana ini sangat berguna untuk mengidentifikasi sifat dari sebuah variabel di lua. Aturan-aturan lainnya juga berlaku untuk menghindari perbedaan antara variabel dengan kata kunci atau kode pada bahasa dimana bagian ini adalah sebuah bagian wajib
   - **Aturan Dasar Lua**:
     1.  Nama variabel bisa terdiri dari huruf, angka, dan garis bawah (`_`). _**Opsional | Bast-Practice**_
     2.  Nama variabel tidak boleh dimulai dengan angka. **_Wajib_**
@@ -77,7 +77,7 @@ Bagian ini mengenalkan Anda pada apa itu variabel dalam konteks Lua, bagaimana m
       UserModule = {}
       GameSettings = {}
       ```
-    - **`UPPER_SNAKE_CASE`**: Semua huruf kapital, dipisahkan garis bawah. Seperti dibahas sebelumnya, ini sering digunakan untuk menandakan bahwa sebuah variabel tersebut didefinisikan sebagai konstanta.
+    - **`UPPER_SNAKE_CASE`**: Semua huruf kapital, dipisahkan garis bawah. Seperti dibahas sebelumnya, ini sering digunakan untuk menandakan bahwa sebuah variabel tersebut di identifikasi sebagai konstanta.
       ```lua
       MAX_CONNECTIONS = 100
       DEFAULT_TIMEOUT = 5000
@@ -113,7 +113,7 @@ Bagian ini mengenalkan Anda pada apa itu variabel dalam konteks Lua, bagaimana m
 
 - **Unicode Support dalam Nama Variabel**
 
-  - **Deskripsi Konkret**: Lua modern (terutama Lua 5.3 dan setelahnya) memiliki dukungan yang lebih baik untuk UTF-8. Ini berarti Anda berpotensi menggunakan karakter Unicode (seperti aksara non-Latin, emoji, dll.) dalam string dan komentar. Untuk nama variabel, dukungan bisa bergantung pada versi Lua dan bagaimana source code Anda diinterpretasikan.
+  - **Deskripsi Konkret**: Lua modern (terutama Lua 5.3 dan setelahnya) memiliki dukungan yang lebih baik untuk [UTF-8][utf-8]. Ini berarti Anda berpotensi menggunakan karakter Unicode (seperti aksara non-Latin, emoji, dll.) dalam string dan komentar. Untuk nama variabel, dukungan bisa bergantung pada versi Lua dan bagaimana source code Anda diinterpretasikan.
   - **Konsep**:
     - **UTF-8**: Skema pengkodean karakter variabel-lebar yang umum digunakan untuk merepresentasikan Unicode.
   - **Detail Lua**:
@@ -164,9 +164,9 @@ Bagian ini membahas fitur-fitur yang membuat Lua menonjol atau berbeda dari bany
 
 - **No Variable Declarations Required**
 
-  - **Deskripsi Konkret**: Di Lua, Anda dapat mulai menggunakan variabel hanya dengan menugaskan nilai padanya. Tidak ada keharusan untuk "mendeklarasikan" variabel dengan kata kunci khusus sebelum penggunaan pertamanya, _kecuali_ jika Anda ingin membuatnya menjadi variabel lokal.
+  - **Deskripsi Konkret**: Di Lua, Anda dapat mulai menggunakan variabel hanya dengan menugaskan nilai padanya. Tidak ada keharusan untuk "mendeklarasikan menggunakan tipe data" variabel dengan kata kunci khusus sebelum penggunaan pertamanya, _kecuali_ jika Anda ingin membuatnya menjadi variabel lokal.
   - **Terminologi & Konsep**:
-    - **Deklarasi (Declaration)**: Memberitahu kompiler/interpreter tentang keberadaan variabel dan namanya (dan tipenya di bahasa statis).
+    - **Deklarasi (Declaration)**: Memberitahu kompiler/interpreter tentang keberadaan variabel dan namanya (dan tipenya seperti di bahasa statis).
     - **Definisi (Definition)**: Selain mendeklarasikan, juga mengalokasikan memori untuk variabel (dan bisa juga menginisialisasi dengan nilai).
     - **Global Variable**: Variabel yang dapat diakses dari mana saja dalam program.
     - **Local Variable**: Variabel yang cakupannya (scope) terbatas pada blok atau fungsi tempat ia didefinisikan.
@@ -873,3 +873,4 @@ Kurikulum menyarankan latihan eksplorasi tipe, tes konversi, dan penanganan erro
 [3]: ../../../../README.md
 [2]: ../2-assignment-patterns/README.md
 [1]: ../../README.md/#11-pengenalan-variabel-di-lua
+[utf-8]: ../../../../../../../../kamus/README.md "klik untuk melihat kamus dan cari kata tersebut"

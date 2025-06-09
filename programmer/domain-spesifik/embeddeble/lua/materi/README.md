@@ -22,15 +22,15 @@
 
 ### **ADVANCED (13 topik)**
 
-13. **[Metatables & Metamethods][13]** - 6 minggu, 40 jam
-14. **[Coroutines][14]** - 5 minggu, 35 jam
+13. **[Metatables & Metamethods][13]** - 6 minggu, 40 jam ✅
+14. **[Coroutines][14]** - 5 minggu, 35 jam ✅
 15. **[Error Handling][15]** - 3 minggu, 25 jam ✅
 16. **[Object-Oriented Programming][16]** - 5 minggu, 35 jam ✅
 17. **[Debug Library][17]** - 3 minggu, 20 jam
 18. **[C API Integration][18]** - 8 minggu, 60 jam
 19. **[Performance Optimization][19]** - 4 minggu, 30 jam ✅
-20. **[Memory Management][20]** - 3 minggu, 25 jam
-21. **[Garbage Collection][21]** - 3 minggu, 20 jam
+20. **[Memory Management][20]** - 3 minggu, 25 jam ✅
+21. **[Garbage Collection][21]** - 3 minggu, 20 jam ✅
 22. **[Advanced Patterns][22]** - 5 minggu, 35 jam
 23. **[Web Development (OpenResty)][23]** - 6 minggu, 40 jam
 24. **[Game Development][24]** - 6 minggu, 40 jam
