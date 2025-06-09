@@ -584,21 +584,19 @@ Anda sekarang memiliki peta jalan yang sangat detail untuk menguasai Metatables 
 3.  **Baca Sumber Referensi**: Kurikulum Anda memiliki daftar sumber yang fantastis. Sekarang setelah Anda memiliki gambaran besar, menyelam ke dalam "Programming in Lua" (PIL) atau referensi lain akan jauh lebih bermanfaat.
     - **Referensi Utama**: [Programming in Lua (PIL), Chapter 13](https://www.lua.org/pil/13.html) - Ini adalah sumber de-facto untuk belajar metatables.
 
-Dengan pendekatan yang sistematis ini, Anda tidak hanya akan belajar _menggunakan_ metatables, tetapi Anda akan _memahami_ cara kerjanya di tingkat fundamental. Ini akan memungkinkan Anda untuk merancang API yang elegan, mengelola memori secara efisien, dan memecahkan masalah kompleks dengan solusi yang idiomatik dan kuat di Lua. Selamat belajar\!
-
-Baik, mari kita lanjutkan dengan fase-fase berikutnya dari kurikulum Anda. Kita akan menyelami teknik-teknik yang lebih canggih, kasus-kasus khusus, dan aplikasi dunia nyata yang menunjukkan kekuatan sejati dari metatables.
+Dengan pendekatan yang sistematis ini, Anda tidak hanya akan belajar _menggunakan_ metatables, tetapi Anda akan _memahami_ cara kerjanya di tingkat fundamental. Ini akan memungkinkan Anda untuk merancang API yang elegan, mengelola memori secara efisien, dan memecahkan masalah kompleks dengan solusi yang idiomatik dan kuat di Lua. Berikutnya kita akan menyelami teknik-teknik yang lebih canggih, kasus-kasus khusus, dan aplikasi dunia nyata yang menunjukkan kekuatan sejati dari metatables.
 
 ### Daftar Isi (Lanjutan)
 
-- [**FASE 7: ADVANCED TECHNIQUES DAN EDGE CASES**](#fase-7)
-  - [7.1 Metatable Chaining](#fase-7-1)
-  - [7.2 Integration dengan C API](#fase-7-2)
-  - [7.3 Debugging dan Troubleshooting](#fase-7-3)
-- [**FASE 8: REAL-WORLD APPLICATIONS**](#fase-8)
-  - [8.1 Domain-Specific Languages (DSL)](#fase-8-1)
-  - [8.2 Game Development Applications](#fase-8-2)
-  - [8.3 Library dan Framework Design](#fase-8-3)
-- [**Analisis Akhir Kurikulum dan Referensi**](#analisis-akhir)
+- [**FASE 7: ADVANCED TECHNIQUES DAN EDGE CASES**](#fase-7-advanced-techniques-dan-edge-cases)
+  - [7.1 Metatable Chaining](#71-metatable-chaining)
+  - [7.2 Integration dengan C API](#72-integration-dengan-c-api)
+  - [7.3 Debugging dan Troubleshooting](#73-debugging-dan-troubleshooting)
+- [**FASE 8: REAL-WORLD APPLICATIONS**](#fase-8-real-world-applications)
+  - [8.1 Domain-Specific Languages (DSL)](#81-domain-specific-languages-dsl)
+  - [8.2 Game Development Applications](#82-game-development-applications)
+  - [8.3 Library dan Framework Design](#83-library-dan-framework-design)
+- [**Analisis Akhir Kurikulum dan Referensi**](#analisis-akhir-kurikulum-dan-referensi)
 
 ---
 
@@ -708,7 +706,7 @@ Kode yang sangat bergantung pada metatables bisa sulit untuk di-debug. Mengetahu
 
 Di fase ini, kita melihat bagaimana semua konsep ini bersatu untuk membangun sistem yang kuat dan elegan.
 
-8.1 Domain-Specific Languages (DSL)
+### 8.1 Domain-Specific Languages (DSL)
 
 Metatables memungkinkan Anda membengkokkan sintaks Lua untuk menciptakan "bahasa" kecil yang sangat ekspresif untuk domain masalah tertentu.
 
