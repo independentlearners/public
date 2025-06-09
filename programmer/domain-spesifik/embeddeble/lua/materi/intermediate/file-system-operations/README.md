@@ -1,6 +1,6 @@
 # **[Daftar Kurikulum File System Operations di Lua (Versi Lengkap)][0]**
 
-### 1. Dasar-Dasar File I/O Lua Standard
+### [1. Dasar-Dasar File I/O Lua Standard][1]
 
 - **Operasi File Dasar (Standard I/O Library)**
   - io.open() modes dan options
@@ -242,7 +242,7 @@ Kurikulum ini sekarang mencakup **semua aspek file system operations** yang ters
 <!-- ------------------------------------------------- -->
 
 [0]: ../../README.md
-[1]: ../
+[1]: ../file-system-operations/materi/README.md
 [2]: ../
 [3]: ../
 [4]: ../

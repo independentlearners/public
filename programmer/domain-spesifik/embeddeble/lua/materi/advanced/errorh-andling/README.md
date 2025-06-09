@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap Error Handling di Lua][0]**
 
-## 1. Dasar-Dasar Error Handling
+## [1. Dasar-Dasar Error Handling][1]
 
 ### 1.1 Pengenalan Error Handling
 
@@ -322,7 +322,7 @@ Kurikulum ini sekarang mencakup **semua aspek error handling di Lua** yang mungk
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
+[1]: ../errorh-andling/materi/README.md
 [2]: ../
 [3]: ../
 [4]: ../

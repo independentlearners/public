@@ -78,7 +78,7 @@
   - [Custom Loader GitHub Gist](https://gist.github.com/stevedonovan/1297868)
   - [Loadkit - Arbitrary File Loading](https://github.com/leafo/loadkit)
 
-## 📦 **[[Tingkat 4: Package Management][][5]4]**
+## 📦 **[Tingkat 4: Package Management][4]**
 
 ### 4.1 LuaRocks - Package Manager
 

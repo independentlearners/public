@@ -16,7 +16,7 @@
 7. **[Tables][7]** - 7 minggu, 45 jam
 8. **[Modules & Packages][8]** - 4 minggu, 30 jam ✅
 9. **[Pattern Matching][9]** - 4 minggu, 30 jam
-10. **[File System Operations][10]** - 3 minggu, 20 jam
+10. **[File System Operations][10]** - 3 minggu, 20 jam ✅
 11. **[Standard Libraries][11]** - 4 minggu, 30 jam ✅
 12. **[Testing & Debugging][12]** - 4 minggu, 25 jam ✅
 
@@ -28,7 +28,7 @@
 16. **[Object-Oriented Programming][16]** - 5 minggu, 35 jam ✅
 17. **[Debug Library][17]** - 3 minggu, 20 jam
 18. **[C API Integration][18]** - 8 minggu, 60 jam
-19. **[Performance Optimization][19]** - 4 minggu, 30 jam
+19. **[Performance Optimization][19]** - 4 minggu, 30 jam ✅
 20. **[Memory Management][20]** - 3 minggu, 25 jam
 21. **[Garbage Collection][21]** - 3 minggu, 20 jam
 22. **[Advanced Patterns][22]** - 5 minggu, 35 jam

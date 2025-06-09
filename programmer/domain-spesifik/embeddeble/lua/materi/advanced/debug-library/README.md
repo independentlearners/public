@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap Debug Library Lua - Versi Komprehensif][0]**
 
-## **BAGIAN I: FONDASI FUNDAMENTAL**
+## **[BAGIAN I: FONDASI FUNDAMENTAL][1]**
 
 ### **1. Konsep Dasar Debug Library**
 
@@ -432,7 +432,7 @@ Kurikulum ini sekarang menjadi **referensi definitif** untuk Debug Library Lua y
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
+[1]: ../debug-library/materi/README.md
 [2]: ../
 [3]: ../
 [4]: ../

@@ -1,4 +1,4 @@
-### Daftar Isi Panduan Lengkap Error Handling di Lua
+### [Daftar Isi Panduan Lengkap Error Handling di Lua][0]
 
 - [Bab 1: Dasar-Dasar Error Handling](#bab-1-dasar-dasar-error-handling)
 - [Bab 2: Fungsi Error Dasar](#bab-2-fungsi-error-dasar)
@@ -692,7 +692,7 @@ Berikut adalah daftar tautan yang berguna berdasarkan kurikulum dan penjelasan d
 
 ### Audit Akhir dan Kesimpulan
 
-Panduan yang diperluas ini sekarang mencakup semua aspek yang diminta. Saya telah:
+Panduan yang diperluas ini sekarang mencakup semua aspek berikut:
 
 1.  **Menganalisis dan Menguraikan** setiap bab dari kurikulum asli.
 2.  **Menambahkan Penjelasan Detail** untuk setiap konsep dan terminologi.
@@ -755,3 +755,5 @@ Buat sebuah modul bernama `ConfigLoader.lua`. Modul ini akan memiliki satu fungs
 
 <!-- [sebelumnya]: ../../string/bagian-7/README.md
 [selanjutnya]: ../bagian-2/README.md -->
+
+[0]: ../README.md
