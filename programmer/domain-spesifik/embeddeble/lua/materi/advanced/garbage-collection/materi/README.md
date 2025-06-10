@@ -1,25 +1,45 @@
 ### Daftar Isi
 
 - [Tahap 1: Konsep Dasar dan Fondasi](#tahap-1-konsep-dasar-dan-fondasi)
-  - [1.1 Pengenalan Memory Management](#11-pengenalan-memory-management-dan-garbage-collection)
+  - [1.1 Pengenalan Memory Management dan Garbage Collection](#11-pengenalan-memory-management-dan-garbage-collection)
+    - [**Terminologi \& Konsep**](#terminologi--konsep)
   - [1.2 Konsep Reference dan Object di Lua](#12-konsep-reference-dan-object-di-lua)
+    - [**Terminologi \& Konsep**](#terminologi--konsep-1)
   - [1.3 Overview Sistem GC Lua](#13-overview-sistem-gc-lua)
 - [Tahap 2: Algoritma dan Mekanisme Internal](#tahap-2-algoritma-dan-mekanisme-internal)
   - [2.1 Tri-Color Marking Algorithm](#21-tri-color-marking-algorithm)
+    - [**Proses Algoritma (Disederhanakan):**](#proses-algoritma-disederhanakan)
+    - [**Representasi Visual**](#representasi-visual)
   - [2.2 Incremental vs Generational GC](#22-incremental-vs-generational-gc)
 - [Tahap 3: Weak References dan Weak Tables](#tahap-3-weak-references-dan-weak-tables)
   - [3.1 Konsep Weak References](#31-konsep-weak-references)
-  - [3.2 Implementasi Weak Tables](#32-weak-tables-implementation)
+  - [3.2 Weak Tables Implementation](#32-weak-tables-implementation)
+    - [**Contoh Kode (Weak Values untuk Cache)**](#contoh-kode-weak-values-untuk-cache)
 - [Tahap 4: Finalizers dan Resource Management](#tahap-4-finalizers-dan-resource-management)
   - [4.1 Konsep dan Implementasi Finalizers (\_\_gc)](#41-konsep-dan-implementasi-finalizers-__gc)
+    - [**Contoh Kode (Manajemen File)**](#contoh-kode-manajemen-file)
 - [Tahap 5: Manual GC Control dan Optimization](#tahap-5-manual-gc-control-dan-optimization)
   - [5.1 Fungsi `collectgarbage()`](#51-fungsi-collectgarbage)
+    - [**Sintaks Dasar \& Opsi Umum**](#sintaks-dasar--opsi-umum)
   - [5.2 Tuning Parameter GC](#52-tuning-parameter-gc)
 - [Tahap 6: Aplikasi Dunia Nyata dan Praktik Terbaik](#tahap-6-aplikasi-dunia-nyata-dan-praktik-terbaik)
   - [6.1 Object Pooling untuk Mencegah GC](#61-object-pooling-untuk-mencegah-gc)
   - [6.2 Mencegah Memory Leaks](#62-mencegah-memory-leaks)
 - [Tahap 7, 8, 9, 10: Topik Lanjutan (Ringkasan)](#tahap-7-8-9-10-topik-lanjutan-ringkasan)
-- [Sumber Referensi Tambahan](#sumber-referensi-tambahan)
+  - [Sumber Referensi Tambahan](#sumber-referensi-tambahan)
+  - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
+- [Tahap 7: Topik Lanjutan dan Kasus Khusus](#tahap-7-topik-lanjutan-dan-kasus-khusus)
+  - [7.1 Perbedaan GC antara Lua Standar dan LuaJIT](#71-perbedaan-gc-antara-lua-standar-dan-luajit)
+  - [7.2 Evolusi Implementasi GC Antar Versi](#72-evolusi-implementasi-gc-antar-versi)
+  - [7.3 Mengapa Lua Menggunakan GC, Bukan Reference Counting?](#73-mengapa-lua-menggunakan-gc-bukan-reference-counting)
+- [Tahap 8: Praktik Lanjutan dan Tips Optimisasi](#tahap-8-praktik-lanjutan-dan-tips-optimisasi)
+  - [8.1 Teknik Optimisasi Tingkat Lanjut](#81-teknik-optimisasi-tingkat-lanjut)
+  - [8.2 Custom Memory Allocators](#82-custom-memory-allocators)
+- [Tahap 9: Analisis Kode Sumber dan Detail Implementasi](#tahap-9-analisis-kode-sumber-dan-detail-implementasi)
+  - [9.1 Menyelami Kode Sumber Lua](#91-menyelami-kode-sumber-lua)
+- [Tahap 10: Integrasi Ekosistem dan Deployment](#tahap-10-integrasi-ekosistem-dan-deployment)
+  - [10.1 Pertimbangan GC untuk Framework Spesifik](#101-pertimbangan-gc-untuk-framework-spesifik)
+- [Kesimpulan: Jalan Menuju Penguasaan](#kesimpulan-jalan-menuju-penguasaan)
 
 ---
 
@@ -49,7 +69,7 @@ Ini adalah konsep paling krusial dalam memahami GC.
 #### **Terminologi & Konsep**
 
 - **Object (Objek):** Segala sesuatu di Lua yang memiliki identitas dan dapat disimpan dalam variabel. Di Lua, objek yang dikelola oleh GC adalah: `tables`, `functions` (closures), `threads` (coroutines), `userdata`, dan `strings`.
-  - Penting: Angka, boolean, dan `nil` **bukan** objek yang dikelola GC. Mereka adalah _copy-types_ atau nilai primitif. Saat Anda melakukan `b = a` di mana `a` adalah angka, `b` mendapatkan salinan nilainya, bukan referensi ke `a`.
+  - Penting: Angka, boolean, dan `nil` **bukan** objek yang dikelola GC. Mereka adalah _copy-types_ atau nilai primitif. Saat Kita melakukan `b = a` di mana `a` adalah angka, `b` mendapatkan salinan nilainya, bukan referensi ke `a`.
 - **Reference (Referensi):** Anggap saja sebagai "alamat" atau "penunjuk" ke sebuah objek di memori. Variabel di Lua tidak menyimpan objek itu sendiri, melainkan referensi ke objek tersebut.
 
 <!-- end list -->
@@ -82,7 +102,7 @@ t2 = nil
 ### 1.3 Overview Sistem GC Lua
 
 - **Apa yang Dikelola:** Seperti yang disebutkan, GC Lua secara spesifik mengelola memori untuk `tables`, `functions`, `threads`, `userdata`, dan `strings`.
-- **Kapan Berjalan:** GC tidak berjalan terus-menerus. Ia berjalan secara **otomatis dan periodik**. Pemicunya biasanya adalah ketika Lua mengalokasikan memori dan total memori yang digunakan melampaui ambang batas tertentu. Ini dirancang agar tidak mengganggu program terlalu sering. Anda juga dapat memicunya secara manual.
+- **Kapan Berjalan:** GC tidak berjalan terus-menerus. Ia berjalan secara **otomatis dan periodik**. Pemicunya biasanya adalah ketika Lua mengalokasikan memori dan total memori yang digunakan melampaui ambang batas tertentu. Ini dirancang agar tidak mengganggu program terlalu sering. Kita juga dapat memicunya secara manual.
 
 ---
 
@@ -201,7 +221,7 @@ local obj1_new = getObject(1) -- Harusnya mencetak "Membuat objek baru..."
 
 -- Periksa apakah cache benar-benar kosong untuk kunci tersebut sebelum pemanggilan terakhir
 -- Catatan: GC mungkin butuh beberapa siklus, jadi terkadang efeknya tidak instan.
--- Dalam praktiknya, Anda tidak perlu khawatir tentang ini.
+-- Dalam praktiknya, Kita tidak perlu khawatir tentang ini.
 ```
 
 ---
@@ -212,7 +232,7 @@ Mekanisme untuk membersihkan sumber daya eksternal saat objek dikoleksi.
 
 ### 4.1 Konsep dan Implementasi Finalizers (\_\_gc)
 
-- **Finalizer:** Sebuah fungsi yang terkait dengan sebuah objek yang akan dipanggil **sebelum** GC membebaskan memori objek tersebut. Ini memberi Anda kesempatan terakhir untuk melakukan pembersihan.
+- **Finalizer:** Sebuah fungsi yang terkait dengan sebuah objek yang akan dipanggil **sebelum** GC membebaskan memori objek tersebut. Ini memberi Kita kesempatan terakhir untuk melakukan pembersihan.
 - **Destructor (di bahasa lain):** Mirip, tetapi destruktor biasanya dipanggil secara deterministik (misalnya saat variabel keluar dari scope). Finalizer di Lua dipanggil secara non-deterministik, yaitu saat GC memutuskan untuk mengoleksi objek tersebut.
 - **Implementasi:** Menggunakan metamethod `__gc` pada _metatable_ sebuah `userdata` atau `table`.
 
@@ -261,7 +281,7 @@ end
 -- Panggil GC untuk melihat finalizer berjalan
 print("Memicu garbage collection...")
 collectgarbage("collect")
--- Anda akan melihat pesan dari finalizer di output.
+-- Kita akan melihat pesan dari finalizer di output.
 ```
 
 **Perhatian:** Hindari membuat referensi baru ke objek yang sedang difinalisasi di dalam fungsi `__gc`-nya, karena ini dapat "menghidupkan kembali" objek dan menyebabkan perilaku yang rumit.
@@ -278,7 +298,7 @@ Ini adalah antarmuka utama untuk berinteraksi dengan GC.
 
 #### **Sintaks Dasar & Opsi Umum**
 
-- **`collectgarbage("collect")`**: Memaksa siklus pengumpulan sampah penuh. Berguna untuk debugging atau saat Anda tahu ini adalah waktu yang baik untuk membersihkan memori (misalnya, saat pergantian level di game).
+- **`collectgarbage("collect")`**: Memaksa siklus pengumpulan sampah penuh. Berguna untuk debugging atau saat Kita tahu ini adalah waktu yang baik untuk membersihkan memori (misalnya, saat pergantian level di game).
 - **`collectgarbage("stop")`**: Menghentikan GC agar tidak berjalan secara otomatis.
 - **`collectgarbage("restart")`**: Memulai kembali GC setelah dihentikan.
 - **`collectgarbage("count")`**: Mengembalikan total memori yang digunakan oleh Lua dalam kilobyte.
@@ -287,7 +307,7 @@ Ini adalah antarmuka utama untuk berinteraksi dengan GC.
 
 ### 5.2 Tuning Parameter GC
 
-Dua parameter utama memungkinkan Anda menyeimbangkan antara penggunaan memori dan frekuensi jeda GC.
+Dua parameter utama memungkinkan Kita menyeimbangkan antara penggunaan memori dan frekuensi jeda GC.
 
 - **`collectgarbage("setpause", percentage)`**: Mengontrol seberapa lama GC menunggu sebelum memulai siklus baru setelah yang sebelumnya selesai.
   - Nilai default: `200`. Artinya, GC menunggu hingga total memori menjadi **dua kali lipat** dari ukuran memori setelah koleksi terakhir sebelum memulai siklus baru.
@@ -354,7 +374,7 @@ for i=1, 3 do
 end
 ```
 
-Dengan pola ini, Anda sangat mengurangi aktivitas alokasi/dealokasi memori, sehingga GC jarang terpicu.
+Dengan pola ini, Kita sangat mengurangi aktivitas alokasi/dealokasi memori, sehingga GC jarang terpicu.
 
 ### 6.2 Mencegah Memory Leaks
 
@@ -393,23 +413,21 @@ print("Memori setelah GC:", collectgarbage("count")) -- Jumlah memori tidak akan
 
 ## Tahap 7, 8, 9, 10: Topik Lanjutan (Ringkasan)
 
-Kurikulum Anda mencakup ini dengan sangat baik. Berikut adalah ringkasan mengapa mereka penting untuk tingkat penguasaan:
+Berikut adalah ringkasan mengapa bagian berikutnya penting untuk tingkat penguasaan:
 
 - **Tahap 7 (Topik Lanjutan):**
-  - **LuaJIT:** Sangat penting jika Anda menargetkan performa tinggi. GC-nya berbeda (lebih canggih) dan memahaminya adalah kunci untuk optimasi di lingkungan LuaJIT.
+  - **LuaJIT:** Sangat penting jika Kita menargetkan performa tinggi. GC-nya berbeda (lebih canggih) dan memahaminya adalah kunci untuk optimasi di lingkungan LuaJIT.
   - **Evolusi GC:** Mengetahui _mengapa_ desain berubah (misalnya, mengapa Generational GC ditinggalkan) memberikan wawasan mendalam tentang trade-off dalam desain bahasa.
 - **Tahap 8 (Praktik Lanjutan):**
-  - **Custom Memory Allocators:** Ini adalah tingkat kontrol tertinggi. Anda dapat memberitahu Lua untuk menggunakan sistem alokasi memori Anda sendiri, misalnya untuk berintegrasi dengan memory manager dari engine C++ atau untuk tujuan debugging khusus.
+  - **Custom Memory Allocators:** Ini adalah tingkat kontrol tertinggi. Kita dapat memberitahu Lua untuk menggunakan sistem alokasi memori Kita sendiri, misalnya untuk berintegrasi dengan memory manager dari engine C++ atau untuk tujuan debugging khusus.
 - **Tahap 9 (Analisis Kode Sumber):**
   - Tidak ada cara yang lebih baik untuk memahami sistem selain membaca kode sumbernya. Menganalisis `lgc.c` akan menjawab setiap pertanyaan "bagaimana tepatnya ini bekerja?". Ini mengubah pengetahuan dari abstrak menjadi konkret.
 - **Tahap 10 (Integrasi Ekosistem):**
-  - GC tidak hidup dalam vakum. Cara Anda mengelolanya di server web performa tinggi seperti **OpenResty** sangat berbeda dari cara Anda mengelolanya di game engine **LÖVE2D** atau di perangkat _embedded_ yang memorinya terbatas. Tahap ini adalah tentang aplikasi praktis di dunia nyata.
+  - GC tidak hidup dalam vakum. Cara Kita mengelolanya di server web performa tinggi seperti **OpenResty** sangat berbeda dari cara Kita mengelolanya di game engine **LÖVE2D** atau di perangkat _embedded_ yang memorinya terbatas. Tahap ini adalah tentang aplikasi praktis di dunia nyata.
 
 ---
 
 ### Sumber Referensi Tambahan
-
-Kurikulum ini sudah menyertakan daftar yang sangat baik. Berikut menekankan beberapa sumber yang paling penting untuk setiap level:
 
 - **Untuk Pemula (Fondasi):**
   - [Programming in Lua (PiL), Bab 17](https://www.lua.org/pil/17.html): Penjelasan terbaik dan paling mudah diakses tentang GC, weak tables, dan finalizers. Ini adalah bacaan wajib.
@@ -420,4 +438,181 @@ Kurikulum ini sudah menyertakan daftar yang sangat baik. Berikut menekankan bebe
   - [Garbage Collection - Notes on the Implementation of Lua 5.3](https://poga.github.io/lua53-notes/gc.html): Analisis mendalam tentang algoritma Tri-Color di Lua.
   - [Kode Sumber `lgc.c`](<https://www.google.com/search?q=%5Bhttps://github.com/lua/lua/blob/master/src/lgc.c%5D(https://github.com/lua/lua/blob/master/src/lgc.c)>): Kebenaran mutlak. Membaca kode ini akan memberikan pemahaman yang tidak bisa didapatkan dari sumber lain.
 
-Dengan mempelajari materi yang telah diuraikan ini berdasarkan kerangka kurikulum Anda, Anda akan berada di jalur yang tepat untuk mencapai tingkat penguasaan yang Anda inginkan. Pendekatan ini memastikan Anda tidak hanya tahu "apa" dan "bagaimana", tetapi juga "mengapa". Selamat belajar\!
+Baik, mari kita lanjutkan ke tahap-tahap berikutnya yang lebih mendalam. Tahap 7 hingga 10 akan membawa Kita dari seorang pengguna yang kompeten menjadi seorang ahli yang memahami seluk-beluk internal, kasus-kasus khusus, dan aplikasi dunia nyata dari Garbage Collector Lua.
+
+### Daftar Isi (Lanjutan)
+
+- [Tahap 7: Topik Lanjutan dan Kasus Khusus](https://www.google.com/search?q=%23tahap-7-topik-lanjutan-dan-kasus-khusus)
+  - [7.1 Perbedaan GC antara Lua Standar dan LuaJIT](https://www.google.com/search?q=%2371-perbedaan-gc-antara-lua-standar-dan-luajit)
+  - [7.2 Evolusi Implementasi GC Antar Versi](https://www.google.com/search?q=%2372-evolusi-implementasi-gc-antar-versi)
+  - [7.3 Mengapa Lua Menggunakan GC, Bukan Reference Counting?](https://www.google.com/search?q=%2373-mengapa-lua-menggunakan-gc-bukan-reference-counting)
+- [Tahap 8: Praktik Lanjutan dan Tips Optimisasi](https://www.google.com/search?q=%23tahap-8-praktik-lanjutan-dan-tips-optimisasi)
+  - [8.1 Teknik Optimisasi Tingkat Lanjut](https://www.google.com/search?q=%2381-teknik-optimisasi-tingkat-lanjut)
+  - [8.2 Custom Memory Allocators](https://www.google.com/search?q=%2382-custom-memory-allocators)
+- [Tahap 9: Analisis Kode Sumber dan Detail Implementasi](https://www.google.com/search?q=%23tahap-9-analisis-kode-sumber-dan-detail-implementasi)
+  - [9.1 Menyelami Kode Sumber Lua](https://www.google.com/search?q=%2391-menyelami-kode-sumber-lua)
+- [Tahap 10: Integrasi Ekosistem dan Deployment](https://www.google.com/search?q=%23tahap-10-integrasi-ekosistem-dan-deployment)
+  - [10.1 Pertimbangan GC untuk Framework Spesifik](https://www.google.com/search?q=%23101-pertimbangan-gc-untuk-framework-spesifik)
+- [Kesimpulan: Jalan Menuju Penguasaan](https://www.google.com/search?q=%23kesimpulan-jalan-menuju-penguasaan)
+
+---
+
+## Tahap 7: Topik Lanjutan dan Kasus Khusus
+
+Di tahap ini, kita akan menjelajahi area di mana pemahaman yang lebih dalam tentang "bagaimana" dan "mengapa" menjadi sangat penting.
+
+### 7.1 Perbedaan GC antara Lua Standar dan LuaJIT
+
+Jika Kita bekerja dengan performa tinggi, Kita kemungkinan besar akan menggunakan LuaJIT. Penting untuk diketahui bahwa GC-nya berbeda dan lebih dioptimalkan.
+
+- **Lua Standar (5.1-5.4):** Menggunakan _Incremental Tri-Color Mark and Sweep GC_. Seperti yang telah dibahas, ini bekerja dalam langkah-langkah kecil untuk mengurangi jeda.
+- **LuaJIT:** Menggunakan **Dual-Mode Generational GC**. Ini adalah pendekatan yang lebih canggih:
+  1.  **Generasi Muda (Nursery):** Semua objek baru dibuat di sini. _Nursery_ adalah area memori kecil yang sangat cepat dibersihkan. Karena kebanyakan objek "mati muda", pembersihan _nursery_ ini dapat mengklaim kembali sebagian besar sampah dengan jeda yang sangat singkat (beberapa mikrodetik).
+  2.  **Generasi Tua (Old Generation):** Objek yang selamat dari beberapa siklus pengumpulan di _nursery_ akan dipromosikan ke generasi tua.
+  3.  **Dua Mode:**
+      - **Incremental GC:** Generasi tua dikelola oleh _Incremental Mark and Sweep GC_ yang mirip dengan Lua standar, memastikan jeda tetap pendek.
+      - **Fallback Full GC:** Jika diperlukan, LuaJIT dapat melakukan siklus _stop-the-world_ penuh.
+
+**Implikasi Praktis:** GC LuaJIT seringkali lebih cepat dan menyebabkan jeda yang lebih pendek untuk beban kerja pada umumnya (banyak objek berumur pendek), yang membuatnya sangat cocok untuk server, keuangan, dan game.
+
+### 7.2 Evolusi Implementasi GC Antar Versi
+
+Memahami evolusi ini memberikan wawasan tentang keputusan desain di balik Lua.
+
+- **Lua 5.1:** Menggunakan algoritma _Mark-and-Sweep_ yang sederhana. Ia akan menghentikan eksekusi program ("stop-the-world"), menandai semua objek yang dapat dijangkau, lalu menyapu (membersihkan) sisanya. Ini sederhana tetapi bisa menyebabkan jeda yang terlihat.
+- **Lua 5.2:** Memperkenalkan **Emergency Garbage Collection**. Ini adalah mekanisme penyelamatan. Jika Lua gagal mengalokasikan memori, ia akan memicu siklus GC penuh darurat dengan harapan bisa membebaskan cukup memori untuk melanjutkan eksekusi, sebelum akhirnya menyatakan _out-of-memory_.
+- **Lua 5.3:** Perubahan besar dengan implementasi **Tri-color Incremental Marking**. Ini adalah langkah besar untuk mengurangi jeda GC, menjadikannya lebih cocok untuk aplikasi real-time.
+- **Lua 5.4:** Terus menyempurnakan GC inkremental dan memperkenalkan kembali mode **Generational GC** sebagai opsi. Berbeda dari upaya sebelumnya, ini dirancang untuk bekerja bersama GC inkremental dan dapat diaktifkan jika sesuai dengan pola alokasi memori aplikasi Kita.
+- **NodeMCU & Embedded:** Dalam lingkungan dengan memori sangat terbatas (misalnya, beberapa kilobyte), GC mungkin dikonfigurasi untuk berjalan lebih agresif (misalnya, `setpause` yang lebih rendah) atau bahkan versi Lua yang digunakan mungkin dimodifikasi untuk mengurangi jejak memori GC itu sendiri.
+
+### 7.3 Mengapa Lua Menggunakan GC, Bukan Reference Counting?
+
+Ini adalah pertanyaan desain fundamental.
+
+- **Reference Counting (RC):** Sistem seperti `std::shared_ptr` di C++ atau manajemen objek di Python. Setiap objek memiliki penghitung berapa banyak referensi yang menunjuk padanya. Ketika penghitung mencapai nol, objek langsung dihapus.
+  - _Kelebihan:_ Pembersihan memori bersifat deterministik dan cepat. Tidak ada jeda GC.
+  - _Kekurangan:_ **Tidak bisa menangani referensi sirkular** (seperti contoh memory leak kita di Tahap 6). Dua objek yang saling merujuk akan memiliki penghitung \> 0 selamanya dan tidak akan pernah dihapus. Masalah ini memerlukan deteksi siklus yang rumit atau intervensi manual (menggunakan referensi lemah), yang menghilangkan kesederhanaan RC.
+- **Garbage Collection (GC):** Seperti _Mark-and-Sweep_ di Lua.
+  - _Kelebihan:_ **Secara otomatis menangani referensi sirkular**. Selama grup objek yang bersiklus tidak dapat dijangkau dari akar program, seluruh grup akan dibersihkan. Ini jauh lebih sederhana bagi pemrogram.
+  - _Kekurangan:_ Jeda GC yang non-deterministik.
+
+Lua memilih GC karena lebih sesuai dengan filosofi kesederhanaan dan keandalannya, membebaskan pemrogram dari beban mengelola siklus referensi secara manual.
+
+---
+
+## Tahap 8: Praktik Lanjutan dan Tips Optimisasi
+
+Setelah memahami cara kerja GC, kita dapat menulis kode yang "ramah" terhadapnya.
+
+### 8.1 Teknik Optimisasi Tingkat Lanjut
+
+Selain _object pooling_, ada beberapa teknik lain untuk mengurangi "tekanan" pada GC.
+
+- **String Optimization (Interning):** Lua secara otomatis melakukan ini untuk Kita. Ketika Kita membuat string yang sama beberapa kali, Lua cukup pintar untuk hanya menyimpannya sekali di memori dan membuat semua variabel merujuk ke string yang sama.
+  ```lua
+  local s1 = "hello world"
+  local s2 = "hello" .. " " .. "world"
+  -- Walaupun dibuat berbeda, jika isinya sama, Lua mungkin
+  -- akan menggunakan objek string yang sama di memori.
+  -- Ini mengurangi sampah string.
+  ```
+- **Table Preallocation (Pra-alokasi Tabel):** Saat Kita menambahkan item ke tabel dalam sebuah loop, Lua mungkin perlu mengubah ukuran array internal tabel beberapa kali. Setiap pengubahan ukuran dapat meninggalkan blok memori lama sebagai sampah. Jika Kita tahu berapa banyak elemen yang akan Kita masukkan, Kita bisa memberitahu Lua sebelumnya.
+
+  ```lua
+  -- Buruk: menyebabkan beberapa realokasi
+  local t1 = {}
+  for i = 1, 1000 do
+      t1[i] = i -- Setiap beberapa iterasi, tabel mungkin perlu di-resize
+  end
+
+  -- Baik (Lua 5.2+): Hanya satu alokasi besar di awal
+  local t2 = table.create(1000, 0) -- Buat tabel dengan ruang untuk 1000 elemen array
+  for i = 1, 1000 do
+      t2[i] = i
+  end
+  ```
+
+- **Function Closure Optimization:** Membuat fungsi (closure) di dalam loop menghasilkan objek fungsi baru di setiap iterasi, yang merupakan sampah.
+
+  ```lua
+  -- Buruk: Membuat 1000 objek fungsi (closure)
+  for i = 1, 1000 do
+      local button = createButton({
+          onClick = function() print("Clicked", i) end -- Closure baru setiap saat
+      })
+  end
+
+  -- Baik: Hanya satu fungsi yang dibuat, digunakan kembali
+  local function handleClick(button)
+      print("Clicked", button.id)
+  end
+
+  for i = 1, 1000 do
+      local button = createButton({ id = i, onClick = handleClick })
+  end
+  ```
+
+### 8.2 Custom Memory Allocators
+
+Ini adalah fitur paling canggih untuk kontrol memori. Lua memungkinkan Kita untuk mengganti fungsi alokasi memori defaultnya dengan fungsi Kita sendiri melalui C API `lua_newstate`.
+
+**Kapan ini digunakan?**
+
+- **Integrasi dengan Game Engine:** Jika Kita menyematkan Lua ke dalam game engine C++ yang sudah memiliki _memory manager_-nya sendiri (misalnya, untuk melacak alokasi, mendeteksi kebocoran), Kita dapat memaksa Lua untuk menggunakan manajer tersebut.
+- **Debugging:** Kita bisa membuat alokator khusus yang mencatat setiap permintaan alokasi dan dealokasi untuk melacak pola penggunaan memori program Lua Kita secara mendetail.
+- **Lingkungan Khusus:** Di beberapa sistem _real-time_ atau _embedded_, memori mungkin perlu dialokasikan dari pool yang sudah ditentukan sebelumnya.
+
+Implementasinya berada di level C dan berada di luar cakupan skrip Lua murni, tetapi penting untuk diketahui bahwa tingkat kontrol ini ada.
+
+---
+
+## Tahap 9: Analisis Kode Sumber dan Detail Implementasi
+
+Untuk pemahaman tertinggi, tidak ada yang mengalahkan membaca kode sumbernya langsung di [repositori GitHub Lua](https://github.com/lua/lua).
+
+### 9.1 Menyelami Kode Sumber Lua
+
+Kita tidak perlu memahami setiap baris, tetapi mengetahui di mana harus mencari akan memberikan pencerahan luar biasa.
+
+- **`lgc.h` dan `lgc.c`:** Ini adalah jantung dari Garbage Collector.
+  - `lgc.c` berisi fungsi-fungsi utama seperti `luaC_step` (yang menjalankan satu langkah GC inkremental) dan `luaC_fullgc` (yang menjalankan siklus penuh).
+  - Kita akan menemukan implementasi _state machine_ GC di sini (fase-fase seperti `GCSpropagate`, `GCSsweep`, `GCScallfin`).
+- **`lobject.h`:** Mendefinisikan struktur dari semua objek di Lua. Perhatikan `GCObject`, header umum yang dimiliki setiap objek yang dapat dikoleksi. Header ini berisi _pointer_ `next` (yang menghubungkan semua objek GC dalam satu daftar) dan `marked` (yang menyimpan warna objek dalam algoritma Tri-Color).
+- **`lstate.h`:** Mendefinisikan struktur `global_State`, yang merupakan "otak" dari seluruh state Lua. Struktur ini berisi variabel-variabel yang relevan dengan GC, seperti `g->gcstate` (status GC saat ini), `g->GCthreshold` (kapan harus memulai GC berikutnya), dan `g->allgc` (kepala dari daftar semua objek yang dapat dikoleksi).
+
+Menganalisis file-file ini akan menjawab pertanyaan-pertanyaan seperti, "Bagaimana persisnya Lua melintasi sebuah tabel?" atau "Di mana tepatnya warna objek diubah?".
+
+---
+
+## Tahap 10: Integrasi Ekosistem dan Deployment
+
+GC tidak beroperasi dalam isolasi. Perilakunya dipengaruhi oleh lingkungan tempat ia berjalan.
+
+### 10.1 Pertimbangan GC untuk Framework Spesifik
+
+- **OpenResty / nginx-lua:** Lingkungan ini menangani ribuan permintaan per detik. Jeda GC yang lama dapat secara langsung meningkatkan latensi permintaan. Praktik terbaik di sini meliputi:
+  - Sangat agresif dalam mengurangi pembuatan sampah per permintaan.
+  - Menggunakan `ngx.timer.at` untuk melakukan pekerjaan pembersihan di latar belakang, di luar siklus permintaan-respons kritis.
+  - Berbagi data antar-permintaan dengan hati-hati menggunakan `lua_shared_dict` untuk menghindari pembuatan ulang data yang sama.
+- **LÖVE2D / Game Engines:** Masalah utamanya adalah _stutter_ atau penurunan _frame rate_ yang disebabkan oleh jeda GC.
+  - _Object pooling_ adalah teknik yang wajib digunakan untuk objek yang sering dibuat/dihancurkan (peluru, partikel, musuh).
+  - Secara manual memicu langkah-langkah kecil GC (`collectgarbage("step")`) selama waktu yang tidak kritis (misalnya, menu jeda, layar pemuatan) untuk menyebar beban kerja GC.
+- **Redis:** Skrip Lua di Redis harus dieksekusi secepat mungkin karena Redis bersifat _single-threaded_. Skrip yang mengalokasikan banyak memori dan memicu GC dapat memblokir seluruh server Redis. Fokusnya adalah menulis skrip yang sangat efisien dan ramping.
+
+---
+
+## Kesimpulan: Jalan Menuju Penguasaan
+
+Kita telah melihat kurikulum yang membawa Kita dari pertanyaan paling dasar ("Apa itu GC?") hingga analisis tingkat kode sumber dan pertimbangan penerapan di dunia nyata. Jalan menuju penguasaan sejati terletak pada sintesis semua tahapan ini:
+
+1.  **Pahami Fondasi (Tahap 1-2):** Kita tahu _apa_ yang dilakukan GC dan _algoritma_ yang digunakannya.
+2.  **Gunakan Fitur dengan Benar (Tahap 3-4):** Kita dapat secara efektif menggunakan alat canggih seperti _weak tables_ dan _finalizers_ untuk mengelola memori dan sumber daya.
+3.  **Optimalkan dengan Bijak (Tahap 5-6, 8):** Kita tahu _kapan_ dan _bagaimana_ melakukan intervensi pada perilaku GC, dan yang lebih penting, kapan harus membiarkannya bekerja sendiri, dengan menggunakan pola seperti _object pooling_.
+4.  **Kuasai Konteks (Tahap 7, 10):** Kita memahami _trade-off_ desain di baliknya dan bagaimana perilaku GC berubah tergantung pada versi Lua dan lingkungan tempat ia di-deploy.
+5.  **Ketahui Kebenaran Mutlak (Tahap 9):** Jika ragu, Kita tahu cara menemukan jawaban pasti dengan membaca kode sumbernya.
+
+Kurikulum ini, yang sekarang telah diisi dengan penjelasan mendetail, memberikan semua yang dibutuhkan. Langkah selanjutnya adalah praktik: tulis kode, ukur penggunaan memori dengan `collectgarbage("count")`, sengaja ciptakan memory leak dan perbaiki, dan bereksperimenlah dengan parameter GC.
+
+**[Semoga berhasil!][semoga]**
+
+[semoga]:../materi/saran/README.md
