@@ -102,7 +102,7 @@
 </details>
 
 <details>
-  <summary>📝 Framework</summary>
+  <summary>🧰 Framework</summary>
 
 <div style="font-size: 10px;">
     <a href="../framework/README.md">
