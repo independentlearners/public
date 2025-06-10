@@ -7,7 +7,7 @@ Bagian ini adalah fondasi penting. Function (fungsi) adalah blok bangunan fundam
 #### **Apa itu function dan mengapa penting**
 
 - **Definisi Function (Fungsi):**
-  Dalam pemrograman, **function** (sering juga disebut prosedur, subroutine, atau method dalam konteks lain) adalah kumpulan pernyataan (statement) yang dikelompokkan bersama untuk melakukan tugas tertentu. Bayangkan function sebagai resep: Anda memberinya beberapa bahan (input/parameter), ia melakukan serangkaian langkah (proses di dalam function), dan mungkin menghasilkan hidangan jadi (output/return value).
+  Dalam pemrograman, **function** (sering juga disebut prosedur, subroutine, atau method dalam konteks lain) ini adalah kumpulan pernyataan (statement) yang dikelompokkan bersama untuk melakukan tugas tertentu. Bayangkan function sebagai resep: Anda memberinya beberapa bahan (input/parameter), ia melakukan serangkaian langkah (proses di dalam function), dan mungkin menghasilkan hidangan jadi (output/return value).
 
 - **Terminologi Penting:**
 

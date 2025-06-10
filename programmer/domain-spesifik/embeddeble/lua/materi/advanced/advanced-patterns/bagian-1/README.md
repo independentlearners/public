@@ -8,7 +8,7 @@
 
 ---
 
-## **BAGIAN I: FONDASI PATTERN MATCHING**
+## **[BAGIAN I: FONDASI PATTERN MATCHING][0]**
 
 Bagian ini adalah fondasi mutlak. Tanpa pemahaman yang kokoh di sini, mustahil untuk melanjutkan ke teknik yang lebih canggih. Kita akan membedah "DNA" dari sistem pattern matching Lua.
 

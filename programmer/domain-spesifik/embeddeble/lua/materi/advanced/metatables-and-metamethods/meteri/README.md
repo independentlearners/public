@@ -41,7 +41,7 @@ Sekarang, bayangkan Anda membuat sebuah **"buku aturan"** ajaib untuk boneka itu
 
 Inilah inti kekuatan Metatables: **kemampuan untuk mendefinisikan ulang atau memperluas perilaku standar dari tables di Lua.** Bagi Anda yang datang dari Dart/OOP, ini adalah cara Lua untuk mengimplementasikan _operator overloading_, _inheritance_, _polymorphism_, dan konsep canggih lainnya, meskipun dengan cara yang lebih fleksibel dan berbasis prototipe.
 
-## **FASE 1: DASAR-DASAR KONSEPTUAL**
+## **[FASE 1: DASAR-DASAR KONSEPTUAL][0]**
 
 Di fase ini, kita membangun fondasi mental tentang "apa" dan "mengapa" di balik metatables.
 
@@ -779,3 +779,10 @@ Prinsip-prinsip ini berlaku untuk pembuatan alat apa pun yang dapat digunakan ke
 Dengan menyelesaikan uraian ini, Anda sekarang memiliki dokumen referensi yang komprehensif, dibangun di atas kerangka kurikulum yang sudah solid. Langkah selanjutnya adalah yang paling penting: **praktik**. Terapkan konsep-konsep ini. Bangun sesuatu. Uji batasannya. Hanya dengan begitu pemahaman mendalam ini akan menjadi keahlian sejati.
 
 ##### Semoga berhasil dalam perjalanan Anda menguasai salah satu fitur paling elegan dan kuat dalam bahasa Lua.
+
+
+> - **[Ke Atas](#)**
+> - **[Kurikulkum][1]**
+
+[0]:../README.md
+[1]:../../metatables-and-metamethods/README.md

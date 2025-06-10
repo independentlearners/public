@@ -410,7 +410,7 @@ Kurikulum ini sekarang benar-benar comprehensive dan memberikan pembelajaran yan
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../C-API-Integration/materi/README.md
+[1]: ../C-API-Integration/bagian-1/README.md
 [2]: ../
 [3]: ../
 [4]: ../

@@ -1,8 +1,6 @@
 # **[Kurikulum Lengkap Lua Coroutines][0]**
 
-> ### 6.3 Coroutines vs Continuations vs Generators
-
-## 1. Fondasi dan Konsep Dasar
+## [1. Fondasi dan Konsep Dasar][1]
 
 ### 1.1 Pengenalan Coroutines
 
@@ -34,7 +32,7 @@
 - Execution context dan call stack
 - **Sumber:** [Lua Coroutine Tutorial - Complete Guide - GameDev Academy](https://gamedevacademy.org/lua-coroutine-tutorial-complete-guide/)
 
-## 2. Theoretical Foundations dan Computer Science Context
+## [2. Theoretical Foundations dan Computer Science Context][2]
 
 ### 2.1 Coroutines dalam Teori Computational Models
 
@@ -59,7 +57,7 @@
 - **Sumber:** [Understanding Lua Closures - Tutorialspoint](https://www.tutorialspoint.com/lua/lua_closures.htm)
 - **Sumber:** [Closures, up values and other odd Lua creatures](https://coolcodea.wordpress.com/2013/04/01/20-closures-up-values-and-other-odd-lua-creatures/)
 
-## 3. API dan Fungsi Dasar
+## [3. API dan Fungsi Dasar][3]
 
 ### 3.1 Coroutine Library Functions
 
@@ -100,7 +98,7 @@
 - **Sumber:** [Lua symmetric coroutines - GitHub](https://github.com/luapower/coro)
 - **Sumber:** [coro - symmetric coroutines](https://luapower.com/coro)
 
-## 4. Pattern dan Use Cases Menengah
+## [4. Pattern dan Use Cases Menengah][4]
 
 ### 4.1 Coroutines sebagai Iterators
 
@@ -137,7 +135,7 @@
 - Backtracking algorithms
 - **Sumber:** [lua-users wiki: Coroutines Tutorial](http://lua-users.org/wiki/CoroutinesTutorial)
 
-## 5. Advanced Patterns dan Teknik
+## [5. Advanced Patterns dan Teknik][5]
 
 ### 5.1 Nested dan Recursive Coroutines
 
@@ -175,7 +173,7 @@
 - **Sumber:** [Minimising Closures - lua-users wiki](http://lua-users.org/wiki/MinimisingClosures)
 - **Sumber:** [Implementation of lexical scoping](https://lua-l.lua.narkive.com/VRFubDb0/implementation-of-lexical-scoping)
 
-## 6. Perbandingan dan Konteks
+## [6. Perbandingan dan Konteks][6]
 
 ### 6.1 Coroutines vs Python Generators
 
@@ -206,7 +204,7 @@
 - Lua vs C# async patterns
 - **Sumber:** [How do coroutines in Python compare to those in Lua? - Stack Overflow](https://stackoverflow.com/questions/39675844/how-do-coroutines-in-python-compare-to-those-in-lua)
 
-## 7. Performance dan Optimization
+## [7. Performance dan Optimization][7]
 
 ### 7.1 Memory Management
 
@@ -243,7 +241,7 @@
 - Bottleneck identification strategies
 - **Sumber:** [Understanding Coroutines in Lua: Mastering Concurrency and Asynchronous Patterns](https://softwarepatternslexicon.com/patterns-lua/9/1/)
 
-## 8. Integration dan Real-World Applications
+## [8. Integration dan Real-World Applications][8]
 
 ### 8.1 Game Development Applications
 
@@ -296,7 +294,7 @@
 - Async libraries
 - **Sumber:** [lua-users wiki: Coroutines Tutorial](http://lua-users.org/wiki/CoroutinesTutorial)
 
-### 9.2 Debugging dan Testing
+### [9.2 Debugging dan Testing][9]
 
 - Debugging coroutine-based code
 - Unit testing strategies
@@ -324,7 +322,7 @@
 - Language embedding techniques
 - **Sumber:** [lua-users wiki: Coroutines Tutorial](http://lua-users.org/wiki/CoroutinesTutorial)
 
-## 10. Troubleshooting dan Common Issues
+## [10. Troubleshooting dan Common Issues][10]
 
 ### 10.1 Common Mistakes
 
@@ -361,7 +359,7 @@
 - Backward compatibility patterns
 - **Sumber:** [Programming in Lua : 9.1](https://www.lua.org/pil/9.1.html)
 
-## 11. Future Directions dan Advanced Research
+## [11. Future Directions dan Advanced Research][11]
 
 ### 11.1 Modern Coroutine Patterns
 
@@ -411,21 +409,22 @@
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
+[1]: ../coroutines/materi/README.md#1-fondasi-dan-konsep-dasar
+[2]: ../coroutines/materi/README.md#2-api-dan-fungsi-dasar
+[3]: ../coroutines/materi/README.md#3-pattern-dan-use-cases-umum
+[4]: ../coroutines/materi/README.md#4-perbandingan-dan-konteks
+[5]: ../coroutines/materi/README.md#5-advanced-patterns-dan-teknik
+[6]: ../coroutines/materi/README.md#6-performance-dan-optimization
+[7]: ../coroutines/materi/README.md#7-integration-dan-real-world-applications
+[8]: ../coroutines/materi/README.md#8-troubleshooting-dan-common-issues
+[9]: ../coroutines/materi/README.md#9-menuju-penguasaan-penuh
+[10]: ../coroutines/materi/README.md#10-latar-belakang-teoretis-dan-konteks-ilmu-komputer
+[11]: ../coroutines/materi/README.md#11-topik-lanjutan-dan-ekstensi
+
+<!-- [12]: ../
 [13]: ../
 [14]: ../
 [15]: ../
 [16]: ../
 [17]: ../
-[18]: ../
+[18]: ../ -->

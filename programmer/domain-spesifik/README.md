@@ -154,6 +154,6 @@
 
 ### -->
 
-##### [Kamus](../kamus/README.md)
+- ##### [📖 Kamus](../kamus/README.md)
 
 > _Ingat satu hal bahwa semua konten disini adalah hasil buatan AI_

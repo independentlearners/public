@@ -1,43 +1,60 @@
 ### [Daftar Isi][0]
 
-- [**Pendahuluan: Memahami Kekuatan Pattern Matching di Lua**](#pendahuluan-memahami-kekuatan-pattern-matching-di-lua)
-  - [Apa Itu Pattern Matching?](#apa-itu-pattern-matching)
-  - [Terminologi Dasar yang Wajib Diketahui](#terminologi-dasar-yang-wajib-diketahui)
-- [**Modul 1: Dasar-dasar Pattern Matching**](#modul-1-dasar-dasar-pattern-matching)
-  - [1.1 Pengenalan Pattern Matching di Lua](#11-pengenalan-pattern-matching-di-lua)
-  - [1.2 Arsitektur Pattern Engine](#12-arsitektur-pattern-engine)
-  - [1.3 Sintaks Dasar Pattern](#13-sintaks-dasar-pattern)
-- [**Modul 2: Magic Characters dan Escape Sequences**](#modul-2-magic-characters-dan-escape-sequences)
-  - [2.1 Magic Characters Komprehensif](#21-magic-characters-komprehensif)
-  - [2.2 Escape Sequences Lanjutan](#22-escape-sequences-lanjutan)
-- [**Modul 3: Character Classes dan Sets**](#modul-3-character-classes-dan-sets)
-  - [3.1 Character Classes Standar](#31-character-classes-standar)
-  - [3.2 Custom Character Sets](#32-custom-character-sets)
-  - [3.3 Character Class Optimization](#33-character-class-optimization)
-- [**Modul 4: Quantifiers dan Modifiers**](#modul-4-quantifiers-dan-modifiers)
-  - [4.1 Quantifiers Dasar](#41-quantifiers-dasar)
-  - [4.2 Perbedaan Greedy vs Lazy Matching](#42-perbedaan-greedy-vs-lazy-matching)
-  - [4.3 Keterbatasan Quantifiers](#43-keterbatasan-quantifiers)
-- [**Modul 5: Anchors dan Positioning**](#modul-5-anchors-dan-positioning)
-  - [5.1 Anchors Dasar](#51-anchors-dasar)
-  - [5.2 Position Matching Strategies](#52-position-matching-strategies)
-- [**Modul 6: Frontier Patterns (%f) - Fitur Lanjutan**](#modul-6-frontier-patterns-f---fitur-lanjutan)
-
-  - [6.1 Pengenalan Frontier Patterns](#61-pengenalan-frontier-patterns)
-  - [6.2 Implementasi Frontier Patterns](#62-implementasi-frontier-patterns)
-  - [6.3 Frontier Pattern Use Cases](#63-frontier-pattern-use-cases)
+- [](#)
+    - [Modul 4: Quantifiers dan Modifiers](#modul-4-quantifiers-dan-modifiers)
+      - [4.1 Quantifiers Dasar](#41-quantifiers-dasar)
+      - [4.2 Perbedaan Greedy vs Lazy Matching](#42-perbedaan-greedy-vs-lazy-matching)
+      - [4.3 Keterbatasan Quantifiers](#43-keterbatasan-quantifiers)
+    - [Modul 5: Anchors dan Positioning](#modul-5-anchors-dan-positioning)
+      - [5.1 Anchors Dasar](#51-anchors-dasar)
+      - [5.2 Position Matching Strategies](#52-position-matching-strategies)
+    - [Modul 6: Frontier Patterns (%f) - Fitur Lanjutan](#modul-6-frontier-patterns-f---fitur-lanjutan)
+      - [6.1 Pengenalan Frontier Patterns](#61-pengenalan-frontier-patterns)
+      - [6.2 Implementasi Frontier Patterns](#62-implementasi-frontier-patterns)
+      - [6.3 Frontier Pattern Use Cases](#63-frontier-pattern-use-cases)
+    - [Modul 7: Balanced Delimiters (%b)](#modul-7-balanced-delimiters-b)
+      - [7.1 Balanced Matching Fundamentals](#71-balanced-matching-fundamentals)
+      - [7.2 Implementasi Balanced Matching](#72-implementasi-balanced-matching)
+      - [7.3 Advanced Balanced Patterns](#73-advanced-balanced-patterns)
+    - [Modul 8: Captures dan Grouping](#modul-8-captures-dan-grouping)
+      - [8.1 Capture Groups Dasar](#81-capture-groups-dasar)
+      - [8.2 Nested dan Complex Captures](#82-nested-dan-complex-captures)
+      - [8.3 Capture Optimization](#83-capture-optimization)
+    - [Modul 9: String Library Functions](#modul-9-string-library-functions)
+      - [9.1 `string.find()` - Comprehensive](#91-stringfind---comprehensive)
+      - [9.2 `string.match()` - Advanced Usage](#92-stringmatch---advanced-usage)
+      - [9.3 `string.gmatch()` - Iterator Mastery](#93-stringgmatch---iterator-mastery)
+      - [9.4 `string.gsub()` - Substitution Mastery](#94-stringgsub---substitution-mastery)
+    - [Modul 10: Pattern Composition dan Modularitas](#modul-10-pattern-composition-dan-modularitas)
+      - [10.1 Complex Pattern Construction](#101-complex-pattern-construction)
+      - [10.2 Dynamic Pattern Generation](#102-dynamic-pattern-generation)
+    - [11. Performance dan Optimization](#11-performance-dan-optimization)
+      - [11.1 Pattern Performance Analysis](#111-pattern-performance-analysis)
+      - [11.2 Optimization Strategies](#112-optimization-strategies)
+    - [12. Debugging dan Troubleshooting](#12-debugging-dan-troubleshooting)
+      - [12.1 Pattern Debugging Techniques](#121-pattern-debugging-techniques)
+      - [12.2 Error Handling](#122-error-handling)
+    - [13. Advanced Text Processing](#13-advanced-text-processing)
+      - [13.1 Parser Development](#131-parser-development)
+      - [13.2 Data Extraction dan Transformation](#132-data-extraction-dan-transformation)
+    - [14. Lua vs Other Pattern Systems](#14-lua-vs-other-pattern-systems)
+      - [14.1 Comprehensive Comparison](#141-comprehensive-comparison)
+      - [14.2 Migration Strategies](#142-migration-strategies)
+    - [15. Real-world Applications](#15-real-world-applications)
+      - [15.1 Use Case Studies](#151-use-case-studies)
+      - [15.2 Industry Applications](#152-industry-applications)
 
 > **Tidak semua modul di daftar isikan** | _Scroll secara manual_
 
 ### Pendahuluan: Memahami Kekuatan Pattern Matching di Lua
 
-Sebelum kita menyelam ke dalam modul pertama, mari kita siapkan fondasi pemahaman yang kokoh. Anda menyebutkan pernah belajar Dart dan OOP. Lupakan sejenak tentang _class_, _object_, dan _inheritance_. Lua memiliki pendekatan yang lebih sederhana dan seringkali lebih langsung, terutama dalam hal manipulasi teks.
+Sebelum Kita menyelam ke dalam modul pertama, mari Kita siapkan fondasi pemahaman yang kokoh. Kita menyebutkan pernah belajar Dart dan OOP. Lupakan sejenak tentang _class_, _object_, dan _inheritance_. Lua memiliki pendekatan yang lebih sederhana dan seringkali lebih langsung, terutama dalam hal manipulasi teks.
 
 #### Apa Itu Pattern Matching?
 
-Bayangkan Anda memiliki sebuah buku yang sangat tebal dan Anda ingin menemukan semua kalimat yang menyebutkan "Pangeran Diponegoro" tetapi tidak diikuti oleh kata "ditangkap". Atau, Anda memiliki daftar nomor telepon dalam format yang berantakan dan ingin mengekstrak hanya nomor-nomor yang valid.
+Bayangkan Kita memiliki sebuah buku yang sangat tebal dan Kita ingin menemukan semua kalimat yang menyebutkan "Pangeran Diponegoro" tetapi tidak diikuti oleh kata "ditangkap". Atau, Kita memiliki daftar nomor telepon dalam format yang berantakan dan ingin mengekstrak hanya nomor-nomor yang valid.
 
-**Pattern Matching** adalah teknik untuk mencari, mencocokkan, dan memanipulasi potongan-potongan teks berdasarkan sebuah "pola" ( _pattern_ ) tertentu. Alih-alih mencari teks yang sama persis, Anda mendefinisikan _aturan_ atau _pola_ dari teks yang ingin Anda temukan.
+**Pattern Matching** adalah teknik untuk mencari, mencocokkan, dan memanipulasi potongan-potongan teks berdasarkan sebuah "pola" ( _pattern_ ) tertentu. Alih-alih mencari teks yang sama persis, Kita mendefinisikan _aturan_ atau _pola_ dari teks yang ingin Kita temukan.
 
 Ini adalah salah satu alat paling kuat dalam pemrograman untuk tugas-tugas seperti:
 
@@ -47,11 +64,11 @@ Ini adalah salah satu alat paling kuat dalam pemrograman untuk tugas-tugas seper
 
 #### Terminologi Dasar yang Wajib Diketahui
 
-Sebelum kita melangkah lebih jauh, mari kita samakan pemahaman tentang beberapa istilah dasar:
+Sebelum Kita melangkah lebih jauh, mari Kita samakan pemahaman tentang beberapa istilah dasar:
 
 - **String:** Dalam pemrograman, **string** adalah sekuens atau urutan karakter. Anggap saja ini sebagai teks biasa. Contoh: `"Halo dunia"`, `"user@example.com"`, atau `"12345"`. Di Lua, string diapit oleh tanda kutip ganda (`"`) atau tunggal (`'`).
 - **Pattern (Pola):** Ini adalah sebuah _string_ khusus yang mendeskripsikan aturan pencarian. Pola ini bisa berisi karakter biasa (yang cocok dengan dirinya sendiri) dan "karakter ajaib" (_magic characters_) yang memiliki makna khusus. Contoh: `"%d%d%d"` adalah pola untuk mencari tiga digit angka secara berurutan.
-- **Fungsi (Function):** Sebuah blok kode yang dapat diberi nama dan dipanggil untuk melakukan tugas tertentu. Di Lua, kita akan banyak menggunakan fungsi dari _library_ `string` seperti `string.find()`, `string.match()`, `string.gmatch()`, dan `string.gsub()`.
+- **Fungsi (Function):** Sebuah blok kode yang dapat diberi nama dan dipanggil untuk melakukan tugas tertentu. Di Lua, Kita akan banyak menggunakan fungsi dari _library_ `string` seperti `string.find()`, `string.match()`, `string.gmatch()`, dan `string.gsub()`.
 - **Literal Character (Karakter Literal):** Karakter biasa dalam sebuah pola yang cocok dengan dirinya sendiri. Dalam pola `"halo"`, `h`, `a`, `l`, dan `o` adalah karakter literal.
 - **Magic Character (Karakter Ajaib):** Karakter yang memiliki makna khusus dalam sebuah pola, bukan untuk dicocokkan secara harfiah. Contohnya termasuk `.` (cocok dengan karakter apa pun), `%` (karakter _escape_), `*`, `+`, `?`, `^`, dan `$`.
 - **Regular Expression (Regex):** Ini adalah "sepupu" dari _pattern matching_ Lua. Regex adalah sistem pencocokan pola yang sangat kuat dan menjadi standar di banyak bahasa pemrograman lain (seperti JavaScript, Python, Java). _Pattern_ Lua lebih sederhana, memiliki beberapa fitur unik (seperti _balanced delimiters_), dan sengaja dirancang agar lebih kecil dan lebih cepat dalam beberapa kasus, dengan mengorbankan beberapa fitur kompleks yang ada di Regex.
@@ -60,7 +77,7 @@ Sebelum kita melangkah lebih jauh, mari kita samakan pemahaman tentang beberapa 
 
 ### [Modul 1: Dasar-dasar Pattern Matching][0]
 
-Di modul ini, kita akan membangun fondasi paling dasar dari _pattern matching_ di Lua.
+Di modul ini, Kita akan membangun fondasi paling dasar dari _pattern matching_ di Lua.
 
 #### 1.1 Pengenalan Pattern Matching di Lua
 
@@ -97,7 +114,7 @@ Karena kesederhanaannya, jejak memori dari mesin _pattern_ Lua sangat kecil, mem
 #### 1.3 Sintaks Dasar Pattern
 
 **Konsep:**
-Di Lua, sebuah _pattern_ hanyalah sebuah _string_. Anda tidak memerlukan sintaks khusus untuk membuatnya. Anda cukup menuliskannya di dalam tanda kutip. Fungsi-fungsi seperti `string.find()` akan menginterpretasikan string ini sebagai pola.
+Di Lua, sebuah _pattern_ hanyalah sebuah _string_. Kita tidak memerlukan sintaks khusus untuk membuatnya. Kita cukup menuliskannya di dalam tanda kutip. Fungsi-fungsi seperti `string.find()` akan menginterpretasikan string ini sebagai pola.
 
 **Karakter Literal vs. Karakter Khusus:**
 
@@ -105,18 +122,18 @@ Di Lua, sebuah _pattern_ hanyalah sebuah _string_. Anda tidak memerlukan sintaks
 - **Karakter Khusus (Magic Characters):** Beberapa karakter memiliki arti khusus. Karakter-karakter ini adalah: `( ) . % + - * ? [ ] ^ $`. Kita akan membahasnya secara rinci di Modul 2.
 
 **Contoh Kode Dasar:**
-Mari kita gunakan `string.find()`, fungsi paling dasar untuk memulai. Fungsi ini mencari kemunculan pertama sebuah pola dalam sebuah string.
+Mari Kita gunakan `string.find()`, fungsi paling dasar untuk memulai. Fungsi ini mencari kemunculan pertama sebuah pola dalam sebuah string.
 
 - **Sintaks:** `string.find(s, pattern, [init, [plain]])`
-  - `s`: String sumber tempat kita mencari.
-  - `pattern`: String pola yang ingin kita temukan.
+  - `s`: String sumber tempat Kita mencari.
+  - `pattern`: String pola yang ingin Kita temukan.
   - `init` (opsional): Posisi awal pencarian (indeks dimulai dari 1).
   - `plain` (opsional): Jika `true`, maka `string.find` akan melakukan pencarian teks biasa tanpa menginterpretasikan _magic characters_.
 
 <!-- end list -->
 
 ```lua
--- Persiapan: String yang akan kita gunakan
+-- Persiapan: String yang akan Kita gunakan
 local teks = "Halo dunia, ini adalah hari yang cerah di tahun 2025."
 
 -- Contoh 1: Mencari karakter literal sederhana
@@ -149,7 +166,7 @@ end
 
 **Penjelasan Kode:**
 
-- `local teks = ...`: Kita mendeklarasikan sebuah variabel lokal bernama `teks` yang berisi string target kita.
+- `local teks = ...`: Kita mendeklarasikan sebuah variabel lokal bernama `teks` yang berisi string target Kita.
 - `string.find(teks, "dunia")`: Kita memanggil fungsi `find` dari _library_ `string`. Fungsi ini mengembalikan dua nilai jika berhasil: indeks awal dan indeks akhir dari kecocokan. Jika tidak, ia mengembalikan `nil`.
 - `if startIndex then ... end`: Ini adalah cara umum di Lua untuk memeriksa apakah pencarian berhasil. Jika `startIndex` bukan `nil`, maka blok `if` akan dieksekusi.
 - `..`: Ini adalah operator untuk menggabungkan (konkatenasi) string di Lua.
@@ -180,7 +197,7 @@ Ini adalah karakter-karakter yang memiliki makna khusus dan tidak cocok dengan d
 - **%**
 
   - **Fungsi:** Ini adalah karakter _escape_. Ia "menghilangkan" kekuatan sihir dari _magic character_ yang mengikutinya, atau memberikan kekuatan sihir pada karakter non-ajaib (membentuk _character class_).
-  - **Konteks:** Digunakan untuk mencari _magic character_ secara harfiah. Misalnya, untuk mencari karakter titik (`.`), Anda harus menggunakan pola `"%."`.
+  - **Konteks:** Digunakan untuk mencari _magic character_ secara harfiah. Misalnya, untuk mencari karakter titik (`.`), Kita harus menggunakan pola `"%."`.
 
   <!-- end list -->
 
@@ -207,7 +224,7 @@ Ini adalah karakter-karakter yang memiliki makna khusus dan tidak cocok dengan d
 - **[ ] (Kurung Siku)**
 
   - **Fungsi:** Membuat sebuah **set karakter kustom**. Cocok dengan **satu karakter apa pun** yang ada di dalam kurung siku.
-  - **Konteks:** Berguna saat Anda ingin mencocokkan salah satu dari beberapa karakter tertentu.
+  - **Konteks:** Berguna saat Kita ingin mencocokkan salah satu dari beberapa karakter tertentu.
   - **Contoh:** `"[aeiou]"` akan cocok dengan satu huruf vokal kecil. `"[0123456789]"` akan cocok dengan satu digit angka.
 
   <!-- end list -->
@@ -273,13 +290,13 @@ Karakter `%` adalah "kunci utama". Ia melakukan dua hal:
 
 **Aturan Escape dalam Pattern:**
 
-- Untuk mencocokkan salah satu dari `( ) . % + - * ? [ ] ^ $`, Anda harus mengawalinya dengan `%`.
-- Untuk mencocokkan karakter `%` itu sendiri, Anda harus menulis `%%`.
+- Untuk mencocokkan salah satu dari `( ) . % + - * ? [ ] ^ $`, Kita harus mengawalinya dengan `%`.
+- Untuk mencocokkan karakter `%` itu sendiri, Kita harus menulis `%%`.
 
 **Contoh Kode:**
 
 ```lua
--- String target kita
+-- String target Kita
 local data = "Diskon 50% untuk item (A+B)!"
 
 -- Mencari tanda kurung literal
@@ -300,7 +317,7 @@ end
 - `"%(A%+B%)"`:
   - `%(`: Mencari karakter `(` literal.
   - `A`: Mencari karakter `A` literal.
-  - `%+`: Mencari karakter `+` literal. `+` adalah _magic character_ (quantifier), jadi kita butuh `%`.
+  - `%+`: Mencari karakter `+` literal. `+` adalah _magic character_ (quantifier), jadi Kita butuh `%`.
   - `B`: Mencari karakter `B` literal.
   - `%)`: Mencari karakter `)` literal.
 - `"50%%"`:
@@ -308,7 +325,7 @@ end
   - `%%`: Mencari karakter `%` literal.
 
 **Best Practices untuk Keamanan:**
-Jika Anda membangun pola dari input pengguna, berhati-hatilah. Pengguna bisa saja memasukkan _magic character_ yang tidak Anda duga. Jika Anda ingin mencari string dari input pengguna secara harfiah, ada dua cara:
+Jika Kita membangun pola dari input pengguna, berhati-hatilah. Pengguna bisa saja memasukkan _magic character_ yang tidak Kita duga. Jika Kita ingin mencari string dari input pengguna secara harfiah, ada dua cara:
 
 1.  **Gunakan parameter `plain` di `string.find`:**
 
@@ -324,7 +341,7 @@ Jika Anda membangun pola dari input pengguna, berhati-hatilah. Pengguna bisa saj
     end
     ```
 
-2.  **Lakukan "escaping" pada input pengguna secara manual:** Anda bisa menggunakan `string.gsub` untuk mengganti semua _magic character_ di input pengguna dengan versi _escaped_-nya.
+2.  **Lakukan "escaping" pada input pengguna secara manual:** Kita bisa menggunakan `string.gsub` untuk mengganti semua _magic character_ di input pengguna dengan versi _escaped_-nya.
 
     ```lua
     local userInput = "item (A+B)!"
@@ -345,7 +362,7 @@ Jika Anda membangun pola dari input pengguna, berhati-hatilah. Pengguna bisa saj
 
 ### Modul 3: Character Classes dan Sets
 
-Setelah memahami _magic characters_ dasar, sekarang kita akan belajar cara mencocokkan _jenis_ karakter, bukan hanya karakter spesifik.
+Setelah memahami _magic characters_ dasar, sekarang Kita akan belajar cara mencocokkan _jenis_ karakter, bukan hanya karakter spesifik.
 
 #### 3.1 Character Classes Standar
 
@@ -387,7 +404,7 @@ print("Bagian ditemukan: '" .. bagian .. "'") -- Output: 'John_Doe, ID:'
 
 #### 3.2 Custom Character Sets
 
-Terkadang, _class_ standar tidak cukup spesifik. Anda mungkin ingin mencocokkan hanya huruf vokal, atau kombinasi huruf tertentu dan tanda baca. Di sinilah _custom sets_ menggunakan `[ ]` berperan.
+Terkadang, _class_ standar tidak cukup spesifik. Kita mungkin ingin mencocokkan hanya huruf vokal, atau kombinasi huruf tertentu dan tanda baca. Di sinilah _custom sets_ menggunakan `[ ]` berperan.
 
 - **Sintaks Dasar:** `[characters]`
 
@@ -399,7 +416,7 @@ Terkadang, _class_ standar tidak cukup spesifik. Anda mungkin ingin mencocokkan 
   - `"[0-9]"`: Cocok dengan satu digit apa pun. Sama seperti `%d`.
   - `"[A-Fa-f0-9]"`: Cocok dengan satu digit heksadesimal. Sama seperti `%x`.
 
-- **Kombinasi:** Anda bisa menggabungkan semuanya.
+- **Kombinasi:** Kita bisa menggabungkan semuanya.
 
   - `"[a-zA-Z_]"`: Cocok dengan satu huruf (besar atau kecil) atau garis bawah.
   - `"[a-f0-9,;]"`: Cocok dengan satu digit heksadesimal rendah, koma, atau titik koma.
@@ -473,7 +490,7 @@ Memisahkan data CSV:
 
 ### Modul 4: Quantifiers dan Modifiers
 
-Di modul sebelumnya, kita belajar mencocokkan _satu karakter_ dari sebuah _class_ atau _set_. Sekarang, kita akan belajar bagaimana cara mencocokkan _urutan_ karakter dengan panjang yang bervariasi. Inilah fungsi dari _quantifiers_.
+Di modul sebelumnya, Kita belajar mencocokkan _satu karakter_ dari sebuah _class_ atau _set_. Sekarang, Kita akan belajar bagaimana cara mencocokkan _urutan_ karakter dengan panjang yang bervariasi. Inilah fungsi dari _quantifiers_.
 
 #### 4.1 Quantifiers Dasar
 
@@ -498,7 +515,7 @@ _Quantifier_ adalah _magic character_ yang memodifikasi item tepat di sebelah ki
 - `-` **(Nol atau Lebih - _Lazy_)**
 
   - **Fungsi:** Versi "malas" (_lazy_ atau _non-greedy_) dari `*`. Ia akan mencocokkan item sebelumnya **nol kali atau lebih**, tetapi berusaha mencocokkan sesedikit mungkin karakter. Ini adalah salah satu _quantifier_ yang paling sering disalahpahami namun sangat kuat.
-  - **Konteks:** Perbedaannya dengan `*` akan menjadi sangat jelas saat kita membahas _Greedy vs. Lazy Matching_ di bagian selanjutnya.
+  - **Konteks:** Perbedaannya dengan `*` akan menjadi sangat jelas saat Kita membahas _Greedy vs. Lazy Matching_ di bagian selanjutnya.
 
 **Contoh Kode:**
 
@@ -514,7 +531,7 @@ local ext1 = string.match(text1, "%.(%w+)")
 print("Ekstensi file 1: " .. ext1) -- Output: txt
 
 -- Menggunakan '?' untuk menangani kasus opsional
--- Misal, kita ingin mengekstrak nama file yang mungkin tidak punya ekstensi
+-- Misal, Kita ingin mengekstrak nama file yang mungkin tidak punya ekstensi
 local filename1 = string.match(text1, "File: (%w+%.?%w*)")
 local filename3 = string.match(text3, "File: (%w+%.?%w*)")
 print("Nama file 1: " .. filename1) -- Output: report.txt
@@ -530,7 +547,7 @@ print("Nama file 3: " .. filename3) -- Output: data
 
 #### 4.2 Perbedaan Greedy vs Lazy Matching
 
-Ini adalah salah satu konsep terpenting dalam _pattern matching_. Memahaminya akan menyelamatkan Anda dari banyak kebingungan.
+Ini adalah salah satu konsep terpenting dalam _pattern matching_. Memahaminya akan menyelamatkan Kita dari banyak kebingungan.
 
 **Konsep:**
 
@@ -538,7 +555,7 @@ Ini adalah salah satu konsep terpenting dalam _pattern matching_. Memahaminya ak
 - **Lazy (Malas):** Quantifier `-` bersifat _lazy_. Artinya, ia akan berusaha mencocokkan **sesedikit mungkin karakter** (bahkan nol karakter). Ia hanya akan "memakan" lebih banyak karakter jika sisa pola tidak dapat dicocokkan dengan kecocokan minimal.
 
 **Visualisasi:**
-Bayangkan kita punya string `teks = "<html><h1>Judul</h1></html>"` dan ingin mengekstrak konten di antara tag HTML pertama dan terakhir.
+Bayangkan Kita punya string `teks = "<html><h1>Judul</h1></html>"` dan ingin mengekstrak konten di antara tag HTML pertama dan terakhir.
 
 - **Kasus Greedy dengan Pola `"<.*>"`:**
 
@@ -546,7 +563,7 @@ Bayangkan kita punya string `teks = "<html><h1>Judul</h1></html>"` dan ingin men
   2.  `.*` adalah _greedy_. Ia akan "memakan" semua karakter hingga akhir string: `html><h1>Judul</h1></html>`.
   3.  Sekarang giliran `">"` di pola untuk mencocokkan. Tapi string sudah habis.
   4.  Mesin _pattern_ melakukan _backtrack_. `.*` "memuntahkan" karakter terakhir (`>`) dan memberikannya pada `">"`. Cocok\!
-  5.  Hasilnya: `<html><h1>Judul</h1></html>`. Ini bukan yang kita inginkan.
+  5.  Hasilnya: `<html><h1>Judul</h1></html>`. Ini bukan yang Kita inginkan.
 
   <!-- end list -->
 
@@ -590,7 +607,7 @@ print("Greedy Match (*): '" .. greedy_match .. "'")
 -- Penjelasan: `.*` memakan segalanya dari '{' pertama hingga '}' terakhir dalam string.
 
 -- 2. Menggunakan '-' (Lazy)
--- Anggap kita punya string yang lebih rumit
+-- Anggap Kita punya string yang lebih rumit
 local teks_rumit = "ambil {ini} bukan {itu}"
 local lazy_match = string.match(teks_rumit, "{(.-)}")
 print("Lazy Match (-): '" .. lazy_match .. "'")
@@ -606,7 +623,7 @@ print("Tag Lazy: '<" .. lazy_tag .. ">'")   -- Output: <b>
 ```
 
 **Implikasi Performa:**
-Tidak ada aturan "satu lebih cepat dari yang lain". _Greedy matching_ bisa jadi lebih cepat jika kecocokan yang diinginkan memang panjang. _Lazy matching_ bisa lebih cepat jika kecocokan yang diinginkan pendek dan berada di awal. Kuncinya adalah memilih _quantifier_ yang tepat sesuai dengan apa yang ingin Anda capai untuk menghindari hasil yang salah dan _backtracking_ yang tidak perlu.
+Tidak ada aturan "satu lebih cepat dari yang lain". _Greedy matching_ bisa jadi lebih cepat jika kecocokan yang diinginkan memang panjang. _Lazy matching_ bisa lebih cepat jika kecocokan yang diinginkan pendek dan berada di awal. Kuncinya adalah memilih _quantifier_ yang tepat sesuai dengan apa yang ingin Kita capai untuk menghindari hasil yang salah dan _backtracking_ yang tidak perlu.
 
 **Sumber:** [Stack Overflow - Lua vs Regex](https://stackoverflow.com/questions/2693334/lua-pattern-matching-vs-regular-expressions)
 
@@ -626,7 +643,7 @@ Mereka **TIDAK BISA** diterapkan pada _capture group_ (`()`).
 **Contoh yang TIDAK VALID di Lua:**
 
 ```lua
--- Di Regex, Anda bisa melakukan ini untuk mencari "ha" yang berulang
+-- Di Regex, Kita bisa melakukan ini untuk mencari "ha" yang berulang
 -- (ha)+ akan cocok dengan "ha", "haha", "hahaha", dst.
 
 -- KODE INI AKAN MENIMBULKAN ERROR DI LUA!
@@ -635,23 +652,23 @@ Mereka **TIDAK BISA** diterapkan pada _capture group_ (`()`).
 ```
 
 **Workaround (Solusi Alternatif):**
-Jadi, bagaimana cara kita mencapai hasil yang sama? Ada beberapa strategi, dari yang sederhana hingga yang canggih.
+Jadi, bagaimana cara Kita mencapai hasil yang sama? Ada beberapa strategi, dari yang sederhana hingga yang canggih.
 
 1.  **Pengulangan Manual (Untuk Jumlah Tetap):**
-    Jika Anda tahu persis berapa kali pengulangan yang diinginkan, Anda cukup menulisnya berulang kali. Ini tidak fleksibel.
+    Jika Kita tahu persis berapa kali pengulangan yang diinginkan, Kita cukup menulisnya berulang kali. Ini tidak fleksibel.
 
     ```lua
     -- Mencari "ha" yang diulang tepat 3 kali
     local teks = "hahaha"
     local cocok = string.match(teks, "(ha)(ha)(ha)")
     -- `string.match` akan mengembalikan capture untuk setiap grup
-    -- Untuk mendapatkan string penuh, kita butuh capture di sekelilingnya
+    -- Untuk mendapatkan string penuh, Kita butuh capture di sekelilingnya
     local cocok_penuh = string.match(teks, "((ha)(ha)(ha))")
     print(cocok_penuh) -- Output: hahaha
     ```
 
 2.  **Menggunakan Frontier Pattern (Canggih):**
-    Untuk kasus tertentu seperti mencari kata berulang, kita bisa menggunakan `%f`. Ini akan kita bahas di Modul 6.
+    Untuk kasus tertentu seperti mencari kata berulang, Kita bisa menggunakan `%f`. Ini akan Kita bahas di Modul 6.
 
 3.  **Menggunakan `string.gsub` dengan Fungsi (Sangat Kuat):**
     Ini adalah teknik yang paling fleksibel. Kita bisa menggunakan `string.gsub` untuk mencari pola dasar secara berulang, dan menggunakan fungsi untuk memproses setiap kecocokan.
@@ -675,7 +692,7 @@ Jadi, bagaimana cara kita mencapai hasil yang sama? Ada beberapa strategi, dari 
     ```
 
 4.  **Menggunakan Library Eksternal (Untuk Parsing Serius):**
-    Ketika pola menjadi sangat kompleks dan membutuhkan pengulangan grup, itu pertanda bahwa Anda mungkin memerlukan alat yang lebih kuat. **LPEG (Lua Parsing Expression Grammars)** adalah library yang sangat populer dan kuat untuk tugas-tugas parsing di Lua. Ia dirancang untuk menangani struktur rekursif dan kompleks yang sulit atau tidak mungkin dilakukan dengan _pattern_ standar.
+    Ketika pola menjadi sangat kompleks dan membutuhkan pengulangan grup, itu pertanda bahwa Kita mungkin memerlukan alat yang lebih kuat. **LPEG (Lua Parsing Expression Grammars)** adalah library yang sangat populer dan kuat untuk tugas-tugas parsing di Lua. Ia dirancang untuk menangani struktur rekursif dan kompleks yang sulit atau tidak mungkin dilakukan dengan _pattern_ standar.
 
     - **Referensi:** [LPEG - Lua Parsing Expression Grammar](http://www.inf.puc-rio.br/~roberto/lpeg/)
 
@@ -690,7 +707,7 @@ _Anchors_ tidak mencocokkan karakter apa pun. Sebaliknya, mereka mencocokkan pos
 #### 5.1 Anchors Dasar
 
 **Konsep:**
-Kita sudah sedikit menyinggung ini, tapi mari kita perdalam. _Anchors_ memaksa pola Anda untuk hanya cocok di lokasi tertentu.
+Kita sudah sedikit menyinggung ini, tapi mari Kita perdalam. _Anchors_ memaksa pola Kita untuk hanya cocok di lokasi tertentu.
 
 - `^` **(Start of String Anchor)**
 
@@ -727,7 +744,7 @@ cek_format(pola_akhir, "error_2025.log.txt") -- TIDAK COCOK
 -- Pola ini untuk memvalidasi username yang hanya boleh berisi huruf kecil dan angka,
 -- panjang 4 sampai 8 karakter.
 local pola_validasi = "^[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]?[a-z0-9]?[a-z0-9]?[a-z0-9]?$"
--- Karena tidak ada quantifier grup, kita harus mengulanginya manual.
+-- Karena tidak ada quantifier grup, Kita harus mengulanginya manual.
 
 cek_format(pola_validasi, "user123") -- COCOK
 cek_format(pola_validasi, "usr")      -- TIDAK COCOK (terlalu pendek)
@@ -737,10 +754,10 @@ cek_format(pola_validasi, "user123 ") -- TIDAK COCOK (ada spasi di akhir)
 
 #### 5.2 Position Matching Strategies
 
-Dengan _anchors_, kita bisa menerapkan strategi pencocokan yang berbeda.
+Dengan _anchors_, Kita bisa menerapkan strategi pencocokan yang berbeda.
 
 - **Whole String Matching (Mencocokkan Seluruh String):**
-  Ini adalah penggunaan paling umum untuk validasi data. Dengan membungkus pola Anda dengan `^` dan `$`, Anda memaksa seluruh string untuk sesuai dengan pola tersebut, dari awal hingga akhir.
+  Ini adalah penggunaan paling umum untuk validasi data. Dengan membungkus pola Kita dengan `^` dan `$`, Kita memaksa seluruh string untuk sesuai dengan pola tersebut, dari awal hingga akhir.
 
   - **Contoh:** Memvalidasi format Hex Color `#RRGGBB`.
 
@@ -756,7 +773,7 @@ Dengan _anchors_, kita bisa menerapkan strategi pencocokan yang berbeda.
     ```
 
 - **Partial Matching (Mencocokkan Sebagian):**
-  Ini adalah perilaku default jika Anda tidak menggunakan _anchors_. Pola akan dicari di mana saja di dalam string. Ini berguna untuk ekstraksi data.
+  Ini adalah perilaku default jika Kita tidak menggunakan _anchors_. Pola akan dicari di mana saja di dalam string. Ini berguna untuk ekstraksi data.
 
   - **Contoh:** Mengekstrak semua angka dari sebuah kalimat.
     ```lua
@@ -769,7 +786,7 @@ Dengan _anchors_, kita bisa menerapkan strategi pencocokan yang berbeda.
     ```
 
 - **Multi-line Considerations:**
-  `^` dan `$` di Lua bekerja pada keseluruhan string subjek, bukan per baris. Jika Anda memiliki string yang berisi beberapa baris (dengan karakter `\n`), `^` hanya akan cocok di awal dari keseluruhan string, dan `$` hanya di akhir. Ini berbeda dengan beberapa mode di Regex yang memiliki _flag_ "multiline". Untuk memproses per baris di Lua, pendekatan yang paling umum adalah memisahkan string menjadi beberapa baris terlebih dahulu, lalu menerapkan pola pada setiap baris.
+  `^` dan `$` di Lua bekerja pada keseluruhan string subjek, bukan per baris. Jika Kita memiliki string yang berisi beberapa baris (dengan karakter `\n`), `^` hanya akan cocok di awal dari keseluruhan string, dan `$` hanya di akhir. Ini berbeda dengan beberapa mode di Regex yang memiliki _flag_ "multiline". Untuk memproses per baris di Lua, pendekatan yang paling umum adalah memisahkan string menjadi beberapa baris terlebih dahulu, lalu menerapkan pola pada setiap baris.
 
   ```lua
   local data_log = [[
@@ -781,7 +798,7 @@ Dengan _anchors_, kita bisa menerapkan strategi pencocokan yang berbeda.
   print("\nMemproses log baris per baris:")
   -- Pertama, pisahkan string menjadi baris-baris
   for baris in string.gmatch(data_log, "[^\n]+") do
-      -- Sekarang kita bisa menggunakan ^ untuk mencari awal setiap 'baris'
+      -- Sekarang Kita bisa menggunakan ^ untuk mencari awal setiap 'baris'
       local level_error = string.match(baris, "^ERROR:")
       if level_error then
           print("Baris error ditemukan: " .. baris)
@@ -799,13 +816,13 @@ Modul ini membahas `%f`, sebuah fitur yang tidak dimiliki oleh kebanyakan sistem
 #### 6.1 Pengenalan Frontier Patterns
 
 **Konsep:**
-Bayangkan Anda berjalan di sepanjang sebuah string, karakter demi karakter. Sebuah **frontier** (perbatasan) bukanlah sebuah karakter, melainkan **posisi transisi** di antara dua karakter. _Frontier pattern_ `%f` adalah sebuah _assertion_ (pernyataan) yang bernilai benar jika posisi saat ini merupakan perbatasan antara karakter yang tidak ada dalam sebuah _set_ dan karakter yang ada di dalam _set_ tersebut.
+Bayangkan Kita berjalan di sepanjang sebuah string, karakter demi karakter. Sebuah **frontier** (perbatasan) bukanlah sebuah karakter, melainkan **posisi transisi** di antara dua karakter. _Frontier pattern_ `%f` adalah sebuah _assertion_ (pernyataan) yang bernilai benar jika posisi saat ini merupakan perbatasan antara karakter yang tidak ada dalam sebuah _set_ dan karakter yang ada di dalam _set_ tersebut.
 
 - **Definisi Teknis:** Pola `%f[set]` cocok pada posisi kosong (tanpa memakan karakter) di mana karakter sebelumnya tidak termasuk dalam `set`, dan karakter berikutnya termasuk dalam `set`.
-- **Analogi:** Anggap `set` adalah sebuah "negara". `%f[set]` adalah pos pemeriksaan perbatasan yang Anda lewati saat memasuki negara tersebut dari luar. Ia tidak cocok dengan wilayah di luar atau di dalam, tetapi tepat di titik transisinya.
+- **Analogi:** Anggap `set` adalah sebuah "negara". `%f[set]` adalah pos pemeriksaan perbatasan yang Kita lewati saat memasuki negara tersebut dari luar. Ia tidak cocok dengan wilayah di luar atau di dalam, tetapi tepat di titik transisinya.
 
 **Sejarah dan Evolusi:**
-Fitur ini adalah salah satu pembeda utama Lua dari sistem lain. Sementara Regex menggunakan `\b` untuk _word boundary_ (batas kata), `%f` di Lua jauh lebih fleksibel karena `set` perbatasannya bisa Anda definisikan sendiri. Anda bisa membuat perbatasan antara angka dan huruf, antara spasi dan non-spasi, dan kombinasi lainnya.
+Fitur ini adalah salah satu pembeda utama Lua dari sistem lain. Sementara Regex menggunakan `\b` untuk _word boundary_ (batas kata), `%f` di Lua jauh lebih fleksibel karena `set` perbatasannya bisa Kita definisikan sendiri. Kita bisa membuat perbatasan antara angka dan huruf, antara spasi dan non-spasi, dan kombinasi lainnya.
 
 **Sumber:** [Lua-users Wiki - Frontier Pattern](http://lua-users.org/wiki/FrontierPattern)
 
@@ -815,7 +832,7 @@ Fitur ini adalah salah satu pembeda utama Lua dari sistem lain. Sementara Regex 
 Sintaksnya sederhana: `%f[set]`
 
 - `%f`: Menandakan ini adalah _frontier pattern_.
-- `[set]`: _Character set_ yang mendefinisikan "wilayah tujuan". `set` ini mengikuti semua aturan yang telah kita pelajari di Modul 3, termasuk `[a-z]`, `[^%s]`, dan penggunaan _character class_ seperti `%w`, `%d`, dll.
+- `[set]`: _Character set_ yang mendefinisikan "wilayah tujuan". `set` ini mengikuti semua aturan yang telah Kita pelajari di Modul 3, termasuk `[a-z]`, `[^%s]`, dan penggunaan _character class_ seperti `%w`, `%d`, dll.
 
 **Contoh Implementasi Dasar:**
 
@@ -825,7 +842,7 @@ Sintaksnya sederhana: `%f[set]`
 - `%f[a]`: Cocok pada transisi dari karakter apa pun selain 'a' ke karakter 'a'.
 
 **Contoh Kode Word Boundary (Batas Kata):**
-Mari kita lihat bagaimana `%f` bekerja dalam praktiknya.
+Mari Kita lihat bagaimana `%f` bekerja dalam praktiknya.
 
 ```lua
 local teks = "pro-cat-123"
@@ -854,8 +871,8 @@ end
 **Penjelasan Kode:**
 
 - `string.gmatch(teks, "()%f[%w]")`:
-  - `()%f[%w]`: Ini adalah trik umum di Lua. `()` adalah _empty capture_ (tangkapan kosong). `gmatch` akan mengembalikan posisi dari tangkapan ini. Karena tangkapan ini berada tepat sebelum `%f`, kita mendapatkan indeks di mana _frontier_ itu cocok.
-  - `%f` sendiri tidak mengonsumsi karakter apa pun, jadi kita perlu sesuatu untuk "dilihat", dan _empty capture_ sangat cocok untuk ini.
+  - `()%f[%w]`: Ini adalah trik umum di Lua. `()` adalah _empty capture_ (tangkapan kosong). `gmatch` akan mengembalikan posisi dari tangkapan ini. Karena tangkapan ini berada tepat sebelum `%f`, Kita mendapatkan indeks di mana _frontier_ itu cocok.
+  - `%f` sendiri tidak mengonsumsi karakter apa pun, jadi Kita perlu sesuatu untuk "dilihat", dan _empty capture_ sangat cocok untuk ini.
 
 **Sumber:** [Stack Overflow - Lua vs Regex](https://stackoverflow.com/questions/2693334/lua-pattern-matching-vs-regular-expressions)
 
@@ -873,7 +890,7 @@ function searchWholeWord(word, text)
 
     -- Buat pola frontier
     -- %f[%w] : Harus dimulai di perbatasan kata
-    -- ..escapedWord.. : Kata yang kita cari
+    -- ..escapedWord.. : Kata yang Kita cari
     -- %f[%W] : Harus diakhiri di perbatasan kata
     local pattern = "%f[%w]" .. escapedWord .. "%f[%W]"
 
@@ -903,7 +920,7 @@ searchWholeWord("catas", kalimat)     -- Tidak Ditemukan
 ```
 
 **2. Context-Sensitive Matching (Pencocokan Sensitif Konteks)**
-Anda bisa menggunakan `%f` untuk menemukan sesuatu hanya jika didahului oleh jenis karakter tertentu.
+Kita bisa menggunakan `%f` untuk menemukan sesuatu hanya jika didahului oleh jenis karakter tertentu.
 
 **Contoh:** Ekstrak angka hanya jika angka tersebut muncul tepat setelah mata uang.
 
@@ -968,7 +985,7 @@ print("\nHasil parsing '" .. data .. "': " .. gabungan)
 
 ### Modul 7: Balanced Delimiters (%b)
 
-Bayangkan Anda perlu mengekstrak isi dari sebuah fungsi, termasuk semua kurung-kurung bersarang di dalamnya, atau mengambil konten dari sebuah tag XML yang kompleks. Di sinilah `%b` bersinar.
+Bayangkan Kita perlu mengekstrak isi dari sebuah fungsi, termasuk semua kurung-kurung bersarang di dalamnya, atau mengambil konten dari sebuah tag XML yang kompleks. Di sinilah `%b` bersinar.
 
 #### 7.1 Balanced Matching Fundamentals
 
@@ -990,7 +1007,7 @@ Ketika mesin _pattern_ Lua menemukan pola `%bxy`, ia akan:
 3.  Pencocokan dianggap selesai ketika hitungan kembali ke nol (artinya karakter `y` penutup yang sesuai telah ditemukan).
 4.  Hasilnya adalah seluruh blok, dari `x` pembuka pertama hingga `y` penutup yang sesuai.
 
-**Contoh:** Pada string `(a (b (c)) d)`, jika kita menggunakan pola `%b()`, ia akan cocok dengan seluruh string karena kurung paling luar adalah pasangan yang seimbang.
+**Contoh:** Pada string `(a (b (c)) d)`, jika Kita menggunakan pola `%b()`, ia akan cocok dengan seluruh string karena kurung paling luar adalah pasangan yang seimbang.
 
 **Keunggulan vs POSIX Regex:**
 Ini adalah keunggulan besar. POSIX Regex standar tidak memiliki cara untuk menangani struktur bersarang dengan kedalaman arbitrer (tidak terbatas) karena ia tidak memiliki "memori" atau "hitungan". Untuk melakukan ini di sistem Regex lain, seringkali memerlukan fitur-fitur canggih seperti _recursive patterns_ yang tidak semua implementasi miliki. Di Lua, fitur ini sudah bawaan dan sangat efisien.
@@ -999,7 +1016,7 @@ Ini adalah keunggulan besar. POSIX Regex standar tidak memiliki cara untuk menan
 
 #### 7.2 Implementasi Balanced Matching
 
-Mari kita lihat bagaimana `%b` digunakan dalam kode.
+Mari Kita lihat bagaimana `%b` digunakan dalam kode.
 
 **1. Parentheses, Brackets, Braces:**
 Ini adalah kasus penggunaan yang paling umum, terutama untuk mem-parsing kode atau data terstruktur.
@@ -1017,7 +1034,7 @@ print("Indeks array: " .. indeks_array) -- Output: [i]
 ```
 
 **2. Custom Delimiter Pairs (Pasangan Pembatas Kustom):**
-Anda tidak terbatas hanya pada kurung. `x` dan `y` bisa berupa karakter apa saja (yang tidak termasuk dalam _magic set_ `().%+-*?[]^$`).
+Kita tidak terbatas hanya pada kurung. `x` dan `y` bisa berupa karakter apa saja (yang tidak termasuk dalam _magic set_ `().%+-*?[]^$`).
 
 ```lua
 local teks = "Pilih salah satu: <opsi1> atau <opsi2>."
@@ -1039,7 +1056,7 @@ local seluruh_ekspresi = string.match(data_lisp, "%b()")
 print("Ekspresi LISP yang ditangkap: " .. seluruh_ekspresi)
 -- Output: (add 10 (multiply 5 (subtract 4 2)))
 
--- Mari kita buktikan dengan string yang lebih kompleks
+-- Mari Kita buktikan dengan string yang lebih kompleks
 local html_like = "<div><p>Paragraf <span>teks</span></p></div>"
 local div_content = string.match(html_like, "%b<>")
 print("Konten DIV: " .. div_content)
@@ -1053,7 +1070,7 @@ Perhatikan bagaimana pada contoh `html_like`, `%b<>` menangkap dari `<div>` pert
 #### 7.3 Advanced Balanced Patterns
 
 **Error Handling untuk Unbalanced Input:**
-Apa yang terjadi jika input tidak seimbang? `string.match` (dan fungsi lainnya) akan gagal mencocokkan dan mengembalikan `nil`. Ini bisa kita manfaatkan sebagai cara untuk memvalidasi struktur.
+Apa yang terjadi jika input tidak seimbang? `string.match` (dan fungsi lainnya) akan gagal mencocokkan dan mengembalikan `nil`. Ini bisa Kita manfaatkan sebagai cara untuk memvalidasi struktur.
 
 ```lua
 local valid_code = "if (x > 0) then print('ok') end"
@@ -1146,7 +1163,7 @@ local data = "Nama: John Doe, Umur: 30"
 local nama = string.match(data, "Nama: (%w+)")
 print("Hasil capture 1: '" .. nama .. "'") -- Output: 'John'
 
--- Tunggu, kita ingin nama lengkapnya. Mari perbaiki polanya.
+-- Tunggu, Kita ingin nama lengkapnya. Mari perbaiki polanya.
 -- Pola (%w+%s%w+) menangkap dua kata yang dipisahkan spasi.
 nama = string.match(data, "Nama: (%w+%s%w+)")
 print("Hasil capture 1 (diperbaiki): '" .. nama .. "'") -- Output: 'John Doe'
@@ -1178,7 +1195,7 @@ print("  Capture 2: " .. capturedUmur)     -- Output: 30
 #### 8.2 Nested dan Complex Captures
 
 **Konsep:**
-Anda dapat menempatkan _capture group_ di dalam _capture group_ lain. Ini berguna untuk mengekstrak data secara keseluruhan sekaligus bagian-bagian spesifiknya.
+Kita dapat menempatkan _capture group_ di dalam _capture group_ lain. Ini berguna untuk mengekstrak data secara keseluruhan sekaligus bagian-bagian spesifiknya.
 
 **Aturan Penomoran Kiri-ke-Kanan (Left-to-right numbering):**
 Aturan penomoran tetap sama: selalu berdasarkan urutan kurung pembuka `(`.
@@ -1207,7 +1224,7 @@ print("  Capture 4 (detik): " .. c4)          -- Output: 55
 Di sini, `c1` mendapatkan kecocokan dari grup terluar, sementara `c2`, `c3`, dan `c4` mendapatkan kecocokan dari grup-grup di dalamnya.
 
 **Skenario Capture Kompleks:**
-Mari gabungkan dengan `%b` yang telah kita pelajari.
+Mari gabungkan dengan `%b` yang telah Kita pelajari.
 
 ```lua
 local pemanggilan_fungsi = "set_color(rgb(255, 100, 0))"
@@ -1223,18 +1240,18 @@ print("\nParsing pemanggilan fungsi:")
 print("  Nama Fungsi: " .. nama_fungsi)     -- Output: set_color
 print("  Blok Argumen: " .. blok_argumen) -- Output: (rgb(255, 100, 0))
 
--- Sekarang, mari kita ekstrak isi dari blok argumen
+-- Sekarang, mari Kita ekstrak isi dari blok argumen
 -- Kita hilangkan dulu kurung terluarnya menggunakan string.sub
 local isi_argumen = string.sub(blok_argumen, 2, -2) -- dari karakter ke-2 sampai ke-2 dari akhir
 print("  Isi Argumen: " .. isi_argumen)     -- Output: rgb(255, 100, 0)
 
--- Sekarang kita bisa mem-parsing isi argumen tersebut
+-- Sekarang Kita bisa mem-parsing isi argumen tersebut
 local nama_fungsi_dalam, nilai_rgb = string.match(isi_argumen, "(%w+)%s*(%b())")
 print("    Fungsi di dalam: " .. nama_fungsi_dalam) -- Output: rgb
 print("    Nilai RGB: " .. nilai_rgb)         -- Output: (255, 100, 0)
 ```
 
-Contoh ini menunjukkan bagaimana Anda bisa menggunakan _captures_ secara bertahap untuk mengurai struktur yang kompleks.
+Contoh ini menunjukkan bagaimana Kita bisa menggunakan _captures_ secara bertahap untuk mengurai struktur yang kompleks.
 
 **Sumber:** [Programming in Lua - Captures](https://www.lua.org/pil/20.3.html)
 
@@ -1243,8 +1260,8 @@ Contoh ini menunjukkan bagaimana Anda bisa menggunakan _captures_ secara bertaha
 **Konsep:**
 Meskipun _captures_ sangat efisien, ada beberapa hal yang perlu diingat, terutama saat bekerja dengan data dalam jumlah sangat besar atau dalam _loop_ yang ketat.
 
-- **Minimizing Capture Overhead:** Setiap kali sebuah tangkapan dibuat, Lua membuat _substring_ baru di memori. Jika Anda hanya memerlukan sebagian kecil dari data, jangan menangkap seluruh blok besar.
-- **Selective Capturing:** Jadilah spesifik tentang apa yang Anda butuhkan. Jika Anda menggunakan kurung hanya untuk mengelompokkan secara visual tetapi tidak memerlukan hasilnya, sadarilah bahwa Anda tetap membuat _capture_ yang tidak perlu. Tidak seperti Regex, Lua tidak memiliki sintaks "non-capturing group" seperti `(?:...)`. Di Lua, setiap `()` adalah _capturing group_.
+- **Minimizing Capture Overhead:** Setiap kali sebuah tangkapan dibuat, Lua membuat _substring_ baru di memori. Jika Kita hanya memerlukan sebagian kecil dari data, jangan menangkap seluruh blok besar.
+- **Selective Capturing:** Jadilah spesifik tentang apa yang Kita butuhkan. Jika Kita menggunakan kurung hanya untuk mengelompokkan secara visual tetapi tidak memerlukan hasilnya, sadarilah bahwa Kita tetap membuat _capture_ yang tidak perlu. Tidak seperti Regex, Lua tidak memiliki sintaks "non-capturing group" seperti `(?:...)`. Di Lua, setiap `()` adalah _capturing group_.
 
 **Contoh Strategi Selective Capturing:**
 
@@ -1254,7 +1271,7 @@ local log_line = "2025-06-09T14:30:55Z [ERROR] Modul 'Payment' gagal: Timeout."
 -- BURUK: Menangkap terlalu banyak data yang tidak perlu
 local level, pesan = string.match(log_line, "%S+%s%[([A-Z]+)%]%s(.+)")
 -- Di sini, `(.+)` menangkap sisa baris, yang efisien.
--- Tapi anggap kita hanya butuh nama modulnya.
+-- Tapi anggap Kita hanya butuh nama modulnya.
 
 -- BAIK: Menangkap hanya bagian yang spesifik
 -- Tujuan: ekstrak level log dan nama modul saja.
@@ -1274,19 +1291,19 @@ end
 - `'([%w_]+)'`: Mencari sepasang tanda kutip literal. Di dalamnya, `([%w_]+)` menangkap nama modul (karakter alfanumerik dan garis bawah).
 
 **Manajemen Memori:**
-Dalam skenario pemrosesan log di mana Anda menjalankan pola ini jutaan kali, menghindari pembuatan string-string tangkapan yang besar dan tidak perlu dapat mengurangi beban pada _garbage collector_ Lua, yang berpotensi meningkatkan performa aplikasi secara keseluruhan.
+Dalam skenario pemrosesan log di mana Kita menjalankan pola ini jutaan kali, menghindari pembuatan string-string tangkapan yang besar dan tidak perlu dapat mengurangi beban pada _garbage collector_ Lua, yang berpotensi meningkatkan performa aplikasi secara keseluruhan.
 
 **Sumber:** [Programming in Lua - Captures](https://www.lua.org/pil/20.3.html)
 
 ---
 
-_Dengan pemahaman yang kuat tentang cara kerja captures, kita sekarang siap untuk menguasai fungsi-fungsi spesifik dalam string library Lua di Modul 9, yang merupakan alat utama kita untuk menerapkan semua pola yang telah kita pelajari. Berikutnya kita akan memasuki "ruang mesin" dari *pattern matching* di Lua. Di modul ini, kita akan menguasai alat-alat yang kita gunakan untuk menerapkan semua konsep pola yang sudah dipelajari._
+_Dengan pemahaman yang kuat tentang cara kerja captures, Kita sekarang siap untuk menguasai fungsi-fungsi spesifik dalam string library Lua di Modul 9, yang merupakan alat utama Kita untuk menerapkan semua pola yang telah Kita pelajari. Berikutnya Kita akan memasuki "ruang mesin" dari *pattern matching* di Lua. Di modul ini, Kita akan menguasai alat-alat yang Kita gunakan untuk menerapkan semua konsep pola yang sudah dipelajari._
 
 ---
 
 ### Modul 9: String Library Functions
 
-Anda telah belajar cara membuat pola—"kunci" yang rumit dan spesifik. Sekarang, kita akan belajar cara menggunakan "kunci" tersebut pada berbagai jenis "pintu" yang disediakan oleh _string library_ Lua. Setiap fungsi memiliki tujuan dan kekuatan yang berbeda.
+Kita telah belajar cara membuat pola—"kunci" yang rumit dan spesifik. Sekarang, Kita akan belajar cara menggunakan "kunci" tersebut pada berbagai jenis "pintu" yang disediakan oleh _string library_ Lua. Setiap fungsi memiliki tujuan dan kekuatan yang berbeda.
 
 #### 9.1 `string.find()` - Comprehensive
 
@@ -1345,7 +1362,7 @@ print("  Hari (capture 3): " .. hari)    -- Output: 09
 
 #### 9.2 `string.match()` - Advanced Usage
 
-**Tujuan Utama:** **Mengekstrak data**. Jika `find` bertanya "Di mana?", `match` bertanya "Apa isinya?". Ini adalah fungsi andalan ketika Anda peduli dengan isinya, bukan lokasinya.
+**Tujuan Utama:** **Mengekstrak data**. Jika `find` bertanya "Di mana?", `match` bertanya "Apa isinya?". Ini adalah fungsi andalan ketika Kita peduli dengan isinya, bukan lokasinya.
 
 - **Sintaks:** `string.match(s, pattern, [init])`
 - **Nilai Kembali:**
@@ -1354,7 +1371,7 @@ print("  Hari (capture 3): " .. hari)    -- Output: 09
   - Jika **tidak cocok**: Mengembalikan `nil`.
 
 **Perbedaan Kunci dengan `string.find()`:**
-`string.match` lebih langsung untuk ekstraksi data. Anda tidak perlu menggunakan `string.sub` setelahnya.
+`string.match` lebih langsung untuk ekstraksi data. Kita tidak perlu menggunakan `string.sub` setelahnya.
 
 **Contoh Kode:**
 
@@ -1429,7 +1446,7 @@ end
   1.  `newString`: String baru hasil substitusi.
   2.  `count`: Jumlah total substitusi yang dilakukan.
 - **Parameter `repl` (Pengganti):** Ini adalah bagian yang paling menarik. `repl` bisa berupa 3 hal:
-  1.  **String:** Teks pengganti. Anda bisa menggunakan `%n` untuk merujuk pada _capture_ ke-`n`. `%0` merujuk pada seluruh kecocokan. `%%` untuk karakter `%` literal.
+  1.  **String:** Teks pengganti. Kita bisa menggunakan `%n` untuk merujuk pada _capture_ ke-`n`. `%0` merujuk pada seluruh kecocokan. `%%` untuk karakter `%` literal.
   2.  **Tabel:** _Capture_ pertama dari kecocokan akan digunakan sebagai _key_ untuk mencari nilai di dalam tabel ini. Nilai dari tabel tersebut akan menjadi teks pengganti.
   3.  **Fungsi:** Untuk setiap kecocokan, fungsi ini akan dipanggil. Semua _captures_ dari kecocokan tersebut akan diteruskan sebagai argumen ke fungsi. Nilai yang dikembalikan oleh fungsi akan menjadi teks pengganti.
 
@@ -1448,11 +1465,11 @@ local s4 = string.gsub(s3, "(%w+) (%w+)", "%2, %1")
 print("Penggantian dengan captures: " .. s4) -- Output: nama: Doe, John
 
 -- 3. Penggantian dengan Tabel (substitusi variabel)
-local template = "Selamat datang, ${nama}! Anda login dari ${kota}."
+local template = "Selamat datang, ${nama}! Kita login dari ${kota}."
 local vars = { nama = "Alex", kota = "Bandung" }
 local hasil = string.gsub(template, "%${(%w+)}", vars)
 print("Penggantian dengan tabel: " .. hasil)
--- Output: Selamat datang, Alex! Anda login dari Bandung.
+-- Output: Selamat datang, Alex! Kita login dari Bandung.
 -- Penjelasan pola %${(%w+)}:
 --   %$      : Karakter '$' literal
 --   {       : Karakter '{' literal
@@ -1473,21 +1490,21 @@ print("Penggantian dengan fungsi: " .. hasil_fahrenheit)
 
 ### Modul 10: Pattern Composition dan Modularitas
 
-Seiring dengan meningkatnya kerumitan tugas, pola yang Anda tulis bisa menjadi sangat panjang dan sulit dibaca. Modul ini mengajarkan strategi untuk membangun pola-pola kompleks dari potongan-potongan yang lebih kecil, modular, dan dapat digunakan kembali, dengan memanfaatkan kekuatan Lua sebagai bahasa pemrograman.
+Seiring dengan meningkatnya kerumitan tugas, pola yang Kita tulis bisa menjadi sangat panjang dan sulit dibaca. Modul ini mengajarkan strategi untuk membangun pola-pola kompleks dari potongan-potongan yang lebih kecil, modular, dan dapat digunakan kembali, dengan memanfaatkan kekuatan Lua sebagai bahasa pemrograman.
 
 #### 10.1 Complex Pattern Construction
 
 **Konsep:**
-Alih-alih menulis satu string pola raksasa, kita bisa mendefinisikan bagian-bagian logis dari pola sebagai variabel-variabel terpisah, lalu menggabungkannya. Ini tidak hanya membuat pola akhir lebih mudah dibaca, tetapi juga memungkinkan kita untuk menggunakan kembali komponen-komponen tersebut di tempat lain.
+Alih-alih menulis satu string pola raksasa, Kita bisa mendefinisikan bagian-bagian logis dari pola sebagai variabel-variabel terpisah, lalu menggabungkannya. Ini tidak hanya membuat pola akhir lebih mudah dibaca, tetapi juga memungkinkan Kita untuk menggunakan kembali komponen-komponen tersebut di tempat lain.
 
 - **Pattern Composition Techniques (Teknik Komposisi Pola):** Teknik utamanya adalah menggunakan operator konkatenasi (penggabungan) string Lua, yaitu `..`.
 - **Modular Pattern Building (Membangun Pola Modular):** Beri nama pada setiap komponen pola sesuai dengan fungsinya. Ini bertindak sebagai dokumentasi-diri.
-- **Reusable Pattern Libraries (Pustaka Pola yang Dapat Digunakan Kembali):** Anda bisa melangkah lebih jauh dengan mengorganisir koleksi pola-pola modular Anda ke dalam sebuah tabel Lua. Tabel ini kemudian bisa berfungsi sebagai "pustaka" yang dapat diimpor dan digunakan di berbagai file atau proyek.
+- **Reusable Pattern Libraries (Pustaka Pola yang Dapat Digunakan Kembali):** Kita bisa melangkah lebih jauh dengan mengorganisir koleksi pola-pola modular Kita ke dalam sebuah tabel Lua. Tabel ini kemudian bisa berfungsi sebagai "pustaka" yang dapat diimpor dan digunakan di berbagai file atau proyek.
 
 **Contoh Kode:**
 
 ```lua
--- Bayangkan kita ingin mem-parsing baris deklarasi variabel sederhana seperti:
+-- Bayangkan Kita ingin mem-parsing baris deklarasi variabel sederhana seperti:
 -- "local user_name = 'alex'" atau "global score = 100"
 
 -- 1. Definisikan komponen-komponen pola secara modular
@@ -1505,8 +1522,8 @@ local p_value = "(" .. p_stringVal .. "|" .. p_numberVal .. ")"
 -- BUKAN kode Lua yang valid. Pendekatan Lua yang benar ada di bawah.
 
 -- Pendekatan Lua yang benar: Coba satu per satu atau buat pola yang lebih umum.
--- Mari kita buat pola yang lebih umum untuk nilai: (.*)
--- Ini menangkap sisa baris, lalu kita bisa mem-parsingnya lebih lanjut jika perlu.
+-- Mari Kita buat pola yang lebih umum untuk nilai: (.*)
+-- Ini menangkap sisa baris, lalu Kita bisa mem-parsingnya lebih lanjut jika perlu.
 local p_assignment = p_scope .. p_whitespace .. "(" .. p_identifier .. ")" .. p_whitespace .. p_equals .. p_whitespace .. "(.*)"
 
 -- 3. Gunakan pola yang sudah disusun
@@ -1547,11 +1564,11 @@ Menggunakan library pola:
 #### 10.2 Dynamic Pattern Generation
 
 **Konsep:**
-Karena pola di Lua hanyalah string, mereka tidak harus statis. Anda bisa membuatnya secara dinamis saat program berjalan (_runtime_), berdasarkan input, konfigurasi, atau parameter lainnya.
+Karena pola di Lua hanyalah string, mereka tidak harus statis. Kita bisa membuatnya secara dinamis saat program berjalan (_runtime_), berdasarkan input, konfigurasi, atau parameter lainnya.
 
 - **Runtime Pattern Construction (Konstruksi Pola Runtime):** Membangun string pola sebagai respons terhadap suatu peristiwa atau kondisi dalam program.
-- **Parameterized Patterns (Pola Berparameter):** Ini adalah aplikasi yang paling kuat. Anda membuat sebuah fungsi yang menerima beberapa argumen dan mengembalikan string pola yang sudah jadi. Ini memungkinkan abstraksi dan penggunaan kembali logika pembuatan pola yang kompleks.
-- **Pattern Templates (Templat Pola):** Anda bisa menggunakan `string.format()` atau bahkan `string.gsub()` untuk membuat "templat" pola di mana Anda bisa menyisipkan bagian-bagian yang dinamis. Ini sangat berguna ketika bagian dinamis tersebut perlu di-_escape_ terlebih dahulu.
+- **Parameterized Patterns (Pola Berparameter):** Ini adalah aplikasi yang paling kuat. Kita membuat sebuah fungsi yang menerima beberapa argumen dan mengembalikan string pola yang sudah jadi. Ini memungkinkan abstraksi dan penggunaan kembali logika pembuatan pola yang kompleks.
+- **Pattern Templates (Templat Pola):** Kita bisa menggunakan `string.format()` atau bahkan `string.gsub()` untuk membuat "templat" pola di mana Kita bisa menyisipkan bagian-bagian yang dinamis. Ini sangat berguna ketika bagian dinamis tersebut perlu di-_escape_ terlebih dahulu.
 
 **Contoh Kode:**
 
@@ -1561,7 +1578,7 @@ function createWholeWordPattern(word)
     -- Escape magic characters dalam kata untuk keamanan
     local escapedWord = string.gsub(word, "([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1")
     -- Gunakan string.format untuk membuat pola
-    -- Ingat, '%' adalah karakter khusus di string.format, jadi kita tulis '%%'
+    -- Ingat, '%' adalah karakter khusus di string.format, jadi Kita tulis '%%'
     return string.format("%%f[%%w]%s%%f[%%W]", escapedWord)
 end
 
@@ -1596,11 +1613,11 @@ print("  Konten <p>: " .. p_content)   -- Output: Ini adalah paragraf.
 print("  Konten <div>: " .. div_content) -- Output: Ini div.
 ```
 
-Dengan menggabungkan komposisi modular dan generasi dinamis, Anda dapat membangun sistem parsing yang sangat canggih dan mudah dipelihara, yang merupakan inti dari pemrosesan teks tingkat lanjut.
+Dengan menggabungkan komposisi modular dan generasi dinamis, Kita dapat membangun sistem parsing yang sangat canggih dan mudah dipelihara, yang merupakan inti dari pemrosesan teks tingkat lanjut.
 
 ---
 
-_Setelah belajar cara menyusun pola secara efektif, langkah logis berikutnya adalah memastikan pola-pola tersebut berjalan secepat mungkin. Modul 11 akan membahas analisis performa dan strategi optimisasi. Berikutnya kita akan masuk ke aspek-aspek praktis yang memastikan kode Anda tidak hanya benar, tetapi juga efisien._
+_Setelah belajar cara menyusun pola secara efektif, langkah logis berikutnya adalah memastikan pola-pola tersebut berjalan secepat mungkin. Modul 11 akan membahas analisis performa dan strategi optimisasi. Berikutnya Kita akan masuk ke aspek-aspek praktis yang memastikan kode Kita tidak hanya benar, tetapi juga efisien._
 
 ---
 
@@ -1611,10 +1628,10 @@ Menulis pola yang berfungsi dengan benar adalah langkah pertama. Menulis pola ya
 #### 11.1 Pattern Performance Analysis
 
 **Konsep:**
-Sebelum Anda bisa mengoptimalkan, Anda harus mengukur. Jangan pernah berasumsi satu pola lebih cepat dari yang lain hanya karena terlihat lebih sederhana. Lakukan _benchmark_ untuk mendapatkan data nyata.
+Sebelum Kita bisa mengoptimalkan, Kita harus mengukur. Jangan pernah berasumsi satu pola lebih cepat dari yang lain hanya karena terlihat lebih sederhana. Lakukan _benchmark_ untuk mendapatkan data nyata.
 
 - **Benchmark Different Approaches (Uji Tolok Ukur Berbagai Pendekatan):**
-  Buat fungsi sederhana untuk mengukur waktu yang dibutuhkan sebuah operasi untuk berjalan berkali-kali. Ini akan membantu Anda membandingkan dua atau lebih versi pola yang berbeda untuk tugas yang sama.
+  Buat fungsi sederhana untuk mengukur waktu yang dibutuhkan sebuah operasi untuk berjalan berkali-kali. Ini akan membantu Kita membandingkan dua atau lebih versi pola yang berbeda untuk tugas yang sama.
 
 - **Memory Usage Patterns (Pola Penggunaan Memori):**
   Performa bukan hanya tentang kecepatan CPU, tapi juga memori. Pola yang membuat banyak _captures_, terutama dari string yang sangat besar, dapat memberi tekanan pada _garbage collector_ Lua. Pola "rakus" (`*` atau `+`) pada string besar juga bisa sementara menggunakan banyak memori saat mencoba mencocokkan.
@@ -1664,13 +1681,13 @@ end)
 ```
 
 **Analisis Hasil:**
-Saat Anda menjalankan kode di atas, Anda kemungkinan akan menemukan bahwa `gmatch` sedikit lebih cepat dan jauh lebih ringkas. Ini karena `gmatch` diimplementasikan secara efisien di C, sementara pendekatan manual melibatkan lebih banyak overhead dari pemanggilan fungsi Lua di dalam _loop_. Ini menunjukkan pentingnya menggunakan alat bawaan yang tepat untuk pekerjaan itu.
+Saat Kita menjalankan kode di atas, Kita kemungkinan akan menemukan bahwa `gmatch` sedikit lebih cepat dan jauh lebih ringkas. Ini karena `gmatch` diimplementasikan secara efisien di C, sementara pendekatan manual melibatkan lebih banyak overhead dari pemanggilan fungsi Lua di dalam _loop_. Ini menunjukkan pentingnya menggunakan alat bawaan yang tepat untuk pekerjaan itu.
 
 #### 11.2 Optimization Strategies
 
-Berikut adalah beberapa strategi konkret untuk membuat pola Anda lebih cepat.
+Berikut adalah beberapa strategi konkret untuk membuat pola Kita lebih cepat.
 
-- **Be Specific and Anchor Your Patterns (Jadilah Spesifik dan Jangkar Pola Anda):**
+- **Be Specific and Anchor Your Patterns (Jadilah Spesifik dan Jangkar Pola Kita):**
   Semakin spesifik sebuah pola, semakin cepat ia bisa gagal. Kegagalan yang cepat adalah hal yang baik, karena mesin tidak perlu membuang waktu untuk mencoba mencocokkan sisa string. Menggunakan _anchor_ (`^` dan `$`) adalah cara terbaik untuk ini.
 
   - **Lambat:** `string.find(text, "ERROR")` (harus memindai seluruh string)
@@ -1679,8 +1696,8 @@ Berikut adalah beberapa strategi konkret untuk membuat pola Anda lebih cepat.
 - **Choose the Right Quantifier (Pilih Quantifier yang Tepat):**
   Pilihan antara _greedy_ (`*`, `+`) dan _lazy_ (`-`) dapat berdampak besar pada performa, terutama jika mereka bisa mencocokkan segmen string yang panjang.
 
-  - Gunakan **lazy (`-`)** jika Anda mengharapkan kecocokan yang Anda inginkan **pendek"** dan berada **sedekat mungkin** dari awal pola.
-  - Gunakan **greedy (`*`, `+`)** jika Anda mengharapkan kecocokan yang Anda inginkan **panjang**.
+  - Gunakan **lazy (`-`)** jika Kita mengharapkan kecocokan yang Kita inginkan **pendek"** dan berada **sedekat mungkin** dari awal pola.
+  - Gunakan **greedy (`*`, `+`)** jika Kita mengharapkan kecocokan yang Kita inginkan **panjang**.
 
   **Contoh:** Mengekstrak konten tag `<title>` dari HTML.
 
@@ -1700,7 +1717,7 @@ Berikut adalah beberapa strategi konkret untuk membuat pola Anda lebih cepat.
   - **Pola Lebih Baik:** Seringkali lebih baik bekerja dari akhir jika memungkinkan, atau memproses string dalam beberapa langkah.
 
 - **Avoid Unnecessary Captures (Hindari Penangkapan yang Tidak Perlu):**
-  Seperti yang dibahas di Modul 8, setiap `()` membuat _substring_ baru. Jika Anda tidak memerlukan nilai yang ditangkap, jangan gunakan tanda kurung. Ini adalah optimisasi mikro, tetapi bisa berarti dalam _loop_ yang sangat ketat.
+  Seperti yang dibahas di Modul 8, setiap `()` membuat _substring_ baru. Jika Kita tidak memerlukan nilai yang ditangkap, jangan gunakan tanda kurung. Ini adalah optimisasi mikro, tetapi bisa berarti dalam _loop_ yang sangat ketat.
 
 - **Know When to Abandon Patterns (Tahu Kapan Harus Meninggalkan Pola):**
   _Pattern matching_ Lua sangat kuat, tetapi ada batasnya. Untuk tugas parsing yang sangat kompleks (misalnya, mem-parsing kode sumber Lua itu sendiri), mencoba membuat satu pola raksasa adalah resep untuk frustrasi dan performa yang buruk.
@@ -1712,7 +1729,485 @@ Berikut adalah beberapa strategi konkret untuk membuat pola Anda lebih cepat.
 
 ---
 
-_Setelah mengetahui cara membuat pola yang cepat, Anda pasti akan bertemu dengan pola yang tidak bekerja sesuai harapan. Modul 12 akan membekali Anda dengan teknik untuk men-debug dan memecahkan masalah pola Anda._
+_Setelah mengetahui cara membuat pola yang cepat, Kita pasti akan bertemu dengan pola yang tidak bekerja sesuai harapan. Modul 12 berikut ini akan membekali Kita dengan teknik untuk men-debug dan memecahkan masalah pola Kita._
+
+### 12. Debugging dan Troubleshooting
+
+Bahkan pengembang paling berpengalaman sekalipun seringkali menulis pola yang tidak bekerja pada percobaan pertama. Pola bisa menjadi rumit, dan satu karakter yang salah tempat dapat menyebabkan hasil yang tidak terduga. Modul ini adalah panduan Kita untuk mendiagnosis dan memperbaiki pola yang "bandel".
+
+#### 12.1 Pattern Debugging Techniques
+
+**1. Common Pitfalls and Mistakes (Kesalahan dan Jebakan Umum)**
+
+Sebelum memulai debug, periksa dulu daftar kesalahan paling umum ini. Seringkali, masalah Kita ada di salah satunya:
+
+- **Lupa Melakukan _Escape_:** Mencoba mencocokkan karakter ajaib (`.`, `(`, `)`, `+`, `%`, dll.) secara harfiah tanpa mengawalinya dengan `%`.
+  - **Salah:** `string.match("file.txt", "file.txt")` (titik di sini berarti "karakter apa pun").
+  - **Benar:** `string.match("file.txt", "file%.txt")`.
+- **Kebingungan _Greedy_ vs. _Lazy_:** Menggunakan `*` saat Kita sebenarnya membutuhkan `-` adalah penyebab utama hasil tangkapan yang "terlalu panjang".
+  - **Masalah:** `string.match("<b>bold</b><i>italic</i>", "<(.*)>")` menghasilkan `b>bold</b><i>italic</i`.
+  - **Solusi:** `string.match("<b>bold</b><i>italic</i>", "<(.-)>")` menghasilkan `b`.
+- **Quantifier pada Grup:** Mencoba menerapkan `+`, `*`, `?`, atau `-` pada sebuah _capture group_ (`()`), yang tidak diizinkan di Lua.
+  - **Salah:** `(ha)+`. Ini akan menyebabkan error "malformed pattern".
+- **Penempatan _Anchor_ yang Salah:** _Anchor_ `$` harus menjadi karakter terakhir dalam pola agar berfungsi.
+  - **Salah:** `string.find("test", "test$.")` (pola tidak akan pernah cocok).
+  - **Benar:** `string.find("test", "test$")`.
+- **Kebingungan _Character Class_:** Menggunakan kelas yang salah, misalnya `%w` (alfanumerik) padahal yang Kita maksud adalah `%a` (hanya huruf).
+
+**2. Debug Strategies (Strategi Debug)**
+
+Jika masalahnya tidak ada di daftar atas, ikuti proses sistematis ini:
+
+- **Isolasi Masalah:** Uji pola Kita pada string sesederhana mungkin yang seharusnya cocok, dan pada string sesederhana mungkin yang seharusnya tidak cocok. Hilangkan semua "kebisingan" dari data asli Kita.
+
+- **Sederhanakan Pola:** Mulailah dengan bagian terkecil dari pola Kita yang Kita yakini 100% benar. Kemudian, tambahkan komponen lain satu per satu menggunakan `..` sampai pola tersebut gagal. Komponen terakhir yang Kita tambahkan adalah sumber masalahnya.
+
+- **Visualisasikan Tangkapan Kita:** `print()` adalah teman terbaik Kita. Gunakan `string.match` dan cetak semua nilai yang dikembalikan. Ini akan menunjukkan dengan tepat apa yang ditangkap oleh setiap `()` dalam pola Kita.
+
+  ```lua
+  local teks = "id:123-ab"
+  local pola = "(%d+)-(.+)" -- Pola yang mungkin bermasalah
+
+  -- Cetak semua hasil tangkapan untuk melihat apa isinya
+  local c1, c2 = string.match(teks, pola)
+  print(string.format("Capture 1: '%s', Capture 2: '%s'", c1, c2))
+  -- Dengan melihat hasilnya, Kita bisa tahu apakah tangkapannya sesuai harapan.
+  ```
+
+- **Gunakan Pola Kosong untuk Menemukan Posisi:** Jika Kita tidak yakin di mana sebuah sub-pola cocok, gunakan tangkapan kosong `()` untuk melihat posisinya.
+
+  ```lua
+  local teks = "aaab"
+  -- Di mana 'b' pertama kali cocok setelah 'a'?
+  local pos = string.find(teks, "a+()b")
+  print("Posisi 'b' setelah 'a' adalah: " .. pos) -- Output: 4
+  ```
+
+**3. Testing Methodologies (Metodologi Pengujian)**
+
+Untuk pola yang penting atau akan digunakan dalam produksi, jangan hanya mengandalkan debug manual.
+
+- **Buat Test Suite:** Siapkan serangkaian string uji untuk pola Kita. Sertakan:
+
+  - Kasus-kasus yang diharapkan cocok.
+  - Kasus-kasus yang diharapkan gagal.
+  - Kasus-kasus ekstrem (_edge cases_): string kosong, string yang hanya berisi pembatas, dll.
+
+- **Gunakan `assert`:** Manfaatkan fungsi `assert` bawaan Lua untuk membuat pengujian yang bisa memverifikasi dirinya sendiri.
+
+  ```lua
+  function testPattern(pola, str, expected_captures)
+      local captures = {string.match(str, pola)}
+      -- Bandingkan hasil tangkapan dengan yang diharapkan
+      assert(#captures == #expected_captures, "Jumlah capture tidak cocok untuk string: "..str)
+      for i = 1, #captures do
+          assert(captures[i] == expected_captures[i], "Isi capture #"..i.." tidak cocok untuk string: "..str)
+      end
+      print("PASS: "..str)
+  end
+
+  local pola_email = "([%w_%.%-]+)@([%w_%.%-]+)"
+
+  testPattern(pola_email, "user.name@example.com", {"user.name", "example.com"})
+  testPattern(pola_email, "another-user@sub.domain.co.uk", {"another-user", "sub.domain.co.uk"})
+  -- testPattern(pola_email, "invalid-email@", {}) -- Ini akan error, sesuai harapan
+  ```
+
+#### 12.2 Error Handling
+
+_Error handling_ berfokus pada bagaimana program Kita bereaksi ketika terjadi kesalahan, baik itu pola yang salah format maupun kecocokan yang tidak ditemukan.
+
+- **Malformed Pattern Detection (Deteksi Pola Cacat):**
+  Jika Kita memberikan pola yang tidak valid secara sintaksis ke `string.match`, `gsub`, dll., program Kita akan berhenti dengan sebuah error. Jika pola tersebut berasal dari input pengguna atau file konfigurasi, ini bisa berbahaya. Gunakan `pcall` (_protected call_) untuk menangkap error ini dengan aman.
+
+  ```lua
+  local userInputPattern = "nama=(%a+" -- Pola tidak valid, kurung tidak ditutup
+
+  -- pcall akan menjalankan fungsi dan mengembalikan status (true/false) dan hasilnya/errornya
+  local status, hasil_atau_error = pcall(function()
+      return string.match("nama=John", userInputPattern)
+  end)
+
+  if not status then
+      print("Error terdeteksi pada pola yang diberikan!")
+      print("Pesan error: " .. hasil_atau_error)
+  else
+      print("Pola berhasil dieksekusi.")
+  end
+  ```
+
+- **Graceful Degradation (Penurunan Fungsi yang Anggun):**
+  Apa yang harus dilakukan program jika `string.match` mengembalikan `nil` (tidak ada kecocokan)? Jangan pernah berasumsi kecocokan akan selalu ada. Selalu periksa `nil` untuk menghindari error "attempt to concatenate a nil value" di baris berikutnya.
+
+  ```lua
+  local teks = "Data tidak tersedia"
+  local nilai = string.match(teks, "Nilai: (%d+)")
+
+  if nilai then
+      print("Nilai yang ditemukan: " .. nilai)
+  else
+      -- Fallback: berikan nilai default atau log pesan peringatan
+      print("Peringatan: Pola nilai tidak ditemukan. Menggunakan nilai default 0.")
+      nilai = 0
+  end
+  -- Program bisa lanjut dengan aman menggunakan `nilai`
+  ```
+
+- **Validation Techniques (Teknik Validasi):**
+
+  - **Pra-validasi:** Sebelum menerapkan pola yang kompleks dan mahal, gunakan pola yang lebih sederhana dan cepat untuk memeriksa apakah input memiliki format dasar yang benar.
+  - **Pasca-validasi:** Setelah mendapatkan hasil tangkapan, validasi isinya. Jika Kita menangkap sesuatu yang seharusnya angka, gunakan `tonumber()` untuk memverifikasinya. Jika `tonumber()` mengembalikan `nil`, berarti tangkapan tersebut bukan angka yang valid meskipun cocok dengan pola `%d+` (misalnya, jika pola Kita lebih longgar).
+
+---
+
+_Dengan kemampuan untuk membangun, mengoptimalkan, dan men-debug pola, Kita sekarang siap untuk menerapkan semua pengetahuan ini pada skenario pemrosesan teks tingkat lanjut di Modul 13._
+
+### 13. Advanced Text Processing
+
+Kita telah menguasai komponen-komponen individual: membuat pola, menggunakan fungsi _string_, menyusun dan men-debugnya. Sekarang, saatnya untuk menyatukan semua keahlian tersebut untuk membangun sistem yang mampu mengubah teks mentah yang berantakan menjadi data yang terstruktur dan bermakna.
+
+#### 13.1 Parser Development
+
+**Konsep:**
+Sebuah **parser** (pengurai) adalah program yang mengambil data teks dalam format tertentu dan mengubahnya menjadi struktur data yang lebih berguna, seperti _table_ di Lua. Ini memungkinkan program Kita untuk "memahami" arti dari teks, bukan hanya melihatnya sebagai serangkaian karakter. _Pattern matching_ adalah fondasi dari banyak parser.
+
+- **Building Parsers with Patterns (Membangun Parser dengan Pola):**
+  Untuk format teks sederhana, Kita seringkali bisa membangun parser yang efektif hanya dengan beberapa fungsi `string`. Pendekatan umumnya adalah membaca input baris per baris (atau token per token) dan menerapkan serangkaian pola untuk mengidentifikasi setiap bagian.
+
+- **State Machine Implementation (Implementasi Mesin State):**
+  Untuk format yang lebih kompleks, Kita bisa memodelkan parser Kita sebagai _state machine_ (mesin keadaan). Parser memiliki "keadaan" saat ini (misalnya, "di luar sebuah seksi", "di dalam sebuah seksi"), dan ia beralih keadaan berdasarkan apa yang cocok dengan polanya.
+
+- **Recursive Descent Techniques (Teknik Penurunan Rekursif):**
+  Ini adalah teknik parsing yang lebih formal di mana Kita memiliki satu set fungsi yang saling memanggil secara rekursif. Setiap fungsi bertanggung jawab untuk mengurai satu bagian dari "tata bahasa" (grammar). Misalnya, fungsi `parse_expression` bisa memanggil `parse_term`, yang mungkin memanggil `parse_factor`. `parse_factor` kemudian bisa memanggil `parse_expression` lagi untuk menangani ekspresi di dalam kurung. Fitur `%b()` yang Kita pelajari pada dasarnya adalah implementasi penurunan rekursif yang sangat dioptimalkan untuk tata bahasa "pembatas seimbang".
+
+**Contoh Kode: Parser File Konfigurasi Sederhana (.ini)**
+Mari Kita buat parser untuk format file INI yang umum, yang mengubah ini:
+
+```ini
+[database]
+host = localhost
+user = admin
+
+[server]
+port = 8080
+```
+
+Menjadi tabel Lua ini:
+
+```lua
+{
+  database = { host = "localhost", user = "admin" },
+  server = { port = "8080" }
+}
+```
+
+**Implementasi Parser:**
+
+```lua
+function parseIni(text)
+    local config = {}
+    local currentSection = nil
+
+    -- Pola untuk mengidentifikasi bagian-bagian yang berbeda
+    local p_section = "^%[(.+)%]$" -- Menangkap nama seksi, misal: [database]
+    local p_key_value = "^(%S+)%s*=%s*(.-)%s*$" -- Menangkap kunci dan nilai
+    local p_comment = "^;" -- Mengabaikan baris komentar yang diawali ';'
+
+    -- Iterasi setiap baris dalam teks
+    for line in string.gmatch(text, "[^\n]+") do
+        -- Coba cocokkan dengan pola seksi
+        local sectionName = string.match(line, p_section)
+        if sectionName then
+            -- Jika seksi baru ditemukan, buat tabel untuknya
+            config[sectionName] = {}
+            -- dan setel sebagai seksi saat ini (ini adalah perubahan "state")
+            currentSection = config[sectionName]
+        else
+            -- Jika bukan seksi, coba cocokkan dengan pola kunci-nilai
+            local key, value = string.match(line, p_key_value)
+            -- Pastikan Kita berada di dalam sebuah seksi dan baris ini bukan komentar
+            if currentSection and key and not string.match(line, p_comment) then
+                currentSection[key] = value
+            end
+        end
+    end
+    return config
+end
+
+-- Teks input
+local iniText = [[
+; Konfigurasi utama
+[database]
+host = localhost
+user = admin
+password = secret_password123
+
+[server]
+port = 8080
+]]
+
+-- Gunakan parser
+local parsedConfig = parseIni(iniText)
+
+-- Cetak hasilnya
+print("Hasil parsing file INI:")
+print("Host database:", parsedConfig.database.host)
+print("Port server:", parsedConfig.server.port)
+```
+
+#### 13.2 Data Extraction dan Transformation
+
+Selain parsing file utuh, _pattern matching_ sangat baik untuk mengambil potongan data terstruktur dari teks yang tidak terstruktur dan mengubahnya ke format lain.
+
+- **Structured Data Extraction (Ekstraksi Data Terstruktur):** Menarik informasi spesifik (seperti tanggal, nama, atau harga) dari teks bebas seperti email, laporan, atau halaman web.
+- **Format Conversion (Konversi Format):** Menggunakan `string.gsub` dengan fungsi adalah cara yang sangat ampuh untuk mengonversi data dari satu format ke format lain secara _on-the-fly_.
+- **Cleaning and Normalization (Pembersihan dan Normalisasi):** Mempersiapkan data mentah untuk diproses dengan menghapus karakter yang tidak diinginkan, menstandardisasi spasi, atau mengubah format.
+
+**Contoh Kode:**
+
+**1. Konversi Format Tanggal**
+
+```lua
+function convertDateToISO(text)
+    local months = {
+        Jan="01", Feb="02", Mar="03", Apr="04", May="05", Jun="06",
+        Jul="07", Aug="08", Sep="09", Oct="10", Nov="11", Dec="12"
+    }
+
+    -- Pola: Menangkap hari, bulan (singkatan 3 huruf), dan tahun
+    local p_date = "(%d%d?)-(%a%a%a)-(%d%d%d%d)"
+
+    local convertedText = string.gsub(text, p_date, function(day, month, year)
+        -- Gunakan tabel 'months' untuk konversi
+        local monthNum = months[month]
+        if not monthNum then return "INVALID_MONTH" end
+
+        -- Format ulang hari agar selalu 2 digit
+        local dayFormatted = string.format("%02d", day)
+
+        -- Kembalikan dalam format ISO 8601
+        return year .. "-" .. monthNum .. "-" .. dayFormatted
+    end)
+    return convertedText
+end
+
+local report = "Laporan dibuat pada 09-Jun-2025 dan akan kedaluwarsa pada 1-Dec-2027."
+local isoReport = convertDateToISO(report)
+print("\nHasil konversi tanggal:")
+print(isoReport)
+-- Output: Laporan dibuat pada 2025-06-09 dan akan kedaluwarsa pada 2027-12-01.
+```
+
+**2. Pembersihan dan Normalisasi Data**
+
+```lua
+function cleanData(messyString)
+    local s = messyString
+
+    -- 1. Hapus tag HTML (lazy match)
+    s = string.gsub(s, "<.->", "")
+
+    -- 2. Ganti beberapa spasi/tab/newline dengan satu spasi
+    s = string.gsub(s, "%s+", " ")
+
+    -- 3. Hapus spasi di awal dan akhir string
+    s = string.gsub(s, "^%s*(.-)%s*$", "%1")
+
+    return s
+end
+
+local messy = "  <p>   Halo   dunia! \n Ini adalah    teks kotor. </p> "
+local clean = cleanData(messy)
+
+print("\nHasil pembersihan data:")
+print("'" .. clean .. "'")
+-- Output: 'Halo dunia! Ini adalah teks kotor.'
+```
+
+Contoh-contoh ini menunjukkan bagaimana _pattern matching_ bertindak sebagai jembatan antara dunia teks yang tidak teratur dan dunia data terstruktur yang dibutuhkan oleh logika program.
+
+---
+
+_Kita sekarang mampu membangun aplikasi pemrosesan teks yang fungsional. Tapi bagaimana kemampuan pattern matching Lua jika dibandingkan dengan sistem lain seperti Regex? Modul 14 akan membahas perbandingan dan strategi migrasi._
+
+****
+
+###  14. Lua vs Other Pattern Systems
+
+Kita telah mendalami *pattern matching* Lua. Namun, bagaimana kemampuannya jika diadu dengan sistem lain yang lebih umum dikenal, seperti *Regular Expressions* (Regex)? Memahami perbedaan, kelebihan, dan kekurangan masing-masing akan membantu Kita memilih alat yang tepat untuk setiap pekerjaan.
+
+#### 14.1 Comprehensive Comparison
+
+Mari kita bedah perbedaan utama antara sistem pola Lua dan standar industri seperti POSIX Regex atau PCRE (Perl Compatible Regular Expressions), yang digunakan oleh banyak bahasa lain (Python, JavaScript, Java, PHP, dll.).
+
+
+| Fitur                     | Pattern Matching Lua                                                                                      | Regular Expressions (PCRE/POSIX)                                                                                           | Keterangan                                                                                                                    |
+| :------------------------ | :-------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| **Filosofi & Ukuran**     | **Sederhana & Ringkas.** Implementasi \< 500 baris kode C. Fokus pada set fitur yang kuat namun terbatas. | **Kaya Fitur & Komprehensif.** Implementasi \> 4000 baris kode. Bertujuan untuk menangani segala kemungkinan.              | Ini adalah perbedaan fundamental yang mendasari semua perbedaan lainnya.                                                      |
+| **Alternation (OR)**      | **Tidak ada (`                                                                                            | `).**                                                                                                                      | **Ada (`                                                                                                                      | `).** `(cat | dog)` | Ini adalah batasan terbesar di Lua. Untuk mencapai OR, Kita harus mencoba pola satu per satu. |
+| **Quantifiers pada Grup** | **Tidak ada.** `(ab)+` adalah pola yang tidak valid.                                                      | **Ada.** `(ab)+` adalah cara standar untuk mencocokkan pengulangan grup.                                                   | Di Lua, Kita harus menggunakan *workaround* seperti pengulangan manual atau `gsub` dengan fungsi.                             |
+| **Balanced Delimiters**   | **Ada (`%bxy`).** Sangat efisien.                                                                         | **Tidak ada (di POSIX).** Membutuhkan *recursive patterns* `(?R)` yang merupakan fitur PCRE lanjutan.                      | Ini adalah keunggulan "pembunuh" dari Lua untuk parsing kode atau struktur bersarang.                                         |
+| **Frontier Matching**     | **Ada (`%f[set]`).** Sangat fleksibel.                                                                    | **Ada (Word Boundary `\b`).** Kurang fleksibel daripada `%f`.                                                              | `%f` Lua dapat mendefinisikan perbatasan kustom (misal: antara angka dan huruf).                                              |
+| **Lookarounds**           | **Tidak ada.** (Lookahead/Lookbehind)                                                                     | **Ada.** `(?=...)`, `(?!...)`, `(?<=...)`, `(?<!...)`                                                                      | Lookarounds memungkinkan pencocokan berdasarkan apa yang ada sebelum/sesudah tanpa menjadi bagian dari kecocokan itu sendiri. |
+| **Non-capturing Groups**  | **Tidak ada.** Setiap `()` adalah *capture*.                                                              | **Ada (`(?:...)`).** Berguna untuk pengelompokan tanpa *overhead capture*.                                                 | Di Lua, jika Kita tidak butuh hasil *capture*, abaikan saja nilai kembaliannya.                                               |
+| **Sintaks Lazy**          | Menggunakan tanda hubung (`-`). `(.-)`                                                                    | Menggunakan tanda tanya (`?`). `(.*?)`                                                                                     | Keduanya mencapai tujuan yang sama, hanya sintaksnya yang berbeda.                                                            |
+| **Performa**              | **Sangat cepat** untuk pola sederhana. Tidak ada *overhead* kompilasi.                                    | **Bervariasi.** Seringkali dikompilasi ke *bytecode*. Bisa lebih cepat untuk pola sangat kompleks karena optimisasi mesin. | Untuk tugas umum, performa Lua sangat kompetitif.                                                                             |
+
+#### 14.2 Migration Strategies
+
+Terkadang Kita menemukan solusi Regex di internet dan ingin menerapkannya di Lua, atau sebaliknya. Berikut adalah panduan "terjemahan" dan strategi untuk memilih sistem yang tepat.
+
+**Menerjemahkan dari Regex ke Pola Lua:**
+
+  * **Regex:** `cat|dog` (mencari "cat" ATAU "dog")
+      * **Lua:** Coba satu per satu.
+        ```lua
+        local match = string.match(s, "cat") or string.match(s, "dog")
+        ```
+  * **Regex:** `\bword\b` (pencarian kata utuh)
+      * **Lua:** Gunakan *frontier patterns*.
+        ```lua
+        local pattern = "%f[%w]word%f[%W]"
+        ```
+  * **Regex:** `(re)?` (grup opsional)
+      * **Lua:** Coba pola dengan grup, lalu coba tanpanya.
+        ```lua
+        local a, b = string.match(s, "(polaA)(polaB)")
+        if not a then
+            a = string.match(s, "(polaA)")
+        end
+        ```
+  * **Regex:** `(abc)+` (pengulangan grup)
+      * **Lua:** Ini yang paling sulit. Kita harus menggunakan teknik lanjutan seperti `string.gsub` dengan fungsi untuk membangun hasil secara iteratif, atau beralih ke LPEG.
+
+**Hybrid Approaches (Pendekatan Hibrida):**
+Kita tidak harus memilih salah satu secara eksklusif. Untuk proyek Lua, strategi yang sangat baik adalah:
+
+1.  Gunakan *pattern matching* bawaan Lua untuk 95% kebutuhan Kita (parsing sederhana, validasi, substitusi, dll). Ini cepat, efisien, dan tanpa dependensi eksternal.
+2.  Untuk 5% kasus di mana Kita benar-benar membutuhkan kekuatan penuh PCRE (misalnya, pola kompleks dengan *lookarounds* dan *alternation*), gunakan *library* pihak ketiga seperti **lrexlib-pcre** yang membawa mesin PCRE ke dalam lingkungan Lua.
+      * **Sumber:** [lrexlib (termasuk PCRE)](https://github.com/rrthomas/lrexlib)
+
+**Kapan Menggunakan Masing-masing Sistem:**
+
+✅ **Gunakan Pattern Matching Bawaan Lua ketika:**
+
+  * Kita membutuhkan performa maksimal untuk pencocokan dan substitusi umum.
+  * Kita perlu mengurai struktur bersarang atau seimbang (`%bxy` adalah alat terbaik untuk ini).
+  * Kita membutuhkan deteksi perbatasan yang fleksibel (`%f[set]`).
+  * Kita bekerja di lingkungan dengan sumber daya terbatas (misalnya, *game engine*, *embedded system*).
+  * Kita ingin menghindari dependensi eksternal untuk menjaga kode tetap ringkas.
+
+❌ **Gunakan Library Regex (seperti PCRE) ketika:**
+
+  * Kita **mutlak** membutuhkan *alternation* (`|`) dalam satu pola yang kompleks.
+  * Kita membutuhkan *lookarounds* (misalnya, `(?=...)`) untuk validasi kontekstual yang rumit.
+  * Kita perlu memberi *quantifier* pada sebuah grup (misalnya, `(abc)+`).
+  * Kita sedang mem-porting kode dari bahasa lain dan ingin menggunakan kembali pola Regex yang sudah ada tanpa perlu merefaktornya secara besar-besaran.
+
+-----
+
+*Dengan pemahaman komparatif ini, Kita kini memiliki kebijaksanaan untuk memilih alat yang tepat. Modul selanjutnya akan menunjukkan bagaimana semua ini diterapkan dalam aplikasi dunia nyata, dari pengembangan game hingga administrasi sistem.*
+
+### 15. Real-world Applications
+
+Ini adalah modul "pembayaran". Kita telah meluangkan waktu untuk mempelajari seluk-beluk *pattern matching*, dan sekarang Kita akan melihat bagaimana keahlian tersebut digunakan untuk memecahkan masalah praktis di berbagai domain industri.
+
+#### 15.1 Use Case Studies
+
+Berikut adalah beberapa studi kasus konkret yang menunjukkan kekuatan *pattern matching* Lua dalam skenario sehari-hari.
+
+  * **Log Parsing (Parsing File Log):**
+    Server, aplikasi, dan sistem operasi menghasilkan file log yang berisi harta karun informasi, tetapi dalam format teks yang tidak terstruktur. *Pattern matching* sangat ideal untuk mengekstrak data ini.
+
+      * **Skenario:** Menganalisis log akses web Nginx untuk mengetahui IP pengunjung, permintaan, dan status respons.
+      * **Baris Log Contoh:** `127.0.0.1 - - [10/Jun/2025:02:20:00 +0000] "GET /index.html HTTP/1.1" 200 1547`
+      * **Implementasi:**
+        ```lua
+        function parseNginxLog(logLine)
+            -- Pola untuk menangkap setiap bagian penting dari log
+            local p_log = '^(%S+)%s.-%s.-%s%[([^%]]+)%]%s"([^"]+)"%s(%d+)%s(%d+)'
+            
+            local ip, timestamp, request, status, size = string.match(logLine, p_log)
+            
+            if ip then
+                print(string.format("IP: %s, Status: %s, Request: %s", ip, status, request))
+            end
+        end
+
+        local logEntry = '127.0.0.1 - - [10/Jun/2025:02:20:00 +0000] "GET /index.html HTTP/1.1" 200 1547'
+        parseNginxLog(logEntry)
+        -- Output: IP: 127.0.0.1, Status: 200, Request: GET /index.html HTTP/1.1
+        ```
+
+  * **Configuration File Processing (Pemrosesan File Konfigurasi):**
+    Banyak aplikasi mengandalkan file teks untuk konfigurasi. Daripada menciptakan format biner yang rumit, format teks sederhana yang dapat diurai dengan pola seringkali lebih disukai.
+
+      * **Skenario:** Memuat pengaturan dari file `.ini`.
+      * **Implementasi:** Contoh parser INI yang kita bangun di **Modul 13** adalah implementasi dunia nyata yang sempurna untuk kasus penggunaan ini.
+
+  * **Template Systems (Sistem Templat):**
+    Membuat konten dinamis (email, halaman web, laporan) seringkali melibatkan templat dengan placeholder yang perlu diganti dengan data aktual.
+
+      * **Skenario:** Membuat mesin templat mini yang menggantikan variabel seperti `${nama}`.
+      * **Implementasi:** `string.gsub` dengan tabel adalah alat yang sempurna, seperti yang didemonstrasikan di **Modul 9**.
+        ```lua
+        function renderTemplate(template, vars)
+            return (string.gsub(template, "%${(%w+)}", vars))
+        end
+
+        local emailTemplate = "Halo ${user}, pesanan Kita #${order_id} telah dikirim."
+        local data = { user = "Budi", order_id = "12345" }
+
+        print("\n" .. renderTemplate(emailTemplate, data))
+        -- Output: Halo Budi, pesanan Kita #12345 telah dikirim.
+        ```
+
+  * **Data Validation (Validasi Data):**
+    Memastikan data yang dimasukkan oleh pengguna (misalnya, melalui formulir web atau API) sesuai dengan format yang diharapkan sangat penting untuk integritas data.
+
+      * **Skenario:** Memvalidasi alamat email dan nama pengguna sebelum menyimpannya ke database.
+      * **Implementasi:**
+        ```lua
+        function validateUsername(username)
+            -- Username: 3-15 karakter, hanya huruf kecil, angka, dan underscore
+            local p_username = "^[a-z0-9_]{3,15}$"
+            return string.match(username, p_username)
+        end
+
+        print("\nValidasi username 'budi_123':", validateUsername("budi_123") and "VALID" or "INVALID") -- VALID
+        print("Validasi username 'BUDI':", validateUsername("BUDI") and "VALID" or "INVALID")       -- INVALID
+        ```
+
+#### 15.2 Industry Applications
+
+Pola-pola ini digunakan di berbagai industri untuk tugas-tugas kritis.
+
+  * **Game Development (Pengembangan Game):**
+    Lua adalah bahasa skrip yang sangat populer di industri game (misalnya, Roblox, World of Warcraft, Garry's Mod, Defold). *Pattern matching* digunakan secara luas untuk:
+
+      * **Parsing Data Game:** Membaca file teks yang mendefinisikan statistik item, dialog NPC, atau tata letak level.
+      * **Konsol Developer:** Mengurai perintah yang diketik oleh developer untuk debugging.
+      * **Sistem Chat:** Memfilter kata-kata kotor atau memformat nama pemain dan pesan.
+      * **Validasi Aset:** Memastikan nama file aset mengikuti konvensi penamaan tertentu.
+
+  * **Web Scraping (Pengambilan Data Web):**
+    Meskipun library parsing HTML/DOM lengkap lebih disarankan untuk *scraping* yang kompleks, *pattern matching* sangat berguna untuk tugas-tugas cepat dan "kotor" di mana strukturnya dapat diprediksi.
+
+      * **Contoh:** Mengekstrak semua alamat email atau nomor telepon dari sebuah halaman web teks biasa, atau mengambil harga produk dari situs e-commerce sederhana.
+
+  * **Data Analysis (Analisis Data):**
+    Langkah pertama dalam banyak alur kerja analisis data adalah pembersihan dan pra-pemrosesan (*preprocessing*).
+
+      * **Contoh:** Mengonversi file log semi-terstruktur menjadi file CSV yang bersih, menormalkan format tanggal dari berbagai sumber sebelum dianalisis, atau membersihkan respons survei teks bebas.
+
+  * **System Administration (Administrasi Sistem):**
+    Para administrator sistem sering menulis skrip untuk mengotomatiskan tugas. Lua, dengan jejak memori yang kecil dan kecepatan eksekusi yang tinggi, adalah pilihan yang sangat baik.
+
+      * **Contoh:** Menulis skrip untuk memindai log sistem dan mencari pola error tertentu, mengganti nama ribuan file secara massal berdasarkan pola, atau mengurai output dari alat baris perintah (*command-line tools*) untuk digunakan dalam skrip lain.
+
+-----
+
+*Kita sekarang memiliki gambaran lengkap tentang 'apa' dan 'mengapa'. Modul berikutnya akan membahas 'di mana'—bagaimana implementasi pattern matching dapat bervariasi di berbagai platform dan versi Lua.*
 
 <!-- > - **[Selanjutnya][selanjutnya]** -->
 

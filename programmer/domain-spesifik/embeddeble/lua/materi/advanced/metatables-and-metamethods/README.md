@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap Metatables & Metamethods di Lua][0]**
 
-## **FASE 1: DASAR-DASAR KONSEPTUAL**
+## **[FASE 1: DASAR-DASAR KONSEPTUAL][1]**
 
 ### 1.1 Pemahaman Fundamental Metatables
 
@@ -29,7 +29,7 @@
 - **Kapan dan mengapa Metamethods dipanggil**
   - Sumber: [CoderScratchpad Guide](https://coderscratchpad.com/metatables-and-metamethods-in-lua/)
 
-## **FASE 2A: VERSION COMPATIBILITY DAN HISTORICAL CONTEXT**
+## **[FASE 2A: VERSION COMPATIBILITY DAN HISTORICAL CONTEXT][2]**
 
 ### 2A.1 Lua Version Differences dalam Metamethods
 
@@ -90,7 +90,7 @@
 - **Performance implications of resolution chains**
   - Sumber: [MoldStud - Flexible API Design](https://moldstud.com/articles/p-exploring-lua-metatables-unlocking-the-power-of-flexible-apis)
 
-## **FASE 2: FUNGSI DASAR DAN OPERASI**
+## **[FASE 2: FUNGSI DASAR DAN OPERASI][2]**
 
 - **Cara kerja setmetatable() secara mendalam**
 
@@ -116,7 +116,7 @@
 - **Perbedaan behavior: function vs table di \_\_index**
   - Sumber: [LearnXYZ - Metatables and Myths](https://learnxyz.in/lua-metatables-and-myths/)
 
-## **FASE 3: OPERATOR OVERLOADING**
+## **[FASE 3: OPERATOR OVERLOADING][3]**
 
 ### 3.1 Arithmetic Metamethods
 
@@ -157,7 +157,7 @@
 - **\_\_tostring: Custom string representation**
   - Sumber: [PiEmbSysTech Guide](https://piembsystech.com/metatables-and-metamethods-in-lua-programming-language/)
 
-## **FASE 4: TEKNIK LANJUTAN**
+## **[FASE 4: TEKNIK LANJUTAN][4]**
 
 ### 4.1 Function Call Metamethods
 
@@ -228,7 +228,7 @@
 - **Custom iterator patterns tanpa **pairs/**ipairs**
   - Sumber: [Lua Official PIL - Stateless Iterators](https://www.lua.org/pil/7.3.html)
 
-## **FASE 5: DESIGN PATTERNS DAN APLIKASI**
+## **[FASE 5: DESIGN PATTERNS DAN APLIKASI][5]**
 
 ### 5.1 Inheritance Patterns
 
@@ -269,7 +269,7 @@
 - **Logging dan debugging wrappers**
   - Sumber: [LuaScripts - Metatables Guide](https://luascripts.com/metatables-lua)
 
-## **FASE 6: PERFORMANCE DAN OPTIMIZATION**
+## **[FASE 6: PERFORMANCE DAN OPTIMIZATION][6]**
 
 ### 6.1 Performance Considerations
 
@@ -297,7 +297,7 @@
 - **Weak reference patterns untuk cached data**
   - Sumber: [lua-users wiki: Metamethods Tutorial](http://lua-users.org/wiki/MetamethodsTutorial)
 
-## **FASE 7: ADVANCED TECHNIQUES DAN EDGE CASES**
+## **[FASE 7: ADVANCED TECHNIQUES DAN EDGE CASES][7]**
 
 ### 7.1 Metatable Chaining
 
@@ -338,7 +338,7 @@
 - **Testing strategies untuk metatable-heavy code**
   - Sumber: [CoderScratchpad Guide](https://coderscratchpad.com/metatables-and-metamethods-in-lua/)
 
-## **FASE 8: REAL-WORLD APPLICATIONS**
+## **[FASE 8: REAL-WORLD APPLICATIONS][8]**
 
 ### 8.1 Domain-Specific Languages (DSL)
 
@@ -427,21 +427,22 @@ Kurikulum ini mencakup **8 fase pembelajaran** dengan **25+ sub-topik** dan **50
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md#advanced-13-topik
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../metatables-and-metamethods/meteri/README.md
+[2]: ../metatables-and-metamethods/meteri/README.md#fase-2-fungsi-dasar-dan-operasi
+[3]: ../metatables-and-metamethods/meteri/README.md#fase-3-operator-overloading
+[4]: ../metatables-and-metamethods/meteri/README.md#fase-4-teknik-lanjutan
+[5]: ../metatables-and-metamethods/meteri/README.md#fase-5-design-patterns-dan-aplikasi
+[6]: ../metatables-and-metamethods/meteri/README.md#fase-6-kinerja-dan-optimisasi
+[7]: ../metatables-and-metamethods/meteri/README.md#fase-7-advanced-techniques-dan-edge-cases
+[8]: ../metatables-and-metamethods/meteri/README.md#fase-8-real-world-applications
+
+<!--
+[9]: ../metatables-and-metamethods/meteri/README.md#
+[10]: ../metatables-and-metamethods/meteri/README.md#
+[11]: ../metatables-and-metamethods/meteri/README.md#
+[12]: ../metatables-and-metamethods/meteri/README.md#
+[13]: ../metatables-and-metamethods/meteri/README.md#
+[14]: ../metatables-and-metamethods/meteri/README.md#
+[15]: ../metatables-and-metamethods/meteri/README.md#
+[16]: ../metatables-and-metamethods/meteri/README.md#
+[17]: ../metatables-and-metamethods/meteri/README.md# -->

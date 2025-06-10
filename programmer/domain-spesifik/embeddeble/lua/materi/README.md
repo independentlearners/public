@@ -26,7 +26,7 @@
 14. **[Coroutines][14]** - 5 minggu, 35 jam ✅
 15. **[Error Handling][15]** - 3 minggu, 25 jam ✅
 16. **[Object-Oriented Programming][16]** - 5 minggu, 35 jam ✅
-17. **[Debug Library][17]** - 3 minggu, 20 jam
+17. **[Debug Library][17]** - 3 minggu, 20 jam ✅
 18. **[C API Integration][18]** - 8 minggu, 60 jam
 19. **[Performance Optimization][19]** - 4 minggu, 30 jam ✅
 20. **[Memory Management][20]** - 3 minggu, 25 jam ✅
@@ -40,10 +40,6 @@
 
 26. **[Chunk][26]** ✅
 27. **[Repl][27]** ✅
-
-### **OPSIONAL NUMBER**
-
-28. **[Number & Math][28]** ✅
 29. **[Number Only][29]** ✅
 
 ---

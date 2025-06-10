@@ -938,12 +938,12 @@ Anda telah menyelesaikan seluruh kurikulum. Mari kita lihat kembali perjalanan A
 5.  Anda menyelami **topik-topik lanjutan** seperti penjadwalan, debugging, dan integrasi dengan C/C++.
 6.  Terakhir, Anda menempatkannya dalam **konteks yang lebih luas**—sejarah, teori, dan tren modern seperti `async/await`.
 
-Kurikulum yang Anda berikan (`README.md`) adalah sebuah peta yang luar biasa. Dengan penjelasan detail ini, Anda sekarang tidak hanya memegang peta, tetapi juga memahami setiap medan, sungai, dan gunung yang digambarkan di dalamnya.
+Kurikulum ini adalah sebuah peta yang luar biasa. Dengan penjelasan detail ini, Anda sekarang tidak hanya memegang peta, tetapi juga memahami setiap medan, sungai, dan gunung yang digambarkan di dalamnya.
 
 Langkah terakhir dan yang paling penting adalah **menerapkannya**. Mulailah sebuah proyek, sekecil apa pun, dan gunakan coroutines untuk menyelesaikan sebuah masalah. Pengalaman langsung adalah guru terbaik yang akan mengubah semua pengetahuan teoretis ini menjadi keahlian sejati.
 
 ##### **Selamat membuat kode\!**
 
-[Ke Atas](#)
+> - **[Ke Atas](#)**
 
-[0]:../README.md
+[0]: ../README.md

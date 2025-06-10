@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap Advanced Patterns Lua - Edisi Komprehensif][0]**
 
-## BAGIAN I: FONDASI PATTERN MATCHING
+## [BAGIAN I: FONDASI PATTERN MATCHING][1]
 
 ### 1.1 Pengenalan Filosofi Pattern Matching Lua
 
@@ -671,24 +671,23 @@ Kurikulum ini dirancang untuk memberikan penguasaan pattern matching Lua yang me
 [sebelumnya]: ../../advanced/garbage-collection/README.md
 [selanjutnya]: ../../advanced/web-development/README.md
 
-<!--------------------------------------------------- -->
+<!--------------------------->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../advanced-patterns/bagian-1/README.md
+[2]: ../advanced-patterns/bagian-2/README.md
+[3]: ../advanced-patterns/bagian-3/README.md
+[4]: ../advanced-patterns/bagian-4/README.md
+[5]: ../advanced-patterns/bagian-5/README.md
+[6]: ../advanced-patterns/bagian-6/README.md
+[7]: ../advanced-patterns/bagian-7/README.md
+[8]: ../advanced-patterns/bagian-8/README.md
+[9]: ../advanced-patterns/bagian-9/README.md
+[10]: ../advanced-patterns/bagian-10/README.md
+[11]: ../advanced-patterns/bagian-11/README.md
+[12]: ../advanced-patterns/bagian-12/README.md
+[13]: ../advanced-patterns/bagian-13/README.md
+[14]: ../advanced-patterns/bagian-14/README.md
+[15]: ../advanced-patterns/bagian-15/README.md
+[16]: ../advanced-patterns/bagian-16README.md
+[17]: ../advanced-patterns/bagian-17/README.md
