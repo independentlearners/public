@@ -225,7 +225,7 @@ Bagian ini membahas fitur-fitur yang membuat Lua menonjol atau berbeda dari bany
     - Meskipun otomatis, pemahaman tentang bagaimana GC bekerja bisa membantu dalam menulis kode yang lebih efisien dan menghindari memory leak (misalnya, dengan tidak menyimpan referensi yang tidak perlu ke objek besar). Topik ini akan dibahas lebih lanjut di Modul 3 dan 4.
   - **Implikasi**: Menyederhanakan pengembangan karena programmer tidak dibebani manajemen memori manual yang rentan error.
 
-- **First-Class Values Concept**
+- **[First-Class Values Concept][first-class-values]**
 
   - **Deskripsi Konkret**: Di Lua, beberapa tipe data, terutama fungsi, diperlakukan sebagai "first-class citizens". Ini berarti mereka dapat diperlakukan seperti nilai lainnya: disimpan dalam variabel, diteruskan sebagai argumen ke fungsi lain, dikembalikan sebagai hasil dari fungsi, dan disimpan dalam tabel.
   - **Terminologi & Konsep**:
@@ -874,3 +874,7 @@ Kurikulum menyarankan latihan eksplorasi tipe, tes konversi, dan penanganan erro
 [2]: ../2-assignment-patterns/README.md
 [1]: ../../README.md/#11-pengenalan-variabel-di-lua
 [utf-8]: ../../../../../../../../kamus/README.md "klik untuk melihat kamus dan cari kata tersebut"
+
+<!------------------------------------>
+
+[first-class-values]:../../../function/bagian-1/README.md#function-sebagai-first-class-citizen
