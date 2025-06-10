@@ -1226,9 +1226,9 @@ Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir
 
 ### Roadmap Dart dan Flutter
 
-## [1. Pondasi Dart](programmer\mobile\dart\bin\dasar)
+## [1. Pondasi Dart](../dart/bin/dasar/README.md)
 
-1. **[Sintaks Dasar & Tipe Data](programmer\mobile\dart\bin\dasar\tipe-data) (2–3 minggu)**
+1. **[Sintaks Dasar & Tipe Data](../dart/bin/dasar/tipe-data/README.md)(2–3 minggu)**
 
    - [Variabel](programmer\mobile\dart\bin\dasar\variabel), tipe primitif ([`int`, `double`,](programmer\mobile\dart\bin\dasar\tipe-data\number\README.md) `String`, `bool`)
    - Koleksi (`List`, `Map`, `Set`)
@@ -1429,5 +1429,5 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 > #### [Domain Spesifik][domain-spesifik]
 
-[domain-spesifik]: ../README.md
-[master-flutter]: ../../../framework/flutter/README.md
+[domain-spesifik]: ../../../README.md
+[master-flutter]: ../../../../framework/flutter/README.md
