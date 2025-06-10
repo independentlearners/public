@@ -1,6 +1,6 @@
 # Final
 #### Kelas Pengubah
-Adalah kata kunci immutable, artinya bahwa suatu variabel tidak dapat diubah setelah nilainya diinisialisasi. Ini berarti bahwa setelah Anda menetapkan nilai untuk variabel immutable / `final`, Anda tidak dapat mengubah nilai tersebut. Hal ini sangat berguna untuk memastikan bahwa nilai tetap konstan selama objek tersebut hidup.
+Adalah kata kunci immutable, artinya bahwa suatu variabel tidak dapat diubah setelah nilainya diinisialisasi. Ini berarti bahwa setelah Kita menetapkan nilai untuk variabel immutable / `final`, Kita tidak dapat mengubah nilai tersebut. Hal ini sangat berguna untuk memastikan bahwa nilai tetap konstan selama objek tersebut hidup.
 
 #### Contoh:
 ```dart
@@ -13,25 +13,25 @@ nilai = 20; // Ini akan menyebabkan kesalahan karena nilai final tidak dapat diu
 ### Tipe Data Lain
 Berikut adalah beberapa tipe data umum dalam Dart ketika tidak didefinisikan sebagai variabel immutabel / `final`:
 
-1. **String**: Sebuah sekuen dari karakter. Anda dapat mengubah nilai dari variabel `String` yang bukan `final`.
+1. **String**: Sebuah sekuen dari karakter. Kita dapat mengubah nilai dari variabel `String` yang bukan `final`.
    ```dart
    String nama = "Alice";
    nama = "Bob"; // Ini diperbolehkan
    ```
 
-2. **int**: Bilangan bulat tanpa bagian desimal. Anda dapat mengubah nilai dari variabel `int` yang bukan `final`.
+2. **int**: Bilangan bulat tanpa bagian desimal. Kita dapat mengubah nilai dari variabel `int` yang bukan `final`.
    ```dart
    int umur = 25;
    umur = 30; // Ini diperbolehkan
    ```
 
-3. **double**: Bilangan desimal (floating-point). Anda dapat mengubah nilai dari variabel `double` yang bukan `final`.
+3. **double**: Bilangan desimal (floating-point). Kita dapat mengubah nilai dari variabel `double` yang bukan `final`.
    ```dart
    double harga = 19.99;
    harga = 25.50; // Ini diperbolehkan
    ```
 
-4. **List<E>**: Sebuah daftar yang dapat berisi elemen tipe `E`. Anda dapat mengubah nilai dari variabel `List` yang bukan `final`.
+4. **List<E>**: Sebuah daftar yang dapat berisi elemen tipe `E`. Kita dapat mengubah nilai dari variabel `List` yang bukan `final`.
    ```dart
    List<int> daftar = [1, 2, 3];
    daftar = [4, 5, 6]; // Ini diperbolehkan

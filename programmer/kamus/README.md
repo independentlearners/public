@@ -4432,6 +4432,22 @@ Jadi, saat seorang programer memanggil fungsi, dia memasukkan argument (isi) ke 
 
 #
 
+**Reassign** berarti memberikan nilai baru kepada variabel yang sudah ada, sehingga nilai lama digantikan oleh nilai baru. Dalam pemrograman, reassign memungkinkan kamu untuk mengubah nilai variabel sesuai kebutuhan program.
+Contoh:
+
+```
+x = 5  # nilai awal
+x = 10  # reassign nilai x menjadi 10
+```
+
+Dalam contoh di atas, nilai x awalnya adalah 5, tapi kemudian di-reassign menjadi **10**. Reassign berguna dalam berbagai situasi, seperti:
+
+Mengupdate nilai variabel berdasarkan input pengguna
+
+Mengubah status program berdasarkan kondisi tertentu
+
+Mengoptimalkan kode dengan mengurangi kebutuhan variabel baru
+
 #
 
 #

@@ -188,7 +188,7 @@ Dalam Dart, variabel dideklarasikan menggunakan kata kunci `var`, `final`, `cons
   }
   ```
 
-- **`final`**: Digunakan untuk mendeklarasikan variabel yang nilainya hanya dapat ditetapkan satu kali (saat inisialisasi) dan tidak dapat diubah setelahnya. Namun, nilai `final` dapat diketahui saat _runtime_.
+- **`final`**: Digunakan untuk mendeklarasikan variabel yang nilainya hanya dapat ditetapkan satu kali (saat inisialisasi) dan tidak dapat diubah setelahnya. Namun, nilai `final` [dapat diketahui saat _runtime_.][1]
 
   ```dart
   void main() {
@@ -3000,7 +3000,7 @@ Saya telah mengaudit semua materi untuk memastikan kelengkapan dan kejelasan. Ji
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
+[1]: ../../../dart/kursus/dasar/modifikator/final/runtime/README.md
 [2]: ../
 [3]: ../
 [4]: ../
