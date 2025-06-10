@@ -1,4 +1,9 @@
-**Daftar Isi Kurikulum Dart Komprehensif**
+<details>
+<div style="font-size: 25px;">
+  <summary>📃Daftar Isi Kurikulum Dart Komprehensif</summary>
+
+<div style="font-size: 13px;">
+    <!-- <a href="../konsep/domain/README.md"> -->
 
 **[Modul 1: Fondasi Absolut - Dari Nol ke Program Pertama Anda](#modul-1-fondasi-absolut---dari-nol-ke-program-pertama-anda)**
 
@@ -106,6 +111,9 @@
 - [6.4. Publikasi Package ke Pub.dev](#64-publikasi-package-ke-pubdev)
 
 ---
+
+</div>
+</details>
 
 ##### Mari kita mulai penjelasannya secara rinci.
 
@@ -2973,6 +2981,8 @@ Informasi yang diberikan adalah akurat dan konsisten dengan dokumentasi resmi Da
 Saya telah mencoba menjelaskan setiap konsep seolah-olah kepada seseorang tanpa latar belakang pemrograman, memecah ide-ide kompleks menjadi bagian-bagian yang lebih kecil dan mudah dicerna, dengan banyak contoh konkret. Hal ini bertujuan agar materi ini menjadi referensi pembelajaran yang kuat dan Anda dapat mencapai pemahaman yang mendalam.
 
 Saya telah mengaudit semua materi untuk memastikan kelengkapan dan kejelasan. Jika ada bagian yang masih kurang jelas atau Anda memiliki pertanyaan lebih lanjut, jangan ragu untuk bertanya\!
+
+<h3 id="bawah"></h3>
 
 #
 
