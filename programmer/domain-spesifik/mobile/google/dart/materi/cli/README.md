@@ -5,7 +5,7 @@
 <div style="font-size: 13px;">
     <!-- <a href="../konsep/domain/README.md"> -->
 
-**[Modul 1: Fondasi Absolut - Dari Nol ke Program Pertama Anda](#modul-1-fondasi-absolut---dari-nol-ke-program-pertama-anda)**
+**[Modul 1: Fondasi Absolut - Dari Nol ke Program Pertama Kita](#modul-1-fondasi-absolut---dari-nol-ke-program-pertama-kita)**
 
 - [1.1. Pengenalan Pemrograman & CLI](#11-pengenalan-pemrograman--cli)
   - [Apa itu Pemrograman?](#apa-itu-pemrograman)
@@ -119,7 +119,7 @@
 
 ---
 
-### **Modul 1: Fondasi Absolut - Dari Nol ke Program Pertama Anda**
+### **Modul 1: Fondasi Absolut - Dari Nol ke Program Pertama Kita**
 
 Modul ini akan membangun pemahaman fundamental tentang pemrograman, Dart, dan lingkungan kerja CLI.
 
@@ -145,12 +145,12 @@ Bahasa pemrograman adalah bahasa formal yang terdiri dari sekumpulan instruksi d
 
 ##### **Apa itu Command-Line Interface (CLI)?**
 
-**Command-Line Interface (CLI)**, atau antarmuka baris perintah, adalah cara berinteraksi dengan program komputer di mana pengguna mengeluarkan perintah dalam bentuk baris teks. Berbeda dengan _Graphical User Interface_ (GUI) yang menggunakan elemen visual seperti ikon dan menu, CLI murni berbasis teks. Anda mengetikkan perintah di terminal atau _command prompt_, dan komputer merespons dengan menampilkan teks.
+**Command-Line Interface (CLI)**, atau antarmuka baris perintah, adalah cara berinteraksi dengan program komputer di mana pengguna mengeluarkan perintah dalam bentuk baris teks. Berbeda dengan _Graphical User Interface_ (GUI) yang menggunakan elemen visual seperti ikon dan menu, CLI murni berbasis teks. Kita mengetikkan perintah di terminal atau _command prompt_, dan komputer merespons dengan menampilkan teks.
 
 **Terminologi penting dalam CLI:**
 
-- **Terminal/Command Prompt/Shell:** Program tempat Anda mengetikkan perintah CLI. Contohnya: `cmd` di Windows, `Terminal` di macOS, `Bash` atau `Zsh` di Linux.
-- **Perintah (Command):** Instruksi spesifik yang Anda berikan kepada komputer (misalnya, `dart`, `ls`, `cd`).
+- **Terminal/Command Prompt/Shell:** Program tempat Kita mengetikkan perintah CLI. Contohnya: `cmd` di Windows, `Terminal` di macOS, `Bash` atau `Zsh` di Linux.
+- **Perintah (Command):** Instruksi spesifik yang Kita berikan kepada komputer (misalnya, `dart`, `ls`, `cd`).
 - **Argumen (Argument):** Nilai tambahan yang diberikan kepada perintah untuk memodifikasi perilakunya (misalnya, `dart run main.dart`, di sini `main.dart` adalah argumen).
 - **Flag/Option:** Jenis argumen khusus yang biasanya dimulai dengan `--` atau `-` untuk mengaktifkan atau menonaktifkan fitur tertentu (misalnya, `git commit -m "Pesan"`).
 
@@ -166,15 +166,15 @@ CLI sangat penting dalam pengembangan perangkat lunak karena:
 
 #### **1.4. Variabel, Tipe Data Bawaan & Komentar**
 
-Bagian ini adalah fundamental dalam setiap bahasa pemrograman. Anda akan belajar bagaimana menyimpan informasi dalam program dan bagaimana mengidentifikasi bagian-bagian dari kode Anda.
+Bagian ini adalah fundamental dalam setiap bahasa pemrograman. Kita akan belajar bagaimana menyimpan informasi dalam program dan bagaimana mengidentifikasi bagian-bagian dari kode Kita.
 
 ##### **Memahami Konsep Variabel**
 
-**Variabel** adalah nama simbolis untuk lokasi penyimpanan dalam memori komputer. Anggap saja sebagai "kotak" berlabel di mana Anda dapat menyimpan berbagai jenis data. Nama variabel memungkinkan Anda untuk mengakses dan memodifikasi data yang disimpan di dalamnya.
+**Variabel** adalah nama simbolis untuk lokasi penyimpanan dalam memori komputer. Anggap saja sebagai "kotak" berlabel di mana Kita dapat menyimpan berbagai jenis data. Nama variabel memungkinkan Kita untuk mengakses dan memodifikasi data yang disimpan di dalamnya.
 
 Dalam Dart, variabel dideklarasikan menggunakan kata kunci `var`, `final`, `const`, atau dengan menentukan tipe datanya secara eksplisit.
 
-- **`var`**: Kata kunci ini memungkinkan Dart untuk secara otomatis menyimpulkan (infer) tipe data berdasarkan nilai yang pertama kali diberikan. Anda dapat mengubah nilai variabel `var` setelah deklarasi, tetapi tipe datanya akan tetap sama.
+- **`var`**: Kata kunci ini memungkinkan Dart untuk secara otomatis menyimpulkan (infer) tipe data berdasarkan nilai yang pertama kali diberikan. Kita dapat mengubah nilai variabel `var` setelah deklarasi, tetapi tipe datanya akan tetap sama.
 
   ```dart
   void main() {
@@ -226,7 +226,7 @@ Dalam Dart, variabel dideklarasikan menggunakan kata kunci `var`, `final`, `cons
   - `const` berarti nilai harus diketahui saat _kompilasi_.
   - `final` berarti nilai ditetapkan satu kali saat _runtime_ atau _inisialisasi_.
 
-- **Deklarasi Tipe Eksplisit**: Anda juga bisa secara langsung menentukan tipe data dari variabel. Ini meningkatkan keterbacaan kode dan membantu dalam _debugging_.
+- **Deklarasi Tipe Eksplisit**: Kita juga bisa secara langsung menentukan tipe data dari variabel. Ini meningkatkan keterbacaan kode dan membantu dalam _debugging_.
 
   ```dart
   void main() {
@@ -277,7 +277,7 @@ print('Hasil bagi integer: $hasilBagiInt');
 
   - Dapat didefinisikan dengan tanda kutip tunggal (`'`) atau ganda (`"`).
 
-  - **String Interpolation**: Anda bisa menyisipkan nilai variabel atau ekspresi ke dalam string dengan `$` atau `${}`.
+  - **String Interpolation**: Kita bisa menyisipkan nilai variabel atau ekspresi ke dalam string dengan `$` atau `${}`.
 
     ```dart
     String nama = 'Dunia';
@@ -332,7 +332,7 @@ print('Hasil bagi integer: $hasilBagiInt');
 
 - **Set (Sets): `Set`**
 
-  - Kumpulan item unik yang tidak terurut. Jika Anda mencoba menambahkan elemen yang sudah ada, set akan mengabaikannya. Berguna ketika Anda hanya ingin memastikan setiap item ada satu kali.
+  - Kumpulan item unik yang tidak terurut. Jika Kita mencoba menambahkan elemen yang sudah ada, set akan mengabaikannya. Berguna ketika Kita hanya ingin memastikan setiap item ada satu kali.
 
     ```dart
     Set<int> angkaUnik = {1, 2, 3, 2, 4};
@@ -369,9 +369,9 @@ print('Hasil bagi integer: $hasilBagiInt');
 
 - **Runes dan Symbols**
 
-  - **Runes**: Representasi Unicode dari string. Digunakan ketika Anda perlu bekerja dengan karakter Unicode di luar _Basic Multilingual Plane_. Jarang digunakan secara langsung dalam pengembangan aplikasi sehari-hari.
+  - **Runes**: Representasi Unicode dari string. Digunakan ketika Kita perlu bekerja dengan karakter Unicode di luar _Basic Multilingual Plane_. Jarang digunakan secara langsung dalam pengembangan aplikasi sehari-hari.
 
-  - **Symbols**: Objek yang merepresentasikan operator atau pengidentifikasi yang dideklarasikan dalam program Dart. Biasanya digunakan dalam refleksi atau ketika Anda ingin mereferensikan nama dari pengidentifikasi secara terprogram.
+  - **Symbols**: Objek yang merepresentasikan operator atau pengidentifikasi yang dideklarasikan dalam program Dart. Biasanya digunakan dalam refleksi atau ketika Kita ingin mereferensikan nama dari pengidentifikasi secara terprogram.
 
     ```dart
     // Contoh Runes
@@ -385,11 +385,11 @@ print('Hasil bagi integer: $hasilBagiInt');
 
 ##### **Null Safety**
 
-**Null Safety** adalah fitur penting di Dart yang membantu mencegah _error_ yang terjadi ketika sebuah variabel memiliki nilai `null` (tidak ada nilai) padahal seharusnya tidak. Dengan _null safety_, Dart compiler dapat menganalisis kode Anda dan memastikan bahwa variabel yang tidak boleh `null` tidak akan pernah menjadi `null`.
+**Null Safety** adalah fitur penting di Dart yang membantu mencegah _error_ yang terjadi ketika sebuah variabel memiliki nilai `null` (tidak ada nilai) padahal seharusnya tidak. Dengan _null safety_, Dart compiler dapat menganalisis kode Kita dan memastikan bahwa variabel yang tidak boleh `null` tidak akan pernah menjadi `null`.
 
-- Secara _default_, semua variabel di Dart tidak boleh `null` (non-nullable). Jika Anda mencoba memberikan nilai `null` ke variabel non-nullable, akan ada _compile-time error_.
+- Secara _default_, semua variabel di Dart tidak boleh `null` (non-nullable). Jika Kita mencoba memberikan nilai `null` ke variabel non-nullable, akan ada _compile-time error_.
 
-- Untuk membuat variabel bisa `null` (nullable), Anda harus menambahkan tanda tanya (`?`) setelah tipe datanya.
+- Untuk membuat variabel bisa `null` (nullable), Kita harus menambahkan tanda tanya (`?`) setelah tipe datanya.
 
   ```dart
   void main() {
@@ -416,7 +416,7 @@ print('Hasil bagi integer: $hasilBagiInt');
     print('Nama tengah aman: $namaTengahAman'); // Output: Nama tengah aman: Tidak ada
 
     // Operator `!` (null assertion operator)
-    // Memberi tahu compiler bahwa Anda yakin nilai tidak akan null pada saat itu.
+    // Memberi tahu compiler bahwa Kita yakin nilai tidak akan null pada saat itu.
     // Gunakan dengan hati-hati, jika null, akan menyebabkan runtime error.
     String nonNullableString = alamat!; // Berbahaya jika alamat benar-benar null!
     print(nonNullableString); // Akan error jika alamat null
@@ -447,7 +447,7 @@ Ada beberapa jenis komentar di Dart:
   String message = "Hello, Dart!";
   ```
 
-- **Documentation comments (`///` atau `/** ... \*/`)\*\*: Ini adalah jenis komentar khusus yang digunakan untuk menghasilkan dokumentasi HTML dari kode Anda. Mereka mendukung format Markdown.
+- **Documentation comments (`///` atau `/** ... \*/`)\*\*: Ini adalah jenis komentar khusus yang digunakan untuk menghasilkan dokumentasi HTML dari kode Kita. Mereka mendukung format Markdown.
 
   ````dart
   /// Fungsi ini menambahkan dua angka dan mengembalikan hasilnya.
@@ -628,7 +628,7 @@ void main() {
   print('Status: $status'); // Output: Status: Dewasa
   ```
 
-- **Cascade Notation (`..`)**: Memungkinkan Anda melakukan serangkaian operasi pada objek yang sama tanpa perlu mengulang nama objek.
+- **Cascade Notation (`..`)**: Memungkinkan Kita melakukan serangkaian operasi pada objek yang sama tanpa perlu mengulang nama objek.
 
   ```dart
   class Mobil {
@@ -665,7 +665,7 @@ void main() {
 
 #### **2.2. Struktur Kontrol (Percabangan)**
 
-Struktur kontrol memungkinkan Anda mengontrol alur eksekusi program berdasarkan kondisi tertentu.
+Struktur kontrol memungkinkan Kita mengontrol alur eksekusi program berdasarkan kondisi tertentu.
 
 ##### **`if`, `else if`, dan `else`**
 
@@ -726,7 +726,7 @@ void main() {
 }
 ```
 
-**Perhatikan**: `switch` di Dart 3.0+ mendukung `pattern matching` yang jauh lebih canggih, memungkinkan kondisi yang lebih kompleks dan ekstraksi nilai. Ini adalah fitur yang sangat kuat dan patut dipelajari lebih lanjut di dokumentasi resmi Dart jika Anda ingin menguasai fitur modern Dart.
+**Perhatikan**: `switch` di Dart 3.0+ mendukung `pattern matching` yang jauh lebih canggih, memungkinkan kondisi yang lebih kompleks dan ekstraksi nilai. Ini adalah fitur yang sangat kuat dan patut dipelajari lebih lanjut di dokumentasi resmi Dart jika Kita ingin menguasai fitur modern Dart.
 
 #### **2.3. Koleksi Data (Collections)**
 
@@ -842,11 +842,11 @@ void main() {
 
 #### **2.4. Perulangan (Loops)**
 
-Perulangan memungkinkan Anda mengeksekusi blok kode berulang kali sampai kondisi tertentu terpenuhi.
+Perulangan memungkinkan Kita mengeksekusi blok kode berulang kali sampai kondisi tertentu terpenuhi.
 
 ##### **`for` Loop**
 
-Paling umum digunakan ketika Anda tahu berapa kali perulangan harus dieksekusi, atau ketika Anda perlu mengakses indeks.
+Paling umum digunakan ketika Kita tahu berapa kali perulangan harus dieksekusi, atau ketika Kita perlu mengakses indeks.
 Sintaksis: `for (inisialisasi; kondisi; increment/decrement) { ... }`
 
 ```dart
@@ -875,7 +875,7 @@ void main() {
 
 ##### **`for-in` Loop**
 
-Digunakan untuk mengiterasi secara langsung melalui elemen-elemen dalam koleksi (List, Set, Map's keys/values). Lebih ringkas jika Anda tidak memerlukan indeks.
+Digunakan untuk mengiterasi secara langsung melalui elemen-elemen dalam koleksi (List, Set, Map's keys/values). Lebih ringkas jika Kita tidak memerlukan indeks.
 
 ```dart
 void main() {
@@ -1040,7 +1040,7 @@ Dart menawarkan fleksibilitas dalam mendefinisikan parameter fungsi.
   }
   ```
 
-- **Named Parameters (Parameter Bernama)**: Parameter yang ditentukan dengan menggunakan kurung kurawal `{}`. Ketika memanggil fungsi, Anda harus menentukan nama parameter. Ini meningkatkan keterbacaan, terutama untuk fungsi dengan banyak parameter. Parameter bernama secara _default_ adalah _nullable_ kecuali ditandai sebagai `required`.
+- **Named Parameters (Parameter Bernama)**: Parameter yang ditentukan dengan menggunakan kurung kurawal `{}`. Ketika memanggil fungsi, Kita harus menentukan nama parameter. Ini meningkatkan keterbacaan, terutama untuk fungsi dengan banyak parameter. Parameter bernama secara _default_ adalah _nullable_ kecuali ditandai sebagai `required`.
 
   ```dart
   void tampilkanDetail({String? nama, int? umur, String? kota}) {
@@ -1067,7 +1067,7 @@ Dart menawarkan fleksibilitas dalam mendefinisikan parameter fungsi.
   }
   ```
 
-- **Optional Positional Parameters (Parameter Posisi Opsional)**: Parameter yang ditentukan dengan menggunakan kurung siku `[]`. Anda dapat memberikan nilai _default_ untuk parameter ini. Jika nilai tidak diberikan saat pemanggilan fungsi, nilai _default_ akan digunakan.
+- **Optional Positional Parameters (Parameter Posisi Opsional)**: Parameter yang ditentukan dengan menggunakan kurung siku `[]`. Kita dapat memberikan nilai _default_ untuk parameter ini. Jika nilai tidak diberikan saat pemanggilan fungsi, nilai _default_ akan digunakan.
 
   ```dart
   void cetakLog(String pesan, [String level = 'INFO']) {
@@ -1101,7 +1101,7 @@ void main() {
 
 ##### **Fungsi Singkat (`=>` atau Arrow Function)**
 
-Untuk fungsi yang hanya berisi satu ekspresi, Anda dapat menggunakan sintaksis panah (`=>`). Ini secara implisit mengembalikan nilai dari ekspresi tersebut.
+Untuk fungsi yang hanya berisi satu ekspresi, Kita dapat menggunakan sintaksis panah (`=>`). Ini secara implisit mengembalikan nilai dari ekspresi tersebut.
 
 ```dart
 int tambah(int a, int b) => a + b; // Sama dengan { return a + b; }
@@ -1115,7 +1115,7 @@ void main() {
 
 ##### **Fungsi Anonim (Anonymous Functions) / Lambda**
 
-Fungsi yang tidak memiliki nama. Sering digunakan sebagai _callback_ atau ketika Anda perlu melewatkan fungsi sebagai argumen ke fungsi lain.
+Fungsi yang tidak memiliki nama. Sering digunakan sebagai _callback_ atau ketika Kita perlu melewatkan fungsi sebagai argumen ke fungsi lain.
 
 ```dart
 void main() {
@@ -1235,8 +1235,8 @@ void main() {
 
 Metode khusus dalam kelas yang dipanggil saat objek dibuat. Tujuan utamanya adalah untuk menginisialisasi properti objek.
 
-- **Default Constructor**: Jika Anda tidak mendefinisikan konstruktor, Dart secara otomatis memberikan konstruktor _default_ tanpa argumen.
-- **Named Constructors**: Memungkinkan Anda untuk membuat beberapa konstruktor dengan nama yang berbeda untuk tujuan inisialisasi yang berbeda.
+- **Default Constructor**: Jika Kita tidak mendefinisikan konstruktor, Dart secara otomatis memberikan konstruktor _default_ tanpa argumen.
+- **Named Constructors**: Memungkinkan Kita untuk membuat beberapa konstruktor dengan nama yang berbeda untuk tujuan inisialisasi yang berbeda.
 - **Factory Constructors**: Digunakan ketika konstruktor tidak selalu membuat instans baru dari kelasnya, misalnya mengembalikan instans yang sudah ada dari _cache_.
 - **Constant Constructors**: Digunakan untuk membuat instans yang konstan pada waktu kompilasi.
 
@@ -1361,7 +1361,7 @@ void main() {
 
 ##### **Mixins**
 
-Cara untuk menggunakan kembali kode kelas secara horizontal, yaitu tanpa mewarisi properti atau metode kelas tersebut dalam hierarki pewarisan. Mixins memungkinkan Anda untuk menambahkan fungsionalitas tertentu ke kelas tanpa mengikatnya dalam hierarki `extends` yang ketat.
+Cara untuk menggunakan kembali kode kelas secara horizontal, yaitu tanpa mewarisi properti atau metode kelas tersebut dalam hierarki pewarisan. Mixins memungkinkan Kita untuk menambahkan fungsionalitas tertentu ke kelas tanpa mengikatnya dalam hierarki `extends` yang ketat.
 
 - Digunakan dengan kata kunci `with`.
 - Kelas dapat menggunakan banyak mixin.
@@ -1403,7 +1403,7 @@ void main() {
 
 ##### **Antarmuka (`Interfaces`)**
 
-Di Dart, semua kelas secara implisit mendefinisikan antarmuka. Anda dapat mengimplementasikan (menggunakan kata kunci `implements`) antarmuka kelas lain untuk mewajibkan kelas Anda memiliki metode dan properti yang sama seperti kelas yang diimplementasikan. Ini memastikan bahwa kelas yang berbeda dapat memiliki kontrak perilaku yang sama.
+Di Dart, semua kelas secara implisit mendefinisikan antarmuka. Kita dapat mengimplementasikan (menggunakan kata kunci `implements`) antarmuka kelas lain untuk mewajibkan kelas Kita memiliki metode dan properti yang sama seperti kelas yang diimplementasikan. Ini memastikan bahwa kelas yang berbeda dapat memiliki kontrak perilaku yang sama.
 
 ```dart
 // Ini bisa menjadi kelas abstrak atau kelas biasa
@@ -1584,7 +1584,7 @@ Ini adalah pilar-pilar utama OOP:
 
 #### **3.2. Penanganan Kesalahan (Error Handling)**
 
-Penanganan kesalahan adalah praktik penting untuk membuat aplikasi Anda tangguh dan dapat merespons situasi tak terduga dengan anggun, daripada _crash_.
+Penanganan kesalahan adalah praktik penting untuk membuat aplikasi Kita tangguh dan dapat merespons situasi tak terduga dengan anggun, daripada _crash_.
 
 ##### **Memahami Kesalahan (`Errors`) dan Pengecualian (`Exceptions`)**
 
@@ -1598,10 +1598,10 @@ Penanganan kesalahan adalah praktik penting untuk membuat aplikasi Anda tangguh 
 Ini adalah blok-blok utama untuk menangani pengecualian.
 
 - **`try`**: Blok kode yang akan dieksekusi. Kode yang mungkin memicu pengecualian ditempatkan di dalam blok `try`.
-- **`catch`**: Blok ini menangkap pengecualian jika terjadi di dalam blok `try`. Anda dapat menentukan tipe pengecualian yang ingin ditangkap. Jika tidak ada tipe yang ditentukan, ia akan menangkap semua jenis pengecualian.
+- **`catch`**: Blok ini menangkap pengecualian jika terjadi di dalam blok `try`. Kita dapat menentukan tipe pengecualian yang ingin ditangkap. Jika tidak ada tipe yang ditentukan, ia akan menangkap semua jenis pengecualian.
   - Sintaksis `catch (e)` menangkap objek pengecualian.
   - Sintaksis `catch (e, s)` menangkap objek pengecualian (`e`) dan _stack trace_ (`s`), yang berguna untuk _debugging_.
-- **`on`**: Digunakan untuk menangkap pengecualian dari tipe tertentu. Anda dapat memiliki beberapa blok `on` untuk menangani berbagai jenis pengecualian secara berbeda.
+- **`on`**: Digunakan untuk menangkap pengecualian dari tipe tertentu. Kita dapat memiliki beberapa blok `on` untuk menangani berbagai jenis pengecualian secara berbeda.
 
 <!-- end list -->
 
@@ -1649,7 +1649,7 @@ void main() {
   } finally {
     // Pastikan sumber daya ditutup, bahkan jika ada error
     print('Membersihkan sumber daya...');
-    // Di sini Anda mungkin ingin menutup file stream jika Dart menggunakan stream
+    // Di sini Kita mungkin ingin menutup file stream jika Dart menggunakan stream
     // Karena readAsStringSync() adalah synchronous dan menutup otomatis, ini hanya contoh konsep
     if (myFile != null) {
       // Logic for closing stream if it was opened manually
@@ -1660,7 +1660,7 @@ void main() {
 
 ##### **Melempar Pengecualian (`throw`)**
 
-Anda dapat secara eksplisit melempar pengecualian menggunakan kata kunci `throw`. Ini berguna ketika Anda mendeteksi kondisi yang tidak valid dalam kode Anda dan ingin menghentikan eksekusi normal.
+Kita dapat secara eksplisit melempar pengecualian menggunakan kata kunci `throw`. Ini berguna ketika Kita mendeteksi kondisi yang tidak valid dalam kode Kita dan ingin menghentikan eksekusi normal.
 
 ```dart
 void validasiUsia(int usia) {
@@ -1687,7 +1687,7 @@ void main() {
 
 ##### **Custom Exceptions**
 
-Anda dapat membuat kelas pengecualian kustom Anda sendiri dengan mewarisi dari kelas `Exception` (atau `Error` jika itu adalah kegagalan fatal). Ini membuat kode Anda lebih deskriptif dan terstruktur.
+Kita dapat membuat kelas pengecualian kustom Kita sendiri dengan mewarisi dari kelas `Exception` (atau `Error` jika itu adalah kegagalan fatal). Ini membuat kode Kita lebih deskriptif dan terstruktur.
 
 ```dart
 class SaldoTidakCukupException implements Exception {
@@ -1754,7 +1754,7 @@ Pemrograman asinkron memungkinkan program untuk memulai operasi yang memakan wak
   - **Completed with a value**: Operasi selesai dengan sukses dan menghasilkan nilai.
   - **Completed with an error**: Operasi selesai dengan error/pengecualian.
 
-- Anda dapat mendaftarkan _callback_ untuk dipanggil saat `Future` selesai menggunakan `.then()`, `.catchError()`, dan `.whenComplete()`.
+- Kita dapat mendaftarkan _callback_ untuk dipanggil saat `Future` selesai menggunakan `.then()`, `.catchError()`, dan `.whenComplete()`.
 
 <!-- end list -->
 
@@ -1905,8 +1905,8 @@ Selesai hitung mundur!
 
 Penanganan kesalahan dalam asinkron dilakukan dengan cara yang mirip dengan sinkron:
 
-- Menggunakan `.catchError()` pada `Future` jika Anda tidak menggunakan `async`/`await`.
-- Menggunakan `try-catch` di dalam fungsi `async` ketika Anda menggunakan `await`.
+- Menggunakan `.catchError()` pada `Future` jika Kita tidak menggunakan `async`/`await`.
+- Menggunakan `try-catch` di dalam fungsi `async` ketika Kita menggunakan `await`.
 
 <!-- end list -->
 
@@ -1947,7 +1947,7 @@ Modul ini adalah inti dari membuat aplikasi berbasis baris perintah yang interak
 Aplikasi CLI seringkali perlu menerima input dari pengguna melalui argumen yang diberikan saat menjalankan program di terminal. Dart menyediakan cara sederhana untuk mengakses argumen ini melalui `List<String> args` di fungsi `main`.
 
 **Konsep:**
-Saat Anda menjalankan program Dart dari terminal seperti ini:
+Saat Kita menjalankan program Dart dari terminal seperti ini:
 `dart run nama_program.dart arg1 arg2 --option=value`
 `arg1`, `arg2`, dan `--option=value` adalah argumen baris perintah.
 
@@ -1968,7 +1968,7 @@ void main(List<String> arguments) {
 
   // Contoh penggunaan sederhana:
   if (arguments.contains('hello')) {
-    print('Anda menyapa!');
+    print('Kita menyapa!');
   }
 }
 ```
@@ -1994,14 +1994,14 @@ dart run my_cli_app.dart hello
 # Jumlah argumen: 1
 # Argumen yang diterima: [hello]
 # Argumen pertama: hello
-# Anda menyapa!
+# Kita menyapa!
 ```
 
 **Sumber:** [Command-line arguments - Dokumentasi Resmi](https://www.google.com/search?q=https://dart.dev/tutorials/server/get-started%23command-line-arguments)
 
 #### **4.2. Manajemen Dependensi dengan Pub**
 
-**Pub** adalah _package manager_ untuk Dart. Ini adalah _tool_ esensial untuk mengelola dependensi (pustaka kode eksternal) yang digunakan dalam proyek Dart Anda.
+**Pub** adalah _package manager_ untuk Dart. Ini adalah _tool_ esensial untuk mengelola dependensi (pustaka kode eksternal) yang digunakan dalam proyek Dart Kita.
 
 ##### **`pubspec.yaml`**
 
@@ -2010,7 +2010,7 @@ Setiap proyek Dart memiliki file konfigurasi bernama `pubspec.yaml` di _root_ pr
 **Struktur dasar `pubspec.yaml`:**
 
 ```yaml
-name: my_cli_app # Nama package/aplikasi Anda
+name: my_cli_app # Nama package/aplikasi Kita
 description: A sample command-line application. # Deskripsi
 version: 1.0.0 # Versi aplikasi
 
@@ -2030,29 +2030,29 @@ dev_dependencies:
   test: ^1.24.0
 ```
 
-- **`dependencies`**: Bagian ini mencantumkan semua _package_ (pustaka kode pihak ketiga) yang dibutuhkan aplikasi Anda untuk berjalan.
+- **`dependencies`**: Bagian ini mencantumkan semua _package_ (pustaka kode pihak ketiga) yang dibutuhkan aplikasi Kita untuk berjalan.
 - **`dev_dependencies`**: Bagian ini mencantumkan _package_ yang hanya dibutuhkan selama pengembangan (misalnya, _tool_ untuk _testing_, _linting_, atau _code generation_).
 
 ##### **Mencari Package di `pub.dev`**
 
-`pub.dev` adalah repositori resmi untuk _package_ dan _library_ Dart. Anda dapat mencari _package_ yang Anda butuhkan di sana. Setiap _package_ di `pub.dev` memiliki halaman detail yang menjelaskan cara menggunakannya dan versi yang tersedia.
+`pub.dev` adalah repositori resmi untuk _package_ dan _library_ Dart. Kita dapat mencari _package_ yang Kita butuhkan di sana. Setiap _package_ di `pub.dev` memiliki halaman detail yang menjelaskan cara menggunakannya dan versi yang tersedia.
 
-**Contoh pencarian:** Jika Anda membutuhkan _package_ untuk melakukan permintaan HTTP, Anda bisa mencari "http" di `pub.dev`.
+**Contoh pencarian:** Jika Kita membutuhkan _package_ untuk melakukan permintaan HTTP, Kita bisa mencari "http" di `pub.dev`.
 
 ##### **Menggunakan Package dalam Proyek**
 
-1.  **Tambahkan ke `pubspec.yaml`**: Setelah menemukan _package_ yang Anda inginkan di `pub.dev`, salin baris dependensi yang sesuai ke bagian `dependencies` atau `dev_dependencies` di `pubspec.yaml` Anda.
+1.  **Tambahkan ke `pubspec.yaml`**: Setelah menemukan _package_ yang Kita inginkan di `pub.dev`, salin baris dependensi yang sesuai ke bagian `dependencies` atau `dev_dependencies` di `pubspec.yaml` Kita.
     Misalnya, untuk menggunakan _package_ `http` untuk permintaan HTTP:
     ```yaml
     dependencies:
       http: ^1.1.0 # Tambahkan baris ini
     ```
-2.  **Jalankan `dart pub get`**: Buka terminal di _root_ proyek Anda dan jalankan perintah:
+2.  **Jalankan `dart pub get`**: Buka terminal di _root_ proyek Kita dan jalankan perintah:
     ```bash
     dart pub get
     ```
     Perintah ini akan mengunduh semua dependensi yang tercantum di `pubspec.yaml` dan membuat file `pubspec.lock` (yang mengunci versi dependensi) serta direktori `.dart_tool/package_config.json`.
-3.  **Impor dalam kode**: Setelah dependensi diunduh, Anda dapat mengimpornya di file Dart Anda menggunakan pernyataan `import`:
+3.  **Impor dalam kode**: Setelah dependensi diunduh, Kita dapat mengimpornya di file Dart Kita menggunakan pernyataan `import`:
 
     ```dart
     import 'package:http/http.dart' as http; // Impor package http
@@ -2072,7 +2072,7 @@ dev_dependencies:
 
 #### **4.3. Parsing Argumen Tingkat Lanjut dengan Package `args`**
 
-Membaca argumen mentah dari `List<String> args` bisa jadi rumit jika Anda memiliki banyak _flag_, _option_, atau sub-perintah. _Package_ `args` menyediakan _tool_ yang kuat untuk mem-parsing argumen baris perintah secara profesional dan terstruktur.
+Membaca argumen mentah dari `List<String> args` bisa jadi rumit jika Kita memiliki banyak _flag_, _option_, atau sub-perintah. _Package_ `args` menyediakan _tool_ yang kuat untuk mem-parsing argumen baris perintah secara profesional dan terstruktur.
 
 **Sumber:** [Package: args - pub.dev](https://pub.dev/packages/args)
 
@@ -2084,7 +2084,7 @@ Membaca argumen mentah dari `List<String> args` bisa jadi rumit jika Anda memili
       args: ^2.4.2
     ```
 2.  **Jalankan `dart pub get`**.
-3.  **Gunakan `ArgParser` di kode Anda:**
+3.  **Gunakan `ArgParser` di kode Kita:**
 
 <!-- end list -->
 
@@ -2114,14 +2114,14 @@ void main(List<String> arguments) {
   }
 
   // Mengakses opsi
-  print('Halo, ${argResults['name']}!'); // Output: Halo, [nama_anda]!
+  print('Halo, ${argResults['name']}!'); // Output: Halo, [nama_Kita]!
 
   // Mengakses perintah (commands)
   if (argResults.command != null) {
     final command = argResults.command!;
     if (command.name == 'create') {
       print('Perintah "create" dipanggil.');
-      // Anda bisa menambahkan sub-opsi untuk perintah 'create'
+      // Kita bisa menambahkan sub-opsi untuk perintah 'create'
       // parser.commands['create']?.addOption(...);
     } else if (command.name == 'delete') {
       print('Perintah "delete" dipanggil.');
@@ -2165,7 +2165,7 @@ dart run my_cli_app.dart --help
 
 ##### **File (`File`)**
 
-Merepresentasikan file di sistem file. Anda dapat membaca, menulis, membuat, atau menghapus file.
+Merepresentasikan file di sistem file. Kita dapat membaca, menulis, membuat, atau menghapus file.
 
 ```dart
 import 'dart:io';
@@ -2211,7 +2211,7 @@ void main() async {
 
 ##### **Direktori (`Directory`)**
 
-Merepresentasikan direktori (folder) di sistem file. Anda dapat membuat, menghapus, atau mendaftar isi direktori.
+Merepresentasikan direktori (folder) di sistem file. Kita dapat membuat, menghapus, atau mendaftar isi direktori.
 
 ```dart
 import 'dart:io';
@@ -2269,7 +2269,7 @@ Aplikasi CLI sering perlu berkomunikasi dengan layanan web atau API online. _Pac
       http: ^1.1.0
     ```
 2.  **Jalankan `dart pub get`**.
-3.  **Gunakan `http` di kode Anda:**
+3.  **Gunakan `http` di kode Kita:**
 
 <!-- end list -->
 
@@ -2345,7 +2345,7 @@ Future<void> postExample() async {
 
 #### **4.6. Menjalankan Proses Eksternal**
 
-Aplikasi CLI Dart Anda mungkin perlu berinteraksi dengan program atau _script_ lain yang sudah ada di sistem pengguna (misalnya, `git`, `python`, `npm`, atau perintah `bash`). Dart menyediakan fungsionalitas ini melalui `Process` di `dart:io`.
+Aplikasi CLI Dart Kita mungkin perlu berinteraksi dengan program atau _script_ lain yang sudah ada di sistem pengguna (misalnya, `git`, `python`, `npm`, atau perintah `bash`). Dart menyediakan fungsionalitas ini melalui `Process` di `dart:io`.
 
 **Sumber:** [Processes - Dokumentasi Resmi](https://www.google.com/search?q=https://dart.dev/guides/libraries/library-tour%23processes)
 
@@ -2420,17 +2420,17 @@ Future<void> runCommandWithError() async {
 
 ### **Modul 5: Integrasi Lintas Platform & Bahasa**
 
-Modul ini membahas bagaimana membuat aplikasi Dart Anda berinteraksi dengan lingkungan sistem operasi dan bahasa pemrograman lain, menjadikannya _tool_ yang lebih serbaguna.
+Modul ini membahas bagaimana membuat aplikasi Dart Kita berinteraksi dengan lingkungan sistem operasi dan bahasa pemrograman lain, menjadikannya _tool_ yang lebih serbaguna.
 
 #### **5.1. Kompilasi ke Native Executable**
 
-Salah satu keunggulan Dart adalah kemampuannya untuk dikompilasi menjadi _native executable_ (file biner mandiri). Ini berarti Anda dapat membuat aplikasi CLI yang dapat didistribusikan dan dijalankan di berbagai sistem operasi (Windows, macOS, Linux) tanpa perlu menginstal Dart SDK di mesin tujuan.
+Salah satu keunggulan Dart adalah kemampuannya untuk dikompilasi menjadi _native executable_ (file biner mandiri). Ini berarti Kita dapat membuat aplikasi CLI yang dapat didistribusikan dan dijalankan di berbagai sistem operasi (Windows, macOS, Linux) tanpa perlu menginstal Dart SDK di mesin tujuan.
 
 **Konsep:**
 Dart menggunakan kompilasi _Ahead-Of-Time_ (AOT) untuk menghasilkan kode mesin asli. Ini menghasilkan aplikasi yang sangat cepat dan memiliki _startup time_ yang instan.
 
 **Perintah:**
-Gunakan perintah `dart compile exe` untuk mengkompilasi aplikasi Dart Anda menjadi _executable_.
+Gunakan perintah `dart compile exe` untuk mengkompilasi aplikasi Dart Kita menjadi _executable_.
 
 ```bash
 # Untuk Windows
@@ -2440,16 +2440,16 @@ dart compile exe bin/my_cli_app.dart -o my_app.exe
 dart compile exe bin/my_cli_app.dart -o my_app
 ```
 
-- `bin/my_cli_app.dart`: Jalur ke file Dart utama (fungsi `main` Anda berada di sini).
-- `-o my_app.exe` (atau `my_app`): Nama file _output executable_ Anda.
+- `bin/my_cli_app.dart`: Jalur ke file Dart utama (fungsi `main` Kita berada di sini).
+- `-o my_app.exe` (atau `my_app`): Nama file _output executable_ Kita.
 
-Setelah kompilasi, Anda akan memiliki satu file biner yang dapat didistribusikan. Misalnya, Anda dapat menyalin `my_app.exe` ke mesin Windows lain, dan itu akan berjalan tanpa memerlukan instalasi Dart.
+Setelah kompilasi, Kita akan memiliki satu file biner yang dapat didistribusikan. Misalnya, Kita dapat menyalin `my_app.exe` ke mesin Windows lain, dan itu akan berjalan tanpa memerlukan instalasi Dart.
 
 **Sumber:** [dart compile - Dokumentasi Resmi](https://dart.dev/tools/dart-compile)
 
 #### **5.2. Foreign Function Interface (FFI): Berbicara dengan Bahasa Lain**
 
-**Foreign Function Interface (FFI)** adalah fitur canggih di Dart yang memungkinkan Anda memanggil fungsi yang ditulis dalam bahasa pemrograman lain (seperti C, C++, Rust, Go) langsung dari kode Dart Anda. Ini sangat berguna ketika Anda perlu:
+**Foreign Function Interface (FFI)** adalah fitur canggih di Dart yang memungkinkan Kita memanggil fungsi yang ditulis dalam bahasa pemrograman lain (seperti C, C++, Rust, Go) langsung dari kode Dart Kita. Ini sangat berguna ketika Kita perlu:
 
 - Berinteraksi dengan _library_ sistem operasi yang ada.
 - Menggunakan _library_ pihak ketiga yang ditulis dalam C/C++ yang tidak memiliki _binding_ Dart.
@@ -2457,9 +2457,9 @@ Setelah kompilasi, Anda akan memiliki satu file biner yang dapat didistribusikan
 
 **Konsep Dasar FFI:**
 
-1.  **Dukungan untuk C-compatible ABI**: Dart FFI bekerja dengan _Application Binary Interface_ (ABI) yang kompatibel dengan C. Ini berarti fungsi yang ingin Anda panggil dari bahasa lain harus terekspos dalam format yang dapat dipahami oleh C.
+1.  **Dukungan untuk C-compatible ABI**: Dart FFI bekerja dengan _Application Binary Interface_ (ABI) yang kompatibel dengan C. Ini berarti fungsi yang ingin Kita panggil dari bahasa lain harus terekspos dalam format yang dapat dipahami oleh C.
 2.  **`dart:ffi` Library**: Dart menyediakan pustaka `dart:ffi` untuk berinteraksi dengan kode native.
-3.  **Typedefs**: Anda perlu mendefinisikan _typedef_ Dart dan C untuk fungsi native yang ingin Anda panggil. Ini memberi tahu Dart tentang tanda tangan fungsi (tipe parameter dan tipe kembali) di sisi C.
+3.  **Typedefs**: Kita perlu mendefinisikan _typedef_ Dart dan C untuk fungsi native yang ingin Kita panggil. Ini memberi tahu Dart tentang tanda tangan fungsi (tipe parameter dan tipe kembali) di sisi C.
 4.  **`DynamicLibrary`**: Digunakan untuk memuat _library_ native (misalnya, `.dll` di Windows, `.so` di Linux, `.dylib` di macOS).
 5.  **`lookupFunction`**: Metode untuk mendapatkan pointer ke fungsi native dan kemudian mengkonversinya menjadi fungsi Dart yang dapat dipanggil.
 
@@ -2498,7 +2498,7 @@ const char* greet(const char* name) {
   # cl /LD my_c_lib.c # Untuk MSVC
   ```
 
-Pastikan file `.so`/`.dylib`/`.dll` berada di lokasi yang dapat ditemukan oleh program Dart Anda (misalnya, di samping _executable_ Dart Anda atau di _path_ sistem).
+Pastikan file `.so`/`.dylib`/`.dll` berada di lokasi yang dapat ditemukan oleh program Dart Kita (misalnya, di samping _executable_ Dart Kita atau di _path_ sistem).
 
 **Langkah 3: Tulis Kode Dart**
 
@@ -2546,15 +2546,15 @@ void main() {
 
   // Jangan lupa membebaskan memori native jika dialokasikan secara manual
   // Jika `toNativeUtf8` dialokasikan secara manual (misalnya dengan calloc),
-  // Anda harus membebaskannya. Dalam contoh ini, `toNativeUtf8` mengalokasikan dan
-  // Anda perlu membebaskannya secara manual.
-  // calloc.free(namePointer); // Contoh jika Anda menggunakan calloc
+  // Kita harus membebaskannya. Dalam contoh ini, `toNativeUtf8` mengalokasikan dan
+  // Kita perlu membebaskannya secara manual.
+  // calloc.free(namePointer); // Contoh jika Kita menggunakan calloc
 }
 ```
 
 **Catatan Penting untuk FFI**:
 
-- **Manajemen Memori**: Saat bekerja dengan FFI, Anda bertanggung jawab penuh atas manajemen memori untuk alokasi memori native (misalnya, string C, struktur data). Jika Anda mengalokasikan memori di sisi C atau menggunakan `malloc` atau `calloc` dari Dart, Anda harus membebaskannya untuk mencegah _memory leaks_.
+- **Manajemen Memori**: Saat bekerja dengan FFI, Kita bertanggung jawab penuh atas manajemen memori untuk alokasi memori native (misalnya, string C, struktur data). Jika Kita mengalokasikan memori di sisi C atau menggunakan `malloc` atau `calloc` dari Dart, Kita harus membebaskannya untuk mencegah _memory leaks_.
 - **Keamanan**: Memanggil kode native bisa berbahaya jika tidak dilakukan dengan benar, karena dapat menyebabkan _crash_ aplikasi atau masalah keamanan.
 - **Kompleksitas**: FFI adalah topik yang kompleks. Untuk aplikasi sederhana, mungkin tidak diperlukan. Pelajari lebih lanjut di dokumentasi resmi Dart untuk penggunaan yang aman dan efektif.
 
@@ -2562,7 +2562,7 @@ void main() {
 
 #### **5.3. Strategi Kode Multi-Platform**
 
-Ketika membangun aplikasi CLI yang akan berjalan di berbagai sistem operasi, Anda mungkin menemukan bahwa beberapa fungsionalitas (terutama yang berkaitan dengan I/O atau akses sistem) berbeda antar OS. Dart menyediakan `dart:io.Platform` untuk membantu Anda menyesuaikan kode.
+Ketika membangun aplikasi CLI yang akan berjalan di berbagai sistem operasi, Kita mungkin menemukan bahwa beberapa fungsionalitas (terutama yang berkaitan dengan I/O atau akses sistem) berbeda antar OS. Dart menyediakan `dart:io.Platform` untuk membantu Kita menyesuaikan kode.
 
 **Konsep:**
 `Platform` kelas di `dart:io` menyediakan informasi tentang lingkungan di mana program Dart sedang berjalan, termasuk sistem operasi, arsitektur CPU, dan variabel lingkungan.
@@ -2580,13 +2580,13 @@ void main() {
 
   // Contoh penyesuaian kode berdasarkan OS
   if (Platform.isWindows) {
-    print('Anda menjalankan aplikasi ini di Windows.');
+    print('Kita menjalankan aplikasi ini di Windows.');
     // Lakukan sesuatu yang spesifik untuk Windows
   } else if (Platform.isMacOS) {
-    print('Anda menjalankan aplikasi ini di macOS.');
+    print('Kita menjalankan aplikasi ini di macOS.');
     // Lakukan sesuatu yang spesifik untuk macOS
   } else if (Platform.isLinux) {
-    print('Anda menjalankan aplikasi ini di Linux.');
+    print('Kita menjalankan aplikasi ini di Linux.');
     // Lakukan sesuatu yang spesifik untuk Linux
   } else {
     print('Sistem operasi tidak dikenal.');
@@ -2603,7 +2603,7 @@ void main() {
 }
 ```
 
-Dengan menggunakan `Platform.isWindows`, `Platform.isMacOS`, `Platform.isLinux`, dll., Anda dapat menulis kode kondisional yang dieksekusi hanya pada OS tertentu, memungkinkan Anda untuk membangun aplikasi CLI yang benar-benar lintas platform.
+Dengan menggunakan `Platform.isWindows`, `Platform.isMacOS`, `Platform.isLinux`, dll., Kita dapat menulis kode kondisional yang dieksekusi hanya pada OS tertentu, memungkinkan Kita untuk membangun aplikasi CLI yang benar-benar lintas platform.
 
 **Sumber:** [Platform class in dart:io - API Referensi](https://api.dart.dev/stable/dart-io/Platform-class.html)
 
@@ -2611,7 +2611,7 @@ Dengan menggunakan `Platform.isWindows`, `Platform.isMacOS`, `Platform.isLinux`,
 
 ### **Modul 6: Produksi & Distribusi**
 
-Setelah aplikasi Anda selesai dikembangkan, modul ini akan memandu Anda melalui langkah-langkah penting untuk memastikan kualitasnya dan bagaimana mendistribusikannya kepada pengguna.
+Setelah aplikasi Kita selesai dikembangkan, modul ini akan memandu Kita melalui langkah-langkah penting untuk memastikan kualitasnya dan bagaimana mendistribusikannya kepada pengguna.
 
 #### **6.1. Pengujian (Testing)**
 
@@ -2653,7 +2653,7 @@ double bagi(double a, double b) {
 
 // File: test/kalkulator_test.dart
 import 'package:test/test.dart'; // Impor package test
-import 'package:my_cli_app/kalkulator.dart'; // Sesuaikan path ini dengan project Anda
+import 'package:my_cli_app/kalkulator.dart'; // Sesuaikan path ini dengan project Kita
 
 void main() {
   // Grouping tests
@@ -2684,13 +2684,13 @@ void main() {
 ```
 
 **Cara Menjalankan Tes:**
-Buka terminal di _root_ proyek Anda dan jalankan:
+Buka terminal di _root_ proyek Kita dan jalankan:
 
 ```bash
 dart test
 ```
 
-Ini akan menjalankan semua tes di direktori `test/`. Anda juga bisa menjalankan tes spesifik:
+Ini akan menjalankan semua tes di direktori `test/`. Kita juga bisa menjalankan tes spesifik:
 
 ```bash
 dart test test/kalkulator_test.dart
@@ -2698,11 +2698,11 @@ dart test test/kalkulator_test.dart
 
 ##### **Unit Tests**
 
-Unit test adalah jenis pengujian yang berfokus pada pengujian unit terkecil dari kode Anda, seperti fungsi, metode, atau kelas individual, secara terisolasi. Tujuan utamanya adalah untuk memverifikasi bahwa setiap unit kode berfungsi dengan benar.
+Unit test adalah jenis pengujian yang berfokus pada pengujian unit terkecil dari kode Kita, seperti fungsi, metode, atau kelas individual, secara terisolasi. Tujuan utamanya adalah untuk memverifikasi bahwa setiap unit kode berfungsi dengan benar.
 
 ##### **Test Fixtures dan Setup/Teardown**
 
-Seringkali, tes Anda memerlukan _setup_ awal (misalnya, menginisialisasi objek atau database) sebelum tes dijalankan dan _teardown_ (membersihkan sumber daya) setelah tes selesai. _Package_ `test` menyediakan fungsi `setUp` dan `tearDown` untuk ini.
+Seringkali, tes Kita memerlukan _setup_ awal (misalnya, menginisialisasi objek atau database) sebelum tes dijalankan dan _teardown_ (membersihkan sumber daya) setelah tes selesai. _Package_ `test` menyediakan fungsi `setUp` dan `tearDown` untuk ini.
 
 ```dart
 import 'package:test/test.dart';
@@ -2750,10 +2750,10 @@ void main() {
 
 ##### **Asynchronous Testing**
 
-Ketika Anda menguji kode asinkron (yang menggunakan `Future` atau `Stream`), Anda perlu memastikan tes Anda menunggu operasi asinkron selesai.
+Ketika Kita menguji kode asinkron (yang menggunakan `Future` atau `Stream`), Kita perlu memastikan tes Kita menunggu operasi asinkron selesai.
 
-- Untuk fungsi `async`, Anda dapat menandai fungsi `test` sebagai `async` dan menggunakan `await`.
-- Untuk `Stream`, Anda dapat menggunakan `emitsInOrder` atau `expectLater`.
+- Untuk fungsi `async`, Kita dapat menandai fungsi `test` sebagai `async` dan menggunakan `await`.
+- Untuk `Stream`, Kita dapat menggunakan `emitsInOrder` atau `expectLater`.
 
 <!-- end list -->
 
@@ -2786,21 +2786,21 @@ void main() {
 
 #### **6.2. Struktur Proyek & Praktik Terbaik**
 
-Mengorganisir kode Anda dengan baik sangat penting untuk proyek yang mudah dikelola, dipahami, dan diskalakan.
+Mengorganisir kode Kita dengan baik sangat penting untuk proyek yang mudah dikelola, dipahami, dan diskalakan.
 
 **Struktur Proyek Khas Dart CLI:**
 
 ```
 my_cli_app/
 ├── lib/
-│   ├── src/        # Kode inti aplikasi Anda, modul-modul
+│   ├── src/        # Kode inti aplikasi Kita, modul-modul
 │   │   ├── models/
 │   │   ├── services/
 │   │   └── utils/
 │   ├── my_cli_app.dart # File utama yang mengekspor fungsionalitas
 │   └── kalkulator.dart # Contoh file dari tes sebelumnya
 ├── bin/
-│   └── main.dart   # Titik masuk aplikasi CLI Anda (fungsi main)
+│   └── main.dart   # Titik masuk aplikasi CLI Kita (fungsi main)
 ├── test/
 │   ├── my_feature_test.dart
 │   └── kalkulator_test.dart
@@ -2811,7 +2811,7 @@ my_cli_app/
 ```
 
 **Praktik Terbaik (`Effective Dart: Style`)**
-Dart memiliki panduan gaya resmi yang disebut "Effective Dart" yang sangat direkomendasikan untuk diikuti. Ini mencakup aturan untuk penamaan, format, penggunaan, dan dokumentasi. Mengikuti panduan ini akan membuat kode Anda konsisten dan mudah dibaca oleh developer Dart lainnya.
+Dart memiliki panduan gaya resmi yang disebut "Effective Dart" yang sangat direkomendasikan untuk diikuti. Ini mencakup aturan untuk penamaan, format, penggunaan, dan dokumentasi. Mengikuti panduan ini akan membuat kode Kita konsisten dan mudah dibaca oleh developer Dart lainnya.
 
 Beberapa poin penting:
 
@@ -2831,7 +2831,7 @@ Beberapa poin penting:
 
 #### **6.3. Dokumentasi Kode**
 
-Menulis dokumentasi yang baik untuk kode Anda adalah hal yang krusial, terutama untuk _library_ atau _package_ yang akan digunakan oleh orang lain. Dart memiliki _tool_ bawaan untuk ini.
+Menulis dokumentasi yang baik untuk kode Kita adalah hal yang krusial, terutama untuk _library_ atau _package_ yang akan digunakan oleh orang lain. Dart memiliki _tool_ bawaan untuk ini.
 
 **Konsep:**
 Dart menggunakan komentar dokumentasi (`///` atau `/** ... */`) yang mendukung sintaksis Markdown. _Tool_ `dart doc` dapat mem-parsing komentar ini dan menghasilkan situs web dokumentasi HTML yang lengkap dan mudah dinavigasi.
@@ -2876,41 +2876,41 @@ class User {
 ````
 
 **Menghasilkan Dokumentasi:**
-Setelah Anda menambahkan komentar dokumentasi ke kode Anda, Anda bisa menghasilkan dokumentasi HTML dengan perintah:
+Setelah Kita menambahkan komentar dokumentasi ke kode Kita, Kita bisa menghasilkan dokumentasi HTML dengan perintah:
 
 ```bash
 dart doc
 ```
 
-Ini akan membuat direktori `doc/api/` di _root_ proyek Anda yang berisi semua file HTML. Anda bisa membukanya dengan _browser_ web.
+Ini akan membuat direktori `doc/api/` di _root_ proyek Kita yang berisi semua file HTML. Kita bisa membukanya dengan _browser_ web.
 
 **Manfaat Dokumentasi Otomatis:**
 
 - **Konsisten**: Struktur dan format dokumentasi selalu sama.
 - **Mudah Diperbarui**: Dokumentasi terintegrasi langsung dengan kode, sehingga lebih mudah diperbarui saat kode berubah.
 - **Efisien**: Tidak perlu menulis dokumentasi manual terpisah.
-- **Integrasi IDE**: Banyak IDE dapat menampilkan dokumentasi ini sebagai _tooltip_ saat Anda mengarahkan kursor ke kelas atau fungsi.
+- **Integrasi IDE**: Banyak IDE dapat menampilkan dokumentasi ini sebagai _tooltip_ saat Kita mengarahkan kursor ke kelas atau fungsi.
 
 **Sumber:** [Effective Dart: Documentation - Dokumentasi Resmi](https://dart.dev/effective-dart/documentation)
 
 #### **6.4. Publikasi Package ke Pub.dev**
 
-Jika Anda telah mengembangkan _library_ atau _tool_ yang berguna dan ingin membaginya dengan komunitas Dart lainnya, Anda dapat mempublikasikannya ke `pub.dev`.
+Jika Kita telah mengembangkan _library_ atau _tool_ yang berguna dan ingin membaginya dengan komunitas Dart lainnya, Kita dapat mempublikasikannya ke `pub.dev`.
 
 **Konsep:**
-Pub.dev adalah repositori _package_ resmi Dart. Dengan mempublikasikan _package_ Anda di sana, developer lain dapat dengan mudah menemukannya dan menggunakannya dalam proyek mereka dengan menambahkan entri ke `pubspec.yaml` mereka.
+Pub.dev adalah repositori _package_ resmi Dart. Dengan mempublikasikan _package_ Kita di sana, developer lain dapat dengan mudah menemukannya dan menggunakannya dalam proyek mereka dengan menambahkan entri ke `pubspec.yaml` mereka.
 
 **Prasyarat:**
 
-1.  **Akun Google**: Anda memerlukan akun Google untuk mengautentikasi ke `pub.dev`.
-2.  **Kualitas Kode**: Pastikan kode Anda berkualitas tinggi, memiliki pengujian, dan dokumentasi yang baik.
+1.  **Akun Google**: Kita memerlukan akun Google untuk mengautentikasi ke `pub.dev`.
+2.  **Kualitas Kode**: Pastikan kode Kita berkualitas tinggi, memiliki pengujian, dan dokumentasi yang baik.
 3.  **`pubspec.yaml` yang Lengkap**: Pastikan `name`, `description`, `version`, `homepage` (opsional), dan `repository` (opsional) diisi dengan benar.
-4.  **Lisensi**: Sertakan file `LICENSE` di _root_ proyek Anda.
+4.  **Lisensi**: Sertakan file `LICENSE` di _root_ proyek Kita.
 
 **Langkah-langkah Publikasi:**
 
 1.  **Verifikasi dengan `dart pub publish --dry-run`**:
-    Sebelum benar-benar mempublikasikan, selalu lakukan _dry run_ terlebih dahulu. Ini akan menjalankan semua validasi yang diperlukan dan memberi tahu Anda masalah apa pun tanpa benar-benar mengunggah _package_.
+    Sebelum benar-benar mempublikasikan, selalu lakukan _dry run_ terlebih dahulu. Ini akan menjalankan semua validasi yang diperlukan dan memberi tahu Kita masalah apa pun tanpa benar-benar mengunggah _package_.
 
     ```bash
     dart pub publish --dry-run
@@ -2924,21 +2924,21 @@ Pub.dev adalah repositori _package_ resmi Dart. Dengan mempublikasikan _package_
     - Apakah ada `error` atau `warning` dari _analyzer_.
 
 2.  **Publikasikan dengan `dart pub publish`**:
-    Jika _dry run_ berhasil dan tidak ada masalah, Anda dapat melanjutkan untuk mempublikasikan _package_ Anda:
+    Jika _dry run_ berhasil dan tidak ada masalah, Kita dapat melanjutkan untuk mempublikasikan _package_ Kita:
 
     ```bash
     dart pub publish
     ```
 
-    Anda akan diminta untuk masuk dengan akun Google Anda (jika belum) dan mengkonfirmasi publikasi.
+    Kita akan diminta untuk masuk dengan akun Google Kita (jika belum) dan mengkonfirmasi publikasi.
 
 **Setelah Publikasi:**
 
-- _Package_ Anda akan muncul di `pub.dev` dalam beberapa menit.
-- Developer lain dapat mulai menggunakan _package_ Anda.
-- Anda dapat mengelola _package_ Anda di halaman `pub.dev` Anda.
+- _Package_ Kita akan muncul di `pub.dev` dalam beberapa menit.
+- Developer lain dapat mulai menggunakan _package_ Kita.
+- Kita dapat mengelola _package_ Kita di halaman `pub.dev` Kita.
 
-**Penting:** Setiap kali Anda membuat perubahan pada _package_ dan ingin memperbaruinya di `pub.dev`, Anda harus menaikkan nomor `version` di `pubspec.yaml` Anda (misalnya, dari `1.0.0` ke `1.0.1` atau `1.1.0` atau `2.0.0` sesuai dengan _semantic versioning_).
+**Penting:** Setiap kali Kita membuat perubahan pada _package_ dan ingin memperbaruinya di `pub.dev`, Kita harus menaikkan nomor `version` di `pubspec.yaml` Kita (misalnya, dari `1.0.0` ke `1.0.1` atau `1.1.0` atau `2.0.0` sesuai dengan _semantic versioning_).
 
 **Sumber:** [Publishing packages - Dokumentasi Resmi](https://dart.dev/tools/pub/publishing)
 
@@ -2946,7 +2946,7 @@ Pub.dev adalah repositori _package_ resmi Dart. Dengan mempublikasikan _package_
 
 **Evaluasi dan Penyesuaian Komprehensif:**
 
-File `README.md` yang Anda berikan adalah kerangka kurikulum yang sangat baik dan terstruktur dengan baik. Ini mencakup topik-topik kunci dari dasar hingga tingkat lanjut yang relevan untuk penguasaan Dart CLI.
+File `README.md` yang Kita berikan adalah kerangka kurikulum yang sangat baik dan terstruktur dengan baik. Ini mencakup topik-topik kunci dari dasar hingga tingkat lanjut yang relevan untuk penguasaan Dart CLI.
 
 **Kekuatan:**
 
@@ -2975,12 +2975,12 @@ File `README.md` yang Anda berikan adalah kerangka kurikulum yang sangat baik da
 17. **Link Langsung**: Saya telah memastikan semua link sumber mengarah langsung ke halaman yang relevan (jika ada perubahan dari sumber asli di `README.md`, saya telah memperbaikinya ke link resmi terbaru).
 
 **Akurasi dan Komprehensif**:
-Informasi yang diberikan adalah akurat dan konsisten dengan dokumentasi resmi Dart. Tingkat komprehensif telah ditingkatkan secara signifikan dari kerangka awal. Dengan penambahan contoh kode yang mendetail dan penjelasan konseptual yang mendalam, materi ini dirancang untuk memungkinkan Anda tidak hanya memahami, tetapi juga menguasai teknologi Dart untuk berbagai tujuan, termasuk pengembangan fitur dalam proyek yang kompleks.
+Informasi yang diberikan adalah akurat dan konsisten dengan dokumentasi resmi Dart. Tingkat komprehensif telah ditingkatkan secara signifikan dari kerangka awal. Dengan penambahan contoh kode yang mendetail dan penjelasan konseptual yang mendalam, materi ini dirancang untuk memungkinkan Kita tidak hanya memahami, tetapi juga menguasai teknologi Dart untuk berbagai tujuan, termasuk pengembangan fitur dalam proyek yang kompleks.
 
 **Penyesuaian untuk Pembelajaran yang Kuat**:
-Saya telah mencoba menjelaskan setiap konsep seolah-olah kepada seseorang tanpa latar belakang pemrograman, memecah ide-ide kompleks menjadi bagian-bagian yang lebih kecil dan mudah dicerna, dengan banyak contoh konkret. Hal ini bertujuan agar materi ini menjadi referensi pembelajaran yang kuat dan Anda dapat mencapai pemahaman yang mendalam.
+Saya telah mencoba menjelaskan setiap konsep seolah-olah kepada seseorang tanpa latar belakang pemrograman, memecah ide-ide kompleks menjadi bagian-bagian yang lebih kecil dan mudah dicerna, dengan banyak contoh konkret. Hal ini bertujuan agar materi ini menjadi referensi pembelajaran yang kuat dan Kita dapat mencapai pemahaman yang mendalam.
 
-Saya telah mengaudit semua materi untuk memastikan kelengkapan dan kejelasan. Jika ada bagian yang masih kurang jelas atau Anda memiliki pertanyaan lebih lanjut, jangan ragu untuk bertanya\!
+Saya telah mengaudit semua materi untuk memastikan kelengkapan dan kejelasan. Jika ada bagian yang masih kurang jelas atau Kita memiliki pertanyaan lebih lanjut, jangan ragu untuk bertanya\!
 
 <h3 id="bawah"></h3>
 
