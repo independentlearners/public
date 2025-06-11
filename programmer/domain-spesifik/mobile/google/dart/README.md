@@ -1,3 +1,6 @@
+<details>
+  <summary>📚 Master Kurikulum</summary>
+
 # 🎯 **MASTER DART PROGRAMMING**
 
 ## _The Ultimate Journey from Flutter to Full-Stack Development_
@@ -1222,7 +1225,14 @@ _From mobile apps to full-stack systems - Dart powers everything modern!_
 
 Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir secara teknis, tetapi juga siap menghadapi tantangan industri modern dan masa depan teknologi!
 
+### [Detail Kurikulum][detailkurikulum]
+
 # [Master Flutter][master-flutter]
+
+</details>
+
+<details>
+  <summary>🎯 Goals</summary>
 
 ### Roadmap Dart dan Flutter
 
@@ -1324,6 +1334,11 @@ Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir
 
 ---
 
+</details>
+
+<details>
+  <summary>📌 Roadmap</summary>
+
 # Peta Jalan Pembelajaran (Roadmap)
 
 Memulai dari nol hingga menjadi **Flutter–Firebase fullstack developer** senior (kerja remote internasional) memerlukan pembelajaran bertahap. Tahapan umumnya mencakup: menguasai _fundamental_ pemrograman dan **Dart**, membangun UI dasar dengan Flutter, integrasi API dan backend (Firebase), menguasai _state management_, arsitektur aplikasi, serta praktik lanjut seperti pengujian, CI/CD, dan proyek nyata. Berdasarkan pengalaman pengembang, tahapan ini dijelaskan sebagai berikut:
@@ -1343,6 +1358,11 @@ Tabel estimasi waktu dan fokus tiap tahap:
 | **3. Backend/API**        | \~4 bulan                   | HTTP/JSON (paket http/dio), Firebase Auth, Firestore/RealtimeDB, Storage, dsb            |
 | **4. State & Arsitektur** | \~4–6 bulan                 | State management (Provider/Bloc, dsb), MVC/MVVM/Clean Arch, testing, CI/CD, deploy       |
 | **5. Senior Readiness**   | ≥3 tahun (pengalaman kerja) | Full-stack mastery (Flutter & Firebase end-to-end), arsitektur skala besar, _leadership_ |
+
+</details>
+
+<details>
+  <summary>😎 Keterampilan</summary>
 
 ## Keterampilan Teknis dan Non-Teknis
 
@@ -1370,6 +1390,11 @@ Selain keahlian teknis, pengembang senior harus menguasai kemampuan non-teknis:
 - **Pemecahan Masalah dan Analisis:** Kemampuan analitik untuk mengidentifikasi bug/performance issue dan merancang solusi.
 - **Kepemimpinan dan Mentoring:** Mengarahkan tim (menunjuk arsitektur, melakukan _code review_), membimbing anggota junior, dan mengambil keputusan teknis strategis.
 
+</details>
+
+<details>
+  <summary>📃 Sertifikasi</summary>
+
 ## Sertifikasi dan Proyek Portofolio
 
 ### Sertifikasi
@@ -1390,6 +1415,11 @@ Portofolio projek sangat krusial. Beberapa ide yang direkomendasikan:
 
 Portofolio harus dipajang di **GitHub** (untuk programmer) dengan dokumentasi jelas. Buat situs pribadi atau blog untuk menampilkan demo aplikasi. Sebuah riset menunjukkan portofolio nyata (aplikasi yang sudah dibuat) sangat menentukan saat melamar posisi programmer.
 
+</details>
+
+<details>
+  <summary>🏢 Standar Industri</summary>
+
 ## Standar Industri: Senior Flutter Remote
 
 Untuk posisi _Senior Flutter Developer_ (kerja remote internasional), standar industri umumnya mensyaratkan pengalaman dan kemampuan sebagai berikut:
@@ -1400,6 +1430,11 @@ Untuk posisi _Senior Flutter Developer_ (kerja remote internasional), standar in
 - **Leadership:** Mampu memimpin tim teknis, memberikan arahan arsitektur, serta berkomunikasi dengan stakeholder non-teknis (marketing, product owner). Pekerjaan senior biasanya juga melibatkan mentoring developer lain dan kemampuan decision-making teknis.
 
 Contoh lowongan senior di perusahaan global menekankan: `“Proven experience in Flutter development… strong understanding of Dart… solid understanding of full mobile development lifecycle”`. Kandidat senior juga diharapkan memahami manajemen proyek (Agile/Scrum) dan dapat bekerja otonom dalam tim terdistribusi.
+
+</details>
+
+<details>
+  <summary>🧑‍💻 Remoting</summary>
 
 ## Tantangan dan Tips Mendapatkan Pekerjaan Remote
 
@@ -1425,9 +1460,22 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 **Sumber:** Informasi di atas disusun berdasarkan dokumentasi resmi Flutter/Firebase, pengalaman praktisi dan pakar industri.
 
+</details>
+
+<details>
+  <summary>📊 Others</summary>
+
+### Beberapa yang mungkin menarik
+
+ - **[Dart CLI][dartcli]**
+
+</details>
+
 #
 
 > #### [Domain Spesifik][domain-spesifik]
 
 [domain-spesifik]: ../../../README.md
 [master-flutter]: ../../../../framework/flutter/README.md
+[dartcli]:../dart/materi/cli/README.md
+[detailkurikulum]:../dart/laporan-dart/README.md
