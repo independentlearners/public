@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap C API Integration di Lua][0]**
 
-## [Bagian I: Fondasi dan Konsep Dasar][1]
+## **[Bagian I: Fondasi dan Konsep Dasar][1]**
 
 ### 1. Pengenalan Lua C API
 
@@ -26,7 +26,7 @@
   - Sumber: [Building Lua from Source](https://www.lua.org/manual/5.4/readme.html)
   - Sumber: [Lua Development Setup Guide](https://github.com/luarocks/luarocks/wiki/Installation-instructions-for-Windows)
 
-## Bagian II: Operasi Stack Fundamental
+## **[Bagian II: Operasi Stack Fundamental][2]**
 
 ### 5. Stack Manipulation Dasar
 
@@ -46,7 +46,7 @@
   - Sumber: [Lua Manual - Error Handling in C](https://www.lua.org/manual/5.4/manual.html#4.4)
   - Sumber: [Error Handling Patterns](http://lua-users.org/wiki/ErrorHandlingBetweenLuaAndCplusplus)
 
-## Bagian III: Interaksi Data Fundamental
+## **[Bagian III: Interaksi Data Fundamental][3]**
 
 ### 8. String Manipulation
 
@@ -66,7 +66,7 @@
   - Sumber: [Programming in Lua - Booleans and Nil](https://www.lua.org/pil/2.2.html)
   - Sumber: [Boolean Logic in C API](http://lua-users.org/wiki/BooleansTutorial)
 
-## Bagian IV: Struktur Data Kompleks
+## **[Bagian IV: Struktur Data Kompleks][4]**
 
 ### 11. Table Creation dan Manipulation
 
@@ -92,7 +92,7 @@
   - Sumber: [Programming in Lua - Userdata](https://www.lua.org/pil/28.html)
   - Sumber: [Userdata Best Practices](http://lua-users.org/wiki/UserDataWithPointer)
 
-## Bagian V: Function Calls dan Execution
+## **[Bagian V: Function Calls dan Execution][5]**
 
 ### 15. Calling Lua Functions from C
 
@@ -118,7 +118,7 @@
   - Sumber: [Programming in Lua - Coroutines](https://www.lua.org/pil/9.html)
   - Sumber: [Coroutine C API](http://lua-users.org/wiki/CoroutinesTutorial)
 
-## Bagian VI: Memory Management dan Performance
+## **[Bagian VI: Memory Management dan Performance][6]**
 
 ### 19. Memory Management Strategies
 
@@ -138,7 +138,7 @@
   - Sumber: [Lua Performance Tips](http://lua-users.org/wiki/OptimisationTips)
   - Sumber: [C API Performance Guide](https://stackoverflow.com/questions/tagged/lua+performance+c-api)
 
-## Bagian VII: Advanced Features
+## **[Bagian VII: Advanced Features][7]**
 
 ### 22. Lua State Management
 
@@ -196,7 +196,7 @@
   - Sumber: [lauxlib Best Practices](http://lua-users.org/wiki/LauxlibFunctions)
   - Sumber: [Auxiliary Library Patterns](https://www.codingwiththomas.com/blog/a-lua-c-api-cheat-sheet)
 
-## Bagian VIII: Integration Patterns
+## **[Bagian VIII: Integration Patterns][8]**
 
 ### 30. Embedding Lua dalam C Applications
 
@@ -233,7 +233,7 @@
   - Sumber: [Cross-platform Integration](https://stackoverflow.com/questions/tagged/lua+binding+integration)
   - Sumber: [Language Bridge Patterns](https://github.com/stevedonovan/luabind)
 
-## Bagian IX: Real-World Applications
+## **[Bagian IX: Real-World Applications][9]**
 
 ### 35. Configuration System Implementation
 
@@ -277,7 +277,7 @@
   - Sumber: [Message Queue Integration](https://github.com/openresty/lua-resty-redis)
   - Sumber: [Distributed Systems Patterns](https://stackoverflow.com/questions/tagged/lua+ipc+messaging)
 
-## Bagian X: Testing dan Debugging
+## **[Bagian X: Testing dan Debugging][10]**
 
 ### 41. Unit Testing C API Code
 
@@ -298,7 +298,7 @@
   - Sumber: [Lua Profiling Techniques](http://lua-users.org/wiki/ProfilingLuaCode)
   - Sumber: [Performance Analysis Tools](https://github.com/openresty/stapxx)
 
-## Bagian XI: Advanced Topics
+## **[Bagian XI: Advanced Topics][11]**
 
 ### 35. Bytecode Manipulation
 
@@ -318,7 +318,7 @@
   - Sumber: [Lua and C++ Integration](http://lua-users.org/wiki/CppBindingWithLuaApi)
   - Sumber: [C++ Wrapper Libraries](https://github.com/ThePhD/sol2)
 
-## Bagian XII: Production Considerations
+## **[Bagian XII: Production Considerations][12]**
 
 ### 38. Error Recovery dan Robustness
 
@@ -410,21 +410,15 @@ Kurikulum ini sekarang benar-benar comprehensive dan memberikan pembelajaran yan
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../C-API-Integration/bagian-1/README.md
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../C-API-Integration/bagian-1/README.md#
+[2]: ../C-API-Integration/bagian-2/README.md#
+[3]: ../C-API-Integration/bagian-3/README.md#
+[4]: ../C-API-Integration/bagian-4/README.md#
+[5]: ../C-API-Integration/bagian-5/README.md#
+[6]: ../C-API-Integration/bagian-6/README.md#
+[7]: ../C-API-Integration/bagian-7/README.md#
+[8]: ../C-API-Integration/bagian-8/README.md#
+[9]: ../C-API-Integration/bagian-9/README.md#
+[10]: ../C-API-Integration/bagian-10/README.md#
+[11]: ../C-API-Integration/bagian-11/README.md#
+[12]: ../C-API-Integration/bagian-12/README.md#

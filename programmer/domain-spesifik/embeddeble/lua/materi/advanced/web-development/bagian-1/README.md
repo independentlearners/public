@@ -600,8 +600,8 @@ Setiap panggilan `red:*` (connect, set, get) di atas adalah non-blocking, berkat
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->

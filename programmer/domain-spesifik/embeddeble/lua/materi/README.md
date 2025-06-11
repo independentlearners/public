@@ -8,14 +8,14 @@
 2. **[Control Flow][2]** - 8 minggu, 50 jam ✅
 3. **[Functions][3]** - 6 minggu, 40 jam ✅
 4. **[Strings][4]** - 4 minggu, 30 jam ✅
-5. **[Data Type (Numbers & Math)][5]** - 3 minggu, 25 jam
+5. **[Data Type (Numbers & Math)][5]** - 3 minggu, 25 jam ✅
 6. **[Input/Output][6]** - 3 minggu, 20 jam ✅
 
 ### **INTERMEDIATE (6 topik)**
 
 7. **[Tables][7]** - 7 minggu, 45 jam
 8. **[Modules & Packages][8]** - 4 minggu, 30 jam ✅
-9. **[Pattern Matching][9]** - 4 minggu, 30 jam
+9. **[Pattern Matching][9]** - 4 minggu, 30 jam ✅
 10. **[File System Operations][10]** - 3 minggu, 20 jam ✅
 11. **[Standard Libraries][11]** - 4 minggu, 30 jam ✅
 12. **[Testing & Debugging][12]** - 4 minggu, 25 jam ✅

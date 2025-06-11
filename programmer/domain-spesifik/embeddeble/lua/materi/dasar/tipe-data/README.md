@@ -484,7 +484,7 @@ Kurikulum ini menyediakan coverage yang sangat komprehensif untuk semua aspek ti
 [9]: ../tipe-data/bagian-9/README.md
 [10]: ../tipe-data/bagian-10/README.md
 [11]: ../tipe-data/bagian-11/README.md
-[12]: ../tipe-data/bagian-12/README.md
-[13]: ../tipe-data/bagian-13/README.md
-[14]: ../tipe-data/bagian-14/README.md
-[15]: ../tipe-data/bagian-15/README.md
+[12]: ../tipe-data/bagian-11/README.md
+[13]: ../tipe-data/bagian-11/README.md
+[14]: ../tipe-data/bagian-11/README.md
+[15]: ../tipe-data/bagian-11/README.md

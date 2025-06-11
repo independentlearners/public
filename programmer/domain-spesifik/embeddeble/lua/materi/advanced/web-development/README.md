@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap Web Development dengan OpenResty & Lua][0]**
 
-## **Modul 1: Dasar-dasar dan Konsep Fundamental**
+## **[Modul 1: Dasar-dasar dan Konsep Fundamental][1]**
 
 ### 1.1 Pengenalan OpenResty dan Ekosistemnya
 
@@ -32,7 +32,7 @@
 - **Sumber**: [BookFusion - Programming OpenResty](https://www.bookfusion.com/books/139636-programming-openresty)
 - **Sumber**: [OpenResty Standard Lua Interpreter](https://openresty.org/en/standard-lua-interpreter.html)
 
-## **Modul 2: NGINX Configuration dan Lua Integration**
+## **[Modul 2: NGINX Configuration dan Lua Integration][2]**
 
 ### 2.1 NGINX Configuration untuk OpenResty
 
@@ -58,7 +58,7 @@
 - Performance profiling basics
 - **Sumber**: [OpenResty Official Blog](https://blog.openresty.com/en/)
 
-## **Modul 3: Core APIs dan Libraries**
+## **[Modul 3: Core APIs dan Libraries][3]**
 
 ### 3.1 HTTP Client dan ngx.location.capture
 
@@ -96,7 +96,7 @@
 - lua-resty-worker-events untuk inter-worker communication
 - **Sumber**: [Three Commonly-Used Lua Resty Libraries - API7.ai](https://api7.ai/learning-center/openresty/lua-resty-libraries-in-openresty)
 
-## **Modul 4: Database Integration**
+## **[Modul 4: Database Integration][4]**
 
 ### 4.1 SQL Database Integration
 
@@ -119,7 +119,7 @@
 - Schema validation dan error handling
 - **Sumber**: [lua-cjson Documentation](https://github.com/mpx/lua-cjson)
 
-## **Modul 5: Web API Development**
+## **[Modul 5: Web API Development][5]**
 
 ### 5.1 RESTful API Design dan Implementation
 
@@ -142,7 +142,7 @@
 - CORS handling dan security headers
 - **Sumber**: [lua-resty-limit-traffic](https://github.com/openresty/lua-resty-limit-traffic)
 
-## **Modul 6: Advanced Features**
+## **[Modul 6: Advanced Features][6]**
 
 ### 6.1 Templating dan View Rendering
 
@@ -165,7 +165,7 @@
 - Image processing dan manipulation
 - **Sumber**: [lua-resty-upload](https://github.com/openresty/lua-resty-upload)
 
-## **Modul 7: Custom Modules dan Libraries**
+## **[Modul 7: Custom Modules dan Libraries][7]**
 
 ### 7.1 Creating Custom Lua Modules
 
@@ -415,21 +415,21 @@
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../web-development/bagian-1/README.md#modul-0-pondasi-wajib-sebelum-memulai
+[2]: ../web-development/bagian-1/README.md#modul-1-dasar-dasar-dan-konsep-fundamental
+[3]: ../web-development/bagian-1/README.md#modul-2-nginx-configuration-dan-lua-integration
+[4]: ../web-development/bagian-1/README.md#modul-3-core-apis-dan-libraries
+[5]: ../web-development/bagian-2/README.md#modul-4-database-integration
+[6]: ../web-development/bagian-3/README.md#modul-5-web-api-development
+[7]: ../web-development/bagian-4/README.md#modul-6-advanced-features
+[8]: ../web-development/bagian-5/README.md#modul-7-custom-modules-dan-libraries
+[9]: ../web-development/bagian-6/README.md#
+[10]: ../web-development/bagian-7/README.md#
+[11]: ../web-development/bagian-8/README.md#
+[12]: ../web-development/bagian-9/README.md#
+[13]: ../web-development/bagian-10/README.md#
+[14]: ../web-development/bagian-11/README.md#
+[15]: ../web-development/bagian-12/README.md#
+[16]: ../web-development/bagian-13/README.md#
+[17]: ../web-development/bagian-14/README.md#
+[18]: ../web-development/bagian-15/README.md#

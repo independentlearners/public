@@ -1,29 +1,24 @@
 ### **Daftar Isi**
 
-- [Fase 1: Dasar-Dasar Pemrograman Lua (Minggu 1-3)](#fase-1-dasar-dasar-pemrograman-lua-minggu-1-3)
-  - [1.1 Pengenalan Lua](#11-pengenalan-lua)
-  - [1.2 Sintaks Dasar Lua](#12-sintaks-dasar-lua)
-  - [1.3 Struktur Kontrol](#13-struktur-kontrol)
-  - [1.4 Functions dan Scope](#14-functions-dan-scope)
-- [Fase 2: Struktur Data dan Konsep Lanjutan (Minggu 4-6)](#fase-2-struktur-data-dan-konsep-lanjutan-minggu-4-6)
-  - [2.1 Tables - Struktur Data Utama Lua](#21-tables---struktur-data-utama-lua)
-  - [2.2 Object-Oriented Programming (OOP) dalam Lua](#22-object-oriented-programming-oop-dalam-lua)
-  - [2.3 Coroutines dan Asynchronous Programming](#23-coroutines-dan-asynchronous-programming)
-  - [2.4 Metaprogramming dan Advanced OOP](#24-metaprogramming-dan-advanced-oop)
-  - [2.5 Error Handling dan Debugging](#25-error-handling)
-  - [2.6 File I/O dan Data Persistence](#26-file-io-dan-data-persistence)
-- [Fase 3: LuaJIT dan Performance Optimization (Minggu 7-9)](#fase-3-luajit-dan-performance-optimization-minggu-7-9)
-  - [3.1 LuaJIT Fundamentals](#31-luajit-fundamentals)
-  - [3.2 Foreign Function Interface (FFI)](#32-foreign-function-interface-ffi)
-- [Fase 4: Pengenalan Game Engine - LÖVE 2D (Minggu 10-13)](#fase-4-pengenalan-game-engine---löve-2d-minggu-10-13)
-  - [4.1 Setup dan Dasar LÖVE 2D](#41-setup-dan-dasar-löve-2d)
-  - [4.2 Graphics dan Rendering](#42-graphics-dan-rendering)
-- [Fase 5 & 6: Game Mechanics & Advanced Development](#fase-5--6-game-mechanics--advanced-development)
-  - [5.2 Physics dan Collision Detection](#52-physics-dan-collision-detection)
-  - [5.4 Entity-Component-System (ECS) Pattern](#54-entity-component-system-ecs-pattern)
-  - [6.3 Networking dan Multiplayer](#63-networking-dan-multiplayer)
-- [Fase 7, 8, & 9: Proyek, Industri, dan Spesialisasi](#fase-7-8--9-proyek-industri-dan-spesialisasi)
-- [Rekomendasi Tambahan](#rekomendasi-tambahan)
+- [](#)
+  - [**Deep Dive: Fase 6.1 - Shaders dan GLSL untuk Efek Visual Lanjutan**](#deep-dive-fase-61---shaders-dan-glsl-untuk-efek-visual-lanjutan)
+    - [1. Apa Itu Shader? Memindahkan Beban dari CPU ke GPU](#1-apa-itu-shader-memindahkan-beban-dari-cpu-ke-gpu)
+    - [2. Dua Jenis Shader Utama dalam 2D](#2-dua-jenis-shader-utama-dalam-2d)
+    - [3. Bahasa untuk Shader: Pengenalan GLSL](#3-bahasa-untuk-shader-pengenalan-glsl)
+    - [4. Implementasi Praktis: Efek Riak Air (Water Ripple) di LÖVE](#4-implementasi-praktis-efek-riak-air-water-ripple-di-löve)
+    - [5. Kekuatan yang Telah Anda Buka](#5-kekuatan-yang-telah-anda-buka)
+- [](#-1)
+  - [**Deep Dive: Fase 6.2 - Kecerdasan Buatan (AI) dengan Behavior Trees**](#deep-dive-fase-62---kecerdasan-buatan-ai-dengan-behavior-trees)
+    - [1. Mengapa Kita Butuh Sesuatu yang Lebih Baik dari `if/else`?](#1-mengapa-kita-butuh-sesuatu-yang-lebih-baik-dari-ifelse)
+    - [2. Konsep Inti: Node dan Status Eksekusi](#2-konsep-inti-node-dan-status-eksekusi)
+    - [3. Jenis-Jenis Node: Bata Pembangun Perilaku](#3-jenis-jenis-node-bata-pembangun-perilaku)
+      - [**A. Composite Nodes (Node Alur Kontrol)**](#a-composite-nodes-node-alur-kontrol)
+      - [**B. Leaf Nodes (Node Aksi/Daun)**](#b-leaf-nodes-node-aksidaun)
+    - [4. Visualisasi: AI Penjaga Sederhana](#4-visualisasi-ai-penjaga-sederhana)
+    - [5. Implementasi Konseptual dalam Lua](#5-implementasi-konseptual-dalam-lua)
+    - [6. Keuntungan yang Anda Dapatkan](#6-keuntungan-yang-anda-dapatkan)
+- [](#-2)
+- [](#-3)
 
 ---
 
@@ -707,6 +702,374 @@ LÖVE tidak punya ECS bawaan. Kita akan gunakan library pihak ketiga yang popule
     - Secara konseptual, `MovementSystem` memproses semua data posisi dan kecepatan secara berurutan di memori. Ini jauh lebih efisien untuk cache CPU dibandingkan melompat-lompat antar objek yang berbeda di memori seperti pada pendekatan OOP.
 
 Ini adalah contoh bagaimana Anda harus mendekati setiap topik lanjutan di kurikulum: pahami masalah yang coba diselesaikannya, pecah konsepnya, temukan alat (library) yang relevan, dan bangun prototipe kecil untuk membuktikan pemahaman Anda. Dari sini, Anda bisa mulai menambahkan `HealthSystem`, `CollisionSystem`, dan lainnya untuk membangun game yang kompleks.
+
+#
+
+Setelah membangun fondasi yang kuat dengan arsitektur game (ECS), langkah selanjutnya yang logis dalam perjalanan penguasaan Anda adalah mendalami **Fase 6: Advanced Game Development**. Secara spesifik, kita akan melakukan _deep dive_ pada salah satu topik yang paling berdampak secara visual dan teknis: **Fase 6.1 - Advanced Graphics Techniques: Shaders dan GLSL**.
+
+Menguasai _shader_ adalah gerbang untuk menciptakan game yang tidak hanya berfungsi dengan baik, tetapi juga memiliki tampilan yang unik, modern, dan artistik. Ini adalah skill yang memisahkan game "buatan sendiri" dari game yang terlihat profesional.
+
+---
+
+### **Deep Dive: Fase 6.1 - Shaders dan GLSL untuk Efek Visual Lanjutan**
+
+#### 1. Apa Itu Shader? Memindahkan Beban dari CPU ke GPU
+
+Selama ini, saat Anda menggunakan `love.graphics.draw()` atau `love.graphics.rectangle()`, Anda memberikan perintah sederhana ke CPU. CPU kemudian meneruskannya ke GPU (Graphics Processing Unit) untuk digambar menggunakan serangkaian operasi standar. Anda tidak punya kendali atas _bagaimana_ setiap piksel digambar.
+
+**Shader mengubah ini sepenuhnya.**
+
+- **Definisi:** Shader adalah program kecil yang Anda tulis sendiri, yang berjalan langsung di GPU untuk setiap vertex (titik sudut) dan setiap piksel dari gambar yang Anda render.
+- **Tujuannya:** Memberikan Anda kendali penuh atas posisi akhir setiap titik dan warna akhir setiap piksel.
+- **Mengapa Penting?** GPU dirancang untuk melakukan ribuan kalkulasi matematika sederhana secara paralel. Dengan memindahkan logika visual ke shader, Anda bisa menciptakan efek yang sangat kompleks (seperti pencahayaan dinamis, riak air, blur) dengan performa yang jauh lebih tinggi daripada jika Anda mencoba melakukannya di CPU (misalnya, dengan memanipulasi data gambar piksel per piksel di Lua).
+
+#### 2. Dua Jenis Shader Utama dalam 2D
+
+Dalam konteks LÖVE 2D, Anda akan berinteraksi dengan dua jenis shader utama:
+
+1.  **Vertex Shader:**
+
+    - **Kapan Berjalan?** Berjalan satu kali untuk setiap _titik sudut_ (vertex) dari bentuk yang Anda gambar. (Sebuah persegi panjang punya 4 vertex).
+    - **Tugas Utama:** Menghitung dan menentukan posisi akhir dari vertex tersebut di layar. Di 2D, ini sering digunakan untuk efek seperti "bergoyang" (wobble) atau distorsi skala.
+
+2.  **Pixel Shader (atau Fragment Shader):**
+    - **Kapan Berjalan?** Berjalan satu kali untuk setiap _piksel_ di dalam bentuk tersebut, setelah Vertex Shader selesai.
+    - **Tugas Utama:** Menghitung dan menentukan warna akhir dari piksel tersebut. **Di sinilah sebagian besar keajaiban efek 2D terjadi.** Grayscale, sepia, glow, riak air, penyesuaian warna, semuanya dilakukan di sini.
+
+**Visualisasi Alur Kerja:**
+
+`CPU (Kode Lua)` -> Kirim data (posisi, gambar, variabel) -> `GPU`
+`GPU`:
+
+1.  Jalankan **Vertex Shader** untuk setiap sudut -> Tentukan bentuk akhir.
+2.  Jalankan **Pixel Shader** untuk setiap piksel di dalam bentuk itu -> Tentukan warna akhir setiap piksel.
+3.  Tampilkan di layar.
+
+#### 3. Bahasa untuk Shader: Pengenalan GLSL
+
+Shader tidak ditulis dalam Lua. Mereka ditulis dalam bahasa C-like khusus yang disebut **GLSL (OpenGL Shading Language)**. LÖVE menggunakan varian spesifik yang disebut **GLSL ES 1.0**. Anda tidak perlu menjadi ahli C, tetapi Anda perlu memahami sintaks dasarnya.
+
+**Konsep Kunci GLSL untuk Pixel Shader:**
+
+- `vec2`, `vec3`, `vec4`: Tipe data vektor untuk menyimpan 2, 3, atau 4 angka. `vec4` sangat umum digunakan untuk warna RGBA (Red, Green, Blue, Alpha).
+- `sampler2D`: Merepresentasikan sebuah gambar/tekstur yang Anda kirim dari Lua.
+- `uniform`: Variabel yang nilainya Anda kirim dari kode Lua ke shader. Ini adalah jembatan komunikasi utama. Contoh: `uniform float time;` atau `uniform vec2 lightPosition;`.
+- `texture2D(sampler, coordinates)`: Fungsi bawaan untuk mengambil warna dari sebuah `sampler2D` (gambar) pada koordinat UV tertentu (antara 0.0 dan 1.0).
+- `gl_FragColor`: Variabel global spesial di pixel shader. Warna apa pun yang Anda masukkan ke variabel ini akan menjadi warna akhir piksel di layar.
+
+#### 4. Implementasi Praktis: Efek Riak Air (Water Ripple) di LÖVE
+
+Mari kita buat efek yang membuat gambar terlihat beriak seperti permukaan air. Efek ini dicapai dengan menggeser (offset) koordinat pembacaan gambar menggunakan fungsi sinus.
+
+- **Langkah 1: Setup Proyek**
+  Buat struktur folder seperti ini:
+
+  ```
+  my-shader-game/
+  ├── main.lua          -- Kode LÖVE kita
+  ├── ripple.glsl       -- Kode shader kita
+  └── image.png         -- Gambar apapun untuk diberi efek
+  ```
+
+- **Langkah 2: Kode `main.lua`**
+
+  ```lua
+  --[[
+      main.lua - Menggunakan shader untuk efek visual
+  ]]
+  function love.load()
+      -- Muat gambar yang akan kita beri efek
+      myImage = love.graphics.newImage('image.png')
+
+      -- Muat file shader kita
+      -- LÖVE secara otomatis akan mendeteksi kode vertex dan pixel shader di dalamnya
+      rippleShader = love.graphics.newShader('ripple.glsl')
+
+      -- Variabel untuk mengontrol efek dari waktu ke waktu
+      time = 0
+  end
+
+  function love.update(dt)
+      -- Update variabel waktu setiap frame
+      time = time + dt
+  end
+
+  function love.draw()
+      -- Posisikan gambar di tengah layar
+      local x = (love.graphics.getWidth() - myImage:getWidth()) / 2
+      local y = (love.graphics.getHeight() - myImage:getHeight()) / 2
+
+      -- 1. AKTIFKAN SHADER
+      love.graphics.setShader(rippleShader)
+
+      -- 2. KIRIM VARIABEL (UNIFORM) DARI LUA KE SHADER
+      -- Kita mengirim nilai 'time' kita ke variabel 'uniform float u_time' di GLSL
+      rippleShader:send("u_time", time)
+
+      -- 3. GAMBAR OBJEK SEPERTI BIASA
+      -- Semua yang digambar setelah setShader() akan terpengaruh olehnya
+      love.graphics.draw(myImage, x, y)
+
+      -- 4. NONAKTIFKAN SHADER (PENTING!)
+      -- Agar objek lain yang digambar setelah ini tidak ikut terpengaruh
+      love.graphics.setShader()
+
+      -- Teks ini tidak akan terpengaruh shader
+      love.graphics.print("Teks ini normal.", 10, 10)
+  end
+  ```
+
+- **Langkah 3: Kode Shader `ripple.glsl`**
+
+  Salin dan tempel kode berikut ke dalam file `ripple.glsl`. Kode ini berisi kedua jenis shader (vertex dan pixel).
+
+  ```glsl
+  // ======== VERTEX SHADER ========
+  // (Tugasnya hanya meneruskan data ke pixel shader)
+  // 'attribute' adalah data per-vertex yang dikirim LÖVE secara default
+  attribute vec4 VertexPosition;
+  attribute vec4 VertexColor;
+  attribute vec2 TexelCoord;
+
+  // 'varying' adalah cara kita mengirim data dari vertex ke pixel shader
+  varying vec4 v_color;
+  varying vec2 v_texCoord;
+
+  // LÖVE mengirimkan ini secara otomatis
+  uniform mat4 TransformMatrix;
+  uniform mat4 ProjectionMatrix;
+
+  vec4 position(mat4 transform_projection, vec4 vertex_position) {
+      return transform_projection * vertex_position;
+  }
+
+  // ======== PIXEL SHADER ========
+  // (Di sinilah keajaiban terjadi)
+  // 'varying' diterima dari vertex shader
+  varying vec4 v_color;
+  varying vec2 v_texCoord;
+
+  // 'uniform' diterima dari kode Lua (love.graphics.send)
+  uniform sampler2D MainTex; // Gambar utama kita (LÖVE mengirim ini secara otomatis)
+  uniform float u_time; // Variabel waktu yang kita kirim dari Lua
+
+  vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+      // Buat salinan koordinat tekstur agar bisa kita modifikasi
+      vec2 uv = v_texCoord;
+
+      // Hitung pergeseran (offset) menggunakan fungsi sinus
+      // Ini menciptakan gelombang horizontal dan vertikal
+      float horizontal_wave = sin(uv.y * 20.0 + u_time * 5.0) * 0.02;
+      float vertical_wave = cos(uv.x * 20.0 + u_time * 5.0) * 0.02;
+
+      // Terapkan pergeseran ke koordinat tekstur
+      uv.x += horizontal_wave;
+      uv.y += vertical_wave;
+
+      // Ambil warna piksel dari gambar asli menggunakan koordinat yang sudah dimodifikasi
+      vec4 final_color = texture2D(MainTex, uv);
+
+      // Kembalikan warna akhir, dikalikan dengan warna vertex (untuk transparansi, dll.)
+      return final_color * v_color;
+  }
+  ```
+
+**Jika Anda menjalankan proyek LÖVE ini, Anda akan melihat gambar Anda meliuk-liuk dan berdistorsi seolah-olah berada di bawah permukaan air.**
+
+#### 5. Kekuatan yang Telah Anda Buka
+
+Dengan memahami alur kerja ini, Anda kini bisa:
+
+- Membuat efek pencahayaan 2D dengan mengirim posisi cahaya sebagai `uniform`.
+- Membuat efek grayscale dengan mengambil rata-rata komponen R, G, B dari warna piksel.
+- Membuat transisi layar (seperti _wipe_ atau _dissolve_) dengan menerapkan shader ke seluruh layar.
+- Membuat efek _CRT scanlines_, _blur_, _shockwave_, dan ratusan efek visual lainnya.
+
+Ini adalah langkah besar menuju penguasaan pengembangan game. Anda tidak lagi dibatasi oleh fungsi gambar bawaan, tetapi dapat menciptakan estetika visual yang unik sesuai dengan visi artistik Anda.
+
+#
+
+Kita telah membahas arsitektur data dengan **ECS** dan presentasi visual dengan **Shaders**. Sekarang, kita akan melakukan _deep dive_ ke dalam "otak" dari entitas game Anda: **Fase 6.2 - AI dan Game Logic**, dengan fokus pada teknik modern yang sangat kuat dan modular: **Behavior Trees (Pohon Perilaku)**.
+
+Menguasai Behavior Trees (BTs) akan memungkinkan Anda untuk membangun AI yang kompleks, dapat diprediksi, dan mudah untuk di-debug serta diperluas, jauh melampaui apa yang bisa dicapai dengan rantai `if-elseif-else` yang rumit.
+
+---
+
+### **Deep Dive: Fase 6.2 - Kecerdasan Buatan (AI) dengan Behavior Trees**
+
+#### 1. Mengapa Kita Butuh Sesuatu yang Lebih Baik dari `if/else`?
+
+Untuk AI sederhana, Anda mungkin menulis sesuatu seperti ini di dalam `update` musuh:
+
+```lua
+if canSeePlayer(self) then
+    self:chasePlayer()
+elseif self.health < 20 then
+    self:flee()
+else
+    self:patrol()
+end
+```
+
+Ini bekerja, tetapi cepat menjadi "Spaghetti Code". Bagaimana jika Anda ingin menambahkan kondisi "jika kehabisan amunisi, cari amunisi"? Atau "jika mendengar suara, selidiki"? Rantai `if/else` menjadi sangat panjang, sulit dibaca, dan sulit dikelola.
+
+Alternatif lain adalah **Finite State Machine (FSM)**, di mana AI berada dalam satu state (misalnya, `PATROL`, `CHASE`, `ATTACK`) dan bisa bertransisi ke state lain. Ini lebih baik, tetapi bisa menderita **"State Explosion"**. Untuk setiap state, Anda harus mendefinisikan transisi ke semua state lain yang memungkinkan, yang bisa menjadi sangat rumit.
+
+**Behavior Trees menawarkan solusi yang lebih baik:** Mereka bersifat hierarkis dan modular, memungkinkan Anda membangun perilaku kompleks dari "bata-bata" logika yang sederhana dan dapat digunakan kembali.
+
+#### 2. Konsep Inti: Node dan Status Eksekusi
+
+Sebuah Behavior Tree adalah pohon yang terdiri dari berbagai jenis **node**. Pohon ini "dijalankan" dari atas ke bawah pada setiap frame (atau interval waktu tertentu) untuk memutuskan tindakan apa yang harus diambil oleh AI.
+
+Setiap node yang dijalankan akan mengembalikan salah satu dari tiga status:
+
+- `SUCCESS` (Sukses): Tugas node telah selesai dengan sukses.
+- `FAILURE` (Gagal): Tugas node tidak dapat diselesaikan.
+- `RUNNING` (Berjalan): Tugas node membutuhkan lebih dari satu frame untuk selesai (misalnya, berjalan ke suatu titik).
+
+Status ini sangat penting karena menentukan bagaimana node induk akan melanjutkan eksekusi pohon.
+
+#### 3. Jenis-Jenis Node: Bata Pembangun Perilaku
+
+Ada dua kategori utama node: **Composite Nodes** (yang mengontrol alur) dan **Leaf Nodes** (yang melakukan aksi).
+
+##### **A. Composite Nodes (Node Alur Kontrol)**
+
+Ini adalah cabang-cabang di pohon Anda. Mereka tidak melakukan aksi sendiri, tetapi mengarahkan alur eksekusi ke anak-anak mereka berdasarkan aturan tertentu.
+
+1.  **Sequence (Urutan | Simbol: `->`)**
+
+    - **Tugas:** Menjalankan anak-anaknya secara berurutan, dari kiri ke kanan.
+    - **Aturan:**
+      - Jika seorang anak mengembalikan `FAILURE`, Sequence akan segera berhenti dan mengembalikan `FAILURE`. Ia tidak akan mencoba anak berikutnya.
+      - Jika seorang anak mengembalikan `RUNNING`, Sequence akan segera berhenti dan mengembalikan `RUNNING`. Pada frame berikutnya, ia akan melanjutkan dari anak yang sama.
+      - Hanya jika **semua** anaknya mengembalikan `SUCCESS`, maka Sequence akan mengembalikan `SUCCESS`.
+    - **Analogi:** Mengikuti resep masakan. "Ambil mangkuk" -> "Masukkan tepung" -> "Aduk". Jika Anda gagal mengambil mangkuk, Anda tidak melanjutkan ke langkah berikutnya.
+
+2.  **Selector (Pilihan | Simbol: `?`)**
+    - **Tugas:** Mencoba setiap anaknya secara berurutan sampai salah satunya berhasil.
+    - **Aturan:**
+      - Jika seorang anak mengembalikan `SUCCESS`, Selector akan segera berhenti dan mengembalikan `SUCCESS`. Ia tidak akan mencoba anak berikutnya.
+      - Jika seorang anak mengembalikan `RUNNING`, Selector akan segera berhenti dan mengembalikan `RUNNING`. Pada frame berikutnya, ia akan melanjutkan dari anak yang sama.
+      - Hanya jika **semua** anaknya mengembalikan `FAILURE`, maka Selector akan mengembalikan `FAILURE`.
+    - **Analogi:** Mencari kunci. "Cek saku?" (Gagal) -> "Cek tas?" (Gagal) -> "Cek meja?" (Sukses! Berhenti mencari).
+
+##### **B. Leaf Nodes (Node Aksi/Daun)**
+
+Ini adalah ujung dari cabang pohon, tempat pekerjaan sebenarnya dilakukan.
+
+1.  **Action (Aksi)**
+
+    - **Tugas:** Melakukan sesuatu di dalam dunia game. Contoh: `AttackPlayer()`, `MoveToLocation()`, `PlaySound('Aku melihatmu!')`.
+    - **Status Kembali:** Bisa `SUCCESS` (serangan selesai), `FAILURE` (pemain di luar jangkauan serangan), atau `RUNNING` (sedang dalam perjalanan ke suatu lokasi).
+
+2.  **Condition (Kondisi)**
+    - **Tugas:** Memeriksa keadaan dunia game. Ini adalah versi `if` dari Behavior Tree. Contoh: `IsPlayerInRange()`, `IsHealthLow()`, `HasAmmunition()`.
+    - **Status Kembali:** Hanya `SUCCESS` (jika kondisi benar) atau `FAILURE` (jika kondisi salah). Mereka tidak pernah mengembalikan `RUNNING`.
+
+#### 4. Visualisasi: AI Penjaga Sederhana
+
+Mari kita rancang AI untuk penjaga yang berpatroli, tetapi akan mengejar dan menyerang pemain jika ia berada dalam jangkauan.
+
+```
+          [? Selector: Logika Utama]
+         /                          \
+        /                            \
+[-> Sequence: Serang Pemain]      [-> Sequence: Patroli]
+ |-----------------------------|      |--------------------------|
+/              |               \     /                          \
+[? IsPlayerInAttackRange?] [ChasePlayer] [AttackPlayer] [? HasPatrolPoint?] [MoveToPatrolPoint]
+```
+
+**Bagaimana pohon ini dibaca dari atas ke bawah:**
+
+1.  **Selector Utama (?)**: Coba opsi pertama, yaitu `Sequence: Serang Pemain`.
+2.  **Sequence Serang (->)**:
+    - Coba anak pertamanya, `Condition: IsPlayerInAttackRange?`.
+    - **Jika Gagal** (pemain terlalu jauh), maka `Sequence Serang` ini gagal. Selector Utama sekarang akan mencoba opsi keduanya, yaitu `Sequence: Patroli`.
+    - **Jika Sukses** (pemain cukup dekat), `Sequence Serang` melanjutkan ke anak keduanya, `Action: ChasePlayer`. Jika `ChasePlayer` masih berjalan (`RUNNING`), seluruh pohon akan mengembalikan `RUNNING` dan mencoba lagi dari node `ChasePlayer` pada frame berikutnya. Jika sudah sampai (`SUCCESS`), ia melanjutkan ke `Action: AttackPlayer`.
+3.  **Sequence Patroli (->)**: Ini hanya akan berjalan jika seluruh `Sequence Serang` gagal. Ia akan mencari titik patroli baru dan berjalan ke sana.
+
+#### 5. Implementasi Konseptual dalam Lua
+
+Anda tidak perlu membuat framework BT dari nol (banyak library tersedia), tetapi memahami cara kerjanya sangatlah penting.
+
+```lua
+-- Kerangka kerja node dasar (sangat disederhanakan)
+local Node = {}
+function Node:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+-- Kerangka untuk Aksi
+local Action = Node:new()
+function Action:new(actionFunc)
+    local o = Node:new{ run = actionFunc }
+    return o
+end
+
+-- Kerangka untuk Sequence
+local Sequence = Node:new()
+function Sequence:new(children)
+    local o = Node:new{ children = children }
+    function o:run(agent)
+        for _, child in ipairs(self.children) do
+            local status = child:run(agent)
+            if status == "FAILURE" or status == "RUNNING" then
+                return status -- Hentikan sequence
+            end
+        end
+        return "SUCCESS" -- Semua anak berhasil
+    end
+    return o
+end
+
+-- (Kerangka untuk Selector akan serupa tetapi dengan logika yang berbeda)
+
+-- --- Implementasi Aksi dan Kondisi untuk AI kita ---
+function IsPlayerInRange(agent)
+    -- Logika untuk mengecek jarak pemain...
+    if distance(agent, player) < agent.attackRange then
+        return "SUCCESS"
+    else
+        return "FAILURE"
+    end
+end
+
+function AttackPlayer(agent)
+    -- Logika untuk menyerang pemain...
+    agent:attack()
+    return "SUCCESS"
+end
+
+-- --- Membangun Pohon untuk AI Tertentu ---
+local guard_ai_tree = Sequence:new({
+    Action:new(IsPlayerInRange),
+    Action:new(AttackPlayer)
+})
+
+
+-- --- Di dalam loop update AI ---
+function Guard:update(dt)
+    -- Jalankan pohon perilaku untuk memutuskan apa yang harus dilakukan
+    guard_ai_tree:run(self)
+end
+```
+
+Kode di atas adalah ilustrasi. Library BT yang sebenarnya akan mengelola status `RUNNING` dengan lebih baik.
+
+#### 6. Keuntungan yang Anda Dapatkan
+
+- **Modularitas & Reusabilitas:** Node `MoveTo` dapat digunakan untuk patroli, mengejar pemain, atau melarikan diri. Anda hanya perlu menempatkannya di cabang yang berbeda dari pohon.
+- **Skalabilitas:** Ingin menambahkan perilaku "melarikan diri saat sekarat"? Cukup tambahkan `Selector` baru di paling atas dengan cabang pertama `Sequence: Lari Saat Sekarat` dan cabang kedua adalah seluruh logika lama Anda. Anda tidak perlu menyentuh kode yang sudah ada.
+- **Mudah Di-debug:** Karena sifatnya yang visual dan hierarkis, Anda bisa melacak dengan tepat di mana keputusan AI gagal, hanya dengan melihat node mana yang mengembalikan `FAILURE`.
+
+Dengan menguasai ECS untuk _apa_ itu entitas, Shaders untuk _bagaimana_ mereka terlihat, dan Behavior Trees untuk _mengapa_ mereka melakukan apa yang mereka lakukan, Anda telah membangun tiga pilar utama yang dibutuhkan untuk menciptakan game yang kompleks dan dinamis.
+
+#
 
 #
 

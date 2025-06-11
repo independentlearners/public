@@ -1,11 +1,15 @@
-# **[Fase 1: Dasar-Dasar Pemrograman Lua (Minggu 1-3)][0]**
+# **[Kurikulum Game Development][0]**
+
+## **[Fase 1: Dasar-Dasar Pemrograman Lua (Minggu 1-3)][1]**
 
 ### 1.1 Pengenalan Lua
 
 - **Apa itu Lua dan Sejarahnya**
   - Sumber: [What is Lua – Complete Guide](https://gamedevacademy.org/what-is-lua/)
 - **Instalasi dan Setup Environment**
+
   - Sumber: [Lua Programming Language Tutorial](https://gamedevacademy.org/lua-programming-language-tutorial-complete-guide/)
+
 - **Filosofi dan Keunggulan Lua dalam Game Development**
   - Sumber: [The Beginner's Guide to Lua for Game Development](https://squidgod.itch.io/lua-for-game-development)
 
@@ -400,7 +404,7 @@
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
+[1]: ../game-development/materi/README.md
 [2]: ../
 [3]: ../
 [4]: ../
