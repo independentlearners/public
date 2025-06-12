@@ -62,11 +62,6 @@
     "padding-left: 20px">
       <ul>
         <li>
-        <a href="../framework/flutter/README.md"
-        >Flutter
-        </a>
-        </li>
-        <li>
         <a href="../domain-spesifik/mobile/google/dart/README.md/#1-pondasi-dart"
         >Dart
         </a>
