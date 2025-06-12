@@ -48,11 +48,11 @@
 | 022  | [Late Variables][late-variables]             | [Late Variables](https://dart.dev/language/variables#late-variables)                        |
 | 023  | [Final vs Const][final-const]                | [Final and Const](https://dart.dev/language/variables#final-and-const)                      |
 | 024  | [Boolean Operations][boolean-operations]     | [Booleans](https://dart.dev/language/built-in-types#booleans)                               |
-| 025  | [Number System][number-system]                                | [Numbers](https://dart.dev/language/built-in-types#numbers)                                 |
-| 026  | [String Fundamentals][string-fundamentals]                          | [Strings](https://dart.dev/language/built-in-types#strings)                                 |
-| 027  | String Interpolation                         | [String Interpolation](https://dart.dev/language/built-in-types#string-interpolation)       |
-| 028  | Raw Strings                                  | [Raw Strings](https://dart.dev/language/built-in-types#raw-strings)                         |
-| 029  | Multi-line Strings                           | [Multi-line Strings](https://dart.dev/language/built-in-types#multiline-strings)            |
+| 025  | [Number System][number-system]               | [Numbers](https://dart.dev/language/built-in-types#numbers)                                 |
+| 026  | [String Fundamentals][string-fundamentals]   | [Strings](https://dart.dev/language/built-in-types#strings)                                 |
+| 027  | [String Interpolation][string-interpolation] | [String Interpolation](https://dart.dev/language/built-in-types#string-interpolation)       |
+| 028  | [Raw Strings][raw-strings]                   | [Raw Strings](https://dart.dev/language/built-in-types#raw-strings)                         |
+| 029  | [Multi-line Strings][multi-line-strings]     | [Multi-line Strings](https://dart.dev/language/built-in-types#multiline-strings)            |
 | 030  | String Methods                               | [String Properties](https://api.dart.dev/stable/dart-core/String-class.html)                |
 | 031  | Symbol Type                                  | [Symbols](https://dart.dev/language/built-in-types#symbols)                                 |
 | 032  | Runes and Unicode                            | [Runes and Graphemes](https://dart.dev/language/built-in-types#runes-and-grapheme-clusters) |
@@ -1490,9 +1490,9 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [boolean-operations]: ../dart/kursus/materi/modul-2/
 [number-system]: ../dart/kursus/materi/modul-2/
 [string-fundamentals]: ../dart/kursus/materi/modul-2/
-[13]: ../dart/kursus/materi/modul-2/
-[14]: ../dart/kursus/materi/modul-2/
-[15]: ../dart/kursus/materi/modul-2/
+[string-interpolation]: ../dart/kursus/materi/modul-2/
+[raw-strings]: ../dart/kursus/materi/modul-2/
+[multi-line-strings]: ../dart/kursus/materi/modul-2/
 [16]: ../dart/kursus/materi/modul-2/
 [17]: ../dart/kursus/materi/modul-2/
 [18]: ../dart/kursus/materi/modul-2/
