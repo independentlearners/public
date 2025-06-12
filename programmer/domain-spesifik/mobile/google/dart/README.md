@@ -43,7 +43,7 @@
 | 017  | Comments               | [Documentation Comments](https://dart.dev/language/comments)                                |
 | 018  | Variables & Constants  | [Variables](https://dart.dev/language/variables)                                            |
 | 019  | [Keywords][keywoard]               | [Keywords Reference](https://dart.dev/language/keywords)                                    |
-| 020  | Typing System          | [Type System](https://dart.dev/language/type-system)                                        |
+| 020  | [Typing System][typing-system]          | [Type System](https://dart.dev/language/type-system)                                        |
 | 021  | Null Safety Deep Dive  | [Understanding Null Safety](https://dart.dev/null-safety/understanding-null-safety)         |
 | 022  | Late Variables         | [Late Variables](https://dart.dev/language/variables#late-variables)                        |
 | 023  | Final vs Const         | [Final and Const](https://dart.dev/language/variables#final-and-const)                      |
@@ -1481,7 +1481,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [detailkurikulum]: ../dart/laporan-dart/README.md
 [1]: ../dart/kursus/materi/fondation/README.md
 [keywoard]: ../dart/kursus/materi/modul-2/keywoards/README.md
-[3]: ../
+[typing-system]: ../dart/kursus/materi/modul-2/typing-system/README.md
 [4]: ../
 [5]: ../
 [6]: ../

@@ -1,6 +1,6 @@
-### Daftar Isi
-
-- [Daftar Isi](#daftar-isi)
+<details>
+  <summary>📃 Daftar Isi</summary>
+  
 - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
   - [Analogi Sederhana](#analogi-sederhana)
   - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
@@ -48,6 +48,8 @@
 - [7. Terminologi Kunci](#7-terminologi-kunci)
 - [8. Ringkasan](#8-ringkasan)
 - [9. Sumber Referensi](#9-sumber-referensi)
+
+</details>
 
 ---
 
