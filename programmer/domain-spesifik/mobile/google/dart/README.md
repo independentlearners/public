@@ -11,7 +11,7 @@
 
 ---
 
-## 🌟 **FOUNDATION LEVEL**
+## 🌟 **[FOUNDATION LEVEL][1]**
 
 ### 🚀 **Module 1: Environment & Ecosystem**
 
@@ -35,14 +35,14 @@
 
 ---
 
-### 💎 **Module 2: Basic Syntax & Data Types**
+### 💎 **[Module 2: Basic Syntax & Data Types][2]**
 
 | Code | Topic                  | Official Reference                                                                          |
 | ---- | ---------------------- | ------------------------------------------------------------------------------------------- |
 | 016  | Syntax Fundamentals    | [Language Tour](https://dart.dev/language)                                                  |
 | 017  | Comments               | [Documentation Comments](https://dart.dev/language/comments)                                |
 | 018  | Variables & Constants  | [Variables](https://dart.dev/language/variables)                                            |
-| 019  | Keywords               | [Keywords Reference](https://dart.dev/language/keywords)                                    |
+| 019  | [Keywords][keywoard]               | [Keywords Reference](https://dart.dev/language/keywords)                                    |
 | 020  | Typing System          | [Type System](https://dart.dev/language/type-system)                                        |
 | 021  | Null Safety Deep Dive  | [Understanding Null Safety](https://dart.dev/null-safety/understanding-null-safety)         |
 | 022  | Late Variables         | [Late Variables](https://dart.dev/language/variables#late-variables)                        |
@@ -64,7 +64,7 @@
 
 ---
 
-### ⚡ **Module 3: Operators & Expressions**
+### ⚡ **[Module 3: Operators & Expressions][3]**
 
 | Code | Topic                   | Official Reference                                                                          |
 | ---- | ----------------------- | ------------------------------------------------------------------------------------------- |
@@ -1467,7 +1467,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 ### Beberapa yang mungkin menarik
 
- - **[Dart CLI][dartcli]**
+- **[Dart CLI][dartcli]**
 
 </details>
 
@@ -1477,5 +1477,64 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 [domain-spesifik]: ../../../README.md
 [master-flutter]: ../../../../framework/flutter/README.md
-[dartcli]:../dart/materi/cli/README.md
-[detailkurikulum]:../dart/laporan-dart/README.md
+[dartcli]: ../dart/materi/cli/README.md
+[detailkurikulum]: ../dart/laporan-dart/README.md
+[1]: ../dart/kursus/materi/fondation/README.md
+[keywoard]: ../dart/kursus/materi/modul-2/keywoards/README.md
+[3]: ../
+[4]: ../
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../
+[19]: ../
+[20]: ../
+[21]: ../
+[22]: ../
+[23]: ../
+[24]: ../
+[25]: ../
+[26]: ../
+[27]: ../
+[28]: ../
+[29]: ../
+[30]: ../
+[31]: ../
+[32]: ../
+[33]: ../
+[34]: ../
+[35]: ../
+[36]: ../
+[37]: ../
+[38]: ../
+[39]: ../
+[40]: ../
+[41]: ../
+[42]: ../
+[43]: ../
+[44]: ../
+[45]: ../
+[46]: ../
+[47]: ../
+[48]: ../
+[49]: ../
+[50]: ../
+[51]: ../
+[52]: ../
+[53]: ../
+[54]: ../
+[55]: ../
+[56]: ../
+[57]: ../
+[58]: ../
+[59]: ../

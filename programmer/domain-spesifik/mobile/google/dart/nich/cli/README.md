@@ -115,10 +115,6 @@
 </div>
 </details>
 
-##### Mari kita mulai penjelasannya secara rinci.
-
----
-
 ### **Modul 1: Fondasi Absolut - Dari Nol ke Program Pertama Kita**
 
 Modul ini akan membangun pemahaman fundamental tentang pemrograman, Dart, dan lingkungan kerja CLI.
@@ -2993,7 +2989,7 @@ Saya telah mengaudit semua materi untuk memastikan kelengkapan dan kejelasan. Ji
 > - **[Domain Spesifik][domain]**
 
 [domain]: ../../../../../README.md
-[kurikulum]: ../../../README.md
+[kurikulum]: ../../README.md
 
 <!-- [selanjutnya]: ../bagian-2/README.md -->
 
