@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap Embedded Systems dengan Lua][0]**
 
-## **Fase 1: Dasar-dasar Lua Programming**
+## **[Fase 1: Dasar-dasar Lua Programming][1]**
 
 ### 1.1 Pengenalan Lua
 
@@ -589,7 +589,7 @@ Kurikulum ini dirancang untuk memberikan pemahaman komprehensif tentang pengguna
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#advanced-13-topik
-[1]: ../
+[1]: ../embedded-systems/bagian-1/README.md
 [2]: ../
 [3]: ../
 [4]: ../

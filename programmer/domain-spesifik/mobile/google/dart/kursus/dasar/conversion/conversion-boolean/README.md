@@ -89,6 +89,18 @@ void main() {
 }
 ```
 
+**Contoh perbandingan string yang lain:**
+
+```dart
+  var inputStrin = 'oke';
+  var inputBoolean = inputStrin == 'oke';
+  print(inputBoolean);
+
+  // Output: true
+```
+
+Pada contoh ini output akan menghasilkan nilai boolean ketika diantara dua string berbeda
+
 ### Membandingkan Boolean
 
 ```dart

@@ -32,7 +32,7 @@
 - Pattern compilation dan caching
 - **Sumber**: [Lua Source Code Analysis](https://github.com/lua/lua/blob/master/lstrlib.c)
 
-## BAGIAN II: ADVANCED PATTERN MATCHING
+## [BAGIAN II: ADVANCED PATTERN MATCHING][2]
 
 ### 2.1 Captures - Komprehensif
 
@@ -68,7 +68,7 @@
 - Debugging complex patterns
 - **Sumber**: [Lua Users Wiki - Error Handling](http://lua-users.org/wiki/ErrorHandling)
 
-## BAGIAN III: STRING MANIPULATION PATTERNS
+## [BAGIAN III: STRING MANIPULATION PATTERNS][3]
 
 ### 3.1 String Substitution - Master Level
 
@@ -104,7 +104,7 @@
 - Multi-byte character handling
 - **Sumber**: [Lua UTF-8 Library](https://www.lua.org/manual/5.3/manual.html#6.5)
 
-## BAGIAN IV: LPEG - PARSING EXPRESSION GRAMMARS
+## [BAGIAN IV: LPEG - PARSING EXPRESSION GRAMMARS][4]
 
 ### 4.1 LPeg Fundamentals
 
@@ -152,7 +152,7 @@
 - Data format converters
 - **Sumber**: [MoonScript Implementation](http://moonscript.org/)
 
-## BAGIAN V: XML DAN STRUCTURED DATA PARSING
+## [BAGIAN V: XML DAN STRUCTURED DATA PARSING][5]
 
 ### 5.1 XML Parsing dengan Patterns
 
@@ -185,7 +185,7 @@
 - File format analysis
 - **Sumber**: [Lua Struct Library](http://www.inf.puc-rio.br/~roberto/struct/)
 
-## BAGIAN VI: METAPROGRAMMING DENGAN PATTERNS
+## [BAGIAN VI: METAPROGRAMMING DENGAN PATTERNS][6]
 
 ### 6.1 Dynamic Pattern Generation
 
@@ -218,7 +218,7 @@
 - AST manipulation
 - **Sumber**: [Lua Templating Systems](http://lua-users.org/wiki/TemplateEngines)
 
-## BAGIAN VII: ADVANCED PROGRAMMING PATTERNS
+## [BAGIAN VII: ADVANCED PROGRAMMING PATTERNS][7]
 
 ### 7.1 Coroutine Patterns Lanjutan
 
@@ -259,7 +259,7 @@
 - Resource management
 - **Sumber**: [Lua Memory Management](http://lua-users.org/wiki/GarbageCollection)
 
-## BAGIAN VIII: PERFORMANCE DAN OPTIMIZATION
+## [BAGIAN VIII: PERFORMANCE DAN OPTIMIZATION][8]
 
 ### 8.1 Pattern Performance Analysis
 
@@ -293,7 +293,7 @@
 - Profile-guided optimization
 - **Sumber**: [LuaJIT Performance Guide](http://luajit.org/performance.html)
 
-## BAGIAN IX: REAL-WORLD APPLICATIONS
+## [BAGIAN IX: REAL-WORLD APPLICATIONS][9]
 
 ### 9.1 Web Development Patterns
 
@@ -337,7 +337,7 @@
 - Process monitoring
 - **Sumber**: [Lua System Programming](http://lua-users.org/wiki/SystemProgramming)
 
-## BAGIAN X: C API INTEGRATION
+## [BAGIAN X: C API INTEGRATION][10]
 
 ### 10.1 C API Pattern Integration
 
@@ -360,7 +360,7 @@
 - Custom regex engine bindings
 - **Sumber**: [LuaExpat XML Processing](https://lunarmodules.github.io/luaexpat/lom.html)
 
-## BAGIAN XI: TESTING DAN DEBUGGING
+## [BAGIAN XI: TESTING DAN DEBUGGING][11]
 
 ### 11.1 Pattern Testing Frameworks
 
@@ -393,7 +393,7 @@
 - Cross-platform validation
 - **Sumber**: [Lua CI/CD Practices](http://lua-users.org/wiki/ContinuousIntegration)
 
-## BAGIAN XII: SECURITY PATTERNS
+## [BAGIAN XII: SECURITY PATTERNS][12]
 
 ### 12.1 Input Validation Patterns
 
@@ -417,7 +417,7 @@
 - OAuth pattern handling
 - **Sumber**: [Lua Authentication Libraries](http://lua-users.org/wiki/AuthenticationAndAuthorization)
 
-## BAGIAN XIII: CROSS-PLATFORM CONSIDERATIONS
+## [BAGIAN XIII: CROSS-PLATFORM CONSIDERATIONS][13]
 
 ### 13.1 Platform-specific Pattern Considerations
 
@@ -441,7 +441,7 @@
 - Hardware-specific optimizations
 - **Sumber**: [Embedded Lua Programming](http://lua-users.org/wiki/EmbeddedProgramming)
 
-## BAGIAN XIV: ADVANCED TOPICS
+## [BAGIAN XIV: ADVANCED TOPICS][14]
 
 ### 14.1 Machine Learning Integration
 
@@ -464,7 +464,7 @@
 - Memory-efficient pattern matching
 - **Sumber**: [Lua Stream Processing](http://lua-users.org/wiki/StreamProcessing)
 
-## BAGIAN XV: EMERGING TECHNOLOGIES
+## [BAGIAN XV: EMERGING TECHNOLOGIES][15]
 
 ### 15.1 WebAssembly Integration
 
@@ -487,7 +487,7 @@
 - Protocol handling
 - **Sumber**: [NodeMCU Lua Programming](https://nodemcu.readthedocs.io/)
 
-## BAGIAN XVI: COMMUNITY DAN RESEARCH
+## [BAGIAN XVI: COMMUNITY DAN RESEARCH][16]
 
 ### 16.1 Open Source Pattern Libraries
 
@@ -510,7 +510,7 @@
 - Research opportunities
 - **Sumber**: [Lua Evolution Proposals](http://lua-users.org/wiki/LuaProposals)
 
-## BAGIAN XVII: SPECIALIZED DOMAINS
+## [BAGIAN XVII: SPECIALIZED DOMAINS][17]
 
 ### 17.1 Financial Systems Patterns
 
@@ -535,7 +535,7 @@
 
 ---
 
-## MASTER REFERENCE COLLECTION
+## [MASTER REFERENCE COLLECTION][18]
 
 ### Dokumentasi Resmi
 

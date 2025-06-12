@@ -13,7 +13,7 @@
 
 ### **INTERMEDIATE (6 topik)**
 
-7. **[Tables][7]** - 7 minggu, 45 jam
+7. **[Tables][7]** - 7 minggu, 45 jam ✅
 8. **[Modules & Packages][8]** - 4 minggu, 30 jam ✅
 9. **[Pattern Matching][9]** - 4 minggu, 30 jam ✅
 10. **[File System Operations][10]** - 3 minggu, 20 jam ✅

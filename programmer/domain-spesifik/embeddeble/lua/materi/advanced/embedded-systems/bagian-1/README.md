@@ -1,19 +1,22 @@
 ### Daftar Isi Panduan Belajar
 
-- [**Fase 1: Fondasi Pemrograman Lua**](#fase-1-fondasi-pemrograman-lua)
-  - [1.1. Pengenalan Lua: Filosofi dan Karakteristik](#11-pengenalan-lua-filosofi-dan-karakteristik)
-  - [1.2. Sintaks Dasar: Variabel, Tipe Data, dan Struktur Kontrol](#12-sintaks-dasar-variabel-tipe-data-dan-struktur-kontrol)
-  - [1.3. Tables: Struktur Data Universal di Lua](#13-tables-struktur-data-universal-di-lua)
-  - [1.4. Functions dan Closures: Blok Pembangun Logika](#14-functions-dan-closures-blok-pembangun-logika)
-  - [1.5. Metatables dan Metamethods: Kustomisasi Perilaku](#15-metatables-dan-metamethods-kustomisasi-perilaku)
-  - [1.6. Coroutines: Multitasking Kooperatif](#16-coroutines-multitasking-kooperatif)
-  - [1.7. Manajemen Memori dan Garbage Collection](#17-manajemen-memori-dan-garbage-collection)
-- [**Fase 2: Lua untuk Embedded Systems**](#fase-2-lua-untuk-embedded-systems)
-  - [2.1. Konsep Inti Embedded Systems](#21-konsep-inti-embedded-systems)
-  - [2.2. Lua vs. C dalam Dunia Embedded](#22-lua-vs-c-dalam-dunia-embedded)
-  - [2.3. Lua C API: Jembatan Antar Dua Dunia](#23-lua-c-api-jembatan-antar-dua-dunia)
-  - [2.4. Arsitektur eLua dan Lingkungan Eksekusi](#24-arsitektur-elua-dan-lingkungan-eksekusi)
-- [**Langkah Selanjutnya dan Rekomendasi**](#langkah-selanjutnya-dan-rekomendasi)
+- [](#)
+  - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
+  - [**Fase 3: Hardware Interface dan Peripheral Control**](#fase-3-hardware-interface-dan-peripheral-control)
+    - [**3.1. GPIO: Gerbang Menuju Dunia Fisik**](#31-gpio-gerbang-menuju-dunia-fisik)
+    - [**3.2. ADC: Mengukur Dunia Analog**](#32-adc-mengukur-dunia-analog)
+    - [**3.3. PWM: Mengontrol Intensitas dan Kecepatan**](#33-pwm-mengontrol-intensitas-dan-kecepatan)
+    - [**3.4. Komunikasi Serial: UART**](#34-komunikasi-serial-uart)
+    - [**3.5. Komunikasi Serial: I2C**](#35-komunikasi-serial-i2c)
+    - [**3.6. Komunikasi Serial: SPI**](#36-komunikasi-serial-spi)
+    - [**3.7. Timer dan Counter: Mengukur Waktu**](#37-timer-dan-counter-mengukur-waktu)
+    - [**3.8. Interrupt Handling: Merespons Kejadian Seketika**](#38-interrupt-handling-merespons-kejadian-seketika)
+  - [**Fase 4: Real-time Systems dan Scheduling**](#fase-4-real-time-systems-dan-scheduling)
+    - [**4.1. Konsep Real-time: Ketepatan Waktu adalah Kunci**](#41-konsep-real-time-ketepatan-waktu-adalah-kunci)
+    - [**4.2. Penjadwalan Tugas (Task Scheduling) dengan Coroutines**](#42-penjadwalan-tugas-task-scheduling-dengan-coroutines)
+    - [**4.3. Event-driven Programming: Reaksi Terhadap Stimulus**](#43-event-driven-programming-reaksi-terhadap-stimulus)
+    - [**4.4. State Machines: Mengelola Perilaku Kompleks**](#44-state-machines-mengelola-perilaku-kompleks)
+    - [**Langkah Selanjutnya**](#langkah-selanjutnya)
 
 ---
 
@@ -530,9 +533,512 @@ Setelah memiliki fondasi Lua yang kuat, sekarang saatnya kita masuk ke konteks _
 
 #
 
-Sangat disarankan agar Kita untuk benar-benar **mempraktikkan setiap contoh kode**. Dapatkan sebuah _development board_ yang didukung dengan baik oleh Lua (seperti ESP32 dengan NodeMCU, atau board yang kompatibel dengan eLua) dan coba setiap konsep satu per satu. Teori tanpa praktik tidak akan membawa Kita pada penguasaan.
+Sangat disarankan agar Kita untuk benar-benar **mempraktikkan setiap contoh kode**. Dapatkan sebuah _development board_ yang didukung dengan baik oleh Lua (seperti ESP32 dengan NodeMCU, atau board yang kompatibel dengan eLua) dan coba setiap konsep satu per satu. Teori tanpa praktik tidak akan membawa Kita pada penguasaan. Berikutnya kita akan menyelami interaksi langsung dengan perangkat keras, yang merupakan inti dari pemrograman _embedded systems_. Setelah itu, kita akan membahas bagaimana mengelola tugas-tugas secara efisien menggunakan konsep sistem _real-time_.
 
-#
+### Daftar Isi (Lanjutan)
+
+- [](#)
+  - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
+  - [**Fase 3: Hardware Interface dan Peripheral Control**](#fase-3-hardware-interface-dan-peripheral-control)
+    - [**3.1. GPIO: Gerbang Menuju Dunia Fisik**](#31-gpio-gerbang-menuju-dunia-fisik)
+    - [**3.2. ADC: Mengukur Dunia Analog**](#32-adc-mengukur-dunia-analog)
+    - [**3.3. PWM: Mengontrol Intensitas dan Kecepatan**](#33-pwm-mengontrol-intensitas-dan-kecepatan)
+    - [**3.4. Komunikasi Serial: UART**](#34-komunikasi-serial-uart)
+    - [**3.5. Komunikasi Serial: I2C**](#35-komunikasi-serial-i2c)
+    - [**3.6. Komunikasi Serial: SPI**](#36-komunikasi-serial-spi)
+    - [**3.7. Timer dan Counter: Mengukur Waktu**](#37-timer-dan-counter-mengukur-waktu)
+    - [**3.8. Interrupt Handling: Merespons Kejadian Seketika**](#38-interrupt-handling-merespons-kejadian-seketika)
+  - [**Fase 4: Real-time Systems dan Scheduling**](#fase-4-real-time-systems-dan-scheduling)
+    - [**4.1. Konsep Real-time: Ketepatan Waktu adalah Kunci**](#41-konsep-real-time-ketepatan-waktu-adalah-kunci)
+    - [**4.2. Penjadwalan Tugas (Task Scheduling) dengan Coroutines**](#42-penjadwalan-tugas-task-scheduling-dengan-coroutines)
+    - [**4.3. Event-driven Programming: Reaksi Terhadap Stimulus**](#43-event-driven-programming-reaksi-terhadap-stimulus)
+    - [**4.4. State Machines: Mengelola Perilaku Kompleks**](#44-state-machines-mengelola-perilaku-kompleks)
+    - [**Langkah Selanjutnya**](#langkah-selanjutnya)
+
+---
+
+## **Fase 3: Hardware Interface dan Peripheral Control**
+
+Di fase ini, kita akan menggunakan modul-modul yang disediakan oleh _firmware_ seperti eLua atau NodeMCU untuk mengendalikan berbagai periferal pada _microcontroller_. Ini adalah penerapan praktis dari Lua C API yang telah kita bahas; fungsi-fungsi C yang rumit untuk mengontrol register perangkat keras dibungkus menjadi fungsi Lua yang sederhana.
+
+### **3.1. GPIO: Gerbang Menuju Dunia Fisik**
+
+- **Deskripsi Konkrit**: GPIO (General-Purpose Input/Output) adalah pin digital pada MCU yang dapat Anda program sebagai input (untuk membaca sinyal, misal dari tombol) atau sebagai output (untuk mengirim sinyal, misal untuk menyalakan LED). Ini adalah bentuk interaksi paling dasar dengan dunia luar.
+
+- **Terminologi Kunci**:
+
+  - **Pin**: Kaki fisik pada chip MCU.
+  - **Input**: Mode di mana pin "mendengarkan" level tegangan dari luar (tinggi/HIGH atau rendah/LOW).
+  - **Output**: Mode di mana pin "mengeluarkan" level tegangan (tinggi/HIGH atau rendah/LOW).
+  - **HIGH/LOW**: Merepresentasikan nilai digital 1 (biasanya 3.3V atau 5V) dan 0 (biasanya 0V/GND).
+  - **Pull-up/Pull-down Resistor**: Resistor internal yang dapat diaktifkan untuk memastikan pin input memiliki status default (HIGH atau LOW) saat tidak terhubung ke apa pun, mencegah kondisi "mengambang" (_floating_).
+
+- **Contoh Kode (Gaya eLua/NodeMCU)**:
+
+  ```lua
+  -- Asumsikan LED terhubung ke pin 2, dan tombol ke pin 4
+  local led_pin = 2
+  local button_pin = 4
+
+  -- 1. Konfigurasi pin
+  -- Mengatur pin LED sebagai output
+  pio.pin.setdir(pio.OUTPUT, led_pin)
+
+  -- Mengatur pin tombol sebagai input dengan pull-up resistor internal
+  -- Artinya, jika tombol tidak ditekan, pin akan membaca HIGH (1)
+  pio.pin.setdir(pio.INPUT, button_pin)
+  pio.pin.setpull(pio.PULLUP, button_pin)
+
+  -- 2. Mengontrol output
+  print("Menyalakan LED...")
+  pio.pin.setval(1, led_pin) -- Set pin ke HIGH (1)
+  -- Tunggu 2 detik (fungsi 'tmr.delay' akan dibahas nanti)
+  tmr.delay(2000)
+  print("Mematikan LED...")
+  pio.pin.setval(0, led_pin) -- Set pin ke LOW (0)
+
+  -- 3. Membaca input
+  local nilai_tombol = pio.pin.getval(button_pin)
+
+  if nilai_tombol == 0 then
+    print("Tombol sedang ditekan!")
+  else
+    print("Tombol tidak ditekan.")
+  end
+  ```
+
+- **Referensi**:
+
+  - [eLua PIO Module Documentation](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_pio.html)
+
+### **3.2. ADC: Mengukur Dunia Analog**
+
+- **Deskripsi Konkrit**: Dunia nyata bersifat analog (kontinu), bukan digital (diskrit). Sensor seperti sensor suhu, cahaya, atau potensiometer menghasilkan sinyal tegangan yang bervariasi. ADC (Analog-to-Digital Converter) adalah periferal yang mengubah sinyal tegangan analog ini menjadi nilai digital yang dapat dibaca oleh MCU.
+
+- **Terminologi Kunci**:
+
+  - **Analog Signal**: Sinyal yang nilainya dapat bervariasi secara kontinu dalam suatu rentang.
+  - **Resolution**: Jumlah bit yang digunakan ADC untuk merepresentasikan sinyal analog. ADC 10-bit dapat menghasilkan 2^10 = 1024 nilai berbeda (0-1023). ADC 12-bit menghasilkan 4096 nilai (0-4095). Semakin tinggi resolusi, semakin presisi pengukurannya.
+  - **Sampling Rate**: Seberapa sering ADC mengambil sampel (mengukur) sinyal analog per detik.
+
+- **Contoh Kode (Gaya eLua/NodeMCU)**:
+
+  ```lua
+  -- Asumsikan sensor analog terhubung ke channel ADC 0
+  local adc_channel = 0
+  local VREF = 3.3 -- Tegangan referensi ADC (biasanya 3.3V)
+  local RESOLUTION = 10 -- Resolusi ADC 10-bit
+
+  -- Membaca nilai digital mentah dari ADC
+  -- NodeMCU: adc.read(adc_channel)
+  -- eLua: adc.getval(adc_channel)
+  local raw_value = adc.read(adc_channel) -- Hasilnya akan antara 0 dan 1023
+
+  -- Mengonversi nilai mentah ke tegangan
+  local voltage = (raw_value / (2^RESOLUTION - 1)) * VREF
+
+  print("Nilai mentah ADC: " .. raw_value)
+  print("Tegangan terukur: " .. string.format("%.2f", voltage) .. "V")
+  ```
+
+- **Referensi**:
+
+  - [eLua ADC Module Documentation](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_adc.html)
+
+### **3.3. PWM: Mengontrol Intensitas dan Kecepatan**
+
+- **Deskripsi Konkrit**: PWM (Pulse Width Modulation) adalah teknik untuk menghasilkan sinyal analog semu dari pin digital. Caranya adalah dengan menyalakan dan mematikan pin digital dengan sangat cepat. Dengan mengubah rasio waktu "nyala" terhadap waktu total (disebut _duty cycle_), kita bisa mengontrol daya rata-rata yang dikirim. Ini sangat berguna untuk mengontrol kecerahan LED, kecepatan motor DC, atau posisi motor servo.
+
+- **Terminologi Kunci**:
+
+  - **Frequency**: Seberapa sering siklus PWM berulang per detik (dalam Hertz).
+  - **Duty Cycle**: Persentase waktu sinyal dalam keadaan HIGH dalam satu periode. 0% berarti selalu OFF, 100% berarti selalu ON, 50% berarti nyala setengah waktu.
+  - **Period**: Waktu yang dibutuhkan untuk satu siklus lengkap (1 / frekuensi).
+
+- **Representasi Visual**:
+
+  ```
+  Duty Cycle 25%: |`~|___|`~|___|`~|___  (Daya rendah)
+  Duty Cycle 50%: |`~`~|___|`~`~|___  (Daya sedang)
+  Duty Cycle 75%: |`~`~`~|_|`~`~`~|_  (Daya tinggi)
+  ```
+
+- **Contoh Kode (Gaya eLua/NodeMCU)**:
+
+  ```lua
+  -- Asumsikan LED yang dapat diredupkan terhubung ke pin PWM
+  local pwm_pin = 5
+  local pwm_id = 1 -- ID untuk channel PWM
+  local frekuensi = 1000 -- 1000 Hz, cukup untuk LED
+
+  -- Setup PWM
+  -- NodeMCU: pwm.setup(pwm_pin, frekuensi, 0) -- pin, frekuensi, duty cycle awal (0-1023)
+  -- eLua: pwm.setup(pwm_id, frekuensi, 0) -- id, frekuensi, duty cycle awal (0-100)
+  pwm.setup(pwm_pin, frekuensi, 0)
+  pwm.start(pwm_pin)
+
+  -- Redupkan LED dari mati ke terang penuh
+  print("Meredupkan LED...")
+  for duty = 0, 1023 do -- Loop untuk duty cycle (format NodeMCU)
+    pwm.setduty(pwm_pin, duty)
+    tmr.delay_us(500) -- delay kecil dalam mikrodetik
+  end
+
+  print("LED pada kecerahan penuh.")
+  pwm.stop(pwm_pin)
+  ```
+
+- **Referensi**:
+
+  - [eLua PWM Module Documentation](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_pwm.html)
+
+### **3.4. Komunikasi Serial: UART**
+
+- **Deskripsi Konkrit**: UART (Universal Asynchronous Receiver-Transmitter) adalah salah satu bentuk komunikasi serial paling sederhana dan umum. Ini memungkinkan komunikasi dua arah antara dua perangkat menggunakan dua kabel: TX (Transmit) dan RX (Receive). Ini sering digunakan untuk debugging (mencetak log ke komputer), atau berkomunikasi dengan modul lain seperti GPS atau GSM.
+
+- **Terminologi Kunci**:
+
+  - **Asynchronous**: Tidak ada sinyal clock bersama. Kedua perangkat harus setuju pada kecepatan yang sama sebelumnya.
+  - **Baud Rate**: Kecepatan komunikasi, dalam bit per detik. Nilai umum adalah 9600, 115200.
+  - **TX (Transmit)**: Pin untuk mengirim data. TX satu perangkat terhubung ke RX perangkat lain.
+  - **RX (Receive)**: Pin untuk menerima data. RX satu perangkat terhubung ke TX perangkat lain.
+  - **Start/Stop Bit**: Bit tambahan yang dikirim untuk menandai awal dan akhir setiap byte data, membantu sinkronisasi.
+
+- **Contoh Kode (Gaya eLua/NodeMCU)**:
+
+  ```lua
+  -- Inisialisasi UART dengan baud rate 9600
+  local uart_id = 0
+  local baud_rate = 9600
+  uart.setup(uart_id, baud_rate, 8, uart.PARITY_NONE, uart.STOPBITS_1)
+
+  -- Mengirim data melalui UART
+  uart.write(uart_id, "Halo dari MCU!\n")
+
+  -- Menerima data (biasanya dilakukan dengan callback/interrupt)
+  uart.on("data", function(data)
+    print("Data diterima dari UART: " .. data)
+  end)
+  ```
+
+- **Referensi**:
+
+  - [eLua UART Module Documentation](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_uart.html)
+
+### **3.5. Komunikasi Serial: I2C**
+
+- **Deskripsi Konkrit**: I2C (Inter-Integrated Circuit) adalah protokol komunikasi serial yang memungkinkan satu perangkat utama (_master_, biasanya MCU) untuk berkomunikasi dengan banyak perangkat bawahan (_slaves_, misal sensor, memori, layar) hanya dengan menggunakan **dua kabel**: SDA (Serial Data) dan SCL (Serial Clock). Setiap _slave_ di bus memiliki alamat unik.
+
+- **Terminologi Kunci**:
+
+  - **Master**: Perangkat yang menginisiasi komunikasi dan menghasilkan sinyal clock.
+  - **Slave**: Perangkat yang merespons master.
+  - **SDA (Serial Data Line)**: Jalur untuk transfer data dua arah.
+  - **SCL (Serial Clock Line)**: Jalur untuk sinyal clock yang disinkronkan oleh master.
+  - **Device Address**: Alamat 7-bit unik untuk setiap slave di bus.
+
+- **Representasi Visual**:
+
+  ```
+        +----------+      +----------------+      +----------------+
+  MCU   |  Master  |      | Sensor (0x68)  |      | EEPROM (0x50)  |
+        |          |      |                |      |                |
+        |      SCL |<----->| SCL            |<----->| SCL            |
+        |      SDA |<----->| SDA            |<----->| SDA            |
+        +----------+      +----------------+      +----------------+
+  ```
+
+- **Contoh Kode (Gaya eLua/NodeMCU)**:
+
+  ```lua
+  local i2c_id = 0
+  local sda_pin, scl_pin = 5, 6
+  local slave_address = 0x68 -- Alamat sensor, misal MPU6050
+
+  -- Inisialisasi I2C
+  i2c.setup(i2c_id, sda_pin, scl_pin, i2c.FAST) -- FAST mode = 400kHz
+
+  -- Membaca register dari slave
+  i2c.start(i2c_id) -- Mulai komunikasi
+  i2c.address(i2c_id, slave_address, i2c.TRANSMITTER) -- Kirim alamat slave (mode tulis)
+  i2c.write(i2c_id, 0x75) -- Tulis alamat register yang ingin dibaca (misal WHO_AM_I)
+  i2c.stop(i2c_id) -- Hentikan (atau restart)
+
+  i2c.start(i2c_id)
+  i2c.address(i2c_id, slave_address, i2c.RECEIVER) -- Kirim alamat slave (mode baca)
+  local data = i2c.read(i2c_id, 1) -- Baca 1 byte
+  i2c.stop(i2c_id)
+
+  print("Data dari I2C slave: " .. data)
+  ```
+
+- **Referensi**:
+
+  - [eLua I2C Module Documentation](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_i2c.html)
+  - [Tutorial Protokol I2C](https://www.electronics-tutorials.ws/comms/i2c-protocol.html)
+
+### **3.6. Komunikasi Serial: SPI**
+
+- **Deskripsi Konkrit**: SPI (Serial Peripheral Interface) adalah protokol komunikasi serial **sinkron** lainnya. Biasanya lebih cepat dari I2C dan bersifat _full-duplex_ (bisa mengirim dan menerima data secara bersamaan). SPI menggunakan lebih banyak kabel (biasanya 4) dan cocok untuk periferal berkecepatan tinggi seperti kartu SD, layar grafis, dan beberapa jenis sensor.
+
+- **Terminologi Kunci**:
+
+  - **Full-duplex**: Transfer data dua arah secara simultan.
+  - **MISO (Master In, Slave Out)**: Jalur data dari Slave ke Master.
+  - **MOSI (Master Out, Slave In)**: Jalur data dari Master ke Slave.
+  - **SCK (Serial Clock)**: Sinyal clock dari Master.
+  - **CS/SS (Chip Select / Slave Select)**: Pin yang digunakan Master untuk memilih _slave_ mana yang akan diajak bicara. Setiap _slave_ membutuhkan pin CS sendiri.
+
+- **Contoh Kode (Gaya eLua/NodeMCU)**:
+
+  ```lua
+  local spi_id = 1
+  local cs_pin = 4 -- Pin Chip Select
+  local clock_speed = 1000000 -- 1 MHz
+
+  -- Konfigurasi pin CS sebagai output
+  pio.pin.setdir(pio.OUTPUT, cs_pin)
+  pio.pin.setval(1, cs_pin) -- Non-aktifkan slave (biasanya CS aktif LOW)
+
+  -- Setup SPI
+  spi.setup(spi_id, spi.MASTER, clock_speed, 8, 0) -- id, mode, speed, bits, CPHA/CPOL
+
+  -- Mengirim dan menerima data
+  local data_to_send = {0x9F, 0x00, 0x00} -- Perintah JEDEC ID untuk flash memory
+
+  pio.pin.setval(0, cs_pin) -- Aktifkan slave
+  local received_data = spi.send(spi_id, data_to_send)
+  pio.pin.setval(1, cs_pin) -- Non-aktifkan slave
+
+  print("Data diterima dari SPI slave:")
+  for i, byte in ipairs(received_data) do
+    print(string.format("Byte %d: 0x%02X", i, byte))
+  end
+  ```
+
+- **Referensi**:
+
+  - [eLua SPI Module Documentation](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_spi.html)
+  - [SparkFun - Serial Peripheral Interface (SPI)](https://learn.sparkfun.com/tutorials/serial-peripheral-interface-spi)
+
+### **3.7. Timer dan Counter: Mengukur Waktu**
+
+- **Deskripsi Konkrit**: Timer adalah periferal perangkat keras yang sangat penting. Mereka dapat digunakan untuk menghitung waktu dengan presisi tinggi, menghasilkan penundaan (_delay_) tanpa memblokir eksekusi (tidak seperti `sleep`), atau memicu aksi (seperti _interrupt_) secara periodik.
+
+- **Terminologi Kunci**:
+
+  - **Prescaler**: Pembagi frekuensi yang memperlambat clock input ke timer, memungkinkan pengukuran interval waktu yang lebih lama.
+  - **Periodic Mode**: Timer akan di-reset dan memicu event setiap kali mencapai nilai tertentu.
+  - **One-shot Mode**: Timer akan berjalan sekali dan kemudian berhenti.
+
+- **Contoh Kode (Gaya eLua/NodeMCU)**:
+
+  ```lua
+  local timer_id = 0
+  local interval_ms = 1000 -- 1000 ms = 1 detik
+
+  -- Membuat alarm yang berulang setiap 1 detik
+  tmr.alarm(timer_id, interval_ms, tmr.ALARM_AUTO, function()
+    print("Satu detik telah berlalu!")
+    -- Di sini Anda bisa meletakkan kode yang perlu dijalankan secara periodik,
+    -- misalnya membaca sensor.
+  end)
+  ```
+
+- **Referensi**:
+
+  - [eLua Timer Module Documentation](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_tmr.html)
+
+### **3.8. Interrupt Handling: Merespons Kejadian Seketika**
+
+- **Deskripsi Konkrit**: _Interrupt_ adalah sinyal dari perangkat keras (atau perangkat lunak) ke prosesor yang menandakan bahwa ada sebuah kejadian penting yang membutuhkan perhatian segera. Ketika _interrupt_ terjadi, prosesor akan menjeda tugasnya saat ini, menjalankan kode khusus yang disebut _Interrupt Service Routine_ (ISR), lalu melanjutkan tugasnya. Ini jauh lebih efisien daripada terus-menerus memeriksa status perangkat (disebut _polling_).
+
+- **Terminologi Kunci**:
+
+  - **Polling**: Secara aktif memeriksa status perangkat dalam sebuah loop. Boros daya dan waktu CPU.
+  - **Interrupt**: Mekanisme berbasis kejadian. CPU hanya bekerja saat dibutuhkan.
+  - **ISR (Interrupt Service Routine)**: Fungsi khusus yang dieksekusi sebagai respons terhadap _interrupt_. ISR harus sangat cepat dan singkat.
+  - **Callback Function**: Di lingkungan tingkat tinggi seperti Lua, kita biasanya mendaftarkan fungsi Lua sebagai _callback_ yang akan dipanggil ketika _interrupt_ terjadi.
+
+- **Contoh Kode (Interrupt pada Pin GPIO)**:
+
+  ```lua
+  local button_pin = 4
+  pio.pin.setdir(pio.INPUT, button_pin)
+
+  -- Mendaftarkan fungsi callback untuk interrupt pada pin tombol
+  -- Trigger ketika pin berubah dari HIGH ke LOW (tombol ditekan)
+  pio.pin.settrig(pio.FALLING, button_pin, function(level)
+    -- INI ADALAH "ISR" VERSI LUA
+    -- Jaga agar kode di sini sangat singkat!
+    print("Tombol ditekan! (Terdeteksi via interrupt)")
+  end)
+
+  print("Sistem siap menerima input. Coba tekan tombol.")
+  -- Program utama bisa melakukan hal lain di sini,
+  -- tanpa perlu memeriksa tombol terus-menerus.
+  ```
+
+- **Referensi**:
+
+  - [eLua Interrupts Architecture](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_arch_interrupts.html)
+
+---
+
+## **Fase 4: Real-time Systems dan Scheduling**
+
+Fase ini berfokus pada teknik perangkat lunak untuk mengelola kompleksitas dan waktu dalam aplikasi _embedded_.
+
+### **4.1. Konsep Real-time: Ketepatan Waktu adalah Kunci**
+
+- **Deskripsi Konkrit**: Seperti yang dibahas sebelumnya, sistem _real-time_ dinilai tidak hanya dari kebenaran hasil logisnya, tetapi juga dari ketepatan waktu dihasilkannya hasil tersebut. Lua, sebagai bahasa yang diinterpretasi dengan _garbage collector_, secara tradisional bukan pilihan utama untuk sistem _hard real-time_. Namun, untuk _soft real-time_ (di mana sedikit keterlambatan masih bisa ditoleransi), Lua sangat mumpuni, terutama jika GC-nya bersifat _incremental_.
+
+- **Terminologi Kunci**:
+
+  - **Determinism**: Kemampuan sistem untuk menghasilkan output yang sama dan dalam waktu yang sama untuk input yang sama. Kode C yang ditulis dengan baik lebih deterministik daripada skrip Lua.
+  - **Latency**: Waktu tunda antara input/kejadian dan respons sistem.
+  - **Jitter**: Variasi dalam _latency_. Jitter yang tinggi tidak diinginkan dalam sistem _real-time_.
+
+- **Referensi**:
+
+  - [Real-Time Operating Systems (RTOS) Concepts](https://www.geeksforgeeks.org/real-time-operating-system-rtos/)
+
+### **4.2. Penjadwalan Tugas (Task Scheduling) dengan Coroutines**
+
+- **Deskripsi Konkrit**: Dalam aplikasi _embedded_ yang nyata, Anda perlu melakukan banyak hal "secara bersamaan": membaca sensor, mengupdate tampilan, berkedip LED, dan memeriksa koneksi jaringan. Karena MCU biasanya hanya memiliki satu inti prosesor, "kebersamaan" ini adalah ilusi yang diciptakan oleh penjadwal (_scheduler_). Dengan _coroutines_, kita bisa membuat penjadwal kooperatif sederhana di Lua.
+
+- **Konsep**:
+  Buat sebuah _scheduler_ yang menyimpan daftar _coroutines_ yang siap dijalankan. Dalam _loop_ utamanya, _scheduler_ mengambil satu _coroutine_, menjalankannya (`coroutine.resume`), dan _coroutine_ itu akan berjalan sampai ia `coroutine.yield()`. Ketika `yield` dipanggil, kontrol kembali ke _scheduler_, yang kemudian dapat menjalankan _coroutine_ berikutnya.
+
+- **Contoh Kode (Scheduler Kooperatif Sederhana)**:
+
+  ```lua
+  local scheduler = {}
+  scheduler.tasks = {}
+
+  function scheduler.add_task(func)
+    table.insert(scheduler.tasks, coroutine.create(func))
+  end
+
+  function scheduler.run()
+    while #scheduler.tasks > 0 do
+      for i, task in ipairs(scheduler.tasks) do
+        local status, err = coroutine.resume(task)
+        if not status then -- Coroutine selesai atau error
+          table.remove(scheduler.tasks, i)
+          if err then print("Error:", err) end
+        end
+      end
+    end
+  end
+
+  -- Definisikan beberapa tugas
+  scheduler.add_task(function()
+    for i=1, 5 do
+      print("Tugas A: Langkah " .. i)
+      coroutine.yield() -- Serahkan kontrol
+    end
+  end)
+
+  scheduler.add_task(function()
+    for i=1, 3 do
+      print("Tugas B: Langkah " .. i)
+      coroutine.yield() -- Serahkan kontrol
+    end
+  end)
+
+  -- Jalankan scheduler
+  scheduler.run()
+  ```
+
+- **Referensi**:
+
+  - [Lua Users Wiki - Cooperative Multitasking](http://lua-users.org/wiki/CooperativeMultitasking)
+
+### **4.3. Event-driven Programming: Reaksi Terhadap Stimulus**
+
+- **Deskripsi Konkrit**: Ini adalah paradigma pemrograman di mana alur program ditentukan oleh kejadian (_events_), seperti _interrupt_ dari perangkat keras, data yang tiba di port serial, atau timer yang berakhir. Ini adalah model yang sangat alami untuk _embedded systems_. Alih-alih satu _loop_ besar yang melakukan segalanya, Anda memiliki _loop_ utama yang sederhana (sering disebut _event loop_) yang menunggu kejadian dan kemudian memanggil fungsi _handler_ yang sesuai.
+
+- **Konsep**: Kombinasikan _interrupts_, _timers_, dan _callbacks_. _Interrupt_ dari pin akan memasukkan sebuah "kejadian tombol ditekan" ke dalam antrian. _Loop_ utama memeriksa antrian ini dan menjalankan _handler_ yang terkait. Model ini sangat efisien karena CPU bisa dalam mode hemat daya saat tidak ada kejadian yang perlu diproses.
+
+- **Contoh Kode (Pola Event Loop)**:
+
+  ```lua
+  local event_queue = {}
+
+  -- Fungsi ini dipanggil oleh ISR (harus cepat)
+  local function on_button_press_isr()
+    table.insert(event_queue, {type="BUTTON_PRESS", value=true})
+  end
+
+  -- Daftarkan ISR ke interrupt pin
+  -- pio.pin.settrig(..., on_button_press_isr)
+
+  -- Loop utama / Event Loop
+  while true do
+    if #event_queue > 0 then
+      local event = table.remove(event_queue, 1) -- Ambil event pertama
+
+      if event.type == "BUTTON_PRESS" then
+        -- Proses event di sini (bisa lebih lambat)
+        print("Event 'BUTTON_PRESS' sedang diproses di loop utama.")
+        -- nyalakan_led(), kirim_data(), dll.
+      end
+    end
+    -- Lakukan tugas latar belakang lain atau masuk mode hemat daya
+  end
+  ```
+
+- **Referensi**:
+
+  - [Lua Users Wiki - Event-driven Programming](http://lua-users.org/wiki/EventDrivenProgramming)
+
+### **4.4. State Machines: Mengelola Perilaku Kompleks**
+
+- **Deskripsi Konkrit**: Banyak perangkat _embedded_ memiliki perilaku yang dapat dimodelkan sebagai _Finite State Machine_ (FSM). Perangkat berada dalam satu keadaan (_state_) pada satu waktu. Berdasarkan input atau kejadian, perangkat dapat bertransisi ke keadaan lain. Contoh: Pintu otomatis memiliki keadaan `TERBUKA`, `TERTUTUP`, `MEMBUKA`, `MENUTUP`. Sensor gerak (input) akan memicu transisi dari `TERTUTUP` ke `MEMBUKA`.
+
+- **Konsep**: Implementasikan FSM menggunakan variabel untuk menyimpan _state_ saat ini. Gunakan struktur `if-then-else` atau `table` berisi fungsi untuk mendefinisikan apa yang harus dilakukan di setiap _state_ dan bagaimana transisi terjadi. Ini membuat kode lebih terorganisir, lebih mudah dipahami, dan lebih mudah di-debug daripada serangkaian `if` yang bersarang dan berantakan.
+
+- **Contoh Kode (FSM untuk Lampu Lalu Lintas)**:
+
+  ```lua
+  local state = "MERAH" -- State awal
+
+  local function handle_state()
+    if state == "MERAH" then
+      print("Lampu MERAH. Berhenti.")
+      -- Setelah 10 detik, ubah state
+      tmr.alarm(0, 10000, tmr.ALARM_SINGLE, function() state = "HIJAU" end)
+
+    elseif state == "HIJAU" then
+      print("Lampu HIJAU. Jalan.")
+      -- Setelah 10 detik, ubah state
+      tmr.alarm(0, 10000, tmr.ALARM_SINGLE, function() state = "KUNING" end)
+
+    elseif state == "KUNING" then
+      print("Lampu KUNING. Hati-hati.")
+      -- Setelah 3 detik, ubah state
+      tmr.alarm(0, 3000, tmr.ALARM_SINGLE, function() state = "MERAH" end)
+    end
+  end
+
+  -- Loop utama hanya memanggil handler state saat ini
+  -- (Ini bisa digabungkan dengan event loop)
+  tmr.alarm(1, 100, tmr.ALARM_AUTO, handle_state) -- Panggil handle_state setiap 100ms
+  ```
+
+- **Referensi**:
+
+  - [Lua Users Wiki - State Machines](http://lua-users.org/wiki/FiniteStateMachine)
+  - [Embedded.com - State Machine Design](https://www.embedded.com/state-machine-design-in-c/)
+
+---
+
+### **Langkah Selanjutnya**
+
+Anda sekarang memiliki pemahaman yang kuat tentang bagaimana Lua berinteraksi dengan perangkat keras dan bagaimana mengelola tugas-tugas dalam lingkungan _embedded_. Fase-fase berikutnya (Networking, IoT, Cloud Integration) akan membangun di atas fondasi ini, menggunakan periferal komunikasi (seperti UART, SPI) untuk terhubung ke jaringan (WiFi, Ethernet) dan menerapkan protokol tingkat tinggi (HTTP, MQTT).
+
+Pemahaman tentang _event-driven programming_ dan _state machines_ akan sangat krusial saat Anda mulai membangun aplikasi IoT yang kompleks yang harus mengelola koneksi jaringan, input sensor, dan interaksi pengguna secara bersamaan.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

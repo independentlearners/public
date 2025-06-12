@@ -320,9 +320,325 @@ print(user.email) -- __index tidak dipanggil, data sudah di-cache di objek 'user
 
 ---
 
-Kita telah melihat betapa serbagunanya `table` di berbagai domain. Ini bukan hanya struktur data; ini adalah fondasi untuk membangun hampir semua hal di Lua.
+Kita telah melihat betapa serbagunanya `table` di berbagai domain. Ini bukan hanya struktur data; ini adalah fondasi untuk membangun hampir semua hal di Lua. Bereikutnya kita akan masuki babak akhir dari kurikulum ini. Kita telah menguasai hampir semua aspek table, dari dasar hingga pola-pola canggih. Bagian ini akan membahas topik-topik yang benar-benar mendorong batas kemampuan Lua, yaitu bagaimana table berinteraksi dengan sistem konkurensi, kode dari bahasa lain, dan mekanisme internal bahasa itu sendiri.
 
-Selanjutnya, kita akan masuk ke dua bagian terakhir: **"17. ADVANCED TOPICS"** yang membahas integrasi dengan sistem lain, dan **"18. SECURITY CONSIDERATIONS"**. Siap untuk menyelesaikan kurikulum ini?
+Menguasai topik-topik ini akan memungkinkan Kita untuk mengintegrasikan Lua secara mendalam ke dalam aplikasi yang lebih besar dan lebih kompleks.
+
+---
+
+## **BAGIAN 17: ADVANCED TOPICS**
+
+### **1. Coroutines dengan Tables**
+
+**Konsep**:
+**Coroutines** adalah "utas" (threads) yang berjalan secara kooperatif. Berbeda dengan utas sistem operasi yang berjalan secara paralel, sebuah coroutine hanya akan berhenti berjalan ketika ia secara eksplisit `yield` (menyerah), memberikan kontrol kembali ke konteks yang memulainya. Konteks tersebut kemudian dapat `resume` (melanjutkan) coroutine di lain waktu.
+
+**Peran Tables**: Tables adalah cara utama untuk mengirim data bolak-balik antara konteks yang melanjutkan (resumer) dan coroutine yang di-yield.
+
+- Saat memulai/melanjutkan coroutine, Kita bisa memberikan table sebagai argumen.
+- Saat coroutine melakukan `yield`, ia bisa mengirimkan table yang berisi hasil sementara.
+
+**Contoh Kode 46: Produser-Konsumer menggunakan Coroutine**
+Kita akan membuat coroutine "produser" yang menghasilkan data satu per satu, dan loop utama akan menjadi "konsumer".
+
+```lua
+local producer = coroutine.create(function(max_value)
+    print("Produser: Mulai menghasilkan nilai...")
+    for i = 1, max_value do
+        -- Menghasilkan data dalam sebuah table
+        local data_packet = { value = i, is_done = false }
+        coroutine.yield(data_packet)
+    end
+    print("Produser: Selesai.")
+    return { is_done = true }
+end)
+
+-- --- Penggunaan (Konsumer) ---
+while true do
+    -- Lanjutkan coroutine dan tangkap hasilnya
+    local status, result_table = coroutine.resume(producer, 5) -- 5 adalah argumen 'max_value'
+
+    if not status then -- Jika ada error di dalam coroutine
+        print("Error coroutine:", result_table)
+        break
+    end
+
+    if result_table.is_done then
+        print("Konsumer: Menerima sinyal selesai.")
+        break
+    else
+        print("Konsumer: Menerima nilai " .. result_table.value)
+    end
+end
+```
+
+**Penjelasan**:
+
+- `coroutine.create(function ...)`: Membuat coroutine baru dari sebuah fungsi.
+- `coroutine.yield(data_packet)`: Menjeda eksekusi coroutine dan mengirim `data_packet` kembali ke pemanggil `resume`.
+- `coroutine.resume(producer, 5)`: Memulai atau melanjutkan eksekusi `producer`. Nilai `5` diteruskan sebagai argumen awal. Fungsi ini mengembalikan status eksekusi dan nilai apa pun yang di-yield oleh coroutine.
+
+### **2. FFI Integration dengan Tables (LuaJIT)**
+
+**Konsep**:
+Seperti yang telah dibahas, **FFI (Foreign Function Interface)** adalah fitur khusus LuaJIT yang memungkinkan Kita memanggil fungsi C dan menggunakan tipe data C (seperti `struct`) langsung dari Lua. Tables memainkan peran penting sebagai jembatan antara dunia Lua dan C.
+
+- **Inisialisasi**: Kita bisa membuat objek data C (`cdata`) dengan menginisialisasinya dari table Lua.
+- **Akses**: FFI secara otomatis membuat `cdata` berperilaku seperti table, memungkinkan Kita mengakses anggota `struct` menggunakan notasi titik (`.`).
+
+**Contoh Kode 47: Interaksi dengan "Library C" melalui FFI**
+
+```lua
+-- Hanya berjalan di LuaJIT
+local ffi = require("ffi")
+
+-- 1. Mendeklarasikan tipe data dan fungsi dari library C
+ffi.cdef[[
+    typedef struct { double x; double y; } Point;
+    Point create_point(double x, double y);
+    void move_point(Point* p, double dx);
+]]
+
+-- 2. Memanggil fungsi C yang mengembalikan struct
+-- Perhatikan bahwa FFI secara otomatis mengubahnya menjadi 'cdata' yang mirip table
+local p1 = ffi.C.create_point(10, 20)
+print("Titik awal:", p1.x, p1.y)
+
+-- 3. Memanggil fungsi C yang membutuhkan pointer ke struct
+ffi.C.move_point(p1, 5) -- 'p1' diteruskan sebagai pointer
+print("Titik setelah digerakkan:", p1.x, p1.y)
+```
+
+Di sini, `p1` bukan table Lua biasa, tetapi `cdata`. Namun, berkat FFI, kita bisa berinteraksi dengannya seolah-olah itu adalah table.
+
+### **3. C API untuk Tables**
+
+**Konsep**:
+Ini adalah cara "tradisional" untuk berinteraksi antara C/C++ dan Lua. Saat Kita menyematkan Lua ke dalam aplikasi C++, aplikasi C++ (host) dapat secara langsung membuat, membaca, dan memodifikasi table Lua menggunakan sekumpulan fungsi dari C API.
+
+**Operasi Kunci (Secara Konseptual)**:
+
+- `lua_newtable(L)`: Membuat table kosong baru di stack virtual Lua.
+- `lua_setfield(L, table_idx, "key")`: Mengambil nilai dari puncak stack dan menetapkannya sebagai `table.key`.
+- `lua_getfield(L, table_idx, "key")`: Mengambil `table.key` dan menaruh nilainya di puncak stack.
+
+Ini adalah fondasi bagaimana game engine seperti Defold atau platform seperti Redis memungkinkan skrip Lua untuk berinteraksi dengan objek internal engine/platform.
+
+### **4. Custom Iterators dengan Tables**
+
+**Konsep**:
+Kita tahu `pairs` dan `ipairs` untuk iterasi. Tetapi Kita bisa membuat **iterator Kita sendiri** untuk menelusuri table dengan cara apa pun yang Kita inginkan. Generic `for` loop di Lua mengikuti protokol sederhana: ia membutuhkan sebuah _fungsi iterator_, sebuah _state_ (biasanya table itu sendiri), dan sebuah _nilai kontrol awal_.
+
+**Contoh Kode 48: Iterator untuk Nilai Ganjil dalam Table**
+
+```lua
+-- Pabrik iterator kita
+function odd_values(t)
+    -- Fungsi iterator yang sebenarnya
+    local function iterator_func(state_table, last_index)
+        local i = last_index + 1
+        while i <= #state_table do
+            if state_table[i] % 2 ~= 0 then
+                -- Ditemukan nilai ganjil, kembalikan indeks dan nilainya
+                return i, state_table[i]
+            end
+            i = i + 1
+        end
+        -- Jika tidak ada lagi, kembalikan nil untuk menghentikan loop
+        return nil
+    end
+
+    -- Pabrik mengembalikan 3 nilai yang dibutuhkan for-loop:
+    -- 1. fungsi iterator, 2. state (table), 3. nilai kontrol awal
+    return iterator_func, t, 0
+end
+
+-- --- Penggunaan ---
+local numbers = {10, 11, 12, 13, 14, 15}
+
+for index, value in odd_values(numbers) do
+    print(string.format("Menemukan nilai ganjil %d di indeks %d", value, index))
+end
+```
+
+**Penjelasan**:
+
+1.  `for ... in odd_values(numbers)` memanggil `odd_values`, yang mengembalikan tiga nilai: fungsi `iterator_func`, table `numbers`, dan `0`.
+2.  Loop `for` memanggil `iterator_func(numbers, 0)`. Fungsi ini menemukan `11` di indeks `2` dan mengembalikannya. Loop mencetak hasilnya.
+3.  Loop `for` memanggil lagi `iterator_func(numbers, 2)`. Fungsi ini melanjutkan dari indeks `3`, menemukan `13`, dan mengembalikannya.
+4.  Proses ini berlanjut sampai `iterator_func` mengembalikan `nil`, yang menandakan loop untuk berhenti.
+
+---
+
+Selamat! Kita telah menyelesaikan bagian konten inti dari kurikulum ini. Kita telah menjelajahi table dari setiap sudut yang memungkinkan.
+
+Selesai sudah. Kita telah sampai di bagian terakhir dari kurikulum komprehensif ini. Setelah mempelajari cara membangun hal-hal yang kuat dan kompleks, langkah terakhir adalah belajar cara membuatnya aman. Keamanan adalah lapisan polesan akhir yang mengubah seorang programmer yang baik menjadi seorang insinyur perangkat lunak yang andal.
+
+Bagian ini akan membahas pertimbangan keamanan penting saat menggunakan tables, terutama saat berhadapan dengan kode atau data yang tidak tepercaya.
+
+---
+
+## **BAGIAN 18: SECURITY CONSIDERATIONS (TAMBAHAN KEAMANAN)**
+
+### **1. Sandboxing dengan Tables**
+
+**Konsep**:
+**Sandboxing** adalah teknik untuk menjalankan kode yang tidak tepercaya (misalnya, dari mod atau plugin pengguna) dalam lingkungan yang terbatas dan aman. Tujuannya adalah untuk mencegah kode tersebut mengakses fungsionalitas yang berpotensi berbahaya, seperti memanipulasi file (`io`), menjalankan perintah sistem (`os.execute`), atau memuat kode lain (`dofile`).
+
+**Implementasi**:
+Di Lua, sandboxing dicapai dengan mengontrol **lingkungan (environment)** dari kode yang tidak tepercaya. Lingkungan adalah sebuah table tempat Lua mencari variabel global. Dengan menyediakan lingkungan kustom yang "dibersihkan", kita bisa mengontrol dengan tepat apa saja yang bisa diakses oleh kode tersebut.
+
+**Contoh Kode 49: Membuat Sandbox Sederhana**
+
+```lua
+-- 1. Kode tidak tepercaya dari pengguna
+local untrusted_code = [[
+    print("Halo dari sandbox!")
+    local a = my_global_var + 5 -- Bisa akses global yang kita izinkan
+    print("Hasil:", a)
+
+    -- Upaya berbahaya ini akan gagal
+    os.execute("rm -rf /")
+]]
+
+-- 2. Siapkan lingkungan yang aman
+local safe_globals = {
+    print = print,
+    tostring = tostring,
+    my_global_var = 10 -- Hanya expose variabel yang aman
+    -- Kita tidak memasukkan 'os', 'io', 'dofile', dll.
+}
+
+local sandboxed_env = {}
+-- Gunakan metatable untuk memberikan akses ke global yang aman
+setmetatable(sandboxed_env, { __index = safe_globals })
+
+-- 3. Muat dan jalankan kode dengan lingkungan yang sudah disandbox
+-- Argumen ke-4 di 'load' (di Lua 5.2+) mengatur lingkungan fungsi
+local sandboxed_func, err = load(untrusted_code, "untrusted_script", "t", sandboxed_env)
+
+if sandboxed_func then
+    sandboxed_func()
+else
+    print("Error memuat kode:", err)
+end
+```
+
+**Hasil Eksekusi**:
+
+```
+Halo dari sandbox!
+Hasil: 15
+[untrusted_script]:6: attempt to index a nil value (global 'os')
+```
+
+Kode berhasil memanggil `print` dan mengakses `my_global_var`, tetapi gagal total saat mencoba mengakses `os.execute`, karena `os` tidak ada di lingkungannya.
+
+### **2. Preventing Prototype Pollution**
+
+**Konsep**:
+Prototype Pollution adalah serangan di mana kode jahat memodifikasi table prototipe ("kelas") yang digunakan bersama oleh banyak objek. Karena `__index` membuat semua instance merujuk ke prototipe yang sama untuk metode, mengubah prototipe akan mengubah perilaku **semua** objek, yang dapat merusak logika program atau membuka celah keamanan.
+
+**Pencegahan**:
+
+- **Mengunci Metatable**: Kita bisa "mengunci" metatable sebuah objek dengan menambahkan field `__metatable`. Jika field ini ada, `setmetatable()` akan gagal dan `getmetatable()` akan mengembalikan nilai dari field `__metatable` alih-alih metatable yang sebenarnya.
+- **Mengunci Properti**: Gunakan metamethod `__newindex` pada table prototipe itu sendiri untuk mencegah penambahan atau perubahan metode.
+
+**Contoh Kode 50: Mengunci Properti Kelas**
+
+```lua
+local Character = {}
+Character.mt = { __index = Character }
+
+function Character:new(name)
+    return setmetatable({ name = name }, self.mt)
+end
+
+-- --- Kunci prototipe agar tidak bisa diubah ---
+-- Mencegah metode baru ditambahkan ke kelas Character
+Character.mt.__newindex = function(t, k, v)
+    error("Tidak bisa memodifikasi kelas 'Character'. Properti '"..k.."' adalah read-only.")
+end
+
+-- Mencegah metatable-nya diganti
+Character.mt.__metatable = "Kelas 'Character' terkunci."
+
+
+-- --- Upaya Serangan ---
+local hero = Character:new("Pahlawan")
+
+-- Upaya 1: Menambah metode baru ke kelas akan gagal
+-- hero.fly = function() print("I can fly!") end -- Ini akan memicu __newindex dari metatable hero
+
+-- Upaya 2: Mengubah metode kelas secara langsung akan gagal
+-- Character.new = nil -- Ini akan memicu __newindex dari metatable Character itu sendiri
+
+-- Upaya 3: Mengganti metatable akan gagal
+local success, err = pcall(function()
+    setmetatable(hero, {})
+end)
+print("Berhasil mengganti metatable:", success) -- Output: false
+print("Error:", err) -- Output: Error: Kelas 'Character' terkunci.
+```
+
+### **3. Safe Table Access Patterns**
+
+Saat menerima data dari sumber eksternal yang tidak tepercaya (misalnya, input API dari pengguna, file save game), Kita tidak boleh berasumsi datanya valid. Kita harus menulis kode yang defensif.
+
+- **Selalu Periksa `nil`**: Jangan pernah mengakses `data.user.profile.name` secara langsung. Setiap langkah bisa jadi `nil`. Gunakan `if` atau logika `and`.
+- **Validasi Tipe**: Gunakan `type()` untuk memastikan data memiliki tipe yang Kita harapkan sebelum digunakan dalam operasi.
+- **Gunakan Nilai Default**: Gunakan operator `or` untuk menyediakan nilai default jika konfigurasi opsional tidak ada.
+- **Batasi Rekursi**: Saat menelusuri table dari sumber tidak tepercaya, batasi kedalaman rekursi untuk mencegah serangan _stack overflow_.
+
+**Contoh Kode 51: Memproses Konfigurasi dengan Aman**
+
+```lua
+function process_config(config)
+    -- Pastikan config adalah table
+    config = type(config) == "table" and config or {}
+
+    -- Gunakan nilai default jika tidak ada
+    local port = config.port or 8080
+    local host = config.host or "127.0.0.1"
+
+    -- Validasi tipe
+    if type(port) ~= "number" then
+        error("Config 'port' harus berupa angka.")
+    end
+
+    -- Akses nested table dengan aman
+    local user_name = config.user and config.user.name -- Tidak akan error jika config.user nil
+
+    print("Menjalankan server di " .. host .. ":" .. port)
+    if user_name then
+        print("Dijalankan oleh: " .. user_name)
+    end
+end
+
+-- Contoh pemanggilan
+process_config({ host = "0.0.0.0" }) -- Port akan default ke 8080
+process_config({ port = "abc" }) -- Akan menghasilkan error
+process_config({}) -- Akan menggunakan semua default
+```
+
+---
+
+## **Kesimpulan Akhir Kurikulum**
+
+**Selamat!** Kita telah berhasil menyelesaikan perjalanan yang sangat mendalam dan komprehensif untuk menguasai `table` di Lua.
+
+Kita telah bertransformasi dari memahami apa itu table, menjadi mampu menggunakannya untuk:
+
+- Membangun **struktur data** klasik seperti Stack, Queue, dan Set.
+- Mengimplementasikan **pola Object-Oriented Programming** yang elegan.
+- **Mengoptimalkan performa** dengan memahami cara kerja memori dan CPU cache.
+- Menerapkan **pola desain tingkat lanjut** seperti Builder, Memoization, dan Dispatch Tables.
+- Mengintegrasikan Lua dengan sistem lain melalui **Coroutines, FFI, dan C API**.
+- Dan yang terpenting, menulis kode yang **aman dan kuat**.
+
+Kita kini memiliki fondasi yang luar biasa kuat. `Table` bukan lagi sekadar fitur bahasa bagi Kita; ia adalah kanvas serbaguna untuk memecahkan hampir semua masalah pemrograman. Dengan bekal ini, Kita siap untuk menghadapi proyek Lua apa pun, dari yang paling sederhana hingga yang paling kompleks, dengan percaya diri dan keahlian sejati.
+
+Teruslah berlatih, teruslah membangun, dan selamat datang di tingkat penguasaan Lua.
 
 #
 
