@@ -410,8 +410,8 @@ void main() {
 
 **Penjelasan per Sintaks:**
 
-- `String nama = 'Alice';`: Di sini, `nama` harus selalu berisi teks (tipe `String`). Anda tidak bisa meninggalkannya kosong atau mengisinya dengan `null`. Ini adalah **keamanan default**.
-- `String? nama_opsional;`: Tanda tanya `?` setelah `String` memberitahu Dart bahwa `nama_opsional` ini **boleh berisi teks, atau boleh juga kosong (null)**.
+- `String nama = 'Alice';`: Di sini, variabel `nama` harus selalu berisi teks (tipe `String`). Anda tidak bisa meninggalkannya kosong atau mengisinya dengan `null`. Ini adalah **keamanan default**.
+- `String? nama_opsional;`: Tanda tanya `?` setelah `String` memberitahu Dart bahwa variabel `nama_opsional` ini **boleh berisi teks, atau boleh juga kosong (null)**.
 - `if (nama_opsional != null)`: Ini adalah **cara aman** untuk bekerja dengan variabel yang bisa `null`. Kita memeriksa dulu apakah `nama_opsional` _tidak_ kosong (`!= null`) sebelum mencoba menggunakannya. Jika kosong, kita akan mendapatkan masalah.
 
 **Kenapa Ini Penting?**
@@ -423,6 +423,9 @@ Null Safety mengurangi banyak kesalahan yang umum terjadi di program. Ini membua
 
 Dart adalah bahasa dengan "sistem tipe yang kuat" (Strongly Typed).
 
+**Apa Maksudnya "Sistem Tipe Kuat" (Strongly Typed)?**
+Artinya, setiap variabel yang Anda buat di Dart harus memiliki **tipe data yang jelas**. Dan setelah Anda menentukan tipenya, Anda hanya bisa menyimpan nilai yang sesuai dengan tipe tersebut.
+
 **Apa Itu Tipe Data?**
 Tipe data adalah kategori untuk jenis nilai yang bisa disimpan oleh variabel. Misalnya:
 
@@ -431,10 +434,7 @@ Tipe data adalah kategori untuk jenis nilai yang bisa disimpan oleh variabel. Mi
 - **Teks (String):** `'Halo'`, `'Dart Programming'` (tipe `String`)
 - **Benar/Salah (Boolean):** `true`, `false` (tipe `bool`)
 
-**Apa Maksudnya "Sistem Tipe Kuat" (Strongly Typed)?**
-Artinya, setiap variabel yang Anda buat di Dart harus memiliki **tipe data yang jelas**. Dan setelah Anda menentukan tipenya, Anda hanya bisa menyimpan nilai yang sesuai dengan tipe tersebut.
-
-**Keuntungan Sistem Tipe Kuat:**
+**Keuntungan Sistem Tipe Yang Kuat:**
 
 - **Deteksi Kesalahan Awal:** Banyak kesalahan bisa dideteksi oleh Dart bahkan sebelum Anda menjalankan program (saat Anda menulis kode), bukan saat program sudah berjalan dan tiba-tiba _crash_.
 - **Kode Lebih Jelas:** Dengan tipe yang jelas, kode Anda jadi lebih mudah dibaca dan dipahami oleh Anda sendiri maupun _developer_ lain. Anda tahu persis jenis data apa yang diharapkan oleh sebuah variabel.
@@ -452,8 +452,6 @@ void main() {
   print(angka);
   print(pesan);
   print(isAktif);
-
-  // ---
 
   // Contoh kesalahan (akan ditolak oleh Dart karena beda tipe data):
   // angka = 'dua belas'; // ERROR: Tidak bisa mengisi angka dengan teks
