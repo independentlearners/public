@@ -37,30 +37,30 @@
 
 ### 💎 **[Module 2: Basic Syntax & Data Types][2]**
 
-| Code | Topic                                        | Official Reference                                                                          |
-| ---- | -------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| 016  | [Syntax Fundamentals][syntax-fundamentals]   | [Language Tour](https://dart.dev/language)                                                  |
-| 017  | Comments                                     | [Documentation Comments](https://dart.dev/language/comments)                                |
-| 018  | [Variables & Constants][variables-constants] | [Variables](https://dart.dev/language/variables)                                            |
-| 019  | [Keywords][keywoard]                         | [Keywords Reference](https://dart.dev/language/keywords)                                    |
-| 020  | [Typing System][typing-system]               | [Type System](https://dart.dev/language/type-system)                                        |
-| 021  | [Null Safety Deep Dive][null-safety-deep]    | [Understanding Null Safety](https://dart.dev/null-safety/understanding-null-safety)         |
-| 022  | [Late Variables][late-variables]             | [Late Variables](https://dart.dev/language/variables#late-variables)                        |
-| 023  | [Final vs Const][final-const]                | [Final and Const](https://dart.dev/language/variables#final-and-const)                      |
-| 024  | [Boolean Operations][boolean-operations]     | [Booleans](https://dart.dev/language/built-in-types#booleans)                               |
-| 025  | [Number System][number-system]               | [Numbers](https://dart.dev/language/built-in-types#numbers)                                 |
-| 026  | [String Fundamentals][string-fundamentals]   | [Strings](https://dart.dev/language/built-in-types#strings)                                 |
-| 027  | [String Interpolation][string-interpolation] | [String Interpolation](https://dart.dev/language/built-in-types#string-interpolation)       |
-| 028  | [Raw Strings][raw-strings]                   | [Raw Strings](https://dart.dev/language/built-in-types#raw-strings)                         |
-| 029  | [Multi-line Strings][multi-line-strings]     | [Multi-line Strings](https://dart.dev/language/built-in-types#multiline-strings)            |
-| 030  | String Methods                               | [String Properties](https://api.dart.dev/stable/dart-core/String-class.html)                |
-| 031  | Symbol Type                                  | [Symbols](https://dart.dev/language/built-in-types#symbols)                                 |
-| 032  | Runes and Unicode                            | [Runes and Graphemes](https://dart.dev/language/built-in-types#runes-and-grapheme-clusters) |
-| 033  | Type System Mastery                          | [Type System](https://dart.dev/language/type-system)                                        |
-| 034  | Type Inference                               | [Type Inference](https://dart.dev/language/type-system#type-inference)                      |
-| 035  | Type Annotations                             | [Type Annotations](https://dart.dev/language/type-system#type-annotations)                  |
-| 036  | Casting and Conversion                       | [Type Casting](https://dart.dev/language/type-system#type-casting)                          |
-| 037  | Runtime Type                                 | [Runtime Type Info](https://api.dart.dev/stable/dart-core/Type-class.html)                  |
+| Code | Topic                                            | Official Reference                                                                          |
+| ---- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| 016  | [Syntax Fundamentals][syntax-fundamentals]       | [Language Tour](https://dart.dev/language)                                                  |
+| 017  | [Comments][comments]                                         | [Documentation Comments](https://dart.dev/language/comments)                                |
+| 018  | [Variables & Constants][variables-constants]     | [Variables](https://dart.dev/language/variables)                                            |
+| 019  | [Keywords][keywoard]                             | [Keywords Reference](https://dart.dev/language/keywords)                                    |
+| 020  | [Typing System][typing-system]                   | [Type System](https://dart.dev/language/type-system)                                        |
+| 021  | [Null Safety Deep Dive][null-safety-deep]        | [Understanding Null Safety](https://dart.dev/null-safety/understanding-null-safety)         |
+| 022  | [Late Variables][late-variables]                 | [Late Variables](https://dart.dev/language/variables#late-variables)                        |
+| 023  | [Final vs Const][final-const]                    | [Final and Const](https://dart.dev/language/variables#final-and-const)                      |
+| 024  | [Boolean Operations][boolean-operations]         | [Booleans](https://dart.dev/language/built-in-types#booleans)                               |
+| 025  | [Number System][number-system]                   | [Numbers](https://dart.dev/language/built-in-types#numbers)                                 |
+| 026  | [String Fundamentals][string-fundamentals]       | [Strings](https://dart.dev/language/built-in-types#strings)                                 |
+| 027  | [String Interpolation][string-interpolation]     | [String Interpolation](https://dart.dev/language/built-in-types#string-interpolation)       |
+| 028  | [Raw Strings][raw-strings]                       | [Raw Strings](https://dart.dev/language/built-in-types#raw-strings)                         |
+| 029  | [Multi-line Strings][multi-line-strings]         | [Multi-line Strings](https://dart.dev/language/built-in-types#multiline-strings)            |
+| 030  | [String Methods][strin-methods]                  | [String Properties](https://api.dart.dev/stable/dart-core/String-class.html)                |
+| 031  | [Symbol Type][symbol-type]                       | [Symbols](https://dart.dev/language/built-in-types#symbols)                                 |
+| 032  | [Runes and Unicode][runes-and-unicode]           | [Runes and Graphemes](https://dart.dev/language/built-in-types#runes-and-grapheme-clusters) |
+| 033  | [Type System Mastery][type-system-mastery]       | [Type System](https://dart.dev/language/type-system)                                        |
+| 034  | [Type Inference][type-inference]                 | [Type Inference](https://dart.dev/language/type-system#type-inference)                      |
+| 035  | [Type Annotations][type-annotations]             | [Type Annotations](https://dart.dev/language/type-system#type-annotations)                  |
+| 036  | [Casting and Conversion][casting-and-conversion] | [Type Casting](https://dart.dev/language/type-system#type-casting)                          |
+| 037  | [Runtime Type][runtime-type]                     | [Runtime Type Info](https://api.dart.dev/stable/dart-core/Type-class.html)                  |
 
 ---
 
@@ -1479,7 +1479,13 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [master-flutter]: ../../../../framework/flutter/README.md
 [dartcli]: ../dart/materi/cli/README.md
 [detailkurikulum]: ../dart/laporan-dart/README.md
+
+<!-- FOUNDATION LEVEL -->
+
 [1]: ../dart/kursus/materi/fondation/README.md
+
+<!-- Module 2: Basic Syntax & Data Types -->
+
 [keywoard]: ../dart/kursus/materi/modul-2/keywoards/README.md
 [typing-system]: ../dart/kursus/materi/modul-2/bagian-4/README.md
 [syntax-fundamentals]: ../dart/kursus/materi/modul-2/bagian-1/README.md
@@ -1487,20 +1493,24 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [null-safety-deep]: ../dart/kursus/materi/modul-2/bagian-5/README.md
 [late-variables]: ../dart/kursus/materi/modul-2/bagian-6/README.md
 [final-const]: ../dart/kursus/materi/modul-2/bagian-7/README.md
-[boolean-operations]: ../dart/kursus/materi/modul-2/
-[number-system]: ../dart/kursus/materi/modul-2/
+[boolean-operations]: ../dart/kursus/materi/modul-2/bagian-8/README.md
+[number-system]: ../dart/kursus/materi/modul-2/bagian-9/README.md
 [string-fundamentals]: ../dart/kursus/materi/modul-2/
-[string-interpolation]: ../dart/kursus/materi/modul-2/
+[string-interpolation]: ../dart/kursus/materi/modul-2/bagian-11/README.md
 [raw-strings]: ../dart/kursus/materi/modul-2/
 [multi-line-strings]: ../dart/kursus/materi/modul-2/
-[16]: ../dart/kursus/materi/modul-2/
-[17]: ../dart/kursus/materi/modul-2/
-[18]: ../dart/kursus/materi/modul-2/
-[19]: ../dart/kursus/materi/modul-2/
-[20]: ../dart/kursus/materi/modul-2/
-[21]: ../dart/kursus/materi/modul-2/
-[22]: ../dart/kursus/materi/modul-2/
-[23]: ../dart/kursus/materi/modul-2/
+[strin-methods]: ../dart/kursus/materi/modul-2/
+[symbol-type]: ../dart/kursus/materi/modul-2/
+[runes-and-unicode]: ../dart/kursus/materi/modul-2/
+[type-system-mastery]: ../dart/kursus/materi/modul-2/
+[type-inference]: ../dart/kursus/materi/modul-2/
+[type-annotations]: ../dart/kursus/materi/modul-2/
+[casting-and-conversion]: ../dart/kursus/materi/modul-2/
+[runtime-type]: ../dart/kursus/materi/modul-2/
+[comments]:../dart/kursus/dasar/comentar/README.md
+
+<!-- Module 3: Operators & Expressions -->
+
 [24]: ../dart/kursus/materi/modul-2/
 [25]: ../dart/kursus/materi/modul-2/
 [26]: ../dart/kursus/materi/modul-2/
