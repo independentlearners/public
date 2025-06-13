@@ -356,6 +356,13 @@
 - GitOps workflows
 - **Sumber**: [OpenResty Infrastructure Automation](https://openresty.org/en/infrastructure.html)
 
+## **Modul 15: Community dan Ecosystem**
+
+- Upcoming features dan improvements
+- Industry trends yang mempengaruhi OpenResty
+- Career paths dalam OpenResty ecosystem
+- **Sumber**: [OpenResty GitHub Roadmap](https://github.com/openresty/openresty/issues)
+
 ### 15.1 OpenResty Community Resources
 
 - Forum dan documentation navigation
@@ -369,13 +376,6 @@
 - Enterprise features dan support
 - Migration strategies
 - **Sumber**: [OpenResty Inc. Commercial Products](https://openresty.com/en/)
-
-## **Modul 15: Community dan Ecosystem**
-
-- Upcoming features dan improvements
-- Industry trends yang mempengaruhi OpenResty
-- Career paths dalam OpenResty ecosystem
-- **Sumber**: [OpenResty GitHub Roadmap](https://github.com/openresty/openresty/issues)
 
 ## **Sumber Referensi Tambahan**
 
