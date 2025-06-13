@@ -1,6 +1,4 @@
-# String Interpolation
-
-## String Interpolation
+# [String Interpolation][0]
 
 ### 1. Pendahuluan
 

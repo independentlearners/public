@@ -33,12 +33,12 @@ void main() {
 
 **Penjelasan per Sintaks:**
 
-- `void`: Ini artinya fungsi ini (akan kita jelaskan sebentar lagi) tidak akan menghasilkan "nilai balikan" apa pun. Anggap saja seperti Anda memberikan perintah "nyalakan lampu", lampu menyala, tapi tidak ada jawaban lisan yang kembali ke Anda.
-- `main()`: Ini adalah bagian paling penting! Semua program Dart **harus** punya bagian `main()`. Anggap saja ini adalah "titik awal" atau "pintu masuk" program Anda. Saat komputer menjalankan program Dart, ia akan selalu mencari dan memulai dari `main()`.
-- `{ }`: Tanda kurung kurawal ini seperti "kotak" yang berisi semua perintah yang harus dijalankan di dalam `main()`. Semua perintah di dalam `main()` harus berada di antara `{` dan `}`.
+- `void`: Ini sebuah kata kunci khusus fungsi (bagian ini akan kita jelaskan sebentar lagi) dan maksud dari kata kunci ini yaitu tidak akan menghasilkan "nilai balikan" apa pun. Anggap saja seperti Anda memberikan perintah "nyalakan lampu", lampu menyala, tapi tidak ada jawaban lisan yang kembali ke Anda.
+- `main()`: Ini adalah bagian paling penting! Semua program Dart **harus** punya bagian `main()`. Anggap saja ini adalah "titik awal" atau "pintu masuk" program Anda. Saat komputer menjalankan program Dart, ia akan selalu mencari dan memulai dari pintu masuk tersebut, itulah `main()`, kode ini desebut _main finction atau fungsi utama_.
+- `{ }`: Tanda kurung kurawal ini seperti "sebuah kotak" yang berisi semua perintah yang harus dijalankan di dalam `main()`. Semua perintah di dalam `main()` harus berada di antara buka tutup kurung kurawal `{` dan `}`.
 - `print('Halo, Dunia!');`: Ini adalah perintah untuk **menampilkan teks** ke layar.
-  - `print`: Ini adalah kata kunci (perintah bawaan) di Dart untuk menampilkan sesuatu.
-  - `'Halo, Dunia!'`: Ini adalah **teks** yang ingin kita tampilkan. Teks selalu ditulis di antara tanda kutip tunggal (`' '`) atau ganda (`" "`).
+  - `print`: Ini adalah kata kunci (perintah bawaan) khusus di Dart untuk menampilkan sesuatu di layar, seperti namanya **print** yaitu **mencetak**.
+  - `'Halo, Dunia!'`: Ini adalah **teks** yang ingin kita tampilkan. Teks selalu ditulis di antara tanda kutip tunggal (`' '`) atau ganda (`" "`) dan apapun yang di tulis disini maka itu disebut teks meskipun berupa angka, kita akan mendalami bagian ini pada saatnya nanti.
   - `;`: Titik koma ini wajib ada di akhir setiap perintah (setiap baris instruksi) di Dart. Ibaratnya seperti titik di akhir kalimat.
 
 **Jadi, kode di atas berarti:** "Saat program ini dijalankan, tampilkan tulisan 'Halo, Dunia!' ke layar."
@@ -67,7 +67,7 @@ Dart pertama kali diperkenalkan oleh Google pada tahun **2011**. Awalnya, Dart d
 
 - **2011:** Diperkenalkan sebagai bahasa web.
 - **2017:** Flutter dirilis, membuat Dart menjadi bintang untuk pengembangan aplikasi mobile.
-- **2020:** Versi 2.0 dirilis dengan banyak peningkatan, termasuk "Null Safety" (akan kita bahas nanti) yang membuat kode lebih aman.
+- **2020:** Versi 2.0 dirilis dengan banyak peningkatan, termasuk "Null Safety" (akan kita bahas nanti) yang membuat kode lebih aman dibandingkan JS / JavaScript.
 
 **Kenapa Penting Tahu Sejarah?**
 Memahami sejarahnya membantu kita mengerti kenapa Dart punya fitur-fitur tertentu dan bagaimana bahasa ini berkembang untuk memenuhi kebutuhan para developer.
@@ -82,7 +82,7 @@ Dart sangat fleksibel dan kuat karena bisa diubah menjadi kode yang berjalan di 
 - **Aplikasi Web:** Anda bisa membuat aplikasi web modern yang cepat dan interaktif menggunakan Dart.
 - **Aplikasi Desktop (Windows, macOS, Linux):** Flutter juga memungkinkan Anda membuat aplikasi desktop yang terlihat bagus dan berfungsi di semua sistem operasi utama.
 - **Server/Backend:** Dart bisa digunakan untuk membuat server API (Application Programming Interface) yang menjadi "otak" aplikasi. Ini tempat data disimpan dan logika bisnis dijalankan.
-- **Command-Line Tools (CLI):** Anda bisa membuat program kecil yang berjalan di terminal komputer (seperti Command Prompt di Windows atau Terminal di macOS/Linux) untuk tugas-tugas otomatisasi.
+- **Command-Line Tools (CLI):** Anda bisa membuat program kecil yang berjalan di terminal komputer (seperti Command Prompt di Windows atau Terminal di macOS/Linux) untuk tugas-tugas aotomasi.
 
 **Contoh Analogi:**
 Bayangkan Dart seperti seorang koki serba bisa yang bisa memasak makanan Indonesia, Italia, Jepang, dan Amerika, semuanya dengan resep yang sama. Jadi, Anda tidak perlu memanggil koki berbeda untuk setiap jenis masakan.
@@ -103,7 +103,7 @@ Umumnya, Anda bisa menginstal Dart SDK melalui berbagai cara tergantung sistem o
 **Penting:** Setelah instalasi, Anda perlu memastikan Dart "terlihat" oleh sistem operasi Anda. Ini biasanya dilakukan dengan menambahkan lokasi Dart ke dalam **PATH** sistem.
 
 **Contoh Analogi:**
-Menginstal Dart SDK itu seperti Anda membeli satu set perkakas lengkap untuk membangun rumah. Di dalamnya sudah ada palu, obeng, meteran, dan semua alat yang Anda butuhkan.
+Menginstal Dart SDK itu seperti Anda membeli satu set perkakas lengkap untuk membangun rumah. Di dalamnya sudah ada palu, obeng, meteran, dan semua alat yang Anda butuhkan, itu adalah ketika nantinya kita membuat perintah perintah di terminal untuk melakukan perubahan atau penyesuaian apapun terkait SDK yang kita meliki, biasanya perintahnya diawali dengan `dart` dsb.
 
 ---
 
@@ -120,7 +120,7 @@ DartPad adalah cara paling mudah untuk mencoba Dart **tanpa perlu instalasi apa 
 **Cara Menggunakan:**
 
 1.  Buka `https://dartpad.dev/` di browser Anda.
-2.  Tulis kode Dart di editor.
+2.  Tulis kode Dart di konsol editor.
 3.  Klik tombol "Run" untuk melihat hasilnya.
 
 **Contoh Kode di DartPad:**
@@ -137,14 +137,15 @@ void main() {
 **Penjelasan Tambahan:**
 
 - `String nama = 'Budi';`: Ini adalah cara membuat **variabel** (kotak penyimpanan data) di Dart.
-  - `String`: Tipe data untuk menyimpan teks (kata atau kalimat).
-  - `nama`: Nama dari variabel (kotak) kita.
+  - `String`: Ini adalah **Tipe Data / Tanda Pengenal** khusus untuk menyimpan teks (kata atau kalimat).
+  - `nama`: Nama dari variabel / kotak kita.
   - `= 'Budi'`: Mengisi variabel `nama` dengan teks `'Budi'`.
 - `int umur = 30;`: Sama seperti di atas, tapi untuk angka bulat.
   - `int`: Tipe data untuk menyimpan angka bulat (integer).
   - `umur`: Nama variabel.
+  - `=`: simbol ini (disebut operator) adalah bagian penugasan
   - `= 30`: Mengisi variabel `umur` dengan angka `30`.
-- `$nama` dan `$umur`: Ini adalah cara cepat untuk "memasukkan" nilai dari variabel `nama` dan `umur` ke dalam teks yang akan ditampilkan.
+  - `$nama` dan `$umur`: Ini disebut **variabel interpolation** adalah cara cepat untuk "memasukkan" nilai dari variabel `nama` dan `umur` ke dalam teks yang akan ditampilkan.
 
 **Hasil Output di DartPad:**
 `Halo, nama saya Budi dan saya berumur 30 tahun.`
@@ -475,9 +476,9 @@ Jika Anda mencoba melakukan `angka = 'dua belas';`, Dart akan langsung memberita
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
-[selanjutnya]: ../bagian-2/README.md
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../README.md
+[selanjutnya]: ../../materi/modul-2/README.md
 
 <!----------------------------------------------------->
 

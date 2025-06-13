@@ -1,4 +1,4 @@
-# Late Variables
+# [Late Variables][0]
 
 Kita telah menyentuh **`late`** secara sekilas di bagian **Variables & Constants** dan **Null Safety Deep Dive**. Sekarang, mari kita bedah lebih jauh mengapa `late` ada, bagaimana cara kerjanya, dan kapan Anda harus (atau tidak harus) menggunakannya dalam kode Dart Anda.
 

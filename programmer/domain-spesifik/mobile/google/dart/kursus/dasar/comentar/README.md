@@ -1,4 +1,4 @@
-# Komentar
+# [Komentar][0]
 
 Komentar adalah bagian dari kode yang tidak akan dijalankan oleh program, komentar hanya berfungsi sebagai penanda atau catatan yang bisa membantu programmer dalam memahami kode yang ditulisnya, komentar tidak akan mempengaruhi hasil dari program yang kita buat, komentar hanya akan dilihat oleh programmer yang membuatnya, komentar bisa berupa teks atau kode yang diawali dengan simbol tertentu, di Dart, komentar bisa ditulis dengan beberapa cara, yaitu:
 
@@ -99,3 +99,5 @@ Ubah simbol "&" menjadi simbol lainnya, seperti simbol "@" atau simbol lainnya y
 
 */
 ```
+
+[0]:../../materi/modul-2/README.md

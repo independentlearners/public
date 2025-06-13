@@ -1,4 +1,4 @@
-# Final vs Const
+# [Final vs Const][0]
 
 Mari kita selami perbedaan antara `final` dan `const` secara mendalam. Kedua kata kunci ini digunakan untuk mendeklarasikan nilai-nilai yang tidak dapat diubah (immutable), namun perbedaan mendasarnya terletak pada _kapan_ nilai tersebut ditetapkan.
 

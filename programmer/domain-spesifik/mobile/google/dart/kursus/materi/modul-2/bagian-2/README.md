@@ -1,4 +1,4 @@
-# Variables dan Constants
+# [Variables dan Constants][0]
 
 Ini adalah konsep kunci yang memungkinkan Anda menyimpan dan mengelola data dalam program Anda. Tanpa mereka, program akan sangat statis dan tidak bisa berinteraksi dengan informasi dinamis.
 

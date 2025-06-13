@@ -1477,12 +1477,13 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 [domain-spesifik]: ../../../README.md
 [master-flutter]: ../../../../framework/flutter/README.md
-[dartcli]: ../dart/materi/cli/README.md
+[dartcli]: ../dart/nich/cli/README.md
 [detailkurikulum]: ../dart/laporan-dart/README.md
 
 <!-- FOUNDATION LEVEL -->
 
 [1]: ../dart/kursus/materi/fondation/README.md
+[2]: ../dart/kursus/materi/modul-2/README.md
 
 <!-- Module 2: Basic Syntax & Data Types -->
 
@@ -1495,18 +1496,18 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [final-const]: ../dart/kursus/materi/modul-2/bagian-7/README.md
 [boolean-operations]: ../dart/kursus/materi/modul-2/bagian-8/README.md
 [number-system]: ../dart/kursus/materi/modul-2/bagian-9/README.md
-[string-fundamentals]: ../dart/kursus/materi/modul-2/
+[string-fundamentals]: ../dart/kursus/materi/modul-2/bagian-10/README.md
 [string-interpolation]: ../dart/kursus/materi/modul-2/bagian-11/README.md
-[raw-strings]: ../dart/kursus/materi/modul-2/
-[multi-line-strings]: ../dart/kursus/materi/modul-2/
-[strin-methods]: ../dart/kursus/materi/modul-2/
-[symbol-type]: ../dart/kursus/materi/modul-2/
-[runes-and-unicode]: ../dart/kursus/materi/modul-2/
-[type-system-mastery]: ../dart/kursus/materi/modul-2/
-[type-inference]: ../dart/kursus/materi/modul-2/
-[type-annotations]: ../dart/kursus/materi/modul-2/
-[casting-and-conversion]: ../dart/kursus/materi/modul-2/
-[runtime-type]: ../dart/kursus/materi/modul-2/
+[raw-strings]: ../dart/kursus/materi/modul-2/bagian-12/README.md
+[multi-line-strings]: ../dart/kursus/materi/modul-2/bagian-13/README.md
+[strin-methods]: ../dart/kursus/materi/modul-2/bagian-14/README.md
+[symbol-type]: ../dart/kursus/materi/modul-2/bagian-15/README.md
+[runes-and-unicode]: ../dart/kursus/materi/modul-2/bagian-16/README.md
+[type-system-mastery]: ../dart/kursus/materi/modul-2/bagian-17/README.md
+[type-inference]: ../dart/kursus/materi/modul-2/bagian-18/README.md
+[type-annotations]: ../dart/kursus/materi/modul-2/bagian-19/README.md
+[casting-and-conversion]: ../dart/kursus/materi/modul-2/bagian-20/README.md
+[runtime-type]: ../dart/kursus/materi/modul-2/bagian-21/README.md
 [comments]:../dart/kursus/dasar/comentar/README.md
 
 <!-- Module 3: Operators & Expressions -->
