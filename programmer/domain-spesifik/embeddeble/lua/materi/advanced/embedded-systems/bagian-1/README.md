@@ -1,7 +1,7 @@
 ### Daftar Isi Panduan Belajar
 
 - [](#)
-  - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
+    - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
   - [**Fase 3: Hardware Interface dan Peripheral Control**](#fase-3-hardware-interface-dan-peripheral-control)
     - [**3.1. GPIO: Gerbang Menuju Dunia Fisik**](#31-gpio-gerbang-menuju-dunia-fisik)
     - [**3.2. ADC: Mengukur Dunia Analog**](#32-adc-mengukur-dunia-analog)
@@ -17,6 +17,20 @@
     - [**4.3. Event-driven Programming: Reaksi Terhadap Stimulus**](#43-event-driven-programming-reaksi-terhadap-stimulus)
     - [**4.4. State Machines: Mengelola Perilaku Kompleks**](#44-state-machines-mengelola-perilaku-kompleks)
     - [**Langkah Selanjutnya**](#langkah-selanjutnya)
+- [](#-1)
+    - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan-1)
+  - [**Fase 5: Networking dan Communication**](#fase-5-networking-dan-communication)
+    - [**5.1. TCP/IP Stack: Fondasi Jaringan**](#51-tcpip-stack-fondasi-jaringan)
+    - [**5.2. WiFi: Konektivitas Nirkabel**](#52-wifi-konektivitas-nirkabel)
+    - [**5.3. HTTP: Berkomunikasi dengan Web**](#53-http-berkomunikasi-dengan-web)
+    - [**5.4. MQTT: Protokol Wajib untuk IoT**](#54-mqtt-protokol-wajib-untuk-iot)
+  - [**Fase 6: IoT dan Cloud Integration**](#fase-6-iot-dan-cloud-integration)
+    - [**6.1. Arsitektur IoT: Gambaran Besar**](#61-arsitektur-iot-gambaran-besar)
+    - [**6.2. Integrasi Platform Cloud**](#62-integrasi-platform-cloud)
+    - [**6.3. Serialisasi Data: JSON dan Format Efisien**](#63-serialisasi-data-json-dan-format-efisien)
+    - [**6.4. Keamanan dan Enkripsi: SSL/TLS**](#64-keamanan-dan-enkripsi-ssltls)
+    - [**6.5. OTA Updates: Pembaruan Jarak Jauh**](#65-ota-updates-pembaruan-jarak-jauh)
+    - [**Langkah Selanjutnya**](#langkah-selanjutnya-1)
 
 ---
 
@@ -538,7 +552,7 @@ Sangat disarankan agar Kita untuk benar-benar **mempraktikkan setiap contoh kode
 ### Daftar Isi (Lanjutan)
 
 - [](#)
-  - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
+    - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
   - [**Fase 3: Hardware Interface dan Peripheral Control**](#fase-3-hardware-interface-dan-peripheral-control)
     - [**3.1. GPIO: Gerbang Menuju Dunia Fisik**](#31-gpio-gerbang-menuju-dunia-fisik)
     - [**3.2. ADC: Mengukur Dunia Analog**](#32-adc-mengukur-dunia-analog)
@@ -554,6 +568,20 @@ Sangat disarankan agar Kita untuk benar-benar **mempraktikkan setiap contoh kode
     - [**4.3. Event-driven Programming: Reaksi Terhadap Stimulus**](#43-event-driven-programming-reaksi-terhadap-stimulus)
     - [**4.4. State Machines: Mengelola Perilaku Kompleks**](#44-state-machines-mengelola-perilaku-kompleks)
     - [**Langkah Selanjutnya**](#langkah-selanjutnya)
+- [](#-1)
+    - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan-1)
+  - [**Fase 5: Networking dan Communication**](#fase-5-networking-dan-communication)
+    - [**5.1. TCP/IP Stack: Fondasi Jaringan**](#51-tcpip-stack-fondasi-jaringan)
+    - [**5.2. WiFi: Konektivitas Nirkabel**](#52-wifi-konektivitas-nirkabel)
+    - [**5.3. HTTP: Berkomunikasi dengan Web**](#53-http-berkomunikasi-dengan-web)
+    - [**5.4. MQTT: Protokol Wajib untuk IoT**](#54-mqtt-protokol-wajib-untuk-iot)
+  - [**Fase 6: IoT dan Cloud Integration**](#fase-6-iot-dan-cloud-integration)
+    - [**6.1. Arsitektur IoT: Gambaran Besar**](#61-arsitektur-iot-gambaran-besar)
+    - [**6.2. Integrasi Platform Cloud**](#62-integrasi-platform-cloud)
+    - [**6.3. Serialisasi Data: JSON dan Format Efisien**](#63-serialisasi-data-json-dan-format-efisien)
+    - [**6.4. Keamanan dan Enkripsi: SSL/TLS**](#64-keamanan-dan-enkripsi-ssltls)
+    - [**6.5. OTA Updates: Pembaruan Jarak Jauh**](#65-ota-updates-pembaruan-jarak-jauh)
+    - [**Langkah Selanjutnya**](#langkah-selanjutnya-1)
 
 ---
 
@@ -1040,13 +1068,387 @@ Anda sekarang memiliki pemahaman yang kuat tentang bagaimana Lua berinteraksi de
 
 Pemahaman tentang _event-driven programming_ dan _state machines_ akan sangat krusial saat Anda mulai membangun aplikasi IoT yang kompleks yang harus mengelola koneksi jaringan, input sensor, dan interaksi pengguna secara bersamaan.
 
+#
+
+Sekarang kita akan memasuki ranah konektivitas. Fase ini akan menunjukkan bagaimana perangkat _embedded_ Anda yang tadinya berdiri sendiri dapat berkomunikasi dengan perangkat lain, baik di jaringan lokal maupun di internet. Ini adalah jembatan menuju dunia _Internet of Things_ (IoT).
+
+### Daftar Isi (Lanjutan)
+
+- [](#)
+    - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan)
+  - [**Fase 3: Hardware Interface dan Peripheral Control**](#fase-3-hardware-interface-dan-peripheral-control)
+    - [**3.1. GPIO: Gerbang Menuju Dunia Fisik**](#31-gpio-gerbang-menuju-dunia-fisik)
+    - [**3.2. ADC: Mengukur Dunia Analog**](#32-adc-mengukur-dunia-analog)
+    - [**3.3. PWM: Mengontrol Intensitas dan Kecepatan**](#33-pwm-mengontrol-intensitas-dan-kecepatan)
+    - [**3.4. Komunikasi Serial: UART**](#34-komunikasi-serial-uart)
+    - [**3.5. Komunikasi Serial: I2C**](#35-komunikasi-serial-i2c)
+    - [**3.6. Komunikasi Serial: SPI**](#36-komunikasi-serial-spi)
+    - [**3.7. Timer dan Counter: Mengukur Waktu**](#37-timer-dan-counter-mengukur-waktu)
+    - [**3.8. Interrupt Handling: Merespons Kejadian Seketika**](#38-interrupt-handling-merespons-kejadian-seketika)
+  - [**Fase 4: Real-time Systems dan Scheduling**](#fase-4-real-time-systems-dan-scheduling)
+    - [**4.1. Konsep Real-time: Ketepatan Waktu adalah Kunci**](#41-konsep-real-time-ketepatan-waktu-adalah-kunci)
+    - [**4.2. Penjadwalan Tugas (Task Scheduling) dengan Coroutines**](#42-penjadwalan-tugas-task-scheduling-dengan-coroutines)
+    - [**4.3. Event-driven Programming: Reaksi Terhadap Stimulus**](#43-event-driven-programming-reaksi-terhadap-stimulus)
+    - [**4.4. State Machines: Mengelola Perilaku Kompleks**](#44-state-machines-mengelola-perilaku-kompleks)
+    - [**Langkah Selanjutnya**](#langkah-selanjutnya)
+- [](#-1)
+    - [Daftar Isi (Lanjutan)](#daftar-isi-lanjutan-1)
+  - [**Fase 5: Networking dan Communication**](#fase-5-networking-dan-communication)
+    - [**5.1. TCP/IP Stack: Fondasi Jaringan**](#51-tcpip-stack-fondasi-jaringan)
+    - [**5.2. WiFi: Konektivitas Nirkabel**](#52-wifi-konektivitas-nirkabel)
+    - [**5.3. HTTP: Berkomunikasi dengan Web**](#53-http-berkomunikasi-dengan-web)
+    - [**5.4. MQTT: Protokol Wajib untuk IoT**](#54-mqtt-protokol-wajib-untuk-iot)
+  - [**Fase 6: IoT dan Cloud Integration**](#fase-6-iot-dan-cloud-integration)
+    - [**6.1. Arsitektur IoT: Gambaran Besar**](#61-arsitektur-iot-gambaran-besar)
+    - [**6.2. Integrasi Platform Cloud**](#62-integrasi-platform-cloud)
+    - [**6.3. Serialisasi Data: JSON dan Format Efisien**](#63-serialisasi-data-json-dan-format-efisien)
+    - [**6.4. Keamanan dan Enkripsi: SSL/TLS**](#64-keamanan-dan-enkripsi-ssltls)
+    - [**6.5. OTA Updates: Pembaruan Jarak Jauh**](#65-ota-updates-pembaruan-jarak-jauh)
+    - [**Langkah Selanjutnya**](#langkah-selanjutnya-1)
+
+---
+
+## **Fase 5: Networking dan Communication**
+
+Di sini kita akan memanfaatkan modul-modul jaringan yang ada di _firmware_ seperti NodeMCU (untuk ESP8266/ESP32) atau eLua dengan tambahan modul jaringan. Konsepnya sama: fungsi-fungsi C yang kompleks untuk mengelola koneksi jaringan dibungkus menjadi API Lua yang sederhana.
+
+### **5.1. TCP/IP Stack: Fondasi Jaringan**
+
+- **Deskripsi Konkrit**: TCP/IP (Transmission Control Protocol/Internet Protocol) adalah serangkaian protokol komunikasi yang menjadi dasar dari internet. Anda tidak perlu tahu setiap detailnya, tetapi pahami bahwa ini adalah sistem berlapis yang menangani segala hal mulai dari pengalamatan perangkat di jaringan hingga memastikan data sampai tanpa kesalahan. Untuk seorang programmer, interaksi kita dengan TCP/IP biasanya melalui _sockets_.
+
+- **Terminologi Kunci**:
+
+  - **Socket**: Titik akhir (endpoint) untuk komunikasi. Bayangkan sebagai "pintu" di perangkat Anda dengan nomor spesifik (disebut _port_) tempat data bisa masuk dan keluar.
+  - **IP Address**: Alamat unik perangkat Anda di jaringan (misal: `192.168.1.10`).
+  - **Port**: Nomor yang mengidentifikasi aplikasi atau layanan spesifik di dalam perangkat (misal: port 80 untuk HTTP).
+  - **TCP (Transmission Control Protocol)**: Protokol yang berorientasi koneksi (_connection-oriented_) dan andal (_reliable_). Ia memastikan semua data sampai, dalam urutan yang benar. Cocok untuk transfer file atau web Browse.
+  - **UDP (User Datagram Protocol)**: Protokol tanpa koneksi (_connectionless_) dan tidak andal. Data "ditembakkan" begitu saja. Lebih cepat tetapi data bisa hilang atau tidak berurutan. Cocok untuk _streaming_ video atau game.
+
+- **Contoh Kode (TCP Client Sederhana dengan NodeMCU)**:
+
+  ```lua
+  -- Membuat TCP client untuk terhubung ke server
+  local client = net.createConnection(net.TCP, 0) -- 0 untuk non-secure
+
+  -- Callback ketika koneksi berhasil
+  client:on("connection", function(sck)
+    print("Terhubung ke server!")
+    -- Mengirim data ke server
+    sck:send("Halo dari klien ESP32!")
+  end)
+
+  -- Callback ketika menerima data dari server
+  client:on("receive", function(sck, payload)
+    print("Menerima data: " .. payload)
+    sck:close() -- Tutup koneksi setelah menerima balasan
+  end)
+
+  -- Callback ketika koneksi terputus
+  client:on("disconnection", function(sck)
+    print("Koneksi terputus.")
+  end)
+
+  -- Hubungkan ke server (ganti dengan IP dan port server Anda)
+  client:connect(8080, "192.168.1.5")
+  ```
+
+- **Referensi**:
+
+  - [Dokumentasi LuaSocket](https://lunarmodules.github.io/luasocket/) (dasar dari banyak implementasi socket di Lua)
+  - [eLua Net Module](https://www.google.com/search?q=http.eluaproject.net/doc/v0.9/en_refman_gen_net.html)
+
+### **5.2. WiFi: Konektivitas Nirkabel**
+
+- **Deskripsi Konkrit**: Ini adalah teknologi yang memungkinkan perangkat Anda terhubung ke jaringan lokal (LAN) dan internet tanpa kabel. Untuk perangkat IoT seperti ESP32, modul WiFi adalah komponen inti.
+
+- **Terminologi Kunci**:
+
+  - **Station (STA) Mode**: Mode di mana perangkat Anda bertindak sebagai klien yang terhubung ke sebuah _Access Point_ (AP) WiFi, seperti router di rumah Anda.
+  - **Access Point (AP) Mode**: Mode di mana perangkat Anda bertindak sebagai router mini. Perangkat lain (seperti ponsel) bisa terhubung langsung ke perangkat Anda. Berguna untuk konfigurasi awal.
+  - **SSID (Service Set Identifier)**: Nama jaringan WiFi Anda (misal: "RumahKu").
+  - **Password**: Kata sandi untuk jaringan WiFi Anda.
+
+- **Contoh Kode (Menghubungkan ESP32/NodeMCU ke WiFi)**:
+
+  ```lua
+  local ssid = "RumahKu"
+  local password = "password_rahasia"
+
+  -- Atur mode ke Station (STA)
+  wifi.setmode(wifi.STATION)
+
+  -- Konfigurasi koneksi
+  wifi.sta.config({ssid = ssid, pwd = password})
+
+  -- Hubungkan
+  wifi.sta.connect()
+
+  print("Menghubungkan ke WiFi...")
+
+  -- Gunakan timer untuk memeriksa status koneksi secara berkala
+  tmr.alarm(1, 1000, tmr.ALARM_AUTO, function()
+    local status = wifi.sta.status()
+    if status == wifi.sta.GOT_IP then
+      print("Berhasil terhubung! Alamat IP: " .. wifi.sta.getip())
+      tmr.stop(1) -- Hentikan timer jika sudah terhubung
+    else
+      print("Status koneksi: " .. status)
+    end
+  end)
+  ```
+
+- **Referensi**:
+
+  - [NodeMCU WiFi Module Documentation](https://nodemcu.readthedocs.io/en/latest/modules/wifi/)
+
+### **5.3. HTTP: Berkomunikasi dengan Web**
+
+- **Deskripsi Konkrit**: HTTP (Hypertext Transfer Protocol) adalah protokol yang menjalankan World Wide Web. Perangkat Anda dapat bertindak sebagai **klien HTTP** untuk mengambil data dari API (misalnya, data cuaca) atau sebagai **server HTTP** untuk menyajikan halaman web sederhana yang bisa Anda akses dari browser untuk mengontrol perangkat.
+
+- **Terminologi Kunci**:
+
+  - **HTTP Client**: Pihak yang memulai permintaan (misal: browser atau MCU Anda).
+  - **HTTP Server**: Pihak yang merespons permintaan (misal: `google.com` atau MCU Anda).
+  - **GET Request**: Meminta data dari server.
+  - **POST Request**: Mengirim data ke server untuk diproses (misal, mengirimkan formulir).
+  - **REST API (Representational State Transfer API)**: Gaya arsitektur populer untuk layanan web yang menggunakan metode HTTP standar (GET, POST, PUT, DELETE) untuk berinteraksi dengan sumber daya.
+
+- **Contoh Kode**:
+
+  **1. Sebagai Klien HTTP (Mengambil data JSON dari API)**
+
+  ```lua
+  -- Mengambil data dari API placeholder
+  http.get("https://jsonplaceholder.typicode.com/todos/1", nil, function(code, data)
+    if (code < 0) then
+      print("Permintaan HTTP gagal")
+    else
+      print("Kode status: " .. code)
+      print("Data diterima: " .. data)
+      -- 'data' adalah string JSON, kita bisa mem-parsing-nya
+      -- local obj = sjson.decode(data)
+      -- print("Judul: " .. obj.title)
+    end
+  end)
+  ```
+
+  **2. Sebagai Server HTTP (Mengontrol LED dari Browser)**
+
+  ```lua
+  local led_pin = 2
+  pio.pin.setdir(pio.OUTPUT, led_pin)
+
+  -- Buat server di port 80
+  local srv = net.createServer(net.TCP)
+  srv:listen(80, function(conn)
+    conn:on("receive", function(sck, request)
+      -- Cek URL yang diminta
+      if string.find(request, "GET /led_on") then
+        pio.pin.setval(1, led_pin) -- Nyalakan LED
+      elseif string.find(request, "GET /led_off") then
+        pio.pin.setval(0, led_pin) -- Matikan LED
+      end
+
+      -- Kirim halaman HTML sederhana sebagai balasan
+      local html_response = "<h1>Kontrol LED</h1><a href='/led_on'>Nyalakan</a> | <a href='/led_off'>Matikan</a>"
+      sck:send("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n" .. html_response)
+      sck:close()
+    end)
+  end)
+  ```
+
+- **Referensi**:
+
+  - [NodeMCU HTTP Module Documentation](https://nodemcu.readthedocs.io/en/latest/modules/http/)
+
+### **5.4. MQTT: Protokol Wajib untuk IoT**
+
+- **Deskripsi Konkrit**: MQTT (Message Queuing Telemetry Transport) adalah protokol _publish-subscribe_ yang sangat ringan, dirancang khusus untuk perangkat dengan sumber daya terbatas dan jaringan yang tidak andal. Ini adalah standar de-facto untuk komunikasi IoT.
+
+- **Terminologi Kunci**:
+
+  - **Publish-Subscribe Pattern**: Pengirim pesan (_publisher_) tidak mengirim pesan langsung ke penerima (_subscriber_). Sebaliknya, _publisher_ mengirim pesan ke sebuah "topik" di server pusat yang disebut _broker_. _Subscriber_ yang tertarik pada topik tersebut akan menerima pesan tersebut dari _broker_.
+  - **Broker**: Server pusat yang menerima semua pesan dari _publisher_ dan meneruskannya ke _subscriber_ yang relevan.
+  - **Topic**: String yang bertindak sebagai "saluran" untuk pesan (misal: `rumah/kamar_tidur/suhu`).
+  - **QoS (Quality of Service)**: Level jaminan pengiriman pesan (0: paling banyak sekali, 1: setidaknya sekali, 2: tepat sekali).
+
+- **Representasi Visual**:
+
+  ```
+                    +----------------+
+                    | MQTT Broker    |
+                    +----------------+
+                         ^      |
+  Publish ke topik     |      |  Kirim ke subscriber
+  "sensor/suhu"        |      |
+                       |      v
+  +----------------+   |   +----------------+
+  | Sensor Suhu    | --+   | Aplikasi Ponsel|
+  | (Publisher)    |       | (Subscriber)   |
+  +----------------+       +----------------+
+  ```
+
+- **Contoh Kode (Klien MQTT dengan NodeMCU)**:
+
+  ```lua
+  -- Inisialisasi klien MQTT
+  -- "my_device_id" harus unik untuk setiap perangkat
+  local mqtt_client = mqtt.Client("my_device_id", 120) -- 120 detik timeout
+
+  mqtt_client:on("connect", function(client)
+    print("Terhubung ke broker MQTT")
+    -- Berlangganan (subscribe) ke topik untuk menerima perintah
+    client:subscribe("perintah/led", 0, function(client)
+      print("Berhasil subscribe ke topik perintah/led")
+    end)
+  end)
+
+  -- Callback ketika pesan diterima
+  mqtt_client:on("message", function(client, topic, data)
+    print("Menerima pesan - Topik: " .. topic .. ", Data: " .. data)
+    if topic == "perintah/led" then
+      if data == "ON" then pio.pin.setval(1, led_pin) end
+      if data == "OFF" then pio.pin.setval(0, led_pin) end
+    end
+  end)
+
+  -- Hubungkan ke broker publik (gunakan broker sendiri untuk produksi)
+  mqtt_client:connect("broker.hivemq.com", 1883, 0)
+
+  -- Mempublikasikan (publish) data sensor setiap 5 detik
+  tmr.alarm(2, 5000, tmr.ALARM_AUTO, function()
+    local suhu = 27.5 -- baca dari sensor asli
+    print("Mengirim data suhu...")
+    mqtt_client:publish("sensor/suhu", suhu, 0, 0)
+  end)
+  ```
+
+- **Referensi**:
+
+  - [NodeMCU MQTT Module Documentation](https://nodemcu.readthedocs.io/en/latest/modules/mqtt/)
+  - [Spesifikasi MQTT](https://mqtt.org/mqtt-specification/)
+
+---
+
+## **Fase 6: IoT dan Cloud Integration**
+
+Fase ini membawa kita ke level berikutnya: menghubungkan perangkat kita ke platform cloud besar untuk penyimpanan data, analisis, dan manajemen skala besar.
+
+### **6.1. Arsitektur IoT: Gambaran Besar**
+
+- **Deskripsi Konkrit**: Sistem IoT yang lengkap biasanya terdiri dari beberapa lapisan:
+
+  1.  **Perangkat (Device Layer)**: "Benda" itu sendiri, seperti sensor suhu atau lampu pintar kita yang menjalankan Lua.
+  2.  **Komunikasi (Connectivity Layer)**: Bagaimana perangkat terhubung (WiFi, seluler, dll.) dan protokol yang digunakan (MQTT, HTTP).
+  3.  **Platform Cloud (Platform Layer)**: "Otak" dari sistem. Tempat data diterima, disimpan, diproses, dan dianalisis. Contoh: AWS IoT, Google Cloud IoT, Azure IoT.
+  4.  **Aplikasi (Application Layer)**: Antarmuka pengguna akhir, seperti dasbor web atau aplikasi seluler yang menampilkan data dan memungkinkan pengguna mengirim perintah.
+
+- **Referensi**:
+
+  - [Panduan Arsitektur IoT](https://www.iotforall.com/iot-architecture-guide)
+
+### **6.2. Integrasi Platform Cloud**
+
+- **Deskripsi Konkrit**: Platform seperti AWS IoT Core atau Google Cloud IoT Core pada dasarnya menyediakan _MQTT broker_ yang aman dan berskala besar. Alih-alih terhubung ke broker publik, perangkat Anda akan terhubung ke _endpoint_ spesifik yang disediakan oleh platform cloud, menggunakan sertifikat keamanan untuk otentikasi.
+
+- **Konsep**: Prosesnya mirip dengan contoh MQTT di atas, tetapi dengan beberapa langkah tambahan yang penting:
+
+  1.  **Provisioning**: Mendaftarkan perangkat Anda di platform cloud untuk mendapatkan kredensial keamanan (sertifikat dan kunci privat).
+  2.  **Secure Connection**: Klien MQTT Anda harus dikonfigurasi untuk menggunakan koneksi SSL/TLS dan menyajikan sertifikatnya saat menghubungkan ke _endpoint_ broker cloud.
+  3.  **Rules Engine**: Setelah data masuk ke cloud (misalnya, data suhu), Anda dapat membuat aturan (mis. "Jika suhu \> 30, kirim notifikasi email") untuk memproses data tersebut secara otomatis.
+
+- **Referensi**:
+
+  - [AWS IoT Device SDKs](https://docs.aws.amazon.com/iot/latest/developerguide/iot-sdks.html)
+  - [Dokumentasi Google Cloud IoT Core](https://cloud.google.com/iot-core/docs) (Perhatikan: Google Cloud IoT Core akan dihentikan, tetapi konsepnya tetap relevan dan diterapkan di layanan lain).
+
+### **6.3. Serialisasi Data: JSON dan Format Efisien**
+
+- **Deskripsi Konkrit**: Saat mengirim data melalui jaringan, kita perlu mengubah struktur data kompleks (seperti _table_ Lua) menjadi format yang bisa ditransmisikan (seperti string atau urutan byte). Proses ini disebut **serialisasi**.
+
+- **Terminologi Kunci**:
+
+  - **JSON (JavaScript Object Notation)**: Format serialisasi berbasis teks yang sangat populer dan mudah dibaca manusia. Ini adalah pilihan yang baik untuk memulai.
+  - **MessagePack, CBOR**: Format serialisasi biner. Mereka menghasilkan data yang jauh lebih kecil dan lebih cepat untuk di-parse oleh mesin dibandingkan JSON. Ini sangat penting untuk perangkat _embedded_ yang ingin menghemat _bandwidth_ dan daya baterai.
+  - **Parsing/Decoding**: Proses kebalikan dari serialisasi, mengubah data kembali dari format transmisi menjadi struktur data asli.
+
+- **Contoh Kode (Serialisasi ke JSON di Lua)**:
+
+  ```lua
+  -- Butuh library JSON, misalnya cjson atau sjson yang sering ada di NodeMCU
+  local sjson = require("cjson")
+
+  local data_sensor = {
+    timestamp = 1678886400,
+    sensor = "DHT22",
+    suhu = 27.5,
+    kelembaban = 65.2
+  }
+
+  -- Serialisasi table Lua menjadi string JSON
+  local json_string = sjson.encode(data_sensor)
+
+  print(json_string)
+  -- Output: {"timestamp":1678886400,"sensor":"DHT22","suhu":27.5,"kelembaban":65.2}
+
+  -- Kirim 'json_string' ini melalui MQTT atau HTTP POST
+  -- mqtt_client:publish("sensor/data", json_string, 0, 0)
+  ```
+
+- **Referensi**:
+
+  - [LuaRocks - rxi/json (library JSON populer)](https://luarocks.org/modules/rxi/json)
+  - [MessagePack for Lua](https://luarocks.org/modules/fperrad/lua-messagepack)
+
+### **6.4. Keamanan dan Enkripsi: SSL/TLS**
+
+- **Deskripsi Konkrit**: Mengirim data melalui jaringan publik tanpa enkripsi adalah ide yang sangat buruk. SSL (Secure Sockets Layer) dan penggantinya, TLS (Transport Layer Security), adalah protokol kriptografi yang menyediakan komunikasi aman melalui jaringan. Ini adalah 'S' dalam HTTPS.
+
+- **Konsep**: TLS menyediakan tiga hal:
+
+  1.  **Enkripsi**: Mencegah pihak ketiga mengintip data Anda.
+  2.  **Otentikasi**: Memastikan Anda terhubung ke server yang benar (bukan penipu), dan server memastikan perangkat Anda adalah perangkat yang sah. Ini dilakukan melalui _sertifikat digital_.
+  3.  **Integritas**: Memastikan data tidak diubah selama transmisi.
+
+- **Implementasi**: Di NodeMCU/Lua, ini biasanya sesederhana menggunakan API yang mendukung SSL/TLS. Contoh: `mqtt.Client` alih-alih `mqtt.Client`, dan menghubungkan ke port aman (misal, 8883 untuk MQTT aman) serta menyediakan sertifikat yang diperlukan.
+
+- **Referensi**:
+
+  - [LuaCrypto - Library Kriptografi untuk Lua](https://luarocks.org/modules/luarocks/luacrypto)
+  - [Praktik Terbaik Keamanan IoT](https://www.iotforall.com/iot-security-best-practices)
+
+### **6.5. OTA Updates: Pembaruan Jarak Jauh**
+
+- **Deskripsi Konkrit**: OTA (Over-The-Air) adalah mekanisme untuk memperbarui perangkat lunak (_firmware_) pada perangkat _embedded_ dari jarak jauh, tanpa memerlukan koneksi fisik. Ini adalah fitur **wajib** untuk produk IoT yang sudah disebar di lapangan.
+
+- **Konsep Proses OTA**:
+
+  1.  **Pemicu**: Perangkat dapat secara berkala memeriksa server untuk pembaruan, atau pembaruan dapat dipicu oleh perintah MQTT.
+  2.  **Unduh**: Perangkat mengunduh file _firmware_ baru dari server (biasanya melalui HTTP). _Firmware_ baru ini disimpan di partisi memori yang terpisah.
+  3.  **Verifikasi**: Perangkat memverifikasi integritas dan keaslian _firmware_ yang diunduh (misalnya dengan memeriksa _hash_ atau tanda tangan digital).
+  4.  **Reboot**: Jika verifikasi berhasil, perangkat akan reboot dan menginstruksikan _bootloader_ untuk memuat dari partisi _firmware_ yang baru. Jika gagal, ia akan tetap menggunakan _firmware_ lama.
+
+- **Referensi**:
+
+  - [Dokumentasi NodeMCU OTA Updates](https://nodemcu.readthedocs.io/en/latest/modules/ota/)
+
+---
+
+### **Langkah Selanjutnya**
+
+Dengan selesainya Fase 5 dan 6, Anda telah menempuh perjalanan dari mengedipkan satu LED hingga menghubungkan perangkat Anda dengan aman ke cloud. Anda sekarang memiliki semua blok bangunan fundamental untuk menciptakan proyek IoT yang canggih.
+
+Fase-fase berikutnya dalam kurikulum Anda (System Integration, Testing, Deployment, Advanced Topics) berfokus pada pematangan proyek Anda dari prototipe menjadi produk yang andal, dapat dipelihara, dan siap produksi.
+
+Kita dapat melanjutkan ke Fase 7 dan 8, yang mencakup penggunaan _framework_ seperti OpenWrt, integrasi dengan RTOS, dan yang terpenting, cara menguji dan men-debug sistem Anda secara efektif.
+
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[domain]: ../../../../../../README.md
+[kurikulum]: ../../../README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->

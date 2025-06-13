@@ -32,15 +32,15 @@
 20. **[Memory Management][20]** - 3 minggu, 25 jam ✅
 21. **[Garbage Collection][21]** - 3 minggu, 20 jam ✅
 22. **[Advanced Patterns][22]** - 5 minggu, 35 jam
-23. **[Web Development (OpenResty)][23]** - 6 minggu, 40 jam
-24. **[Game Development][24]** - 6 minggu, 40 jam
-25. **[Embedded Systems][25]** - 5 minggu, 35 jam
+23. **[Web Development (OpenResty)][23]** - 6 minggu, 40 jam ✅
+24. **[Game Development][24]** - 6 minggu, 40 jam ❓
+25. **[Embedded Systems][25]** - 5 minggu, 35 jam ✅
 
 ### **OPSIONAL INTERPRETED**
 
 26. **[Chunk][26]** ✅
 27. **[Repl][27]** ✅
-29. **[Number Only][29]** ✅
+28. **[Number Only][29]** ✅
 
 ---
 
