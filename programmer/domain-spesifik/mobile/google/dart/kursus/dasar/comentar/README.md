@@ -8,20 +8,20 @@ Ini adalah fitur fundamental dalam setiap bahasa pemrograman yang mungkin terlih
 ---
 
 - [📝 Comments](#-comments)
-  - [1. Pendahuluan](#1-pendahuluan)
-  - [2. Mengapa Komentar Penting?](#2-mengapa-komentar-penting)
-  - [3. Jenis-Jenis Komentar di Dart](#3-jenis-jenis-komentar-di-dart)
-    - [a. Komentar Baris Tunggal (`//`)](#a-komentar-baris-tunggal-)
-    - [b. Komentar Multi-Baris (`/* ... */`)](#b-komentar-multi-baris---)
-    - [c. Komentar Dokumentasi (`///` atau `/** ... */`)](#c-komentar-dokumentasi--atau---)
-      - [Markdown dalam Komentar Dokumentasi](#markdown-dalam-komentar-dokumentasi)
-      - [Referensi ID dalam Komentar Dokumentasi](#referensi-id-dalam-komentar-dokumentasi)
-  - [4. Kapan dan Bagaimana Menggunakan Komentar Secara Efektif?](#4-kapan-dan-bagaimana-menggunakan-komentar-secara-efektif)
-    - [a. Apa yang Seharusnya Dikomentari?](#a-apa-yang-seharusnya-dikomentari)
-    - [b. Apa yang Seharusnya **Tidak** Dikomentari?](#b-apa-yang-seharusnya-tidak-dikomentari)
-    - [c. Komentar yang Baik vs. Komentar Buruk](#c-komentar-yang-baik-vs-komentar-buruk)
-  - [5. Ringkasan](#5-ringkasan)
-- [Kode Saya](#kode-saya)
+    - [1. Pendahuluan](#1-pendahuluan)
+    - [2. Mengapa Komentar Penting?](#2-mengapa-komentar-penting)
+    - [3. Jenis-Jenis Komentar di Dart](#3-jenis-jenis-komentar-di-dart)
+      - [a. Komentar Baris Tunggal (`//`)](#a-komentar-baris-tunggal-)
+      - [b. Komentar Multi-Baris (`/* ... */`)](#b-komentar-multi-baris---)
+      - [c. Komentar Dokumentasi (`///` atau `/** ... */`)](#c-komentar-dokumentasi--atau---)
+        - [Markdown dalam Komentar Dokumentasi](#markdown-dalam-komentar-dokumentasi)
+        - [Referensi ID dalam Komentar Dokumentasi](#referensi-id-dalam-komentar-dokumentasi)
+    - [4. Kapan dan Bagaimana Menggunakan Komentar Secara Efektif?](#4-kapan-dan-bagaimana-menggunakan-komentar-secara-efektif)
+      - [a. Apa yang Seharusnya Dikomentari?](#a-apa-yang-seharusnya-dikomentari)
+      - [b. Apa yang Seharusnya **Tidak** Dikomentari?](#b-apa-yang-seharusnya-tidak-dikomentari)
+      - [c. Komentar yang Baik vs. Komentar Buruk](#c-komentar-yang-baik-vs-komentar-buruk)
+    - [5. Ringkasan](#5-ringkasan)
+  - [Mewarnai Komenar Dengan Ekstensi](#mewarnai-komenar-dengan-ekstensi)
 
 </details>
 
@@ -230,13 +230,11 @@ Komentar yang baik adalah seni. Tujuannya adalah untuk menambah nilai, bukan mem
 
 Gunakan komentar secara bijak untuk menjelaskan "mengapa" dan bukan hanya "apa" dari kode Anda, sehingga Anda dan rekan tim dapat memahami _codebase_ dengan lebih baik dan membangun aplikasi yang lebih tangguh.
 
----
+<!-- ```dart
+ //, /\* \*/, ///,
+``` -->
 
-Komentar adalah bagian dari kode yang tidak akan dijalankan oleh program, komentar hanya berfungsi sebagai penanda atau catatan yang bisa membantu programmer dalam memahami kode yang ditulisnya, komentar tidak akan mempengaruhi hasil dari program yang kita buat, komentar hanya akan dilihat oleh programmer yang membuatnya, komentar bisa berupa teks atau kode yang diawali dengan simbol tertentu, di Dart, komentar bisa ditulis dengan beberapa cara, yaitu:
-
-```dart
- //, /\* \*/, ///, //! dan !!
-```
+## Mewarnai Komenar Dengan Ekstensi
 
 Pada dasarnya, komentar tidak memiliki warna, namun kita bisa memberinya warna sesuai yang kita inginkan menggunakan extensi Batter Comment, anda bisa mendownloadnya [disini](https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments "ke halaman extensi")
 
@@ -265,15 +263,16 @@ Ubah simbol "&" menjadi simbol lainnya, seperti simbol "@" atau simbol lainnya y
 
 - Klik untuk informasi lebih lanjut tentang [komentar di Dart](https://dart.dev/guides/language/language-tour#comments "dart.dev")
 
-# Kode Saya
+<!--
 
-```dart
-// # Komentar adalah bagian dari kode yang tidak akan dijalankan oleh program, komentar hanya berfungsi sebagai penanda atau catatan yang bisa membantu programmer dalam memahami kode yang ditulisnya, komentar tidak akan mempengaruhi hasil dari program yang kita buat, komentar hanya akan dilihat oleh programmer yang membuatnya, komentar bisa berupa teks atau kode yang diawali dengan simbol tertentu, di Dart, komentar bisa ditulis dengan beberapa cara, yaitu: //, /* */, ///, //! dan !!
+# Sintaks Pewarnaan
 
-// ignore: dangling_library_doc_comments
+Dalam penjelasan disini komentar tidak akan memiliki warna karena itu hanya berlaku di kompailer Dart
+
+````dart
 /// Berikut adalah contoh komentar berwarna yang dihasilkan oleh eksistensi Better Comment
 
-// ! Berikan spasi setelah tanda seru (!) agar komentar bisa berwarna, hal yang sama juga berlaku untuk tanda seru ganda (!!) dan tanda pagar (!#) yang akan menghasilkan komentar dengan warna yang berbeda, seperti contoh di bawah ini:
+// ! Berikan spasi setelah tanda seru (!) seperti bagaimana komentar ini ditulis agar komentar bisa berwarna, hal yang sama juga berlaku untuk tanda seru ganda (!!) dan tanda pagar (!#) yang akan menghasilkan komentar dengan warna yang berbeda, seperti contoh di bawah ini:
 
 // ^endregion
 
@@ -330,6 +329,6 @@ Ubah simbol "&" menjadi simbol lainnya, seperti simbol "@" atau simbol lainnya y
     $ Untuk informasi lebih lanjut tentang komentar di Dart, silahkan kunjungi: https://dart.dev/guides/language/language-tour#comments
 
 */
-```
+``` -->
 
 [0]: ../../materi/modul-2/README.md

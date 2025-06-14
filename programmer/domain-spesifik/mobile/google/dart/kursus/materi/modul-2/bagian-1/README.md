@@ -11,79 +11,79 @@ Bayangkan Anda belajar bahasa manusia. Typing System dalam dunia programing adal
 
 - [Syntax Fundamentals](#syntax-fundamentals)
 - [](#)
-  - [1. Pendahuluan: Apa itu Syntax Fundamentals?](#1-pendahuluan-apa-itu-syntax-fundamentals)
-    - [Analogi Sederhana](#analogi-sederhana)
-    - [Mengapa Sintaks Penting?](#mengapa-sintaks-penting)
-  - [2. Dasar-dasar Struktur Program Dart](#2-dasar-dasar-struktur-program-dart)
-    - [`main()` Function: Titik Masuk Program](#main-function-titik-masuk-program)
-    - [Statements dan Expressions](#statements-dan-expressions)
-      - [Statement](#statement)
-      - [Expression](#expression)
-  - [3. Komentar (Comments)](#3-komentar-comments)
-    - [Single-line Comments (`//`)](#single-line-comments-)
-    - [Multi-line Comments (`/* ... */`)](#multi-line-comments---)
-    - [Documentation Comments (`///` atau `/** ... */`)](#documentation-comments--atau---)
-  - [4. Variabel (Variables)](#4-variabel-variables)
-    - [Deklarasi Variabel](#deklarasi-variabel)
-    - [Inisialisasi Variabel](#inisialisasi-variabel)
-    - [Aturan Penamaan Variabel (Identifiers)](#aturan-penamaan-variabel-identifiers)
-    - [Kata Kunci Variabel di Dart](#kata-kunci-variabel-di-dart)
-      - [`var`](#var)
-      - [`final`](#final)
-      - [`const`](#const)
-      - [`late`](#late)
-      - [Tipe Eksplisit](#tipe-eksplisit)
-    - [Null Safety pada Variabel](#null-safety-pada-variabel)
-  - [5. Tipe Data Bawaan (Built-in Data Types)](#5-tipe-data-bawaan-built-in-data-types)
-    - [Angka (`num`, `int`, `double`)](#angka-num-int-double)
-    - [Teks (`String`)](#teks-string)
-    - [Boolean (`bool`)](#boolean-bool)
-    - [List (`List`)](#list-list)
-    - [Set (`Set`)](#set-set)
-    - [Map (`Map`)](#map-map)
-    - [Runes dan Symbols](#runes-dan-symbols)
-  - [6. Operator (Operators)](#6-operator-operators)
-    - [Operator Aritmatika](#operator-aritmatika)
-    - [Operator Kesetaraan dan Relasional](#operator-kesetaraan-dan-relasional)
-    - [Operator Penugasan (Assignment Operators)](#operator-penugasan-assignment-operators)
-    - [Operator Logika](#operator-logika)
-    - [Operator Type Test](#operator-type-test)
-    - [Operator Penugasan Null-Aware (`??=`)](#operator-penugasan-null-aware-)
-    - [Cascading Operator (`..`)](#cascading-operator-)
-    - [Spread Operator (`...` dan `...?`)](#spread-operator--dan-)
-    - [Null-aware Access Operator (`?.`)](#null-aware-access-operator-)
-    - [Null Assertion Operator (`!`)](#null-assertion-operator-)
-  - [7. Kontrol Aliran (Control Flow)](#7-kontrol-aliran-control-flow)
-    - [Conditional Statements (Pernyataan Bersyarat)](#conditional-statements-pernyataan-bersyarat)
-      - [`if`, `else if`, `else`](#if-else-if-else)
-      - [`switch` dan `case`](#switch-dan-case)
-      - [Ternary Operator (`condition ? expr1 : expr2`)](#ternary-operator-condition--expr1--expr2)
-    - [Looping Statements (Pernyataan Perulangan)](#looping-statements-pernyataan-perulangan)
-      - [`for` loop](#for-loop)
-      - [`for-in` loop](#for-in-loop)
-      - [`while` loop](#while-loop)
-      - [`do-while` loop](#do-while-loop)
-    - [Break dan Continue](#break-dan-continue)
-  - [8. Fungsi (Functions)](#8-fungsi-functions)
-    - [Definisi Fungsi Dasar](#definisi-fungsi-dasar)
-    - [Parameter Fungsi](#parameter-fungsi)
-      - [Required Positional Parameters](#required-positional-parameters)
-      - [Optional Positional Parameters (`[]`)](#optional-positional-parameters-)
-      - [Named Parameters (`{}`)](#named-parameters-)
-      - [Required Named Parameters (`required`)](#required-named-parameters-required)
-    - [Fungsi sebagai First-Class Objects](#fungsi-sebagai-first-class-objects)
-    - [Anonymous Functions (Fungsi Anonim) / Lambdas](#anonymous-functions-fungsi-anonim--lambdas)
-    - [Arrow Functions (Fungsi Panah)](#arrow-functions-fungsi-panah)
-    - [Return Values (Nilai Kembalian)](#return-values-nilai-kembalian)
-  - [9. Impor dan Ekspor (Imports \& Exports)](#9-impor-dan-ekspor-imports--exports)
-    - [`import`](#import)
-    - [`export`](#export)
-    - [Prefix (`as`)](#prefix-as)
-    - [Show dan Hide (`show`, `hide`)](#show-dan-hide-show-hide)
-  - [10. Kata Kunci (Keywords)](#10-kata-kunci-keywords)
-  - [11. Terminologi Kunci](#11-terminologi-kunci)
-  - [12. Ringkasan](#12-ringkasan)
-  - [13. Sumber Referensi](#13-sumber-referensi)
+    - [1. Pendahuluan: Apa itu Syntax Fundamentals?](#1-pendahuluan-apa-itu-syntax-fundamentals)
+      - [Analogi Sederhana](#analogi-sederhana)
+      - [Mengapa Sintaks Penting?](#mengapa-sintaks-penting)
+    - [2. Dasar-dasar Struktur Program Dart](#2-dasar-dasar-struktur-program-dart)
+      - [`main()` Function: Titik Masuk Program](#main-function-titik-masuk-program)
+      - [Statements dan Expressions](#statements-dan-expressions)
+        - [Statement](#statement)
+        - [Expression](#expression)
+    - [3. Komentar (Comments)](#3-komentar-comments)
+      - [Single-line Comments (`//`)](#single-line-comments-)
+      - [Multi-line Comments (`/* ... */`)](#multi-line-comments---)
+      - [Documentation Comments (`///` atau `/** ... */`)](#documentation-comments--atau---)
+    - [4. Variabel (Variables)](#4-variabel-variables)
+      - [Deklarasi Variabel](#deklarasi-variabel)
+      - [Inisialisasi Variabel](#inisialisasi-variabel)
+      - [Aturan Penamaan Variabel (Identifiers)](#aturan-penamaan-variabel-identifiers)
+      - [Kata Kunci Variabel di Dart](#kata-kunci-variabel-di-dart)
+        - [`var`](#var)
+        - [`final`](#final)
+        - [`const`](#const)
+        - [`late`](#late)
+        - [Tipe Eksplisit](#tipe-eksplisit)
+      - [Null Safety pada Variabel](#null-safety-pada-variabel)
+    - [5. Tipe Data Bawaan (Built-in Data Types)](#5-tipe-data-bawaan-built-in-data-types)
+      - [Angka (`num`, `int`, `double`)](#angka-num-int-double)
+      - [Teks (`String`)](#teks-string)
+      - [Boolean (`bool`)](#boolean-bool)
+      - [List (`List`)](#list-list)
+      - [Set (`Set`)](#set-set)
+      - [Map (`Map`)](#map-map)
+      - [Runes dan Symbols](#runes-dan-symbols)
+    - [6. Operator (Operators)](#6-operator-operators)
+      - [Operator Aritmatika](#operator-aritmatika)
+      - [Operator Kesetaraan dan Relasional](#operator-kesetaraan-dan-relasional)
+      - [Operator Penugasan (Assignment Operators)](#operator-penugasan-assignment-operators)
+      - [Operator Logika](#operator-logika)
+      - [Operator Type Test](#operator-type-test)
+      - [Operator Penugasan Null-Aware (`??=`)](#operator-penugasan-null-aware-)
+      - [Cascading Operator (`..`)](#cascading-operator-)
+      - [Spread Operator (`...` dan `...?`)](#spread-operator--dan-)
+      - [Null-aware Access Operator (`?.`)](#null-aware-access-operator-)
+      - [Null Assertion Operator (`!`)](#null-assertion-operator-)
+    - [7. Kontrol Aliran (Control Flow)](#7-kontrol-aliran-control-flow)
+      - [Conditional Statements (Pernyataan Bersyarat)](#conditional-statements-pernyataan-bersyarat)
+        - [`if`, `else if`, `else`](#if-else-if-else)
+        - [`switch` dan `case`](#switch-dan-case)
+        - [Ternary Operator (`condition ? expr1 : expr2`)](#ternary-operator-condition--expr1--expr2)
+      - [Looping Statements (Pernyataan Perulangan)](#looping-statements-pernyataan-perulangan)
+        - [`for` loop](#for-loop)
+        - [`for-in` loop](#for-in-loop)
+        - [`while` loop](#while-loop)
+        - [`do-while` loop](#do-while-loop)
+      - [Break dan Continue](#break-dan-continue)
+    - [8. Fungsi (Functions)](#8-fungsi-functions)
+      - [Definisi Fungsi Dasar](#definisi-fungsi-dasar)
+      - [Parameter Fungsi](#parameter-fungsi)
+        - [Required Positional Parameters](#required-positional-parameters)
+        - [Optional Positional Parameters (`[]`)](#optional-positional-parameters-)
+        - [Named Parameters (`{}`)](#named-parameters-)
+        - [Required Named Parameters (`required`)](#required-named-parameters-required)
+      - [Fungsi sebagai First-Class Objects](#fungsi-sebagai-first-class-objects)
+      - [Anonymous Functions (Fungsi Anonim) / Lambdas](#anonymous-functions-fungsi-anonim--lambdas)
+      - [Arrow Functions (Fungsi Panah)](#arrow-functions-fungsi-panah)
+      - [Return Values (Nilai Kembalian)](#return-values-nilai-kembalian)
+    - [9. Impor dan Ekspor (Imports \& Exports)](#9-impor-dan-ekspor-imports--exports)
+      - [`import`](#import)
+      - [`export`](#export)
+      - [Prefix (`as`)](#prefix-as)
+      - [Show dan Hide (`show`, `hide`)](#show-dan-hide-show-hide)
+    - [10. Kata Kunci (Keywords)](#10-kata-kunci-keywords)
+    - [11. Terminologi Kunci](#11-terminologi-kunci)
+    - [12. Ringkasan](#12-ringkasan)
+    - [13. Sumber Referensi](#13-sumber-referensi)
 - [](#-1)
 
 </details>
@@ -233,7 +233,7 @@ Ada tiga jenis utama komentar di Dart:
   }
   ```
 
-  **Catatan:** Menggunakan `[nama_parameter]` di dalam komentar dokumentasi adalah konvensi umum untuk mereferensikan parameter fungsi.
+  **Catatan:** Menggunakan `[nama_parameter]` di dalam komentar dokumentasi adalah konvensi umum untuk mereferensikan parameter fungsi. Lebih lanjut tentang [komentar][1]
 
 ---
 
@@ -265,14 +265,20 @@ Sebelum menggunakan variabel, Anda harus **mendeklarasikannya**. Deklarasi membe
 **Contoh Deklarasi dan Inisialisasi:**
 
 ```dart
-String namaDepan = "Alice"; // Deklarasi dan inisialisasi
-int usia; // Hanya deklarasi (nilai default adalah null jika tidak nullable)
+String namaDepan = "Alice"; // Deklarasi dan inisialisasi langsung
+
+// Contoh salah: non-nullable tapi tidak diberi nilai
+int usia; // ❌ Error karena belum diinisialisasi
+
+// Solusi: gunakan nullable jika nilai belum tersedia
+int? usia; // ✅ Nullable, default-nya null
 usia = 25; // Penugasan nilai setelah deklarasi
 
-double harga; // Harga belum diinisialisasi
-// print(harga); // Ini akan error jika harga tidak diizinkan null, atau akan null jika nullable
+double harga; // ❌ Error jika tidak diinisialisasi
+// print(harga); // Tidak boleh diakses sebelum diberi nilai
 
-harga = 99.99; // Sekarang harga sudah memiliki nilai
+harga = 99.99; // ✅ Harga sekarang punya nilai
+
 ```
 
 #### Aturan Penamaan Variabel (Identifiers)
@@ -1466,7 +1472,7 @@ Dengan bekal pemahaman ini, Anda sudah bisa mulai menulis program Dart yang sede
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
+[1]: ../../../dasar/comentar/README.md
 [2]: ../
 [3]: ../
 [4]: ../
