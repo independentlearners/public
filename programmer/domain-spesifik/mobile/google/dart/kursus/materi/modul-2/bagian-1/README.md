@@ -4,86 +4,86 @@ Ini adalah bagian yang akan mengajarkan Anda bagaimana cara menulis instruksi un
 
 #
 
-Bayangkan Anda belajar bahasa manusia. Jika kita sudah familiar dengan Typing System dalam dunia programing yang mana itu adalah tentang jenis-jenis kata (kata benda, kata kerja, kata sifat, dll.). Nah, Syntax Fundamentals adalah tentang aturan tata bahasa (grammar) dan struktur kalimat yang benar agar orang lain bisa memahami apa yang Anda katakan. Dalam pemrograman, "orang lain" itu adalah kompiler Dart, dan tentu saja, programmer lain (atau diri Anda sendiri di masa depan\!) yang akan membaca kode Anda.
+Bayangkan Anda belajar bahasa manusia. Typing System dalam dunia programing adalah tentang jenis-jenis kata (kata benda, kata kerja, kata sifat, dll.). Nah, Syntax Fundamentals adalah tentang aturan tata bahasa (grammar) dan struktur kalimat yang benar agar orang lain bisa memahami apa yang Anda katakan. Dalam pemrograman, "orang lain" kita anggap sebagai kompailer Dart, dan tentu saja, hal semacam ini berlaku untuk programmer lain (atau diri Anda sendiri di masa depan\!) yang akan membaca kode tersebut.
 
 <details>
   <summary>📃 Daftar Isi</summary>
 
 - [Syntax Fundamentals](#syntax-fundamentals)
 - [](#)
-    - [1. Pendahuluan: Apa itu Syntax Fundamentals?](#1-pendahuluan-apa-itu-syntax-fundamentals)
-      - [Analogi Sederhana](#analogi-sederhana)
-      - [Mengapa Sintaks Penting?](#mengapa-sintaks-penting)
-    - [2. Dasar-dasar Struktur Program Dart](#2-dasar-dasar-struktur-program-dart)
-      - [`main()` Function: Titik Masuk Program](#main-function-titik-masuk-program)
-      - [Statements dan Expressions](#statements-dan-expressions)
-        - [Statement](#statement)
-        - [Expression](#expression)
-    - [3. Komentar (Comments)](#3-komentar-comments)
-      - [Single-line Comments (`//`)](#single-line-comments-)
-      - [Multi-line Comments (`/* ... */`)](#multi-line-comments---)
-      - [Documentation Comments (`///` atau `/** ... */`)](#documentation-comments--atau---)
-    - [4. Variabel (Variables)](#4-variabel-variables)
-      - [Deklarasi Variabel](#deklarasi-variabel)
-      - [Inisialisasi Variabel](#inisialisasi-variabel)
-      - [Aturan Penamaan Variabel (Identifiers)](#aturan-penamaan-variabel-identifiers)
-      - [Kata Kunci Variabel di Dart](#kata-kunci-variabel-di-dart)
-        - [`var`](#var)
-        - [`final`](#final)
-        - [`const`](#const)
-        - [`late`](#late)
-        - [Tipe Eksplisit](#tipe-eksplisit)
-      - [Null Safety pada Variabel](#null-safety-pada-variabel)
-    - [5. Tipe Data Bawaan (Built-in Data Types)](#5-tipe-data-bawaan-built-in-data-types)
-      - [Angka (`num`, `int`, `double`)](#angka-num-int-double)
-      - [Teks (`String`)](#teks-string)
-      - [Boolean (`bool`)](#boolean-bool)
-      - [List (`List`)](#list-list)
-      - [Set (`Set`)](#set-set)
-      - [Map (`Map`)](#map-map)
-      - [Runes dan Symbols](#runes-dan-symbols)
-    - [6. Operator (Operators)](#6-operator-operators)
-      - [Operator Aritmatika](#operator-aritmatika)
-      - [Operator Kesetaraan dan Relasional](#operator-kesetaraan-dan-relasional)
-      - [Operator Penugasan (Assignment Operators)](#operator-penugasan-assignment-operators)
-      - [Operator Logika](#operator-logika)
-      - [Operator Type Test](#operator-type-test)
-      - [Operator Penugasan Null-Aware (`??=`)](#operator-penugasan-null-aware-)
-      - [Cascading Operator (`..`)](#cascading-operator-)
-      - [Spread Operator (`...` dan `...?`)](#spread-operator--dan-)
-      - [Null-aware Access Operator (`?.`)](#null-aware-access-operator-)
-      - [Null Assertion Operator (`!`)](#null-assertion-operator-)
-    - [7. Kontrol Aliran (Control Flow)](#7-kontrol-aliran-control-flow)
-      - [Conditional Statements (Pernyataan Bersyarat)](#conditional-statements-pernyataan-bersyarat)
-        - [`if`, `else if`, `else`](#if-else-if-else)
-        - [`switch` dan `case`](#switch-dan-case)
-        - [Ternary Operator (`condition ? expr1 : expr2`)](#ternary-operator-condition--expr1--expr2)
-      - [Looping Statements (Pernyataan Perulangan)](#looping-statements-pernyataan-perulangan)
-        - [`for` loop](#for-loop)
-        - [`for-in` loop](#for-in-loop)
-        - [`while` loop](#while-loop)
-        - [`do-while` loop](#do-while-loop)
-      - [Break dan Continue](#break-dan-continue)
-    - [8. Fungsi (Functions)](#8-fungsi-functions)
-      - [Definisi Fungsi Dasar](#definisi-fungsi-dasar)
-      - [Parameter Fungsi](#parameter-fungsi)
-        - [Required Positional Parameters](#required-positional-parameters)
-        - [Optional Positional Parameters (`[]`)](#optional-positional-parameters-)
-        - [Named Parameters (`{}`)](#named-parameters-)
-        - [Required Named Parameters (`required`)](#required-named-parameters-required)
-      - [Fungsi sebagai First-Class Objects](#fungsi-sebagai-first-class-objects)
-      - [Anonymous Functions (Fungsi Anonim) / Lambdas](#anonymous-functions-fungsi-anonim--lambdas)
-      - [Arrow Functions (Fungsi Panah)](#arrow-functions-fungsi-panah)
-      - [Return Values (Nilai Kembalian)](#return-values-nilai-kembalian)
-    - [9. Impor dan Ekspor (Imports \& Exports)](#9-impor-dan-ekspor-imports--exports)
-      - [`import`](#import)
-      - [`export`](#export)
-      - [Prefix (`as`)](#prefix-as)
-      - [Show dan Hide (`show`, `hide`)](#show-dan-hide-show-hide)
-    - [10. Kata Kunci (Keywords)](#10-kata-kunci-keywords)
-    - [11. Terminologi Kunci](#11-terminologi-kunci)
-    - [12. Ringkasan](#12-ringkasan)
-    - [13. Sumber Referensi](#13-sumber-referensi)
+  - [1. Pendahuluan: Apa itu Syntax Fundamentals?](#1-pendahuluan-apa-itu-syntax-fundamentals)
+    - [Analogi Sederhana](#analogi-sederhana)
+    - [Mengapa Sintaks Penting?](#mengapa-sintaks-penting)
+  - [2. Dasar-dasar Struktur Program Dart](#2-dasar-dasar-struktur-program-dart)
+    - [`main()` Function: Titik Masuk Program](#main-function-titik-masuk-program)
+    - [Statements dan Expressions](#statements-dan-expressions)
+      - [Statement](#statement)
+      - [Expression](#expression)
+  - [3. Komentar (Comments)](#3-komentar-comments)
+    - [Single-line Comments (`//`)](#single-line-comments-)
+    - [Multi-line Comments (`/* ... */`)](#multi-line-comments---)
+    - [Documentation Comments (`///` atau `/** ... */`)](#documentation-comments--atau---)
+  - [4. Variabel (Variables)](#4-variabel-variables)
+    - [Deklarasi Variabel](#deklarasi-variabel)
+    - [Inisialisasi Variabel](#inisialisasi-variabel)
+    - [Aturan Penamaan Variabel (Identifiers)](#aturan-penamaan-variabel-identifiers)
+    - [Kata Kunci Variabel di Dart](#kata-kunci-variabel-di-dart)
+      - [`var`](#var)
+      - [`final`](#final)
+      - [`const`](#const)
+      - [`late`](#late)
+      - [Tipe Eksplisit](#tipe-eksplisit)
+    - [Null Safety pada Variabel](#null-safety-pada-variabel)
+  - [5. Tipe Data Bawaan (Built-in Data Types)](#5-tipe-data-bawaan-built-in-data-types)
+    - [Angka (`num`, `int`, `double`)](#angka-num-int-double)
+    - [Teks (`String`)](#teks-string)
+    - [Boolean (`bool`)](#boolean-bool)
+    - [List (`List`)](#list-list)
+    - [Set (`Set`)](#set-set)
+    - [Map (`Map`)](#map-map)
+    - [Runes dan Symbols](#runes-dan-symbols)
+  - [6. Operator (Operators)](#6-operator-operators)
+    - [Operator Aritmatika](#operator-aritmatika)
+    - [Operator Kesetaraan dan Relasional](#operator-kesetaraan-dan-relasional)
+    - [Operator Penugasan (Assignment Operators)](#operator-penugasan-assignment-operators)
+    - [Operator Logika](#operator-logika)
+    - [Operator Type Test](#operator-type-test)
+    - [Operator Penugasan Null-Aware (`??=`)](#operator-penugasan-null-aware-)
+    - [Cascading Operator (`..`)](#cascading-operator-)
+    - [Spread Operator (`...` dan `...?`)](#spread-operator--dan-)
+    - [Null-aware Access Operator (`?.`)](#null-aware-access-operator-)
+    - [Null Assertion Operator (`!`)](#null-assertion-operator-)
+  - [7. Kontrol Aliran (Control Flow)](#7-kontrol-aliran-control-flow)
+    - [Conditional Statements (Pernyataan Bersyarat)](#conditional-statements-pernyataan-bersyarat)
+      - [`if`, `else if`, `else`](#if-else-if-else)
+      - [`switch` dan `case`](#switch-dan-case)
+      - [Ternary Operator (`condition ? expr1 : expr2`)](#ternary-operator-condition--expr1--expr2)
+    - [Looping Statements (Pernyataan Perulangan)](#looping-statements-pernyataan-perulangan)
+      - [`for` loop](#for-loop)
+      - [`for-in` loop](#for-in-loop)
+      - [`while` loop](#while-loop)
+      - [`do-while` loop](#do-while-loop)
+    - [Break dan Continue](#break-dan-continue)
+  - [8. Fungsi (Functions)](#8-fungsi-functions)
+    - [Definisi Fungsi Dasar](#definisi-fungsi-dasar)
+    - [Parameter Fungsi](#parameter-fungsi)
+      - [Required Positional Parameters](#required-positional-parameters)
+      - [Optional Positional Parameters (`[]`)](#optional-positional-parameters-)
+      - [Named Parameters (`{}`)](#named-parameters-)
+      - [Required Named Parameters (`required`)](#required-named-parameters-required)
+    - [Fungsi sebagai First-Class Objects](#fungsi-sebagai-first-class-objects)
+    - [Anonymous Functions (Fungsi Anonim) / Lambdas](#anonymous-functions-fungsi-anonim--lambdas)
+    - [Arrow Functions (Fungsi Panah)](#arrow-functions-fungsi-panah)
+    - [Return Values (Nilai Kembalian)](#return-values-nilai-kembalian)
+  - [9. Impor dan Ekspor (Imports \& Exports)](#9-impor-dan-ekspor-imports--exports)
+    - [`import`](#import)
+    - [`export`](#export)
+    - [Prefix (`as`)](#prefix-as)
+    - [Show dan Hide (`show`, `hide`)](#show-dan-hide-show-hide)
+  - [10. Kata Kunci (Keywords)](#10-kata-kunci-keywords)
+  - [11. Terminologi Kunci](#11-terminologi-kunci)
+  - [12. Ringkasan](#12-ringkasan)
+  - [13. Sumber Referensi](#13-sumber-referensi)
 - [](#-1)
 
 </details>
@@ -99,14 +99,14 @@ Bayangkan Anda belajar bahasa manusia. Jika kita sudah familiar dengan Typing Sy
 Bayangkan Anda sedang belajar memasak menggunakan resep.
 
 - **Bahan-bahan** adalah **Tipe Data** (gula, garam, tepung, telur).
-- **Cara menggabungkan dan mengolah bahan-bahan** (misalnya, "campur tepung dan gula," "aduk rata," "panggang pada suhu 180°C selama 30 menit") adalah **Sintaks**. Jika Anda mencampur bahan yang salah atau mengikuti instruksi yang salah, hasilnya tidak akan seperti yang diharapkan (atau bahkan bisa jadi bencana\!).
+- **Cara menggabungkan dan mengolah bahan-bahan** tersebut adalah **Sintaks** (misalnya, "campur tepung dan gula", "aduk rata", "panggang pada suhu 180°C selama 30 menit"). Jika Anda mencampur bahan yang salah atau mengikuti instruksi yang salah, hasilnya tidak akan seperti yang diharapkan (atau bahkan bisa jadi bencana\!).
 
-Dalam pemrograman, jika Anda menulis kode yang tidak sesuai dengan sintaks Dart, kompiler akan memberikan pesan kesalahan, dan program Anda tidak akan berjalan.
+Dalam pemrograman, jika Anda menulis kode yang tidak sesuai dengan sintaks, kompiler akan memberikan pesan kesalahan, dan program Anda tidak akan berjalan.
 
 #### Mengapa Sintaks Penting?
 
 1.  **Dapat Dipahami Komputer:** Kompiler atau interpreter membutuhkan sintaks yang tepat untuk mengubah kode Anda menjadi instruksi yang dapat dijalankan oleh mesin. Sedikit saja kesalahan sintaks akan membuat komputer "tidak mengerti" apa yang Anda maksud.
-2.  **Dapat Dibaca Manusia:** Sintaks yang konsisten dan standar membuat kode lebih mudah dibaca, dipahami, dan dipelihara oleh programmer lain (atau diri Anda sendiri di masa depan).
+2.  **Dapat Dibaca Manusia:** Sintaks yang konsisten dan standar, membuat kode lebih mudah dibaca, dipahami, dan dipelihara oleh programmer lain (atau diri Anda sendiri di masa depan).
 3.  **Konsistensi:** Memastikan semua orang menulis kode dengan cara yang sama, yang sangat penting dalam pengembangan tim.
 
 ---
@@ -117,7 +117,7 @@ Setiap program Dart, bahkan yang paling sederhana sekalipun, memiliki struktur d
 
 #### `main()` Function: Titik Masuk Program
 
-Setiap aplikasi Dart harus memiliki fungsi `main()`. Ini adalah **titik masuk (entry point)** di mana eksekusi program dimulai. Ketika Anda menjalankan program Dart, sistem akan mencari fungsi `main()` ini dan mulai menjalankan instruksi di dalamnya dari atas ke bawah.
+Setiap aplikasi Dart harus memiliki fungsi `main()`. Ini adalah **titik masuk (entry point)** di mana eksekusi program dimulai. Ketika Anda menjalankan program Dart, sistem akan mencari titk masuk tersebut lalu kemudian memulai untuk menjalankan instruksi yang ada di dalamnya dari atas ke bawah, inilah yang disebut fungsi main (main function)
 
 - **Deskripsi:** Fungsi `main()` adalah fungsi tingkat atas (top-level function), artinya ia tidak berada di dalam kelas mana pun. Ia tidak mengembalikan nilai (atau mengembalikan `void`, yang berarti "tidak ada").
 - **Sintaks Dasar:**

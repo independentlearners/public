@@ -1,6 +1,4 @@
-# **[Kursus Mandiri Dart][0]**
-
-## 💎 Modul 2: Dasar Sintaks & Tipe Data
+# **[💎 Modul 2: Dasar Sintaks & Tipe Data][0]**
 
 Modul ini adalah pondasi utama Anda dalam memahami dan menulis kode Dart. Anda akan belajar tentang struktur dasar penulisan kode, cara menyimpan dan memanipulasi informasi menggunakan berbagai tipe data, serta konsep-konsep kunci seperti Null Safety yang membuat kode Anda lebih aman dan robust. Menguasai materi ini akan membekali Anda dengan alat-alat esensial untuk membangun aplikasi Dart yang fungsional dan efisien.
 

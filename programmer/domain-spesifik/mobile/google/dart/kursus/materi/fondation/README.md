@@ -461,7 +461,7 @@ void main() {
 
 **Penjelasan per Sintaks:**
 
-- `int angka = 10;`: Kita secara eksplisit menyatakan bahwa `angka` adalah variabel yang akan menyimpan **angka bulat (`int`)**. Jadi, Anda tidak bisa mengisi `angka` dengan teks atau nilai `true`/`false`.
+- `int angka = 10;`: Kita secara eksplisit menyatakan bahwa `angka` adalah variabel yang akan menyimpan **angka bulat (`int`)**. Jadi, Anda tidak bisa mengisi `angka` dengan teks atau nilai `true`/`false` atau `doubel` seperti `5.0`.
 - `String pesan = 'Ini adalah pesan.';`: Kita menyatakan bahwa `pesan` akan menyimpan **teks (`String`)**.
 - `bool isAktif = true;`: Kita menyatakan bahwa `isAktif` akan menyimpan nilai **benar/salah (`bool`)**.
 
