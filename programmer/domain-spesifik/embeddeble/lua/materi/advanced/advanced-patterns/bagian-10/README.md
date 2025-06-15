@@ -80,7 +80,7 @@ Selanjutnya, kita akan beralih ke aspek yang sama pentingnya: bagaimana memastik
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../README.md#bagian-x-c-api-integration
 [1]: ../
 [2]: ../
 [3]: ../
