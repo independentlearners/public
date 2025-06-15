@@ -60,7 +60,7 @@ Ini adalah konsep fundamental yang sangat penting untuk dipahami, tidak hanya da
 
 ### 1\. Pendahuluan: Apa itu Typing System?
 
-Dalam pemrograman, **Typing System** (Sistem Penulisan Tipe) adalah satu set aturan yang digunakan oleh sebuah bahasa pemrograman untuk **mengklasifikasikan berbagai jenis nilai (data)** yang dapat digunakan dalam program, seperti angka, teks, daftar, dan sebagainya. Sistem ini juga mengatur bagaimana nilai-nilai dari tipe yang berbeda dapat berinteraksi satu sama lain.
+Dalam pemrograman, **Typing System** (Sistem Tipe Penulisan) adalah satu set aturan yang digunakan oleh sebuah bahasa pemrograman untuk **mengklasifikasikan berbagai jenis nilai (data)** yang dapat digunakan dalam program, seperti angka, teks, daftar, dan sebagainya. Sistem ini juga mengatur bagaimana nilai-nilai dari tipe yang berbeda dapat berinteraksi satu sama lain.
 
 Bayangkan setiap informasi yang kita gunakan dalam hidup memiliki "jenis" atau "kategori"nya sendiri. Misalnya, angka adalah satu jenis, teks adalah jenis lain, tanggal adalah jenis lain lagi. Typing system dalam pemrograman melakukan hal yang sama: ia memberikan label atau "tipe" pada setiap data yang kita gunakan.
 
@@ -102,7 +102,7 @@ Misalnya:
 - Teks `"Halo dunia"` adalah string.
 - Nilai `true` atau `false` adalah boolean.
 
-Pentingnya tipe data adalah karena komputer menyimpan setiap jenis informasi secara berbeda di dalam memori. Sebuah angka disimpan secara berbeda dari sebuah teks, meskipun keduanya mungkin terlihat serupa bagi kita. Tipe data memberitahu komputer berapa banyak ruang memori yang dibutuhkan dan bagaimana menafsirkan bit-bit di memori tersebut.
+Pentingnya tipe data adalah karena komputer menyimpan setiap jenis informasi secara berbeda di dalam memori sistem. Sebuah angka disimpan secara berbeda dari sebuah teks, meskipun keduanya mungkin terlihat serupa bagi kita. Tipe data memberitahu komputer berapa banyak ruang memori yang dibutuhkan dan bagaimana menafsirkan bit-bit di dalam memori tersebut.
 
 #### Kategori Tipe Data
 
@@ -160,7 +160,7 @@ Digunakan untuk menyimpan banyak nilai dalam satu variabel. Mereka adalah strukt
 
 ###### Contoh dalam Dart:
 
-- **`List` (Array):** Koleksi yang terurut dari objek. Setiap elemen memiliki indeks (posisi) yang unik.
+- **`List`** Dalam bahasa pemrogramana lain disebut: **(Array):** Koleksi yang terurut dari objek. Setiap elemen memiliki indeks (posisi) yang unik.
   - **Deskripsi:** Mirip dengan array dalam bahasa lain. Mendukung elemen duplikat.
   - **Sintaks Dasar:**
     ```dart

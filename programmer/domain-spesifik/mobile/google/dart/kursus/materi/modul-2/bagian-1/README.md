@@ -398,7 +398,7 @@ Nama variabel, fungsi, kelas, dll., disebut **Identifiers/Pengidentifikasi**. Da
 2.  Tidak boleh dimulai dengan angka.
 3.  Tidak boleh mengandung spasi.
 4.  Tidak boleh menggunakan kata kunci (keywords) Dart (seperti `if`, `for`, `class`).
-5.  Sensitif terhadap huruf besar/kecil (`nama` berbeda dengan `Nama` karena ini di identifikasi sebagai bentuk yang berbeda).
+5.  Sensitif terhadap huruf besar/kecil (`nama` berbeda dengan `Nama` karena Dart mengidentifikasi kduanya sebagai bentuk yang berbeda).
 6.  **Konvensi Penamaan (Code Style):**
     - **`camelCase`:** Untuk variabel, fungsi, parameter, dan nama file. Dimulai dengan huruf kecil, dan setiap kata berikutnya dimulai dengan huruf kapital.
       ```dart
@@ -465,24 +465,101 @@ Dart menyediakan beberapa kata kunci untuk mendeklarasikan variabel, masing-masi
 
 - **Kapan Digunakan:** Untuk nilai-nilai yang benar-benar konstan dan tidak akan pernah berubah sepanjang hidup aplikasi (misalnya, nilai matematika, konfigurasi statis).
 
+---
+
 ##### `late`
 
-- **Deskripsi:** Digunakan untuk mendeklarasikan variabel non-nullable yang **akan diinisialisasi nanti**, sebelum variabel itu digunakan pertama kali. Tanpa `late`, variabel non-nullable harus diinisialisasi saat deklarasi atau dalam konstruktor.
-- **Sintaks Dasar:**
+**Deskripsi:** Kata kunci `late` digunakan untuk mendeklarasikan variabel non-nullable yang akan diinisialisasi nanti, yaitu sebelum variabel tersebut digunakan untuk pertama kali. Dengan kata lain, kita menunda inisialisasi variabel meskipun secara normal Dart mengharuskan variabel non-nullable diberi nilai saat deklarasi atau di dalam konstruktor (bagain yang berkaitan dengan konstruktor akan dijelaskan pada materi OOP | Object-Oriented Programming).
 
-  ```dart
-  late String deskripsi; // Variabel non-nullable yang akan diinisialisasi nanti
+Jadi, dengan `late` kita bisa menjanjikan bahwa nilai tersebut akan diberikan nanti, sehingga kita tidak perlu segera menginisialisasinya, juga tidak perlu membuatnya sebagai nullabel | `int? angka;`.
 
-  void setup() {
-    deskripsi = "Ini adalah deskripsi yang diinisialisasi nanti.";
-    print(deskripsi); // OK, karena sudah diinisialisasi
-  }
+**Catatan Penting:**
 
-  // void main() {
-  //   // print(deskripsi); // Ini akan crash jika deskripsi belum diinisialisasi
-  //   setup();
-  // }
-  ```
+- Jika variabel `late` belum diinisialisasi dan langsung diakses, program akan melempar kesalahan `LateInitializationError`.
+- Penggunaan `late` sangat berguna ketika inisialisasi variabel bergantung pada kondisi atau nilai yang belum tersedia saat deklarasi.
+
+---
+
+**Sintaks Dasar:**
+
+```dart
+late String deskripsi; // Deklarasi variabel non-nullable yang akan diinisialisasi di kemudian hari
+
+void setup() {
+  deskripsi = "Ini adalah deskripsi yang diinisialisasi nanti.";
+  print(deskripsi); // OK, karena variabel sudah diinisialisasi sebelum digunakan
+}
+
+// Contoh fungsi main untuk menunjukkan risiko akses awal:
+// void main() {
+//   print(deskripsi); // Ini akan memicu LateInitializationError jika 'deskripsi' belum diinisialisasi
+//   setup();
+// }
+```
+
+Pada kode di atas, variabel `deskripsi` dideklarasikan dengan `late`. Variabel tersebut diinisialisasi di dalam fungsi `setup()` sebelum digunakan. Jika variabel diakses sebelum pemanggilan fungsi `setup()`, program akan mengalami error karena `deskripsi` belum memiliki nilai.
+
+---
+
+**Contoh Penggunaan Lazy Initialization:**
+
+Selain menunda inisialisasi, `late` juga memungkinkan apa yang disebut lazy initialization. Artinya, kita bisa menunda pembuatan nilai variabel hingga saat benar-benar dibutuhkan. Misalnya:
+
+```dart
+late int counter;
+
+// Fungsi yang mengembalikan nilai dan hanya dipanggil saat counter diinisialisasi
+int getCounter() {
+  print('Fungsi getCounter() dipanggil.');
+  return 42;
+}
+
+void main() {
+  // Inisialisasi variabel 'counter' dengan memanggil getCounter()
+  counter = getCounter(); // Output: "Fungsi getCounter() dipanggil."
+  print(counter);         // Output: 42
+}
+```
+
+Pada contoh ini, variabel `counter` diinisialisasi dengan hasil dari fungsi `getCounter()` hanya ketika kita menginginkannya di dalam `main()`.
+
+---
+
+**Alternatif: `late final`**
+
+Dalam beberapa kasus, variabel hanya perlu diinisialisasi satu kali dan tidak boleh berubah nilainya. Untuk kasus seperti ini, kita dapat menggunakan `late final`:
+
+```dart
+late final String nama;
+
+// Variabel 'nama' hanya boleh diinisialisasi satu kali.
+void setupNama() {
+  nama = "Dart Language";
+  // nama = "Flutter"; // Baris ini akan menyebabkan error karena tidak boleh mengubah nilai dari late final
+}
+
+void main() {
+  setupNama();
+  print(nama); // Output: Dart Language
+}
+```
+
+`late final` berguna untuk variabel yang nilainya tidak diketahui saat deklarasi, namun akan tetap konstan setelah diberikan nilai awal.
+
+---
+
+**Ringkasan:**
+
+- **Kapan digunakan:**  
+  Gunakan `late` ketika Anda yakin variabel akan diinisialisasi sebelum pertama kali digunakan, tetapi nilai tersebut belum tersedia saat deklarasi.
+- **Keuntungan:**  
+  Fleksibilitas dalam menginisialisasi variabel, terutama saat nilai bergantung pada proses atau kondisi tertentu.
+- **Risiko:**  
+  Akses sebelum inisialisasi akan menyebabkan runtime error (`LateInitializationError`).
+
+Dokumentasi ini diharapkan dapat membantu pemahaman dasar mengenai penggunaan `late` di Dart. Jika ada topik lanjutan seperti perbedaan antara `late var` dan `late final`, atau perbandingan dengan penggunaan tipe nullable (`String?`), penjelasan tambahan bisa disertakan sesuai kebutuhan pembelajaran selanjutnya.
+
+---
 
 - **Kapan Digunakan:**
   - Ketika Anda memiliki variabel yang tidak bisa diinisialisasi di awal, tetapi Anda yakin itu akan diinisialisasi sebelum digunakan (misalnya, di dalam `initState` pada widget Flutter).

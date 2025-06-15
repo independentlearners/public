@@ -6,16 +6,16 @@ Modul ini adalah pondasi utama Anda dalam memahami dan menulis kode Dart. Anda a
 
 ### Daftar Materi:
 
-- 🌐 **[Syntax Fundamentals][1]**
-  - Mempelajari aturan dasar penulisan kode Dart, termasuk struktur program, statement, dan ekspresi.
+- 🛡️ **[Typing System][5]**
+  - Memahami bagaimana Dart mengkategorikan data (misalnya teks, angka, boolean) untuk memastikan keamanan dan konsistensi kode.
 - 📝 **[Comments][2]**
   - Memahami cara menambahkan catatan dalam kode untuk dokumentasi dan klarifikasi, agar kode lebih mudah dipahami.
 - 📦 **[Variables & Constants][3]**
   - Mengenal cara menyimpan data sementara menggunakan variabel, serta nilai tetap yang tidak dapat diubah (konstanta).
 - 🔑 **[Keywords][4]**
   - Mempelajari kata-kata khusus yang memiliki makna tertentu dalam bahasa Dart dan tidak dapat digunakan sebagai nama variabel.
-- 🛡️ **[Typing System][5]**
-  - Memahami bagaimana Dart mengkategorikan data (misalnya teks, angka, boolean) untuk memastikan keamanan dan konsistensi kode.
+- 🌐 **[Syntax Fundamentals][1]**
+  - Mempelajari aturan dasar penulisan kode Dart, termasuk struktur program, statement, dan ekspresi.
 - 🚫 **[Null Safety Deep Dive][6]**
   - Mendalami fitur penting Dart yang membantu mencegah error tak terduga dengan memastikan variabel tidak berisi `null` (kosong) secara tidak sengaja.
 - ⏳ **[Late Variables][7]**

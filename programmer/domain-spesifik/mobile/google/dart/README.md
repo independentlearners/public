@@ -39,11 +39,11 @@
 
 | Code | Topic                                            | Official Reference                                                                          |
 | ---- | ------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| 016  | [Syntax Fundamentals][syntax-fundamentals]       | [Language Tour](https://dart.dev/language)                                                  |
-| 017  | [Comments][comments]                                         | [Documentation Comments](https://dart.dev/language/comments)                                |
+| 016  | [Typing System][typing-system]                   | [Type System](https://dart.dev/language/type-system)                                        |
+| 017  | [Comments][comments]                             | [Documentation Comments](https://dart.dev/language/comments)                                |
 | 018  | [Variables & Constants][variables-constants]     | [Variables](https://dart.dev/language/variables)                                            |
 | 019  | [Keywords][keywoard]                             | [Keywords Reference](https://dart.dev/language/keywords)                                    |
-| 020  | [Typing System][typing-system]                   | [Type System](https://dart.dev/language/type-system)                                        |
+| 020  | [Syntax Fundamentals][syntax-fundamentals]       | [Language Tour](https://dart.dev/language)                                                  |
 | 021  | [Null Safety Deep Dive][null-safety-deep]        | [Understanding Null Safety](https://dart.dev/null-safety/understanding-null-safety)         |
 | 022  | [Late Variables][late-variables]                 | [Late Variables](https://dart.dev/language/variables#late-variables)                        |
 | 023  | [Final vs Const][final-const]                    | [Final and Const](https://dart.dev/language/variables#final-and-const)                      |
@@ -1508,7 +1508,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [type-annotations]: ../dart/kursus/materi/modul-2/bagian-19/README.md
 [casting-and-conversion]: ../dart/kursus/materi/modul-2/bagian-20/README.md
 [runtime-type]: ../dart/kursus/materi/modul-2/bagian-21/README.md
-[comments]:../dart/kursus/dasar/comentar/README.md
+[comments]: ../dart/kursus/dasar/comentar/README.md
 
 <!-- Module 3: Operators & Expressions -->
 
