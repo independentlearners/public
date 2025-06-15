@@ -26,6 +26,14 @@ Bayangkan Anda belajar bahasa manusia. Typing System dalam dunia programing adal
     - [4. Variabel (Variables)](#4-variabel-variables)
       - [Deklarasi Variabel](#deklarasi-variabel)
       - [Inisialisasi Variabel](#inisialisasi-variabel)
+- [Poin Tambahan](#poin-tambahan)
+  - [📘 Statement dan Expression dalam Dart](#-statement-dan-expression-dalam-dart)
+    - [Statement](#statement-1)
+    - [Expression](#expression-1)
+  - [📌 Hubungan antara Deklarasi, Inisialisasi, Statement, dan Expression](#-hubungan-antara-deklarasi-inisialisasi-statement-dan-expression)
+    - [1. Deklarasi](#1-deklarasi)
+    - [2. Inisialisasi](#2-inisialisasi)
+  - [📑 Rangkuman](#-rangkuman)
       - [Aturan Penamaan Variabel (Identifiers)](#aturan-penamaan-variabel-identifiers)
       - [Kata Kunci Variabel di Dart](#kata-kunci-variabel-di-dart)
         - [`var`](#var)
@@ -264,22 +272,121 @@ Sebelum menggunakan variabel, Anda harus **mendeklarasikannya**. Deklarasi membe
 
 **Contoh Deklarasi dan Inisialisasi:**
 
+**variabel non‑nullable tanpa nilai awal adalah tidak valid**, bukan menjadi nullable.
+
 ```dart
-String namaDepan = "Alice"; // Deklarasi dan inisialisasi langsung
+String namaDepan = "Alice";
+// ✅ Deklarasi dan inisialisasi langsung (non-nullable)
 
-// Contoh salah: non-nullable tapi tidak diberi nilai
-int usia; // ❌ Error karena belum diinisialisasi
+// Contoh salah: variabel non-nullable tanpa nilai awal
+int usia;
+// ❌ Error: non-nullable harus langsung diinisialisasi saat deklarasi
 
-// Solusi: gunakan nullable jika nilai belum tersedia
-int? usia; // ✅ Nullable, default-nya null
-usia = 25; // Penugasan nilai setelah deklarasi
+// Solusi: jika nilai belum tersedia, gunakan tipe nullable
+int? usia;
+// ✅ Nullable: default-nya null, boleh diakses tapi harus dicek null-nya
 
-double harga; // ❌ Error jika tidak diinisialisasi
-// print(harga); // Tidak boleh diakses sebelum diberi nilai
+usia = 25;
+// ✅ Penugasan nilai setelah deklarasi (inisialisasi kedua)
 
-harga = 99.99; // ✅ Harga sekarang punya nilai
+// ———————————————————————————————————————————————
 
+double harga;
+// ❌ Error: non-nullable tanpa nilai awal tidak diizinkan
+// print(harga); // ❌ Masih error jika dipanggil di sini
+
+// Solusi 1: langsung beri nilai saat deklarasi
+double harga2 = 99.99;
+// ✅ Non-nullable langsung diinisialisasi
+
+/// Solusi 2: Deklarasikan sebagai nullable jika inisialisasi ditunda
+double? harga3;
+// ✅ Nullable, default null
+harga3 = 99.99;
+// ✅ Sekarang `harga3` sudah diinisialisasi
 ```
+
+---
+
+**Ringkasan:**
+
+- **Non‑nullable** (contoh: `int`, `double`, `String`) **harus** diinisialisasi tepat saat deklarasi.
+- **Nullable** (contoh: `int?`, `double?`, `String?`) boleh ditunda, dengan default `null`, tapi aksesnya perlu pengecekan null (`if (x != null)` atau `x?.method()`).
+
+# Poin Tambahan
+
+Berikut adalah Statement dan expression dalam konteks Dart, beserta klasifikasi deklarasi dan inisialisasi.
+
+## 📘 Statement dan Expression dalam Dart
+
+### Statement
+
+Dalam Dart, _statement_ adalah unit eksekusi program yang berdiri sendiri. Setiap statement memberi tahu Dart untuk melakukan suatu aksi, seperti mendeklarasikan variabel, membuat perulangan, atau menjalankan fungsi.
+
+Contoh:
+
+```dart
+print("Halo, dunia!");
+int x = 10;
+```
+
+> **Catatan**: Tidak semua statement menghasilkan nilai. Statement bersifat imperatif — mereka memerintahkan program untuk _melakukan sesuatu_.
+
+---
+
+### Expression
+
+_Expression_ adalah kombinasi dari variabel, operator, literal, atau fungsi yang menghasilkan sebuah nilai. Expression dapat ditulis di dalam statement, atau digunakan sebagai bagian dari penugasan (assignment).
+
+Contoh:
+
+```dart
+2 + 3
+myFunction()
+a == b
+```
+
+> **Catatan**: Expression selalu _menghasilkan nilai_. Dalam Dart, banyak statement dibangun dari expression.
+
+---
+
+## 📌 Hubungan antara Deklarasi, Inisialisasi, Statement, dan Expression
+
+### 1. Deklarasi
+
+Deklarasi variabel adalah sebuah **statement** yang memberi tahu kompiler tentang nama dan tipe dari variabel.
+
+```dart
+int usia;
+```
+
+- Ini adalah **declaration statement**.
+- Tidak mengandung expression karena belum ada nilai yang diberikan.
+
+### 2. Inisialisasi
+
+Inisialisasi adalah proses memberi nilai awal pada variabel, biasanya bersamaan dengan deklarasi. Nilai tersebut diperoleh dari sebuah **expression**.
+
+```dart
+int usia = 20 + 5;
+```
+
+- Ini adalah **declaration + initialization statement**.
+- Bagian kanan (`20 + 5`) adalah **expression** yang menghasilkan nilai.
+- Bagian kiri (`int usia`) adalah deklarasi variabel.
+
+---
+
+## 📑 Rangkuman
+
+| Konsep       | Termasuk Apa              | Menghasilkan Nilai? | Contoh                            |
+| ------------ | ------------------------- | ------------------- | --------------------------------- |
+| Deklarasi    | Statement                 | ❌ Tidak            | `String nama;`                    |
+| Inisialisasi | Statement + Expression    | ✅ Ya               | `String nama = "Alice";`          |
+| Expression   | Digunakan dalam statement | ✅ Ya               | `"Alice"`, `2 + 5`, `a == b`      |
+| Statement    | Unit eksekusi             | ❌ Tidak            | `if (x > 0) {...}`, `int y = 10;` |
+
+---
 
 #### Aturan Penamaan Variabel (Identifiers)
 
