@@ -360,7 +360,7 @@ Deklarasi variabel adalah sebuah **statement** yang memberi tahu kompiler tentan
 int usia;
 ```
 
-- Ini adalah **declaration statement**.
+- Ini adalah **declaration statement** | _deklarasi statement_.
 - Tidak mengandung expression karena belum ada nilai yang diberikan.
 
 ### 2. Inisialisasi
@@ -371,7 +371,7 @@ Inisialisasi adalah proses memberi nilai awal pada variabel, biasanya bersamaan 
 int usia = 20 + 5;
 ```
 
-- Ini adalah **declaration + initialization statement**.
+- Ini adalah **declaration + initialization statement** | _deklarasi + inisialisasi statement_.
 - Bagian kanan (`20 + 5`) adalah **expression** yang menghasilkan nilai.
 - Bagian kiri (`int usia`) adalah deklarasi variabel.
 
