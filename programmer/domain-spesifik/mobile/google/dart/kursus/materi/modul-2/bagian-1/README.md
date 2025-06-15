@@ -386,17 +386,19 @@ int usia = 20 + 5;
 | Expression   | Digunakan dalam statement | ✅ Ya               | `"Alice"`, `2 + 5`, `a == b`      |
 | Statement    | Unit eksekusi             | ❌ Tidak            | `if (x > 0) {...}`, `int y = 10;` |
 
+> _Jadi kode yang sifatnya memerintah disebut statement sedangkan isi dalam perintah tersebut dikatakan sebagai expression_
+
 ---
 
 #### Aturan Penamaan Variabel (Identifiers)
 
-Nama variabel, fungsi, kelas, dll., disebut **identifiers**. Dart memiliki aturan ketat untuk penamaan identifiers:
+Nama variabel, fungsi, kelas, dll., disebut **Identifiers/Pengidentifikasi**. Dart memiliki aturan ketat untuk penamaan identifiers:
 
 1.  Dapat berisi huruf, angka, dan underscore (`_`).
 2.  Tidak boleh dimulai dengan angka.
 3.  Tidak boleh mengandung spasi.
 4.  Tidak boleh menggunakan kata kunci (keywords) Dart (seperti `if`, `for`, `class`).
-5.  Sensitif terhadap huruf besar/kecil (`nama` berbeda dengan `Nama`).
+5.  Sensitif terhadap huruf besar/kecil (`nama` berbeda dengan `Nama` karena ini di identifikasi sebagai bentuk yang berbeda).
 6.  **Konvensi Penamaan (Code Style):**
     - **`camelCase`:** Untuk variabel, fungsi, parameter, dan nama file. Dimulai dengan huruf kecil, dan setiap kata berikutnya dimulai dengan huruf kapital.
       ```dart
