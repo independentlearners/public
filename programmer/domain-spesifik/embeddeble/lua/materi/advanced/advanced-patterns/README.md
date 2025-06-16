@@ -535,7 +535,7 @@
 
 ---
 
-## [MASTER REFERENCE COLLECTION][18]
+## MASTER REFERENCE COLLECTION
 
 ### Dokumentasi Resmi
 
@@ -688,6 +688,6 @@ Kurikulum ini dirancang untuk memberikan penguasaan pattern matching Lua yang me
 [12]: ../advanced-patterns/bagian-12/README.md
 [13]: ../advanced-patterns/bagian-13/README.md
 [14]: ../advanced-patterns/bagian-14/README.md
-[15]: ../advanced-patterns/bagian-15/README.md
-[16]: ../advanced-patterns/bagian-16README.md
-[17]: ../advanced-patterns/bagian-17/README.md
+[15]: ../advanced-patterns/bagian-14/README.md
+[16]: ../advanced-patterns/bagian-14README.md
+[17]: ../advanced-patterns/bagian-14/README.md

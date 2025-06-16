@@ -16,7 +16,7 @@ Setelah terinstal, Kita dapat menggunakannya di dalam skrip Lua Kita dengan: `lo
 
 -----
 
-### Daftar Isi (Bagian IV)
+### **[Daftar Isi (Bagian IV)][0]**
 
   * [**BAGIAN IV: LPEG - PARSING EXPRESSION GRAMMARS**](#bagian-iv-lpeg---parsing-expression-grammars)
       * [4.1 LPeg Fundamentals](#41-lpeg-fundamentals)
