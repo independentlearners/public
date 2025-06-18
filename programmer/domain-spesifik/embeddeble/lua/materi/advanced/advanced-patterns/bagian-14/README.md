@@ -112,7 +112,7 @@ Dokumen ini adalah penjabaran mendalam dari kerangka kerja brilian tersebut. Gun
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-13/README.md
-[selanjutnya]: ../bagian-15/README.md
+[selanjutnya]: ../../web-development/bagian-1/README.md
 
 <!----------------------------------------------------->
 

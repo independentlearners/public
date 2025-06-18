@@ -597,12 +597,14 @@ Setiap panggilan `red:*` (connect, set, get) di atas adalah non-blocking, berkat
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../README.md
 [selanjutnya]: ../bagian-2/README.md
+[sebelumnya]: ../../advanced-patterns/bagian-14/README.md
 
 <!----------------------------------------------------->
 
