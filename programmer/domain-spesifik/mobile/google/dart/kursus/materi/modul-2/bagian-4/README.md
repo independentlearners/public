@@ -16,6 +16,7 @@ Ini adalah konsep fundamental yang sangat penting untuk dipahami, tidak hanya da
         - [Contoh dalam Dart:](#contoh-dalam-dart)
       - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
         - [Contoh dalam Dart:](#contoh-dalam-dart-1)
+      - [✅ Audit](#-audit)
       - [Tipe Data Khusus (Special Data Types)](#tipe-data-khusus-special-data-types)
         - [Contoh dalam Dart:](#contoh-dalam-dart-2)
       - [Tipe Data Didefinisikan Pengguna (User-Defined Data Types)](#tipe-data-didefinisikan-pengguna-user-defined-data-types)
@@ -189,6 +190,9 @@ Digunakan untuk menyimpan banyak nilai dalam satu variabel. Mereka adalah strukt
       "isMahasiswa": true,
     };
     ```
+
+##### ✅ Audit
+
 - **`Iterable`:** Kelas abstrak yang merepresentasikan urutan elemen yang dapat diiterasi (dilalui). `List` dan `Set` adalah contoh `Iterable`.
   - **Deskripsi:** Ini bukan tipe data yang langsung Anda instansiasi, melainkan sebuah antarmuka yang diimplementasikan oleh koleksi yang bisa dilalui elemennya.
   - **Sintaks Dasar:**
