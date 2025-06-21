@@ -6,54 +6,54 @@ Ini adalah konsep fundamental yang sangat penting untuk dipahami, tidak hanya da
   <summary>📃 Daftar Isi</summary>
 
 - [Typing System](#typing-system)
-  - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
-    - [Analogi Sederhana](#analogi-sederhana)
-    - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
-  - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
-    - [Apa itu Tipe Data?](#apa-itu-tipe-data)
-    - [Kategori Tipe Data](#kategori-tipe-data)
-      - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
-        - [Contoh dalam Dart:](#contoh-dalam-dart)
-      - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
-        - [Contoh dalam Dart:](#contoh-dalam-dart-1)
-      - [✅ Audit](#-audit)
-      - [Tipe Data Khusus (Special Data Types)](#tipe-data-khusus-special-data-types)
-        - [Contoh dalam Dart:](#contoh-dalam-dart-2)
-      - [Tipe Data Didefinisikan Pengguna (User-Defined Data Types)](#tipe-data-didefinisikan-pengguna-user-defined-data-types)
-        - [Contoh dalam Dart:](#contoh-dalam-dart-3)
-  - [3. Kategori Typing System](#3-kategori-typing-system)
-    - [Strong vs. Weak Typing](#strong-vs-weak-typing)
-      - [Strong Typing](#strong-typing)
-      - [Weak Typing](#weak-typing)
-        - [Perbandingan Contoh:](#perbandingan-contoh)
-      - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing)
-    - [Static vs. Dynamic Typing](#static-vs-dynamic-typing)
-      - [Static Typing](#static-typing)
-      - [Dynamic Typing](#dynamic-typing)
-        - [Perbandingan Contoh:](#perbandingan-contoh-1)
-      - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing)
-    - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing)
-      - [Explicit Typing](#explicit-typing)
-      - [Implicit Typing (Type Inference)](#implicit-typing-type-inference)
-        - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
-  - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
-    - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
-    - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
-    - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
-    - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
-    - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
-    - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
-  - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
-  - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
-    - [Type Safety dalam Dart](#type-safety-dalam-dart)
-    - [`dynamic` Keyword](#dynamic-keyword)
-    - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
-    - [`Object` Class](#object-class)
-    - [Null Safety](#null-safety)
-    - [Generics](#generics)
-  - [7. Terminologi Kunci](#7-terminologi-kunci)
-  - [8. Ringkasan](#8-ringkasan)
-  - [9. Sumber Referensi](#9-sumber-referensi)
+    - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
+      - [Analogi Sederhana](#analogi-sederhana)
+      - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
+    - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
+      - [Apa itu Tipe Data?](#apa-itu-tipe-data)
+      - [Kategori Tipe Data](#kategori-tipe-data)
+        - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
+          - [Contoh :](#contoh-)
+        - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
+          - [Contoh dalam Dart:](#contoh-dalam-dart)
+        - [✅ Audit](#-audit)
+        - [Tipe Data Khusus (Special Data Types)](#tipe-data-khusus-special-data-types)
+          - [Contoh dalam Dart:](#contoh-dalam-dart-1)
+        - [Tipe Data Didefinisikan Pengguna (User-Defined Data Types)](#tipe-data-didefinisikan-pengguna-user-defined-data-types)
+          - [Contoh dalam Dart:](#contoh-dalam-dart-2)
+    - [3. Kategori Typing System](#3-kategori-typing-system)
+      - [Strong vs. Weak Typing](#strong-vs-weak-typing)
+        - [Strong Typing](#strong-typing)
+        - [Weak Typing](#weak-typing)
+          - [Perbandingan Contoh:](#perbandingan-contoh)
+        - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing)
+      - [Static vs. Dynamic Typing](#static-vs-dynamic-typing)
+        - [Static Typing](#static-typing)
+        - [Dynamic Typing](#dynamic-typing)
+          - [Perbandingan Contoh:](#perbandingan-contoh-1)
+        - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing)
+      - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing)
+        - [Explicit Typing](#explicit-typing)
+        - [Implicit Typing (Type Inference)](#implicit-typing-type-inference)
+          - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
+    - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
+      - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
+      - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
+      - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
+      - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
+      - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
+      - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
+    - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
+    - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
+      - [Type Safety dalam Dart](#type-safety-dalam-dart)
+      - [`dynamic` Keyword](#dynamic-keyword)
+      - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
+      - [`Object` Class](#object-class)
+      - [Null Safety](#null-safety)
+      - [Generics](#generics)
+    - [7. Terminologi Kunci](#7-terminologi-kunci)
+    - [8. Ringkasan](#8-ringkasan)
+    - [9. Sumber Referensi](#9-sumber-referensi)
 
 </details>
 
@@ -103,7 +103,11 @@ Misalnya:
 - Teks `"Halo dunia"` adalah string.
 - Nilai `true` atau `false` adalah boolean.
 
-Pentingnya tipe data adalah karena komputer menyimpan setiap jenis informasi secara berbeda di dalam memori sistem. Sebuah angka disimpan secara berbeda dari sebuah teks, meskipun keduanya mungkin terlihat serupa bagi kita. Tipe data memberitahu komputer berapa banyak ruang memori yang dibutuhkan dan bagaimana menafsirkan bit-bit di dalam memori tersebut.
+Pentingnya tipe data adalah karena komputer menyimpan setiap jenis informasi secara berbeda di dalam memori sistem. Sebuah angka disimpan secara berbeda dari sebuah teks, meskipun keduanya mungkin terlihat serupa bagi kita. Tetapi bagi komputer, Tipe data memberitahu sistem tentang seberapa banyak ruang memori yang dibutuhkan dan bagaimana bit-bit tersebut ditafsirkan berdasarkan jenisnya.
+
+Misalnya, angka disimpan dengan format biner yang dioptimalkan untuk operasi matematis, sedangkan teks disimpan menggunakan encoding seperti ASCII atau UTF-8 yang memerlukan cara penafsiran berbeda. Dengan adanya tipe data, sistem operasi dan compiler dapat mengetahui berapa banyak ruang memori yang harus dialokasikan serta bagaimana bit-bit tersebut harus diolah ketika program dijalankan.
+
+Lebih jauh lagi, tipe data membantu dalam mencegah kesalahan saat manipulasi data. Kesalahan seperti mencoba menjumlahkan angka dengan teks dapat dicegah dengan adanya pengecekan tipe data pada saat kompilasi dalam bahasa pemrograman yang menerapkan static typing. Ini tidak hanya meningkatkan keamanan dan kestabilan program, tetapi juga meningkatkan efisiensi penggunaan memori dan performa sistem secara keseluruhan.
 
 #### Kategori Tipe Data
 
@@ -113,7 +117,7 @@ Tipe data dapat dikategorikan menjadi beberapa jenis utama:
 
 Ini adalah tipe data dasar yang menjadi fondasi dalam sebuah bahasa pemrograman. Mereka biasanya menyimpan nilai tunggal dan tidak dapat dipecah menjadi tipe yang lebih kecil.
 
-###### Contoh dalam Dart:
+###### Contoh :
 
 - **`int` (Integer):** Digunakan untuk menyimpan bilangan bulat (tanpa desimal).
   - **Deskripsi:** Merepresentasikan bilangan bulat 64-bit.
@@ -159,18 +163,24 @@ Ini adalah tipe data dasar yang menjadi fondasi dalam sebuah bahasa pemrograman.
 
 Digunakan untuk menyimpan banyak nilai dalam satu variabel. Mereka adalah struktur data yang memungkinkan pengorganisasian dan manipulasi kumpulan data.
 
+Tipe data koleksi memungkinkan kita menyimpan dan mengelola beberapa nilai sekaligus dalam sebuah struktur yang terorganisir.
+
+Misalnya, dalam banyak bahasa pemrograman, koleksi yang umum digunakan adalah array, list, set, dan map. Masing-masing memiliki karakteristik dan operasi khusus yang mengakomodasi cara kita mengakses, memanipulasi, dan mengelola data. Pada dasarnya, meskipun tipe data primitif (seperti integer atau boolean) mewakili nilai tunggal, tipe data koleksi menggabungkan beberapa nilai, sehingga memungkinkan operasi seperti iterasi, pencarian, penambahan, atau penghapusan elemen.
+
+Di banyak paradigma pemrograman termasuk dart, koleksi dianggap sebagai tipe data karena mendefinisikan bagaimana data dikumpulkan, diakses, dan diinterpretasikan oleh program. Jadi, ketika kita memilih tipe data untuk menyimpan kumpulan data, kita memilih dari tipe koleksi tersebut sesuai dengan kebutuhan efisiensi dan organisasi data dalam aplikasi tersebut.
+
 ###### Contoh dalam Dart:
 
-- **`List`** Dalam bahasa pemrogramana lain disebut **(Array)** ini adlah koleksi yang terurut dari objek. Setiap elemen memiliki indeks (posisi) yang unik.
-  - **Deskripsi:** Mirip dengan array dalam bahasa lain. Mendukung elemen duplikat.
+- **`List`** Dalam bahasa pemrogramana lain disebut **(Array)** ini adalah Tipe Data koleksi yang terurut dari objek. Setiap elemen memiliki indeks (posisi) yang unik.
+  - **Deskripsi:** Mirip dengan array dalam bahasa lain. Mendukung elemen duplikat bahkan dengan berbagai jenis tipe.
   - **Sintaks Dasar:**
     ```dart
     List<String> namaMahasiswa = ["Andi", "Budi", "Cici"];
     List<int> angkaGenap = [2, 4, 6, 8];
-    List<dynamic> campuran = [1, "dua", true]; // List yang bisa berisi tipe data berbeda
+    List<dynamic> campuran = [1, "dua", true]; // List yang bisa berisi tipe data berbeda, ini adalah tipe data koleksi yang sifatnya dinamis.
     ```
 - **`Set`:** Koleksi unik dari objek. Tidak ada urutan dan tidak ada elemen duplikat.
-  - **Deskripsi:** Berguna ketika Anda perlu memastikan setiap elemen dalam koleksi unik.
+  - **Deskripsi:** Berguna ketika Anda perlu memastikan setiap elemen dalam koleksi unik, bisa menerima duplikat tetapi hanya menampilkan tiap-tiap jenis. Jika ada yang duplikat dia hanya akan menampilkan satu satu sementara duplikasi lainnya diabaikan.
   - **Sintaks Dasar:**
     ```dart
     Set<int> nomorUnik = {1, 2, 3, 2}; // Akan disimpan sebagai {1, 2, 3}
@@ -193,13 +203,18 @@ Digunakan untuk menyimpan banyak nilai dalam satu variabel. Mereka adalah strukt
 
 ##### ✅ Audit
 
-- **`Iterable`:** Kelas abstrak yang merepresentasikan urutan elemen yang dapat diiterasi (dilalui). `List` dan `Set` adalah contoh `Iterable`.
-  - **Deskripsi:** Ini bukan tipe data yang langsung Anda instansiasi, melainkan sebuah antarmuka yang diimplementasikan oleh koleksi yang bisa dilalui elemennya.
-  - **Sintaks Dasar:**
-    ```dart
-    Iterable<int> angka = [1, 2, 3, 4].where((e) => e.isEven); // Hasilnya Iterable
-    print(angka); // (2, 4)
-    ```
+- **`Iterable`:** Merupakan _interface_ atau kelas abstrak dalam banyak bahasa pemrograman termasuk Dart, yang mendefinisikan objek yang dapat di-_iterasi_, artinya elemen-elemennya bisa diakses satu per satu menggunakan perulangan seperti `for-in`. Struktur data seperti `List` dan `Set` mengimplementasikan `Iterable`. Namun, `Map` tidak langsung mewarisi `Iterable` karena struktur key-value-nya berbeda—meskipun komponen seperti `map.keys` atau `map.values` _adalah_ iterable.
+
+`Iterable` bukan superclass dari `List`, `Set`, dan `Map` dalam arti pewarisan tunggal, tapi lebih seperti _kontrak abstrak_ yang diikuti oleh kelas-kelas yang membutuhkan fitur iterasi (perulangan).
+
+---
+
+- **Deskripsi:** Ini bukan tipe data yang langsung Anda instansiasi, melainkan sebuah antarmuka yang diimplementasikan oleh koleksi yang bisa dilalui elemennya.
+- **Sintaks Dasar:**
+  ```dart
+  Iterable<int> angka = [1, 2, 3, 4].where((e) => e.isEven); // Hasilnya Iterable
+  print(angka); // (2, 4)
+  ```
 
 ##### Tipe Data Khusus (Special Data Types)
 
