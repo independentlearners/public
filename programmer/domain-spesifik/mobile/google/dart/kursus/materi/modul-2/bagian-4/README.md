@@ -6,54 +6,47 @@ Ini adalah konsep fundamental yang sangat penting untuk dipahami, tidak hanya da
   <summary>📃 Daftar Isi</summary>
 
 - [Typing System](#typing-system)
-  - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
-    - [Analogi Sederhana](#analogi-sederhana)
-    - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
-  - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
-    - [Apa itu Tipe Data?](#apa-itu-tipe-data)
-    - [Kategori Tipe Data](#kategori-tipe-data)
-      - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
-        - [Contoh :](#contoh-)
-      - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
-        - [Contoh dalam Dart:](#contoh-dalam-dart)
-      - [✅ Audit](#-audit)
-      - [Tipe Data Khusus (Special Data Types)](#tipe-data-khusus-special-data-types)
-        - [Contoh dalam Dart:](#contoh-dalam-dart-1)
-      - [Tipe Data Didefinisikan Pengguna (User-Defined Data Types)](#tipe-data-didefinisikan-pengguna-user-defined-data-types)
-        - [Contoh dalam Dart:](#contoh-dalam-dart-2)
-  - [3. Kategori Typing System](#3-kategori-typing-system)
-    - [Strong vs. Weak Typing](#strong-vs-weak-typing)
-      - [Strong Typing](#strong-typing)
-      - [Weak Typing](#weak-typing)
-        - [Perbandingan Contoh:](#perbandingan-contoh)
-      - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing)
-    - [Static vs. Dynamic Typing](#static-vs-dynamic-typing)
-      - [Static Typing](#static-typing)
-      - [Dynamic Typing](#dynamic-typing)
-        - [Perbandingan Contoh:](#perbandingan-contoh-1)
-      - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing)
-    - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing)
-      - [Explicit Typing](#explicit-typing)
-      - [Implicit Typing (Type Inference)](#implicit-typing-type-inference)
-        - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
-  - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
-    - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
-    - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
-    - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
-    - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
-    - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
-    - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
-  - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
-  - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
-    - [Type Safety dalam Dart](#type-safety-dalam-dart)
-    - [`dynamic` Keyword](#dynamic-keyword)
-    - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
-    - [`Object` Class](#object-class)
-    - [Null Safety](#null-safety)
-    - [Generics](#generics)
-  - [7. Terminologi Kunci](#7-terminologi-kunci)
-  - [8. Ringkasan](#8-ringkasan)
-  - [9. Sumber Referensi](#9-sumber-referensi)
+    - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
+      - [Analogi Sederhana](#analogi-sederhana)
+      - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
+    - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
+      - [Apa itu Tipe Data?](#apa-itu-tipe-data)
+      - [Kategori Tipe Data](#kategori-tipe-data)
+        - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
+          - [Contoh :](#contoh-)
+        - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
+          - [Contoh dalam Dart:](#contoh-dalam-dart)
+- [](#)
+      - [**`Iterable` Kontrak Universal**](#iterable-kontrak-universal)
+      - [**Deskripsi Tambahan**](#deskripsi-tambahan)
+        - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing)
+      - [Static vs. Dynamic Typing](#static-vs-dynamic-typing)
+        - [Static Typing](#static-typing)
+        - [Dynamic Typing](#dynamic-typing)
+          - [Perbandingan Contoh:](#perbandingan-contoh)
+        - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing)
+      - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing)
+        - [Explicit Typing](#explicit-typing)
+        - [Implicit Typing (Type Inference)](#implicit-typing-type-inference)
+          - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
+    - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
+      - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
+      - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
+      - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
+      - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
+      - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
+      - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
+    - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
+    - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
+      - [Type Safety dalam Dart](#type-safety-dalam-dart)
+      - [`dynamic` Keyword](#dynamic-keyword)
+      - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
+      - [`Object` Class](#object-class)
+      - [Null Safety](#null-safety)
+      - [Generics](#generics)
+    - [7. Terminologi Kunci](#7-terminologi-kunci)
+    - [8. Ringkasan](#8-ringkasan)
+    - [9. Sumber Referensi](#9-sumber-referensi)
 
 </details>
 
@@ -202,33 +195,44 @@ Di banyak paradigma pemrograman termasuk dart, koleksi dianggap sebagai tipe dat
     };
     ```
 
-- **`Iterable`:** Jembatan universal yang dapat mengatur semua hal selama objek tersebut mampu di-_iterasi_, artinya elemen-elemennya bisa diakses satu per satu menggunakan perulangan seperti `for-in`. Dalam hal ini sebagai langkah awal pengenalan Iterable, kita akan menggunakannya sebagai struktur data seperti `List` dan `Set` untuk mengimplementasikan salah satu pengguna `Iterable`. Penggunaan key-value pada komponen seperti `map.keys` atau `map.values` adalah bagian dari bagaimana iterable mengatur tipe data khusus koleksi. Perlu dipahami bahwa Iterable tidak hanya terbatas pada struktur data tradisional seperti `List` atau `Set`. Ia juga berlaku untuk objek yang menghasilkan data secara dinamis, sehingga menjadi pengatur yang menyatukan berbagai jenis objek yang "bisa dilalui" dengan cara yang seragam. Jadi kita sebetulnya mampu menggunakan Iterable pada jenis kebtuhan yang lain. Intinya adalah Iterable bekerja pada standar perilaku untuk mengiterasi data, bukan bagaimana atau di mana data itu disimpan.
+#
+
+#### **`Iterable` Kontrak Universal**
+
+`Iterable` adalah jembatan abstrak universal yang memungkinkan objek untuk di-_iterasi_ yang artinya, elemennya dapat diakses satu per satu melalui perulangan seperti `for-in`. Sebagai langkah awal pengenalan, kita akan menggunakannya bersama struktur data seperti `List` dan `Set`, yang merupakan contoh konkret implementasi dari `Iterable`.
+
+Penggunaan pasangan kunci-nilai seperti `map.keys` dan `map.values` juga merupakan contoh bagaimana `Iterable` mengatur tipe data koleksi secara lebih khusus. Penting untuk dipahami bahwa `Iterable` tidak terbatas pada koleksi tradisional saja, tetapi juga mencakup objek yang menghasilkan data secara dinamis. Maka dari itu, `Iterable` berperan sebagai pengatur umum yang menyatukan berbagai objek yang “bisa dilalui” secara seragam.
+
+Intinya, `Iterable` menetapkan _standar perilaku_ dalam mengiterasi data—terlepas dari bagaimana atau di mana data tersebut disimpan.
 
 ---
 
-- **Deskripsi:** Ini bukan tipe data yang langsung di instansiasi melainkan karena dia adalah sebuah kontrak abstrak yang mensyaratkan bahwa sebuah objek harus bersifat iterasi, dalam contoh disini dia bekerja sebagai antarmuka yang diimplementasikan untuk sebuah koleksi yang bisa dilalui elemennya. Kedepannya mungkin kita akan melihat Iterable bekerja dengan cara yang berbeda dimana fungsinya tidak hanya sebatas untuk sebuah koleksi
+#### **Deskripsi Tambahan**
+
+`Iterable` bukan tipe data yang bisa diinstansiasi langsung, melainkan kontrak abstrak yang menyaratkan bahwa suatu objek bersifat iteratif. Dalam praktiknya, ia berfungsi sebagai antarmuka yang diimplementasikan oleh struktur koleksi agar elemen-elemennya dapat diakses melalui iterasi. Ke depannya, bukan tidak mungkin kita akan melihat `Iterable` digunakan dalam konteks yang lebih luas, jadi tidak hanya terbatas pada koleksi.
+
 - **Sintaks Dasar:**
 
-**Contoh Kode**
+- **Contoh Kode**
 
-```dart
-Iterable<int> angka = [1, 2, 3, 4].where((e) => e.isEven); // Hasilnya: Iterable yang berisi 2 dan 4
-print(angka); // Idealnya menampilkan elemen genap, misalnya [2, 4] jika dikonversi ke List
-```
-
-**Penjelasan Kode:**
-
-- **List Awal:**  
-  `[1, 2, 3, 4]` adalah sebuah `List<int>` yang secara otomatis mengimplementasikan _Iterable_.
-- **Operasi `where`:**  
-  Metode `where` memfilter elemen dengan kondisi `e.isEven`, sehingga menghasilkan sebuah _Iterable_ yang hanya berisi elemen genap.
-  - Karena _Iterable_ bersifat **lazy**, proses penyaringan hanya dilakukan ketika elemen-elemennya diiterasi.
-- **Output:**  
-  Perhatikan bahwa jika kamu menjalankan kode ini, `print(angka)` mungkin mencetak representasi objek _Iterable_ (misalnya, `Instance of '_WhereIterable<int>'`). Untuk melihat hasil yang lebih eksplisit, kamu bisa melakukan konversi ke `List`:
-
-  ```dart
-  print(angka.toList()); // Akan mencetak: [2, 4]
+- ```dart
+   Iterable<int> angka = [1, 2, 3, 4].where((e) => e.isEven); // Hasilnya: Iterable yang berisi 2 dan 4
+   print(angka); // Idealnya menampilkan elemen genap, misalnya [2, 4] jika dikonversi ke List
   ```
+
+- **Penjelasan Kode:**
+
+  - **List Awal:**  
+    `[1, 2, 3, 4]` adalah sebuah `List<int>` yang secara otomatis mengimplementasikan _Iterable_.
+  - **Operasi `where`:**  
+    Metode `where` memfilter elemen dengan kondisi `e.isEven`, sehingga menghasilkan sebuah _Iterable_ yang hanya berisi elemen genap.
+    - Karena _Iterable_ bersifat **lazy**, proses penyaringan hanya dilakukan ketika elemen-elemennya diiterasi.
+  - **Output:**  
+    Perhatikan bahwa jika kamu menjalankan kode ini, `print(angka)` mungkin mencetak representasi objek _Iterable_ (misalnya, `Instance of '_WhereIterable<int>'`). Untuk melihat hasil yang lebih eksplisit, kamu bisa melakukan konversi ke `List`:
+
+  - ```dart
+     print(angka.toList()); // Akan mencetak: [2, 4]
+    ```
 
 ---
 
