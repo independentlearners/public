@@ -6,47 +6,35 @@ Ini adalah konsep fundamental yang sangat penting untuk dipahami, tidak hanya da
   <summary>📃 Daftar Isi</summary>
 
 - [Typing System](#typing-system)
-    - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
-      - [Analogi Sederhana](#analogi-sederhana)
-      - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
-    - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
-      - [Apa itu Tipe Data?](#apa-itu-tipe-data)
-      - [Kategori Tipe Data](#kategori-tipe-data)
-        - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
-          - [Contoh :](#contoh-)
-        - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
-          - [Contoh dalam Dart:](#contoh-dalam-dart)
-- [](#)
-      - [**`Iterable` Kontrak Universal**](#iterable-kontrak-universal)
-      - [**Deskripsi Tambahan**](#deskripsi-tambahan)
-        - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing)
-      - [Static vs. Dynamic Typing](#static-vs-dynamic-typing)
-        - [Static Typing](#static-typing)
-        - [Dynamic Typing](#dynamic-typing)
-          - [Perbandingan Contoh:](#perbandingan-contoh)
-        - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing)
-      - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing)
-        - [Explicit Typing](#explicit-typing)
-        - [Implicit Typing (Type Inference)](#implicit-typing-type-inference)
-          - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
-    - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
-      - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
-      - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
-      - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
-      - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
-      - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
-      - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
-    - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
-    - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
-      - [Type Safety dalam Dart](#type-safety-dalam-dart)
-      - [`dynamic` Keyword](#dynamic-keyword)
-      - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
-      - [`Object` Class](#object-class)
-      - [Null Safety](#null-safety)
-      - [Generics](#generics)
-    - [7. Terminologi Kunci](#7-terminologi-kunci)
-    - [8. Ringkasan](#8-ringkasan)
-    - [9. Sumber Referensi](#9-sumber-referensi)
+  - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
+    - [Analogi Sederhana](#analogi-sederhana)
+    - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
+  - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
+    - [Apa itu Tipe Data?](#apa-itu-tipe-data)
+    - [Kategori Tipe Data](#kategori-tipe-data)
+      - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
+        - [Contoh :](#contoh-)
+      - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
+        - [Contoh dalam Dart:](#contoh-dalam-dart)
+- [](#) - [**`Iterable` Kontrak Universal**](#iterable-kontrak-universal) - [**Deskripsi Tambahan**](#deskripsi-tambahan) - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing) - [Static vs. Dynamic Typing](#static-vs-dynamic-typing) - [Static Typing](#static-typing) - [Dynamic Typing](#dynamic-typing) - [Perbandingan Contoh:](#perbandingan-contoh) - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing) - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing) - [Explicit Typing](#explicit-typing) - [Implicit Typing (Type Inference)](#implicit-typing-type-inference) - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
+  - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
+    - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
+    - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
+    - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
+    - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
+    - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
+    - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
+  - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
+  - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
+    - [Type Safety dalam Dart](#type-safety-dalam-dart)
+    - [`dynamic` Keyword](#dynamic-keyword)
+    - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
+    - [`Object` Class](#object-class)
+    - [Null Safety](#null-safety)
+    - [Generics](#generics)
+  - [7. Terminologi Kunci](#7-terminologi-kunci)
+  - [8. Ringkasan](#8-ringkasan)
+  - [9. Sumber Referensi](#9-sumber-referensi)
 
 </details>
 
@@ -211,9 +199,7 @@ Intinya, `Iterable` menetapkan _standar perilaku_ dalam mengiterasi data—terle
 
 `Iterable` bukan tipe data yang bisa diinstansiasi langsung, melainkan kontrak abstrak yang menyaratkan bahwa suatu objek bersifat iteratif. Dalam praktiknya, ia berfungsi sebagai antarmuka yang diimplementasikan oleh struktur koleksi agar elemen-elemennya dapat diakses melalui iterasi. Ke depannya, bukan tidak mungkin kita akan melihat `Iterable` digunakan dalam konteks yang lebih luas, jadi tidak hanya terbatas pada koleksi.
 
-- **Sintaks Dasar:**
-
-- **Contoh Kode**
+- **Contoh Sintaks Kode Dasar:**
 
 - ```dart
    Iterable<int> angka = [1, 2, 3, 4].where((e) => e.isEven); // Hasilnya: Iterable yang berisi 2 dan 4
