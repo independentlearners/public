@@ -6,47 +6,35 @@ Ini adalah konsep fundamental yang sangat penting untuk dipahami, tidak hanya da
   <summary>📃 Daftar Isi</summary>
 
 - [Typing System](#typing-system)
-    - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
-      - [Analogi Sederhana](#analogi-sederhana)
-      - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
-    - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
-      - [Apa itu Tipe Data?](#apa-itu-tipe-data)
-      - [Kategori Tipe Data](#kategori-tipe-data)
-        - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
-          - [Contoh :](#contoh-)
-        - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
-          - [Contoh dalam Dart:](#contoh-dalam-dart)
-- [](#)
-      - [**`Iterable` Kontrak Universal**](#iterable-kontrak-universal)
-      - [**Deskripsi Tambahan**](#deskripsi-tambahan)
-        - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing)
-      - [Static vs. Dynamic Typing](#static-vs-dynamic-typing)
-        - [Static Typing](#static-typing)
-        - [Dynamic Typing](#dynamic-typing)
-          - [Perbandingan Contoh:](#perbandingan-contoh)
-        - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing)
-      - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing)
-        - [Explicit Typing](#explicit-typing)
-        - [Implicit Typing (Type Inference)](#implicit-typing-type-inference)
-          - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
-    - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
-      - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
-      - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
-      - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
-      - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
-      - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
-      - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
-    - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
-    - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
-      - [Type Safety dalam Dart](#type-safety-dalam-dart)
-      - [`dynamic` Keyword](#dynamic-keyword)
-      - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
-      - [`Object` Class](#object-class)
-      - [Null Safety](#null-safety)
-      - [Generics](#generics)
-    - [7. Terminologi Kunci](#7-terminologi-kunci)
-    - [8. Ringkasan](#8-ringkasan)
-    - [9. Sumber Referensi](#9-sumber-referensi)
+  - [1. Pendahuluan: Apa itu Typing System?](#1-pendahuluan-apa-itu-typing-system)
+    - [Analogi Sederhana](#analogi-sederhana)
+    - [Mengapa Penting dalam Pemrograman?](#mengapa-penting-dalam-pemrograman)
+  - [2. Tipe Data (Data Types)](#2-tipe-data-data-types)
+    - [Apa itu Tipe Data?](#apa-itu-tipe-data)
+    - [Kategori Tipe Data](#kategori-tipe-data)
+      - [Tipe Data Primitif (Primitive Data Types)](#tipe-data-primitif-primitive-data-types)
+        - [Contoh :](#contoh-)
+      - [Tipe Data Koleksi (Collection Data Types)](#tipe-data-koleksi-collection-data-types)
+        - [Contoh dalam Dart:](#contoh-dalam-dart)
+- [](#) - [**`Iterable` Kontrak Universal**](#iterable-kontrak-universal) - [**Deskripsi Tambahan**](#deskripsi-tambahan) - [Dart: Bahasa dengan Strong Typing](#dart-bahasa-dengan-strong-typing) - [Static vs. Dynamic Typing](#static-vs-dynamic-typing) - [Static Typing](#static-typing) - [Dynamic Typing](#dynamic-typing) - [Perbandingan Contoh:](#perbandingan-contoh) - [Dart: Kombinasi Static dan Dynamic Typing](#dart-kombinasi-static-dan-dynamic-typing) - [Explicit vs. Implicit Typing](#explicit-vs-implicit-typing) - [Explicit Typing](#explicit-typing) - [Implicit Typing (Type Inference)](#implicit-typing-type-inference) - [Dart: Mendukung Keduanya](#dart-mendukung-keduanya)
+  - [4. Keuntungan Menggunakan Typing System yang Kuat (Strong \& Static)](#4-keuntungan-menggunakan-typing-system-yang-kuat-strong--static)
+    - [Meningkatkan Keandalan Kode (Reliability)](#meningkatkan-keandalan-kode-reliability)
+    - [Deteksi Kesalahan Lebih Awal](#deteksi-kesalahan-lebih-awal)
+    - [Memudahkan Pemeliharaan dan Refactoring](#memudahkan-pemeliharaan-dan-refactoring)
+    - [Dokumentasi Kode yang Lebih Jelas](#dokumentasi-kode-yang-lebih-jelas)
+    - [Peningkatan Performa (Potensial)](#peningkatan-performa-potensial)
+    - [Dukungan Tooling yang Lebih Baik](#dukungan-tooling-yang-lebih-baik)
+  - [5. Tantangan dan Pertimbangan](#5-tantangan-dan-pertimbangan)
+  - [6. Studi Kasus: Typing System dalam Dart](#6-studi-kasus-typing-system-dalam-dart)
+    - [Type Safety dalam Dart](#type-safety-dalam-dart)
+    - [`dynamic` Keyword](#dynamic-keyword)
+    - [`var` Keyword (Type Inference)](#var-keyword-type-inference)
+    - [`Object` Class](#object-class)
+    - [Null Safety](#null-safety)
+    - [Generics](#generics)
+  - [7. Terminologi Kunci](#7-terminologi-kunci)
+  - [8. Ringkasan](#8-ringkasan)
+  - [9. Sumber Referensi](#9-sumber-referensi)
 
 </details>
 
@@ -247,11 +235,12 @@ Tipe data yang memiliki fungsi atau representasi khusus dalam bahasa.
 ###### Contoh dalam Dart:
 
 - **`null`:** Merepresentasikan ketiadaan nilai (tidak ada nilai).
-  - **Deskripsi:** Di Dart, `null` adalah objek. Dengan _Null Safety_ (akan dijelaskan nanti), tipe data secara default tidak bisa `null` kecuali Anda secara eksplisit mengizinkannya dengan `?`.
+  - **Deskripsi:** Di Dart, `null` adalah objek. Artinya ketiadaan nilai sendiri itu adalah sebuah objek yang mana ini dinamakan fitur _Null Safety_ (akan dijelaskan nanti). Maka secara default Tipe Data tidak bisa `null` kecuali secara eksplisit kita mengizinkannya. Jadi disinilah alasan Tipe Data Null di Dart dibuat, yaitu untuk menyengaja dengan menjadikan sebuah objek memang bersifat Null atau tidak memiliki nilai, dengan menggunakan operator null `?` atau menjadikan nilainya sebagai `Null`.
   - **Sintaks Dasar:**
     ```dart
     String? namaDepan = null; // String yang bisa null
     int? nomorRumah;         // Secara default null jika tidak diinisialisasi dan diizinkan null
+    var x = Null;
     ```
 - **`dynamic`:** Tipe yang sangat fleksibel. Variabel dengan tipe `dynamic` dapat menyimpan nilai apa pun, dan tipe aslinya tidak diperiksa saat kompilasi.
   - **Deskripsi:** Memberikan fleksibilitas seperti bahasa _dynamically-typed_, tetapi mengorbankan _type safety_ saat kompilasi.
@@ -261,8 +250,8 @@ Tipe data yang memiliki fungsi atau representasi khusus dalam bahasa.
     x = 123;
     x = true;
     ```
-- **`Object`:** Ini adalah superclass dari semua tipe data di Dart (kecuali `null` yang memiliki tipe `Null`). Artinya, setiap nilai di Dart adalah objek.
-  - **Deskripsi:** Jika Anda mendeklarasikan variabel sebagai `Object`, ia bisa menyimpan nilai apa pun. Mirip dengan `dynamic` tetapi dengan beberapa perbedaan dalam perilaku _runtime_.
+- **`Object`:** Ini adalah superclass dari semua tipe data di Dart kecuali tipe `Null`. Artinya, setiap nilai di Dart adalah objek.
+  - **Deskripsi:** Jika Anda mendeklarasikan variabel sebagai `Object`, ia bisa menyimpan nilai apa pun. Mirip dengan `dynamic` tetapi dengan beberapa perbedaan dalam perilaku _runtime (Program Berjalan)_.
   - **Sintaks Dasar:**
     ```dart
     Object obj1 = 10;
@@ -276,9 +265,9 @@ Tipe data ini dibuat oleh programmer berdasarkan kebutuhan aplikasi, biasanya de
 
 ###### Contoh dalam Dart:
 
-- **`class` (Kelas):** Blueprint (cetak biru) untuk membuat objek. Mendefinisikan struktur dan perilaku objek.
+- **`class` (Kelas):** Blueprint (cetak biru/bangunan dasar) untuk membuat objek. Mendefinisikan struktur dasar dan perilaku objek.
 
-  - **Deskripsi:** Dasar dari pemrograman berorientasi objek (OOP) di Dart.
+  - **Deskripsi:** Tipe data ini adalah dasar dari materi pemrograman berorientasi objek (OOP) di Dart.
   - **Sintaks Dasar:**
 
     ```dart
