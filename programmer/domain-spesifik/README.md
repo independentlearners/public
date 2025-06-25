@@ -11,8 +11,8 @@
   <details>
     <summary>
     <a href=
-    "../domain-spesifik/embedded/README.md">
-    🔌 Embedded
+    "../domain-spesifik/system/README.md">
+    ⚙️ System
     </a>
     </summary>
     <div style=
@@ -20,8 +20,19 @@
       <ul>
             <li>
             <a href=
-    "../domain-spesifik/embedded/C/README.md"
-    >C
+    "../domain-spesifik/system/C/README.md"
+    >🧬 C/C++
+            </a>
+            </li>
+      </ul>
+    </div>
+    <div style=
+    "padding-left: 20px">
+      <ul>
+            <li>
+            <a href=
+    "../domain-spesifik/system/Rust/README.md"
+    >🦀 Rust
             </a>
             </li>
       </ul>
@@ -34,7 +45,7 @@
     <summary>
     <a href=
     "../domain-spesifik/embeddeble/README.md"
-    >🧩 Embeddeble
+    >🧩 Embedded Scripting
     </a>
     </summary>
     <div style=
@@ -43,10 +54,34 @@
       <ul>
         <li>
         <a href=
-                "../domain-spesifik/embeddeble/lua/README.md">Lua
+                "../domain-spesifik/embeddeble/lua/README.md">🌙 Lua
         </a></li>
             <li><a href=
-                "../domain-spesifik/embeddeble/python/README.md">Python
+                "../domain-spesifik/embeddeble/bash/README.md">🖥️ Bash/Shell
+            </a></li>
+      </ul>
+    </div>
+  </details>
+
+#
+
+  <details>
+    <summary>
+    <a href=
+    "../domain-spesifik/embeddeble/README.md"
+    >🤖 AI & 🧠 ML
+    </a>
+    </summary>
+    <div style=
+            "padding-left: 20px"
+            >
+      <ul>
+        <li>
+        <a href=
+                "../domain-spesifik/embeddeble/lua/README.md">📊 R
+        </a></li>
+            <li><a href=
+                "../domain-spesifik/embeddeble/python/README.md">🐍 Python
             </a></li>
       </ul>
     </div>
@@ -63,7 +98,7 @@
       <ul>
         <li>
         <a href="../domain-spesifik/mobile/google/dart/README.md/#1-pondasi-dart"
-        >Dart
+        >🧊 Dart
         </a>
         </li>
       </ul>
@@ -105,7 +140,7 @@
   <div style=
   "padding-left: 20px">
     <a href="../framework/flutter/README.md">
-    📱 Flutter
+    🦋 Flutter
     </a>
     </div>
   <div style=
