@@ -51,7 +51,15 @@ Oke selesai, saya berharap kalian menuliskan komentar dibawah! saya menunggu tan
 yt-dlp -f "bestvideo+bestaudio/best" --merge-output-format mkv -o "%(playlist_index)s - %(title)s.%(ext)s" "URL VIDEO ATAU PLAYLIST YOUTUBE" ;exit
 ```
 
-### Update
+## Pengunduhan subtitle
+
+```shell
+yt-dlp --write-auto-sub --sub-lang en --skip-download "ULR_VIDEO"
+```
+
+Jika gagal mungkin perlu diperbaharui
+
+## Update
 
 Jika mendownload yt-dlp melalui paket manager seperti `winget` di Windows tetapi kemudian sulit di update, coba jalankan perintah beriku:
 
