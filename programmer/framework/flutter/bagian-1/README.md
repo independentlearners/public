@@ -31,17 +31,18 @@ Modul ini adalah titik awal untuk memahami Flutter secara menyeluruh, mencakup e
 **Deskripsi Konkret & Peran dalam Kurikulum:**
 Bagian ini memperkenalkan pembelajar kepada Flutter sebagai UI _toolkit_ yang inovatif dan mendalam. Pembelajar akan memahami mengapa Flutter berbeda dari kerangka kerja lain, bagaimana arsitekturnya bekerja dari level tinggi hingga detail komponen, dan bagaimana bahasa Dart berperan sebagai fondasi utamanya. Ini penting sebagai landasan konseptual sebelum terjun ke praktik coding yang lebih dalam.
 
-**Struktur Pembelajaran Internal:**
+<details>
+  <summary>📃 Struktur Pembelajaran Internal</summary>
 
-- 1.1 Konsep Dasar dan Philosophy
-  - Apa itu Flutter dan Philosophy
-  - Flutter Architecture Deep Dive
-  - Dart Language Fundamentals (Khusus untuk Flutter)
-- 1.2 Development Environment Setup
-  - IDE dan Tools Setup
-  - Flutter CLI dan DevTools
+- [FASE 1: Foundation \& Core Concepts](#fase-1-foundation--core-concepts)
+  - [1. Pengenalan Flutter Ecosystem](#1-pengenalan-flutter-ecosystem)
+    - [1.1 Konsep Dasar dan Philosophy](#11-konsep-dasar-dan-philosophy)
+      - [1.1.1 Apa itu Flutter dan Philosophy](#111-apa-itu-flutter-dan-philosophy)
+      - [1.1.2 Flutter Architecture Deep Dive](#112-flutter-architecture-deep-dive)
+      - [1.1.3 Dart Language Fundamentals (Khusus untuk Flutter)](#113-dart-language-fundamentals-khusus-untuk-flutter)
+- [](#)
 
----
+</details>
 
 ### 1.1 Konsep Dasar dan Philosophy
 
