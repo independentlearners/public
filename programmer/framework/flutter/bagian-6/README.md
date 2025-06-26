@@ -20,6 +20,8 @@ Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
     - [4.3 BLoC/Cubit (Introduction)](#43-bloccubit-introduction)
       - [4.3.1 Core Concepts of BLoC/Cubit](#431-core-concepts-of-bloccubit)
       - [4.3.2 Basic Implementation with `flutter_bloc`](#432-basic-implementation-with-flutter_bloc)
+    - [4.4 Other State Management Approaches (Overview)](#44-other-state-management-approaches-overview)
+      - [4.4.1 GetX (Brief Mention)](#441-getx-brief-mention)
 
 </details>
 
@@ -2346,6 +2348,77 @@ class CounterDisplayAndNotifier extends StatelessWidget {
 
   - **Penyebab:** Anda mencoba mengakses `context.read()` atau `context.watch()` di luar `build` method atau _callback_ yang memiliki `BuildContext` yang valid (misalnya, di dalam metode `initState` tanpa `Provider.of` yang tepat).
   - **Solusi:** Pastikan Anda memiliki `BuildContext` yang valid. Untuk `initState`, gunakan `Provider.of<BlocOrCubit>(context, listen: false)` setelah `super.initState()` jika perlu. Atau, lebih baik lagi, BLoC/Cubit harus memuat data awalnya sendiri sebagai respons terhadap `Event` (seperti `LoadCounterEvent` di contoh).
+
+---
+
+### 4.4 Other State Management Approaches (Overview)
+
+Sub-bagian ini akan memberikan gambaran singkat tentang beberapa opsi _state management_ populer lainnya di ekosistem Flutter selain _Provider_ dan BLoC/Cubit. Tujuan utamanya adalah untuk memperkenalkan keberadaan alternatif-alternatif ini dan membantu pembelajar memahami bahwa ada berbagai alat dengan filosofi yang berbeda. **Tidak akan ada contoh kode mendalam di bagian ini**, karena fokus utama kurikulum ini adalah pada _Provider_ dan BLoC/Cubit.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan menyadari bahwa komunitas Flutter memiliki berbagai pendekatan untuk _state management_, masing-masing dengan kelebihan dan kekurangannya. Memahami adanya opsi-opsi ini akan membantu pembelajar membuat keputusan yang tepat di masa depan saat memilih alat yang sesuai untuk proyek mereka. Ini juga menekankan bahwa tidak ada "satu ukuran cocok untuk semua" dalam _state management_.
+
+**Konsep Kunci & Filosofi Mendalam (Umum untuk Bagian Ini):**
+
+- **Diversity in State Management:** Menunjukkan kekayaan dan keanekaragaman solusi yang tersedia di Flutter.
+
+  - **Filosofi:** Memberikan fleksibilitas kepada pengembang untuk memilih alat yang paling sesuai dengan preferensi tim, skala proyek, dan kompleksitas _state_.
+
+- **Trade-offs:** Setiap pendekatan memiliki _trade-off_ antara kemudahan penggunaan, performa, _boilerplate_, skalabilitas, dan _testability_.
+
+  - **Filosofi:** Mendorong pemikiran kritis dalam pemilihan teknologi, bukan sekadar mengikuti tren.
+
+- **Community Support:** Pentingnya komunitas aktif dan dokumentasi yang baik dalam pemilihan _package_.
+
+  - **Filosofi:** Memastikan keberlanjutan dan dukungan saat menghadapi masalah.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram sederhana berbentuk piramida (atau spektrum) yang menempatkan berbagai solusi _state management_ berdasarkan kompleksitas/skalabilitas (misalnya, `setState` di bawah, lalu `Provider`, lalu BLoC/Cubit, Riverpod, GetX di berbagai posisi relatif).
+
+**Hubungan dengan Modul Lain:**
+Bagian ini melengkapi pembahasan _state management_ di Fase 4. Meskipun tidak mendalam, pengetahuan ini akan menjadi latar belakang berharga saat pembelajar melihat proyek lain atau mencari solusi untuk masalah spesifik di masa depan. Ini juga menegaskan bahwa _Provider_ dan BLoC/Cubit adalah pilihan yang sangat solid dan umum di industri.
+
+---
+
+#### 4.4.1 GetX (Brief Mention)
+
+Sub-bagian ini akan memperkenalkan GetX, sebuah kerangka kerja mikro yang populer di Flutter yang menawarkan solusi _state management_ (dan banyak fitur lainnya) dengan sintaks yang sangat ringkas.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami bahwa GetX adalah paket multifungsi yang menyediakan _state management_, _dependency injection_, _routing_, dan banyak lagi dalam satu _package_. Ia dikenal karena minimnya _boilerplate_ dan performa yang tinggi. Metode _state management_-nya seringkali terasa sangat "langsung" dan mudah untuk dipelajari di awal.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **All-in-one Solution:** GetX bukan hanya _state management_, tetapi juga menyediakan solusi untuk navigasi, manajemen dependensi, internasionalisasi, dan banyak lagi.
+
+  - **Filosofi:** Meminimalkan kebutuhan untuk mengimpor banyak _package_ terpisah untuk berbagai fungsionalitas, menawarkan ekosistem yang terintegrasi.
+
+- **Reactive Programming (Simplified):** GetX memperkenalkan konsep `Obx` (Observable Builder) dan `GetXController` yang memungkinkan _state_ reaktif dengan sedikit kode.
+
+  - **Filosofi:** Menyederhanakan pola reaktif untuk pengembang, menghilangkan _boilerplate_ yang sering ditemukan di pendekatan reaktif lainnya.
+
+- **No BuildContext for Many Operations:** Salah satu ciri khas GetX adalah kemampuannya untuk melakukan operasi seperti navigasi atau menampilkan `SnackBar` tanpa memerlukan `BuildContext`.
+
+  - **Filosofi:** Menyederhanakan penulisan kode dengan mengurangi ketergantungan pada `BuildContext`, yang dapat menjadi tantangan bagi pemula.
+
+**Terminologi Esensial (GetX):**
+
+- **`GetXController`:** Kelas dasar untuk _controller_ yang memegang _state_ dan logika bisnis.
+- **`Obx`:** _Widget_ yang secara reaktif mendengarkan perubahan pada variabel _observable_ (misalnya, `RxInt`, `RxString`, `RxList`) di dalam `GetXController` dan membangun ulang hanya bagian UI yang terpengaruh.
+- **`Get.put()`:** Digunakan untuk menempatkan instance `GetXController` (atau dependensi lain) ke dalam _memory_ dan membuatnya tersedia secara global.
+- **`.obs`:** Ekstensi `.obs` yang digunakan pada variabel untuk menjadikannya _observable_ (misalnya, `var count = 0.obs;`).
+
+**Sumber Referensi Lengkap:**
+
+- [GetX package (pub.dev)](https://pub.dev/packages/get) - Halaman pub.dev GetX.
+- [GetX Documentation (GitHub)](https://www.google.com/search?q=https://github.com/jonataslaw/getx/blob/master/documentation/en_US/README.md) - Dokumentasi resmi GetX.
+
+**Tips dan Praktik Terbaik (Umum untuk Pemahaman GetX):**
+
+- **Perdebatan di Komunitas:** Pembelajar harus menyadari bahwa GetX memiliki reputasi yang campur aduk di komunitas Flutter. Meskipun disukai karena kemudahan dan kecepatannya, ada kekhawatiran tentang pemisahan kekhawatiran, ketergantungan yang kuat pada kerangka kerja, dan kurangnya _type safety_ di beberapa area.
+- **Sangat Cepat untuk Prototipe:** GetX sering direkomendasikan untuk proyek-proyek kecil atau prototipe di mana kecepatan pengembangan adalah prioritas utama.
+- **Komitmen pada Ekosistem GetX:** Jika Anda memilih GetX, Anda cenderung akan menggunakan banyak fitur lain yang disediakannya (routing, dependency management, dll.), yang berarti Anda akan sangat "terikat" pada ekosistem GetX.
 
 ---
 
