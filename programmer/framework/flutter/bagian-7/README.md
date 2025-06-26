@@ -4,14 +4,19 @@
   <summary>📃 Struktur Daftar Isi</summary>
 
 - [FASE 5: Asynchronous Programming \& API Integration](#fase-5-asynchronous-programming--api-integration)
-  - [FASE 5: Asynchronous Programming \& API Integration](#fase-5-asynchronous-programming--api-integration-1)
-  - [5.1 Asynchronous Programming in Dart](#51-asynchronous-programming-in-dart)
-    - [5.1.1 Futures (`async`/`await`)](#511-futures-asyncawait)
-    - [5.1.2 Streams (Basic Concepts)](#512-streams-basic-concepts)
-    - [5.1.3 Error Handling (`try-catch-finally`)](#513-error-handling-try-catch-finally)
-  - [5.2 HTTP Requests \& REST APIs](#52-http-requests--rest-apis)
-    - [5.2.1 Understanding RESTful Principles](#521-understanding-restful-principles)
-    - [5.2.2 Making Basic HTTP Requests (`http` package)](#522-making-basic-http-requests-http-package)
+    - [FASE 5: Asynchronous Programming \& API Integration](#fase-5-asynchronous-programming--api-integration-1)
+    - [5.1 Asynchronous Programming in Dart](#51-asynchronous-programming-in-dart)
+      - [5.1.1 Futures (`async`/`await`)](#511-futures-asyncawait)
+      - [5.1.2 Streams (Basic Concepts)](#512-streams-basic-concepts)
+      - [5.1.3 Error Handling (`try-catch-finally`)](#513-error-handling-try-catch-finally)
+    - [5.2 HTTP Requests \& REST APIs](#52-http-requests--rest-apis)
+      - [5.2.1 Understanding RESTful Principles](#521-understanding-restful-principles)
+      - [5.2.2 Making Basic HTTP Requests (`http` package)](#522-making-basic-http-requests-http-package)
+      - [5.2.3 Handling JSON (Serialization/Deserialization)](#523-handling-json-serializationdeserialization)
+    - [5.3 Advanced API Integration](#53-advanced-api-integration)
+      - [5.3.1 Dio (Advanced HTTP Client)](#531-dio-advanced-http-client)
+      - [5.3.2 Error Handling \& Interceptors](#532-error-handling--interceptors)
+      - [5.3.3 Working with Authentication (Tokens)](#533-working-with-authentication-tokens)
 
 </details>
 
@@ -1409,7 +1414,7 @@ class _PostsScreenState extends State<PostsScreen> {
 **Sumber Referensi Lengkap:**
 
 - [http package (pub.dev)](https://pub.dev/packages/http) - Dokumentasi resmi paket `http`.
-- [Fetch data from the internet (Flutter documentation)](https://www.google.com/search?q=https://docs.flutter.dev/data-and-backend/networking/fetch-data) - Panduan resmi Flutter tentang fetching data.
+- [Fetch data from the internet (Flutter documentation)](https://docs.flutter.dev/data-and-backend/networking/fetch-data) - Panduan resmi Flutter tentang fetching data.
 - [JSONPlaceholder](https://jsonplaceholder.typicode.com/) - API dummy gratis untuk pengujian.
 
 **Tips dan Praktik Terbaik:**
@@ -1441,6 +1446,1420 @@ class _PostsScreenState extends State<PostsScreen> {
 
   - **Penyebab:** Mencoba mengakses `snapshot.data` tanpa memeriksa `snapshot.hasData` atau `snapshot.connectionState`.
   - **Solusi:** Selalu periksa `if (snapshot.hasData)` sebelum mengakses `snapshot.data!` di `FutureBuilder`.
+
+---
+
+#### 5.2.3 Handling JSON (Serialization/Deserialization)
+
+Sub-bagian ini akan membahas secara mendalam bagaimana mengelola data JSON di Dart/Flutter, yang merupakan format pertukaran data paling umum dalam integrasi API. Ini akan mencakup parsing manual, penggunaan `dart:convert`, dan memperkenalkan pendekatan berbasis _code generation_ untuk kasus yang lebih kompleks.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami dua proses kunci: **Deserialization** (mengubah string JSON menjadi objek Dart) dan **Serialization** (mengubah objek Dart menjadi string JSON). Mereka akan belajar cara melakukan ini secara manual untuk struktur JSON sederhana dan kapan harus mempertimbangkan _code generation_ untuk struktur yang lebih kompleks. Kemampuan ini adalah inti dari setiap interaksi dengan RESTful API yang menghasilkan atau menerima data JSON.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **JSON sebagai Universal Data Format:** JSON (JavaScript Object Notation) adalah format ringan, mudah dibaca manusia, dan mudah diurai oleh mesin, menjadikannya pilihan universal untuk pertukaran data di web.
+
+  - **Filosofi:** Menyediakan representasi data yang standar dan dapat dioperasikan secara lintas platform dan bahasa pemrograman.
+
+- **Serialization (Dart Object -\> JSON String):** Proses mengonversi instance kelas Dart menjadi string JSON yang dapat dikirim melalui jaringan atau disimpan.
+
+  - **Filosofi:** Memastikan bahwa data yang diorganisir dalam logika aplikasi dapat dengan mudah dikemas untuk komunikasi eksternal.
+
+- **Deserialization (JSON String -\> Dart Object):** Proses mengonversi string JSON yang diterima dari jaringan atau penyimpanan menjadi instance kelas Dart.
+
+  - **Filosofi:** Mengubah data mentah dari dunia luar menjadi objek yang terstruktur dan aman tipe yang dapat langsung digunakan dalam logika aplikasi.
+
+- **Dynamic vs. Static Typing:**
+
+  - **Manual Parsing (`dart:convert`):** Mengembalikan `Map<String, dynamic>` atau `List<dynamic>`. Membutuhkan _type casting_ manual yang berpotensi menyebabkan `RuntimeError` jika struktur JSON tidak sesuai ekspektasi.
+  - **Model Class (POJO/POCO):** Membuat kelas Dart yang merepresentasikan struktur JSON, memberikan _type safety_ saat deserialisasi/serialisasi.
+  - **Code Generation (`json_serializable`):** Mengotomatiskan pembuatan kode `fromJson` dan `toJson` berdasarkan anotasi, mengurangi _boilerplate_ dan _error_ manusiawi untuk model data yang kompleks.
+  - **Filosofi:** Menyeimbangkan kecepatan pengembangan untuk kasus sederhana dengan keamanan tipe dan skalabilitas untuk kasus yang lebih kompleks.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Kita akan menggunakan kembali `Post` model dari bagian 5.2.2, lalu menunjukkan dua pendekatan:
+
+1.  **Manual JSON Parsing (`dart:convert`)** - Sudah sedikit diperkenalkan, kita akan elaborasi.
+2.  **Automated JSON Parsing (`json_serializable`)** - Pendekatan yang direkomendasikan untuk proyek skala besar.
+
+---
+
+**Pendekatan 1: Manual JSON Parsing (`dart:convert`)**
+
+Ini cocok untuk struktur JSON sederhana atau ketika Anda hanya perlu membaca beberapa nilai.
+
+```dart
+import 'dart:convert'; // Import untuk jsonEncode dan jsonDecode
+
+// Contoh JSON String yang akan di-deserialize
+const String jsonStringSingle = '''
+{
+  "id": 1,
+  "title": "Dart is awesome",
+  "author": "Alice"
+}
+''';
+
+const String jsonStringList = '''
+[
+  {
+    "id": 1,
+    "title": "Flutter Basics",
+    "author": "Alice"
+  },
+  {
+    "id": 2,
+    "title": "State Management with Provider",
+    "author": "Bob"
+  }
+]
+''';
+
+// --- Model Dart (POJO/POCO) ---
+// Model ini akan digunakan untuk representasi data JSON
+class Article {
+  final int id;
+  final String title;
+  final String author;
+  final int? views; // Properti opsional, bisa null
+
+  Article({
+    required this.id,
+    required this.title,
+    required this.author,
+    this.views, // Tidak required
+  });
+
+  // Factory Constructor untuk Deserialization (JSON String -> Article object)
+  // Menerima Map<String, dynamic> dari jsonDecode
+  factory Article.fromJson(Map<String, dynamic> json) {
+    return Article(
+      id: json['id'] as int, // Casting eksplisit disarankan
+      title: json['title'] as String,
+      author: json['author'] as String,
+      // Menggunakan operator null-aware ?? untuk default value atau casting yang aman
+      views: json['views'] as int?, // Jika 'views' tidak ada atau null, maka views akan null
+    );
+  }
+
+  // Method untuk Serialization (Article object -> Map<String, dynamic>)
+  // Map ini akan di-jsonEncode untuk menjadi JSON String
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
+      'id': id,
+      'title': title,
+      'author': author,
+    };
+    if (views != null) { // Hanya tambahkan jika views tidak null
+      data['views'] = views;
+    }
+    return data;
+  }
+
+  @override
+  String toString() {
+    return 'Article(id: $id, title: "$title", author: "$author", views: $views)';
+  }
+}
+
+
+void main() {
+  print('--- Manual JSON Deserialization ---');
+  // Deserialisasi satu objek
+  Map<String, dynamic> articleMap = jsonDecode(jsonStringSingle);
+  Article article1 = Article.fromJson(articleMap);
+  print('Deserialized Article 1: $article1');
+
+  // Deserialisasi daftar objek
+  List<dynamic> jsonListMap = jsonDecode(jsonStringList);
+  List<Article> articles = jsonListMap
+      .map((item) => Article.fromJson(item as Map<String, dynamic>))
+      .toList();
+  print('Deserialized Articles List:');
+  articles.forEach(print);
+
+  print('\n--- Manual JSON Serialization ---');
+  // Serialisasi satu objek
+  Article newArticle = Article(id: 3, title: 'Flutter Widgets', author: 'Charlie', views: 1500);
+  Map<String, dynamic> newArticleMap = newArticle.toJson();
+  String newArticleJson = jsonEncode(newArticleMap);
+  print('Serialized New Article: $newArticleJson');
+
+  // Serialisasi daftar objek
+  List<Article> articlesToSave = [
+    Article(id: 4, title: 'Dart Fundamentals', author: 'David'),
+    Article(id: 5, title: 'API Integration Best Practices', author: 'Eve', views: 800),
+  ];
+  List<Map<String, dynamic>> articlesMapList = articlesToSave.map((a) => a.toJson()).toList();
+  String articlesListJson = jsonEncode(articlesMapList);
+  print('Serialized Articles List: $articlesListJson');
+}
+```
+
+---
+
+**Pendekatan 2: Automated JSON Parsing (`json_serializable`)**
+
+Untuk proyek yang lebih besar dengan banyak model data dan struktur JSON yang kompleks, menulis `fromJson` dan `toJson` secara manual bisa menjadi membosankan dan rawan kesalahan. `json_serializable` adalah paket populer yang menggunakan _code generation_ untuk mengotomatiskan proses ini.
+
+**Langkah-langkah Penggunaan `json_serializable`:**
+
+1.  **Tambahkan Dependensi di `pubspec.yaml`:**
+
+    ```yaml
+    dependencies:
+      flutter:
+        sdk: flutter
+      json_annotation: ^4.8.1 # Periksa versi terbaru
+
+    dev_dependencies:
+      flutter_test:
+        sdk: flutter
+      build_runner: ^2.4.6 # Periksa versi terbaru
+      json_serializable: ^6.7.1 # Periksa versi terbaru
+    ```
+
+    - `json_annotation`: Berisi anotasi yang Anda gunakan untuk menandai kelas model Anda.
+    - `build_runner`: Alat yang menjalankan _code generators_.
+    - `json_serializable`: Generator kode yang sebenarnya.
+
+2.  **Buat Model Data Anda (dengan Anotasi):**
+    Buat file Dart baru, misalnya `lib/models/user.dart`.
+
+    ```dart
+    // lib/models/user.dart
+    import 'package:json_annotation/json_annotation.dart';
+
+    // Perhatikan bagian ini:
+    // Mengharuskan "user.g.dart" yang akan dihasilkan secara otomatis
+    part 'user.g.dart';
+
+    @JsonSerializable() // Anotasi ini memberitahu json_serializable untuk membuat kode
+    class User {
+      final int id;
+      final String name;
+      final String email;
+
+      @JsonKey(name: 'phone_number') // Untuk mapping nama field JSON yang berbeda
+      final String? phoneNumber;
+
+      // Konstruktor standar
+      User({required this.id, required this.name, required this.email, this.phoneNumber});
+
+      // Factory constructor yang diperlukan untuk deserialization
+      // Ini akan menunjuk ke fungsi yang dihasilkan secara otomatis
+      factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+      // Method yang diperlukan untuk serialization
+      // Ini akan menunjuk ke fungsi yang dihasilkan secara otomatis
+      Map<String, dynamic> toJson() => _$UserToJson(this);
+
+      @override
+      String toString() {
+        return 'User(id: $id, name: $name, email: $email, phoneNumber: $phoneNumber)';
+      }
+    }
+    ```
+
+3.  **Jalankan Code Generator:**
+
+    Buka terminal di root proyek Flutter Anda dan jalankan:
+
+    ```bash
+    flutter pub get
+    flutter pub run build_runner build
+    ```
+
+    Atau untuk mode _watch_ (akan otomatis menghasilkan kode setiap kali Anda menyimpan perubahan pada file model):
+
+    ```bash
+    flutter pub run build_runner watch
+    ```
+
+    Setelah perintah ini selesai, sebuah file baru bernama `user.g.dart` akan dibuat di folder yang sama dengan `user.dart`. File ini berisi implementasi `_$UserFromJson` dan `_$UserToJson`.
+
+4.  **Gunakan Model Anda:**
+
+    ```dart
+    import 'dart:convert';
+    import 'package:your_app_name/models/user.dart'; // Sesuaikan path
+
+    void main() {
+      print('\n--- Automated JSON Deserialization (json_serializable) ---');
+      const String userJsonString = '''
+      {
+        "id": 101,
+        "name": "Sarah Connor",
+        "email": "sarah.c@example.com",
+        "phone_number": "123-456-7890"
+      }
+      ''';
+
+      Map<String, dynamic> userMap = jsonDecode(userJsonString);
+      User user = User.fromJson(userMap); // Menggunakan fungsi yang dihasilkan
+      print('Deserialized User: $user');
+
+      print('\n--- Automated JSON Serialization (json_serializable) ---');
+      User newUser = User(id: 102, name: 'John Doe', email: 'john.doe@example.com');
+      Map<String, dynamic> newUserMap = newUser.toJson(); // Menggunakan fungsi yang dihasilkan
+      String newUserJson = jsonEncode(newUserMap);
+      print('Serialized New User: $newUserJson');
+    }
+    ```
+
+**Penjelasan Konteks Kode:**
+
+- **`dart:convert`:**
+
+  - `jsonDecode(jsonString)`: Mengambil string JSON dan mengonversinya menjadi objek Dart (`Map<String, dynamic>` atau `List<dynamic>`). Ini adalah langkah pertama dalam deserialisasi.
+  - `jsonEncode(dartObject)`: Mengambil objek Dart (`Map<String, dynamic>` atau `List<dynamic>`) dan mengonversinya menjadi string JSON. Ini adalah langkah terakhir dalam serialisasi.
+
+- **`Article` Model (Manual):**
+
+  - `factory Article.fromJson(Map<String, dynamic> json)`: Ini adalah _factory constructor_ yang menerima `Map` dari `jsonDecode` dan secara manual memetakan nilai-nilai dari _map_ ke properti objek `Article`. Perhatikan penggunaan _casting_ eksplisit (`as int`, `as String`, `as int?`) untuk keamanan tipe.
+  - `Map<String, dynamic> toJson()`: Ini adalah _method_ yang mengonversi objek `Article` kembali ke `Map` yang dapat di-_encode_ menjadi JSON.
+
+- **`User` Model (`json_serializable`):**
+
+  - `part 'user.g.dart';`: Ini adalah deklarasi penting yang memberitahu Dart bahwa sebagian kode untuk kelas `User` akan berada di file `user.g.dart` yang dihasilkan otomatis.
+  - `@JsonSerializable()`: Anotasi ini dari `json_annotation` memberi tahu `json_serializable` _package_ untuk menghasilkan kode serialisasi/deserialisasi untuk kelas ini.
+  - `@JsonKey(name: 'phone_number')`: Digunakan ketika nama kunci di JSON berbeda dari nama properti di kelas Dart.
+  - `factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);` dan `Map<String, dynamic> toJson() => _$UserToJson(this);`: Ini adalah _boilerplate_ yang harus Anda tulis. `_$UserFromJson` dan `_$UserToJson` adalah fungsi yang akan dihasilkan oleh `json_serializable` di file `user.g.dart`.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **Deserialization:** JSON String -\> `jsonDecode` -\> `Map<String, dynamic>` (or `List<dynamic>`) -\> `Model.fromJson(map)` -\> Dart Object.
+- **Serialization:** Dart Object -\> `model.toJson()` -\> `Map<String, dynamic>` -\> `jsonEncode` -\> JSON String.
+- Untuk `json_serializable`: Kelas Dart dengan Anotasi -\> `build_runner` -\> File `.g.dart` (dengan fungsi `_$...FromJson`, `_$...ToJson`).
+
+**Terminologi Esensial:**
+
+- **JSON (JavaScript Object Notation):** Format data standar.
+- **Serialization:** Proses mengonversi objek ke format yang dapat ditransmisikan atau disimpan (misalnya, Dart Object ke JSON String).
+- **Deserialization:** Proses mengonversi format yang disimpan atau ditransmisikan kembali ke objek (misalnya, JSON String ke Dart Object).
+- **`dart:convert`:** Library bawaan Dart untuk _encoding_ dan _decoding_ JSON.
+- **`jsonDecode()`:** Fungsi untuk deserialisasi JSON.
+- **`jsonEncode()`:** Fungsi untuk serialisasi JSON.
+- **Model Class (POJO/POCO):** Kelas Dart yang dirancang untuk merepresentasikan struktur data dari API.
+- **`factory` constructor:** Jenis konstruktor yang tidak selalu membuat instance baru dari kelasnya. Sering digunakan untuk deserialisasi.
+- **`json_serializable`:** Paket Dart untuk menghasilkan kode serialisasi/deserialisasi JSON secara otomatis.
+- **`json_annotation`:** Paket yang menyediakan anotasi untuk `json_serializable`.
+- **`build_runner`:** Alat yang menjalankan _code generators_ di proyek Dart/Flutter.
+- **`part` directive:** Sintaks Dart yang memungkinkan satu file untuk memasukkan sebagian kode dari file lain, sering digunakan dengan _code generation_.
+
+**Sumber Referensi Lengkap:**
+
+- [JSON and serialization (Flutter documentation)](https://docs.flutter.dev/data-and-backend/json) - Panduan resmi Flutter tentang JSON.
+- [json_serializable (pub.dev)](https://pub.dev/packages/json_serializable) - Halaman resmi paket `json_serializable`.
+- [Effective Dart: Usage - DO use `json_serializable`](<%5Bhttps://dart.dev/guides/language/effective-dart/usage%23do-use-json_serializable%5D(https://dart.dev/guides/language/effective-dart/usage%23do-use-json_serializable)>)
+- [The `dart:convert` library](<%5Bhttps://dart.dev/guides/libraries/library-tour%23dartconvert---decoding-and-encoding-json-utf-8-etc%5D(https://dart.dev/guides/libraries/library-tour%23dartconvert---decoding-and-encoding-json-utf-8-etc)>)
+
+**Tips dan Praktik Terbaik:**
+
+- **Pilih Pendekatan yang Tepat:**
+  - **Manual Parsing:** Untuk respons API yang sangat sederhana (misalnya, hanya mengembalikan string atau angka), atau ketika Anda hanya perlu mengakses satu atau dua nilai dari JSON tanpa membuat _full model_.
+  - **Model Classes (`fromJson`/`toJson` manual):** Untuk respons yang lebih kompleks namun masih bisa dikelola, dan ketika Anda ingin kontrol penuh atas logika parsing. Baik untuk mempelajari dasar-dasarnya.
+  - **`json_serializable`:** Sangat direkomendasikan untuk proyek skala menengah hingga besar dengan banyak model data, model bersarang, atau ketika struktur JSON cenderung berubah. Ini mengurangi _boilerplate_, mencegah _error_ manusiawi, dan meningkatkan _maintainability_.
+- **Error Handling saat Parsing:** Selalu bungkus operasi `jsonDecode` dan `fromJson` di blok `try-catch` karena format JSON bisa saja tidak valid atau tidak sesuai dengan model Anda (misalnya, _field_ hilang atau tipe data salah).
+- **Gunakan Tipe Data yang Aman Null (`?`):** Jika sebuah _field_ JSON mungkin tidak ada atau bernilai `null`, deklarasikan properti di model Anda sebagai _nullable_ (misalnya, `String? phoneNumber`).
+- **Pahami Struktur JSON Anda:** Sebelum menulis kode, selalu periksa respons JSON dari API menggunakan alat seperti Postman atau _browser developer tools_ untuk memahami strukturnya dengan baik.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** `_CastError` atau `type 'String' is not a subtype of type 'int'` saat deserialisasi.
+
+  - **Penyebab:** Upaya untuk mengakses nilai JSON dengan tipe data yang salah atau lupa melakukan _casting_ yang benar.
+  - **Solusi:** Periksa kembali struktur JSON dan pastikan _factory constructor_ `fromJson` Anda menggunakan _casting_ yang benar (misalnya, `json['id'] as int`) dan menangani nilai `null` dengan tepat (`as String?`).
+
+- **Kesalahan:** `MissingPluginException` atau masalah _build_runner_ saat menggunakan `json_serializable`.
+
+  - **Penyebab:** Lupa menjalankan `flutter pub get` setelah menambahkan dependensi, atau lupa menjalankan `flutter pub run build_runner build/watch`.
+  - **Solusi:** Pastikan semua dependensi terinstal dan `build_runner` dijalankan dengan benar. Periksa output konsol untuk _error_ dari `build_runner`.
+
+- **Kesalahan:** File `.g.dart` tidak terbuat atau tidak terbarui.
+
+  - **Penyebab:** Lupa menyertakan `part 'your_model.g.dart';` di bagian atas file model Anda, atau ada _error_ sintaksis di file model yang mencegah _code generator_ berjalan.
+  - **Solusi:** Periksa `part` directive. Pastikan tidak ada _error_ di file model Anda. Jalankan `flutter pub run build_runner build --delete-conflicting-outputs` untuk membersihkan _output_ yang bermasalah.
+
+---
+
+### 5.3 Advanced API Integration
+
+Sub-bagian ini akan membawa pemahaman integrasi API ke tingkat selanjutnya, memperkenalkan alat dan teknik yang lebih canggih untuk mengelola permintaan jaringan yang kompleks, penanganan _error_ yang lebih terpusat, dan strategi otentikasi.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan diperkenalkan dengan paket `dio`, sebuah klien HTTP yang lebih kaya fitur dibandingkan `http` standar, yang menawarkan kemampuan seperti _interceptors_, _caching_, dan penanganan _error_ yang lebih baik. Mereka juga akan mempelajari bagaimana mengimplementasikan otentikasi berbasis token, sebuah praktik standar dalam aplikasi modern. Keterampilan ini penting untuk membangun aplikasi yang kuat, aman, dan mudah di-_maintain_ saat berinteraksi dengan API di dunia nyata.
+
+**Konsep Kunci & Filosofi Mendalam (Umum untuk Bagian Ini):**
+
+- **Robustness & Maintainability:** Menggunakan _client_ HTTP yang lebih canggih dan pola desain yang baik untuk _error handling_ dan otentikasi bertujuan untuk membuat kode jaringan lebih tangguh terhadap kegagalan dan lebih mudah untuk dikembangkan serta diperbaiki.
+
+  - **Filosofi:** Membangun fondasi yang kuat untuk komunikasi jaringan yang berkelanjutan dan kompleks, mengurangi _boilerplate_ dan meningkatkan kualitas kode.
+
+- **Separation of Concerns:** Memisahkan logika otentikasi dan penanganan _error_ dari permintaan API inti.
+
+  - **Filosofi:** Mempromosikan kode yang lebih modular dan mudah diuji, di mana setiap bagian memiliki tanggung jawab yang jelas.
+
+- **Security Best Practices:** Memahami cara yang benar untuk mengirimkan kredensial dan mengelola token otentikasi.
+
+  - **Filosofi:** Mengamankan komunikasi _client-server_ untuk melindungi data pengguna dan integritas sistem.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram `Dio`: Permintaan -\> Interceptor (Request) -\> HTTP Request -\> Server Response -\> Interceptor (Response) -\> Client.
+- Alur Otentikasi Token: Login Request -\> Token Response -\> Token Storage -\> Subsequent Requests (with Token Header).
+
+**Hubungan dengan Modul Lain:**
+Ini adalah kelanjutan logis dari `5.2 HTTP Requests & REST APIs`. Pemahaman `5.1 Asynchronous Programming` dan `5.1.3 Error Handling` adalah prasyarat. Penanganan _state_ aplikasi (misalnya, _user authentication state_) yang diperoleh dari sini akan menjadi input penting untuk `Fase 6: State Management`.
+
+---
+
+#### 5.3.1 Dio (Advanced HTTP Client)
+
+Sub-bagian ini akan memperkenalkan paket `dio`, sebuah _HTTP client_ yang kuat dan populer di Flutter, yang menawarkan lebih banyak fitur dan fleksibilitas dibandingkan paket `http` standar.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan belajar mengapa dan kapan harus menggunakan `dio` sebagai pengganti `http`. Mereka akan mengimplementasikan permintaan `GET`, `POST`, `PUT`, dan `DELETE` menggunakan `dio`, serta memanfaatkan fitur-fitur dasar seperti _base URL_, _query parameters_, dan _request options_. Ini akan menjadi alat utama mereka untuk komunikasi jaringan di proyek-proyek yang lebih besar.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Feature-Rich Client:** `Dio` menyediakan fitur yang tidak ada di `http` standar, seperti:
+
+  - **Interceptors:** Untuk mencegat dan memodifikasi permintaan/respons (misalnya, menambahkan _header_, _logging_, _refresh token_).
+  - **Global Configuration:** Mengatur _base URL_, _headers_, _timeout_ di satu tempat untuk semua permintaan.
+  - **Form Data Support:** Penanganan yang lebih mudah untuk _multipart/form-data_ (untuk _upload file_).
+  - **Request Cancellation:** Kemampuan untuk membatalkan permintaan yang sedang berjalan.
+  - **Download/Upload Progress:** Callback untuk melacak progres.
+  - **Custom Adapters:** Fleksibilitas untuk mengintegrasikan _http client_ lainnya.
+  - **Filosofi:** Menyederhanakan tugas-tugas jaringan yang kompleks dan mengurangi _boilerplate_, memungkinkan pengembang fokus pada logika bisnis daripada detail implementasi HTTP.
+
+- **Singleton/Dependency Injection:** Seringkali `Dio` diinisialisasi sebagai _singleton_ atau dikelola melalui _dependency injection_ untuk memastikan konfigurasi yang konsisten dan pengelolaan sumber daya yang efisien.
+
+  - **Filosofi:** Mendorong praktik arsitektur yang baik, seperti _loose coupling_ dan kemudahan pengujian.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Pertama, tambahkan dependensi `dio` di `pubspec.yaml` Anda:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^5.4.3 # Periksa versi terbaru di pub.dev
+  json_annotation: ^4.8.1 # Tetap pakai jika Anda menggunakan json_serializable
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
+```
+
+Kemudian jalankan `flutter pub get`.
+
+```dart
+import 'package:dio/dio.dart'; // Import dio
+import 'dart:convert'; // Untuk jsonEncode (jika masih diperlukan)
+
+// Re-use the Post model from 5.2.2 or adapt with json_serializable if desired
+// Assuming Post model is defined as in 5.2.2 or with json_serializable
+class Post {
+  final int id;
+  final String title;
+  final String body;
+  final int userId;
+
+  Post({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.userId,
+  });
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      id: json['id'],
+      title: json['title'],
+      body: json['body'],
+      userId: json['userId'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'body': body,
+      'userId': userId,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Post(id: $id, title: $title, body: $body, userId: $userId)';
+  }
+}
+
+// --- Inisialisasi Dio Client (Global/Singleton) ---
+final Dio dio = Dio(BaseOptions(
+  baseUrl: 'https://jsonplaceholder.typicode.com',
+  connectTimeout: const Duration(seconds: 5), // 5 detik
+  receiveTimeout: const Duration(seconds: 3), // 3 detik
+  headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Accept': 'application/json', // Opsional: Beritahu server format yang diharapkan
+  },
+));
+
+// --- Fungsi untuk Melakukan Permintaan HTTP dengan Dio ---
+
+// GET Request: Mengambil semua post
+Future<List<Post>> fetchAllPostsDio() async {
+  try {
+    final response = await dio.get('/posts'); // Path relatif
+    if (response.statusCode == 200) {
+      List<dynamic> jsonList = response.data; // Dio otomatis mengurai JSON ke Map/List
+      return jsonList.map((json) => Post.fromJson(json)).toList();
+    } else {
+      throw Exception('Gagal memuat posts. Status Code: ${response.statusCode}');
+    }
+  } on DioException catch (e) { // Menangkap DioException
+    if (e.response != null) {
+      print('Dio error (Response): Status: ${e.response?.statusCode}, Data: ${e.response?.data}');
+      throw Exception('Server error: ${e.response?.statusCode}');
+    } else {
+      print('Dio error (Request): ${e.message}');
+      throw Exception('Jaringan error: ${e.message}');
+    }
+  } catch (e) {
+    throw Exception('Error saat fetching posts: $e');
+  }
+}
+
+// GET Request: Mengambil post berdasarkan ID
+Future<Post> fetchPostByIdDio(int id) async {
+  try {
+    final response = await dio.get('/posts/$id');
+    if (response.statusCode == 200) {
+      Map<String, dynamic> json = response.data;
+      return Post.fromJson(json);
+    } else {
+      throw Exception('Gagal memuat post ID $id. Status Code: ${response.statusCode}');
+    }
+  } on DioException catch (e) {
+     if (e.response != null) {
+      print('Dio error (Response): Status: ${e.response?.statusCode}, Data: ${e.response?.data}');
+      throw Exception('Server error: ${e.response?.statusCode}');
+    } else {
+      print('Dio error (Request): ${e.message}');
+      throw Exception('Jaringan error: ${e.message}');
+    }
+  } catch (e) {
+    throw Exception('Error saat fetching post ID $id: $e');
+  }
+}
+
+// POST Request: Membuat post baru
+Future<Post> createPostDio(String title, String body, int userId) async {
+  try {
+    final response = await dio.post(
+      '/posts',
+      data: { // Dio menerima Map langsung, tidak perlu jsonEncode
+        'title': title,
+        'body': body,
+        'userId': userId,
+      },
+      // Headers sudah diset di BaseOptions, tapi bisa di-override di sini jika perlu
+      // options: Options(headers: {'Authorization': 'Bearer YOUR_TOKEN'}),
+    );
+
+    if (response.statusCode == 201) { // 201 Created
+      Map<String, dynamic> json = response.data;
+      return Post.fromJson(json);
+    } else {
+      throw Exception('Gagal membuat post. Status Code: ${response.statusCode}');
+    }
+  } on DioException catch (e) {
+    if (e.response != null) {
+      print('Dio error (Response): Status: ${e.response?.statusCode}, Data: ${e.response?.data}');
+      throw Exception('Server error: ${e.response?.statusCode}');
+    } else {
+      print('Dio error (Request): ${e.message}');
+      throw Exception('Jaringan error: ${e.message}');
+    }
+  } catch (e) {
+    throw Exception('Error saat membuat post: $e');
+  }
+}
+
+// PUT Request: Memperbarui post yang sudah ada
+Future<Post> updatePostDio(int id, String title, String body, int userId) async {
+  try {
+    final response = await dio.put(
+      '/posts/$id',
+      data: {
+        'id': id,
+        'title': title,
+        'body': body,
+        'userId': userId,
+      },
+    );
+
+    if (response.statusCode == 200) { // 200 OK
+      Map<String, dynamic> json = response.data;
+      return Post.fromJson(json);
+    } else {
+      throw Exception('Gagal memperbarui post ID $id. Status Code: ${response.statusCode}');
+    }
+  } on DioException catch (e) {
+    if (e.response != null) {
+      print('Dio error (Response): Status: ${e.response?.statusCode}, Data: ${e.response?.data}');
+      throw Exception('Server error: ${e.response?.statusCode}');
+    } else {
+      print('Dio error (Request): ${e.message}');
+      throw Exception('Jaringan error: ${e.message}');
+    }
+  } catch (e) {
+    throw Exception('Error saat memperbarui post: $e');
+  }
+}
+
+// DELETE Request: Menghapus post
+Future<void> deletePostDio(int id) async {
+  try {
+    final response = await dio.delete('/posts/$id');
+    if (response.statusCode == 200) { // 200 OK
+      print('Post ID $id berhasil dihapus.');
+    } else {
+      throw Exception('Gagal menghapus post ID $id. Status Code: ${response.statusCode}');
+    }
+  } on DioException catch (e) {
+    if (e.response != null) {
+      print('Dio error (Response): Status: ${e.response?.statusCode}, Data: ${e.response?.data}');
+      throw Exception('Server error: ${e.response?.statusCode}');
+    } else {
+      print('Dio error (Request): ${e.message}');
+      throw Exception('Jaringan error: ${e.message}');
+    }
+  } catch (e) {
+    throw Exception('Error saat menghapus post: $e');
+  }
+}
+
+void main() async {
+  print('--- Mengambil Semua Posts dengan Dio ---');
+  try {
+    List<Post> posts = await fetchAllPostsDio();
+    posts.take(2).forEach((post) => print(post));
+    print('Total posts: ${posts.length}');
+  } catch (e) {
+    print(e);
+  }
+
+  print('\n--- Membuat Post Baru dengan Dio ---');
+  try {
+    Post newPost = await createPostDio('Judul Dio Baru', 'Isi dari post Dio yang baru.', 10);
+    print('Post baru dibuat dengan Dio: $newPost');
+  } catch (e) {
+    print(e);
+  }
+
+  print('\n--- Mengambil Post ID 1 dengan Dio ---');
+  try {
+    Post post = await fetchPostByIdDio(1);
+    print(post);
+  } catch (e) {
+    print(e);
+  }
+
+  print('\n--- Memperbarui Post ID 1 dengan Dio ---');
+  try {
+    Post updatedPost = await updatePostDio(1, 'Judul Dio Diperbarui', 'Isi yang sudah direvisi Dio.', 1);
+    print('Post ID 1 diperbarui dengan Dio: $updatedPost');
+  } catch (e) {
+    print(e);
+  }
+
+  print('\n--- Menghapus Post ID 1 dengan Dio (Contoh) ---');
+  try {
+    await deletePostDio(1);
+  } catch (e) {
+    print(e);
+  }
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+1.  **Inisialisasi `Dio`:**
+
+    - `final Dio dio = Dio(BaseOptions(...));`: Ini adalah cara untuk menginisialisasi instance `Dio`. `BaseOptions` memungkinkan Anda untuk mengatur konfigurasi global seperti `baseUrl`, `connectTimeout`, `receiveTimeout`, dan `headers`. Ini sangat berguna karena Anda tidak perlu mengulang pengaturan ini untuk setiap permintaan.
+    - `baseUrl`: Path dasar untuk semua permintaan Anda. Ini memungkinkan Anda hanya menyediakan path relatif (`/posts`, `/posts/$id`) di setiap panggilan.
+    - `connectTimeout`: Waktu maksimum untuk membangun koneksi ke server.
+    - `receiveTimeout`: Waktu maksimum untuk menerima data dari server setelah koneksi berhasil.
+    - `headers`: _Headers_ yang akan dikirim dengan setiap permintaan secara default.
+
+2.  **`dio.get()`, `dio.post()`, `dio.put()`, `dio.delete()`:**
+
+    - Metode-metode ini mirip dengan paket `http` tetapi langsung disediakan oleh instance `Dio`.
+    - **`response.data`:** Ini adalah perbedaan besar dari `http`. `Dio` secara otomatis mencoba mengurai _body_ respons JSON menjadi objek Dart (`Map` atau `List`). Anda tidak perlu lagi memanggil `jsonDecode()` secara manual.
+    - **`data` parameter (untuk POST/PUT):** `Dio` menerima `Map<String, dynamic>` atau objek Dart lainnya langsung sebagai `data` untuk _body_ permintaan. Anda tidak perlu memanggil `jsonEncode()` secara manual karena `Dio` akan menanganinya.
+
+3.  **`DioException`:**
+
+    - `Dio` memiliki sistem penanganan _error_ sendiri melalui `DioException` (sebelumnya `DioError`).
+    - Anda dapat menangkap `DioException` dan memeriksa properti seperti `e.response` (untuk _error_ dari _server_ seperti 404, 500) atau `e.type` (untuk _error_ jaringan, _timeout_). Ini memungkinkan penanganan _error_ yang lebih granular.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram mirip dengan `http` package, namun dengan `Dio` instance di tengah yang mengelola konfigurasi dasar.
+- Penekanan pada `response.data` sebagai JSON yang sudah di-_parse_ dan `data` parameter untuk _body_ yang tidak perlu di-_encode_ manual.
+- Diagram `DioException` cabang untuk respons dan _error_ jaringan.
+
+**Terminologi Esensial:**
+
+- **Dio:** Klien HTTP pihak ketiga yang kuat untuk Dart/Flutter.
+- **`Dio` instance:** Objek utama untuk melakukan permintaan HTTP dengan konfigurasi spesifik.
+- **`BaseOptions`:** Objek untuk mengkonfigurasi pengaturan default untuk `Dio` instance (baseUrl, timeout, headers).
+- **`response.data`:** Properti pada objek `Response` dari Dio yang berisi _body_ respons yang sudah diurai (biasanya `Map` atau `List`).
+- **`data` parameter (di `post`, `put`):** Argumen untuk menyediakan _body_ permintaan. Dio akan otomatis menserialisasi Map ini ke JSON.
+- **`DioException`:** Tipe _exception_ khusus yang dilempar oleh Dio ketika terjadi _error_ dalam permintaan HTTP.
+- **`DioExceptionType`:** Enum dalam `DioException` yang menjelaskan jenis _error_ (misalnya, `connectTimeout`, `receiveTimeout`, `badResponse`, `cancel`).
+
+**Sumber Referensi Lengkap:**
+
+- [Dio (pub.dev)](https://pub.dev/packages/dio) - Dokumentasi resmi paket Dio.
+- [Dio Wiki (GitHub)](https://github.com/cfug/dio/wiki) - Wiki Dio untuk panduan dan contoh yang lebih mendalam.
+
+**Tips dan Praktik Terbaik:**
+
+- **Inisialisasi sebagai Singleton:** Buat satu instance `Dio` global atau melalui _dependency injection_ untuk seluruh aplikasi Anda. Ini memastikan konsistensi konfigurasi dan efisiensi sumber daya.
+- **Gunakan `BaseOptions`:** Manfaatkan `BaseOptions` untuk mengatur konfigurasi umum seperti `baseUrl` dan `headers` agar kode lebih rapi dan mudah di-_maintain_.
+- **Tangani `DioException`:** Selalu tangani `DioException` secara spesifik, memeriksa `e.response` untuk _error_ dari _server_ dan `e.type` untuk _error_ jaringan/timeout.
+- **Integrasi dengan `json_serializable`:** `Dio` bekerja sangat baik dengan model yang dihasilkan oleh `json_serializable` karena keduanya beroperasi dengan `Map<String, dynamic>`. Anda hanya perlu memanggil `MyModel.fromJson(response.data)` dan `myModel.toJson()`.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** `DioException` tidak tertangkap.
+
+  - **Penyebab:** Hanya menggunakan `catch (e)` tanpa spesifik `on DioException catch (e)`. Atau, _error_ terjadi di luar cakupan `try-catch`.
+  - **Solusi:** Selalu tambahkan `on DioException catch (e)` untuk penanganan _error_ khusus Dio. Pastikan _async_ function Anda di-_await_ di dalam `try-catch`.
+
+- **Kesalahan:** Data POST/PUT tidak diterima oleh _server_.
+
+  - **Penyebab:** Lupa mengatur `Content-Type` _header_ di `BaseOptions` atau di `Options` spesifik untuk permintaan tersebut. Meskipun Dio otomatis meng-_encode_ `Map` menjadi JSON, _server_ tetap perlu tahu _Content-Type_ dari _body_ yang diterima.
+  - **Solusi:** Pastikan `headers: {'Content-Type': 'application/json'}` sudah diatur dengan benar.
+
+- **Kesalahan:** `Timeout` terjadi terlalu cepat/lambat.
+
+  - **Penyebab:** `connectTimeout` atau `receiveTimeout` diatur tidak sesuai dengan kebutuhan _server_ atau koneksi jaringan yang diharapkan.
+  - **Solusi:** Sesuaikan nilai `connectTimeout` dan `receiveTimeout` berdasarkan pengalaman dan persyaratan API.
+
+---
+
+#### 5.3.2 Error Handling & Interceptors
+
+Sub-bagian ini akan memperdalam strategi penanganan _error_ dalam konteks integrasi API tingkat lanjut, khususnya dengan memanfaatkan fitur `Interceptors` yang disediakan oleh `Dio`. Ini adalah kunci untuk membangun lapisan jaringan yang kokoh dan mudah di-_maintain_.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami bagaimana menggunakan `DioException` untuk menangani berbagai jenis _error_ yang mungkin terjadi selama permintaan jaringan (jaringan putus, _timeout_, respons _server_ dengan _error status code_). Yang terpenting, mereka akan belajar tentang `Interceptors` sebagai cara terpusat untuk memodifikasi permintaan dan respons, melakukan _logging_, menambahkan _headers_ otentikasi secara otomatis, dan bahkan melakukan _retries_ atau _token refresh_ secara transparan.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Centralized Error Handling:** Daripada menulis blok `try-catch` yang sama di setiap panggilan API, kita bisa memusatkan logika penanganan _error_ umum.
+
+  - **Filosofi:** Mengurangi _boilerplate_, meningkatkan konsistensi penanganan _error_, dan membuat _maintenance_ lebih mudah. Perubahan pada cara _error_ ditangani hanya perlu dilakukan di satu tempat.
+
+- **Interceptors in Dio:** `Interceptors` adalah _middleware_ yang dapat mencegat, memodifikasi, atau bahkan membatalkan permintaan dan respons HTTP sebelum mereka dikirim atau setelah mereka diterima.
+
+  - **Filosofi:** Menyediakan "hook" yang kuat dalam siklus hidup permintaan HTTP, memungkinkan pengembang untuk menyuntikkan logika kustom untuk _logging_, otentikasi, _caching_, penanganan _error_ umum, dll., tanpa mengotori kode aplikasi inti.
+
+- **Types of Interceptors:**
+
+  - **`RequestInterceptor`**: Dieksekusi sebelum permintaan dikirim. Ideal untuk menambahkan _headers_ (misalnya, token otentikasi), _logging_ permintaan, atau memodifikasi URL.
+  - **`ResponseInterceptor`**: Dieksekusi setelah respons diterima dari _server_. Ideal untuk _logging_ respons, memvalidasi data, atau melakukan pra-pemrosesan respons.
+  - **`ErrorInterceptor`**: Dieksekusi ketika ada `DioException`. Ideal untuk _logging_ _error_, menampilkan pesan _error_ global, melakukan _retries_, atau _token refresh_.
+  - **Filosofi:** Membagi tanggung jawab _interceptor_ berdasarkan fase siklus permintaan, meningkatkan modularitas dan kejelasan.
+
+- **Chaining Interceptors:** Beberapa _interceptor_ dapat ditambahkan ke `Dio` instance, dan mereka akan dieksekusi secara berurutan.
+
+  - **Filosofi:** Membangun alur pemrosesan modular di mana setiap _interceptor_ menangani satu aspek tertentu dari permintaan atau respons.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram `Dio` dengan panah masuk ke `Interceptors`: `Request` -\> `RequestInterceptor` -\> `HTTP Request` -\> `Server Response` -\> `ResponseInterceptor` -\> (If Error -\> `ErrorInterceptor`) -\> `Client`.
+- Visualisasi `ErrorInterceptor` yang menangkap `DioException` dan kemudian memutuskan apakah akan `handler.next(e)` (melanjutkan _error_), `handler.resolve(response)` (mengubah _error_ menjadi sukses), atau `handler.reject(error)` (menolak _error_).
+
+**Hubungan dengan Modul Lain:**
+Ini secara langsung membangun di atas `5.3.1 Dio (Advanced HTTP Client)` dan `5.1.3 Error Handling`. Konsep ini sangat relevan untuk `5.3.3 Working with Authentication (Tokens)` di mana _interceptor_ akan digunakan untuk menambahkan _token_ secara otomatis.
+
+---
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Mari kita buat contoh `Dio` client dengan _custom interceptors_ untuk _logging_ dan penanganan _error_ dasar.
+
+Pertama, pastikan Anda telah menambahkan `dio` ke `pubspec.yaml` seperti di 5.3.1.
+
+```dart
+import 'package:dio/dio.dart';
+
+// Asumsi Post model sudah ada seperti di 5.3.1
+
+// --- 1. Custom Interceptor untuk Logging ---
+class LoggingInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    print('REQUEST[${options.method}] => PATH: ${options.path}');
+    print('HEADERS: ${options.headers}');
+    print('DATA: ${options.data}');
+    super.onRequest(options, handler); // Lanjutkan permintaan
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    print(
+        'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
+    print('DATA: ${response.data}');
+    super.onResponse(response, handler); // Lanjutkan respons
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    print(
+        'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
+    print('MESSAGE: ${err.message}');
+    if (err.response != null) {
+      print('RESPONSE DATA: ${err.response?.data}');
+    }
+    super.onError(err, handler); // Lanjutkan error
+  }
+}
+
+// --- 2. Custom Interceptor untuk Error Handling Otomatis (Contoh Sederhana) ---
+class ErrorHandlingInterceptor extends Interceptor {
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    String errorMessage = 'Terjadi kesalahan tidak diketahui.';
+
+    if (err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.receiveTimeout ||
+        err.type == DioExceptionType.sendTimeout ||
+        err.type == DioExceptionType.unknown) { // 'unknown' seringkali berarti masalah jaringan
+      errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+    } else if (err.type == DioExceptionType.badResponse) {
+      // Tangani status code spesifik
+      switch (err.response?.statusCode) {
+        case 400:
+          errorMessage = 'Bad Request: ${err.response?.data['message'] ?? 'Data tidak valid.'}';
+          break;
+        case 401:
+          errorMessage = 'Unauthorized: Silakan login kembali.';
+          // Di sini Anda bisa menambahkan logika untuk refresh token atau logout otomatis
+          break;
+        case 404:
+          errorMessage = 'Resource tidak ditemukan.';
+          break;
+        case 500:
+          errorMessage = 'Internal Server Error: Ada masalah di server.';
+          break;
+        default:
+          errorMessage = 'Server error: Status ${err.response?.statusCode ?? ''}';
+          break;
+      }
+    } else if (err.type == DioExceptionType.cancel) {
+      errorMessage = 'Permintaan dibatalkan.';
+    }
+
+    // Anda bisa melemparkan Exception kustom di sini
+    // throw CustomAppException(errorMessage);
+
+    // Atau, cukup cetak dan lanjutkan error agar tertangkap di try-catch di caller
+    print('Handled by ErrorHandlingInterceptor: $errorMessage');
+
+    // Penting: Anda harus memanggil handler.next(err) untuk meneruskan error
+    // atau handler.resolve(response) jika Anda ingin mengubah error menjadi respons sukses
+    handler.next(err);
+  }
+}
+
+
+// --- Inisialisasi Dio Client dengan Interceptors ---
+final Dio apiDio = Dio(BaseOptions(
+  baseUrl: 'https://jsonplaceholder.typicode.com',
+  connectTimeout: const Duration(seconds: 5),
+  receiveTimeout: const Duration(seconds: 3),
+  headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Accept': 'application/json',
+  },
+));
+
+// Tambahkan interceptor ke Dio instance
+void setupDioInterceptors() {
+  apiDio.interceptors.add(LoggingInterceptor());
+  apiDio.interceptors.add(ErrorHandlingInterceptor());
+  // Anda bisa menambahkan interceptor lain di sini (misalnya, AuthInterceptor)
+}
+
+
+// --- Fungsi API yang sama, kini menggunakan `apiDio` dengan interceptor ---
+Future<List<Post>> fetchAllPostsDio() async {
+  try {
+    final response = await apiDio.get('/posts'); // Menggunakan apiDio
+    if (response.statusCode == 200) {
+      List<dynamic> jsonList = response.data;
+      return jsonList.map((json) => Post.fromJson(json)).toList();
+    } else {
+      // Ini jarang tercapai jika ErrorHandlingInterceptor melakukan throw sendiri
+      throw Exception('Gagal memuat posts. Status Code: ${response.statusCode}');
+    }
+  } on DioException catch (e) {
+    // Error sudah ditangani sebagian di interceptor, tapi Anda bisa menambahkan
+    // logika spesifik untuk komponen UI di sini (misalnya, menampilkan SnackBar)
+    print('Error caught in fetchAllPostsDio: ${e.message}');
+    rethrow; // Melempar kembali error agar dapat ditangkap di tingkat UI jika diperlukan
+  } catch (e) {
+    print('Unexpected error in fetchAllPostsDio: $e');
+    rethrow;
+  }
+}
+
+// Untuk demonstasi, kita akan sengaja memicu error 404
+Future<Post> fetchNonExistentPostDio() async {
+  try {
+    // Meminta ID yang tidak ada untuk memicu 404
+    final response = await apiDio.get('/posts/999999999');
+    if (response.statusCode == 200) {
+      Map<String, dynamic> json = response.data;
+      return Post.fromJson(json);
+    } else {
+      throw Exception('Gagal memuat post. Status Code: ${response.statusCode}');
+    }
+  } on DioException catch (e) {
+    print('Error caught in fetchNonExistentPostDio: ${e.message}');
+    rethrow;
+  } catch (e) {
+    print('Unexpected error in fetchNonExistentPostDio: $e');
+    rethrow;
+  }
+}
+
+
+void main() async {
+  setupDioInterceptors(); // Panggil ini sekali saat aplikasi dimulai
+
+  print('--- Mengambil Semua Posts (dengan Interceptors) ---');
+  try {
+    List<Post> posts = await fetchAllPostsDio();
+    posts.take(1).forEach((post) => print(post)); // Cetak 1 post pertama
+  } catch (e) {
+    print('Main caught error: $e');
+  }
+
+  print('\n--- Mencoba Mengambil Post yang Tidak Ada (untuk memicu 404) ---');
+  try {
+    await fetchNonExistentPostDio();
+  } catch (e) {
+    print('Main caught error for non-existent post: $e');
+  }
+
+  // Contoh lain: Memicu Timeout (jika server lambat atau tidak merespons)
+  // Untuk tujuan demo ini, sulit disimulasikan tanpa server sungguhan
+  // Jika `connectTimeout` terlalu kecil, Anda mungkin melihat error jenis ini.
+  // try {
+  //   await dio.get('http://slowwly.robertomurray.co.uk/delay/10000/url/http://www.google.com'); // Simulasi delay 10 detik
+  // } on DioException catch (e) {
+  //   print('Timeout Error: ${e.message}');
+  // }
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+1.  **`LoggingInterceptor`:**
+
+    - Meng-override `onRequest`, `onResponse`, dan `onError`.
+    - Di setiap _method_, ia mencetak informasi relevan tentang permintaan, respons, atau _error_ ke konsol. Ini sangat berguna untuk _debugging_ selama pengembangan.
+    - Panggilan `super.onRequest(options, handler)`, `super.onResponse(response, handler)`, dan `super.onError(err, handler)` adalah kunci untuk memastikan permintaan/respons/error terus diproses oleh _interceptor_ berikutnya dalam rantai atau oleh kode aplikasi itu sendiri.
+
+2.  **`ErrorHandlingInterceptor`:**
+
+    - Meng-override hanya `onError`.
+    - Menganalisis `DioException` (berdasarkan `err.type` dan `err.response?.statusCode`) untuk menentukan jenis _error_ dan membuat pesan _error_ yang lebih mudah dipahami.
+    - Anda bisa menambahkan logika di sini untuk:
+      - Menampilkan `SnackBar` atau `Dialog` global.
+      - Melakukan _logging_ _error_ ke layanan eksternal (misalnya, Firebase Crashlytics).
+      - Memicu alur _refresh token_ otomatis (akan dibahas di 5.3.3).
+      - Mengubah _error_ menjadi respons sukses jika Anda bisa memulihkan (jarang, tapi mungkin untuk _caching_).
+    - `handler.next(err)`: Meneruskan _error_ ke _catch block_ berikutnya atau ke pemanggil API. Ini adalah yang paling umum.
+    - `handler.resolve(response)`: Mengubah _error_ menjadi respons sukses. Misalnya, jika _server_ merespons 404, tetapi Anda memiliki data _cache_ lokal, Anda bisa mengembalikan data _cache_ tersebut sebagai respons sukses.
+    - `handler.reject(error)`: Menolak _error_ sepenuhnya, mencegahnya mencapai pemanggil. (Jarang digunakan secara langsung kecuali Anda ingin menekan _error_).
+
+3.  **Inisialisasi `Dio` dengan Interceptor:**
+
+    - `apiDio.interceptors.add(...)`: Ini adalah cara untuk mendaftarkan _interceptor_ Anda ke instance `Dio`. Urutan penambahan _interceptor_ penting karena mereka akan dieksekusi secara berurutan.
+
+4.  **Penggunaan di Fungsi API:**
+
+    - Fungsi seperti `fetchAllPostsDio()` sekarang menggunakan `apiDio` yang sudah dikonfigurasi dengan _interceptors_.
+    - Blok `try-catch` di fungsi-fungsi API menjadi lebih ringkas karena banyak _error_ umum sudah ditangani oleh `ErrorHandlingInterceptor`. Anda mungkin masih ingin memiliki `try-catch` di sini untuk logika spesifik UI atau untuk menangkap _error_ yang mungkin dilempar oleh _interceptor_ (`rethrow`).
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram yang menunjukkan `Dio` object dengan daftar `interceptors` yang diatur.
+- Panah yang menunjukkan `Request`, `Response`, dan `Error` melewati setiap _interceptor_ satu per satu.
+- Detail tentang bagaimana `handler.next()`, `handler.resolve()`, dan `handler.reject()` memengaruhi alur di dalam _interceptor_.
+
+**Terminologi Esensial:**
+
+- **Interceptor:** _Middleware_ dalam `Dio` yang dapat mencegat dan memproses permintaan, respons, atau _error_.
+- **`RequestInterceptorHandler`:** Objek yang digunakan di `onRequest` untuk melanjutkan, membatalkan, atau mengulang permintaan.
+- **`ResponseInterceptorHandler`:** Objek yang digunakan di `onResponse` untuk melanjutkan atau mengubah respons.
+- **`ErrorInterceptorHandler`:** Objek yang digunakan di `onError` untuk melanjutkan _error_, mengubah _error_ menjadi respons sukses, atau menolak _error_.
+- **`DioException`:** Kelas dasar untuk semua _error_ yang dilempar oleh `Dio`.
+- **`DioExceptionType`:** Enum yang mengklasifikasikan jenis `DioException` (misalnya, `connectionTimeout`, `badResponse`).
+
+**Sumber Referensi Lengkap:**
+
+- [Dio Interceptors (Dio Wiki)](https://github.com/cfug/dio/wiki/Interceptors)
+- [Dio Exception Handling (Dio Wiki)](https://github.com/cfug/dio/wiki/Handling-Errors)
+
+**Tips dan Praktik Terbaik:**
+
+- **Modularitas Interceptor:** Buat setiap _interceptor_ memiliki satu tanggung jawab (misalnya, satu untuk _logging_, satu untuk otentikasi, satu untuk _error_). Ini membuat mereka lebih mudah untuk dikelola dan diuji.
+- **Urutan Penting:** Urutan _interceptor_ ditambahkan penting. Misalnya, _logging interceptor_ harus ditambahkan sebelum _auth interceptor_ jika Anda ingin _log_ permintaan sebelum _token_ ditambahkan, atau setelahnya jika Anda ingin melihat _token_ yang ditambahkan.
+- **Jangan Menelan Error:** Selalu _log_ _error_ atau tampilkan di UI. _Interceptors_ adalah tempat yang bagus untuk _logging_ _error_ secara global. Jika Anda menangani _error_ di _interceptor_ tetapi ingin komponen UI tertentu juga bereaksi, pastikan Anda `handler.next(err)` atau `rethrow` di `catch` block Anda.
+- **Global vs. Local Handling:** Gunakan _interceptors_ untuk penanganan _error_ yang bersifat global (berlaku untuk semua atau sebagian besar permintaan). Tetap gunakan `try-catch` di tempat panggilan API jika ada logika penanganan _error_ yang sangat spesifik untuk satu fungsionalitas tertentu di UI.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Permintaan tidak pernah mencapai _server_ atau tidak ada respons yang dicetak.
+
+  - **Penyebab:** Lupa memanggil `super.onRequest/onResponse/onError(handler)` di _custom interceptor_ Anda, sehingga rantai _interceptor_ atau alur permintaan/respons terputus.
+  - **Solusi:** Pastikan Anda selalu memanggil `super` _method_ yang sesuai di dalam _custom interceptor_ Anda, atau gunakan `handler.next()`, `handler.resolve()`, atau `handler.reject()` secara eksplisit.
+
+- **Kesalahan:** _Error_ ditangani oleh _interceptor_ tetapi UI tidak tahu bahwa ada _error_.
+
+  - **Penyebab:** _Interceptor_ menangkap _error_ dan tidak meneruskannya (`handler.next(err)`) atau mengubahnya menjadi respons sukses (`handler.resolve(response)`).
+  - **Solusi:** Jika Anda ingin _error_ tetap menyebar ke pemanggil, pastikan `handler.next(err)` dipanggil di `ErrorInterceptor`. Di tingkat aplikasi, Anda masih bisa memiliki `try-catch` di sekitar panggilan Dio untuk menampilkan pesan kepada pengguna.
+
+- **Kesalahan:** _Interceptor_ tidak dieksekusi.
+
+  - **Penyebab:** Lupa menambahkan _interceptor_ ke `dio.interceptors.add()` atau menambahkannya setelah permintaan pertama sudah dilakukan.
+  - **Solusi:** Pastikan `setupDioInterceptors()` (atau metode inisialisasi _interceptor_ Anda) dipanggil sekali di awal aplikasi (misalnya, di `main()` sebelum `runApp()`).
+
+---
+
+#### 5.3.3 Working with Authentication (Tokens)
+
+Sub-bagian ini akan membahas salah satu aspek terpenting dalam integrasi API dunia nyata: otentikasi. Fokusnya adalah pada otentikasi berbasis token (misalnya, JWT - JSON Web Tokens), yang merupakan metode paling umum untuk mengamankan komunikasi API di aplikasi seluler.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan belajar konsep di balik token otentikasi, bagaimana cara memperolehnya dari _server_, cara menyimpannya dengan aman di perangkat, dan yang paling penting, bagaimana cara mengirimkannya secara otomatis dengan setiap permintaan API yang memerlukan otentikasi menggunakan `Dio` _interceptors_. Mereka juga akan mempelajari dasar-dasar _token refresh_ untuk menjaga sesi pengguna tetap aktif.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Token-Based Authentication:** Sebuah metode di mana _server_ mengeluarkan token (string kriptografi) setelah pengguna berhasil login. Token ini kemudian digunakan oleh _client_ untuk membuktikan identitas mereka dalam permintaan API berikutnya.
+
+  - **Filosofi:** **Statelessness** di sisi _server_. _Server_ tidak perlu menyimpan "session" pengguna; setiap token berisi semua informasi yang diperlukan untuk memverifikasi pengguna. Ini meningkatkan skalabilitas dan fleksibilitas.
+
+- **JWT (JSON Web Tokens):** Format token yang umum digunakan, terdiri dari tiga bagian (Header, Payload, Signature) yang di-_encode_ dan dipisahkan oleh titik.
+
+  - **Filosofi:** Memberikan cara yang standar dan _self-contained_ untuk transmisi informasi yang aman antara pihak-pihak. Informasi di dalam token (misalnya, ID pengguna, peran, waktu kedaluwarsa) dapat diverifikasi oleh _server_ tanpa perlu melakukan _lookup_ database.
+
+- **Access Token vs. Refresh Token:**
+
+  - **Access Token:** Token berumur pendek (misalnya, 15 menit, 1 jam) yang digunakan untuk mengamankan permintaan API yang terautentikasi.
+  - **Refresh Token:** Token berumur panjang yang digunakan untuk mendapatkan _access token_ baru ketika _access token_ yang lama kedaluwarsa, tanpa mengharuskan pengguna untuk login ulang.
+  - **Filosofi:** Meningkatkan keamanan dengan membatasi masa pakai _access token_ (jika dicuri, dampaknya terbatas), sementara tetap memberikan pengalaman pengguna yang mulus melalui _refresh token_.
+
+- **Penyimpanan Token yang Aman:** Token harus disimpan dengan aman di perangkat agar tidak mudah diakses oleh aplikasi lain atau pihak jahat. `shared_preferences` dapat digunakan untuk demo atau kasus sederhana, tetapi untuk keamanan yang lebih tinggi, _secure storage_ (misalnya, `flutter_secure_storage`) harus dipertimbangkan.
+
+  - **Filosofi:** Melindungi kredensial pengguna dan menjaga integritas sesi.
+
+- **`AuthInterceptor` (Dio Interceptor):** Menggunakan _interceptor_ untuk secara otomatis menambahkan _access token_ ke _header_ `Authorization` dari setiap permintaan API yang keluar.
+
+  - **Filosofi:** Mengotomatiskan tugas berulang, mengurangi _boilerplate_ di setiap panggilan API, dan memastikan token selalu disertakan jika tersedia.
+
+- **Token Refresh Logic:** Mengimplementasikan logika untuk mendeteksi _access token_ yang kedaluwarsa (misalnya, melalui kode status 401 Unauthorized dari _server_) dan kemudian menggunakan _refresh token_ untuk mendapatkan _access token_ baru secara transparan sebelum mengulang permintaan awal.
+
+  - **Filosofi:** Memastikan sesi pengguna tetap aktif dan terautentikasi tanpa gangguan, bahkan ketika _access token_ kedaluwarsa.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **Login Flow:** User Input -\> Login Request (username/password) -\> Server Authenticates -\> Server Returns Access Token + Refresh Token -\> Save Tokens to Local Storage.
+- **Authenticated Request Flow:** UI Action -\> API Call (via Dio) -\> `AuthInterceptor` intercepts -\> Checks for Access Token -\> Adds Token to Header -\> HTTP Request -\> Server Validates Token -\> Server Responds -\> UI Updates.
+- **Token Refresh Flow:**
+  - `AuthInterceptor` detects 401 Unauthorized.
+  - Checks if Refresh Token exists.
+  - Sends Refresh Token to Server to get new Access Token.
+  - Saves new Access Token.
+  - Retries original failed request with new Access Token.
+
+---
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Untuk demo ini, kita akan membutuhkan `shared_preferences` untuk penyimpanan token sederhana. Untuk produksi, pertimbangkan `flutter_secure_storage`.
+
+Tambahkan dependensi di `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^5.4.3
+  shared_preferences: ^2.2.3 # Untuk penyimpanan token sederhana
+  # flutter_secure_storage: ^9.0.0 # Pertimbangkan untuk produksi
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
+```
+
+Kemudian jalankan `flutter pub get`.
+
+```dart
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// --- Asumsi Model untuk Token Response ---
+class AuthResponse {
+  final String accessToken;
+  final String refreshToken;
+  final int expiresIn; // Contoh: durasi Access Token dalam detik
+
+  AuthResponse({required this.accessToken, required this.refreshToken, required this.expiresIn});
+
+  factory AuthResponse.fromJson(Map<String, dynamic> json) {
+    return AuthResponse(
+      accessToken: json['accessToken'],
+      refreshToken: json['refreshToken'],
+      expiresIn: json['expiresIn'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'accessToken': accessToken,
+      'refreshToken': refreshToken,
+      'expiresIn': expiresIn,
+    };
+  }
+}
+
+// --- Kelas untuk Mengelola Token (Simulasi) ---
+class AuthManager {
+  static const String _accessTokenKey = 'accessToken';
+  static const String _refreshTokenKey = 'refreshToken';
+
+  // Simpan token
+  static Future<void> saveTokens(String accessToken, String refreshToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_accessTokenKey, accessToken);
+    await prefs.setString(_refreshTokenKey, refreshToken);
+    print('Tokens saved: Access: $accessToken, Refresh: $refreshToken');
+  }
+
+  // Dapatkan access token
+  static Future<String?> getAccessToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_accessTokenKey);
+  }
+
+  // Dapatkan refresh token
+  static Future<String?> getRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_refreshTokenKey);
+  }
+
+  // Hapus token (logout)
+  static Future<void> clearTokens() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_accessTokenKey);
+    await prefs.remove(_refreshTokenKey);
+    print('Tokens cleared.');
+  }
+
+  // Simulasi API Login - Mengembalikan Access Token & Refresh Token
+  static Future<AuthResponse> login(String username, String password) async {
+    print('Attempting login for $username...');
+    await Future.delayed(const Duration(seconds: 1)); // Simulasi delay
+
+    if (username == 'user' && password == 'pass') {
+      final String accessToken = 'fake_access_token_${DateTime.now().millisecondsSinceEpoch}';
+      const String refreshToken = 'fake_refresh_token_123';
+      const int expiresIn = 3600; // 1 jam
+      await saveTokens(accessToken, refreshToken);
+      return AuthResponse(accessToken: accessToken, refreshToken: refreshToken, expiresIn: expiresIn);
+    } else {
+      throw Exception('Invalid username or password');
+    }
+  }
+
+  // Simulasi API Refresh Token - Mengembalikan Access Token Baru
+  static Future<String> refreshAccessToken(String refreshToken) async {
+    print('Refreshing token using: $refreshToken...');
+    await Future.delayed(const Duration(seconds: 1)); // Simulasi delay
+
+    if (refreshToken == 'fake_refresh_token_123') {
+      final String newAccessToken = 'new_fake_access_token_${DateTime.now().millisecondsSinceEpoch}';
+      await saveTokens(newAccessToken, refreshToken); // Simpan access token baru
+      return newAccessToken;
+    } else {
+      await clearTokens(); // Refresh token tidak valid, paksa logout
+      throw Exception('Invalid refresh token. Please login again.');
+    }
+  }
+}
+
+// --- Auth Interceptor untuk Dio ---
+class AuthInterceptor extends Interceptor {
+  final Dio dio; // Menerima Dio instance yang sama untuk permintaan refresh
+
+  AuthInterceptor(this.dio);
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final accessToken = await AuthManager.getAccessToken();
+    if (accessToken != null) {
+      // Tambahkan Authorization header ke setiap permintaan
+      options.headers['Authorization'] = 'Bearer $accessToken';
+    }
+    print('REQUEST[${options.method}] => PATH: ${options.path} with Auth: ${accessToken != null}');
+    super.onRequest(options, handler);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
+    // Tangani 401 Unauthorized - Token kedaluwarsa
+    if (err.response?.statusCode == 401) {
+      print('401 Unauthorized detected. Attempting to refresh token...');
+      final refreshToken = await AuthManager.getRefreshToken();
+      if (refreshToken != null) {
+        try {
+          // Lakukan permintaan refresh token
+          final newAccessToken = await AuthManager.refreshAccessToken(refreshToken);
+
+          // Perbarui access token di Dio instance untuk permintaan selanjutnya (jika perlu)
+          // dio.options.headers['Authorization'] = 'Bearer $newAccessToken'; // Jika Dio dipakai global
+
+          // Buat ulang permintaan asli dengan token baru
+          final RequestOptions originalRequest = err.requestOptions;
+          originalRequest.headers['Authorization'] = 'Bearer $newAccessToken';
+
+          // Ulangi permintaan asli
+          final response = await dio.fetch(originalRequest);
+          print('Original request retried successfully with new token.');
+          return handler.resolve(response); // Resolusi error dengan respons yang berhasil
+        } on DioException catch (refreshError) {
+          print('Token refresh failed: $refreshError');
+          await AuthManager.clearTokens(); // Gagal refresh, hapus token dan paksa login
+          // Arahkan ke halaman login atau tampilkan pesan error
+          return handler.next(refreshError); // Teruskan error refresh
+        } catch (e) {
+          print('Unexpected error during token refresh: $e');
+          await AuthManager.clearTokens();
+          return handler.next(err); // Teruskan error asli jika ada masalah lain
+        }
+      } else {
+        print('No refresh token available. User must log in.');
+        await AuthManager.clearTokens(); // Tidak ada refresh token, paksa login
+        return handler.next(err); // Teruskan 401 asli
+      }
+    }
+    super.onError(err, handler); // Untuk error lain, teruskan
+  }
+}
+
+// --- Dio Instance dengan Auth Interceptor ---
+final Dio authDio = Dio(BaseOptions(
+  baseUrl: 'https://jsonplaceholder.typicode.com', // Ganti dengan URL API yang sesungguhnya
+  connectTimeout: const Duration(seconds: 5),
+  receiveTimeout: const Duration(seconds: 3),
+));
+
+void setupAuthDio() {
+  authDio.interceptors.add(AuthInterceptor(authDio)); // Tambahkan AuthInterceptor
+  // Anda bisa menambahkan LoggingInterceptor atau ErrorHandlingInterceptor di sini juga
+  // authDio.interceptors.add(LoggingInterceptor());
+  // authDio.interceptors.add(ErrorHandlingInterceptor());
+}
+
+// --- Fungsi API Terautentikasi (Simulasi) ---
+Future<Map<String, dynamic>> fetchProtectedData() async {
+  print('Fetching protected data...');
+  try {
+    // Simulasi permintaan yang memerlukan token valid
+    // Kita akan sengaja memicu 401 setelah token kedaluwarsa
+    final response = await authDio.get('/posts/1'); // Contoh endpoint yang dilindungi
+    print('Protected data response: ${response.statusCode}');
+    return response.data;
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 401) {
+      print('API Error: Unauthorized. Token might be invalid or expired.');
+      // Tidak perlu refresh manual di sini, interceptor sudah mencoba
+    } else {
+      print('API Error: ${e.message}');
+    }
+    rethrow;
+  }
+}
+
+void main() async {
+  setupAuthDio(); // Inisialisasi Dio dengan interceptor
+
+  // Bersihkan token dari sesi sebelumnya
+  await AuthManager.clearTokens();
+
+  print('--- Skenario 1: Login Sukses & Ambil Data ---');
+  try {
+    // 1. Login
+    await AuthManager.login('user', 'pass');
+
+    // 2. Ambil data terproteksi (access token harusnya dikirim otomatis)
+    final data = await fetchProtectedData();
+    print('Fetched protected data (Skenario 1): ${data['title']}');
+  } catch (e) {
+    print('Skenario 1 Error: $e');
+  }
+
+  print('\n--- Skenario 2: Token Kedaluwarsa (Simulasi) dan Refresh Otomatis ---');
+  try {
+    // 1. Login lagi untuk mendapatkan token baru
+    await AuthManager.login('user', 'pass');
+
+    // 2. Simulasikan token kedaluwarsa dengan mengganti access token menjadi 'expired'
+    // DI SINI ADALAH TRICKNYA UNTUK DEMO 401
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accessToken', 'EXPIRED_TOKEN'); // Set token kedaluwarsa secara paksa
+
+    // 3. Coba ambil data terproteksi (akan menghasilkan 401, interceptor akan mencoba refresh)
+    final data = await fetchProtectedData();
+    print('Fetched protected data (Skenario 2 - After Refresh): ${data['title']}');
+  } on DioException catch (e) {
+    print('Skenario 2 Dio Error: ${e.response?.statusCode ?? e.message}');
+  } catch (e) {
+    print('Skenario 2 General Error: $e');
+  }
+
+  print('\n--- Skenario 3: Refresh Token Tidak Valid / Tidak Ada ---');
+  try {
+    await AuthManager.clearTokens(); // Pastikan tidak ada token
+    await AuthManager.saveTokens('initial_token', 'INVALID_REFRESH'); // Simpan access token & refresh token tidak valid
+
+    // Pemicu 401 pertama (simulasi)
+    // Kemudian refresh token akan gagal karena 'INVALID_REFRESH'
+    await fetchProtectedData();
+  } on DioException catch (e) {
+    print('Skenario 3 Dio Error (expected): ${e.response?.statusCode ?? e.message}');
+    print('User should be logged out and redirected to login screen.');
+  } catch (e) {
+    print('Skenario 3 General Error: $e');
+  }
+
+  await AuthManager.clearTokens(); // Bersihkan token setelah demo
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+1.  **`AuthResponse` Model:** Sebuah model sederhana untuk mengurai respons dari API login/refresh, yang biasanya berisi `accessToken`, `refreshToken`, dan `expiresIn`.
+
+2.  **`AuthManager`:**
+
+    - Mengelola penyimpanan token (`accessToken` dan `refreshToken`) menggunakan `shared_preferences`. Dalam aplikasi produksi, `flutter_secure_storage` lebih disarankan untuk keamanan yang lebih baik karena `shared_preferences` dapat diakses di beberapa platform (misalnya, Android SharedPreferences XML file).
+    - `login()`: Mensimulasikan panggilan API login. Setelah sukses, ia menyimpan token yang diterima.
+    - `refreshAccessToken()`: Mensimulasikan panggilan API untuk mendapatkan _access token_ baru menggunakan _refresh token_. Penting untuk memperbarui _access token_ yang disimpan setelah berhasil.
+
+3.  **`AuthInterceptor`:**
+
+    - **`onRequest(RequestOptions options, RequestInterceptorHandler handler)`:**
+      - Sebelum setiap permintaan, ia mencoba mengambil `accessToken` dari `AuthManager`.
+      - Jika _access token_ ada, ia menambahkannya ke `Authorization` _header_ dalam format `Bearer <token>`. Ini adalah standar untuk otentikasi Bearer Token.
+      - Kemudian, ia meneruskan permintaan (`super.onRequest` atau `handler.next`).
+    - **`onError(DioException err, ErrorInterceptorHandler handler)`:**
+      - Ini adalah bagian paling kompleks dan krusial.
+      - Jika _error_ adalah 401 Unauthorized (`err.response?.statusCode == 401`), ini menandakan bahwa _access token_ mungkin kedaluwarsa atau tidak valid.
+      - Interceptor kemudian mencoba mendapatkan `refreshToken`.
+      - Jika `refreshToken` ada, ia memanggil `AuthManager.refreshAccessToken()` untuk mendapatkan _access token_ baru.
+      - Setelah _access token_ baru diperoleh, _header_ `Authorization` dari `originalRequest` (permintaan yang gagal) diperbarui dengan token baru.
+      - `dio.fetch(originalRequest)`: Permintaan asli diulang dengan _access token_ yang baru.
+      - `handler.resolve(response)`: Jika permintaan ulang berhasil, _interceptor_ "menyelesaikan" _error_ ini dengan respons yang berhasil dari permintaan ulang. Ini berarti pemanggil asli dari `fetchProtectedData()` tidak akan melihat _error_ 401; mereka akan melihat respons yang berhasil setelah refresh token. Ini menciptakan pengalaman pengguna yang mulus.
+      - Jika _token refresh_ gagal (misalnya, _refresh token_ tidak valid), `AuthManager.clearTokens()` dipanggil untuk memaksa logout pengguna, dan _error_ diteruskan.
+
+4.  **`setupAuthDio()`:** Menginisialisasi `Dio` instance dan menambahkan `AuthInterceptor` ke dalamnya.
+
+5.  **`fetchProtectedData()`:** Sebuah fungsi simulasi untuk mengambil data yang memerlukan otentikasi. Ini akan memicu alur _interceptor_ dan _token refresh_ jika token kedaluwarsa.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **Otentikasi Login:** UI (Username/Password) -\> `AuthManager.login()` -\> `Dio.post(/login)` -\> Server -\> Respon (Access/Refresh Tokens) -\> `AuthManager.saveTokens()` -\> UI (Dashboard).
+- **Permintaan Terautentikasi:** UI (Tombol) -\> `fetchProtectedData()` -\> `AuthDio.get(/protected)`
+  - `-> AuthInterceptor.onRequest` (Adds Token) -\> `Dio Request` -\> Server.
+  - Server Respon (200 OK) -\> `AuthInterceptor.onResponse` -\> UI.
+- **Token Refresh Otomatis:** UI (Tombol) -\> `fetchProtectedData()` -\> `AuthDio.get(/protected)`
+  - `-> AuthInterceptor.onRequest` (Adds Expired Token) -\> `Dio Request` -\> Server Respon (401 Unauthorized)
+  - `-> AuthInterceptor.onError` (Detects 401) -\> `AuthManager.refreshAccessToken()` -\> `Dio.post(/refresh)` -\> Server Respon (New Access Token) -\> `AuthManager.saveTokens()` -\> `AuthInterceptor` retries `originalRequest` with new token.
+  - `-> AuthInterceptor.resolve(retryResponse)` -\> UI.
+
+**Terminologi Esensial:**
+
+- **Authentication (Otentikasi):** Proses memverifikasi identitas pengguna (siapa Anda?).
+- **Authorization (Otorisasi):** Proses menentukan izin pengguna (apa yang bisa Anda lakukan?).
+- **Token:** String kriptografi yang mewakili identitas atau izin pengguna.
+- **JWT (JSON Web Token):** Format token populer yang _self-contained_ dan dapat diverifikasi.
+- **Access Token:** Token berumur pendek untuk mengakses _protected resources_.
+- **Refresh Token:** Token berumur panjang untuk mendapatkan _access token_ baru.
+- **`Authorization` header:** _Header_ HTTP standar yang digunakan untuk mengirimkan kredensial otentikasi (misalnya, `Authorization: Bearer <token>`).
+- **Bearer Token:** Jenis _access token_ di mana klien "membawa" token ini sebagai "pembawa" otorisasi.
+- **`flutter_secure_storage`:** Paket untuk menyimpan data sensitif dengan aman di _keychain_ iOS atau _Keystore_ Android.
+- **`Dio.fetch(requestOptions)`:** Metode dalam `Dio` untuk mengulang permintaan yang sudah ada atau membuat permintaan baru dari `RequestOptions`.
+
+**Sumber Referensi Lengkap:**
+
+- [JWT Introduction](https://jwt.io/introduction)
+- [The OAuth 2.0 Authorization Framework](https://datatracker.ietf.org/doc/html/rfc6749) (spesifikasi OAuth 2.0 yang sering melibatkan Access/Refresh Tokens)
+- [flutter_secure_storage (pub.dev)](https://pub.dev/packages/flutter_secure_storage)
+- [Dio Wiki - Refresh Token](https://github.com/cfug/dio/wiki/Interceptors%23refresh-token)
+
+**Tips dan Praktik Terbaik:**
+
+- **Gunakan Secure Storage:** Untuk token sensitif, selalu gunakan `flutter_secure_storage` di lingkungan produksi, bukan `shared_preferences`.
+- **Pisahkan Logika Otentikasi:** Buat kelas terpisah (seperti `AuthManager` di contoh) untuk mengelola login, logout, penyimpanan/pengambilan token, dan _token refresh_. Ini menjaga kode tetap rapi dan _maintainable_.
+- **Modularisasi Interceptor:** Gabungkan _logging_, _error handling_, dan _authentication_ ke dalam _interceptor_ yang berbeda untuk menjaga modularitas.
+- **Retry Logic Hati-hati:** Pastikan logika _retry_ (di dalam `AuthInterceptor`) tidak membuat _loop_ tak terbatas jika _token refresh_ terus gagal. Batasi jumlah _retry_ atau berikan _fallback_ (misalnya, paksa logout).
+- **Handle Logout:** Pastikan Anda membersihkan semua token (access dan refresh) dari penyimpanan lokal saat pengguna logout.
+- **Perhatikan Security Headings:** Pastikan Anda memahami `Authorization` _header_ dan tidak secara tidak sengaja mengekspos token di URL atau _request body_ yang tidak terenkripsi.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Token tidak ditambahkan ke permintaan.
+
+  - **Penyebab:** Lupa menambahkan `AuthInterceptor` ke `Dio` instance, atau _logic_ di `onRequest` _interceptor_ tidak benar.
+  - **Solusi:** Periksa kembali `authDio.interceptors.add(AuthInterceptor(authDio));` dan pastikan `options.headers['Authorization']` diatur dengan benar.
+
+- **Kesalahan:** Aplikasi terus menampilkan "Unauthorized" atau meminta login berulang kali.
+
+  - **Penyebab:**
+    1.  _Access token_ tidak diperbarui di penyimpanan setelah _refresh_.
+    2.  _Refresh token_ itu sendiri kedaluwarsa atau tidak valid, dan tidak ada penanganan untuk memaksa logout.
+    3.  API _refresh token_ salah atau tidak bekerja.
+  - **Solusi:**
+    1.  Pastikan `AuthManager.saveTokens()` dipanggil dengan _access token_ yang baru setelah _refresh_.
+    2.  Implementasikan logika untuk membersihkan token dan mengarahkan pengguna ke layar login jika _refresh token_ gagal.
+    3.  Uji API _refresh token_ Anda secara terpisah menggunakan Postman atau alat lain.
+
+- **Kesalahan:** Lingkaran permintaan tak terbatas saat _token refresh_ gagal.
+
+  - **Penyebab:** `AuthInterceptor` terus mencoba _refresh_ token yang tidak valid atau _server_ terus merespons 401 meskipun dengan token yang seharusnya valid.
+  - **Solusi:** Tambahkan mekanisme pencegahan _loop_ dalam `AuthInterceptor`, seperti batas _retry_ atau bendera untuk mencegah _refresh_ berulang kali dalam waktu singkat. Jika _refresh_ gagal dalam beberapa percobaan, paksa logout.
 
 ---
 
