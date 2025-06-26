@@ -40,6 +40,8 @@ Berikut adalah struktur terperinci untuk **FASE 3: Navigation & Routing**:
     - [3.2.2 Generating Routes (`onGenerateRoute`)](#322-generating-routes-ongenerateroute)
   - [3.3 Advanced Navigation Concepts](#33-advanced-navigation-concepts)
     - [3.3.1 Hero Animations](#331-hero-animations)
+    - [3.3.2 Dialogs, Bottom Sheets, and Snackbars (as overlays)](#332-dialogs-bottom-sheets-and-snackbars-as-overlays)
+  - [Selamat!](#selamat)
 
 </details>
 
@@ -1403,6 +1405,311 @@ void main() {
   - **Solusi:** Verifikasi kembali implementasi `Hero` di kedua layar.
 
 ---
+
+#### 3.3.2 Dialogs, Bottom Sheets, and Snackbars (as overlays)
+
+Sub-bagian ini akan membahas berbagai jenis _overlays_ UI yang umum digunakan di Flutter untuk interaksi pengguna yang cepat dan kontekstual, tanpa harus melibatkan navigasi layar penuh.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan mempelajari tiga _widget_/fungsi _overlay_ utama dari Material Design:
+
+- **Dialogs (`AlertDialog`, `SimpleDialog`)**: _Pop-up_ modal yang biasanya digunakan untuk informasi penting, konfirmasi aksi, atau input singkat. Mereka memblokir interaksi dengan konten di bawahnya.
+- **Bottom Sheets (`showModalBottomSheet`)**: Panel yang muncul dari bawah layar, bisa bersifat modal atau persisten. Ideal untuk menampilkan daftar opsi, formulir singkat, atau konten tambahan yang tidak memerlukan layar penuh.
+- **Snackbars (`ScaffoldMessenger.of(context).showSnackBar`)**: Pesan singkat yang muncul di bagian bawah layar untuk memberikan umpan balik kepada pengguna tentang suatu operasi, seperti "Item ditambahkan ke keranjang". Mereka menghilang secara otomatis setelah beberapa detik.
+
+Penguasaan elemen-elemen ini penting untuk menciptakan pengalaman pengguna yang mulus, di mana aplikasi dapat memberikan informasi atau meminta input tanpa memaksa pengguna untuk berpindah konteks layar.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Overlay Layer:** Flutter memiliki _overlay layer_ di atas _widget tree_ utama, tempat dialog, _bottom sheets_, dan _snackbars_ ditampilkan. Ini memungkinkan mereka untuk mengambang di atas konten yang ada tanpa mengubah tumpukan navigasi.
+
+  - **Filosofi:** Pemisahan _layer_ UI memungkinkan fleksibilitas dalam menampilkan elemen temporal atau kontekstual tanpa mengganggu _layout_ atau _state_ dari layar utama.
+
+- **Modal vs. Non-Modal Interaction:**
+
+  - **Modal (Dialogs, Modal Bottom Sheets):** Memblokir interaksi dengan UI di bawahnya sampai ditutup. Digunakan untuk aksi yang memerlukan perhatian pengguna.
+  - **Non-Modal (Snackbars, Persistent Bottom Sheets):** Tidak memblokir interaksi dengan UI di bawahnya. Digunakan untuk umpan balik atau informasi sekunder.
+  - **Filosofi:** Memastikan bahwa interaksi pengguna sesuai dengan tingkat urgensi dan dampak pada alur kerja aplikasi.
+
+- **Contextual Feedback:** _Overlays_ ini dirancang untuk memberikan umpan balik atau opsi dalam konteks layar saat ini.
+
+  - **Filosofi:** Meningkatkan _usability_ dengan menjaga pengguna di alur kerja yang sama saat memberikan informasi atau menerima input kecil, mengurangi kebutuhan untuk navigasi yang berlebihan.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+```dart
+import 'package:flutter/material.dart';
+
+class OverlayDemoScreen extends StatefulWidget {
+  const OverlayDemoScreen({super.key});
+
+  @override
+  State<OverlayDemoScreen> createState() => _OverlayDemoScreenState();
+}
+
+class _OverlayDemoScreenState extends State<OverlayDemoScreen> {
+  String _selectedOption = 'Belum memilih opsi';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Overlay UI Demo'),
+        backgroundColor: Colors.deepOrange,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Tekan tombol di bawah untuk melihat Overlay UI:',
+              style: TextStyle(fontSize: 18),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 30),
+
+            // --- 1. Dialog (AlertDialog) ---
+            ElevatedButton(
+              onPressed: () => _showAlertDialog(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrangeAccent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text('Tampilkan AlertDialog'),
+            ),
+            const SizedBox(height: 20),
+
+            // --- 2. Bottom Sheet (ModalBottomSheet) ---
+            ElevatedButton(
+              onPressed: () => _showModalBottomSheet(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text('Tampilkan Bottom Sheet'),
+            ),
+            const SizedBox(height: 20),
+
+            // --- 3. Snackbar ---
+            ElevatedButton(
+              onPressed: () => _showSnackBar(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
+              child: const Text('Tampilkan Snackbar'),
+            ),
+            const SizedBox(height: 30),
+            Text(
+              'Opsi terpilih dari Bottom Sheet: $_selectedOption',
+              style: const TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- Implementasi AlertDialog ---
+  void _showAlertDialog(BuildContext context) {
+    // Sintaks: showDialog(context: BuildContext, builder: (BuildContext) => Widget)
+    // showDialog adalah fungsi yang menampilkan dialog.
+    // builder harus mengembalikan widget Dialog (misalnya AlertDialog atau SimpleDialog).
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) { // Gunakan dialogContext untuk widget di dalam dialog
+        return AlertDialog(
+          title: const Text('Konfirmasi Aksi'),
+          content: const Text('Apakah Anda yakin ingin melanjutkan aksi ini?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Menutup dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Aksi dibatalkan.')),
+                );
+              },
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Menutup dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Aksi dikonfirmasi!')),
+                );
+              },
+              child: const Text('Ya, Lanjutkan'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // --- Implementasi Bottom Sheet ---
+  void _showModalBottomSheet(BuildContext context) async {
+    // Sintaks: showModalBottomSheet(context: BuildContext, builder: (BuildContext) => Widget)
+    // showModalBottomSheet juga mengembalikan Future yang bisa ditunggu untuk hasil.
+    final String? selected = await showModalBottomSheet<String>(
+      context: context,
+      builder: (BuildContext sheetContext) { // Gunakan sheetContext
+        return SizedBox( // Wrap content in SizedBox for specific height, or ListView/Column for dynamic height
+          height: 200,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text('Pilih Opsi:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(sheetContext).pop('Opsi A'); // Mengembalikan data saat pop
+                  },
+                  child: const Text('Opsi A'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(sheetContext).pop('Opsi B');
+                  },
+                  child: const Text('Opsi B'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selected != null) {
+      setState(() {
+        _selectedOption = selected;
+      });
+    } else {
+      setState(() {
+        _selectedOption = 'Tidak ada opsi yang dipilih.';
+      });
+    }
+  }
+
+  // --- Implementasi Snackbar ---
+  void _showSnackBar(BuildContext context) {
+    // ScaffoldMessenger.of(context) digunakan untuk menampilkan Snackbar.
+    // Pastikan ScaffoldMessenger adalah ancestor dari context.
+    // Snackbar adalah widget yang ditampilkan.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Ini adalah Snackbar!'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            // Kode untuk membatalkan aksi
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Aksi dibatalkan.')),
+            );
+          },
+        ),
+        duration: const Duration(seconds: 3), // Durasi tampil
+        // backgroundColor: Colors.blueGrey,
+        // behavior: SnackBarBehavior.floating, // Untuk tampilan floating
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(const MaterialApp(
+    home: OverlayDemoScreen(),
+  ));
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+- **`showDialog()`**:
+  - Adalah fungsi tingkat atas yang menampilkan `Dialog` sebagai _overlay_.
+  - Membutuhkan `context` dan `builder` fungsi yang mengembalikan _widget_ `Dialog` (`AlertDialog` atau `SimpleDialog`).
+  - `AlertDialog` digunakan untuk pesan penting dengan opsi aksi. Memiliki `title`, `content`, dan `actions`.
+  - `Navigator.of(dialogContext).pop()` digunakan untuk menutup dialog. Perhatikan penggunaan `dialogContext` yang diteruskan ke `builder`.
+- **`showModalBottomSheet()`**:
+  - Fungsi tingkat atas yang menampilkan _bottom sheet_ modal.
+  - Juga membutuhkan `context` dan `builder`.
+  - Mengembalikan `Future<T?>` yang akan selesai ketika _bottom sheet_ di-_pop_, memungkinkan Anda untuk menerima data kembali (mirip dengan `Navigator.push()`).
+  - Konten _bottom sheet_ dapat berupa `SizedBox` dengan tinggi tetap atau _widget_ yang dapat di-_scroll_ seperti `ListView` atau `Column` di dalam `SingleChildScrollView` untuk konten dinamis.
+  - `Navigator.of(sheetContext).pop(data)` digunakan untuk menutup _bottom sheet_ dan mengembalikan data.
+- **`ScaffoldMessenger.of(context).showSnackBar()`**:
+  - Digunakan untuk menampilkan `SnackBar`. `ScaffoldMessenger` adalah _widget_ yang mengelola `SnackBar` dan `MaterialBanner` untuk seluruh `Scaffold`.
+  - `SnackBar` adalah _widget_ yang memiliki `content` (biasanya `Text`) dan bisa memiliki `action` (tombol undo, misalnya).
+  - Properti `duration` mengontrol berapa lama _snackbar_ akan terlihat.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- _Screenshot_ atau ilustrasi masing-masing:
+  - `AlertDialog` di tengah layar dengan latar belakang _dimmed_.
+  - `ModalBottomSheet` muncul dari bawah, menutupi bagian bawah layar.
+  - `Snackbar` muncul di bagian bawah layar, biasanya di atas `BottomNavigationBar` jika ada.
+
+**Terminologi Esensial & Penjelasan Detail:**
+
+- **Dialog:** Jendela _pop-up_ kecil yang muncul di atas konten utama untuk informasi atau konfirmasi.
+  - **`AlertDialog`:** Implementasi `Dialog` untuk peringatan atau konfirmasi.
+  - **`SimpleDialog`:** Implementasi `Dialog` untuk menampilkan daftar opsi sederhana.
+- **Bottom Sheet:** Panel yang meluncur dari bagian bawah layar.
+  - **Modal Bottom Sheet:** Memblokir interaksi di belakangnya, ditutup dengan _swipe_ ke bawah atau mengetuk di luar.
+  - **Persistent Bottom Sheet:** Tetap terbuka dan tidak memblokir interaksi di bawahnya (dikelola oleh `ScaffoldState`). (Contoh di atas adalah Modal Bottom Sheet).
+- **Snackbar:** Pesan non-modal singkat yang muncul di bagian bawah layar.
+- **`ScaffoldMessenger`:** _Widget_ yang mengelola `SnackBar` dan `MaterialBanner` untuk _ancestor_ `Scaffold` terdekat.
+- **`Overlay`:** Lapisan di atas _widget tree_ utama tempat elemen seperti dialog ditampilkan.
+- **`BuildContext` (untuk _overlays_):** Penting untuk menggunakan `context` yang benar saat memanggil `showDialog`, `showModalBottomSheet`, atau `ScaffoldMessenger.of(context)`. `builder` untuk dialog/bottom sheet menerima `BuildContext` baru untuk konten di dalam _overlay_.
+
+**Sumber Referensi Lengkap:**
+
+- [Dialogs, alerts, and panels (Official Docs - Design Guidelines)](https://m2.material.io/components/dialogs)
+- [AlertDialog Class (API Docs)](https://api.flutter.dev/flutter/material/AlertDialog-class.html)
+- [showDialog Function (API Docs)](https://api.flutter.dev/flutter/material/showDialog.html)
+- [Bottom sheets (Official Docs - Design Guidelines)](https://m2.material.io/components/sheets-bottom)
+- [showModalBottomSheet Function (API Docs)](https://api.flutter.dev/flutter/material/showModalBottomSheet.html)
+- [Snackbars (Official Docs - Design Guidelines)](https://m2.material.io/components/snackbars)
+- [SnackBar Class (API Docs)](https://api.flutter.dev/flutter/material/SnackBar-class.html)
+- [ScaffoldMessenger Class (API Docs)](https://api.flutter.dev/flutter/material/ScaffoldMessenger-class.html)
+
+**Tips dan Praktik Terbaik:**
+
+- **Pilih _Overlay_ yang Tepat:**
+  - Gunakan **Dialog** untuk konfirmasi yang penting atau informasi krusial yang memerlukan persetujuan eksplisit.
+  - Gunakan **Bottom Sheet** untuk daftar opsi atau formulir singkat yang dapat diselesaikan dengan cepat tanpa mengganti layar penuh.
+  - Gunakan **Snackbar** untuk umpan balik non-invasif tentang suatu aksi (misalnya, "Item ditambahkan", "Berhasil disimpan").
+- **Gunakan `await` untuk Hasil:** Gunakan `await` dengan `showDialog` atau `showModalBottomSheet` jika Anda ingin melakukan sesuatu setelah _overlay_ ditutup dan/atau jika Anda mengharapkan data kembali.
+- **Jangan Lupa `context`:** Pastikan `context` yang Anda gunakan untuk memanggil fungsi `show...` memiliki `Scaffold` (untuk `SnackBar`) atau `Navigator` (untuk `pop` dari dialog/bottom sheet) sebagai _ancestor_ yang memadai.
+- **Bersihkan Pesan Lama:** Untuk `SnackBar`, jika Anda memanggil `showSnackBar` berulang kali, _snackbar_ sebelumnya akan antri atau diganti. Gunakan `ScaffoldMessenger.of(context).hideCurrentSnackBar()` atau `clearSnackBars()` jika Anda ingin membersihkan _snackbar_ yang sedang tampil sebelum menampilkan yang baru.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** "No ScaffoldMessenger found with that context."
+
+  - **Penyebab:** Anda mencoba memanggil `ScaffoldMessenger.of(context).showSnackBar()` dari `context` yang tidak memiliki `ScaffoldMessenger` (atau `Scaffold`) sebagai _ancestor_. Ini sering terjadi jika Anda memanggilnya dari `main()` atau dari _widget_ yang berada di atas `MaterialApp` atau `Scaffold`.
+  - **Solusi:** Pastikan panggilan `showSnackBar` dilakukan dari `context` dari _widget_ yang merupakan anak dari `Scaffold` (atau `ScaffoldMessenger`). Contohnya, dari dalam `build` metode `StatefulWidget` atau `StatelessWidget` yang ada di dalam `Scaffold`.
+
+- **Kesalahan:** Dialog/Bottom Sheet tidak menutup setelah aksi.
+
+  - **Penyebab:** Lupa memanggil `Navigator.of(context).pop()` (atau `Navigator.of(dialogContext).pop()`) di dalam _callback_ aksi dialog/bottom sheet.
+  - **Solusi:** Pastikan Anda memanggil `pop()` yang sesuai ketika pengguna menyelesaikan interaksi dengan _overlay_.
+
+- **Kesalahan:** Data yang dikembalikan dari `showModalBottomSheet` adalah `null` padahal seharusnya ada.
+
+  - **Penyebab:** `pop()` dipanggil di _bottom sheet_ tanpa argumen, atau _bottom sheet_ ditutup oleh _gesture swipe_ ke bawah atau ketukan di luar tanpa secara eksplisit memanggil `pop()` dengan nilai.
+  - **Solusi:** Pastikan Anda meneruskan nilai ke `pop()` di dalam `onPressed` _callback_ tombol. Ingat bahwa penutupan _gesture_ default tidak akan mengembalikan nilai kecuali Anda secara eksplisit menanganinya (yang biasanya tidak perlu kecuali untuk kasus khusus).
+
+## Selamat!
+
+Kita telah menyelesaikan FASE 3. Selanjutnya kita akan masuk pada **FASE 4: State Management Fundamentals**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

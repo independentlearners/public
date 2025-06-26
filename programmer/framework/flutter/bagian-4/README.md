@@ -2343,7 +2343,7 @@ void main() {
 
 ## Selamat!
 
-Kita telah menyelesaikan FASE 2. Selanjutnya kita akan melanjutkan ke **FASE 3: Navigation & Routing**.
+Kita telah menyelesaikan FASE 2. Selanjutnya kita akan masuk pada **FASE 3: Navigation & Routing**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

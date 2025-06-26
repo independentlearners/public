@@ -4,9 +4,9 @@
   <summary>📃 Daftar Isi</summary>
 
 - [Flutter CLI dan DevTools](#flutter-cli-dan-devtools)
-    - [1.2.2 Flutter CLI dan DevTools](#122-flutter-cli-dan-devtools)
-      - [Perintah Dasar Flutter CLI](#perintah-dasar-flutter-cli)
-      - [Memahami Flutter DevTools](#memahami-flutter-devtools)
+  - [1.2.2 Flutter CLI dan DevTools](#122-flutter-cli-dan-devtools)
+    - [Perintah Dasar Flutter CLI](#perintah-dasar-flutter-cli)
+    - [Memahami Flutter DevTools](#memahami-flutter-devtools)
   - [Selamat!](#selamat)
 
 </details>
@@ -319,7 +319,7 @@ Flutter DevTools adalah _suite_ alat diagnostik yang kuat yang memungkinkan peng
 
 ## Selamat!
 
-Kita telah menyelesaikan FASE 1. Selanjutnya **Fase 2: Widget System & UI Foundation**.
+Kita telah menyelesaikan FASE 1. Selanjutnya kiata akan masuk pada **Fase 2: Widget System & UI Foundation**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
