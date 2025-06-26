@@ -1,9 +1,9 @@
 <details>
-  <summary>📃 Daftar Isi</summary>
+  <summary>📃 Struktur Daftar Isi</summary>
 
 </details>
 
-#
+---
 
 <!-- > - **[Selanjutnya][selanjutnya]** -->
 

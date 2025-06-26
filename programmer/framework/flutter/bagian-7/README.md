@@ -4,21 +4,28 @@
   <summary>📃 Struktur Daftar Isi</summary>
 
 - [FASE 5: Asynchronous Programming \& API Integration](#fase-5-asynchronous-programming--api-integration)
-    - [FASE 5: Asynchronous Programming \& API Integration](#fase-5-asynchronous-programming--api-integration-1)
-    - [5.1 Asynchronous Programming in Dart](#51-asynchronous-programming-in-dart)
-      - [5.1.1 Futures (`async`/`await`)](#511-futures-asyncawait)
-      - [5.1.2 Streams (Basic Concepts)](#512-streams-basic-concepts)
-      - [5.1.3 Error Handling (`try-catch-finally`)](#513-error-handling-try-catch-finally)
-    - [5.2 HTTP Requests \& REST APIs](#52-http-requests--rest-apis)
-      - [5.2.1 Understanding RESTful Principles](#521-understanding-restful-principles)
-      - [5.2.2 Making Basic HTTP Requests (`http` package)](#522-making-basic-http-requests-http-package)
-      - [5.2.3 Handling JSON (Serialization/Deserialization)](#523-handling-json-serializationdeserialization)
-    - [5.3 Advanced API Integration](#53-advanced-api-integration)
-      - [5.3.1 Dio (Advanced HTTP Client)](#531-dio-advanced-http-client)
-      - [5.3.2 Error Handling \& Interceptors](#532-error-handling--interceptors)
-      - [5.3.3 Working with Authentication (Tokens)](#533-working-with-authentication-tokens)
-    - [5.4 Local Data Persistence](#54-local-data-persistence)
-      - [5.4.1 Shared Preferences (Simple Key-Value)](#541-shared-preferences-simple-key-value)
+  - [FASE 5: Asynchronous Programming \& API Integration](#fase-5-asynchronous-programming--api-integration-1)
+  - [5.1 Asynchronous Programming in Dart](#51-asynchronous-programming-in-dart)
+    - [5.1.1 Futures (`async`/`await`)](#511-futures-asyncawait)
+    - [5.1.2 Streams (Basic Concepts)](#512-streams-basic-concepts)
+    - [5.1.3 Error Handling (`try-catch-finally`)](#513-error-handling-try-catch-finally)
+  - [5.2 HTTP Requests \& REST APIs](#52-http-requests--rest-apis)
+    - [5.2.1 Understanding RESTful Principles](#521-understanding-restful-principles)
+    - [5.2.2 Making Basic HTTP Requests (`http` package)](#522-making-basic-http-requests-http-package)
+    - [5.2.3 Handling JSON (Serialization/Deserialization)](#523-handling-json-serializationdeserialization)
+  - [5.3 Advanced API Integration](#53-advanced-api-integration)
+    - [5.3.1 Dio (Advanced HTTP Client)](#531-dio-advanced-http-client)
+    - [5.3.2 Error Handling \& Interceptors](#532-error-handling--interceptors)
+    - [5.3.3 Working with Authentication (Tokens)](#533-working-with-authentication-tokens)
+  - [5.4 Local Data Persistence](#54-local-data-persistence)
+    - [5.4.1 Shared Preferences (Simple Key-Value)](#541-shared-preferences-simple-key-value)
+    - [5.4.2 SQLite (via `sqflite` package)](#542-sqlite-via-sqflite-package)
+    - [5.4.3 Hive/Isar (NoSQL Local Database)](#543-hiveisar-nosql-local-database)
+  - [Hive (Contoh Kode)](#hive-contoh-kode)
+  - [Isar (Contoh Kode)](#isar-contoh-kode)
+  - [Hive](#hive)
+  - [Isar](#isar)
+- [Selamat!](#selamat)
 
 </details>
 
@@ -3249,65 +3256,961 @@ class MyApp extends StatelessWidget {
 
 ---
 
+#### 5.4.2 SQLite (via `sqflite` package)
+
+Sub-bagian ini akan membahas penggunaan SQLite, sebuah _relational database_ ringan yang sangat populer untuk aplikasi seluler, melalui paket `sqflite` di Flutter. Ini adalah pilihan yang sangat baik untuk menyimpan data terstruktur dan relasional secara lokal.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan belajar konsep dasar database relasional, cara menginisialisasi database SQLite di Flutter, membuat tabel, serta melakukan operasi CRUD (Create, Read, Update, Delete) menggunakan SQL mentah dan metode _helper_ `sqflite`. Mereka akan memahami kapan `sqflite` lebih unggul dari `shared_preferences` dan mempersiapkan mereka untuk skenario data yang lebih kompleks.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Relational Database:** Data diorganisir dalam tabel dengan baris dan kolom, dan hubungan antar tabel dapat didefinisikan (misalnya, _one-to-many_, _many-to-many_).
+
+  - **Filosofi:** Menyediakan struktur yang kuat dan terdefinisi dengan baik untuk mengelola data yang kompleks dan saling terkait, memastikan integritas data melalui skema.
+
+- **SQLite:** Sebuah mesin _database_ SQL yang ringkas, tanpa server, mandiri, berkonfigurasi nol, transaksional yang umum digunakan di perangkat seluler.
+
+  - **Filosofi:** Memberikan kemampuan _database_ penuh tanpa _overhead_ server, ideal untuk penyimpanan data lokal yang andal dan berkinerja tinggi.
+
+- **`sqflite` package:** _Plugin_ Flutter resmi untuk SQLite, menyediakan API Dart untuk berinteraksi dengan database SQLite di Android, iOS, dan desktop.
+
+  - **Filosofi:** Mengintegrasikan SQLite secara mulus dengan Dart/Flutter, memungkinkan pengembang untuk memanfaatkan kekuatan SQL dari dalam aplikasi mereka.
+
+- **CRUD Operations:** Singkatan dari Create, Read, Update, Delete. Ini adalah empat operasi dasar yang dilakukan pada data di _database_.
+
+  - **Filosofi:** Menyediakan standar universal untuk interaksi data, membuat pengelolaan data dapat diprediksi dan terstruktur.
+
+- **Database Schema & Migrations:** Mendefinisikan struktur tabel dan kolom, serta mengelola perubahan pada struktur _database_ seiring waktu.
+
+  - **Filosofi:** Memastikan konsistensi data dan memungkinkan evolusi aplikasi tanpa kehilangan data pengguna yang sudah ada.
+
+- **`Batch` Operations:** Mengelompokkan beberapa operasi _database_ menjadi satu transaksi, yang dapat meningkatkan performa.
+
+  - **Filosofi:** Mengoptimalkan operasi I/O dan menjaga konsistensi data dengan memastikan semua operasi dalam batch berhasil atau tidak sama sekali (atomicity).
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram `Database Lifecycle`: `openDatabase` -\> `onCreate`/`onUpgrade` -\> `Database` instance -\> `CRUD operations`.
+- Tabel Contoh: `id | name | description | isCompleted`.
+- SQL Query Flow: Flutter Code -\> `sqflite` API -\> SQLite Engine -\> Disk.
+
+**Hubungan dengan Modul Lain:**
+Melengkapi `5.2 HTTP Requests & REST APIs` dan `5.3 Advanced API Integration` dengan menyediakan cara untuk _cache_ atau menyimpan data yang diambil dari API. Juga berhubungan dengan `5.2.3 Handling JSON` karena data yang diambil dari API (JSON) sering disimpan sebagai objek Dart di SQLite.
+
+---
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Pertama, tambahkan dependensi `sqflite` dan `path_provider` (untuk mendapatkan jalur database yang benar) di `pubspec.yaml` Anda:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite: ^2.3.3 # Periksa versi terbaru di pub.dev
+  path_provider: ^2.1.3 # Untuk menemukan lokasi penyimpanan database
+  path: ^1.9.0 # Untuk join path
+```
+
+Kemudian jalankan `flutter pub get`.
+
+```dart
+import 'dart:async';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart'; // Untuk join path database
+
+// --- 1. Model Data (POJO) ---
+// Merepresentasikan sebuah item To-Do
+class Todo {
+  final int? id; // id bisa null saat membuat item baru
+  final String title;
+  final String description;
+  final bool isCompleted;
+
+  Todo({
+    this.id,
+    required this.title,
+    required this.description,
+    this.isCompleted = false, // Default value
+  });
+
+  // Konversi Todo object menjadi Map
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'isCompleted': isCompleted ? 1 : 0, // SQLite menyimpan boolean sebagai INT
+    };
+  }
+
+  // Konversi Map menjadi Todo object
+  factory Todo.fromMap(Map<String, dynamic> map) {
+    return Todo(
+      id: map['id'] as int,
+      title: map['title'] as String,
+      description: map['description'] as String,
+      isCompleted: (map['isCompleted'] as int) == 1,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Todo{id: $id, title: $title, description: $description, isCompleted: $isCompleted}';
+  }
+}
+
+// --- 2. Database Helper Class ---
+class TodoDatabaseHelper {
+  static Database? _database;
+  static const String tableName = 'todos'; // Nama tabel
+
+  // Getter untuk mendapatkan instance database (singleton pattern)
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDatabase();
+    return _database!;
+  }
+
+  // Menginisialisasi database
+  Future<Database> _initDatabase() async {
+    final documentsDirectory = await getDatabasesPath();
+    final path = join(documentsDirectory, 'todo_app.db'); // Nama file database
+
+    return await openDatabase(
+      path,
+      version: 1, // Versi database
+      onCreate: _onCreate, // Dipanggil saat database pertama kali dibuat
+      onUpgrade: _onUpgrade, // Dipanggil saat versi database berubah
+    );
+  }
+
+  // Metode untuk membuat tabel
+  Future _onCreate(Database db, int version) async {
+    print('Creating table: $tableName');
+    await db.execute('''
+      CREATE TABLE $tableName (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
+        isCompleted INTEGER NOT NULL
+      )
+    ''');
+    print('Table $tableName created.');
+  }
+
+  // Metode untuk meng-upgrade database (contoh)
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    print('Upgrading database from version $oldVersion to $newVersion');
+    // Contoh: Jika ada perubahan skema di versi mendatang
+    if (oldVersion < 2) {
+      // Tambahkan kolom baru misalnya
+      // await db.execute("ALTER TABLE $tableName ADD COLUMN new_column TEXT;");
+    }
+    print('Database upgraded.');
+  }
+
+  // --- Operasi CRUD ---
+
+  // Create: Menambahkan item Todo baru
+  Future<int> insertTodo(Todo todo) async {
+    final db = await database;
+    // `insert` akan mengembalikan ID dari baris yang baru dimasukkan
+    final id = await db.insert(
+      tableName,
+      todo.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace, // Ganti jika ID sudah ada
+    );
+    print('Inserted Todo with ID: $id');
+    return id;
+  }
+
+  // Read: Mendapatkan semua item Todo
+  Future<List<Todo>> getTodos() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(tableName);
+    print('Fetched ${maps.length} todos.');
+    return List.generate(maps.length, (i) {
+      return Todo.fromMap(maps[i]);
+    });
+  }
+
+  // Read: Mendapatkan item Todo berdasarkan ID
+  Future<Todo?> getTodoById(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return Todo.fromMap(maps.first);
+    }
+    print('Todo with ID $id not found.');
+    return null;
+  }
+
+  // Update: Memperbarui item Todo
+  Future<int> updateTodo(Todo todo) async {
+    final db = await database;
+    final rowsAffected = await db.update(
+      tableName,
+      todo.toMap(),
+      where: 'id = ?',
+      whereArgs: [todo.id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    print('Updated Todo with ID: ${todo.id}. Rows affected: $rowsAffected');
+    return rowsAffected;
+  }
+
+  // Delete: Menghapus item Todo
+  Future<int> deleteTodo(int id) async {
+    final db = await database;
+    final rowsAffected = await db.delete(
+      tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    print('Deleted Todo with ID: $id. Rows affected: $rowsAffected');
+    return rowsAffected;
+  }
+
+  // --- Operasi Lanjutan: Batch Operations ---
+  Future<void> bulkInsert(List<Todo> todos) async {
+    final db = await database;
+    // Memulai transaksi batch
+    await db.transaction((txn) async {
+      final batch = txn.batch();
+      for (var todo in todos) {
+        batch.insert(tableName, todo.toMap());
+      }
+      await batch.commit(noResult: true); // noResult: true jika tidak butuh ID dari setiap insert
+    });
+    print('Bulk insert of ${todos.length} todos completed.');
+  }
+
+  // Menutup koneksi database (opsional, biasanya tidak perlu di app berjalan)
+  Future<void> close() async {
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+      print('Database closed.');
+    }
+  }
+
+  // Menghapus database (untuk pengujian atau reset)
+  static Future<void> deleteDatabaseFile() async {
+    final documentsDirectory = await getDatabasesPath();
+    final path = join(documentsDirectory, 'todo_app.db');
+    await deleteDatabase(path);
+    print('Database file deleted: $path');
+    _database = null; // Reset instance
+  }
+}
+
+void main() async {
+  // PENTING: Untuk menjalankan sqflite di main() tanpa Flutter UI,
+  // perlu inisialisasi binding.
+  // Di aplikasi Flutter normal, ini otomatis oleh runApp().
+  // Untuk contoh CLI, kita panggil manual:
+  // import 'package:flutter/widgets.dart';
+  // WidgetsFlutterBinding.ensureInitialized();
+  // Untuk demo langsung, kita akan simulasi tanpa Flutter binding lengkap
+  // Ini mungkin tidak bekerja persis di environment CLI Dart
+  // Untuk hasil terbaik, jalankan ini di proyek Flutter yang sebenarnya.
+
+  // NOTE: Jika menjalankan ini sebagai Dart CLI, Anda mungkin perlu mengadaptasi
+  // atau menjalankan di lingkungan Flutter test/main app.
+  // Untuk demonstasi, kita asumsikan init berhasil.
+  print('--- SQLite `sqflite` Demo ---');
+
+  final dbHelper = TodoDatabaseHelper();
+
+  // Hapus database lama jika ada (untuk demo bersih)
+  await TodoDatabaseHelper.deleteDatabaseFile(); // Reset database
+  await dbHelper.database; // Ini akan memicu _initDatabase dan _onCreate
+
+  print('\n--- Create (Insert) ---');
+  final todo1 = Todo(title: 'Belajar Flutter', description: 'Selesaikan modul persistensi data.');
+  final id1 = await dbHelper.insertTodo(todo1);
+
+  final todo2 = Todo(title: 'Buat Aplikasi To-Do', description: 'Dengan SQLite dan Dio.', isCompleted: false);
+  final id2 = await dbHelper.insertTodo(todo2);
+
+  final todo3 = Todo(title: 'Baca Dokumentasi Sqflite', description: 'Pahami fitur-fitur lanjutan.', isCompleted: true);
+  final id3 = await dbHelper.insertTodo(todo3);
+
+  print('\n--- Read All ---');
+  List<Todo> todos = await dbHelper.getTodos();
+  todos.forEach(print);
+
+  print('\n--- Read by ID (ID $id1) ---');
+  Todo? fetchedTodo = await dbHelper.getTodoById(id1);
+  print(fetchedTodo);
+
+  print('\n--- Update (ID $id1) ---');
+  final updatedTodo1 = Todo(id: id1, title: 'Belajar Flutter Dasar', description: 'Selesaikan modul persistensi data.', isCompleted: true);
+  await dbHelper.updateTodo(updatedTodo1);
+  fetchedTodo = await dbHelper.getTodoById(id1);
+  print('Updated: $fetchedTodo');
+
+  print('\n--- Delete (ID $id2) ---');
+  await dbHelper.deleteTodo(id2);
+  todos = await dbHelper.getTodos();
+  print('Todos after deletion:');
+  todos.forEach(print);
+
+  print('\n--- Bulk Insert ---');
+  final newTodos = [
+    Todo(title: 'Membeli susu', description: 'Di supermarket dekat rumah.'),
+    Todo(title: 'Membayar tagihan', description: 'Listrik dan internet.'),
+    Todo(title: 'Olahraga pagi', description: 'Lari 30 menit.', isCompleted: true),
+  ];
+  await dbHelper.bulkInsert(newTodos);
+  todos = await dbHelper.getTodos();
+  print('Todos after bulk insert:');
+  todos.forEach(print);
+
+  await dbHelper.close(); // Tutup database
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+1.  **`Todo` Model:**
+
+    - Kelas Dart yang merepresentasikan satu baris dalam tabel `todos`. Ini adalah POJO (Plain Old Java Object) atau POCO (Plain Old C\# Object) versi Dart.
+    - **`toMap()`:** Mengonversi objek `Todo` menjadi `Map<String, dynamic>`, format yang dibutuhkan `sqflite` untuk operasi `insert` dan `update`. Perhatikan konversi `bool` menjadi `int` (0 atau 1) karena SQLite tidak memiliki tipe data boolean natif.
+    - **`fromMap()`:** `factory constructor` yang mengonversi `Map<String, dynamic>` yang diterima dari `sqflite` menjadi objek `Todo`. Perhatikan konversi `int` kembali menjadi `bool`.
+
+2.  **`TodoDatabaseHelper` Class:**
+
+    - Mengimplementasikan pola **Singleton** (`static Database? _database;`) untuk memastikan hanya ada satu instance database di seluruh aplikasi, menghindari masalah konkurensi.
+    - **`_initDatabase()`:** Fungsi asinkron yang membuka atau membuat database.
+      - `getDatabasesPath()` dari `path_provider`: Mendapatkan jalur standar untuk menyimpan database di perangkat.
+      - `join()` dari `path`: Menggabungkan jalur direktori dengan nama file database.
+      - `openDatabase()`: Fungsi inti dari `sqflite`.
+        - `version`: Nomor versi database. Penting untuk migrasi.
+        - `onCreate`: Fungsi _callback_ yang dipanggil saat database baru pertama kali dibuat. Di sinilah Anda membuat tabel awal dengan pernyataan SQL `CREATE TABLE`.
+        - `onUpgrade`: Fungsi _callback_ yang dipanggil saat `openDatabase` dengan `version` yang lebih tinggi dari yang sudah ada. Di sinilah Anda menangani migrasi skema database (misalnya, menambahkan kolom baru, mengubah tabel).
+
+3.  **CRUD Operations:**
+
+    - **`insertTodo()`:** Menggunakan `db.insert()`. Mengembalikan ID dari baris yang baru dibuat. `ConflictAlgorithm.replace` berarti jika Anda mencoba memasukkan dengan ID yang sudah ada, baris lama akan diganti.
+    - **`getTodos()`:** Menggunakan `db.query()` untuk mengambil semua baris dari tabel. Mengembalikan `List<Map<String, dynamic>>`. Kemudian, di-_map_ ke `List<Todo>` menggunakan `Todo.fromMap()`.
+    - **`getTodoById()`:** Menggunakan `db.query()` dengan klausa `where` dan `whereArgs` untuk mengambil baris spesifik. Ini adalah praktik terbaik untuk mencegah SQL Injection dengan menggunakan _prepared statements_ (`?` sebagai _placeholder_).
+    - **`updateTodo()`:** Menggunakan `db.update()`. Membutuhkan `where` dan `whereArgs` untuk menentukan baris mana yang akan diperbarui.
+    - **`deleteTodo()`:** Menggunakan `db.delete()`. Membutuhkan `where` dan `whereArgs` untuk menentukan baris mana yang akan dihapus.
+
+4.  **`bulkInsert()` (Batch Operations):**
+
+    - Menggunakan `db.transaction()` dan `db.batch()` untuk mengelompokkan banyak operasi `insert` (atau `update`, `delete`) ke dalam satu transaksi atomik. Ini secara signifikan meningkatkan performa untuk operasi massal.
+
+5.  **`main()` Function:**
+
+    - Menunjukkan alur penggunaan `TodoDatabaseHelper`.
+    - `WidgetsFlutterBinding.ensureInitialized();` **penting** jika Anda menjalankan kode `sqflite` di luar konteks widget Flutter (`runApp()`). Ini memastikan _binding_ Flutter diinisialisasi sebelum plugin digunakan. (Di contoh CLI, ini dikomentari karena mungkin tidak sepenuhnya berfungsi tanpa _full Flutter environment_, tetapi konsepnya penting).
+    - `await TodoDatabaseHelper.deleteDatabaseFile();` digunakan di demo untuk memastikan awal yang bersih setiap kali kode dijalankan.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **Database Schema:** Diagram tabel `todos` dengan kolom `id`, `title`, `description`, `isCompleted` dan tipe datanya.
+- **SQL Query Mapping:** Menunjukkan bagaimana `Todo` object diubah menjadi `Map` untuk `INSERT/UPDATE` dan bagaimana `Map` dari `SELECT` diubah menjadi `Todo` object.
+- **Database Helper:** Representasi `TodoDatabaseHelper` sebagai jembatan antara aplikasi Flutter dan SQLite database.
+
+**Terminologi Esensial:**
+
+- **SQLite:** Mesin _database_ relasional lokal.
+- **`sqflite`:** Paket Flutter untuk berinteraksi dengan SQLite.
+- **CRUD:** Create, Read, Update, Delete (operasi dasar _database_).
+- **SQL (Structured Query Language):** Bahasa untuk mengelola dan memanipulasi _database_ relasional.
+- **Schema:** Struktur _database_, termasuk nama tabel, kolom, tipe data, dan hubungan.
+- **Migration:** Proses memperbarui _schema database_ dari satu versi ke versi berikutnya tanpa kehilangan data yang ada.
+- **`openDatabase()`:** Fungsi untuk membuka atau membuat file _database_.
+- **`onCreate`:** _Callback_ saat _database_ pertama kali dibuat.
+- **`onUpgrade`:** _Callback_ saat _database_ di-_upgrade_ ke versi baru.
+- **`insert()`, `query()`, `update()`, `delete()`:** Metode `sqflite` untuk operasi CRUD.
+- **`where`, `whereArgs`:** Parameter untuk memfilter hasil query dan mencegah SQL Injection.
+- **Batch:** Sekumpulan operasi _database_ yang dieksekusi sebagai satu transaksi.
+- **Transaction:** Urutan operasi _database_ yang diperlakukan sebagai satu unit kerja logis dan atomik.
+
+**Sumber Referensi Lengkap:**
+
+- [sqflite package (pub.dev)](https://pub.dev/packages/sqflite) - Dokumentasi resmi paket.
+- [Flutter Cookbook: Persist data with SQLite](https://www.google.com/search?q=https://docs.flutter.dev/data-and-backend/local-data/sqlite) - Panduan resmi Flutter.
+- [SQLite Tutorial](https://www.sqlitetutorial.net/) - Sumber daya umum untuk belajar SQL dasar SQLite.
+
+**Tips dan Praktik Terbaik:**
+
+- **Model-View-Controller (MVC) / Repository Pattern:** Untuk aplikasi yang lebih besar, pisahkan logika _database_ dari logika UI. Gunakan _repository pattern_ di mana `TodoDatabaseHelper` akan menjadi bagian dari _repository_ yang berinteraksi dengan _database_.
+- **`PRIMARY KEY AUTOINCREMENT`:** Gunakan ini untuk kolom ID untuk secara otomatis menghasilkan ID unik untuk setiap baris baru.
+- **Hindari SQL Injection:** Selalu gunakan `whereArgs` dengan `?` sebagai _placeholder_ dalam query `where`, bukan menyisipkan nilai langsung ke string SQL.
+- **Asynchronous Operations:** Ingatlah bahwa semua operasi _database_ adalah asinkron dan memerlukan `async`/`await`.
+- **Error Handling:** Bungkus operasi _database_ dengan blok `try-catch` untuk menangani _error_ (misalnya, _database_ tidak tersedia, _query_ tidak valid).
+- **Database Versioning & Migrations:** Rencanakan versi _database_ Anda dengan hati-hati. Setiap kali Anda mengubah skema, tingkatkan nomor versi dan implementasikan logika migrasi di `onUpgrade`.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** `DatabaseException(database is closed) `
+
+  - **Penyebab:** Anda mencoba melakukan operasi pada _database_ setelah Anda memanggil `db.close()`.
+  - **Solusi:** Pastikan Anda hanya memanggil `db.close()` ketika Anda yakin tidak ada lagi operasi _database_ yang akan dilakukan (misalnya, saat aplikasi dimatikan), atau pastikan untuk membuka kembali database jika diperlukan. Dalam sebagian besar aplikasi, database tetap terbuka selama aplikasi berjalan.
+
+- **Kesalahan:** Tabel tidak ditemukan atau kolom tidak ada.
+
+  - **Penyebab:** Kesalahan penulisan nama tabel/kolom dalam SQL, atau `onCreate` belum dipicu karena database sudah ada dengan versi lama.
+  - **Solusi:** Periksa kembali nama tabel dan kolom. Pastikan Anda telah meningkatkan `version` database di `openDatabase` jika Anda mengubah skema dan menjalankan kembali aplikasi (atau hapus file database untuk memaksa `onCreate`).
+
+- **Kesalahan:** Data tidak konsisten setelah pembaruan skema.
+
+  - **Penyebab:** Logika di `onUpgrade` tidak menangani migrasi dari versi lama ke versi baru dengan benar.
+  - **Solusi:** Uji migrasi secara menyeluruh. Pastikan setiap `onUpgrade` dapat mengelola transisi dari versi `oldVersion` apa pun ke `newVersion`. Seringkali, Anda akan memiliki blok `if (oldVersion < X)` untuk menjalankan skrip migrasi yang diperlukan.
+
+- **Kesalahan:** Performa lambat saat menyisipkan/memperbarui banyak data.
+
+  - **Penyebab:** Melakukan banyak operasi `insert`/`update` satu per satu tanpa menggunakan `Batch`.
+  - **Solusi:** Gunakan `db.transaction()` dan `batch` untuk operasi massal.
+
+---
+
+#### 5.4.3 Hive/Isar (NoSQL Local Database)
+
+Sub-bagian ini akan memperkenalkan dua solusi _NoSQL local database_ yang populer dan sangat berkinerja tinggi di ekosistem Flutter: Hive dan Isar. Keduanya menawarkan alternatif yang menarik untuk SQLite, terutama untuk data yang tidak memerlukan struktur relasional yang ketat.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami perbedaan mendasar antara _relational_ dan _NoSQL database_. Mereka akan mempelajari konsep "boxes" di Hive dan "collections" di Isar, serta cara menyimpan, membaca, memperbarui, dan menghapus objek Dart secara langsung tanpa perlu konversi `toMap()`/`fromMap()` manual seperti di `sqflite`. Ini akan memberikan gambaran lengkap tentang opsi persistensi data lokal di Flutter, memungkinkan mereka memilih alat yang paling tepat untuk skenario yang berbeda.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **NoSQL Database:** Menyimpan data dalam format yang tidak terstruktur atau semi-terstruktur, tidak memerlukan skema yang tetap, dan tidak menggunakan tabel, baris, dan kolom tradisional. Umumnya, data disimpan sebagai dokumen (JSON-like), pasangan kunci-nilai, atau grafik.
+
+  - **Filosofi:** Fleksibilitas, skalabilitas horizontal (terutama di server-side NoSQL), dan kecepatan untuk data yang tidak kaku secara skema atau saat relasi data tidak menjadi fokus utama.
+
+- **Hive:** _NoSQL database_ yang sangat cepat dan ringan, cocok untuk aplikasi seluler. Ini menyimpan data dalam "boxes" (mirip tabel di SQL atau koleksi di MongoDB) dan mendukung penyimpanan objek Dart langsung menggunakan _TypeAdapters_.
+
+  - **Filosofi:** Kemudahan penggunaan, performa tinggi, dan jejak memori yang kecil. Ideal untuk _caching_, data pengaturan, dan data yang tidak terlalu kompleks.
+
+- **Isar:** _NoSQL database_ yang lebih baru dan berkinerja lebih tinggi, merupakan generasi penerus dari Hive. Isar menawarkan _query_ yang kuat, dukungan transaksi, dan kemampuan _listening_ terhadap perubahan data (`Stream`).
+
+  - **Filosofi:** Kombinasi performa ekstrim, _query_ yang kaya fitur, dan API yang mudah digunakan, menjadikannya pilihan solid untuk sebagian besar kebutuhan _local database_ di Flutter, terutama untuk data yang lebih besar dan _query_ yang lebih canggih daripada yang bisa ditawarkan Hive.
+
+- **TypeAdapters (Hive) / @Collection & @Id (Isar):** Mekanisme untuk menginstruksikan _database_ cara menserialisasi dan deserialisasi objek Dart kustom.
+
+  - **Filosofi:** Menghilangkan _boilerplate_ konversi data, memungkinkan pengembang untuk bekerja langsung dengan objek Dart native.
+
+- **Reactive Programming with Databases:** Isar secara khusus menawarkan _stream_ dari _query_ yang memungkinkan UI Anda bereaksi secara otomatis terhadap perubahan data di _database_.
+
+  - **Filosofi:** Mempermudah membangun UI yang dinamis dan _real-time_ yang selalu sinkron dengan data yang mendasarinya.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **Perbandingan Database:** Diagram Venn atau tabel perbandingan: `SharedPreferences` (Simple KV) vs `sqflite` (Relational SQL) vs `Hive/Isar` (NoSQL Object/Document).
+- **Hive Architecture:** Aplikasi -\> Hive -\> Boxes -\> Data (Objects).
+- **Isar Architecture:** Aplikasi -\> Isar Instance -\> Collections -\> Objects -\> Query Engine.
+- Flow **`@HiveType`/`@IsarCollection`** -\> `build_runner` -\> Generated Code -\> Database.
+
+**Hubungan dengan Modul Lain:**
+Melengkapi `5.2 HTTP Requests & REST APIs` dan `5.3 Advanced API Integration` untuk _caching_ data API secara efisien. Dapat berinteraksi dengan `Fase 6: State Management` karena perubahan pada _local database_ dapat memicu pembaruan _state_ UI, terutama dengan fitur _stream_ di Isar.
+
+---
+
+**Sintaks Dasar / Contoh Implementasi Inti (Hive dan Isar):**
+
+Untuk mendemonstrasikan kedua database, kita akan menggunakan contoh data `Task` sederhana.
+
+### Hive (Contoh Kode)
+
+Tambahkan dependensi di `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  hive: ^2.2.3 # Periksa versi terbaru di pub.dev
+  hive_flutter: ^1.1.0 # Untuk integrasi Flutter
+  path_provider: ^2.1.3
+
+dev_dependencies:
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.6
+```
+
+Kemudian jalankan `flutter pub get`. Setelah itu, Anda perlu menjalankan `flutter pub run build_runner build` untuk menghasilkan _TypeAdapter_.
+
+```dart
+import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // Untuk initFlutter
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+
+// --- 1. Model Data dengan @HiveType ---
+// Untuk Hive, kita perlu mendeklarasikan TypeAdapter dan menjalankan build_runner
+part 'hive_isar_demo.g.dart'; // File yang akan di-generate oleh build_runner
+
+@HiveType(typeId: 0) // typeId harus unik untuk setiap model Hive
+class Task extends HiveObject {
+  @HiveField(0)
+  String title;
+
+  @HiveField(1)
+  String description;
+
+  @HiveField(2)
+  bool isCompleted;
+
+  Task({
+    required this.title,
+    required this.description,
+    this.isCompleted = false,
+  });
+
+  @override
+  String toString() {
+    return 'Task(key: $key, title: $title, description: $description, isCompleted: $isCompleted)';
+  }
+}
+
+// --- 2. Database Helper untuk Hive ---
+class HiveDatabaseHelper {
+  static const String taskBoxName = 'tasks'; // Nama box
+
+  // Inisialisasi Hive
+  static Future<void> init() async {
+    // Di Flutter, gunakan Hive.initFlutter()
+    await Hive.initFlutter();
+
+    // Pastikan path untuk desktop/CLI
+    if (kIsWeb) {
+      // Tidak mendukung path di web
+    } else if (defaultTargetPlatform == TargetPlatform.android ||
+               defaultTargetPlatform == TargetPlatform.iOS ||
+               defaultTargetPlatform == TargetPlatform.macOS ||
+               defaultTargetPlatform == TargetPlatform.windows ||
+               defaultTargetPlatform == TargetPlatform.linux) {
+      final appDocumentDir = await getApplicationDocumentsDirectory();
+      Hive.init(p.join(appDocumentDir.path, 'hive_data'));
+    } else {
+      // Fallback untuk platform lain atau CLI jika diperlukan
+      Hive.init(''); // Menggunakan direktori saat ini jika tidak ada path tertentu
+    }
+
+    Hive.registerAdapter(TaskAdapter()); // Daftarkan TypeAdapter yang di-generate
+    print('Hive initialized and TaskAdapter registered.');
+  }
+
+  // Buka Box
+  static Future<Box<Task>> openTaskBox() async {
+    return await Hive.openBox<Task>(taskBoxName);
+  }
+
+  // --- Operasi CRUD Hive ---
+
+  // Create/Update: Menambahkan atau memperbarui Task
+  static Future<void> addTask(Task task) async {
+    final box = await openTaskBox();
+    await box.add(task); // Menambahkan item baru, Hive akan memberikan key otomatis
+    // Atau: await box.put(task.key, task); untuk update/insert dengan key spesifik
+    print('Added task: $task');
+  }
+
+  // Read: Mendapatkan semua Task
+  static Future<List<Task>> getTasks() async {
+    final box = await openTaskBox();
+    return box.values.toList();
+  }
+
+  // Read: Mendapatkan Task berdasarkan key
+  static Future<Task?> getTaskByKey(dynamic key) async {
+    final box = await openTaskBox();
+    return box.get(key);
+  }
+
+  // Update: Memperbarui Task yang sudah ada
+  static Future<void> updateTask(Task task) async {
+    final box = await openTaskBox();
+    if (task.key != null) {
+      await box.put(task.key, task); // HiveObject memiliki properti key
+      print('Updated task with key ${task.key}: $task');
+    } else {
+      print('Error: Task has no key, cannot update. Use addTask() for new tasks.');
+    }
+  }
+
+  // Delete: Menghapus Task berdasarkan key
+  static Future<void> deleteTask(dynamic key) async {
+    final box = await openTaskBox();
+    await box.delete(key);
+    print('Deleted task with key: $key');
+  }
+
+  // Clear Box
+  static Future<void> clearAllTasks() async {
+    final box = await openTaskBox();
+    await box.clear();
+    print('All tasks cleared from Hive.');
+  }
+
+  // Close Box (optional, Hive mengelola sendiri sebagian besar)
+  static Future<void> closeHive() async {
+    await Hive.close();
+    print('Hive boxes closed.');
+  }
+}
+```
+
+### Isar (Contoh Kode)
+
+Tambahkan dependensi di `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  isar: ^3.1.0+1 # Periksa versi terbaru di pub.dev
+  isar_flutter_libs: ^3.1.0+1 # Untuk library platform spesifik
+  path_provider: ^2.1.3
+
+dev_dependencies:
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.6
+```
+
+Kemudian jalankan `flutter pub get`. Setelah itu, Anda perlu menjalankan `flutter pub run build_runner build` untuk menghasilkan _Isar schema files_.
+
+```dart
+import 'package:flutter/foundation.dart';
+import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+
+// --- 1. Model Data dengan @Collection ---
+// Untuk Isar, kita perlu mendeklarasikan @collection dan @Id, lalu menjalankan build_runner
+part 'hive_isar_demo.g.dart'; // File yang akan di-generate oleh build_runner
+
+@collection // Mendeklarasikan ini sebagai Isar collection
+class TaskIsar {
+  Id id = Isar.autoIncrement; // ID unik, Isar akan otomatis mengisi
+
+  @Index(type: IndexType.hash) // Contoh: Index untuk query yang lebih cepat berdasarkan title
+  String title;
+
+  String description;
+  bool isCompleted;
+
+  TaskIsar({
+    required this.title,
+    required this.description,
+    this.isCompleted = false,
+  });
+
+  @override
+  String toString() {
+    return 'TaskIsar(id: $id, title: $title, description: $description, isCompleted: $isCompleted)';
+  }
+}
+
+// --- 2. Database Helper untuk Isar ---
+class IsarDatabaseHelper {
+  static late Isar _isar;
+
+  // Inisialisasi Isar
+  static Future<void> init() async {
+    if (kIsWeb) {
+      // Isar tidak mendukung persistence di web secara default
+      _isar = await Isar.open(
+        [TaskIsarSchema],
+        directory: '', // Di web, path kosong
+        inspector: true, // Untuk menggunakan Isar Inspector
+      );
+    } else {
+      final dir = await getApplicationDocumentsDirectory();
+      _isar = await Isar.open(
+        [TaskIsarSchema],
+        directory: p.join(dir.path, 'isar_data'),
+        inspector: true, // Aktifkan Isar Inspector untuk debugging
+      );
+    }
+    print('Isar initialized.');
+  }
+
+  // Getter Isar instance
+  static Isar get isar => _isar;
+
+  // --- Operasi CRUD Isar ---
+
+  // Create: Menambahkan Task baru
+  static Future<int> addTask(TaskIsar task) async {
+    int id = -1;
+    await _isar.writeTxn(() async { // Semua operasi write harus dalam transaksi
+      id = await _isar.taskIsars.put(task); // Menyimpan objek TaskIsar
+    });
+    print('Added task: $task with ID: $id');
+    return id;
+  }
+
+  // Read: Mendapatkan semua Task
+  static Future<List<TaskIsar>> getTasks() async {
+    return await _isar.taskIsars.where().findAll(); // Query semua objek
+  }
+
+  // Read: Mendapatkan Task berdasarkan ID
+  static Future<TaskIsar?> getTaskById(int id) async {
+    return await _isar.taskIsars.get(id);
+  }
+
+  // Update: Memperbarui Task yang sudah ada
+  static Future<bool> updateTask(TaskIsar task) async {
+    bool success = false;
+    await _isar.writeTxn(() async {
+      success = await _isar.taskIsars.put(task); // put akan update jika ID ada
+    });
+    print('Updated task with ID ${task.id}: $task');
+    return success;
+  }
+
+  // Delete: Menghapus Task berdasarkan ID
+  static Future<bool> deleteTask(int id) async {
+    bool deleted = false;
+    await _isar.writeTxn(() async {
+      deleted = await _isar.taskIsars.delete(id);
+    });
+    print('Deleted task with ID: $id. Success: $deleted');
+    return deleted;
+  }
+
+  // Delete All (Clear Collection)
+  static Future<int> clearAllTasks() async {
+    int count = 0;
+    await _isar.writeTxn(() async {
+      count = await _isar.taskIsars.clear();
+    });
+    print('Cleared $count tasks from Isar.');
+    return count;
+  }
+
+  // --- Query Lanjutan (Contoh) ---
+  static Future<List<TaskIsar>> getCompletedTasks() async {
+    return await _isar.taskIsars.filter().isCompletedEqualTo(true).findAll();
+  }
+
+  static Future<List<TaskIsar>> searchTasksByTitle(String query) async {
+    return await _isar.taskIsars.filter().titleContains(query, caseSensitive: false).findAll();
+  }
+
+  // Close Isar instance
+  static Future<void> closeIsar() async {
+    await _isar.close();
+    print('Isar instance closed.');
+  }
+
+  // Clean Isar files (for testing or reset)
+  static Future<void> cleanIsar() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final isarDir = p.join(dir.path, 'isar_data');
+    if (await Isar.instanceNames.contains('isar_data')) { // Check if the instance exists
+      await Isar.open([TaskIsarSchema], directory: isarDir).then((value) => value.close(deleteFromDisk: true));
+    }
+    print('Isar database files cleaned.');
+  }
+}
+```
+
+**Main Demo Function (Untuk menjalankan kedua contoh)**
+
+```dart
+// Untuk running di main() tanpa Flutter UI, perlu import ini
+// import 'package:flutter/widgets.dart';
+
+void main() async {
+  // PENTING: Jika menjalankan di Dart CLI, ini diperlukan
+  // Jika di proyek Flutter, ini otomatis oleh runApp()
+  // WidgetsFlutterBinding.ensureInitialized(); // uncomment di proyek Flutter
+
+  print('--- Hive Demo ---');
+  await HiveDatabaseHelper.init();
+  await HiveDatabaseHelper.clearAllTasks(); // Bersihkan data lama
+
+  final hiveTask1 = Task(title: 'Belajar Hive', description: 'Pahami cara kerja TypeAdapter.', isCompleted: false);
+  await HiveDatabaseHelper.addTask(hiveTask1);
+
+  final hiveTask2 = Task(title: 'Buat Demo Hive', description: 'Implementasikan CRUD.', isCompleted: true);
+  await HiveDatabaseHelper.addTask(hiveTask2);
+
+  List<Task> hiveTasks = await HiveDatabaseHelper.getTasks();
+  print('All Hive Tasks:');
+  hiveTasks.forEach(print);
+
+  if (hiveTasks.isNotEmpty) {
+    hiveTasks[0].isCompleted = true;
+    await HiveDatabaseHelper.updateTask(hiveTasks[0]);
+    print('Updated Hive Task 0: ${await HiveDatabaseHelper.getTaskByKey(hiveTasks[0].key)}');
+
+    await HiveDatabaseHelper.deleteTask(hiveTasks[1].key);
+    print('Hive Tasks after delete: ${await HiveDatabaseHelper.getTasks()}');
+  }
+  await HiveDatabaseHelper.closeHive(); // Tutup box setelah selesai
 
 
+  print('\n--- Isar Demo ---');
+  await IsarDatabaseHelper.cleanIsar(); // Bersihkan data lama
+  await IsarDatabaseHelper.init();
+
+  final isarTask1 = TaskIsar(title: 'Pelajari Isar', description: 'Pahami Collection dan Query.', isCompleted: false);
+  await IsarDatabaseHelper.addTask(isarTask1);
+
+  final isarTask2 = TaskIsar(title: 'Buat Aplikasi Isar', description: 'Dengan Reactive Query.', isCompleted: false);
+  await IsarDatabaseHelper.addTask(isarTask2);
+
+  final isarTask3 = TaskIsar(title: 'Integrasi Isar dengan Provider', description: 'Untuk State Management.', isCompleted: true);
+  await IsarDatabaseHelper.addTask(isarTask3);
 
 
+  List<TaskIsar> isarTasks = await IsarDatabaseHelper.getTasks();
+  print('All Isar Tasks:');
+  isarTasks.forEach(print);
 
+  if (isarTasks.isNotEmpty) {
+    // Update Isar Task (gunakan ID dari TaskIsar yang sudah ada)
+    isarTasks[0].isCompleted = true;
+    await IsarDatabaseHelper.updateTask(isarTasks[0]);
+    print('Updated Isar Task 0: ${await IsarDatabaseHelper.getTaskById(isarTasks[0].id)}');
 
+    print('Completed Isar Tasks: ${await IsarDatabaseHelper.getCompletedTasks()}');
+    print('Search "Aplikasi": ${await IsarDatabaseHelper.searchTasksByTitle('Aplikasi')}');
 
+    await IsarDatabaseHelper.deleteTask(isarTasks[1].id);
+    print('Isar Tasks after delete: ${await IsarDatabaseHelper.getTasks()}');
+  }
 
+  await IsarDatabaseHelper.closeIsar(); // Tutup instance Isar
+}
+```
 
+**Penjelasan Konteks Kode:**
 
+### Hive
 
+1.  **Dependencies:** `hive`, `hive_flutter`, `path_provider`, `hive_generator`, `build_runner`.
+2.  **Model (`Task`)**:
+    - Meng-extend `HiveObject` (opsional, tetapi memudahkan update/delete).
+    - Anotasi `@HiveType(typeId: 0)`: Memberi tahu Hive bahwa kelas ini adalah tipe yang dapat disimpan. `typeId` harus unik untuk setiap model.
+    - Anotasi `@HiveField(0)`: Menandai properti sebagai field yang akan disimpan di Hive, dengan nomor field unik.
+    - **PENTING:** Setelah membuat atau mengubah model dengan `@HiveType` dan `@HiveField`, Anda harus menjalankan `flutter pub run build_runner build` di terminal untuk menghasilkan file `hive_isar_demo.g.dart` yang berisi `TypeAdapter` untuk `Task`.
+3.  **`HiveDatabaseHelper`:**
+    - **`init()`:** Menginisialisasi Hive (gunakan `Hive.initFlutter()` untuk Flutter), mendaftarkan `TaskAdapter()` (yang di-_generate_), dan secara opsional mengatur path untuk penyimpanan data.
+    - **`openTaskBox()`:** Membuka "box" bernama `tasks`. Sebuah box adalah unit penyimpanan utama di Hive, mirip dengan tabel di SQL atau koleksi di NoSQL.
+    - **CRUD:**
+      - `box.add(task)`: Untuk menambahkan objek baru, Hive akan memberikan kunci otomatis (integritas melalui `HiveObject.key`).
+      - `box.put(key, task)`: Untuk menyimpan objek dengan kunci spesifik (insert atau update).
+      - `box.get(key)`: Mengambil objek berdasarkan kuncinya.
+      - `box.values.toList()`: Mengambil semua objek dalam box.
+      - `box.delete(key)`: Menghapus objek berdasarkan kuncinya.
+      - `box.clear()`: Menghapus semua objek dalam box.
+    - `HiveObject`: Jika model Anda meng-extend `HiveObject`, Anda mendapatkan properti `key` dan metode `save()` serta `delete()` langsung pada objek itu sendiri, menyederhanakan operasi update/delete.
 
+### Isar
 
+1.  **Dependencies:** `isar`, `isar_flutter_libs`, `path_provider`, `isar_generator`, `build_runner`.
+2.  **Model (`TaskIsar`)**:
+    - Anotasi `@collection`: Memberi tahu Isar bahwa kelas ini adalah _collection_ yang dapat disimpan.
+    - `Id id = Isar.autoIncrement;`: Mendeklarasikan properti ID yang akan diatur secara otomatis oleh Isar.
+    - Anotasi `@Index(type: IndexType.hash)`: Menginstruksikan Isar untuk membuat indeks pada field `title`, yang akan mempercepat _query_ berdasarkan `title`.
+    - **PENTING:** Setelah membuat atau mengubah model dengan `@collection`, Anda harus menjalankan `flutter pub run build_runner build` di terminal untuk menghasilkan file `hive_isar_demo.g.dart` yang berisi skema Isar.
+3.  **`IsarDatabaseHelper`:**
+    - **`init()`:** Menginisialisasi Isar dengan membuka _database_. Anda perlu menyediakan daftar `Schema` (misalnya `[TaskIsarSchema]`) yang di-_generate_ oleh `isar_generator`. `inspector: true` mengaktifkan Isar Inspector untuk _debugging_ visual.
+    - **Transaksi Penulisan (`_isar.writeTxn(() async { ... });`)**: Semua operasi yang mengubah data (insert, update, delete, clear) **harus** dilakukan di dalam transaksi penulisan. Ini memastikan integritas data dan performa.
+    - **CRUD:**
+      - `_isar.taskIsars.put(task)`: Menyimpan objek `TaskIsar`. Jika objek memiliki `id` yang sudah ada, itu akan diperbarui; jika tidak, itu akan disisipkan. Mengembalikan ID dari objek yang disimpan.
+      - `_isar.taskIsars.where().findAll()`: Mengambil semua objek dalam _collection_.
+      - `_isar.taskIsars.get(id)`: Mengambil objek berdasarkan ID-nya.
+      - `_isar.taskIsars.delete(id)`: Menghapus objek berdasarkan ID-nya.
+      - `_isar.taskIsars.clear()`: Menghapus semua objek dalam _collection_.
+    - **Query Lanjutan:** Isar menawarkan API _query_ yang sangat kuat dan fasih (fluent API), seperti `filter().isCompletedEqualTo(true)` atau `filter().titleContains(query)`.
+    - **`closeIsar()`:** Menutup instance Isar.
+    - **`cleanIsar()`:** Metode _utility_ untuk menghapus file database Isar dari disk (berguna untuk _testing_).
 
+**Visualisasi Diagram Alur/Struktur:**
 
+- **Hive Model Binding:** Kelas Dart `Task` -\> `@HiveType`, `@HiveField` -\> `hive_generator` -\> `TaskAdapter` -\> Hive Box.
+- **Isar Model Binding:** Kelas Dart `TaskIsar` -\> `@collection`, `@Id`, `@Index` -\> `isar_generator` -\> `TaskIsarSchema` -\> Isar Collection.
+- **Write Transactions:** Diagram kotak yang menunjukkan operasi tulis (put, delete, clear) harus berada di dalam blok transaksi `writeTxn`.
+- **Query Flow:** `Isar.instance.collection.filter().someCondition().findAll()`
 
+**Terminologi Esensial:**
 
+- **NoSQL:** _Database_ non-relasional, tidak memerlukan skema tetap.
+- **Hive:** _NoSQL key-value database_ yang ringan dan cepat untuk Flutter.
+- **Box (Hive):** Unit penyimpanan data di Hive, mirip dengan tabel.
+- **`TypeAdapter` (Hive):** Kelas yang dihasilkan untuk mengonversi objek Dart ke format yang dapat disimpan Hive dan sebaliknya.
+- **Isar:** _NoSQL database_ yang sangat cepat dengan _querying_ yang kuat untuk Flutter, pengganti yang disarankan untuk Hive di banyak kasus.
+- **Collection (Isar):** Unit penyimpanan data di Isar, mirip dengan tabel.
+- **`@collection` (Isar):** Anotasi untuk menandai kelas model sebagai Isar _collection_.
+- **`Id` (Isar):** Properti ID unik untuk objek di Isar.
+- **`@Index` (Isar):** Anotasi untuk membuat indeks pada field, mempercepat _query_.
+- **`writeTxn` (Isar):** Transaksi penulisan yang wajib untuk semua operasi modifikasi data.
+- **`filter()` (Isar):** Metode untuk memulai pembangunan _query_ yang kompleks.
+- **`build_runner`:** Alat Dart yang menjalankan _code generators_ (seperti `hive_generator` dan `isar_generator`).
 
+**Sumber Referensi Lengkap:**
 
+- [Hive (pub.dev)](https://www.google.com/search?q=https://pub.dev/packages/hive)
+- [tautan mencurigakan telah dihapus]
+- [Isar (pub.dev)](https://www.google.com/search?q=https://pub.dev/packages/isar)
+- [Isar Documentation](https://www.google.com/search?q=https://isar.dev/docs/introduction.html)
 
+**Tips dan Praktik Terbaik:**
 
+- **Pilih Alat yang Tepat:**
 
+  - **`shared_preferences`:** Untuk pengaturan aplikasi sederhana, _flag_, atau data yang sangat kecil.
+  - **`Hive`:** Untuk _caching_ cepat, data yang tidak relasional, atau aplikasi yang sangat ringan yang membutuhkan performa tinggi tanpa _overhead_ SQL.
+  - **`Isar`:** Untuk sebagian besar kasus penggunaan _local database_ di aplikasi Flutter modern. Menawarkan performa ekstrem, _query_ yang kuat, dan API yang reaktif. Lebih disarankan daripada `sqflite` jika Anda tidak membutuhkan relasi kompleks atau migrasi skema SQL.
+  - **`sqflite`:** Jika Anda secara khusus membutuhkan _database_ relasional dengan _full SQL power_ (join, foreign keys, complex transactions) dan terbiasa dengan SQL.
 
+- **Jalankan Code Generator:** Selalu ingat untuk menjalankan `flutter pub run build_runner build` setiap kali Anda membuat atau mengubah model data untuk Hive atau Isar. Gunakan `flutter pub run build_runner watch` untuk otomatisasi selama pengembangan.
 
+- **Error Handling:** Meskipun Hive dan Isar lebih _robust_, tetap gunakan `try-catch` di sekitar operasi _database_ Anda untuk menangani potensi _error_ seperti masalah I/O atau _database_ yang tidak tersedia.
 
+- **Isar Inspector:** Manfaatkan Isar Inspector (tersedia saat `inspector: true` di `Isar.open()`) untuk memvisualisasikan data Anda, menjalankan _query_, dan _debugging_.
 
+- **Transaksi Isar:** Jangan pernah lupa untuk membungkus operasi penulisan Isar di dalam `_isar.writeTxn(() async { ... });`. Ini krusial untuk integritas data.
 
+**Potensi Kesalahan Umum & Solusi:**
 
+- **Kesalahan:** `MissingPluginException` atau `No generator found for collection.`
 
+  - **Penyebab:** Lupa menjalankan `flutter pub run build_runner build` setelah membuat atau memodifikasi model Hive (`@HiveType`) atau Isar (`@collection`).
+  - **Solusi:** Jalankan perintah `build_runner` dan pastikan file `.g.dart` ter-_generate_ dan di-_import_ (`part 'your_file.g.dart';`).
 
+- **Kesalahan (Hive):** `HiveError: Hive not initialized.`
 
+  - **Penyebab:** Anda mencoba menggunakan Hive (misalnya, membuka box) sebelum memanggil `Hive.initFlutter()` atau `Hive.init()`.
+  - **Solusi:** Pastikan `Hive.initFlutter()` dipanggil di `main()` sebelum `runApp()`, atau di `init` method dari helper class Anda.
 
+- **Kesalahan (Isar):** `IsarError: Database has already been opened.`
 
+  - **Penyebab:** Anda mencoba memanggil `Isar.open()` lebih dari sekali. Isar dirancang sebagai _singleton_.
+  - **Solusi:** Implementasikan pola _singleton_ atau pastikan `Isar.open()` hanya dipanggil sekali di seluruh siklus hidup aplikasi Anda. Periksa `Isar.instanceNames.isNotEmpty` sebelum membuka Isar lagi.
 
+- **Kesalahan (Isar):** `IsarError: All database operations must be performed inside a transaction.`
 
+  - **Penyebab:** Anda mencoba memanggil operasi penulisan Isar (misalnya `put`, `delete`, `clear`) di luar blok `_isar.writeTxn(() async { ... });`.
+  - **Solusi:** Pastikan semua operasi penulisan dibungkus dalam `_isar.writeTxn()`.
 
+---
 
+Dengan ini, kita telah menyelesaikan penjelasan mendalam yang menandai selesainya seluruh bagian **FASE 5: Asynchronous Programming & API Integration**.
 
+# Selamat!
 
+Anda sekarang memiliki pemahaman yang kuat tentang bagaimana menangani operasi asinkron, berinteraksi dengan API eksternal, dan menyimpan data secara lokal di Flutter. Ini adalah fondasi penting untuk membangun aplikasi yang kuat dan responsif.
 
+---
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Kita telah menyelesaikan FASE 5. Selanjutnya kita akan masuk pada **FASE 6: State Management**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

@@ -23,12 +23,9 @@ Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
     - [4.4 Other State Management Approaches (Overview)](#44-other-state-management-approaches-overview)
       - [4.4.1 GetX (Brief Mention)](#441-getx-brief-mention)
       - [4.4.2 Riverpod (Brief Mention)](#442-riverpod-brief-mention)
-- [FASE 4: State Management Fundamentals](#fase-4-state-management-fundamentals-1)
-  - [4. State Management Fundamentals](#4-state-management-fundamentals)
       - [4.4.3 MobX (Brief Mention)](#443-mobx-brief-mention)
     - [Ringkasan FASE 4: State Management Fundamentals](#ringkasan-fase-4-state-management-fundamentals)
-  - [Selamat!](#selamat)
-- [](#)
+- [Selamat!](#selamat)
 
 </details>
 
@@ -2485,38 +2482,6 @@ Pembelajar akan memahami bahwa Riverpod adalah alternatif modern untuk _Provider
 
 ---
 
-Baik, saya akan melanjutkan ke bagian berikutnya dari kurikulum, yaitu **4.4.3 MobX (Brief Mention)**.
-
-Berikut adalah daftar isi yang diperbarui untuk bagian ini:
-
----
-
-# FASE 4: State Management Fundamentals
-
-## 4\. State Management Fundamentals
-
-- [4.1 Understanding State in Flutter](https://www.google.com/search?q=%2341-understanding-state-in-flutter)
-  - [4.1.1 Local State (`setState`) vs. App State](https://www.google.com/search?q=%23411-local-state-setstate-vs-app-state)
-  - [4.1.2 Why State Management is Needed (Challenges)](https://www.google.com/search?q=%23412-why-state-management-is-needed-challenges)
-  - [4.1.3 InheritedWidget (Basic Concept)](https://www.google.com/search?q=%23413-inheritedwidget-basic-concept)
-- [4.2 Provider Package (Simple & Recommended)](https://www.google.com/search?q=%2342-provider-package-simple-recommended)
-  - [4.2.1 `Provider`, `ChangeNotifier`, `ChangeNotifierProvider`](https://www.google.com/search?q=%23421-provider-changenotifier-changenotifierprovider)
-  - [4.2.2 `Consumer` and `Selector`](https://www.google.com/search?q=%23422-consumer-and-selector)
-  - [4.2.3 MultiProvider](https://www.google.com/search?q=%23423-multiprovider)
-- [4.3 BLoC/Cubit (Introduction)](https://www.google.com/search?q=%2343-bloccubit-introduction)
-  - [4.3.1 Core Concepts of BLoC/Cubit](https://www.google.com/search?q=%23431-core-concepts-of-bloccubit)
-  - [4.3.2 Basic Implementation with `flutter_bloc`](https://www.google.com/search?q=%23432-basic-implementation-with-flutter_bloc)
-- [4.4 Other State Management Approaches (Overview)](https://www.google.com/search?q=%2344-other-state-management-approaches-overview)
-  - [4.4.1 GetX (Brief Mention)](https://www.google.com/search?q=%23441-getx-brief-mention)
-  - [4.4.2 Riverpod (Brief Mention)](https://www.google.com/search?q=%23442-riverpod-brief-mention)
-  - [4.4.3 MobX (Brief Mention)](https://www.google.com/search?q=%23443-mobX-brief-mention)
-
----
-
-Mari kita mulai dengan penjelasan mendalam untuk **4.4.3 MobX (Brief Mention)**.
-
----
-
 #### 4.4.3 MobX (Brief Mention)
 
 Sub-bagian ini akan memperkenalkan MobX, sebuah _state management library_ yang menggunakan konsep _observables_, _actions_, dan _reactions_ untuk mengelola _state_ secara reaktif dan otomatis.
@@ -2594,13 +2559,13 @@ Terakhir, Anda mendapatkan gambaran singkat tentang beberapa alternatif _state m
 
 ---
 
-## Selamat!
+# Selamat!
 
 Anda telah menyelesaikan Fase 4! Pemahaman yang kuat tentang _state management_ ini akan menjadi fondasi krusial untuk membangun aplikasi Flutter yang _scalable_, _maintainable_, dan berperforma tinggi.
 
-#
+---
 
-Kita telah menyelesaikan FASE 3. Selanjutnya kita akan masuk pada **FASE 5: Asynchronous Programming & API Integration**?
+Kita telah menyelesaikan FASE 4. Selanjutnya kita akan masuk pada **FASE 5: Asynchronous Programming & API Integration**?
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
