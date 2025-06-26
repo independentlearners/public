@@ -13,24 +13,41 @@ Berikut adalah struktur terperinci untuk **FASE 6: State Management**:
 
 ---
 
-- [FASE 6: State Management](#fase-6-state-management)
-      - [6.1 Pengenalan Konsep State Management](#61-pengenalan-konsep-state-management)
-      - [**Visualisasi Diagram Alur/Struktur:**](#visualisasi-diagram-alurstruktur)
-      - [6.2 Local State Management (`setState`)](#62-local-state-management-setstate)
-      - [6.2.1 Menggunakan `setState` pada `StatefulWidget`](#621-menggunakan-setstate-pada-statefulwidget)
-      - [6.2.2 Keterbatasan `setState` untuk Skala Besar](#622-keterbatasan-setstate-untuk-skala-besar)
-    - [6.3 Provider Package](#63-provider-package)
-      - [6.3.1 Dasar-dasar `Provider`, `Consumer`, `Selector`](#631-dasar-dasar-provider-consumer-selector)
-      - [6.3.2 Jenis-jenis Provider (`ChangeNotifierProvider`, `FutureProvider`, `StreamProvider`, dll.)](#632-jenis-jenis-provider-changenotifierprovider-futureprovider-streamprovider-dll)
-      - [6.3.3 MultiProvider dan Best Practices](#633-multiprovider-dan-best-practices)
-    - [6.4 Riverpod Package](#64-riverpod-package)
-      - [6.4.1 Pengenalan Konsep Riverpod (Providers, Consumers, Scoping)](#641-pengenalan-konsep-riverpod-providers-consumers-scoping)
-      - [6.4.2 StateNotifierProvider, FutureProvider, StreamProvider di Riverpod](#642-statenotifierprovider-futureprovider-streamprovider-di-riverpod)
-      - [6.4.3 Menggunakan `ConsumerWidget` dan `ConsumerStatefulWidget`](#643-menggunakan-consumerwidget-dan-consumerstatefulwidget)
-      - [6.4.4 Keunggulan Riverpod (Compile-time Safety, Testing)](#644-keunggulan-riverpod-compile-time-safety-testing)
-    - [6.5 BLoC (Business Logic Component) / Cubit](#65-bloc-business-logic-component--cubit)
-      - [6.5.1 Filosofi BLoC dan Cubit](#651-filosofi-bloc-dan-cubit)
-      - [6.5.2 Events, States, dan Streams](#652-events-states-dan-streams)
+- [6.1 Pengenalan Konsep State Management](#61-pengenalan-konsep-state-management)
+  - [Apa Itu State](#apa-itu-state)
+  - [Mengapa "State Management" Penting?](#mengapa-state-management-penting)
+  - [Jenis-jenis State](#jenis-jenis-state)
+  - [Tantangan dalam State Management](#tantangan-dalam-state-management)
+  - [Visualisasi Diagram Alur/Struktur](#visualisasi-diagram-alurstruktur)
+- [6.2 Local State Management (`setState`)](#62-local-state-management-setstate)
+  - [6.2.1 Menggunakan `setState` pada `StatefulWidget`](#621-menggunakan-setstate-pada-statefulwidget)
+  - [6.2.2 Keterbatasan `setState` untuk Skala Besar](#622-keterbatasan-setstate-untuk-skala-besar)
+- [6.3 Provider Package](#63-provider-package)
+  - [6.3.1 Dasar-dasar `Provider`, `Consumer`, `Selector`](#631-dasar-dasar-provider-consumer-selector)
+  - [6.3.2 Jenis-jenis Provider (`ChangeNotifierProvider`, `FutureProvider`, `StreamProvider`, dll.)](#632-jenis-jenis-provider-changenotifierprovider-futureprovider-streamprovider-dll)
+  - [6.3.3 MultiProvider dan Best Practices](#633-multiprovider-dan-best-practices)
+- [6.4 Riverpod Package](#64-riverpod-package)
+  - [6.4.1 Pengenalan Konsep Riverpod (Providers, Consumers, Scoping)](#641-pengenalan-konsep-riverpod-providers-consumers-scoping)
+  - [6.4.2 StateNotifierProvider, FutureProvider, StreamProvider di Riverpod](#642-statenotifierprovider-futureprovider-streamprovider-di-riverpod)
+  - [6.4.3 Menggunakan `ConsumerWidget` dan `ConsumerStatefulWidget`](#643-menggunakan-consumerwidget-dan-consumerstatefulwidget)
+  - [6.4.4 Keunggulan Riverpod (Compile-time Safety, Testing)](#644-keunggulan-riverpod-compile-time-safety-testing)
+- [6.5 BLoC (Business Logic Component) / Cubit](#65-bloc-business-logic-component--cubit)
+  - [6.5.1 Filosofi BLoC dan Cubit](#651-filosofi-bloc-dan-cubit)
+  - [6.5.2 Events, States, dan Streams](#652-events-states-dan-streams)
+  * [6.5.3 Menggunakan `BlocProvider`, `BlocBuilder`, `BlocListener`](#653-menggunakan-blocprovider-blocbuilder-bloclistener)
+  - [6.5.4 Testing BLoC/Cubit](#654-testing-bloccubit)
+
+* [6.6 GetX Framework (Overview)](#66-getx-framework-overview)
+  - [6.6.1 Konsep Dasar GetX (Reactive, Simple, Management)](#661-konsep-dasar-getx-reactive-simple-management)
+  - [6.6.2 GetX State Management (GetBuilder, Obx, GetX)](#662-getx-state-management-getbuilder-obx-getx)
+  - [6.6.3 Kontroversi dan Pertimbangan Penggunaan](#663-kontroversi-dan-pertimbangan-penggunaan)
+* [6.7 State Management Lainnya (Gambaran Singkat)](#67-state-management-overview)
+  - [6.7.1 InheritedWidget (Dasar)](#671-inheritedwidget-dasar)
+  - [6.7.2 GetIt / Injectable](#672-getit--injectable)
+  - [6.7.3 Redux](#673-redux)
+  - [6.7.4 MobX](#674-mobX)
+  - [6.7.5 Memilih Solusi yang Tepat](#675-memilih-solusi-yang-tepat)
+
 - [Selamat!](#selamat)
 
 </details>
@@ -163,7 +180,7 @@ class _MyCounterWidgetState extends State<MyCounterWidget> {
 **Sumber Referensi Lengkap:**
 
 - [Managing State (Flutter documentation)](https://docs.flutter.dev/data-and-backend/state-mgmt/options) - Titik awal resmi Flutter.
-- [Provider package (Flutter documentation)](https://www.google.com/search?q=https://docs.flutter.dev/data-and-backend/state-mgmt/options/provider) - Memperkenalkan konsep Provider sebagai solusi sederhana.
+- [Provider package (Flutter documentation)](https://docs.flutter.dev/data-and-backend/state-mgmt/options/provider) - Memperkenalkan konsep Provider sebagai solusi sederhana.
 - [Ephemeral State vs App State (Flutter documentation)](https://docs.flutter.dev/data-and-backend/state-mgmt/ephemeral-vs-app) - Perbedaan kunci antara dua jenis _state_.
 
 **Tips dan Praktik Terbaik:**
@@ -752,7 +769,7 @@ class SeparatedWidget extends StatelessWidget {
 **Sumber Referensi Lengkap:**
 
 - [Provider package (pub.dev)](https://pub.dev/packages/provider) - Dokumentasi resmi paket.
-- [Flutter documentation: Simple app state management (using Provider)](https://www.google.com/search?q=https://docs.flutter.dev/data-and-backend/state-mgmt/options/provider) - Panduan resmi Flutter.
+- [Flutter documentation: Simple app state management (using Provider)](https://docs.flutter.dev/data-and-backend/state-mgmt/options/provider) - Panduan resmi Flutter.
 
 **Tips dan Praktik Terbaik:**
 
@@ -1108,7 +1125,7 @@ class ProviderTypesScreen extends StatelessWidget {
 
 **Sumber Referensi Lengkap:**
 
-- [Flutter documentation: Async state management with Provider](https://www.google.com/search?q=https://docs.flutter.dev/data-and-backend/state-mgmt/options/provider%23async-state-management) - Panduan resmi tentang `FutureProvider` dan `StreamProvider`.
+- [Flutter documentation: Async state management with Provider](https://docs.flutter.dev/data-and-backend/state-mgmt/options/provider%23async-state-management) - Panduan resmi tentang `FutureProvider` dan `StreamProvider`.
 - [Provider package (pub.dev)](https://pub.dev/packages/provider) - Dokumentasi lengkap untuk semua jenis `Provider`.
 
 **Tips dan Praktik Terbaik:**
@@ -2235,7 +2252,7 @@ void main() {
 **Sumber Referensi Lengkap:**
 
 - [Riverpod Official Documentation](https://riverpod.dev/) - Dokumentasi yang sangat baik dan komprehensif.
-- [Why Riverpod? (Riverpod documentation)](https://www.google.com/search?q=https://riverpod.dev/docs/concepts/why_riverpod) - Penjelasan mengapa Riverpod dibuat dan keunggulannya.
+- [Why Riverpod? (Riverpod documentation)](https://riverpod.dev/docs/concepts/why_riverpod) - Penjelasan mengapa Riverpod dibuat dan keunggulannya.
 - [Testing Riverpod (Riverpod documentation)](https://riverpod.dev/docs/cookbooks/testing) - Panduan mendalam tentang pengujian dengan Riverpod.
 
 **Tips dan Praktik Terbaik:**
@@ -2548,8 +2565,8 @@ class CounterCubit extends Cubit<CounterState> {
 **Sumber Referensi Lengkap:**
 
 - [BLoC Library Official Documentation](https://bloclibrary.dev/) - Dokumentasi resmi yang sangat lengkap dan direkomendasikan.
-- [Why BLoC? (BLoC Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/whybloc) - Penjelasan mendalam tentang filosofi BLoC.
-- [Cubit Documentation (BLoC Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/cubit) - Panduan spesifik tentang Cubit.
+- [Why BLoC? (BLoC Library)](https://bloclibrary.dev/%23/whybloc) - Penjelasan mendalam tentang filosofi BLoC.
+- [Cubit Documentation (BLoC Library)](https://bloclibrary.dev/%23/cubit) - Panduan spesifik tentang Cubit.
 
 **Tips dan Praktik Terbaik:**
 
@@ -3035,9 +3052,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
 **Sumber Referensi Lengkap:**
 
-- [Events & States in BLoC (Official Docs)](https://www.google.com/search?q=https://bloclibrary.dev/%23/eventsandstates) - Penjelasan mendalam tentang bagaimana _event_ dan _state_ bekerja di BLoC.
+- [Events & States in BLoC (Official Docs)](https://bloclibrary.dev/%23/eventsandstates) - Penjelasan mendalam tentang bagaimana _event_ dan _state_ bekerja di BLoC.
 - [Streams in Dart (Official Docs)](https://dart.dev/tutorials/language/streams) - Dasar-dasar Stream dalam bahasa Dart.
-- [BlocObserver (Official Docs)](https://www.google.com/search?q=https://bloclibrary.dev/%23/blocobserver) - Cara menggunakan `BlocObserver` untuk _logging_.
+- [BlocObserver (Official Docs)](https://bloclibrary.dev/%23/blocobserver) - Cara menggunakan `BlocObserver` untuk _logging_.
 
 **Tips dan Praktik Terbaik:**
 
@@ -3065,11 +3082,1907 @@ class _AuthScreenState extends State<AuthScreen> {
 
 ---
 
-# Selamat!
+#### 6.5.3 Menggunakan `BlocProvider`, `BlocBuilder`, `BlocListener`
+
+Setelah kita memahami konsep dasar `Events`, `States`, dan bagaimana BLoC/Cubit memprosesnya, langkah selanjutnya adalah mengintegrasikan BLoC/Cubit ke dalam UI Flutter. _Package_ `flutter_bloc` menyediakan beberapa _widget_ kunci untuk tujuan ini: `BlocProvider`, `BlocBuilder`, dan `BlocListener`.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan belajar bagaimana "menyuntikkan" BLoC/Cubit ke dalam pohon widget menggunakan `BlocProvider` atau `MultiBlocProvider`. Mereka akan memahami peran `BlocBuilder` untuk merekonstruksi bagian UI secara reaktif saat _state_ berubah, dan `BlocListener` untuk melakukan efek samping (seperti menampilkan _snackbar_ atau navigasi) tanpa memicu _rebuild_ UI. `BlocConsumer` sebagai kombinasi keduanya juga akan dijelaskan. Penekanan akan diberikan pada penggunaan yang tepat untuk mengoptimalkan performa dan UX.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **`BlocProvider<Bloc/Cubit>`:**
+
+  - **Konsep:** Widget ini menyediakan instance BLoC atau Cubit ke _widget_ turunannya. Ini adalah mekanisme _dependency injection_ untuk BLoC/Cubit dalam pohon _widget_.
+  - **Filosofi:** Mirip dengan `Provider` di _package_ `provider`, `BlocProvider` memastikan bahwa _instance_ BLoC/Cubit tunggal dapat diakses oleh banyak _widget_ tanpa _prop drilling_. Penempatannya menentukan _scope_ (lingkup) di mana BLoC/Cubit tersebut dapat diakses.
+  - **`create`:** Digunakan untuk membuat _instance_ BLoC/Cubit baru. BLoC/Cubit akan secara otomatis di-_dispose_ ketika `BlocProvider` dihapus dari pohon _widget_.
+  - **`value`:** Digunakan untuk menyediakan _instance_ BLoC/Cubit yang sudah ada (misalnya, jika Anda ingin menggunakan kembali _instance_ dari tempat lain atau menyuntikkannya secara manual).
+
+- **`BlocBuilder<Bloc/Cubit, State>`:**
+
+  - **Konsep:** Widget ini bertanggung jawab untuk membangun (membangun ulang) bagian UI berdasarkan perubahan _state_ dari BLoC/Cubit.
+  - **Filosofi:** Ini adalah mekanisme reaktif utama di mana UI "mendengarkan" _stream_ _state_ dari BLoC/Cubit dan memicu `builder` _callback_ setiap kali _state_ baru dikeluarkan. Hanya `BlocBuilder` dan turunannya yang akan di-_rebuild_, menjaga _widget_ di atasnya tetap tidak tersentuh, sehingga mengoptimalkan performa.
+  - **`builder`:** _Callback_ yang menerima `BuildContext` dan _state_ terbaru, mengembalikan _widget_ yang akan dibangun.
+  - **`buildWhen` (Opsional):** Sebuah _callback_ opsional yang memungkinkan Anda mengontrol kapan `BlocBuilder` harus di-_rebuild_. Ini menerima _previous state_ dan _current state_, dan harus mengembalikan `true` jika _builder_ perlu dijalankan, `false` sebaliknya. Ini sangat penting untuk optimasi performa.
+
+- **`BlocListener<Bloc/Cubit, State>`:**
+
+  - **Konsep:** Widget ini bertanggung jawab untuk melakukan efek samping (`side effects`) sebagai respons terhadap perubahan _state_, tanpa memicu _rebuild_ UI.
+  - **Filosofi:** Efek samping adalah tindakan yang tidak memengaruhi tampilan _widget_ itu sendiri, seperti menampilkan `SnackBar`, menavigasi ke halaman lain, menampilkan _dialog_, atau melakukan panggilan API satu kali. `BlocListener` memastikan _logic_ ini terpisah dari _logic_ _rendering_ UI.
+  - **`listener`:** _Callback_ yang menerima `BuildContext` dan _state_ terbaru. Dipanggil sekali untuk setiap _state_ baru.
+  - **`listenWhen` (Opsional):** Sebuah _callback_ opsional yang memungkinkan Anda mengontrol kapan `listener` harus dipanggil. Mirip dengan `buildWhen`.
+
+- **`BlocConsumer<Bloc/Cubit, State>`:**
+
+  - **Konsep:** Sebuah _widget_ gabungan yang mengkombinasikan fungsionalitas `BlocBuilder` dan `BlocListener`.
+  - **Filosofi:** Berguna ketika Anda ingin _widget_ merespons perubahan _state_ dengan membangun ulang UI _dan_ melakukan efek samping pada _state_ yang sama. Mengurangi _boilerplate_ dibandingkan membungkus `BlocBuilder` dan `BlocListener` secara terpisah.
+  - Memiliki properti `builder`, `listener`, `buildWhen`, dan `listenWhen`.
+
+- **`BlocSelector<Bloc/Cubit, State, SelectedState>`:**
+
+  - **Konsep:** Sebuah _widget_ khusus yang memungkinkan Anda untuk memilih sebagian kecil dari _state_ BLoC/Cubit dan hanya membangun ulang _widget_ ketika bagian _state_ yang dipilih tersebut berubah.
+  - **Filosofi:** Mirip dengan `Selector` di _package_ `provider`, ini adalah alat optimasi performa yang canggih. Jika BLoC Anda memiliki _state_ yang besar, tetapi hanya sebagian kecil dari _state_ tersebut yang memengaruhi _widget_ tertentu, `BlocSelector` dapat mencegah _rebuild_ yang tidak perlu.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **BlocProvider Scoping:** Diagram pohon widget menunjukkan `BlocProvider` di level atas, dan anak-anak di bawahnya dapat mengakses BLoC. Anak-anak di luar _scope_ tidak bisa.
+- **BlocBuilder/Listener Interaction:**
+  ```
+  +-----------------+        +---------------------+
+  |      UI         |        |   Authentication    |
+  | (AuthScreen)    |        |      BLoC           |
+  +-----------------+        +---------------------+
+          | `context.read<AuthBloc>().add(AuthLoginRequested())`
+          V
+  +-----------------+
+  |   Login Button  |
+  +-----------------+
+          |
+          V  (AuthLoginRequested Event)
+  +-----------------+
+  |   AuthBloc      |
+  +-----------------+
+          | `emit(AuthLoading())`
+          V
+  +-----------------+        +---------------------------+
+  |   BlocConsumer  | -----> |   AuthLoading State       |
+  |   <AuthBloc,AuthState>   |   (CircularProgressIndicator) |
+  +-----------------+        +---------------------------+
+          | `emit(AuthAuthenticated(...))`
+          V
+  +-----------------+        +---------------------------------+
+  |   BlocConsumer  | Listener: `ScaffoldMessenger.showSnackBar`|
+  |   <AuthBloc,AuthState> | Builder: `Text('Welcome...')`, `Logout Button`|
+  +-----------------+        +---------------------------------+
+  ```
+
+**Hubungan dengan Modul Lain:**
+Melanjutkan dari `6.5.1 Filosofi BLoC` dan `6.5.2 Events, States, Streams`. Konsep _scoping_ dan _dependency injection_ mirip dengan `BlocProvider` di _package_ `provider` (6.3.1). `BlocObserver` (dari 6.5.2) juga akan berinteraksi dengan _widget_ ini untuk _logging_.
 
 ---
 
-Kita telah menyelesaikan FASE 6. Selanjutnya kita akan masuk pada
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Kita akan menggunakan contoh autentikasi dari bagian sebelumnya dan menunjukkan bagaimana _widget_ `BlocProvider`, `BlocBuilder`, dan `BlocListener` digunakan.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart'; // For @immutable
+import 'dart:async';
+
+// Re-using the BLoC and State/Event definitions from 6.5.2
+// --- Events ---
+@immutable
+abstract class AuthEvent {}
+class AuthLoginRequested extends AuthEvent {
+  final String username;
+  final String password;
+  AuthLoginRequested({required this.username, required this.password});
+  @override String toString() => 'AuthLoginRequested { username: $username }';
+  @override bool operator ==(Object other) => identical(this, other) || other is AuthLoginRequested && runtimeType == other.runtimeType && username == other.username && password == other.password;
+  @override int get hashCode => username.hashCode ^ password.hashCode;
+}
+class AuthLogoutRequested extends AuthEvent {
+  AuthLogoutRequested();
+  @override String toString() => 'AuthLogoutRequested';
+}
+
+// --- States ---
+@immutable
+abstract class AuthState { const AuthState(); }
+class AuthInitial extends AuthState { const AuthInitial(); }
+class AuthLoading extends AuthState { const AuthLoading(); }
+class AuthAuthenticated extends AuthState {
+  final String userId;
+  final String username;
+  const AuthAuthenticated({required this.userId, required this.username});
+  @override String toString() => 'AuthAuthenticated { userId: $userId, username: $username }';
+  @override bool operator ==(Object other) => identical(this, other) || other is AuthAuthenticated && runtimeType == other.runtimeType && userId == other.userId && username == other.username;
+  @override int get hashCode => userId.hashCode ^ username.hashCode;
+}
+class AuthError extends AuthState {
+  final String message;
+  const AuthError(this.message);
+  @override String toString() => 'AuthError { message: $message }';
+  @override bool operator ==(Object other) => identical(this, other) || other is AuthError && runtimeType == other.runtimeType && message == other.message;
+  @override int get hashCode => message.hashCode;
+}
+
+// --- AuthBloc ---
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc() : super(const AuthInitial()) {
+    on<AuthLoginRequested>(_onLoginRequested);
+    on<AuthLogoutRequested>(_onLogoutRequested);
+  }
+
+  Future<void> _onLoginRequested(AuthLoginRequested event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+    try {
+      await Future.delayed(const Duration(seconds: 2));
+      if (event.username == 'user' && event.password == 'pass') {
+        emit(AuthAuthenticated(userId: '123', username: event.username));
+      } else {
+        emit(const AuthError('Invalid credentials'));
+      }
+    } catch (e) {
+      emit(AuthError('Login failed: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onLogoutRequested(AuthLogoutRequested event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      emit(const AuthInitial());
+    } catch (e) {
+      emit(AuthError('Logout failed: ${e.toString()}'));
+    }
+  }
+}
+
+// Global BlocObserver (from 6.5.2)
+class SimpleBlocObserver extends BlocObserver {
+  @override
+  void onEvent(Bloc bloc, Object? event) { super.onEvent(bloc, event); print('${bloc.runtimeType} Event: $event'); }
+  @override
+  void onTransition(Bloc bloc, Transition transition) { super.onTransition(bloc, transition); print('${bloc.runtimeType} Transition: ${transition.currentState} -> ${transition.nextState}'); }
+  @override
+  void onError(Bloc bloc, Object error, StackTrace stackTrace) { super.onError(bloc, error, stackTrace); print('${bloc.runtimeType} Error: $error'); }
+}
+
+
+void main() {
+  Bloc.observer = SimpleBlocObserver(); // Set global observer
+
+  runApp(
+    // 1. BlocProvider: Menyediakan instance AuthBloc ke seluruh sub-pohon.
+    // Biasanya ditempatkan di root aplikasi atau di atas halaman yang memerlukannya.
+    BlocProvider(
+      create: (context) => AuthBloc(), // Membuat instance AuthBloc baru
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'BLoC Widgets Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
+      home: const AuthHomePage(),
+    );
+  }
+}
+
+class AuthHomePage extends StatefulWidget {
+  const AuthHomePage({super.key});
+
+  @override
+  State<AuthHomePage> createState() => _AuthHomePageState();
+}
+
+class _AuthHomePageState extends State<AuthHomePage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('BLoC Widgets Demo'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          // 2. BlocConsumer: Kombinasi BlocBuilder dan BlocListener.
+          // Digunakan ketika Anda perlu membangun ulang UI DAN melakukan efek samping.
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              // Ini adalah bagian BlocListener: Dipanggil sekali per state change
+              // untuk efek samping (snackbar, navigasi, dialog).
+              if (state is AuthAuthenticated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Selamat datang, ${state.username}!')),
+                );
+                // Contoh navigasi (biasanya di Navigator.pushReplacement)
+                // Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+              } else if (state is AuthError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Login Gagal: ${state.message}')),
+                );
+              }
+            },
+            builder: (context, state) {
+              // Ini adalah bagian BlocBuilder: Membangun ulang UI berdasarkan state.
+              if (state is AuthLoading) {
+                return const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text('Memproses...'),
+                  ],
+                );
+              } else if (state is AuthAuthenticated) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.green, size: 80),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Anda login sebagai ${state.username}',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 30),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Mengirim event Logout ke BLoC
+                        context.read<AuthBloc>().add(AuthLogoutRequested());
+                      },
+                      icon: const Icon(Icons.logout),
+                      label: const Text('Logout'),
+                    ),
+                  ],
+                );
+              } else { // AuthInitial atau AuthError
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Silakan Login',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                    const SizedBox(height: 30),
+                    TextField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.person),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.lock),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // Mengirim event Login ke BLoC
+                        context.read<AuthBloc>().add(
+                              AuthLoginRequested(
+                                username: _usernameController.text,
+                                password: _passwordController.text,
+                              ),
+                            );
+                      },
+                      icon: const Icon(Icons.login),
+                      label: const Text('Login'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        textStyle: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    if (state is AuthError) // Menampilkan pesan error jika ada
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Text(
+                          state.message,
+                          style: const TextStyle(color: Colors.red, fontSize: 16),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                  ],
+                );
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// --- Contoh terpisah BlocBuilder dan BlocListener untuk ilustrasi ---
+class SeperateBlocWidgetsExample extends StatelessWidget {
+  const SeperateBlocWidgetsExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Seperate Builder/Listener')),
+      body: Column(
+        children: [
+          // 3. BlocListener: Hanya untuk efek samping (misal, menampilkan dialog).
+          BlocListener<AuthBloc, AuthState>(
+            listenWhen: (previousState, currentState) {
+              // Hanya mendengarkan ketika state berubah dari Loading ke Error
+              return previousState is AuthLoading && currentState is AuthError;
+            },
+            listener: (context, state) {
+              if (state is AuthError) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Kesalahan Autentikasi'),
+                    content: Text(state.message),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+            child: const SizedBox.shrink(), // child ini tidak akan dibangun ulang
+          ),
+          // 4. BlocBuilder: Hanya untuk membangun UI.
+          BlocBuilder<AuthBloc, AuthState>(
+            // Hanya membangun ulang jika ada perubahan pada properti username
+            // Sangat berguna untuk optimasi!
+            buildWhen: (previousState, currentState) {
+                // Perbandingan state untuk buildWhen:
+                // rebuild jika tipe state berubah (misalnya dari Initial ke Loading)
+                // atau jika Authenticated, rebuild hanya jika username berubah.
+                if (previousState.runtimeType != currentState.runtimeType) {
+                    return true;
+                }
+                if (currentState is AuthAuthenticated && previousState is AuthAuthenticated) {
+                    return currentState.username != previousState.username;
+                }
+                return false; // Jangan rebuild jika tidak ada perubahan relevan
+            },
+            builder: (context, state) {
+              if (state is AuthAuthenticated) {
+                return Text('Selamat datang, ${state.username}!');
+              } else if (state is AuthLoading) {
+                return const CircularProgressIndicator();
+              }
+              return const Text('Silakan login');
+            },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Example of adding an event
+              context.read<AuthBloc>().add(AuthLoginRequested(username: 'test', password: '123'));
+            },
+            child: const Text('Trigger Login (for separate example)'),
+          )
+        ],
+      ),
+    );
+  }
+}
+```
+
+**Penjelasan Konteks Kode (`BlocProvider`, `BlocBuilder`, `BlocListener`):**
+
+1.  **`BlocProvider`:**
+
+    - Di fungsi `main()`, `AuthBloc` disediakan menggunakan `BlocProvider`. Ini memastikan bahwa `AuthBloc` tersedia untuk semua _widget_ di bawah `MyApp` dalam pohon _widget_.
+    - `create: (context) => AuthBloc()`: Ini adalah _callback_ yang akan dipanggil untuk membuat _instance_ `AuthBloc` saat pertama kali dibutuhkan. _Instance_ ini akan secara otomatis di-_dispose_ ketika `BlocProvider` dihapus dari pohon _widget_ (misalnya, jika halaman yang menyediakannya di-_pop_).
+    - Jika Anda memiliki beberapa BLoC, Anda akan menggunakan `MultiBlocProvider` di _root_ aplikasi (mirip dengan `MultiProvider` di _package_ `provider`).
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh MultiBlocProvider
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => AuthBloc()),
+        BlocProvider(create: (_) => ProductBloc()),
+        // ... Bloc lainnya
+      ],
+      child: const MyApp(),
+    )
+    ```
+
+2.  **Mengakses BLoC/Cubit dari UI:**
+
+    - **`context.read<AuthBloc>()`:** Digunakan untuk mendapatkan _instance_ BLoC atau Cubit **sekali** dari `BuildContext`. Ini ideal untuk memanggil metode atau menambahkan _event_ (seperti `authBloc.add(AuthLoginRequested())`) di _callback_ (misalnya `onPressed`), atau di `initState()` (tapi hati-hati, lihat tips di bawah). Ini tidak akan memicu _rebuild_ widget saat _state_ BLoC berubah.
+    - **`context.watch<AuthBloc>()`:** (dari _package_ `provider`, _tidak_ langsung dari `flutter_bloc`) Tidak umum digunakan langsung dengan `flutter_bloc` untuk mendengarkan _state_, karena `BlocBuilder`/`BlocConsumer` lebih spesifik. Sebaliknya, gunakan `context.select` atau `BlocSelector` jika Anda ingin optimasi.
+
+3.  **`BlocConsumer<AuthBloc, AuthState>`:**
+
+    - Ini adalah _widget_ yang paling umum digunakan karena menggabungkan kebutuhan untuk membangun UI _dan_ melakukan efek samping.
+    - **`listener`:**
+      - Dipanggil setiap kali _state_ `AuthBloc` berubah.
+      - Ideal untuk logika yang hanya perlu terjadi _sekali_ per perubahan _state_ (misalnya, menampilkan `SnackBar`, navigasi, _dialog_, menampilkan pesan _error_).
+      - Perhatikan bahwa `listener` akan dipanggil bahkan jika _widget_ tidak di-_rebuild_.
+    - **`builder`:**
+      - Dipanggil setiap kali _state_ `AuthBloc` berubah **dan** _state_ baru berbeda dari _state_ sebelumnya (berdasarkan implementasi `==` pada kelas `State` Anda).
+      - Digunakan untuk membangun atau membangun ulang bagian UI yang bergantung pada _state_ saat ini.
+    - Di contoh, `BlocConsumer` mengelola tampilan `CircularProgressIndicator`, pesan login/logout, _input field_, dan tombol berdasarkan `AuthState` yang berbeda.
+
+4.  **`BlocListener<AuthBloc, AuthState>` (Contoh Terpisah):**
+
+    - **`listenWhen`:** _Callback_ opsional yang memungkinkan Anda mengontrol kapan `listener` harus dipanggil. Ini menerima _previous state_ dan _current state_. Mengembalikan `true` untuk memanggil `listener`, `false` untuk tidak.
+      - Di contoh, kita hanya ingin `listener` dipanggil ketika _state_ berubah dari `AuthLoading` ke `AuthError` untuk menampilkan _dialog_ spesifik.
+
+5.  **`BlocBuilder<AuthBloc, AuthState>` (Contoh Terpisah):**
+
+    - **`buildWhen`:** _Callback_ opsional yang memungkinkan Anda mengontrol kapan `builder` harus dipanggil (yaitu, kapan _widget_ harus di-_rebuild_). Ini menerima _previous state_ dan _current state_. Mengembalikan `true` untuk memicu _rebuild_, `false` untuk tidak.
+      - Ini adalah alat optimasi performa yang sangat penting. Jika Anda hanya peduli tentang sebagian kecil dari _state_ (misalnya, hanya `username` berubah), Anda dapat menggunakan `buildWhen` untuk mencegah _rebuild_ yang tidak perlu dari seluruh sub-pohon `BlocBuilder`.
+      - Di contoh, `buildWhen` hanya memicu _rebuild_ jika tipe _state_ berubah, atau jika itu `AuthAuthenticated` dan `username` berubah.
+
+**Terminologi Esensial (Revisi & Tambahan):**
+
+- **`BlocProvider`:** Widget yang menyediakan _instance_ BLoC/Cubit ke _widget_ turunannya.
+- **`MultiBlocProvider`:** Digunakan untuk menyediakan beberapa BLoC/Cubit sekaligus.
+- **`BlocBuilder`:** Widget yang membangun ulang UI berdasarkan perubahan _state_ BLoC/Cubit.
+- **`BlocListener`:** Widget yang mendengarkan perubahan _state_ BLoC/Cubit untuk melakukan efek samping tanpa _rebuild_ UI.
+- **`BlocConsumer`:** Kombinasi `BlocBuilder` dan `BlocListener`.
+- **`BlocSelector`:** Widget yang membangun ulang UI hanya ketika sebagian _state_ yang dipilih berubah.
+- **`context.read<T>()`:** Metode ekstensi di `BuildContext` untuk mendapatkan _instance_ BLoC/Cubit satu kali (tanpa mendengarkan perubahan).
+- **`buildWhen`:** Predikat opsional untuk `BlocBuilder`/`BlocConsumer` yang mengontrol kapan `builder` harus dijalankan.
+- **`listenWhen`:** Predikat opsional untuk `BlocListener`/`BlocConsumer` yang mengontrol kapan `listener` harus dijalankan.
+
+**Sumber Referensi Lengkap:**
+
+- [BlocProvider (Official Docs)](https://bloclibrary.dev/%23/blocprovider)
+- [BlocBuilder (Official Docs)](https://bloclibrary.dev/%23/blocbuilder)
+- [BlocListener (Official Docs)](https://bloclibrary.dev/%23/bloclistener)
+- [BlocConsumer (Official Docs)](https://bloclibrary.dev/%23/blocconsumer)
+- [BlocSelector (Official Docs)](https://bloclibrary.dev/%23/blocselector)
+- [Performance Optimization (Official Docs)](https://bloclibrary.dev/%23/performanceoptimisation) - Penjelasan mendalam tentang `buildWhen` dan `listenWhen`.
+
+**Tips dan Praktik Terbaik:**
+
+- **Penempatan `BlocProvider`:** Tempatkan `BlocProvider` setinggi mungkin di pohon _widget_ agar BLoC/Cubit dapat diakses oleh semua _widget_ yang relevan. Namun, jangan berlebihan; jika BLoC hanya relevan untuk satu halaman, tempatkan `BlocProvider` di atas halaman itu.
+- **Optimalisasi `buildWhen` dan `listenWhen`:** Selalu pertimbangkan untuk menggunakan `buildWhen` pada `BlocBuilder` dan `BlocConsumer` untuk mencegah _rebuild_ yang tidak perlu. Demikian pula, gunakan `listenWhen` untuk `BlocListener` agar efek samping hanya terjadi pada _state_ yang relevan. Ini adalah kunci untuk performa yang baik.
+- **Pilih Widget yang Tepat:**
+  - Jika Anda hanya perlu membangun ulang UI: Gunakan `BlocBuilder`.
+  - Jika Anda hanya perlu melakukan efek samping: Gunakan `BlocListener`.
+  - Jika Anda perlu keduanya: Gunakan `BlocConsumer`.
+  - Jika Anda perlu optimasi _rebuild_ yang sangat granular pada sebagian _state_: Gunakan `BlocSelector`.
+- **`context.read()` untuk Memanggil Metode:** Selalu gunakan `context.read<BlocType>().add(Event())` atau `context.read<CubitType>().method()` di dalam _callback_ seperti `onPressed`, `onChanged`, atau `initState()`. Jangan gunakan `context.watch()` di sana karena itu akan membuat _widget_ mendengarkan perubahan yang tidak perlu.
+- **`MultiBlocProvider` untuk Banyak BLoC:** Hindari _nesting_ `BlocProvider` yang dalam. Gunakan `MultiBlocProvider` untuk menyediakan beberapa BLoC sekaligus di _root_ aplikasi atau di atas suatu _feature_.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Menggunakan `BlocBuilder` untuk efek samping (misalnya, menampilkan _snackbar_ di dalam _builder_).
+
+  - **Penyebab:** Jika Anda menampilkan _snackbar_ di dalam `builder`, _snackbar_ akan muncul setiap kali _widget_ di-_rebuild_, bahkan jika tidak ada perubahan _state_ yang berarti untuk _snackbar_ tersebut. Ini bisa menyebabkan _snackbar_ berulang.
+  - **Solusi:** Gunakan `BlocListener` atau `listener` di `BlocConsumer` untuk efek samping.
+
+- **Kesalahan:** BLoC/Cubit tidak ditemukan di `BlocProvider.of(context)` atau `context.read()`.
+
+  - **Penyebab:** _Widget_ yang mencoba mengakses BLoC/Cubit tidak berada dalam _scope_ dari `BlocProvider` yang sesuai. Pastikan `BlocProvider` berada di atas _widget_ tersebut dalam pohon _widget_.
+  - **Solusi:** Periksa hierarki _widget_ Anda. Jika BLoC/Cubit diperlukan di banyak tempat, pastikan `BlocProvider` ada di _root_ aplikasi (`main.dart`).
+
+- **Kesalahan:** `buildWhen` atau `listenWhen` terlalu permisif atau terlalu ketat.
+
+  - **Penyebab:** `buildWhen` yang selalu mengembalikan `true` akan menyebabkan _rebuild_ yang tidak perlu. `listenWhen` yang selalu mengembalikan `false` akan mencegah efek samping yang diinginkan. Terlalu ketat bisa menyebabkan UI tidak memperbarui atau efek samping tidak terjadi saat seharusnya.
+  - **Solusi:** Pahami dengan cermat _state_ mana yang benar-benar memerlukan _rebuild_ UI dan _state_ mana yang hanya memerlukan efek samping. Uji kasus batas.
+
+---
+
+### 6.5.4 Testing BLoC/Cubit
+
+Salah satu keunggulan utama dari arsitektur BLoC/Cubit adalah kemudahannya untuk diuji. Karena _business logic_ terpisah dari UI dan _state_ dikelola melalui _streams_ yang _predictable_, kita dapat melakukan _unit test_ dan bahkan _widget test_ dengan efisien. _Package_ `bloc_test` (bagian dari ekosistem `bloc`) menyediakan _utility_ yang sangat membantu untuk tujuan ini.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami pentingnya _testing_ dalam pengembangan aplikasi yang _robust_. Mereka akan belajar bagaimana menulis _unit test_ untuk BLoC dan Cubit menggunakan `bloc_test` untuk memverifikasi bahwa BLoC/Cubit memancarkan _state_ yang benar sebagai respons terhadap _event_ tertentu. Konsep _mocking_ dependensi akan dijelaskan untuk mengisolasi _unit_ yang diuji. Ini akan memperkuat pemahaman mereka tentang pentingnya desain _testable_ dan bagaimana mengimplementasikannya dalam praktik.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Unit Testing (Isolasi Logika Bisnis):**
+
+  - **Konsep:** Fokus pada pengujian unit kode terkecil secara terisolasi. Dalam konteks BLoC/Cubit, ini berarti menguji `Bloc` atau `Cubit` itu sendiri, memastikan bahwa ketika `Event` ditambahkan (untuk BLoC) atau metode dipanggil (untuk Cubit), `State` yang benar dipancarkan.
+  - **Filosofi:** Dengan mengisolasi BLoC/Cubit dari UI dan _dependencies_ eksternal (seperti API), kita dapat dengan cepat dan andal memverifikasi _business logic_ tanpa kompleksitas tambahan. Ini membuat _bug_ mudah diidentifikasi dan diisolasi.
+
+- **`bloc_test` Package:**
+
+  - **Konsep:** Sebuah _package_ yang menyediakan _utility_ khusus untuk menguji BLoC dan Cubit. Ini memungkinkan Anda untuk dengan mudah menentukan serangkaian _event_ yang akan ditambahkan ke BLoC dan kemudian memverifikasi _state_ yang diharapkan akan dipancarkan.
+  - **`blocTest<Bloc, State>()` function:** Fungsi inti yang memungkinkan Anda mendefinisikan _test case_ untuk BLoC/Cubit. Ini menyediakan struktur yang jelas untuk:
+    - `build`: Fungsi untuk membuat _instance_ BLoC/Cubit yang akan diuji.
+    - `setUp`: (Opsional) Fungsi yang dipanggil sebelum setiap _test_.
+    - `act`: Fungsi untuk memicu _event_ atau memanggil metode pada BLoC/Cubit.
+    - `expect`: Daftar _state_ yang diharapkan akan dipancarkan oleh BLoC/Cubit setelah _act_.
+    - `verify`: (Opsional) Fungsi untuk memverifikasi interaksi dengan _mock_ _dependencies_.
+    - `errors`: (Opsional) Daftar _error_ yang diharapkan akan dipancarkan.
+  - **Filosofi:** Menyediakan DSL (Domain Specific Language) yang ekspresif dan ringkas untuk menulis _test_ BLoC/Cubit, mengurangi _boilerplate_ dan meningkatkan keterbacaan.
+
+- **Mocking Dependencies:**
+
+  - **Konsep:** Mengganti _dependencies_ eksternal (seperti layanan API, database, atau _repository_) dengan _mock object_ atau _stub_ selama pengujian. _Mock object_ adalah objek palsu yang perilakunya telah diprogram sebelumnya.
+  - **Filosofi:** Penting untuk mengisolasi BLoC/Cubit. Jika BLoC Anda bergantung pada `UserRepository`, Anda tidak ingin _unit test_ BLoC Anda benar-benar memanggil API. Dengan _mocking_, Anda bisa mensimulasikan respons API (sukses, gagal, dll.) dan memverifikasi bahwa BLoC bereaksi dengan benar. _Package_ seperti `mockito` sangat berguna untuk ini.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **Testing Flow:**
+  ```
+  +-----------------+        +---------------------+
+  |  `blocTest()`   |        |   Mocked Services   |
+  |  (from bloc_test)|        |  (e.g., Mockito)    |
+  +-----------------+        +---------------------+
+          | `build`                ^
+          | `act`                  | (Programmed behavior)
+          V                        |
+  +-----------------+        +---------------------+
+  |   BLoC/Cubit    | -------> | Dependencies        |
+  |   (Unit Under   |          | (e.g., Repository)  |
+  |     Test)       |          +---------------------+
+  +-----------------+
+          | `emit`
+          V
+  +-----------------+
+  |   Stream of     |
+  |     States      |
+  +-----------------+
+          |
+          | `expect` (Assertion)
+          V
+  +-----------------+
+  |    Test Runner  |
+  +-----------------+
+  ```
+
+**Hubungan dengan Modul Lain:**
+Sangat terkait dengan `Fase 10: Testing` secara keseluruhan. Membangun di atas pemahaman `6.5.1 Filosofi BLoC` dan `6.5.2 Events, States, Streams` karena kita menguji _transition_ antara _event_ dan _state_.
+
+---
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Mari kita gunakan kembali contoh `AuthBloc` dan `AuthCubit` dari bagian sebelumnya, dan tulis _unit test_ untuk mereka.
+
+Pertama, pastikan Anda telah menambahkan `bloc_test` dan `mockito` di `dev_dependencies` pada `pubspec.yaml`:
+
+```yaml
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  bloc_test: ^9.1.5 # Periksa versi terbaru
+  mockito: ^5.4.4 # Periksa versi terbaru
+  build_runner: ^2.4.6 # Diperlukan oleh mockito untuk code generation
+```
+
+Kemudian jalankan `flutter pub get`. Setelah itu, Anda perlu menjalankan `flutter pub run build_runner build --delete-conflicting-outputs` jika Anda menggunakan `mockito` untuk pertama kali atau setelah perubahan pada kelas yang di-mock.
+
+```dart
+// auth_bloc.dart (reused from previous sections)
+import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart'; // For @immutable
+
+// --- Events ---
+@immutable
+abstract class AuthEvent {}
+class AuthLoginRequested extends AuthEvent {
+  final String username;
+  final String password;
+  AuthLoginRequested({required this.username, required this.password});
+  @override String toString() => 'AuthLoginRequested { username: $username }';
+  @override bool operator ==(Object other) => identical(this, other) || other is AuthLoginRequested && runtimeType == other.runtimeType && username == other.username && password == other.password;
+  @override int get hashCode => username.hashCode ^ password.hashCode;
+}
+class AuthLogoutRequested extends AuthEvent { AuthLogoutRequested(); @override String toString() => 'AuthLogoutRequested'; }
+
+// --- States ---
+@immutable
+abstract class AuthState { const AuthState(); }
+class AuthInitial extends AuthState { const AuthInitial(); }
+class AuthLoading extends AuthState { const AuthLoading(); }
+class AuthAuthenticated extends AuthState {
+  final String userId;
+  final String username;
+  const AuthAuthenticated({required this.userId, required this.username});
+  @override String toString() => 'AuthAuthenticated { userId: $userId, username: $username }';
+  @override bool operator ==(Object other) => identical(this, other) || other is AuthAuthenticated && runtimeType == other.runtimeType && userId == other.userId && username == other.username;
+  @override int get hashCode => userId.hashCode ^ username.hashCode;
+}
+class AuthError extends AuthState {
+  final String message;
+  const AuthError(this.message);
+  @override String toString() => 'AuthError { message: $message }';
+  @override bool operator ==(Object other) => identical(this, other) || other is AuthError && runtimeType == other.runtimeType && message == other.message;
+  @override int get hashCode => message.hashCode;
+}
+
+// --- Dependency: AuthService ---
+// Kita akan membuat kelas service terpisah yang akan di-mock.
+class AuthService {
+  Future<bool> login(String username, String password) async {
+    // Simulasi panggilan API
+    await Future.delayed(const Duration(milliseconds: 50));
+    return username == 'test' && password == 'password';
+  }
+
+  Future<void> logout() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+  }
+}
+
+// --- AuthBloc (modified to use AuthService) ---
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final AuthService _authService; // Injeksi AuthService
+
+  AuthBloc(this._authService) : super(const AuthInitial()) {
+    on<AuthLoginRequested>(_onLoginRequested);
+    on<AuthLogoutRequested>(_onLogoutRequested);
+  }
+
+  Future<void> _onLoginRequested(
+      AuthLoginRequested event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+    try {
+      final bool success = await _authService.login(event.username, event.password);
+      if (success) {
+        emit(AuthAuthenticated(userId: 'user_id_1', username: event.username));
+      } else {
+        emit(const AuthError('Invalid credentials'));
+      }
+    } catch (e) {
+      emit(AuthError('Login failed: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onLogoutRequested(
+      AuthLogoutRequested event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+    try {
+      await _authService.logout();
+      emit(const AuthInitial());
+    } catch (e) {
+      emit(AuthError('Logout failed: ${e.toString()}'));
+    }
+  }
+}
+
+// --- AuthCubit (modified to use AuthService) ---
+class AuthCubit extends Cubit<AuthState> {
+  final AuthService _authService; // Injeksi AuthService
+
+  AuthCubit(this._authService) : super(const AuthInitial());
+
+  Future<void> login(String username, String password) async {
+    emit(const AuthLoading());
+    try {
+      final bool success = await _authService.login(username, password);
+      if (success) {
+        emit(AuthAuthenticated(userId: 'user_id_1', username: username));
+      } else {
+        emit(const AuthError('Invalid credentials'));
+      }
+    } catch (e) {
+      emit(AuthError('Login failed: ${e.toString()}'));
+    }
+  }
+
+  Future<void> logout() async {
+    emit(const AuthLoading());
+    try {
+      await _authService.logout();
+      emit(const AuthInitial());
+    } catch (e) {
+      emit(AuthError('Logout failed: ${e.toString()}'));
+    }
+  }
+}
+```
+
+Sekarang, buat file test di `test/blocs/auth_bloc_test.dart` dan `test/cubits/auth_cubit_test.dart`.
+
+```dart
+// test/blocs/auth_bloc_test.dart
+import 'package:bloc_test/bloc_test.dart'; // Import bloc_test
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart'; // Untuk mocking
+// Asumsikan auth_bloc.dart dan auth_service.dart ada di lib/
+// Sesuaikan path import sesuai struktur proyek Anda
+import 'package:your_app_name/auth_bloc.dart'; // Sesuaikan import
+
+// Buat mock class dari AuthService
+// command: flutter pub run build_runner build
+class MockAuthService extends Mock implements AuthService {}
+
+void main() {
+  group('AuthBloc', () {
+    late MockAuthService mockAuthService; // Deklarasi mock service
+
+    // Inisialisasi mock sebelum setiap test
+    setUp(() {
+      mockAuthService = MockAuthService();
+    });
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [AuthLoading, AuthAuthenticated] when AuthLoginRequested is successful',
+      build: () {
+        // Ketika mockAuthService.login dipanggil dengan kredensial ini,
+        // kembalikan true (sukses).
+        when(mockAuthService.login('test_user', 'password'))
+            .thenAnswer((_) async => true);
+        return AuthBloc(mockAuthService); // Buat AuthBloc dengan mock service
+      },
+      act: (bloc) => bloc.add(AuthLoginRequested(username: 'test_user', password: 'password')),
+      expect: () => [
+        const AuthLoading(), // State pertama yang diharapkan
+        const AuthAuthenticated(userId: 'user_id_1', username: 'test_user'), // State kedua yang diharapkan
+      ],
+      verify: (_) {
+        // Verifikasi bahwa metode login pada mock service dipanggil sekali
+        verify(mockAuthService.login('test_user', 'password')).called(1);
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [AuthLoading, AuthError] when AuthLoginRequested fails',
+      build: () {
+        // Ketika mockAuthService.login dipanggil, kembalikan false (gagal).
+        when(mockAuthService.login('wrong_user', 'wrong_password'))
+            .thenAnswer((_) async => false);
+        return AuthBloc(mockAuthService);
+      },
+      act: (bloc) => bloc.add(AuthLoginRequested(username: 'wrong_user', password: 'wrong_password')),
+      expect: () => [
+        const AuthLoading(),
+        const AuthError('Invalid credentials'), // Harapkan state error
+      ],
+      verify: (_) {
+        verify(mockAuthService.login('wrong_user', 'wrong_password')).called(1);
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [AuthLoading, AuthInitial] when AuthLogoutRequested is successful',
+      build: () {
+        when(mockAuthService.logout()).thenAnswer((_) async => {}); // Logout sukses
+        return AuthBloc(mockAuthService);
+      },
+      // State awal BLoC harus Authenticated agar logout bisa terjadi
+      seed: () => const AuthAuthenticated(userId: 'user_id_1', username: 'logged_in_user'),
+      act: (bloc) => bloc.add(AuthLogoutRequested()),
+      expect: () => [
+        const AuthLoading(),
+        const AuthInitial(), // Harapkan kembali ke state Initial
+      ],
+      verify: (_) {
+        verify(mockAuthService.logout()).called(1);
+      },
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [AuthLoading, AuthError] when AuthLogoutRequested fails',
+      build: () {
+        when(mockAuthService.logout()).thenThrow(Exception('Logout error')); // Logout gagal
+        return AuthBloc(mockAuthService);
+      },
+      seed: () => const AuthAuthenticated(userId: 'user_id_1', username: 'logged_in_user'),
+      act: (bloc) => bloc.add(AuthLogoutRequested()),
+      expect: () => [
+        const AuthLoading(),
+        isA<AuthError>(), // Harapkan AuthError
+      ],
+      // Verifikasi pesan error jika perlu
+      expectErrors: () => [], // Kita tidak mengharapkan error dipancarkan oleh Stream, tapi di dalam State
+    );
+  });
+}
+```
+
+```dart
+// test/cubits/auth_cubit_test.dart
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:your_app_name/auth_bloc.dart'; // Sesuaikan import (gunakan file yang sama)
+
+// Reuse MockAuthService from bloc_test
+class MockAuthService extends Mock implements AuthService {}
+
+void main() {
+  group('AuthCubit', () {
+    late MockAuthService mockAuthService;
+
+    setUp(() {
+      mockAuthService = MockAuthService();
+    });
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthLoading, AuthAuthenticated] when login is successful',
+      build: () {
+        when(mockAuthService.login('test_user', 'password'))
+            .thenAnswer((_) async => true);
+        return AuthCubit(mockAuthService);
+      },
+      act: (cubit) => cubit.login('test_user', 'password'),
+      expect: () => [
+        const AuthLoading(),
+        const AuthAuthenticated(userId: 'user_id_1', username: 'test_user'),
+      ],
+      verify: (_) {
+        verify(mockAuthService.login('test_user', 'password')).called(1);
+      },
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthLoading, AuthError] when login fails',
+      build: () {
+        when(mockAuthService.login('wrong_user', 'wrong_password'))
+            .thenAnswer((_) async => false);
+        return AuthCubit(mockAuthService);
+      },
+      act: (cubit) => cubit.login('wrong_user', 'wrong_password'),
+      expect: () => [
+        const AuthLoading(),
+        const AuthError('Invalid credentials'),
+      ],
+      verify: (_) {
+        verify(mockAuthService.login('wrong_user', 'wrong_password')).called(1);
+      },
+    );
+
+    blocTest<AuthCubit, AuthState>(
+      'emits [AuthLoading, AuthInitial] when logout is successful',
+      build: () {
+        when(mockAuthService.logout()).thenAnswer((_) async => {});
+        return AuthCubit(mockAuthService);
+      },
+      seed: () => const AuthAuthenticated(userId: 'user_id_1', username: 'logged_in_user'),
+      act: (cubit) => cubit.logout(),
+      expect: () => [
+        const AuthLoading(),
+        const AuthInitial(),
+      ],
+      verify: (_) {
+        verify(mockAuthService.logout()).called(1);
+      },
+    );
+  });
+}
+```
+
+**Penjelasan Konteks Kode `bloc_test`:**
+
+1.  **Struktur Test (`group`, `setUp`):**
+
+    - `group('AuthBloc', () { ... })` dan `group('AuthCubit', () { ... })`: Mengelompokkan _test case_ yang terkait.
+    - `late MockAuthService mockAuthService;`: Deklarasi objek _mock_.
+    - `setUp(() { mockAuthService = MockAuthService(); });`: Setiap _test case_ di dalam `group` akan menjalankan fungsi `setUp` ini sebelum dijalankan. Ini memastikan bahwa _mock_ selalu dalam kondisi bersih dan terinisialisasi ulang untuk setiap _test_.
+
+2.  **`blocTest<Bloc, State>()` Function:**
+
+    - **Generics (`<AuthBloc, AuthState>`):** Mendefinisikan tipe BLoC/Cubit dan tipe _state_ yang akan diuji.
+    - **String Deskripsi:** Memberikan deskripsi yang jelas tentang apa yang diuji (`'emits [AuthLoading, AuthAuthenticated] when AuthLoginRequested is successful'`).
+    - **`build: () => AuthBloc(mockAuthService)`:**
+      - Fungsi ini bertanggung jawab untuk membuat _instance_ BLoC atau Cubit yang akan diuji.
+      - Penting untuk menyuntikkan _mock_ `AuthService` ke dalam BLoC/Cubit di sini, bukan `AuthService` yang asli.
+    - **`setUp: () { ... }` (Opsional):** Dipanggil sebelum _build_ dan _act_. Berguna untuk setup _mock_ yang lebih kompleks atau inisialisasi awal.
+    - **`seed: () => const AuthAuthenticated(...)` (Opsional):**
+      - Digunakan untuk memberikan _state_ awal BLoC/Cubit yang berbeda dari _state_ `super()` di _constructor_-nya.
+      - Sangat berguna untuk menguji skenario di mana BLoC/Cubit sudah berada di _state_ tertentu (misalnya, pengguna sudah _login_ sebelum mencoba _logout_).
+    - **`act: (bloc) => bloc.add(AuthLoginRequested(...))` (untuk BLoC) atau `act: (cubit) => cubit.login(...)` (untuk Cubit):**
+      - Fungsi ini adalah tempat Anda memicu _event_ atau memanggil metode pada BLoC/Cubit yang sedang diuji. Ini adalah "tindakan" yang akan menyebabkan perubahan _state_.
+      - Untuk BLoC, Anda memanggil `bloc.add(event)`.
+      - Untuk Cubit, Anda memanggil `cubit.method()`.
+    - **`expect: () => [...]`:**
+      - Ini adalah daftar **urutan _state_ yang diharapkan** yang akan dipancarkan oleh BLoC/Cubit setelah `act`.
+      - Penting: Ini adalah _state_ yang akan dipancarkan **setelah _state_ awal** (atau _state_ dari `seed`). `bloc_test` secara otomatis mengabaikan _initial state_ yang dipancarkan dari _constructor_.
+      - Anda harus mencantumkan _state_ dalam urutan kronologis.
+      - Untuk menguji objek _state_ yang kompleks, pastikan Anda telah mengimplementasikan `==` dan `hashCode` dengan benar (seringkali menggunakan `equatable` atau `freezed`) sehingga perbandingan nilai dilakukan, bukan perbandingan _reference_.
+      - Anda juga bisa menggunakan `isA<StateClass>()` jika Anda hanya ingin memverifikasi tipe _state_ dan bukan nilai spesifiknya (berguna untuk _error state_).
+    - **`verify: (_) { ... }` (Opsional):**
+      - Digunakan untuk memverifikasi bahwa _dependencies_ (misalnya, _mock service_) dipanggil dengan parameter yang benar, atau bahwa metode tertentu dipanggil sejumlah kali.
+      - `verify(mockAuthService.login(...)).called(1);` memastikan bahwa metode `login` pada _mock_ dipanggil tepat satu kali.
+    - **`errors: () => [...]` (Opsional):**
+      - Daftar _error_ yang diharapkan akan dipancarkan oleh _stream_ BLoC/Cubit itu sendiri. Ini berbeda dengan `AuthError` _state_ (yang merupakan _state_ yang valid dari BLoC yang merepresentasikan kondisi _error_). Ini untuk _runtime errors_ yang tidak ditangkap oleh BLoC. Biasanya jarang digunakan karena BLoC harus menangani _error_ dan memancarkan _error state_.
+
+3.  **Mocking dengan `mockito`:**
+
+    - `class MockAuthService extends Mock implements AuthService {}`: Mendefinisikan kelas _mock_ yang akan meniru `AuthService` asli. `mockito` akan menghasilkan implementasi _mock_ untuk semua metode.
+    - `when(mockAuthService.login('test_user', 'password')).thenAnswer((_) async => true);`: Ini adalah _stubbing_. Kita memberi tahu _mock_ bahwa ketika metode `login` dipanggil dengan argumen `('test_user', 'password')`, ia harus mengembalikan `Future<bool>` yang _resolve_ ke `true`.
+
+**Terminologi Esensial (Revisi & Tambahan):**
+
+- **`blocTest<Bloc, State>()`:** Fungsi utama dari `bloc_test` untuk menulis _unit test_ BLoC/Cubit.
+- **`build`:** Bagian dari `blocTest` untuk membuat _instance_ BLoC/Cubit yang akan diuji.
+- **`act`:** Bagian dari `blocTest` untuk memicu _event_ atau memanggil metode pada BLoC/Cubit.
+- **`expect`:** Bagian dari `blocTest` untuk menentukan urutan _state_ yang diharapkan akan dipancarkan.
+- **`verify`:** Bagian dari `blocTest` untuk memverifikasi interaksi dengan _mock_ _dependencies_.
+- **`seed`:** Bagian dari `blocTest` untuk menginisialisasi BLoC/Cubit dengan _state_ awal tertentu.
+- **`mockito`:** _Package_ populer untuk membuat _mock object_ dalam Dart/Flutter.
+- **Mocking:** Proses mengganti _dependencies_ asli dengan _mock object_ untuk isolasi pengujian.
+- **Stubbing (`when().thenAnswer()`):** Menginstruksikan _mock object_ untuk mengembalikan nilai tertentu saat metode tertentu dipanggil.
+
+**Sumber Referensi Lengkap:**
+
+- [Testing BLoC (Official Docs)](https://bloclibrary.dev/#/testing) - Panduan resmi dan sangat direkomendasikan untuk _testing_ BLoC/Cubit.
+- [bloc_test package](https://pub.dev/packages/bloc_test) - Dokumentasi _package_ `bloc_test`.
+- [mockito package](https://pub.dev/packages/mockito) - Dokumentasi _package_ `mockito`.
+
+**Tips dan Praktik Terbaik:**
+
+- **Uji Setiap Transisi:** Pastikan untuk menulis _test case_ untuk setiap kemungkinan transisi _event_ ke _state_ yang relevan.
+- **Uji Kasus Positif dan Negatif:** Uji skenario sukses (`login` berhasil) dan skenario gagal (`login` gagal, _error_ jaringan, dll.).
+- **Prioritaskan Unit Test:** Karena _business logic_ terisolasi dalam BLoC/Cubit, _unit test_ adalah tulang punggung pengujian aplikasi BLoC. Mereka cepat dan andal.
+- **`equatable` for `State`:** Selalu gunakan _package_ `equatable` (atau `freezed`) untuk kelas `State` dan `Event` Anda. Ini akan secara otomatis mengimplementasikan `==` dan `hashCode`, yang sangat penting untuk fungsi `expect` di `bloc_test` agar dapat membandingkan _state_ berdasarkan nilai, bukan _reference_ memori.
+- **Gunakan `Mock` dengan Benar:** Hanya _mock_ _dependencies_ yang dibutuhkan oleh BLoC/Cubit. Jangan _mock_ BLoC/Cubit itu sendiri kecuali untuk _widget test_ yang sangat spesifik (namun itu jarang diperlukan karena Anda bisa langsung menyuntikkan BLoC/Cubit asli ke _widget test_).
+- **Hindari Logic di `build` function:** Pastikan fungsi `build` di `blocTest` hanya fokus pada pembuatan _instance_ BLoC/Cubit dan _dependencies_ yang diperlukan. Semua _stubbing_ harus dilakukan di `setUp` atau langsung di dalam `build`.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** _State_ tidak cocok di `expect` meskipun *logic*nya benar.
+
+  - **Penyebab:** Kelas `State` Anda tidak mengimplementasikan `==` dan `hashCode` dengan benar, sehingga `bloc_test` membandingkan _reference_ memori alih-alih nilai.
+  - **Solusi:** Gunakan `equatable` atau `freezed` untuk kelas `State` Anda.
+
+- **Kesalahan:** Lupa menginisialisasi _mock_ di `setUp`.
+
+  - **Penyebab:** Objek _mock_ tidak ada atau tidak memiliki perilaku yang diprogram.
+  - **Solusi:** Pastikan `setUp` memanggil _constructor_ _mock_ dan bahwa `when().thenAnswer()` dilakukan untuk semua perilaku yang relevan.
+
+- **Kesalahan:** Menguji UI _logic_ dalam _unit test_ BLoC.
+
+  - **Penyebab:** _Unit test_ BLoC harus fokus pada _state transition_ berdasarkan _event_ dan _business logic_. Interaksi UI harus diuji dengan _widget test_.
+  - **Solusi:** Pertahankan _unit test_ BLoC fokus dan terisolasi. Gunakan _widget test_ untuk menguji bagaimana UI bereaksi terhadap _state_ yang berbeda.
+
+- **Kesalahan:** Tidak menunggu operasi asinkron selesai di `act`.
+
+  - **Penyebab:** Jika BLoC/Cubit Anda melakukan operasi asinkron, dan Anda tidak menunggu hingga selesai di dalam `act` (misalnya, dengan `await bloc.add(event)` jika `on<Event>` adalah `async`), `expect` mungkin dijalankan terlalu cepat.
+  - **Solusi:** `bloc_test` menangani ini secara otomatis. Cukup tambahkan _event_ atau panggil metode, dan `bloc_test` akan menunggu hingga semua `emit` yang diharapkan selesai sebelum menjalankan `expect`.
+
+---
+
+### 6.6 GetX Framework (Overview)
+
+**GetX** adalah sebuah _framework_ mikro yang komprehensif untuk Flutter, menawarkan solusi untuk _state management_, navigasi, _dependency injection_, dan banyak lagi. GetX dirancang dengan fokus pada performa, produktivitas, dan organisasi kode. Meskipun sering dibahas sebagai solusi _state management_, GetX sebenarnya adalah ekosistem yang lebih luas.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan mendapatkan gambaran umum tentang GetX sebagai solusi _state management_ yang "serba bisa" dan sangat populer di kalangan beberapa pengembang. Mereka akan memahami bagaimana GetX mencoba menyederhanakan berbagai aspek pengembangan Flutter dengan API yang minimal. Kita akan mengulas dua pendekatan _state management_ utama di GetX (Simple State Manager dan Reactive State Manager) dan membahas keunggulan serta beberapa kontroversi yang melingkupinya, agar pembelajar dapat membuat keputusan yang terinformasi.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **"All-in-One" Solution:**
+
+  - **Konsep:** GetX tidak hanya tentang _state management_. Ia juga menyediakan solusi untuk **dependency management** (pengelolaan dependensi), **route management** (manajemen navigasi), **translations**, **utility functions**, dan lainnya.
+  - **Filosofi:** Mengurangi ketergantungan pada banyak _package_ terpisah dan menyatukan fungsionalitas inti dalam satu _framework_. Tujuannya adalah mempercepat pengembangan dan mengurangi _boilerplate_.
+
+- **Performance Focused:**
+
+  - **Konsep:** GetX mengklaim memiliki performa tinggi dengan mengoptimalkan penggunaan memori dan siklus CPU, khususnya dalam _state management_ reaktifnya yang hanya membangun ulang _widget_ yang benar-benar membutuhkan perubahan.
+  - **Filosofi:** Mengurangi _overhead_ dan memastikan aplikasi berjalan secepat mungkin, bahkan pada perangkat kelas bawah.
+
+- **Productivity / Minimal Boilerplate:**
+
+  - **Konsep:** GetX dirancang untuk memiliki API yang sangat ringkas dan intuitif, yang memungkinkan pengembang menulis kode lebih sedikit untuk mencapai hasil yang sama dibandingkan dengan _package_ lain.
+  - **Filosofi:** Meningkatkan kecepatan pengembangan dengan meminimalkan kode yang berulang dan memungkinkan fokus lebih pada _business logic_.
+
+- **Separation of Concerns (MVC-ish / MVVM-ish):**
+
+  - **Konsep:** Meskipun tidak secara ketat mengikuti pola arsitektur klasik, GetX mendorong pemisahan _view_, _logic_ (Controller), dan _data_ (Model). `GetXController` adalah komponen utama untuk menampung _business logic_ dan _state_.
+  - **Filosofi:** Meskipun API-nya sederhana, GetX memungkinkan aplikasi yang terstruktur dengan baik jika digunakan dengan benar, memisahkan _logic_ dari _UI_.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **GetX Ecosystem (simplified):**
+  ```
+  +--------------------------------+
+  |           Flutter App          |
+  +--------------------------------+
+                  |
+  +--------------------------------+
+  |              GetX              |
+  |  (Route, State, Dependency)    |
+  +--------------------------------+
+      |                 |               |
+      V                 V               V
+  +----------+     +----------+     +----------+
+  |  UI (View) |     | Controller |     |  Model   |
+  |  (Widgets) |     |  (Logic)   |     |  (Data)  |
+  +----------+     +----------+     +----------+
+        ^                 ^
+        |                 |
+        +----- State -----+ (Reactive/Simple)
+  ```
+
+**Hubungan dengan Modul Lain:**
+Sebagai alternatif dari `6.3 Provider` dan `6.5 BLoC/Cubit` dalam hal _state management_. Pendekatan _dependency injection_ yang disediakan GetX relevan dengan `6.7.2 GetIt / Injectable`.
+
+---
+
+#### 6.6.1 Konsep Dasar GetX (Reactive, Simple, Management)
+
+Untuk menggunakan GetX, tambahkan dependensi di `pubspec.yaml`:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  get: ^4.6.6 # Periksa versi terbaru di pub.dev
+```
+
+Kemudian jalankan `flutter pub get`.
+
+**Prinsip Inti GetX:**
+
+1.  **Performance:** GetX berjanji untuk tidak menggunakan `ChangeNotifier` atau `Streams` yang memerlukan _resources_ tinggi. Untuk _reactive state management_, GetX menggunakan `.obs` (Observable) yang diimplementasikan dengan `RxDart` di bawahnya tetapi dengan API yang lebih sederhana. _Rebuild_ hanya terjadi pada _widget_ yang benar-benar mendengarkan perubahan _observable_ tersebut.
+
+2.  **Productivity:** API yang ringkas dan _declarative_. Misalnya, untuk navigasi tanpa `BuildContext`: `Get.to(NextPage())`. Untuk _dependency injection_: `Get.put(MyController())`.
+
+3.  **Organization:** Mendorong pemisahan antara _view_ dan _business logic_ melalui `GetxController`.
+
+**Tiga Pilar Utama GetX:**
+
+1.  **State Management:**
+
+    - **Simple State Manager (`GetBuilder`):** Ini adalah pendekatan _state management_ yang paling ringan di GetX. Mirip dengan `setState`, tetapi dengan pemisahan _logic_ di dalam `GetxController`. Ketika Anda memanggil `update()` di dalam `GetxController`, _widget_ yang menggunakan `GetBuilder` akan di-_rebuild_. Ini tidak _reactive_.
+    - **Reactive State Manager (`Obx`, `GetX`, `.obs`):** Ini adalah fitur yang lebih kuat dan paling sering dibicarakan dari GetX. Ini memungkinkan Anda membuat variabel menjadi "observable" (`.obs`) yang secara otomatis memicu _rebuild_ pada _widget_ yang mendengarkannya, tetapi hanya _widget_ yang benar-benar menggunakan variabel tersebut yang akan di-_rebuild_. Ini sangat efisien.
+
+2.  **Route Management:**
+
+    - Menawarkan navigasi tanpa `BuildContext`, yang memudahkan _unit testing_ dan pemisahan _concern_.
+    - Contoh: `Get.to(() => HomePage())`, `Get.offAll(() => LoginPage())`, `Get.back()`.
+    - Sangat memudahkan penanganan rute bernama dan _middleware_.
+
+3.  **Dependency Management:**
+
+    - Memungkinkan Anda mendeklarasikan _dependencies_ yang akan digunakan di seluruh aplikasi (misalnya, _controller_, _service_, _repository_).
+    - Contoh: `Get.put(MyController())`, `Get.find<MyController>()`.
+    - Secara otomatis mengelola _lifecycle_ _dependencies_ (misalnya, _dispose_ _controller_ ketika tidak lagi digunakan).
+
+**Contoh Sederhana (Counter App dengan GetX State Management):**
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:get/get.dart'; // Import GetX
+
+// --- 1. Define Controller (Business Logic & State) ---
+// GetxController adalah tempat state dan business logic berada
+class CounterController extends GetxController {
+  // Reactive State: count adalah observable.
+  // Ketika nilainya berubah, Obx/GetX widget yang mendengarkan akan update.
+  var count = 0.obs; // .obs membuat variabel ini observable
+
+  // Simple State (alternative, less common for reactive):
+  // int simpleCount = 0;
+
+  void increment() {
+    count++; // Cukup panggil increment pada observable
+    // Untuk simple state: update(); // Memanggil update() akan memicu GetBuilder
+  }
+
+  void decrement() {
+    if (count.value > 0) { // Akses nilai observable dengan .value
+      count--;
+    }
+    // Untuk simple state: update();
+  }
+
+  // Lifecycle methods (optional)
+  @override
+  void onInit() {
+    super.onInit();
+    print('CounterController initialized');
+    // Contoh listener untuk observable
+    ever(count, (_) => print('Count changed: $count')); // Dipanggil setiap kali count berubah
+    once(count, (_) => print('Count changed for the first time: $count')); // Dipanggil sekali saat count berubah pertama kali
+    debounce(count, (_) => print('Count debounced: $count'), time: const Duration(seconds: 1)); // Dipanggil setelah tidak ada perubahan selama durasi tertentu
+  }
+
+  @override
+  void onClose() {
+    print('CounterController closed');
+    super.onClose();
+  }
+}
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp( // Gunakan GetMaterialApp untuk fitur GetX seperti navigasi tanpa context
+      title: 'GetX Counter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const CounterPage(),
+    );
+  }
+}
+
+class CounterPage extends StatelessWidget {
+  // 2. Registrasi dan Ambil Instance Controller
+  // Get.put() akan membuat instance CounterController dan membuatnya tersedia di seluruh aplikasi (atau scope tertentu)
+  final CounterController counterController = Get.put(CounterController());
+
+  CounterPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('GetX Counter'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'You have pushed the button this many times:',
+            ),
+            // 3. Menggunakan Reactive State: Obx
+            // Obx hanya akan dibangun ulang ketika observable yang digunakannya (counterController.count) berubah.
+            Obx(
+              () => Text(
+                '${counterController.count.value}', // Akses nilai dengan .value
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+            // Alternatif: GetX<CounterController> (mirip dengan Obx tapi dengan builder explicit)
+            // GetX<CounterController>(
+            //   builder: (controller) {
+            //     return Text(
+            //       '${controller.count.value}',
+            //       style: Theme.of(context).textTheme.headlineMedium,
+            //     );
+            //   },
+            // ),
+            // Contoh Simple State Manager (jika menggunakan simpleCount dan update() di controller)
+            // GetBuilder<CounterController>(
+            //   builder: (controller) => Text(
+            //     '${controller.simpleCount}',
+            //     style: Theme.of(context).textTheme.headlineMedium,
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'decrementBtn',
+            onPressed: () => counterController.decrement(), // Panggil metode dari controller
+            tooltip: 'Decrement',
+            child: const Icon(Icons.remove),
+          ),
+          const SizedBox(width: 10),
+          FloatingActionButton(
+            heroTag: 'incrementBtn',
+            onPressed: () => counterController.increment(), // Panggil metode dari controller
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Contoh navigasi dengan GetX (tanpa context)
+class NextPage extends StatelessWidget {
+  const NextPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Next Page')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Welcome to the next page!'),
+            ElevatedButton(
+              onPressed: () {
+                Get.back(); // Kembali tanpa context
+              },
+              child: const Text('Go Back'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Penjelasan Konteks Kode GetX:**
+
+1.  **`GetMaterialApp`:** Ini adalah pengganti `MaterialApp` standar jika Anda ingin menggunakan fitur GetX seperti navigasi tanpa `BuildContext` dan _dependency injection_ di _root_ aplikasi.
+2.  **`GetxController`:** Ini adalah kelas dasar untuk semua _controller_ GetX Anda. Ini adalah tempat Anda akan meletakkan _business logic_ dan _state_ Anda.
+3.  **Reactive State (`.obs`):**
+    - Variabel `count` dideklarasikan sebagai `var count = 0.obs;`. Suffix `.obs` mengubah variabel standar menjadi `Rx<T>` (Reactive), menjadikannya _observable_.
+    - Ketika Anda mengakses nilainya, gunakan `.value` (misalnya `count.value`). Ketika Anda mengubahnya (misalnya `count++`), GetX secara internal akan memberi tahu _listener_ yang relevan.
+4.  **`Get.put(CounterController())`:**
+    - Ini adalah metode untuk menempatkan (menyuntikkan) _instance_ `CounterController` ke dalam _dependency graph_ GetX.
+    - Setelah `Get.put()` dipanggil, Anda bisa mendapatkan _instance_ yang sama di mana saja di aplikasi dengan `Get.find<CounterController>()` atau seperti di contoh (`final CounterController counterController = Get.put(CounterController());`).
+    - Secara _default_, GetX akan menghapus _controller_ saat _widget_ yang menggunakannya dihilangkan dari pohon _widget_ (misalnya, `CounterPage` di-_pop_ dari _stack_ navigasi). Ini disebut sebagai _smart management_.
+5.  **`Obx(() => ...)`:**
+    - Ini adalah _widget_ utama untuk menggunakan _reactive state_. `Obx` adalah _widget_ `StatelessWidget` yang sangat ringan yang hanya akan dibangun ulang ketika _observable_ yang diakses di dalamnya berubah.
+    - `Obx` sangat efisien karena tidak memiliki parameter dan tidak tahu tipe _controller_ yang digunakan; ia hanya bereaksi terhadap _observable_ yang diakses di dalamnya.
+6.  **`GetX<T>` (Alternatif Reactive):**
+    - Mirip dengan `Obx`, tetapi Anda harus secara eksplisit mendefinisikan tipe _controller_ (`GetX<CounterController>`).
+    - Memberikan _instance controller_ ke _builder_ _callback_, yang terkadang lebih nyaman.
+7.  **Simple State Manager (`GetBuilder<T>`):**
+    - Jika Anda menggunakan _simple state_ (bukan `.obs`) di dalam _controller_ Anda (misalnya `int simpleCount = 0;`), Anda perlu memanggil `update()` di dalam _controller_ setelah mengubah `simpleCount` agar `GetBuilder` merefresh UI.
+    - `GetBuilder` tidak _reactive_ secara intrinsik; ia bergantung pada Anda memanggil `update()`.
+
+**Terminologi Esensial:**
+
+- **`GetMaterialApp`:** Pengganti `MaterialApp` untuk mengaktifkan fitur GetX.
+- **`GetxController`:** Kelas dasar untuk _controller_ yang menampung _business logic_ dan _state_.
+- **`.obs`:** Ekstensi properti Dart yang membuat variabel menjadi _observable_ (reaktif).
+- **`Obx`:** Widget yang membangun ulang dirinya hanya ketika _observable_ yang diakses di dalamnya berubah.
+- **`GetX<T>`:** Widget reaktif serupa `Obx` yang membutuhkan tipe _controller_ eksplisit.
+- **`GetBuilder<T>`:** Widget untuk _simple state management_ yang membutuhkan `update()` dipanggil di _controller_.
+- **`Get.put(Controller())`:** Menempatkan _instance controller_ ke dalam _dependency graph_.
+- **`Get.find<Controller>()`:** Mengambil _instance controller_ yang sudah ada.
+- **`Get.to()`, `Get.back()`:** Metode navigasi tanpa `BuildContext`.
+- **`ever`, `once`, `debounce`:** Metode _listener_ pada _observable_ untuk efek samping.
+
+**Sumber Referensi Lengkap:**
+
+- [GetX Official Documentation](https://pub.dev/packages/get) - Halaman pub.dev GetX, berisi tautan ke dokumentasi lengkap.
+- [GetX State Management](https://www.google.com/search?q=https://pub.dev/packages/get%23state-management) - Bagian _state management_ di dokumentasi resmi.
+- [GetX Route Management](https://www.google.com/search?q=https://pub.dev/packages/get%23route-management) - Bagian _route management_.
+- [GetX Dependency Management](https://www.google.com/search?q=https://pub.dev/packages/get%23dependency-management) - Bagian _dependency management_.
+
+---
+
+#### 6.6.2 GetX State Management (GetBuilder, Obx, GetX)
+
+Kita sudah membahas secara singkat, mari kita gali lebih dalam perbandingan ketiga mekanisme _state management_ utama di GetX:
+
+1.  **Simple State Manager (dengan `GetBuilder<Controller>`):**
+
+    - **Cara Kerja:** Mirip dengan `ChangeNotifierProvider` di _package_ `provider`. Anda memiliki `GetxController` dengan variabel biasa (bukan `.obs`). Untuk memberi tahu UI agar di-_rebuild_, Anda secara manual memanggil `update()` di dalam _controller_ setelah mengubah _state_.
+    - **Kapan Digunakan:**
+      - Untuk _state_ yang sangat sederhana dan tidak sering berubah.
+      - Ketika Anda menginginkan kontrol eksplisit atas kapan _rebuild_ terjadi.
+      - Sebagai alternatif `setState` yang terpusat di _controller_.
+    - **Keunggulan:** Sangat ringan, mudah dipahami bagi pemula.
+    - **Kekurangan:** Membutuhkan `update()` manual, kurang "reaktif" dibandingkan pendekatan `.obs`.
+
+    <!-- end list -->
+
+    ```dart
+    // In Controller
+    int counter = 0;
+    void increment() {
+      counter++;
+      update(); // <<< Penting: memicu rebuild GetBuilder
+    }
+
+    // In UI
+    GetBuilder<CounterController>(
+      builder: (controller) => Text('${controller.counter}'),
+    )
+    ```
+
+2.  **Reactive State Manager (dengan `.obs` dan `Obx`/`GetX`):**
+
+    - **Cara Kerja:** Ini adalah inti dari "reactivity" GetX. Anda membuat variabel menjadi _observable_ dengan `.obs` (misalnya `var count = 0.obs;`). Ketika nilai _observable_ ini berubah, `Obx` atau `GetX` _widget_ yang mendengarkannya akan secara otomatis di-_rebuild_ (tanpa Anda memanggil `update()`).
+    - **Kapan Digunakan:**
+      - Untuk sebagian besar _state_ aplikasi yang dinamis dan sering berubah.
+      - Ketika Anda menginginkan _rebuild_ yang sangat granular dan otomatis.
+      - Ideal untuk data yang berasal dari API atau _real-time updates_.
+    - **Keunggulan:** Sangat efisien (hanya membangun ulang _widget_ yang relevan), _boilerplate_ minimal, mudah digunakan.
+    - **Kekurangan:** Variabel harus dideklarasikan sebagai `var` atau tipe eksplisit `Rx<T>` (misalnya `RxInt`, `RxString`).
+
+    <!-- end list -->
+
+    ```dart
+    // In Controller
+    var count = 0.obs; // <<< Membuat observable
+    void increment() {
+      count.value++; // Akses nilai dengan .value, ubah langsung
+      // Atau: count++; // Ini juga berfungsi!
+    }
+
+    // In UI
+    Obx(() => Text('${controller.count.value}')) // <<< Obx mendengarkan
+    // Atau
+    // GetX<CounterController>(builder: (c) => Text('${c.count.value}'))
+    ```
+
+**Perbandingan Singkat:**
+
+| Fitur                | Simple State Manager (`GetBuilder`)         | Reactive State Manager (`.obs`, `Obx`/`GetX`)             |
+| :------------------- | :------------------------------------------ | :-------------------------------------------------------- |
+| **Pemicu Update UI** | Panggilan `update()` manual di _controller_ | Perubahan nilai pada variabel `.obs` otomatis             |
+| **Reactivity**       | Tidak reaktif secara intrinsik              | Sepenuhnya reaktif                                        |
+| **Boilerplate**      | Sangat minimal                              | Sangat minimal (bahkan lebih sedikit dari Simple)         |
+| **Kinerja**          | Sangat ringan                               | Sangat efisien (hanya _widget_ relevan yang di-_rebuild_) |
+| **Penggunaan Umum**  | Untuk _state_ sederhana, kontrol eksplisit  | Untuk sebagian besar _state_ aplikasi dinamis             |
+
+**Penggunaan Controller Lifecycle Methods:**
+
+`GetxController` juga menyediakan _lifecycle methods_ yang berguna:
+
+- `onInit()`: Dipanggil segera setelah _controller_ dibuat dan sebelum _widget_ pertama kali dibangun. Ideal untuk inisialisasi data atau memuat data awal.
+- `onReady()`: Dipanggil setelah _controller_ dibuat dan _widget_ yang terkait telah di-_render_ di layar. Berguna untuk melakukan operasi yang memerlukan UI siap.
+- `onClose()`: Dipanggil tepat sebelum _controller_ dihapus dari memori. Ideal untuk membersihkan _resources_ (menutup _stream_, _dispose_ `TextEditingController`, dll.).
+
+<!-- end list -->
+
+```dart
+class MyController extends GetxController {
+  @override
+  void onInit() {
+    // Dipanggil saat controller dibuat
+    super.onInit();
+    // Load data dari API
+  }
+
+  @override
+  void onReady() {
+    // Dipanggil setelah widget pertama di-render
+    super.onReady();
+  }
+
+  @override
+  void onClose() {
+    // Dipanggil sebelum controller di-dispose
+    // Bersihkan resources di sini
+    super.onClose();
+  }
+}
+```
+
+---
+
+#### 6.6.3 Kontroversi dan Pertimbangan Penggunaan
+
+Meskipun GetX sangat populer dan memiliki banyak keunggulan, ada beberapa kontroversi dan pertimbangan yang perlu diketahui oleh pembelajar:
+
+1.  **"Magic" dan Terlalu Banyak Abstraksi:**
+
+    - **Kontroversi:** Beberapa pengembang merasa GetX terlalu "magis" karena menyembunyikan banyak detail implementasi dan menyediakan banyak fungsionalitas di bawah satu payung. Ini bisa membuat _debugging_ sulit jika terjadi masalah dan mengurangi pemahaman mendalam tentang bagaimana Flutter atau Dart bekerja di balik layar.
+    - **Pertimbangan:** Bagi pengembang baru, kesederhanaan ini bisa sangat menarik. Namun, penting untuk tetap memahami konsep dasar Flutter dan Dart. Bagi proyek jangka panjang atau tim besar, kejelasan dan transparansi bisa menjadi prioritas.
+
+2.  **Keterikatan (_Tight Coupling_) dengan Framework:**
+
+    - **Kontroversi:** Penggunaan `Get.to()`, `Get.find()`, `Get.put()`, dll., membuat kode sangat terikat pada GetX. Jika Anda memutuskan untuk beralih ke _state management_ atau _route management_ lain di masa depan, migrasi bisa sangat menantang.
+    - **Pertimbangan:** Jika Anda berkomitmen penuh pada GetX, ini bukan masalah. Namun, jika Anda menghargai modularitas dan kemudahan penggantian _package_, keterikatan ini adalah risiko.
+
+3.  **Kualitas Kode dan Struktur Proyek:**
+
+    - **Kontroversi:** Karena GetX sangat mudah digunakan dan memungkinkan banyak hal dilakukan dengan sedikit kode, ada risiko pengembang yang kurang berpengalaman akan menciptakan kode "spaghetti" atau mengabaikan prinsip pemisahan _concern_ yang baik. Misalnya, menempatkan terlalu banyak _logic_ di _view_ atau membuat _controller_ menjadi terlalu besar.
+    - **Pertimbangan:** GetX tidak memaksa arsitektur tertentu. Tanggung jawab ada pada pengembang untuk menerapkan pola desain yang baik (misalnya, memisahkan _repository_ dari _controller_, menjaga _controller_ tetap fokus pada _business logic_).
+
+4.  **Komunitas dan Sumber Daya:**
+
+    - **Kontroversi:** Beberapa kritik menyoroti bahwa komunitas GetX, meskipun besar, terkadang kurang fokus pada praktik terbaik arsitektur dibandingkan performa dan kesederhanaan.
+    - **Pertimbangan:** Ada banyak sumber daya GetX di internet, tetapi penting untuk memilah dan memilih praktik yang sehat dan terstruktur.
+
+**Kapan Mempertimbangkan GetX:**
+
+- **Proyek Kecil atau Prototipe Cepat:** Kecepatan pengembangan GetX sangat cocok untuk ini.
+- **Pengembang yang Memprioritaskan Produktivitas:** Jika Anda ingin menulis kode lebih sedikit dan bergerak cepat.
+- **Tim yang Sepakat Menggunakan GetX:** Jika seluruh tim memahami filosofi GetX dan berkomitmen pada praktik terbaik yang menyertainya.
+
+**Kapan Mempertimbangkan Alternatif (Provider, BLoC/Cubit, Riverpod):**
+
+- **Aplikasi Skala Enterprise/Besar:** Membutuhkan struktur yang lebih kaku, _testability_ yang sangat tinggi, dan pemisahan _concern_ yang eksplisit (di mana BLoC/Cubit atau Riverpod lebih unggul).
+- **Tim yang Memprioritaskan Modularitas dan Fleksibilitas:** Jika Anda ingin dapat dengan mudah menukar _state management_ atau _dependency injection library_ di masa depan.
+- **Pengembang yang Memprioritaskan Pemahaman Mendalam tentang Flutter/Dart:** _Package_ lain seringkali lebih terbuka tentang bagaimana mereka bekerja.
+
+**Kesimpulan:**
+GetX adalah _framework_ yang kuat dan populer dengan keunggulan signifikan dalam produktivitas dan performa untuk banyak kasus penggunaan. Namun, seperti alat lainnya, penting untuk memahami _trade-off_-nya. Pembelajar harus mampu menilai kapan GetX adalah pilihan yang tepat dan kapan alternatif yang lebih _opinionated_ atau _explicit_ seperti BLoC/Cubit atau Riverpod mungkin lebih sesuai untuk kebutuhan proyek.
+
+**Terminologi Esensial (Kontroversi):**
+
+- **Tight Coupling:** Kode yang sangat bergantung pada satu _framework_ atau _library_ tertentu.
+- **Boilerplate:** Kode berulang yang harus ditulis untuk menyiapkan fungsionalitas dasar.
+- **Spaghetti Code:** Kode yang tidak terstruktur, sulit dibaca, dan sulit dipelihara.
+- **Smart Management:** Fitur GetX yang secara otomatis mengelola _lifecycle_ _controller_ (misalnya, menghapus dari memori saat tidak digunakan).
+
+**Sumber Referensi Lengkap (Kontroversi):**
+
+- Pencarian di Google/YouTube untuk "GetX controversies" atau "Why not to use GetX" akan memberikan banyak diskusi komunitas dari berbagai sudut pandang. Ini adalah cara yang baik untuk melihat perspektif yang berbeda.
+
+**Tips dan Praktik Terbaik:**
+
+- **Pahami Dasar-dasar Flutter Dulu:** Sebelum terjun ke GetX, pastikan Anda memiliki pemahaman yang kuat tentang `StatefulWidget`, `InheritedWidget`, dan siklus hidup Flutter. Ini akan membantu Anda memahami apa yang disederhanakan oleh GetX.
+- **Pisahkan Concerns:** Meskipun GetX mempermudah, tetaplah berpegang pada prinsip pemisahan _concern_. Jangan meletakkan _logic_ basis data langsung di _controller_. Gunakan _repository_ atau _service_ terpisah.
+- **Gunakan `.obs` untuk Reaktif:** Untuk sebagian besar _state_ dinamis, pendekatan `.obs` adalah cara yang direkomendasikan karena efisiensi dan otomatisasinya.
+- **Baca Dokumentasi dan Contoh Resmi:** Dokumentasi GetX terus diperbarui dan berisi banyak contoh yang berguna.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Mencoba menggunakan `BuildContext` untuk navigasi atau mendapatkan _controller_ saat menggunakan `GetMaterialApp`.
+
+  - **Penyebab:** GetX dirancang untuk navigasi dan _dependency injection_ tanpa `BuildContext` menggunakan API `Get.to()`, `Get.find()`, dll.
+  - **Solusi:** Gunakan API GetX untuk navigasi dan _dependency management_.
+
+- **Kesalahan:** Lupa menggunakan `.value` saat mengakses _observable_ atau `.obs` saat mendeklarasikan _observable_.
+
+  - **Penyebab:** Kesalahan sintaksis yang umum saat beralih ke GetX reactive.
+  - **Solusi:** Pastikan Anda selalu menggunakan `.obs` saat deklarasi dan `.value` saat akses nilai _observable_.
+
+- **Kesalahan:** _Controller_ tidak di-_dispose_ dan menyebabkan _memory leak_.
+
+  - **Penyebab:** Meskipun GetX memiliki _smart management_, ada kasus di mana Anda perlu secara eksplisit mengelola _lifecycle_ (misalnya, jika _controller_ di-_load_ dengan `Get.lazyPut` dan tidak ada yang "mengambil"nya).
+  - **Solusi:** Pahami `Get.put`, `Get.lazyPut`, `Get.find`, `Get.delete`. Dalam banyak kasus, `Get.put` dan `Get.find` dengan _smart management_ sudah cukup. Jika Anda perlu menonaktifkan _smart management_, pastikan Anda membersihkan _controller_ secara manual.
+
+---
+
+### 6.7 State Management Lainnya (Gambaran Singkat)
+
+Flutter adalah ekosistem yang kaya, dan ada banyak pendekatan serta _package_ untuk _state management_ selain yang sudah kita bahas secara mendalam (Provider, Riverpod, BLoC/Cubit, GetX). Bagian ini akan memberikan gambaran singkat tentang beberapa di antaranya, serta membahas bagaimana memilih solusi yang tepat untuk proyek Anda.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan diperkenalkan pada konsep dasar di balik `InheritedWidget` sebagai fondasi utama di Flutter untuk _dependency injection_ dan _state sharing_. Mereka juga akan mengenal `GetIt` dan `Injectable` sebagai solusi _dependency injection_ yang populer, `Redux` sebagai pola arsitektur yang mapan dari ekosistem web, dan `MobX` untuk _reactive state management_ yang sangat terintegrasi dengan kode Dart. Tujuan bagian ini adalah memperluas wawasan pembelajar tentang keberagaman solusi yang tersedia dan membantu mereka dalam proses pengambilan keputusan.
+
+---
+
+#### 6.7.1 InheritedWidget (Dasar)
+
+**Deskripsi:**
+`InheritedWidget` adalah _widget_ dasar di Flutter yang memungkinkan Anda untuk menyediakan data ke bawah pohon _widget_ dan secara efisien membangun ulang _widget_ anak yang bergantung pada data tersebut ketika data berubah. Ini adalah mekanisme bawaan Flutter untuk _dependency injection_ dan merupakan fondasi dari banyak _package state management_ lainnya, termasuk `Provider` dan `Riverpod`.
+
+**Bagaimana Ia Bekerja:**
+Ketika sebuah `InheritedWidget` berubah (misalnya, _state_ internalnya di-_update_), ia memberi tahu semua _widget_ di bawahnya yang telah memanggil `BuildContext.dependOnInheritedWidgetOfExactType<T>()` (atau lebih umumnya `context.dependOnInheritedWidgetOfExactType<T>()` yang disederhanakan oleh ekstensi) untuk di-_rebuild_. Jika Anda tidak memanggil `dependOnInheritedWidgetOfExactType`, _widget_ tidak akan di-_rebuild_ meskipun `InheritedWidget` berubah.
+
+**Kelebihan:**
+
+- **Fondasi Flutter:** Memahami `InheritedWidget` adalah kunci untuk memahami bagaimana _state_ dan _dependency_ mengalir di Flutter.
+- **Sangat Efisien:** Flutter mengoptimalkan _rebuild_ hanya pada _widget_ yang benar-benar membutuhkan data dari `InheritedWidget`.
+
+**Kekurangan:**
+
+- **Boilerplate:** Menulis `InheritedWidget` secara langsung untuk setiap _state_ bisa sangat _verbose_ dan memerlukan banyak kode _boilerplate_ (misalnya, `updateShouldNotify`).
+- **Kompleksitas Manual:** Mengelola dan mengakses data bisa menjadi rumit seiring bertambahnya kompleksitas aplikasi.
+
+**Contoh Kasus:**
+Meskipun jarang digunakan langsung untuk _state management_ yang kompleks, `InheritedWidget` sering digunakan untuk menyediakan tema aplikasi (`Theme.of(context)`), _media query_ (`MediaQuery.of(context)`), atau _locale_ aplikasi, yang secara inheren statis atau tidak sering berubah.
+
+```dart
+// Contoh sederhana InheritedWidget
+import 'package:flutter/material.dart';
+
+class MyInheritedData extends InheritedWidget {
+  const MyInheritedData({
+    super.key,
+    required this.data,
+    required super.child,
+  });
+
+  final String data;
+
+  // Metode untuk mendapatkan instance MyInheritedData dari context
+  static MyInheritedData of(BuildContext context) {
+    // dependOnInheritedWidgetOfExactType akan membuat widget ini tergantung pada MyInheritedData
+    // sehingga jika data berubah, widget ini akan di-rebuild.
+    final MyInheritedData? result = context.dependOnInheritedWidgetOfExactType<MyInheritedData>();
+    assert(result != null, 'No MyInheritedData found in context');
+    return result!;
+  }
+
+  // Metode ini menentukan apakah widget yang tergantung pada ini harus di-rebuild
+  @override
+  bool updateShouldNotify(MyInheritedData oldWidget) {
+    return data != oldWidget.data; // Rebuild jika data berubah
+  }
+}
+
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Mengakses data dari MyInheritedData
+    final String sharedData = MyInheritedData.of(context).data;
+    return Text('Shared Data: $sharedData');
+  }
+}
+
+// Penggunaan
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('InheritedWidget Demo')),
+        body: Center(
+          child: MyInheritedData(
+            data: 'Hello from InheritedWidget!',
+            child: const MyWidget(),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+```
+
+---
+
+#### 6.7.2 GetIt / Injectable
+
+**Deskripsi:**
+`GetIt` adalah _Service Locator_ sederhana untuk Dart dan Flutter. Ini bukan solusi _state management_ itu sendiri, melainkan solusi **dependency injection (DI)**. `Injectable` adalah _package_ yang dibangun di atas `GetIt` untuk mengotomatisasi proses registrasi _dependency_ menggunakan anotasi dan _code generation_.
+
+**Bagaimana Ia Bekerja:**
+
+- **GetIt:** Anda mendaftarkan _instance_ kelas (_singleton_, _factory_, atau _lazy singleton_) ke `GetIt` di awal aplikasi. Kemudian, Anda bisa "mendapatkan" _instance_ tersebut di mana saja dengan `GetIt.instance<T>()` atau `getIt<T>()`.
+- **Injectable:** Mengurangi _boilerplate_ `GetIt` dengan menggunakan anotasi seperti `@Injectable()` pada kelas dan `@injectableInit` pada fungsi inisialisasi. Setelah menjalankan _code generation_, `Injectable` akan membuat semua kode registrasi `GetIt` secara otomatis.
+
+**Kelebihan:**
+
+- **Pemisahan Concern:** Memisahkan pembuatan _dependency_ dari penggunaannya, membuat kode lebih bersih dan _testable_.
+- **Fleksibilitas:** Dapat digunakan bersama dengan _state management solution_ apa pun (BLoC, Cubit, Provider, Riverpod, dll.) untuk mengelola _dependencies_ seperti _repositories_ atau _services_.
+- **Testing Lebih Mudah:** Anda dapat dengan mudah menukar _dependency_ asli dengan _mock_ atau _stub_ saat pengujian.
+
+**Kekurangan:**
+
+- **Kurangnya Tipe Keamanan (GetIt murni):** Tanpa `Injectable`, Anda harus secara manual memastikan tipe yang benar didaftarkan dan diambil.
+- **Complexity (Injectable):** Menambahkan _code generation_ bisa sedikit meningkatkan kompleksitas _setup_ awal.
+
+**Contoh Kasus:**
+Mengelola _instance_ `Dio` (untuk HTTP requests), _repository_ yang berinterinteraksi dengan API, atau _database service_.
+
+```dart
+// main.dart (setup GetIt with Injectable)
+import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
+
+// Import file generated oleh injectable
+import 'main.config.dart'; // File ini akan digenerate
+
+// Inisialisasi GetIt
+final getIt = GetIt.instance;
+
+@injectableInit
+void configureDependencies() => getIt.init(); // Perintah untuk generate: flutter pub run build_runner build --delete-conflicting-outputs
+
+void main() {
+  configureDependencies(); // Panggil sebelum runApp
+  runApp(const MyApp());
+}
+
+// my_service.dart
+@singleton // Menandai kelas ini agar di-register sebagai singleton di GetIt
+class MyService {
+  String fetchData() => 'Data fetched from MyService!';
+}
+
+// my_bloc.dart (menggunakan GetIt untuk dependensi)
+import 'package:bloc/bloc.dart';
+import 'package:get_it/get_it.dart'; // Import GetIt
+import 'package:your_app_name/auth_bloc.dart'; // Assume auth_bloc.dart has AuthService
+
+class MyBloc extends Bloc<AuthEvent, AuthState> {
+  // Dapatkan instance AuthService melalui GetIt
+  final AuthService _authService = GetIt.I<AuthService>(); // Atau getIt<AuthService>()
+
+  MyBloc() : super(const AuthInitial()) {
+    on<AuthLoginRequested>((event, emit) async {
+      emit(const AuthLoading());
+      final success = await _authService.login(event.username, event.password);
+      if (success) {
+        emit(const AuthAuthenticated(userId: '1', username: 'testuser'));
+      } else {
+        emit(const AuthError('Login failed'));
+      }
+    });
+  }
+}
+
+// Di file UI (widget) Anda bisa mendapatkan instance BLoC atau Service:
+// final MyBloc myBloc = getIt<MyBloc>(); // Jika MyBloc juga di-register di GetIt
+// final MyService myService = getIt<MyService>();
+```
+
+---
+
+#### 6.7.3 Redux
+
+**Deskripsi:**
+Redux adalah pola arsitektur _state management_ yang sangat terkenal dari ekosistem web (terutama React). Meskipun kurang umum digunakan di Flutter dibandingkan BLoC atau Provider, ia memiliki implementasi resmi di Flutter dan cocok untuk aplikasi yang sangat besar dengan _state_ kompleks dan sering di-_audit_.
+
+**Tiga Prinsip Redux:**
+
+1.  **Single Source of Truth:** Seluruh _state_ aplikasi disimpan dalam satu objek _tree_ tunggal yang disebut `store`.
+2.  **State is Read-only:** Satu-satunya cara untuk mengubah _state_ adalah dengan memancarkan sebuah `action`, objek biasa yang menggambarkan apa yang terjadi.
+3.  **Changes are Made with Pure Functions:** Untuk menentukan bagaimana _state tree_ berubah oleh _action_, Anda menulis `reducers`. _Reducer_ adalah fungsi murni yang mengambil _state_ sebelumnya dan _action_, dan mengembalikan _state_ berikutnya.
+
+**Kelebihan:**
+
+- **Predictability:** _State_ sangat _predictable_ karena perubahan hanya melalui `action` dan `reducer` yang murni. Ini memudahkan _debugging_ dan _time-travel debugging_.
+- **Scalability:** Sangat cocok untuk aplikasi besar dengan _state_ yang kompleks.
+- **Debugging Tools:** Ekosistem Redux (misalnya, Redux DevTools) menyediakan alat _debugging_ yang sangat canggih.
+
+**Kekurangan:**
+
+- **Boilerplate:** Memiliki _boilerplate_ yang paling banyak di antara solusi _state management_ lainnya, bahkan untuk kasus sederhana. Anda perlu mendefinisikan `action`, `reducer`, dan _middleware_.
+- **Kurva Pembelajaran:** Memiliki kurva pembelajaran yang lebih curam bagi mereka yang tidak familiar dengan konsepnya.
+
+**Contoh Kasus:**
+Aplikasi e-commerce besar, aplikasi dengan banyak _form_ yang kompleks, atau aplikasi dengan kebutuhan _undo/redo_ yang luas.
+
+```dart
+// Contoh sangat sederhana Redux
+// 1. Actions
+enum CounterActions { Increment, Decrement }
+
+// 2. State
+class AppState {
+  final int counter;
+  AppState({this.counter = 0});
+
+  AppState copyWith({int? counter}) {
+    return AppState(counter: counter ?? this.counter);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AppState && runtimeType == other.runtimeType && counter == other.counter;
+
+  @override
+  int get hashCode => counter.hashCode;
+}
+
+// 3. Reducer
+AppState appReducer(AppState state, dynamic action) {
+  if (action == CounterActions.Increment) {
+    return state.copyWith(counter: state.counter + 1);
+  } else if (action == CounterActions.Decrement) {
+    return state.copyWith(counter: state.counter - 1);
+  }
+  return state;
+}
+
+// 4. Store (di main.dart atau di atas app)
+// final store = Store<AppState>(appReducer, initialState: AppState());
+
+// 5. Connect UI (menggunakan flutter_redux package)
+/*
+// Contoh menggunakan StoreConnector dari flutter_redux
+StoreConnector<AppState, int>(
+  converter: (store) => store.state.counter, // Pilih bagian state yang dibutuhkan
+  builder: (context, counter) {
+    return Text('$counter');
+  },
+);
+
+// Untuk dispatch action
+// StoreProvider.of<AppState>(context).dispatch(CounterActions.Increment);
+*/
+```
+
+---
+
+#### 6.7.4 MobX
+
+**Deskripsi:**
+MobX adalah _state management library_ yang populer di JavaScript, dan memiliki implementasi untuk Dart dan Flutter. Ini berfokus pada pendekatan reaktif yang menggunakan _observable_ untuk secara otomatis memperbarui UI saat _state_ berubah. MobX sangat cocok untuk pengembang yang menyukai pendekatan _object-oriented_ dan _imperative_ yang lebih fleksibel.
+
+**Bagaimana Ia Bekerja:**
+
+- **Observables:** Anda menandai properti atau _computed value_ sebagai _observable_.
+- **Actions:** Metode yang memodifikasi _observable_.
+- **Reactions:** Fungsi yang bereaksi terhadap perubahan _observable_ (misalnya, memperbarui UI, _logging_).
+- **`@observable`, `@action`, `@computed`:** Anotasi yang digunakan bersama dengan _code generation_ (`mobx_codegen`) untuk mengubah kode Dart biasa menjadi _reactive_.
+- **`Observer` widget:** Widget Flutter yang mirip dengan `Obx` atau `GetX` yang secara otomatis membangun ulang ketika _observable_ yang diakses di dalamnya berubah.
+
+**Kelebihan:**
+
+- **Reaktif Penuh:** Mirip dengan GetX reactive, hanya bagian UI yang relevan yang di-_rebuild_.
+- **Sintaks Ringkas:** Setelah _setup_ awal, API-nya sangat bersih dan intuitif.
+- **Object-Oriented:** Cocok untuk pengembang yang nyaman dengan pola berorientasi objek.
+- **Fleksibilitas:** Tidak terlalu _opinionated_ tentang struktur aplikasi Anda.
+
+**Kekurangan:**
+
+- **Code Generation:** Membutuhkan _code generation_ (`build_runner`), yang menambahkan langkah _build_ dan bisa sedikit memperlambat pengembangan.
+- **Kurva Pembelajaran Awal:** Membutuhkan pemahaman tentang konsep _observable_, _action_, dan _reaction_.
+
+**Contoh Kasus:**
+Aplikasi dengan _form_ dinamis, _real-time updates_, atau _state_ yang kompleks di mana _reactive programming_ sangat menguntungkan.
+
+```dart
+// Pastikan ada dependensi:
+// dependencies:
+//   mobx: ^2.3.0
+//   flutter_mobx: ^2.2.0
+// dev_dependencies:
+//   mobx_codegen: ^2.4.0
+//   build_runner: ^2.4.6
+
+// counter.dart
+import 'package:mobx/mobx.dart';
+part 'counter.g.dart'; // File yang akan digenerate
+
+class Counter = _Counter with _$Counter; // Mixin for code generation
+
+abstract class _Counter with Store {
+  @observable // Menandai 'value' sebagai observable
+  int value = 0;
+
+  @action // Menandai 'increment' sebagai action yang mengubah observable
+  void increment() {
+    value++;
+  }
+
+  @action
+  void decrement() {
+    value--;
+  }
+
+  @computed // Menandai 'isEven' sebagai computed value yang bergantung pada observable
+  bool get isEven => value % 2 == 0;
+}
+
+// main.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart'; // Untuk Observer widget
+import 'counter.dart'; // Import file counter yang sudah didefinisikan
+
+final Counter counter = Counter(); // Buat instance counter
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MobX Counter',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('MobX Counter Demo'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('Current Counter Value:'),
+              Observer( // Widget Observer akan otomatis di-rebuild saat counter.value berubah
+                builder: (_) => Text(
+                  '${counter.value}',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ),
+              Observer(
+                builder: (_) => Text(
+                  counter.isEven ? 'Even' : 'Odd',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'decrement',
+                    onPressed: counter.decrement, // Panggil action
+                    child: const Icon(Icons.remove),
+                  ),
+                  const SizedBox(width: 20),
+                  FloatingActionButton(
+                    heroTag: 'increment',
+                    onPressed: counter.increment, // Panggil action
+                    child: const Icon(Icons.add),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+#### 6.7.5 Memilih Solusi yang Tepat
+
+Memilih solusi _state management_ yang tepat adalah keputusan penting yang akan memengaruhi struktur, _maintainability_, performa, dan skalabilitas aplikasi Anda. Tidak ada satu pun solusi "terbaik" yang cocok untuk semua kasus. Pilihan terbaik tergantung pada beberapa faktor:
+
+1.  **Ukuran dan Kompleksitas Proyek:**
+
+    - **Kecil/Sedang (Prototipe, Aplikasi Sederhana):** `Provider` (dengan `ChangeNotifier`) atau `GetX` (Reactive) bisa menjadi pilihan yang sangat baik karena kesederhanaan dan kecepatan pengembangannya.
+    - **Besar/Enterprise (Aplikasi Skala Perusahaan):** `BLoC/Cubit` atau `Riverpod` sering kali lebih disukai karena _enforcement_ pemisahan _concern_ yang kuat, _testability_ yang tinggi, dan _predictability_. `Redux` juga bisa dipertimbangkan jika Anda membutuhkan _time-travel debugging_ atau terbiasa dengan polanya.
+
+2.  **Pengalaman Tim:**
+
+    - Jika tim Anda sudah familiar dengan konsep reaktif atau _functional programming_, `Riverpod` atau `MobX` bisa menjadi pilihan yang bagus.
+    - Jika tim Anda berasal dari latar belakang yang berorientasi objek atau ingin struktur yang lebih terdefinisi, `BLoC/Cubit` mungkin lebih cocok.
+    - Jika kecepatan pengembangan dan _boilerplate_ minimal adalah prioritas utama, `GetX` mungkin menarik.
+    - Jika tim tidak memiliki banyak pengalaman, `Provider` adalah titik awal yang paling mudah dan direkomendasikan.
+
+3.  **Kebutuhan Spesifik Proyek:**
+
+    - **Testing:** Jika _testability_ adalah prioritas utama, `BLoC/Cubit` dan `Riverpod` sangat unggul dalam hal ini.
+    - **Boilerplate:** Jika Anda ingin seminimal mungkin _boilerplate_, `GetX` atau `MobX` (setelah _setup_ awal) adalah pilihan yang baik.
+    - **Debuggability:** `Redux` dengan DevTools-nya adalah raja dalam _debugging_ _state_ yang kompleks. `BLoC/Cubit` juga sangat baik dengan `BlocObserver`.
+    - **Compile-time Safety:** `Riverpod` menawarkan keamanan tipe yang luar biasa pada _compile-time_.
+
+4.  **Ekosistem dan Komunitas:**
+
+    - Perhatikan seberapa aktif pengembangan _package_, kualitas dokumentasi, dan ukuran komunitas untuk dukungan. Semua _package_ yang dibahas memiliki komunitas yang aktif, namun tingkat dan jenis dukungannya bisa bervariasi.
+
+**Matriks Perbandingan (Ringkasan):**
+
+| Fitur/Solusi    | `setState`   | `Provider`            | `Riverpod`     | `BLoC/Cubit`          | `GetX`         | `Redux`               | `MobX`                |
+| :-------------- | :----------- | :-------------------- | :------------- | :-------------------- | :------------- | :-------------------- | :-------------------- |
+| **Kemudahan**   | Sangat Mudah | Mudah                 | Sedang         | Sedang                | Sangat Mudah   | Sulit                 | Sedang                |
+| **Boilerplate** | Rendah       | Rendah/Sedang         | Rendah/Sedang  | Tinggi                | Sangat Rendah  | Sangat Tinggi         | Rendah/Sedang         |
+| **Reactivity**  | Local        | ChangeNotifier/Stream | Sangat Reaktif | Stream/Reactive       | Sangat Reaktif | Deterministik         | Sangat Reaktif        |
+| **Testability** | Rendah       | Sedang                | Sangat Tinggi  | Sangat Tinggi         | Tinggi         | Sangat Tinggi         | Tinggi                |
+| **Scalability** | Rendah       | Sedang                | Tinggi         | Tinggi                | Sedang/Tinggi  | Sangat Tinggi         | Sedang/Tinggi         |
+| **DI Built-in** | Tidak        | Implicit              | Ya             | Tidak (perlu DI lain) | Ya             | Tidak (perlu DI lain) | Tidak (perlu DI lain) |
+| **Keterikatan** | Rendah       | Rendah                | Rendah         | Sedang                | Tinggi         | Sedang                | Sedang                |
+
+**Alur Pengambilan Keputusan Sederhana:**
+
+1.  **Apakah ini _state_ lokal yang hanya relevan untuk satu _widget_?**
+    - `setState` sudah cukup.
+2.  **Apakah Anda memulai proyek baru dan menginginkan solusi yang direkomendasikan Google?**
+    - `Provider` atau `Riverpod`.
+3.  **Apakah Anda membangun aplikasi besar yang membutuhkan pemisahan _concern_ yang kuat dan _testability_ tinggi?**
+    - `BLoC/Cubit` atau `Riverpod`.
+4.  **Apakah Anda ingin solusi "serba bisa" dengan _boilerplate_ minimal dan kecepatan pengembangan tinggi, dan Anda memahami _trade-off_-nya?**
+    - `GetX`.
+5.  **Apakah Anda sudah memiliki pengalaman dengan Redux di web atau membutuhkan _state management_ yang sangat _auditable_?**
+    - `Redux`.
+6.  **Apakah Anda menyukai pendekatan _observable_ dan _object-oriented_ dengan _reactive updates_?**
+    - `MobX`.
+
+**Kesimpulan Fase 6: State Management**
+
+Fase ini telah memberikan Anda pemahaman yang komprehensif tentang berbagai pendekatan _state management_ di Flutter. Dari yang paling dasar (`setState`) hingga _framework_ yang kompleks (`BLoC`, `Riverpod`, `GetX`, `Redux`, `MobX`), Anda kini memiliki alat dan pengetahuan untuk membuat keputusan yang tepat tentang bagaimana mengelola _state_ di aplikasi Flutter Anda. Ingatlah bahwa pengalaman adalah guru terbaik; cobalah berbagai pendekatan dalam proyek-proyek Anda untuk merasakan langsung kelebihan dan kekurangannya.
+
+# Selamat!
+
+Dengan ini, kita telah menyelesaikan seluruh **Fase 6: State Management**. Selanjutnya kita akan masuk pada **Fase 7: Routing dan Navigasi**
 
 ---
 
