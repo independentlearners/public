@@ -6,8 +6,10 @@
 #
 
 - [FASE 1: Foundation \& Core Concepts](#fase-1-foundation--core-concepts)
-  - [Tujuan Pembelajaran Fase 1:](#tujuan-pembelajaran-fase-1)
-  - [Terminologi Esensial \& Penjelasan Detail:](#terminologi-esensial--penjelasan-detail)
+- [](#)
+- [](#-1)
+  - [**Tujuan Pembelajaran Fase 1:**](#tujuan-pembelajaran-fase-1)
+  - [**Terminologi Esensial \& Penjelasan Detail:**](#terminologi-esensial--penjelasan-detail)
   - [1. Pengenalan Flutter Ecosystem](#1-pengenalan-flutter-ecosystem)
     - [1.1 Konsep Dasar dan Philosophy](#11-konsep-dasar-dan-philosophy)
       - [1.1.1 Apa itu Flutter dan Philosophy](#111-apa-itu-flutter-dan-philosophy)
@@ -547,19 +549,17 @@ Contoh kode telah disisipkan langsung dalam penjelasan setiap konsep.
 
 ---
 
-Selanjutkan:
+Selanjutnya:
 **1.2 Development Environment Setup**.
-
-#
 
 > - **[Guide](../bagian-1/guide/README.md)**
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Framework][framework]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[domain]: ../../../domain-spesifik/README.md
+[framework]: ../../../framework/README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->
