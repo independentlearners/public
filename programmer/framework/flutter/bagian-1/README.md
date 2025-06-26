@@ -6,16 +6,13 @@
 #
 
 - [FASE 1: Foundation \& Core Concepts](#fase-1-foundation--core-concepts)
-- [](#)
-- [](#-1)
-  - [**Tujuan Pembelajaran Fase 1:**](#tujuan-pembelajaran-fase-1)
-  - [**Terminologi Esensial \& Penjelasan Detail:**](#terminologi-esensial--penjelasan-detail)
+  - [Tujuan Pembelajaran Fase 1:](#tujuan-pembelajaran-fase-1)
+  - [Terminologi Esensial \& Penjelasan Detail:](#terminologi-esensial--penjelasan-detail)
   - [1. Pengenalan Flutter Ecosystem](#1-pengenalan-flutter-ecosystem)
     - [1.1 Konsep Dasar dan Philosophy](#11-konsep-dasar-dan-philosophy)
       - [1.1.1 Apa itu Flutter dan Philosophy](#111-apa-itu-flutter-dan-philosophy)
       - [1.1.2 Flutter Architecture Deep Dive](#112-flutter-architecture-deep-dive)
       - [1.1.3 Dart Language Fundamentals (Khusus untuk Flutter)](#113-dart-language-fundamentals-khusus-untuk-flutter)
-- [](#-2)
 
 </details>
 
