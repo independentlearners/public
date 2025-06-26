@@ -5,7 +5,7 @@ Dengan selesainya **Fase 3: Navigation & Routing**, kita akan melangkah ke **Fas
 Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
 
 <details>
-  <summary>📃 Daftar Isi</summary>
+  <summary>📃 Struktur Daftar Isi</summary>
 
 - [FASE 4: State Management Fundamentals](#fase-4-state-management-fundamentals)
   - [Overview Fase](#overview-fase)
@@ -16,6 +16,7 @@ Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
     - [4.2 Provider Package (Simple \& Recommended)](#42-provider-package-simple--recommended)
       - [4.2.1 `Provider`, `ChangeNotifier`, `ChangeNotifierProvider`](#421-provider-changenotifier-changenotifierprovider)
       - [4.2.2 `Consumer` and `Selector`](#422-consumer-and-selector)
+      - [4.2.3 MultiProvider](#423-multiprovider)
 
 </details>
 
@@ -1245,6 +1246,295 @@ class HomeScreen extends StatelessWidget {
 
   - **Penyebab:** `context.read()` tidak akan membuat _widget_ di-_rebuild_ saat _state_ berubah.
   - **Solusi:** Gunakan `context.watch()` atau argumen _provider_ yang diteruskan ke _builder_ (`counterModel` di contoh `Consumer`, `userName` di contoh `Selector`) untuk membaca _state_ yang akan menyebabkan _rebuild_. `context.read()` hanya untuk memicu aksi.
+
+---
+
+#### 4.2.3 MultiProvider
+
+Sub-bagian ini akan menjelaskan mengapa dan bagaimana menggunakan `MultiProvider` untuk menyediakan beberapa instance _provider_ ke dalam _widget tree_ secara bersih dan terorganisir.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami bahwa dalam aplikasi yang lebih kompleks, seringkali ada kebutuhan untuk menyediakan lebih dari satu jenis _state_ (misalnya, `CounterModel` dan `UserProfileModel` dari contoh sebelumnya) ke _widget tree_. Jika kita menyediakan _provider_ satu per satu secara berurutan, kode akan terlihat sangat bersarang (nesting) dan sulit dibaca. `MultiProvider` adalah _widget_ dari paket _Provider_ yang dirancang untuk mengatasi masalah ini dengan memungkinkan Anda mendaftarkan daftar _provider_ secara horizontal, menjaga keterbacaan kode.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Code Readability and Maintainability:** Tujuan utama `MultiProvider` adalah membuat _widget tree_ lebih rapi dan mudah dibaca ketika ada banyak _provider_.
+
+  - **Filosofi:** Mengikuti prinsip "Clean Code" dan meningkatkan pengalaman pengembang (DX) dengan mengurangi _nesting_ yang berlebihan.
+
+- **Dependency Order:** Meskipun `MultiProvider` tampak menyediakan _provider_ secara paralel, _provider_ di dalam daftar `providers` sebenarnya diproses secara berurutan. Ini penting jika satu _provider_ bergantung pada _provider_ lain (misalnya, `AuthService` yang memerlukan `HttpClient`). _Provider_ yang dibutuhkan harus didefinisikan _sebelum_ _provider_ yang membutuhkannya.
+
+  - **Filosofi:** Memberikan fleksibilitas dalam mengatur dependensi antar _state_ atau layanan.
+
+- **Scoped Availability:** Sama seperti _provider_ tunggal, _provider_ yang disediakan oleh `MultiProvider` hanya tersedia untuk _widget tree_ di bawah `MultiProvider` tersebut.
+
+  - **Filosofi:** Menjaga _scope_ _state_ tetap terdefinisi dengan jelas, sehingga tidak semua _state_ tersedia di setiap bagian aplikasi jika tidak diperlukan.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram yang membandingkan:
+  - **Nesting (`ChangeNotifierProvider` bersarang):** Menunjukkan banyak `ChangeNotifierProvider` yang bersarang satu sama lain, membentuk segitiga ke dalam.
+  - **`MultiProvider`:** Menunjukkan `MultiProvider` di satu tingkat, dengan panah-panah yang menunjuk ke berbagai _provider_ (misalnya, `CounterModel`, `UserProfileModel`) yang disediakan ke _widget tree_ di bawahnya. Ini menunjukkan struktur yang lebih datar dan rapi.
+
+**Hubungan dengan Modul Lain:**
+`MultiProvider` adalah alat organisasional untuk _Provider_ secara keseluruhan. Ini akan menjadi bagian integral dari pengaturan aplikasi Flutter yang menggunakan _Provider_ sebagai solusi _state management_, terutama ketika aplikasi tumbuh dan memiliki berbagai jenis _state_ yang berbeda. Ini akan sering ditempatkan di tingkat atas aplikasi, seperti di atas `MaterialApp`.
+
+---
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Kita akan menggunakan kembali contoh `CounterModel` dan `UserProfileModel` dari sub-bagian sebelumnya untuk mendemonstrasikan `MultiProvider`.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// --- Models (ChangeNotifier) ---
+// Model 1: CounterModel
+class CounterModel extends ChangeNotifier {
+  int _counter = 0;
+  int get counter => _counter;
+
+  void increment() {
+    _counter++;
+    notifyListeners();
+  }
+
+  void decrement() {
+    _counter--;
+    notifyListeners();
+  }
+}
+
+// Model 2: UserProfileModel
+class UserProfileModel extends ChangeNotifier {
+  String _userName = 'Guest';
+  int _loginCount = 0;
+  bool _isPremium = false;
+
+  String get userName => _userName;
+  int get loginCount => _loginCount;
+  bool get isPremium => _isPremium;
+
+  void login(String name) {
+    _userName = name;
+    _loginCount++;
+    notifyListeners();
+  }
+
+  void togglePremiumStatus() {
+    _isPremium = !_isPremium;
+    notifyListeners();
+  }
+}
+
+// --- Main Application with MultiProvider ---
+void main() {
+  runApp(
+    // MultiProvider digunakan untuk menyediakan beberapa provider sekaligus.
+    MultiProvider(
+      providers: [
+        // Daftar semua provider yang ingin Anda sediakan.
+        // Urutan penting jika ada dependensi antar provider.
+        ChangeNotifierProvider(create: (_) => CounterModel()),
+        ChangeNotifierProvider(create: (_) => UserProfileModel()),
+        // Contoh provider yang bergantung pada yang lain (misalnya, AuthService bergantung pada HttpClient)
+        // Provider<HttpClient>(create: (_) => HttpClient()),
+        // ChangeNotifierProvider<AuthService>(
+        //   create: (context) => AuthService(context.read<HttpClient>()),
+        // ),
+      ],
+      child: const MyApp(), // Anak dari MultiProvider, yang bisa mengakses semua provider di atas.
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'MultiProvider Demo',
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+// --- HomeScreen - Mengkonsumsi kedua model ---
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('MultiProvider Example'),
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // Mengkonsumsi CounterModel menggunakan Consumer
+            Consumer<CounterModel>(
+              builder: (context, counterModel, child) {
+                print('Consumer<CounterModel> rebuilt');
+                return Column(
+                  children: [
+                    const Text(
+                      'Counter:',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${counterModel.counter}',
+                      style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: counterModel.decrement,
+                          child: const Icon(Icons.remove),
+                        ),
+                        const SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: counterModel.increment,
+                          child: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 50),
+
+            // Mengkonsumsi UserProfileModel menggunakan Selector untuk userName
+            Selector<UserProfileModel, String>(
+              selector: (context, userProfileModel) => userProfileModel.userName,
+              builder: (context, userName, child) {
+                print('Selector<UserProfileModel, String> rebuilt');
+                return Text(
+                  'Halo, $userName!',
+                  style: const TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            // Mengkonsumsi UserProfileModel menggunakan Selector untuk isPremium
+            Selector<UserProfileModel, bool>(
+              selector: (context, userProfileModel) => userProfileModel.isPremium,
+              builder: (context, isPremium, child) {
+                print('Selector<UserProfileModel, bool> (isPremium) rebuilt');
+                return Text(
+                  isPremium ? 'Anda adalah Pengguna Premium!' : 'Anda adalah Pengguna Standar.',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isPremium ? Colors.amber[800] : Colors.grey[700],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 30),
+
+            // Tombol untuk memicu perubahan pada UserProfileModel
+            ElevatedButton(
+              onPressed: () {
+                final userProfileModel = context.read<UserProfileModel>();
+                if (userProfileModel.userName == 'Guest') {
+                  userProfileModel.login('Alice');
+                } else {
+                  userProfileModel.login('Guest');
+                }
+              },
+              child: const Text('Toggle User / Login'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                context.read<UserProfileModel>().togglePremiumStatus();
+              },
+              child: const Text('Toggle Premium Status'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+- **`MultiProvider` Structure:**
+  - `MultiProvider` adalah _widget_ yang menerima properti `providers`, yang merupakan `List<SingleChildWidget>`. `ChangeNotifierProvider` (dan banyak _provider_ lainnya dari paket _Provider_) adalah `SingleChildWidget`, jadi mereka dapat ditempatkan dalam daftar ini.
+  - Setiap _provider_ dalam daftar `providers` akan tersedia untuk `child` dari `MultiProvider` dan semua *descendant*nya.
+- **Benefits:**
+  - **Keterbacaan:** Bandingkan dengan menumpuk `ChangeNotifierProvider` satu per satu:
+    ```dart
+    ChangeNotifierProvider(
+      create: (_) => CounterModel(),
+      child: ChangeNotifierProvider(
+        create: (_) => UserProfileModel(),
+        child: const MyApp(),
+      ),
+    );
+    ```
+    `MultiProvider` menghindari _nesting_ yang mendalam ini, membuat struktur _widget tree_ di `main()` jauh lebih datar dan mudah dibaca, terutama saat jumlah _provider_ bertambah.
+  - **Manajemen Dependensi (Urutan):** Anda bisa melihat baris yang dikomentari di `providers` list:
+    ```dart
+    // Provider<HttpClient>(create: (_) => HttpClient()),
+    // ChangeNotifierProvider<AuthService>(
+    //   create: (context) => AuthService(context.read<HttpClient>()),
+    // ),
+    ```
+    Ini mengilustrasikan bagaimana Anda dapat menyediakan `HttpClient` terlebih dahulu, dan kemudian `AuthService` dapat mengakses `HttpClient` tersebut menggunakan `context.read<HttpClient>()` di dalam _builder_ `create`-nya. Ini menunjukkan bahwa urutan _provider_ dalam daftar `providers` itu penting jika ada dependensi antar _provider_.
+- **Consumption:** Konsumsi _provider_ di _widget_ anak (seperti `HomeScreen`) tidak berubah. Anda tetap menggunakan `context.watch<T>()`, `context.read<T>()`, `Consumer<T>`, atau `Selector<T, R>` seperti biasa, seolah-olah mereka disediakan oleh `ChangeNotifierProvider` tunggal.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Ilustrasi perbandingan `nesting` _provider_ vs `MultiProvider`.
+  - **Nesting:** Gambar `MyApp` dibungkus oleh `Provider B`, yang dibungkus oleh `Provider A`. Terlihat seperti piramida terbalik.
+  - **MultiProvider:** Gambar `MyApp` dibungkus oleh `MultiProvider`, yang memiliki garis-garis yang menunjuk ke `Provider A` dan `Provider B` di sampingnya, semua di tingkat yang sama. Ini lebih datar.
+- Diagram yang menunjukkan `MultiProvider` di _root_ aplikasi, dengan panah yang menyebar ke berbagai `ChangeNotifierModel` (`CounterModel`, `UserProfileModel`, dll.) yang kemudian tersedia di seluruh _widget tree_ di bawahnya.
+
+**Terminologi Esensial & Penjelasan Detail:**
+
+- **`MultiProvider`:** Sebuah _widget_ dari paket `provider` yang memungkinkan Anda untuk mendaftarkan dan menyediakan beberapa _provider_ ke _widget tree_ secara efisien, menghindari _nesting_ yang berlebihan.
+- **`providers` (Properti `MultiProvider`):** Sebuah `List<SingleChildWidget>` yang berisi semua _provider_ (seperti `ChangeNotifierProvider`, `Provider`, `StreamProvider`, dll.) yang ingin Anda sediakan.
+- **`SingleChildWidget`:** Kelas dasar untuk _widget_ yang hanya memiliki satu anak, dan banyak _provider_ (termasuk `ChangeNotifierProvider`) mengimplementasikannya.
+
+**Sumber Referensi Lengkap:**
+
+- [MultiProvider widget (Provider Documentation)](https://www.google.com/search?q=https://pub.dev/packages/provider%23multiprovider)
+- [Provider Types (Provider Documentation)](https://www.google.com/search?q=https://pub.dev/packages/provider%23provider-types) - Berguna untuk memahami berbagai jenis _provider_ yang dapat digunakan dalam `MultiProvider`.
+
+**Tips dan Praktik Terbaik:**
+
+- **Tempatkan di Tingkat yang Tepat:** Untuk _state_ global (seperti tema, otentikasi, keranjang belanja), tempatkan `MultiProvider` di atas `MaterialApp` Anda (biasanya di fungsi `main`). Untuk _state_ yang hanya relevan untuk bagian aplikasi tertentu, tempatkan `MultiProvider` serendah mungkin di _widget tree_.
+- **Urutan Penting untuk Dependensi:** Selalu ingat bahwa urutan _provider_ dalam daftar `providers` penting jika ada _provider_ yang bergantung pada yang lain. _Provider_ yang diperlukan harus muncul terlebih dahulu.
+- **Jangan Berlebihan:** Meskipun `MultiProvider` memudahkan penambahan _provider_, hindari membuat terlalu banyak _provider_ kecil yang tidak perlu. Kelompokkan _state_ yang terkait secara logis ke dalam satu `ChangeNotifier` jika memungkinkan.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** "No provider found for type 'X'\!" meskipun `MultiProvider` sudah digunakan.
+
+  - **Penyebab:**
+    - Anda lupa mendaftarkan _provider_ yang diperlukan di daftar `providers` dalam `MultiProvider`.
+    - Urutan _provider_ salah, dan _provider_ yang bergantung diakses sebelum _provider_ yang dibutuhkan tersedia.
+    - _Widget_ yang mencoba mengakses _provider_ berada di atas `MultiProvider` di _widget tree_.
+  - **Solusi:**
+    - Periksa kembali daftar `providers` untuk memastikan semua _provider_ yang dibutuhkan sudah ada.
+    - Pastikan _provider_ yang memiliki dependensi didefinisikan setelah dependensinya.
+    - Pastikan `MultiProvider` ditempatkan di atas semua _widget_ yang akan mengkonsumsi _provider_ tersebut.
+
+- **Kesalahan:** Error _runtime_ terkait dengan _type mismatch_ saat mengakses _provider_.
+
+  - **Penyebab:** Anda mencoba mengakses _provider_ dengan _type_ yang salah (misalnya, `context.watch<AnotherModel>()` padahal Anda menyediakan `MyModel`).
+  - **Solusi:** Pastikan _generic type_ yang Anda gunakan dengan `watch`, `read`, `Consumer`, atau `Selector` cocok dengan _type_ `ChangeNotifier` yang disediakan oleh `ChangeNotifierProvider`.
 
 ---
 
