@@ -19,6 +19,7 @@ Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
       - [4.2.3 MultiProvider](#423-multiprovider)
     - [4.3 BLoC/Cubit (Introduction)](#43-bloccubit-introduction)
       - [4.3.1 Core Concepts of BLoC/Cubit](#431-core-concepts-of-bloccubit)
+      - [4.3.2 Basic Implementation with `flutter_bloc`](#432-basic-implementation-with-flutter_bloc)
 
 </details>
 
@@ -1942,6 +1943,409 @@ class BlocCounterApp extends StatelessWidget {
 
   - **Penyebab:** Terlalu sering membuat kelas `Event` atau `State` yang sangat sederhana, atau tidak memanfaatkan fitur seperti `freezed` atau `bloc_test`.
   - **Solusi:** Pertimbangkan untuk menggunakan Cubit jika _event_ Anda terlalu sederhana. Pelajari tentang `freezed` untuk membuat _immutable_ _data class_ dengan mudah. Ini akan sangat mengurangi _boilerplate_.
+
+---
+
+#### 4.3.2 Basic Implementation with `flutter_bloc`
+
+Sub-bagian ini akan berfokus pada penggunaan praktis dari _widget_-_widget_ yang disediakan oleh paket `flutter_bloc` untuk mengintegrasikan BLoC/Cubit dengan UI Flutter.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan mempelajari bagaimana menggunakan `BlocProvider`, `BlocBuilder`, `BlocListener`, dan `BlocConsumer` untuk menyuntikkan (inject) BLoC/Cubit ke _widget tree_, membangun UI berdasarkan _state_ BLoC/Cubit, dan melakukan aksi sampingan (side effects) sebagai respons terhadap perubahan _state_. Selain itu, akan diperkenalkan `RepositoryProvider` sebagai cara untuk menyediakan dependensi (seperti layanan API) ke BLoC/Cubit. Ini adalah implementasi inti dari _pattern_ BLoC/Cubit di UI Flutter.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **`BlocProvider` (Dependency Injection):** Mirip dengan `ChangeNotifierProvider`, `BlocProvider` adalah cara untuk membuat BLoC/Cubit tersedia di _widget tree_.
+
+  - **Filosofi:** Mengurangi _coupling_ antara UI dan logika bisnis. UI tidak perlu tahu bagaimana BLoC/Cubit dibuat, hanya perlu tahu bagaimana mengaksesnya.
+
+- **`BlocBuilder` (Rebuild UI on State Change):** `BlocBuilder` bertanggung jawab untuk membangun ulang bagian dari UI ketika _state_ BLoC/Cubit berubah. Ini sangat mirip dengan `Consumer` di _Provider_.
+
+  - **Filosofi:** Memastikan bahwa hanya bagian UI yang relevan yang di-_rebuild_, mengoptimalkan kinerja _rendering_.
+
+- **`BlocListener` (Side Effects on State Change):** `BlocListener` digunakan untuk melakukan aksi sampingan yang tidak melibatkan _rebuild_ UI (misalnya, menampilkan `SnackBar`, navigasi, menampilkan dialog) sebagai respons terhadap perubahan _state_.
+
+  - **Filosofi:** Memisahkan logika _rendering_ UI dari logika aksi sampingan, menjaga _widget_ tetap fokus pada tugas utamanya.
+
+- **`BlocConsumer` (Combine Builder & Listener):** `BlocConsumer` adalah kombinasi dari `BlocBuilder` dan `BlocListener`, berguna ketika Anda ingin membangun UI _dan_ melakukan aksi sampingan berdasarkan _state_ yang sama.
+
+  - **Filosofi:** Menyediakan _utility_ yang nyaman untuk skenario umum tanpa perlu menumpuk `BlocBuilder` dan `BlocListener`.
+
+- **`RepositoryProvider` (Providing Dependencies):** Digunakan untuk menyediakan objek atau layanan yang tidak mengelola _state_ (misalnya, `UserRepository`, `ApiServiceClient`) ke BLoC/Cubit atau _widget_ lain.
+
+  - **Filosofi:** Mendorong pemisahan tanggung jawab yang lebih lanjut, di mana BLoC/Cubit berinteraksi dengan repositori untuk mendapatkan data, bukan langsung dengan layanan API. Ini sangat penting untuk _testability_.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram `BlocProvider` di bagian atas _widget tree_, menyediakan `Bloc` ke bawah.
+- Panah dari `Bloc` ke `BlocBuilder` (memicu _rebuild_ UI).
+- Panah dari `Bloc` ke `BlocListener` (memicu aksi sampingan seperti `SnackBar`).
+- Diagram `BlocConsumer` yang menunjukkan kedua panah (rebuild dan side effect) dari satu _widget_.
+- Diagram yang menunjukkan `RepositoryProvider` di atas `BlocProvider`, dan `BlocProvider` mengakses `Repository` yang disediakan. Ini mengilustrasikan alur dependensi.
+
+**Hubungan dengan Modul Lain:**
+Ini adalah langkah praktis dalam mengimplementasikan BLoC/Cubit yang telah dibahas konsepnya. `RepositoryProvider` secara langsung berhubungan dengan konsep Lapisan Data dan Repositori yang akan dibahas lebih lanjut di Fase 6 (Arsitektur Aplikasi), serta integrasi API (Fase 5).
+
+---
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Mari kita kembangkan contoh counter dengan menambahkan fitur "loading" dan "error" untuk demonstrasi `BlocListener` dan juga sebuah "Repository" sederhana.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+
+// --- 1. Repository/Service (Contoh: untuk simulasi operasi asinkron) ---
+// Ini adalah kelas yang akan diinjeksi ke BLoC/Cubit.
+// Tidak menggunakan ChangeNotifier, ini adalah kelas Dart biasa.
+class CounterRepository {
+  Future<int> fetchInitialCounterValue() async {
+    await Future.delayed(const Duration(seconds: 1)); // Simulasi network delay
+    return 10; // Nilai awal dari "server"
+  }
+
+  Future<int> incrementRemote(int currentValue) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    // Simulasi error sesekali
+    if (currentValue >= 12) { // Contoh: tidak bisa increment di atas 12
+      throw Exception('Cannot increment above 12!');
+    }
+    return currentValue + 1;
+  }
+}
+
+// --- 2. BLoC Events ---
+abstract class CounterEvent extends Equatable {
+  const CounterEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class LoadCounterEvent extends CounterEvent {} // Untuk memuat nilai awal
+class IncrementCounterEvent extends CounterEvent {}
+class DecrementCounterEvent extends CounterEvent {}
+
+// --- 3. BLoC States ---
+abstract class CounterState extends Equatable {
+  const CounterState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class CounterInitial extends CounterState {}
+
+class CounterLoading extends CounterState {}
+
+class CounterLoaded extends CounterState {
+  final int value;
+  const CounterLoaded(this.value);
+
+  @override
+  List<Object> get props => [value];
+}
+
+class CounterError extends CounterState {
+  final String message;
+  const CounterError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+// --- 4. BLoC ---
+class CounterBloc extends Bloc<CounterEvent, CounterState> {
+  // BLoC sekarang menerima CounterRepository sebagai dependensi
+  final CounterRepository _counterRepository;
+
+  CounterBloc(this._counterRepository) : super(CounterInitial()) {
+    on<LoadCounterEvent>(_onLoadCounter);
+    on<IncrementCounterEvent>(_onIncrementCounter);
+    on<DecrementCounterEvent>(_onDecrementCounter);
+  }
+
+  Future<void> _onLoadCounter(
+      LoadCounterEvent event, Emitter<CounterState> emit) async {
+    emit(CounterLoading()); // Mengeluarkan state loading
+    try {
+      final value = await _counterRepository.fetchInitialCounterValue();
+      emit(CounterLoaded(value)); // Mengeluarkan state loaded
+    } catch (e) {
+      emit(CounterError(e.toString())); // Mengeluarkan state error
+    }
+  }
+
+  Future<void> _onIncrementCounter(
+      IncrementCounterEvent event, Emitter<CounterState> emit) async {
+    if (state is CounterLoaded) {
+      final currentValue = (state as CounterLoaded).value;
+      try {
+        final newValue = await _counterRepository.incrementRemote(currentValue);
+        emit(CounterLoaded(newValue));
+      } catch (e) {
+        emit(CounterError(e.toString())); // Mengeluarkan state error
+      }
+    }
+  }
+
+  Future<void> _onDecrementCounter(
+      DecrementCounterEvent event, Emitter<CounterState> emit) async {
+    if (state is CounterLoaded) {
+      final currentValue = (state as CounterLoaded).value;
+      if (currentValue > 0) { // Contoh: tidak bisa decrement di bawah 0
+        emit(CounterLoaded(currentValue - 1));
+      } else {
+        emit(const CounterError('Cannot decrement below zero!'));
+      }
+    }
+  }
+}
+
+// --- 5. Main Application ---
+void main() {
+  runApp(
+    // MultiRepositoryProvider / RepositoryProvider untuk menyediakan dependensi
+    RepositoryProvider(
+      create: (context) => CounterRepository(), // Menyediakan instance CounterRepository
+      child: BlocProvider(
+        // BlocProvider untuk menyediakan CounterBloc
+        // CounterBloc sekarang memerlukan CounterRepository, yang diakses via context.read
+        create: (context) => CounterBloc(context.read<CounterRepository>())
+          ..add(LoadCounterEvent()), // Memicu load data awal
+        child: const MyApp(),
+      ),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Bloc Implementation Demo',
+      theme: ThemeData(primarySwatch: Colors.teal),
+      home: const CounterPage(),
+    );
+  }
+}
+
+// --- 6. UI: CounterPage ---
+class CounterPage extends StatelessWidget {
+  const CounterPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('BLoC Counter App'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Counter Value:',
+              style: TextStyle(fontSize: 24),
+            ),
+            // BlocBuilder untuk membangun UI berdasarkan state
+            BlocBuilder<CounterBloc, CounterState>(
+              builder: (context, state) {
+                print('BlocBuilder rebuilt: $state'); // Log untuk melihat rebuild
+                if (state is CounterInitial) {
+                  return const CircularProgressIndicator();
+                } else if (state is CounterLoading) {
+                  return const Column(
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 10),
+                      Text('Loading...', style: TextStyle(fontSize: 20)),
+                    ],
+                  );
+                } else if (state is CounterLoaded) {
+                  return Text(
+                    '${state.value}',
+                    style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                  );
+                } else if (state is CounterError) {
+                  return Text(
+                    'Error: ${state.message}',
+                    style: const TextStyle(fontSize: 20, color: Colors.red),
+                    textAlign: TextAlign.center,
+                  );
+                }
+                return const Text('Unknown State'); // Fallback
+              },
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'decrementBtn',
+                  onPressed: () => context.read<CounterBloc>().add(DecrementCounterEvent()),
+                  child: const Icon(Icons.remove),
+                ),
+                const SizedBox(width: 20),
+                FloatingActionButton(
+                  heroTag: 'incrementBtn',
+                  onPressed: () => context.read<CounterBloc>().add(IncrementCounterEvent()),
+                  child: const Icon(Icons.add),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      // BlocListener untuk side effects (misalnya, menampilkan SnackBar pada Error)
+      // Perhatikan bahwa BlocListener tidak me-rebuild UI.
+      // listener: (context, state) adalah callback yang dipanggil saat state berubah.
+      // listenWhen: (previousState, currentState) adalah opsional, untuk filter kapan listener dipanggil.
+      bottomNavigationBar: BlocListener<CounterBloc, CounterState>(
+        listener: (context, state) {
+          if (state is CounterError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          } else if (state is CounterLoaded && state.value == 10) {
+            // Contoh lain: Aksi ketika counter mencapai 10
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Counter is back to 10!'),
+                backgroundColor: Colors.blue,
+                duration: Duration(seconds: 1),
+              ),
+            );
+          }
+        },
+        // Anda bisa menyertakan child jika ingin BlocListener "membungkus" sesuatu
+        child: const SizedBox.shrink(), // Biasanya tidak ada UI di sini
+      ),
+    );
+  }
+}
+
+// --- Tambahan: BlocConsumer ---
+// Menggabungkan BlocBuilder dan BlocListener
+class CounterDisplayAndNotifier extends StatelessWidget {
+  const CounterDisplayAndNotifier({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<CounterBloc, CounterState>(
+      // listener sama seperti BlocListener
+      listener: (context, state) {
+        if (state is CounterError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Consumer Error: ${state.message}')),
+          );
+        }
+      },
+      // builder sama seperti BlocBuilder
+      builder: (context, state) {
+        if (state is CounterLoaded) {
+          return Text('Consumer Value: ${state.value}', style: const TextStyle(fontSize: 30));
+        }
+        return const CircularProgressIndicator();
+      },
+      // listenWhen dan buildWhen juga tersedia di BlocConsumer
+      // listenWhen: (previous, current) => current is CounterError,
+      // buildWhen: (previous, current) => current is CounterLoaded,
+    );
+  }
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+1.  **`CounterRepository`:** Sebuah kelas Dart biasa yang mensimulasikan sumber data (misalnya, API _backend_). Ini tidak _extend_ `ChangeNotifier` atau BLoC. Fungsinya adalah untuk menyediakan data atau memproses logika terkait data yang tidak secara langsung merupakan _state_ aplikasi. Ini penting untuk pemisahan tanggung jawab.
+2.  **`CounterEvent` & `CounterState`:** Kita mendefinisikan _event_ dan _state_ yang lebih beragam untuk mencakup kasus `Loading`, `Loaded`, dan `Error`.
+    - Setiap _state_ adalah kelas terpisah yang _extends_ `CounterState` dan `Equatable`, memungkinkan kita untuk membedakan kondisi aplikasi dengan jelas.
+3.  **`CounterBloc`:**
+    - Konstruktornya sekarang menerima `CounterRepository`. Ini adalah pola umum di BLoC/Cubit: BLoC/Cubit mendapatkan dependensinya melalui konstruktor.
+    - Kita memiliki _event handler_ `_onLoadCounter` yang disiapkan untuk `LoadCounterEvent`. Di sini, kita menunjukkan bagaimana BLoC dapat mengeluarkan berbagai _state_ (misalnya, `CounterLoading`, `CounterLoaded`, `CounterError`) secara berurutan sebagai respons terhadap operasi asinkron.
+    - Metode `incrementRemote` di `CounterRepository` sekarang dapat melempar `Exception`, dan BLoC menanganinya dengan mengeluarkan `CounterError` _state_.
+4.  **`main()` function (`RepositoryProvider` & `BlocProvider`):**
+    - **`RepositoryProvider<CounterRepository>`:** Ini adalah _widget_ yang menyediakan instance `CounterRepository` ke _widget tree_. Ini sering ditempatkan di atas `BlocProvider` jika BLoC/Cubit memerlukan repositori.
+    - **`BlocProvider<CounterBloc>`:** Ini menyediakan `CounterBloc`. Perhatikan bagaimana instance `CounterBloc` dibuat: `create: (context) => CounterBloc(context.read<CounterRepository>())`. Ini berarti `CounterBloc` mendapatkan `CounterRepository`-nya dari _widget tree_ melalui `context.read()`. Ini adalah contoh _Dependency Injection_ yang jelas.
+    - `..add(LoadCounterEvent())`: Setelah `CounterBloc` dibuat, kita langsung mengirimkan `LoadCounterEvent` untuk memicu pemuatan data awal.
+5.  **`CounterPage` (UI):**
+    - **`BlocBuilder<CounterBloc, CounterState>`:** Digunakan di tengah halaman untuk menampilkan nilai counter atau indikator _loading_ atau pesan _error_.
+      - Di dalam _builder_, kita melakukan pengecekan tipe _state_ (`if (state is CounterLoading)`, `if (state is CounterLoaded)`, dll.) untuk menampilkan UI yang berbeda sesuai kondisi _state_ saat ini. Ini adalah pola umum.
+    - **`BlocListener<CounterBloc, CounterState>`:** Ditempatkan di properti `bottomNavigationBar` dari `Scaffold`. Ini menunjukkan bahwa `BlocListener` dapat ditempatkan di mana saja di _widget tree_ yang memiliki akses ke BLoC, dan tidak harus menjadi bagian dari area `body` yang di-_rebuild_.
+      - Properti `listener` adalah _callback_ yang dipicu setiap kali _state_ BLoC berubah. Di sini, kita menggunakannya untuk menampilkan `SnackBar` ketika _error state_ atau _state_ tertentu tercapai.
+      - Perhatikan bahwa `BlocListener` memiliki properti `child` opsional. Jika Anda tidak memiliki _widget_ yang perlu di-_listen_ tetapi tidak di-_rebuild_, Anda bisa gunakan `SizedBox.shrink()` atau `Container()`.
+      - `listenWhen` (opsional): Anda dapat memberikan _callback_ ke `listenWhen` untuk menentukan kapan `listener` harus dipicu. Misalnya, `listenWhen: (previous, current) => current is CounterError` akan memastikan `listener` hanya dipanggil saat _state_ saat ini adalah `CounterError`. Ini sangat berguna untuk mencegah _listener_ bereaksi pada setiap perubahan _state_ yang tidak relevan.
+6.  **`CounterDisplayAndNotifier` (`BlocConsumer`):**
+    - `BlocConsumer<B, S>`: Menggabungkan fungsionalitas `BlocBuilder` (`builder` property) dan `BlocListener` (`listener` property) ke dalam satu _widget_.
+    - Sangat berguna ketika Anda ingin membangun ulang bagian UI _dan_ memicu aksi sampingan sebagai respons terhadap _state_ yang sama.
+    - Juga mendukung `listenWhen` dan `buildWhen` untuk kontrol yang lebih halus.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **Aplikasi Umum:**
+  - `RepositoryProvider` (menyediakan `CounterRepository`)
+  - `BlocProvider` (mengambil `CounterRepository` dan menyediakan `CounterBloc`)
+  - `CounterPage` (memiliki `Scaffold`)
+  - Di `body` `Scaffold`: `BlocBuilder` (menerima _state_, membangun UI)
+  - Di `bottomNavigationBar` `Scaffold`: `BlocListener` (menerima _state_, memicu `SnackBar`)
+- Panah `context.read` dari `BlocProvider` ke `RepositoryProvider`.
+- Panah `add` _event_ dari FloatingActionButtons ke `CounterBloc`.
+- Panah `state` dari `CounterBloc` ke `BlocBuilder` dan `BlocListener`.
+
+**Terminologi Esensial & Penjelasan Detail:**
+
+- **`BlocProvider<T>`:** _Widget_ yang menyediakan BLoC/Cubit dari tipe `T` ke _widget tree_ di bawahnya.
+- **`BlocBuilder<B, S>`:** _Widget_ yang mendengarkan perubahan _state_ `S` dari BLoC/Cubit `B` dan membangun ulang bagian UI-nya di dalam fungsi `builder`.
+  - `buildWhen` (opsional): Sebuah _callback_ yang dapat digunakan untuk menentukan kapan `BlocBuilder` harus di-_rebuild_. `buildWhen: (previousState, currentState) => true/false`. Jika `false`, `builder` tidak akan dipanggil ulang. Sangat berguna untuk optimasi.
+- **`BlocListener<B, S>`:** _Widget_ yang mendengarkan perubahan _state_ `S` dari BLoC/Cubit `B` dan memicu _callback_ `listener` untuk efek samping (navigasi, `SnackBar`, dialog), tanpa membangun ulang UI.
+  - `listenWhen` (opsional): Mirip dengan `buildWhen`, ini menentukan kapan `listener` harus dipicu.
+- **`BlocConsumer<B, S>`:** Gabungan dari `BlocBuilder` dan `BlocListener`. Memiliki properti `builder` dan `listener`, serta `buildWhen` dan `listenWhen`.
+- **`RepositoryProvider<T>`:** _Widget_ dari `flutter_bloc` yang digunakan untuk menyediakan instance kelas (seringkali kelas `Repository` atau `Service`) yang tidak mengelola _state_ yang dapat berubah, tetapi berfungsi sebagai dependensi untuk BLoC/Cubit. Ini meningkatkan _testability_ karena repositori dapat di-_mock_.
+- **`MultiBlocProvider` / `MultiRepositoryProvider`:** Mirip dengan `MultiProvider`, ini digunakan untuk menyediakan beberapa BLoC/Cubit atau beberapa Repositori sekaligus tanpa _nesting_ yang dalam.
+
+**Sumber Referensi Lengkap:**
+
+- [BlocProvider (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/flutterbloc%3Fid%3Dblocprovider)
+- [BlocBuilder (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/flutterbloc%3Fid%3Dblocbuilder)
+- [BlocListener (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/flutterbloc%3Fid%3Dbloclistener)
+- [BlocConsumer (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/flutterbloc%3Fid%3Dblocconsumer)
+- [RepositoryProvider (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/flutterbloc%3Fid%3Drepositoryprovider)
+- [Bloc vs Cubit vs ChangeNotifier (Medium)](https://www.google.com/search?q=https://medium.com/flutter-community/bloc-vs-cubit-vs-changenotifier-128a30646197) - Perbandingan yang membantu memahami kapan menggunakan masing-masing.
+
+**Tips dan Praktik Terbaik:**
+
+- **Satu BLoC per Fitur/Domain:** Umumnya, desain satu BLoC/Cubit per fitur atau domain logis (misalnya, `AuthBloc`, `ProductBloc`, `CartBloc`).
+- **Gunakan `BlocBuilder` Secara Selektif:** Bungkus bagian terkecil dari _widget tree_ yang perlu di-_rebuild_ dengan `BlocBuilder` untuk performa terbaik. Manfaatkan `buildWhen` untuk kontrol yang lebih halus.
+- **`BlocListener` untuk Side Effects:** Selalu gunakan `BlocListener` (atau `BlocConsumer` dengan `listener`) untuk aksi sampingan seperti navigasi, dialog, atau `SnackBar`. Jangan melakukan aksi sampingan di dalam `BlocBuilder` karena itu bisa terpicu pada setiap _rebuild_.
+- **Injeksi Dependensi dengan Providers:** Gunakan `RepositoryProvider` (atau `Provider` biasa jika Anda nyaman dengan itu) untuk menyediakan dependensi seperti _API services_ atau _databases_ ke BLoC/Cubit Anda. Ini membuat BLoC/Cubit lebih mudah diuji dan kode lebih bersih.
+- **`context.read()` untuk Mengirim Event/Memanggil Metode:** Selalu gunakan `context.read<BlocOrCubit>().add(Event())` atau `context.read<BlocOrCubit>().method()` untuk memicu perubahan _state_ dari _callback_ (misalnya `onPressed`), karena ini tidak akan membuat _widget_ Anda di-_rebuild_ saat BLoC/Cubit mengeluarkan _state_ baru.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Menggunakan `context.watch<BlocOrCubit>()` di dalam `build` method untuk mengakses BLoC/Cubit dan memicu `add(Event())` atau `method()`.
+
+  - **Penyebab:** Ini akan membuat _widget_ di-_rebuild_ pada setiap perubahan _state_, dan jika `add` dipanggil di `build` tanpa kondisi yang tepat, bisa menyebabkan _infinite loop_.
+  - **Solusi:** Gunakan `BlocBuilder` untuk membaca _state_ dan membangun UI. Gunakan `context.read()` saat mengirim _event_ atau memanggil metode Cubit dari _callback_ (`onPressed`).
+
+- **Kesalahan:** `BlocListener` tidak memicu aksi sampingan.
+
+  - **Penyebab:** `listenWhen` mengembalikan `false` secara tidak sengaja, atau `BlocListener` ditempatkan terlalu rendah di _widget tree_ sehingga tidak memiliki akses ke BLoC/Cubit yang benar, atau _state_ yang diharapkan tidak pernah benar-benar dikeluarkan oleh BLoC/Cubit.
+  - **Solusi:** Periksa logika `listenWhen`. Pastikan _state_ yang Anda harapkan benar-benar dikeluarkan oleh BLoC/Cubit. Pastikan `BlocListener` berada di bawah `BlocProvider` yang sesuai.
+
+- **Kesalahan:** Error _runtime_ seperti "Looking up a `BlocProvider` isn't supported outside of the `build` method".
+
+  - **Penyebab:** Anda mencoba mengakses `context.read()` atau `context.watch()` di luar `build` method atau _callback_ yang memiliki `BuildContext` yang valid (misalnya, di dalam metode `initState` tanpa `Provider.of` yang tepat).
+  - **Solusi:** Pastikan Anda memiliki `BuildContext` yang valid. Untuk `initState`, gunakan `Provider.of<BlocOrCubit>(context, listen: false)` setelah `super.initState()` jika perlu. Atau, lebih baik lagi, BLoC/Cubit harus memuat data awalnya sendiri sebagai respons terhadap `Event` (seperti `LoadCounterEvent` di contoh).
 
 ---
 
