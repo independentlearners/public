@@ -15,6 +15,7 @@ Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
       - [4.1.3 InheritedWidget (Basic Concept)](#413-inheritedwidget-basic-concept)
     - [4.2 Provider Package (Simple \& Recommended)](#42-provider-package-simple--recommended)
       - [4.2.1 `Provider`, `ChangeNotifier`, `ChangeNotifierProvider`](#421-provider-changenotifier-changenotifierprovider)
+      - [4.2.2 `Consumer` and `Selector`](#422-consumer-and-selector)
 
 </details>
 
@@ -968,6 +969,282 @@ class CounterScreen extends StatelessWidget {
 
   - **Penyebab:** Terjadi `notifyListeners()` yang memicu `rebuild`, yang pada gilirannya memicu `notifyListeners()` lagi. Ini bisa terjadi jika Anda memanggil metode yang mengubah _state_ secara langsung di dalam `build` method (tanpa `listen: false` atau `Consumer` yang tepat).
   - **Solusi:** Jangan panggil metode yang memodifikasi _state_ secara langsung di dalam `build` method. Gunakan _callback_ seperti `onPressed` atau `init` (untuk `StatefulWidget`) atau gunakan `read` jika Anda perlu mengakses _provider_ di luar `build` dan tidak ingin _rebuild_.
+
+---
+
+#### 4.2.2 `Consumer` and `Selector`
+
+Sub-bagian ini akan memperkenalkan dua _widget_ penting dari paket _Provider_ (`Consumer` dan `Selector`) yang dirancang untuk mengoptimalkan _rebuild_ UI dan membuat kode lebih bersih, terutama ketika hanya sebagian kecil dari _widget tree_ yang perlu bereaksi terhadap perubahan _state_.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan belajar bahwa `Consumer` adalah _widget_ yang digunakan untuk mendengarkan perubahan pada `ChangeNotifier` dan membangun ulang _widget_ anakannya secara selektif. Ini adalah alternatif untuk `context.watch()` yang lebih spesifik dalam lingkup _rebuild_. `Selector` adalah varian yang lebih canggih dari `Consumer` yang memungkinkan Anda untuk "memilih" hanya bagian tertentu dari _state_ dari `ChangeNotifier` Anda, dan hanya akan memicu _rebuild_ jika bagian _state_ yang _dipilih_ tersebut berubah. Ini adalah alat yang sangat kuat untuk mengoptimalkan kinerja aplikasi dengan menghindari _rebuild_ yang tidak perlu.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Scoped Rebuilding (`Consumer`):** Berbeda dengan `context.watch()` yang dapat me-_rebuild_ seluruh _build_ method dari _widget_ yang memanggilnya, `Consumer` hanya akan me-_rebuild_ bagian dari _widget tree_ yang berada di dalam _builder_ function-nya.
+
+  - **Filosofi:** Mengurangi ukuran area yang perlu dibangun ulang, sehingga meningkatkan efisiensi _rendering_ dan kinerja aplikasi. "Only rebuild what you need."
+
+- **Fine-grained Control (`Selector`):** `Selector` memungkinkan Anda untuk menentukan secara eksplisit bagian mana dari _state_ yang ingin Anda pantau. Ini sangat penting ketika _ChangeNotifier_ Anda memegang _state_ yang kompleks dengan banyak properti.
+
+  - **Filosofi:** Mencegah _rebuild_ yang tidak perlu. Jika sebuah _widget_ hanya peduli dengan properti `namaPengguna` dari objek `UserProfile`, ia tidak perlu di-_rebuild_ ketika properti `alamat` berubah.
+
+- **Equality Check:** `Selector` menggunakan fungsi perbandingan (`shouldRebuild` atau `equals` jika disediakan) untuk menentukan apakah _widget_ perlu di-_rebuild_. Secara _default_, ia menggunakan operator `==` pada nilai yang _dipilih_.
+
+  - **Filosofi:** Memberikan kontrol presisi atas kapan _rebuild_ terjadi, mengoptimalkan kinerja dengan meminimalkan pekerjaan yang tidak perlu.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Mari kita lanjutkan dari contoh `CounterModel` sebelumnya dan tambahkan fitur _user profile_ untuk menunjukkan penggunaan `Consumer` dan `Selector`.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// --- 1. Model / State Class (ChangeNotifier) ---
+class CounterModel extends ChangeNotifier {
+  int _counter = 0;
+  int get counter => _counter;
+
+  void increment() {
+    _counter++;
+    notifyListeners();
+  }
+
+  void decrement() {
+    _counter--;
+    notifyListeners();
+  }
+}
+
+// Model baru untuk profil pengguna
+class UserProfileModel extends ChangeNotifier {
+  String _userName = 'Guest';
+  int _loginCount = 0;
+  bool _isPremium = false;
+
+  String get userName => _userName;
+  int get loginCount => _loginCount;
+  bool get isPremium => _isPremium;
+
+  void login(String name) {
+    _userName = name;
+    _loginCount++;
+    notifyListeners();
+  }
+
+  void togglePremiumStatus() {
+    _isPremium = !_isPremium;
+    notifyListeners();
+  }
+}
+
+// --- 2. Widget Utama Aplikasi dengan MultiProvider ---
+// Karena kita punya lebih dari satu model, kita akan gunakan MultiProvider.
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CounterModel()),
+        ChangeNotifierProvider(create: (_) => UserProfileModel()),
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Provider Consumer/Selector Demo',
+      theme: ThemeData(primarySwatch: Colors.deepPurple),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+// --- 3. Home Screen ---
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Provider Consumer & Selector'),
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // --- Menggunakan Consumer untuk CounterModel ---
+            // Consumer<T> hanya akan me-rebuild widget anaknya (di dalam builder)
+            // ketika ChangeNotifier<T> yang di-listen memanggil notifyListeners().
+            // Ini lebih spesifik daripada context.watch().
+            Consumer<CounterModel>(
+              builder: (context, counterModel, child) {
+                print('Consumer<CounterModel> rebuilt'); // Lihat kapan ini di-rebuild
+                return Column(
+                  children: [
+                    const Text(
+                      'Counter (from Consumer):',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      '${counterModel.counter}',
+                      style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: counterModel.decrement, // Aksi langsung dari model
+                          child: const Icon(Icons.remove),
+                        ),
+                        const SizedBox(width: 20),
+                        ElevatedButton(
+                          onPressed: counterModel.increment, // Aksi langsung dari model
+                          child: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 50),
+
+            // --- Menggunakan Selector untuk UserProfileModel ---
+            // Selector<T, R> hanya me-rebuild jika bagian 'R' dari state 'T' berubah.
+            // Di sini, kita hanya peduli pada 'userName'.
+            Selector<UserProfileModel, String>(
+              selector: (context, userProfileModel) => userProfileModel.userName,
+              // shouldRebuild: (previous, next) => previous != next, // Opsional: defaultnya sudah memeriksa kesamaan
+              builder: (context, userName, child) {
+                print('Selector<UserProfileModel, String> (userName) rebuilt'); // Lihat kapan ini di-rebuild
+                return Text(
+                  'Halo, $userName!', // Hanya menampilkan userName
+                  style: const TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            // Selector lain untuk 'isPremium'
+            Selector<UserProfileModel, bool>(
+              selector: (context, userProfileModel) => userProfileModel.isPremium,
+              builder: (context, isPremium, child) {
+                print('Selector<UserProfileModel, bool> (isPremium) rebuilt'); // Lihat kapan ini di-rebuild
+                return Text(
+                  isPremium ? 'Anda adalah Pengguna Premium!' : 'Anda adalah Pengguna Standar.',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isPremium ? Colors.amber[800] : Colors.grey[700],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 30),
+
+            // Tombol untuk memicu perubahan pada UserProfileModel
+            ElevatedButton(
+              onPressed: () {
+                // Memanggil read karena kita hanya ingin memicu aksi, tidak perlu rebuild widget ini.
+                final userProfileModel = context.read<UserProfileModel>();
+                if (userProfileModel.userName == 'Guest') {
+                  userProfileModel.login('Alice');
+                } else {
+                  userProfileModel.login('Guest'); // Kembali ke Guest
+                }
+              },
+              child: const Text('Toggle User / Login'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                context.read<UserProfileModel>().togglePremiumStatus();
+              },
+              child: const Text('Toggle Premium Status'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+1.  **`CounterModel` & `UserProfileModel` (`ChangeNotifier`):**
+
+    - Kita memiliki dua model `ChangeNotifier` terpisah untuk mengelola _state_ yang berbeda: `CounterModel` untuk hitungan, dan `UserProfileModel` untuk data pengguna. Masing-masing memiliki properti dan metode yang relevan, dan memanggil `notifyListeners()` saat _state_ berubah.
+
+2.  **`MultiProvider` di `main()`:**
+
+    - Karena kita sekarang memiliki lebih dari satu `ChangeNotifier`, kita menggunakan `MultiProvider` untuk menyediakan semuanya di satu tempat di atas _widget tree_. Ini lebih rapi daripada menumpuk banyak `ChangeNotifierProvider`.
+
+3.  **`HomeScreen`:**
+
+    - **`Consumer<CounterModel>`:**
+      - `Consumer` adalah _widget_ yang menerima _builder_ function. _Builder_ function ini menerima tiga argumen: `context`, instance dari _provider_ yang di-_listen_ (`counterModel` dalam kasus ini), dan `child` (opsional, untuk _widget_ yang tidak perlu di-_rebuild_).
+      - Seluruh `Column` yang berisi teks counter dan tombol `+`/`-` akan di-_rebuild_ hanya ketika `CounterModel` memanggil `notifyListeners()`. Perhatikan `print('Consumer<CounterModel> rebuilt');` di konsol. Ini menunjukkan lingkup _rebuild_ yang spesifik.
+      - Anda dapat langsung memanggil metode seperti `counterModel.increment` karena `counterModel` adalah instance dari `CounterModel` yang sudah di-_watch_ oleh `Consumer`.
+    - **`Selector<UserProfileModel, String>` (untuk `userName`):**
+      - `Selector` membutuhkan dua _generic type_: `T` (tipe _provider_, `UserProfileModel`) dan `R` (tipe nilai yang _dipilih_, `String` untuk `userName`).
+      - **`selector: (context, userProfileModel) => userProfileModel.userName`**: Ini adalah fungsi yang "memilih" bagian _state_ dari _provider_ Anda. `Selector` akan memanggil fungsi ini setiap kali `UserProfileModel` memanggil `notifyListeners()`.
+      - **`builder: (context, userName, child)`**: Fungsi ini hanya akan dipanggil (dan bagian UI ini di-_rebuild_) jika nilai `userName` yang _dipilih_ berbeda dari nilai sebelumnya. Jika properti lain di `UserProfileModel` berubah (misalnya, `loginCount` atau `isPremium`), _selector_ ini tidak akan di-_rebuild_. Ini adalah optimasi performa yang sangat penting.
+    - **`Selector<UserProfileModel, bool>` (untuk `isPremium`):**
+      - Contoh lain dari `Selector` yang hanya mendengarkan perubahan pada properti `isPremium`. Jika `userName` atau `loginCount` berubah, _selector_ ini tidak akan di-_rebuild_ karena `isPremium` tidak berubah.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram `Widget Tree` dengan `MultiProvider` di atas.
+- Panah dari `MultiProvider` ke `CounterModel` dan `UserProfileModel`.
+- Di dalam `HomeScreen`, area kecil yang dibatasi oleh `Consumer<CounterModel>`, dengan panah `notifyListeners` hanya memicu _rebuild_ di dalam area tersebut.
+- Area kecil lain yang dibatasi oleh `Selector<UserProfileModel, String>` dan `Selector<UserProfileModel, bool>`, dengan panah `notifyListeners` hanya memicu _rebuild_ jika properti spesifik yang _dipilih_ berubah. Ini akan menunjukkan bahwa _rebuild_ menjadi lebih "lokal" dan efisien.
+
+**Terminologi Esensial & Penjelasan Detail:**
+
+- **`Consumer<T>`:** Sebuah _widget_ dari paket _Provider_ yang memungkinkan Anda untuk mendengarkan perubahan pada `ChangeNotifier` dari tipe `T` dan membangun ulang _widget_ anakannya secara selektif.
+- **`Selector<T, R>`:** Sebuah _widget_ dari paket _Provider_ yang memungkinkan Anda untuk mendengarkan perubahan pada `ChangeNotifier` dari tipe `T`, tetapi hanya membangun ulang _widget_ anaknya jika nilai `R` yang _dipilih_ dari `ChangeNotifier` tersebut berubah.
+- **`selector` (Properti `Selector`):** Sebuah fungsi yang mengambil instance _provider_ dan mengembalikan bagian _state_ yang ingin Anda pantau.
+- **`shouldRebuild` (Properti `Selector` opsional):** Sebuah fungsi opsional yang memungkinkan Anda untuk menentukan logika perbandingan kustom untuk menentukan apakah _widget_ perlu di-_rebuild_. Defaultnya adalah `(previous, next) => previous != next`.
+- **`MultiProvider`:** Sebuah _widget_ dari paket _Provider_ yang memungkinkan Anda untuk menyediakan beberapa _provider_ sekaligus di satu lokasi, lebih rapi daripada menumpuknya.
+
+**Sumber Referensi Lengkap:**
+
+- [Consumer widget (Provider Documentation)](https://www.google.com/search?q=https://pub.dev/packages/provider%23consumer)
+- [Selector widget (Provider Documentation)](https://www.google.com/search?q=https://pub.dev/packages/provider%23selector)
+- [MultiProvider widget (Provider Documentation)](https://www.google.com/search?q=https://pub.dev/packages/provider%23multiprovider)
+- [Performance considerations (Provider Documentation)](https://www.google.com/search?q=https://pub.dev/packages/provider%23performance-considerations) - Bagian ini menjelaskan secara detail mengapa `Consumer` dan `Selector` penting.
+
+**Tips dan Praktik Terbaik:**
+
+- **Gunakan `Consumer` atau `Selector` untuk Optimalisasi Rebuild:** Di mana pun memungkinkan, gunakan `Consumer` atau `Selector` di bagian terkecil dari _widget tree_ yang benar-benar perlu bereaksi terhadap perubahan _state_. Hindari menggunakan `context.watch()` di `build` method dari _widget_ yang besar jika hanya sebagian kecil dari UI yang berubah.
+- **Pilih `Selector` untuk Spesifisitas:** Jika `ChangeNotifier` Anda memiliki banyak properti dan _widget_ Anda hanya peduli dengan satu atau dua di antaranya, `Selector` adalah pilihan terbaik untuk mencegah _rebuild_ yang tidak perlu.
+- **Hindari Logic di Builder:** Jaga agar _builder_ function dari `Consumer` dan `Selector` sesederhana mungkin, fokus pada pembangunan UI. Pindahkan logika kompleks ke dalam `ChangeNotifier` atau metode terpisah.
+- **`child` Argument di `Consumer`/`Selector`:** Gunakan argumen `child` jika Anda memiliki bagian dari _widget tree_ di dalam `Consumer`/`Selector` yang tidak bergantung pada _state_ yang sedang di-_listen_. Ini akan mencegah bagian tersebut dari _rebuild_ yang tidak perlu.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** `Selector` tidak me-_rebuild_ meskipun data yang dipilih berubah.
+
+  - **Penyebab:**
+    - `notifyListeners()` tidak dipanggil di `ChangeNotifier`.
+    - Nilai yang dikembalikan oleh fungsi `selector` adalah objek yang sama secara referensi (bukan nilai baru), padahal isinya telah berubah (misalnya, memodifikasi properti di dalam `List` atau `Map` tanpa membuat `List` atau `Map` baru). `Selector` secara default membandingkan objek dengan `==`.
+  - **Solusi:**
+    - Pastikan `notifyListeners()` dipanggil.
+    - Jika nilai yang dipilih adalah koleksi (List, Map) atau objek kustom, pastikan Anda membuat instance baru dari koleksi/objek tersebut ketika kontennya berubah, agar operator `==` dapat mendeteksi perubahan. Atau, berikan `shouldRebuild` kustom untuk melakukan perbandingan mendalam.
+
+- **Kesalahan:** Menggunakan `context.read()` di dalam `builder` function dari `Consumer`/`Selector` untuk membaca state yang seharusnya di-_watch_.
+
+  - **Penyebab:** `context.read()` tidak akan membuat _widget_ di-_rebuild_ saat _state_ berubah.
+  - **Solusi:** Gunakan `context.watch()` atau argumen _provider_ yang diteruskan ke _builder_ (`counterModel` di contoh `Consumer`, `userName` di contoh `Selector`) untuk membaca _state_ yang akan menyebabkan _rebuild_. `context.read()` hanya untuk memicu aksi.
 
 ---
 
