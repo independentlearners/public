@@ -52,7 +52,7 @@ Fase ini adalah inti dari pengembangan UI di Flutter. Setelah memahami dasar-das
 
 ---
 
-## 2\. Widget System & UI Foundation
+## 2. Widget System & UI Foundation
 
 Modul ini adalah jantung dari pengembangan UI di Flutter. Ini akan membawa pembelajar dari pemahaman konseptual tentang _widget_ di Fase 1 ke implementasi praktisnya, membentuk fondasi yang kuat untuk membangun antarmuka pengguna yang kompleks.
 
@@ -2348,17 +2348,17 @@ Kita telah menyelesaikan FASE 2. Selanjutnya kita akan melanjutkan ke **FASE 3: 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Framework][framework]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../domain-spesifik/README.md
+[framework]: ../../../framework/README.md
 [sebelumnya]: ../bagian-3/README.md
 [selanjutnya]: ../bagian-5/README.md
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../README.md#fase-2-widget-system--ui-foundation
 [1]: ../
 [2]: ../
 [3]: ../

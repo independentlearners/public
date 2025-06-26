@@ -1517,7 +1517,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../README.md
+[domain]: ../../../../domain-spesifik/README.md
 [kurikulum]: ../../README.md
 
 <!----------------------------------------------------->

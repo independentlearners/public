@@ -8,11 +8,11 @@
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Framework][framework]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../domain-spesifik/README.md
+[framework]: ../../../framework/README.md
 [sebelumnya]: ../bagian-11/README.md
 [selanjutnya]: ../bagian-13/README.md
 

@@ -1,14 +1,35 @@
 # [FASE 1: Foundation & Core Concepts][0]
 
+<details>
+  <summary>📃 Struktur Pembelajaran Internal</summary>
+
+#
+
+- [FASE 1: Foundation \& Core Concepts](#fase-1-foundation--core-concepts)
+- [](#)
+- [](#-1)
+  - [**Tujuan Pembelajaran Fase 1:**](#tujuan-pembelajaran-fase-1)
+  - [**Terminologi Esensial \& Penjelasan Detail:**](#terminologi-esensial--penjelasan-detail)
+  - [1. Pengenalan Flutter Ecosystem](#1-pengenalan-flutter-ecosystem)
+    - [1.1 Konsep Dasar dan Philosophy](#11-konsep-dasar-dan-philosophy)
+      - [1.1.1 Apa itu Flutter dan Philosophy](#111-apa-itu-flutter-dan-philosophy)
+      - [1.1.2 Flutter Architecture Deep Dive](#112-flutter-architecture-deep-dive)
+      - [1.1.3 Dart Language Fundamentals (Khusus untuk Flutter)](#113-dart-language-fundamentals-khusus-untuk-flutter)
+- [](#-2)
+
+</details>
+
+#
+
 Fase 1 ini adalah fondasi utama bagi siapa pun yang ingin mempelajari pengembangan aplikasi dengan Flutter. Ini adalah gerbang awal yang akan memperkenalkan pembelajar pada ekosistem Flutter, filosofi di baliknya, dan bahasa pemrograman Dart yang menjadi tulang punggung Flutter. Pemahaman yang kuat di fase ini sangat krusial karena akan menjadi dasar untuk semua konsep yang lebih kompleks di fase-fase selanjutnya. Tanpa fondasi yang kokoh, pembelajar akan kesulitan memahami bagaimana Flutter bekerja dan mengapa hal-hal tertentu diimplementasikan dengan cara tertentu.
 
-**Tujuan Pembelajaran Fase 1:**
+### **Tujuan Pembelajaran Fase 1:**
 
 - Memahami apa itu Flutter dan mengapa ia menjadi pilihan populer untuk pengembangan lintas platform.
 - Mengenal bahasa pemrograman Dart dan fitur-fitur esensialnya yang mendukung pengembangan Flutter.
 - Mampu menyiapkan lingkungan pengembangan yang diperlukan untuk mulai membuat aplikasi Flutter.
 
-**Terminologi Esensial & Penjelasan Detail:**
+### **Terminologi Esensial & Penjelasan Detail:**
 
 - **UI Toolkit (User Interface Toolkit):** Sekumpulan alat dan komponen yang digunakan untuk membangun antarmuka pengguna grafis (GUI) suatu aplikasi. Flutter adalah UI toolkit.
 - **Multi-platform:** Kemampuan suatu teknologi atau aplikasi untuk berjalan di berbagai sistem operasi atau perangkat (misalnya, Android, iOS, Web, Desktop) dari satu basis kode.
@@ -24,25 +45,12 @@ Fase 1 ini adalah fondasi utama bagi siapa pun yang ingin mempelajari pengembang
 
 ---
 
-## 1\. Pengenalan Flutter Ecosystem
+## 1. Pengenalan Flutter Ecosystem
 
 Modul ini adalah titik awal untuk memahami Flutter secara menyeluruh, mencakup esensi dan komponen-komponen yang membentuk ekosistem pengembangan aplikasi yang kuat ini. Memahami konsep-konsep ini akan memberikan gambaran besar tentang bagaimana Flutter beroperasi dan apa yang membuatnya unik.
 
 **Deskripsi Konkret & Peran dalam Kurikulum:**
 Bagian ini memperkenalkan pembelajar kepada Flutter sebagai UI _toolkit_ yang inovatif dan mendalam. Pembelajar akan memahami mengapa Flutter berbeda dari kerangka kerja lain, bagaimana arsitekturnya bekerja dari level tinggi hingga detail komponen, dan bagaimana bahasa Dart berperan sebagai fondasi utamanya. Ini penting sebagai landasan konseptual sebelum terjun ke praktik coding yang lebih dalam.
-
-<details>
-  <summary>📃 Struktur Pembelajaran Internal</summary>
-
-- [FASE 1: Foundation \& Core Concepts](#fase-1-foundation--core-concepts)
-  - [1. Pengenalan Flutter Ecosystem](#1-pengenalan-flutter-ecosystem)
-    - [1.1 Konsep Dasar dan Philosophy](#11-konsep-dasar-dan-philosophy)
-      - [1.1.1 Apa itu Flutter dan Philosophy](#111-apa-itu-flutter-dan-philosophy)
-      - [1.1.2 Flutter Architecture Deep Dive](#112-flutter-architecture-deep-dive)
-      - [1.1.3 Dart Language Fundamentals (Khusus untuk Flutter)](#113-dart-language-fundamentals-khusus-untuk-flutter)
-- [](#)
-
-</details>
 
 ### 1.1 Konsep Dasar dan Philosophy
 

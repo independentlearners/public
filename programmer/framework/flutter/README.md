@@ -21,7 +21,7 @@
 
 ## [FASE 1: Foundation & Core Concepts][2]
 
-### 1\. Pengenalan Flutter Ecosystem
+### 1. Pengenalan Flutter Ecosystem
 
 #### 1.1 Konsep Dasar dan Philosophy
 
@@ -89,9 +89,9 @@
 
 -----
 
-## FASE 2: Widget System & UI Foundation
+## [FASE 2: Widget System & UI Foundation][3]
 
-### 2\. Widget Architecture Deep Dive
+### 2. Widget Architecture Deep Dive
 
 #### 2.1 Widget Tree & Rendering Engine
 
@@ -1030,7 +1030,7 @@
 
 ## FASE 10: Performance & Optimization
 
-### 16\. Performance Monitoring & Optimization
+### 16. Performance Monitoring & Optimization
 
 #### 16.1 Performance Analysis
 
@@ -1101,7 +1101,7 @@
 
 ## FASE 11: Deployment & Distribution
 
-### 17\. App Store Deployment
+### 17. App Store Deployment
 
 #### 17.1 Android Deployment
 
@@ -1160,7 +1160,7 @@
       - [Windows Packaging](https://docs.flutter.dev/deployment/windows)
       - [macOS Deployment](https://docs.flutter.dev/deployment/macos)
 
-### 18\. DevOps & Release Management
+### 18. DevOps & Release Management
 
 #### 18.1 CI/CD Pipeline
 
@@ -1201,7 +1201,7 @@
 
 ## FASE 12: Advanced Architectural Patterns
 
-### 19\. Enterprise Architecture Patterns
+### 19. Enterprise Architecture Patterns
 
 #### 19.1 Clean Architecture
 
@@ -1269,7 +1269,7 @@
 
 ## FASE 13: Advanced Flutter Concepts
 
-### 20\. Custom Rendering & Low-Level APIs
+### 20. Custom Rendering & Low-Level APIs
 
 #### 20.1 Render Objects
 
@@ -1310,7 +1310,7 @@
       - [Dart FFI](https://dart.dev/guides/libraries/c-interop)
       - [FFI Best Practices](https://medium.com/flutter-community/flutter-dart-ffi-complete-guide-7e7e7e7e7e7e)
 
-### 21\. Code Generation & Metaprogramming
+### 21. Code Generation & Metaprogramming
 
 #### 21.1 Build System
 
@@ -1356,7 +1356,7 @@
 
 ## FASE 14: Specialized Flutter Applications
 
-### 22\. Game Development
+### 22. Game Development
 
 #### 22.1 Flame Game Engine
 
@@ -1391,7 +1391,7 @@
       - [Flutter 3D](https://pub.dev/packages/flutter_3d_controller)
       - [Three.js Flutter](https://pub.dev/packages/three_js)
 
-### 23\. AR/VR Development
+### 23. AR/VR Development
 
 #### 23.1 Augmented Reality
 
@@ -1429,7 +1429,7 @@
 
 ## FASE 15: Expert Level & Specialization
 
-### 24\. Framework Contribution
+### 24. Framework Contribution
 
 #### 24.1 Flutter Framework Development
 
@@ -1472,7 +1472,7 @@
       - Community building
       - [Flutter Community](https://flutter.dev/community)
 
-### 25\. Enterprise & Consulting
+### 25. Enterprise & Consulting
 
 #### 25.1 Enterprise Solutions
 
@@ -1572,3 +1572,4 @@ Peserta akan mampu:
 [0]: ../README.md
 [1]:../../domain-spesifik/README.md
 [2]:../flutter/bagian-1/README.md
+[3]:../flutter/bagian-4/README.md

@@ -4,9 +4,9 @@
   <summary>📃 Daftar Isi</summary>
 
 - [Flutter CLI dan DevTools](#flutter-cli-dan-devtools)
-  - [1.2.2 Flutter CLI dan DevTools](#122-flutter-cli-dan-devtools)
-    - [Perintah Dasar Flutter CLI](#perintah-dasar-flutter-cli)
-    - [Memahami Flutter DevTools](#memahami-flutter-devtools)
+    - [1.2.2 Flutter CLI dan DevTools](#122-flutter-cli-dan-devtools)
+      - [Perintah Dasar Flutter CLI](#perintah-dasar-flutter-cli)
+      - [Memahami Flutter DevTools](#memahami-flutter-devtools)
   - [Selamat!](#selamat)
 
 </details>
@@ -324,11 +324,11 @@ Kita telah menyelesaikan FASE 1. Selanjutnya **Fase 2: Widget System & UI Founda
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Framework][framework]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../domain-spesifik/README.md
+[framework]: ../../../framework/README.md
 [sebelumnya]: ../bagian-2/README.md
 [selanjutnya]: ../bagian-4/README.md
 
