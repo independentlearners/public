@@ -1,4 +1,4 @@
-# FASE 4: State Management Fundamentals
+# [FASE 4: State Management Fundamentals][0]
 
 Dengan selesainya **Fase 3: Navigation & Routing**, kita akan melangkah ke **Fase 4: State Management Fundamentals**. Fase ini sangat krusial karena _state management_ adalah inti dari bagaimana data dan UI aplikasi Anda berinteraksi dan berubah seiring waktu.
 
@@ -22,6 +22,13 @@ Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
       - [4.3.2 Basic Implementation with `flutter_bloc`](#432-basic-implementation-with-flutter_bloc)
     - [4.4 Other State Management Approaches (Overview)](#44-other-state-management-approaches-overview)
       - [4.4.1 GetX (Brief Mention)](#441-getx-brief-mention)
+      - [4.4.2 Riverpod (Brief Mention)](#442-riverpod-brief-mention)
+- [FASE 4: State Management Fundamentals](#fase-4-state-management-fundamentals-1)
+  - [4. State Management Fundamentals](#4-state-management-fundamentals)
+      - [4.4.3 MobX (Brief Mention)](#443-mobx-brief-mention)
+    - [Ringkasan FASE 4: State Management Fundamentals](#ringkasan-fase-4-state-management-fundamentals)
+  - [Selamat!](#selamat)
+- [](#)
 
 </details>
 
@@ -2421,6 +2428,179 @@ Pembelajar akan memahami bahwa GetX adalah paket multifungsi yang menyediakan _s
 - **Komitmen pada Ekosistem GetX:** Jika Anda memilih GetX, Anda cenderung akan menggunakan banyak fitur lain yang disediakannya (routing, dependency management, dll.), yang berarti Anda akan sangat "terikat" pada ekosistem GetX.
 
 ---
+
+#### 4.4.2 Riverpod (Brief Mention)
+
+Sub-bagian ini akan memperkenalkan Riverpod, sebuah _state management library_ yang dibangun oleh pembuat paket _Provider_ itu sendiri. Riverpod dirancang untuk mengatasi beberapa keterbatasan dan kelemahan yang ada di _Provider_, khususnya terkait dengan _type safety_ dan _testability_.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami bahwa Riverpod adalah alternatif modern untuk _Provider_ yang menawarkan _compile-time safety_ (tidak ada _runtime error_ "No provider found") dan dukungan penuh untuk penggunaan global tanpa memerlukan `BuildContext`. Ini mencapai skalabilitas yang lebih baik dan lebih mudah diuji, membuatnya menjadi pilihan yang kuat untuk aplikasi yang lebih besar dan kompleks.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Type-safe and Compile-time Safe:** Ini adalah perbedaan paling menonjol dari Riverpod dibandingkan _Provider_. Riverpod menjamin bahwa Anda tidak akan mendapatkan _runtime error_ seperti "No provider found" karena semua dependensi diperiksa pada waktu kompilasi.
+
+  - **Filosofi:** Menggeser potensi kesalahan dari _runtime_ ke _compile-time_, memungkinkan pengembang untuk menangkap _bug_ lebih awal dan meningkatkan keandalan aplikasi.
+
+- **Elimination of `BuildContext` for Provider Lookup:** Riverpod memungkinkan _provider_ untuk diakses dari mana saja tanpa memerlukan `BuildContext`, memecahkan masalah umum di _Provider_ di mana `BuildContext` tidak tersedia (misalnya, di luar _build method_).
+
+  - **Filosofi:** Menyederhanakan akses _state_ dan dependensi, terutama untuk logika bisnis yang tidak terkait langsung dengan _widget tree_.
+
+- **Global Providers (Explicit):** Meskipun _provider_ dapat diakses secara global, mereka tetap didefinisikan secara eksplisit dan dikelola dengan baik, tidak seperti beberapa pendekatan "global state" lainnya.
+
+  - **Filosofi:** Memberikan kemudahan akses global tanpa mengorbankan kontrol atau _testability_.
+
+- **Various Provider Types:** Riverpod menawarkan berbagai jenis _provider_ (misalnya, `Provider`, `StateProvider`, `StateNotifierProvider`, `FutureProvider`, `StreamProvider`) yang dirancang untuk berbagai skenario _state_.
+
+  - **Filosofi:** Menyediakan alat yang spesifik dan dioptimalkan untuk berbagai jenis _state_ (misalnya, _single value_, _complex state_, _asynchronous data_).
+
+- **Testability by Design:** Arsitektur Riverpod memudahkan penulisan _unit test_ karena _provider_ dapat di-_override_ dengan mudah untuk tujuan pengujian.
+
+  - **Filosofi:** Mendukung pengembangan _test-driven_ (TDD) dan memastikan kualitas kode melalui pengujian yang komprehensif.
+
+**Terminologi Esensial (Riverpod):**
+
+- **`ProviderContainer`:** Mirip dengan `Provider` di `main()`, ini adalah tempat semua _provider_ disimpan. `Riverpod` menggunakan ini secara internal.
+- **`ProviderRef`:** Objek yang tersedia di _callback_ `create` setiap _provider_ dan di _widget_ konsumen untuk mengakses _provider_ lain. Ini adalah pengganti `BuildContext` dalam konteks _provider_.
+- **`Provider` (dalam Riverpod):** _Provider_ paling dasar untuk mengekspos nilai read-only (misalnya, objek layanan).
+- **`StateProvider`:** Untuk mengekspos _state_ yang dapat diubah dan sederhana (misalnya, _boolean_ atau _integer_).
+- **`StateNotifierProvider`:** Untuk mengelola _state_ yang lebih kompleks dan dapat diubah, mirip dengan `ChangeNotifierProvider` tetapi dengan API yang lebih terkontrol dan _immutable state_.
+- **`FutureProvider`:** Untuk mengekspos hasil dari operasi `Future` (asinkron). Secara otomatis menangani _loading_, _data_, dan _error state_.
+- **`StreamProvider`:** Untuk mengekspos hasil dari `Stream`.
+- **`ConsumerWidget` / `ConsumerStatefulWidget`:** _Widget_ kustom dari Riverpod yang menyediakan akses ke _provider_ melalui `ref` objek.
+- **`ref.watch()`:** Metode untuk "mendengarkan" perubahan pada _provider_ dan memicu _rebuild_ di _widget_. Mirip dengan `context.watch()`.
+- **`ref.read()`:** Metode untuk membaca _provider_ satu kali tanpa mendengarkan perubahannya. Mirip dengan `context.read()`.
+- **`ref.listen()`:** Mirip dengan `BlocListener`, ini untuk melakukan aksi sampingan sebagai respons terhadap perubahan _state_ tanpa _rebuild_.
+
+**Sumber Referensi Lengkap:**
+
+- [Riverpod Official Website](https://riverpod.dev/) - Dokumentasi resmi Riverpod. Sangat direkomendasikan.
+- [Riverpod vs Provider](https://www.google.com/search?q=https://riverpod.dev/docs/concepts/provider_vs_riverpod) - Penjelasan langsung dari pembuatnya tentang perbedaan antara Riverpod dan _Provider_.
+
+**Tips dan Praktik Terbaik (Umum untuk Pemahaman Riverpod):**
+
+- **Evolusi dari Provider:** Pahami Riverpod sebagai "Provider 2.0" yang mengatasi kelemahan pendahulunya. Jika Anda sudah nyaman dengan _Provider_, transisi ke Riverpod akan relatif mudah.
+- **Compile-time Safety adalah Kunci:** Pahami bahwa keunggulan utama Riverpod adalah kemampuannya untuk mendeteksi masalah _provider_ pada waktu kompilasi, bukan _runtime_.
+- **Penggunaan `ref`:** Biasakan diri dengan objek `ref` sebagai pengganti `BuildContext` untuk mengakses _provider_ di banyak tempat.
+
+---
+
+Baik, saya akan melanjutkan ke bagian berikutnya dari kurikulum, yaitu **4.4.3 MobX (Brief Mention)**.
+
+Berikut adalah daftar isi yang diperbarui untuk bagian ini:
+
+---
+
+# FASE 4: State Management Fundamentals
+
+## 4\. State Management Fundamentals
+
+- [4.1 Understanding State in Flutter](https://www.google.com/search?q=%2341-understanding-state-in-flutter)
+  - [4.1.1 Local State (`setState`) vs. App State](https://www.google.com/search?q=%23411-local-state-setstate-vs-app-state)
+  - [4.1.2 Why State Management is Needed (Challenges)](https://www.google.com/search?q=%23412-why-state-management-is-needed-challenges)
+  - [4.1.3 InheritedWidget (Basic Concept)](https://www.google.com/search?q=%23413-inheritedwidget-basic-concept)
+- [4.2 Provider Package (Simple & Recommended)](https://www.google.com/search?q=%2342-provider-package-simple-recommended)
+  - [4.2.1 `Provider`, `ChangeNotifier`, `ChangeNotifierProvider`](https://www.google.com/search?q=%23421-provider-changenotifier-changenotifierprovider)
+  - [4.2.2 `Consumer` and `Selector`](https://www.google.com/search?q=%23422-consumer-and-selector)
+  - [4.2.3 MultiProvider](https://www.google.com/search?q=%23423-multiprovider)
+- [4.3 BLoC/Cubit (Introduction)](https://www.google.com/search?q=%2343-bloccubit-introduction)
+  - [4.3.1 Core Concepts of BLoC/Cubit](https://www.google.com/search?q=%23431-core-concepts-of-bloccubit)
+  - [4.3.2 Basic Implementation with `flutter_bloc`](https://www.google.com/search?q=%23432-basic-implementation-with-flutter_bloc)
+- [4.4 Other State Management Approaches (Overview)](https://www.google.com/search?q=%2344-other-state-management-approaches-overview)
+  - [4.4.1 GetX (Brief Mention)](https://www.google.com/search?q=%23441-getx-brief-mention)
+  - [4.4.2 Riverpod (Brief Mention)](https://www.google.com/search?q=%23442-riverpod-brief-mention)
+  - [4.4.3 MobX (Brief Mention)](https://www.google.com/search?q=%23443-mobX-brief-mention)
+
+---
+
+Mari kita mulai dengan penjelasan mendalam untuk **4.4.3 MobX (Brief Mention)**.
+
+---
+
+#### 4.4.3 MobX (Brief Mention)
+
+Sub-bagian ini akan memperkenalkan MobX, sebuah _state management library_ yang menggunakan konsep _observables_, _actions_, dan _reactions_ untuk mengelola _state_ secara reaktif dan otomatis.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami bahwa MobX berfokus pada "reaktivitas transparan". Ini berarti Anda mendefinisikan bagian-bagian dari _state_ Anda sebagai _observable_, dan setiap kali _observable_ tersebut berubah, MobX akan secara otomatis mendeteksi _widget_ atau komputasi apa pun yang bergantung padanya dan memperbaruinya. Ini seringkali menghasilkan kode yang lebih ringkas dan otomatis dibandingkan pendekatan _event-driven_ seperti BLoC.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Observables:** Ini adalah _state_ aplikasi Anda. Ketika _observable_ berubah, semua yang "mengamatinya" akan bereaksi.
+
+  - **Filosofi:** Mendeklarasikan data sebagai reaktif, sehingga perubahan data secara otomatis memicu pembaruan UI atau komputasi lain yang terkait.
+
+- **Actions:** Ini adalah metode yang memodifikasi _observable state_. _Actions_ membantu dalam mengelola perubahan _state_ dengan cara yang terstruktur.
+
+  - **Filosofi:** Memastikan bahwa semua modifikasi _state_ dilakukan melalui jalur yang jelas, sehingga memudahkan _debugging_ dan pemahaman aliran _state_.
+
+- **Reactions:** Ini adalah komputasi atau efek samping yang secara otomatis dijalankan sebagai respons terhadap perubahan _observable state_. Contoh _reactions_ termasuk pembaruan UI, panggilan API, atau _logging_.
+
+  - **Filosofi:** Mengotomatiskan respons terhadap perubahan _state_, mengurangi _boilerplate_ untuk menghubungkan _state_ ke UI atau efek samping.
+
+- **Transparent Reactivity:** MobX mencapai reaktivitas tanpa memerlukan banyak _boilerplate_ _event_ atau _builder_ bersarang. Anda hanya menandai apa yang _observable_, dan MobX akan mengurus sisanya.
+
+  - **Filosofi:** Menyederhanakan penulisan kode reaktif dengan meminimalkan kode yang berulang.
+
+- **Code Generation:** MobX seringkali memerlukan _code generation_ (menggunakan `build_runner`) untuk menghasilkan kode _boilerplate_ yang diperlukan untuk reaktivitas.
+
+  - **Filosofi:** Meminimalkan _boilerplate_ yang harus ditulis tangan oleh pengembang, tetapi menambahkan langkah _build_ dalam proses pengembangan.
+
+**Terminologi Esensial (MobX):**
+
+- **`@observable`:** Annotation yang digunakan pada properti di kelas untuk menjadikannya _observable state_.
+- **`@action`:** Annotation yang digunakan pada metode yang memodifikasi _observable state_.
+- **`@computed`:** Annotation yang digunakan pada _getter_ yang nilainya bergantung pada _observable_ lain dan akan secara otomatis dihitung ulang ketika _observable_ yang mendasarinya berubah.
+- **`@Store`:** Annotation pada kelas yang berisi `@observable`, `@action`, dan `@computed`.
+- **`Observer` (widget):** _Widget_ dari paket `flutter_mobx` yang secara otomatis membangun ulang _widget_ anakannya ketika _observable_ yang diakses di dalamnya berubah.
+- **`reaction()`:** Sebuah fungsi untuk membuat efek samping yang secara otomatis bereaksi terhadap perubahan _observable state_.
+
+**Sumber Referensi Lengkap:**
+
+- [MobX.dart Official Website](https://mobx.netlify.app/) - Dokumentasi resmi MobX untuk Dart/Flutter.
+- [MobX.dart (pub.dev)](https://pub.dev/packages/mobx) - Halaman pub.dev untuk paket inti MobX.
+- [flutter_mobx (pub.dev)](https://pub.dev/packages/flutter_mobx) - Halaman pub.dev untuk integrasi MobX dengan Flutter UI.
+
+**Tips dan Praktik Terbaik (Umum untuk Pemahaman MobX):**
+
+- **Cocok untuk Skala Menengah:** MobX bisa menjadi pilihan yang baik untuk proyek skala menengah yang menginginkan reaktivitas tanpa kompleksitas _event_ dan _state_ yang ketat seperti BLoC.
+- **Belajar Konsep Inti:** Memahami konsep _observables_, _actions_, dan _reactions_ adalah kunci untuk menggunakan MobX secara efektif.
+- **Code Generation:** Pembelajar harus siap dengan proses _code generation_ (`flutter pub run build_runner watch`) yang diperlukan oleh MobX.
+
+---
+
+Dengan ini, semua sub-bagian dalam **4.4 Other State Management Approaches (Overview)** telah dibahas. Ini juga menandai berakhirnya **FASE 4: State Management Fundamentals**.
+
+---
+
+### Ringkasan FASE 4: State Management Fundamentals
+
+Pada Fase 4 ini, Anda telah memperoleh pemahaman fundamental dan praktis tentang _state management_ di Flutter. Anda memulai dengan memahami perbedaan antara _local state_ dan _app state_, serta mengapa _state management_ diperlukan untuk mengatasi kompleksitas aplikasi skala besar. Anda mengenal `InheritedWidget` sebagai fondasi bagi sebagian besar solusi _state management_ di Flutter.
+
+Kemudian, Anda menyelami dua solusi _state management_ yang paling populer dan direkomendasikan:
+
+1.  **Provider Package:** Anda mempelajari bagaimana `ChangeNotifier` memegang _state_, `ChangeNotifierProvider` menyediakannya ke _widget tree_, dan bagaimana `Consumer`, `Selector`, serta `context.watch()`/`context.read()` digunakan untuk mengkonsumsi _state_ dan mengoptimalkan _rebuild_ UI. Anda juga memahami penggunaan `MultiProvider` untuk mengatur banyak _provider_ dengan rapi.
+2.  **BLoC/Cubit:** Anda diperkenalkan pada filosofi _event-driven_ (BLoC) dan pendekatan yang lebih langsung (Cubit) untuk memisahkan logika bisnis dari UI. Anda memahami konsep `Events`, `States`, dan bagaimana `BlocProvider`, `BlocBuilder`, `BlocListener`, serta `RepositoryProvider` digunakan untuk mengintegrasikan BLoC/Cubit dengan UI Flutter dan mengelola dependensi.
+
+Terakhir, Anda mendapatkan gambaran singkat tentang beberapa alternatif _state management_ populer lainnya seperti **GetX**, **Riverpod**, dan **MobX**, memberikan Anda perspektif yang lebih luas tentang pilihan-pilihan di ekosistem Flutter.
+
+**Apa yang Telah Anda Kuasai:**
+
+- Memahami masalah _state management_ di Flutter.
+- Mampu mengimplementasikan _state management_ menggunakan paket _Provider_ untuk berbagai skenario.
+- Memahami konsep inti BLoC/Cubit dan mampu menerapkan implementasi dasar dengan `flutter_bloc`.
+- Mengenali berbagai pendekatan _state management_ lain yang ada di Flutter.
+- Mampu memilih solusi _state management_ yang sesuai untuk kebutuhan proyek.
+
+---
+
+## Selamat!
+
+Anda telah menyelesaikan Fase 4! Pemahaman yang kuat tentang _state management_ ini akan menjadi fondasi krusial untuk membangun aplikasi Flutter yang _scalable_, _maintainable_, dan berperforma tinggi.
+
+#
+
+Kita telah menyelesaikan FASE 3. Selanjutnya kita akan masuk pada **FASE 5: Asynchronous Programming & API Integration**?
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

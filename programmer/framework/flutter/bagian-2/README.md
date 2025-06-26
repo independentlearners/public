@@ -1,7 +1,7 @@
 ## Development Environment Setup
 
 <details>
-  <summary>📃 Daftar Isi</summary>
+  <summary>📃 Struktur Daftar Isi</summary>
 
 ---
 

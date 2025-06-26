@@ -210,9 +210,9 @@
 
 -----
 
-## FASE 3: State Management & Data Flow
+## [FASE 3: State Management & Data Flow][4]
 
-### 4\. State Management Architecture
+### 4. State Management Architecture
 
 #### 4.1 Built-in State Management
 
@@ -362,7 +362,7 @@
 
 -----
 
-## FASE 4: Navigation & Routing
+## [FASE 4: Navigation & Routing][5]
 
 ### 6\. Navigation Architecture
 
@@ -1573,3 +1573,5 @@ Peserta akan mampu:
 [1]:../../domain-spesifik/README.md
 [2]:../flutter/bagian-1/README.md
 [3]:../flutter/bagian-4/README.md
+[4]:../flutter/bagian-5/README.md
+[5]:../flutter/bagian-6/README.md
