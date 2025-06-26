@@ -17,6 +17,8 @@ Berikut adalah daftar isi yang diperbarui untuk kurikulum, mencakup Fase 4:
       - [4.2.1 `Provider`, `ChangeNotifier`, `ChangeNotifierProvider`](#421-provider-changenotifier-changenotifierprovider)
       - [4.2.2 `Consumer` and `Selector`](#422-consumer-and-selector)
       - [4.2.3 MultiProvider](#423-multiprovider)
+    - [4.3 BLoC/Cubit (Introduction)](#43-bloccubit-introduction)
+      - [4.3.1 Core Concepts of BLoC/Cubit](#431-core-concepts-of-bloccubit)
 
 </details>
 
@@ -1535,6 +1537,411 @@ class HomeScreen extends StatelessWidget {
 
   - **Penyebab:** Anda mencoba mengakses _provider_ dengan _type_ yang salah (misalnya, `context.watch<AnotherModel>()` padahal Anda menyediakan `MyModel`).
   - **Solusi:** Pastikan _generic type_ yang Anda gunakan dengan `watch`, `read`, `Consumer`, atau `Selector` cocok dengan _type_ `ChangeNotifier` yang disediakan oleh `ChangeNotifierProvider`.
+
+---
+
+### 4.3 BLoC/Cubit (Introduction)
+
+Sub-bagian ini akan memperkenalkan _Business Logic Component_ (BLoC) dan Cubit sebagai pendekatan _state management_ yang lebih terstruktur dan _event-driven_. BLoC/Cubit adalah pilihan populer untuk aplikasi skala menengah hingga besar karena memberikan pemisahan yang jelas antara logika bisnis dan UI, serta meningkatkan _testability_ dan _scalability_.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami bahwa BLoC (atau Cubit, sebagai varian yang lebih sederhana) berfokus pada aliran data yang _unidirectional_ (satu arah) menggunakan _event_ sebagai input dan _state_ sebagai output. Ini membantu mengelola _state_ yang kompleks dan _asynchronous_ dengan cara yang dapat diprediksi dan mudah diuji. Meskipun mungkin terasa lebih _boilerplate_ di awal dibandingkan _Provider_, manfaatnya akan terlihat jelas di proyek yang lebih besar. Bagian ini akan menjadi dasar sebelum melangkah lebih jauh ke arsitektur aplikasi (Fase 6).
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Business Logic Component (BLoC):** BLoC adalah _pattern_ untuk memisahkan logika bisnis dari UI. Ini berpusat pada pemrosesan **Events** untuk menghasilkan **States**.
+
+  - **Filosofi:** Logika bisnis harus independen dari UI, sehingga dapat digunakan kembali, diuji secara terpisah, dan tidak bergantung pada kerangka kerja UI.
+
+- **Event-Driven:** BLoC bereaksi terhadap _event_. Alih-alih memanggil metode langsung pada _state manager_, _widget_ mengirimkan _event_ ke BLoC, dan BLoC memproses _event_ tersebut untuk menghasilkan _state_ baru.
+
+  - **Filosofi:** Membuat aliran data lebih mudah diprediksi dan di-_debug_, karena semua perubahan _state_ dipicu oleh _event_ yang jelas. Ini juga mendukung _undo/redo_ dan _logging_ aksi pengguna.
+
+- **Stream-based (BLoC Klasik):** BLoC klasik sangat bergantung pada `Stream` dari Dart. _Events_ adalah `Stream` input, dan _States_ adalah `Stream` output.
+
+  - **Filosofi:** Memanfaatkan kekuatan Reactive Programming untuk menangani operasi asinkron dan aliran data seiring waktu.
+
+- **Cubit (Simplified BLoC):** Cubit adalah alternatif yang lebih sederhana dari BLoC. Alih-alih _event_, Cubit memiliki metode langsung yang memicu perubahan _state_ menggunakan `emit`. Ini lebih cocok untuk skenario yang lebih sederhana tanpa perlu abstraksi _event_.
+
+  - **Filosofi:** Menurunkan _learning curve_ BLoC dengan menghilangkan konsep _event_ saat tidak diperlukan, tetap mempertahankan manfaat pemisahan logika dan _testability_.
+
+- **Predictable State:** Karena _state_ hanya berubah sebagai respons terhadap _event_ (atau metode di Cubit) dan menghasilkan _state_ baru, perilaku aplikasi menjadi lebih dapat diprediksi.
+
+  - **Filosofi:** Mengurangi _bug_ yang terkait dengan _state_ yang tidak terduga dan meningkatkan keandalan aplikasi.
+
+- **Testability:** Dengan memisahkan logika bisnis dari UI, BLoC/Cubit sangat mudah diuji secara unit, tanpa perlu menguji komponen UI.
+
+  - **Filosofi:** Mendukung pengembangan _test-driven_ dan meningkatkan kualitas kode.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- **BLoC Flow Diagram:** Ilustrasi sederhana: UI -\> Events -\> BLoC -\> States -\> UI. Tunjukkan panah `Stream` untuk input `Event` dan output `State`.
+- **Cubit Flow Diagram:** Ilustrasi sederhana: UI -\> Method Call -\> Cubit -\> States -\> UI. Ini menunjukkan jalur yang lebih langsung dibandingkan BLoC.
+- Diagram yang menunjukkan `BlocProvider`/`BlocBuilder`/`BlocListener` di _widget tree_ dan bagaimana mereka berinteraksi dengan BLoC/Cubit yang ditempatkan di atasnya.
+
+**Hubungan dengan Modul Lain:**
+BLoC/Cubit adalah evolusi dari pemahaman _state management_ dari `setState()` dan _Provider_. Ini akan menjadi fondasi untuk pembahasan arsitektur di Fase 6, di mana konsep _Clean Architecture_ dan _Layered Architecture_ akan diintegrasikan dengan BLoC/Cubit. Penanganan operasi asinkron (Fase 5) sangat relevan karena BLoC/Cubit sangat baik dalam mengelola _state_ yang berubah akibat operasi I/O (seperti panggilan API).
+
+---
+
+#### 4.3.1 Core Concepts of BLoC/Cubit
+
+Sub-bagian ini akan menguraikan komponen-komponen dasar yang membentuk BLoC dan Cubit, serta bagaimana mereka berinteraksi.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan memahami elemen kunci dari _pattern_ BLoC/Cubit:
+
+- **`Bloc` (`package:bloc`)**: Kelas inti yang memproses `Events` dan memetakan menjadi `States`.
+- **`Cubit` (`package:bloc`)**: Varian yang lebih sederhana dari `Bloc` yang tidak menggunakan _event_, melainkan metode langsung yang memanggil `emit` untuk mengubah _state_.
+- **`Event` (hanya untuk BLoC):** Representasi dari apa yang terjadi di aplikasi (misalnya, `UserLoggedInEvent`, `ProductAddedEvent`). Ini adalah input ke BLoC.
+- **`State`:** Representasi dari kondisi aplikasi pada suatu waktu tertentu (misalnya, `UserState.loading`, `UserState.loaded(user)`, `CartState.empty`). Ini adalah output dari BLoC/Cubit.
+- **`flutter_bloc` (Package):** Paket yang menyediakan _widget_ integrasi Flutter untuk BLoC/Cubit seperti `BlocProvider`, `BlocBuilder`, dan `BlocListener`.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Sealed Classes/Discriminated Unions for States and Events (recommended):** Menggunakan kelas abstrak dengan _subclass_ (seringkali dengan `freezed` atau `equatable`) untuk merepresentasikan semua kemungkinan _event_ dan _state_.
+
+  - **Filosofi:** Memastikan bahwa semua _event_ dan _state_ ditangani secara eksplisit, meningkatkan keamanan _type_ dan mengurangi _bug_ yang tidak terduga. Ini juga membuat kode lebih mudah dibaca dan di-_maintain_.
+
+- **Immutability of States and Events:** _States_ dan _Events_ harus bersifat _immutable_. Ketika _state_ berubah, objek _state_ baru yang dihasilkan.
+
+  - **Filosofi:** Mencegah modifikasi _state_ secara tidak langsung atau dari berbagai tempat, yang dapat menyebabkan _bug_ yang sulit dilacak. Ini juga membantu dalam perbandingan _state_ yang efisien.
+
+- **BlocObserver (Debugging):** Sebuah alat untuk mengamati semua transisi _state_ dan _event_ di seluruh aplikasi.
+
+  - **Filosofi:** Membantu dalam _debugging_ dan memahami aliran _state_ di aplikasi yang kompleks.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Pertama, tambahkan _dependencies_ `flutter_bloc` dan `equatable` (untuk membandingkan _state_ dan _event_ secara mudah) ke `pubspec.yaml` Anda:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.5 # Gunakan versi terbaru yang stabil
+  equatable: ^2.0.5 # Untuk membandingkan objek secara mudah
+```
+
+Kemudian jalankan `flutter pub get`.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // Impor paket flutter_bloc
+import 'package:equatable/equatable.dart';      // Impor equatable
+
+// --- A. Cubit Example (Sederhana, tanpa Event) ---
+
+// 1. Definisikan State (immutable!)
+// State ini merepresentasikan kondisi CounterCubit.
+class CounterState extends Equatable {
+  final int value;
+
+  const CounterState(this.value);
+
+  // Equatable memungkinkan perbandingan objek berdasarkan nilai propertinya.
+  // Ini penting agar BlocBuilder hanya rebuilt ketika state benar-benar berubah.
+  @override
+  List<Object> get props => [value];
+}
+
+// 2. Buat Cubit
+class CounterCubit extends Cubit<CounterState> {
+  // Inisialisasi Cubit dengan state awal
+  CounterCubit() : super(const CounterState(0));
+
+  // Metode untuk mengubah state
+  void increment() {
+    // emit() adalah cara Cubit untuk mengeluarkan state baru.
+    emit(CounterState(state.value + 1));
+  }
+
+  void decrement() {
+    emit(CounterState(state.value - 1));
+  }
+}
+
+// --- B. BLoC Example (dengan Event, untuk skenario lebih kompleks) ---
+
+// 1. Definisikan Events (immutable!)
+abstract class CounterEvent extends Equatable {
+  const CounterEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
+class IncrementEvent extends CounterEvent {}
+
+class DecrementEvent extends CounterEvent {}
+
+// 2. Definisikan State (immutable!)
+// Bisa sama dengan Cubit, atau lebih kompleks sesuai kebutuhan.
+// Kita gunakan yang sama untuk konsistensi.
+// class CounterState extends Equatable { ... (sudah didefinisikan di atas)
+// Contoh state yang lebih kompleks:
+// class CounterState extends Equatable {
+//   final int value;
+//   final bool isLoading;
+//   final String? error;
+//   const CounterState({required this.value, this.isLoading = false, this.error});
+//   @override List<Object?> get props => [value, isLoading, error];
+//   CounterState copyWith({int? value, bool? isLoading, String? error}) { /* ... */ }
+// }
+
+
+// 3. Buat BLoC
+class CounterBloc extends Bloc<CounterEvent, CounterState> {
+  // Inisialisasi Bloc dengan state awal
+  CounterBloc() : super(const CounterState(0)) {
+    // Daftarkan handler untuk setiap Event.
+    // on<EventType>((event, emit) => { ... logika ... emit(newState); });
+    on<IncrementEvent>((event, emit) {
+      emit(CounterState(state.value + 1));
+    });
+
+    on<DecrementEvent>((event, emit) {
+      emit(CounterState(state.value - 1));
+    });
+  }
+}
+
+// --- C. BlocObserver (untuk Debugging) ---
+// Untuk melihat semua transisi state dan event di aplikasi
+class SimpleBlocObserver extends BlocObserver {
+  @override
+  void onEvent(Bloc bloc, Object? event) {
+    super.onEvent(bloc, event);
+    print('onEvent: $event');
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print('onTransition: $transition');
+  }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    print('onError: $error');
+    super.onError(bloc, error, stackTrace);
+  }
+}
+
+// --- D. Main Application (Menggunakan BlocProvider dan BlocBuilder) ---
+void main() {
+  // Daftarkan BlocObserver
+  Bloc.observer = SimpleBlocObserver();
+
+  runApp(
+    // BlocProvider menyediakan instance BLoC/Cubit ke bawah widget tree.
+    // Untuk Cubit:
+    // BlocProvider<CounterCubit>(
+    //   create: (context) => CounterCubit(),
+    //   child: const CubitCounterApp(),
+    // ),
+    // Untuk BLoC:
+    BlocProvider<CounterBloc>(
+      create: (context) => CounterBloc(),
+      child: const BlocCounterApp(),
+    ),
+  );
+}
+
+// --- E. Widget Konsumen untuk Cubit ---
+class CubitCounterApp extends StatelessWidget {
+  const CubitCounterApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Cubit Counter Demo',
+      theme: ThemeData(primarySwatch: Colors.green),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Cubit Counter')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('Cubit Counter Value:', style: TextStyle(fontSize: 24)),
+              // BlocBuilder mendengarkan state dari Cubit dan membangun ulang hanya bagian ini.
+              BlocBuilder<CounterCubit, CounterState>(
+                builder: (context, state) {
+                  print('Cubit CounterBuilder rebuilt: ${state.value}'); // Log rebuild
+                  return Text(
+                    '${state.value}',
+                    style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                  );
+                },
+              ),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'cubitDecrement',
+                    onPressed: () => context.read<CounterCubit>().decrement(), // Panggil metode langsung
+                    child: const Icon(Icons.remove),
+                  ),
+                  const SizedBox(width: 20),
+                  FloatingActionButton(
+                    heroTag: 'cubitIncrement',
+                    onPressed: () => context.read<CounterCubit>().increment(), // Panggil metode langsung
+                    child: const Icon(Icons.add),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// --- F. Widget Konsumen untuk BLoC ---
+class BlocCounterApp extends StatelessWidget {
+  const BlocCounterApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'BLoC Counter Demo',
+      theme: ThemeData(primarySwatch: Colors.deepOrange),
+      home: Scaffold(
+        appBar: AppBar(title: const Text('BLoC Counter')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('BLoC Counter Value:', style: TextStyle(fontSize: 24)),
+              // BlocBuilder mendengarkan state dari BLoC dan membangun ulang hanya bagian ini.
+              BlocBuilder<CounterBloc, CounterState>(
+                builder: (context, state) {
+                  print('BLoC CounterBuilder rebuilt: ${state.value}'); // Log rebuild
+                  return Text(
+                    '${state.value}',
+                    style: const TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
+                  );
+                },
+              ),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'blocDecrement',
+                    onPressed: () => context.read<CounterBloc>().add(DecrementEvent()), // Kirim Event
+                    child: const Icon(Icons.remove),
+                  ),
+                  const SizedBox(width: 20),
+                  FloatingActionButton(
+                    heroTag: 'blocIncrement',
+                    onPressed: () => context.read<CounterBloc>().add(IncrementEvent()), // Kirim Event
+                    child: const Icon(Icons.add),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'Lihat log konsol untuk Event, Transition, dan Rebuilds.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Penjelasan Konteks Kode:**
+
+- **`equatable` Package:** Digunakan untuk membuat _state_ dan _event_ Anda mudah dibandingkan. Dengan meng-_extend_ `Equatable` dan meng-_override_ `props`, Anda memberitahu Dart untuk membandingkan objek berdasarkan nilai propertinya, bukan referensi memori. Ini sangat penting untuk `BlocBuilder` agar tahu kapan harus di-_rebuild_.
+- **A. Cubit Example:**
+  - **`CounterState`:** Kelas yang merepresentasikan _state_. Dibuat _immutable_ (`final` properti) dan _extends_ `Equatable`.
+  - **`CounterCubit`:** _Extends_ `Cubit<CounterState>`. Konstruktor memanggil `super()` dengan _state_ awal.
+  - Metode `increment()` dan `decrement()` memanggil `emit(newState)`. `emit()` adalah cara Cubit untuk "mengeluarkan" _state_ baru, yang kemudian akan didengarkan oleh `BlocBuilder` di UI.
+- **B. BLoC Example:**
+  - **`CounterEvent` (`abstract`):** Kelas dasar abstrak untuk semua _event_.
+  - **`IncrementEvent`, `DecrementEvent`:** Kelas-kelas _event_ konkret. Mereka adalah _immutable_ dan _extends_ `Equatable`.
+  - **`CounterBloc`:** _Extends_ `Bloc<CounterEvent, CounterState>`. Konstruktor memanggil `super()` dengan _state_ awal.
+  - **`on<EventType>((event, emit) { ... })`:** Ini adalah _event handler_ di dalam BLoC. Untuk setiap `EventType` yang ingin Anda tangani, Anda mendaftarkan sebuah _callback_. _Callback_ ini menerima `event` dan fungsi `emit` yang digunakan untuk mengeluarkan _state_ baru. Logika bisnis Anda berada di sini.
+- **C. `BlocObserver`:**
+  - Sebuah kelas yang _extends_ `BlocObserver` memungkinkan Anda untuk mencegat setiap `event`, `transition` (perubahan _state_ yang berhasil), dan `error` di semua BLoC/Cubit di aplikasi Anda. Sangat berguna untuk _debugging_. Anda harus mendaftarkannya di `main()` dengan `Bloc.observer = SimpleBlocObserver();`.
+- **D. Main Application (`BlocProvider`):**
+  - `BlocProvider<T>`: Mirip dengan `ChangeNotifierProvider`, ini adalah _widget_ yang menyediakan instance BLoC/Cubit dari _type_ `T` ke _widget tree_ di bawahnya.
+  - `create: (context) => CounterBloc()`: _Callback_ untuk membuat instance BLoC/Cubit.
+- **E. Widget Konsumen untuk Cubit (`CubitCounterApp`):**
+  - **`BlocBuilder<CounterCubit, CounterState>`:** Ini adalah _widget_ kunci untuk mengkonsumsi _state_ dari Cubit (atau BLoC). Ia menerima dua _generic type_: _tipe Cubit/BLoC_ dan _tipe State_.
+    - Properti `builder` adalah fungsi yang dipanggil setiap kali _state_ dari `CounterCubit` berubah (yaitu, ketika `emit()` dipanggil). Ia menerima `context` dan `state` saat ini.
+    - Hanya _widget_ di dalam _builder_ ini yang akan di-_rebuild_ ketika _state_ berubah, mirip dengan `Consumer`.
+  - **`context.read<CounterCubit>().decrement()`:** Untuk memicu perubahan _state_ di Cubit, Anda memanggil metode langsung pada instance Cubit. Gunakan `context.read()` karena Anda tidak ingin _widget_ yang memicu aksi di-_rebuild_ hanya karena aksi itu terjadi.
+- **F. Widget Konsumen untuk BLoC (`BlocCounterApp`):**
+  - **`BlocBuilder<CounterBloc, CounterState>`:** Mirip dengan Cubit, ia mendengarkan _state_ dari `CounterBloc`.
+  - **`context.read<CounterBloc>().add(DecrementEvent())`:** Untuk memicu perubahan _state_ di BLoC, Anda mengirimkan (`add`) sebuah `Event` ke BLoC. BLoC kemudian akan memproses _event_ tersebut melalui _event handler_ yang sesuai.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram BLoC/Cubit yang ditempatkan oleh `BlocProvider` di atas _widget tree_.
+- `BlocBuilder` di bawahnya "mendengarkan" perubahan _state_ dari BLoC/Cubit.
+- Tombol-tombol di UI "mengirimkan" _Event_ ke BLoC (untuk BLoC) atau "memanggil metode" pada Cubit (untuk Cubit) melalui `context.read()`.
+- BLoC/Cubit memprosesnya dan "mengeluarkan" _state_ baru yang kembali ke `BlocBuilder`, memicu _rebuild_ pada bagian UI tersebut.
+
+**Terminologi Esensial & Penjelasan Detail:**
+
+- **BLoC (Business Logic Component):** Sebuah _pattern_ dan juga kelas dasar dari paket `bloc` yang memetakan `Event` menjadi `State`.
+- **Cubit:** Varian yang lebih sederhana dari BLoC yang memetakan pemanggilan metode langsung menjadi `State`.
+- **`Event`:** Objek yang merepresentasikan aksi atau input dari UI/layanan lain ke BLoC. Harus _immutable_.
+- **`State`:** Objek yang merepresentasikan kondisi data saat ini yang dikeluarkan oleh BLoC/Cubit. Harus _immutable_.
+- **`emit()`:** Metode di Cubit (dan di dalam _event handler_ BLoC) yang digunakan untuk mengeluarkan _state_ baru, yang kemudian akan diperhatikan oleh `BlocBuilder` atau `BlocListener`.
+- **`on<EventType>()`:** Metode yang digunakan di BLoC untuk mendaftarkan _event handler_ untuk `EventType` tertentu.
+- **`add()`:** Metode pada instance BLoC yang digunakan oleh UI untuk mengirimkan `Event` ke BLoC.
+- **`flutter_bloc`:** Paket integrasi Flutter yang menyediakan _widget_ seperti `BlocProvider`, `BlocBuilder`, `BlocListener`, dll.
+- **`BlocProvider<T>`:** _Widget_ yang menyediakan instance BLoC/Cubit dari tipe `T` ke _widget tree_ di bawahnya (mirip dengan `ChangeNotifierProvider`).
+- **`BlocBuilder<B, S>`:** _Widget_ yang mendengarkan _state_ dari BLoC/Cubit (`B`) dan membangun ulang bagian UI-nya setiap kali _state_ (`S`) berubah.
+- **`BlocObserver`:** Sebuah kelas yang memungkinkan Anda mengamati semua transisi _state_ dan _event_ di seluruh aplikasi Anda untuk _debugging_.
+- **`equatable`:** Sebuah paket yang membantu dalam membandingkan objek Dart berdasarkan nilai propertinya, bukan referensi memori, yang penting untuk performa `BlocBuilder` dan menghindari _rebuild_ yang tidak perlu.
+
+**Sumber Referensi Lengkap:**
+
+- [Bloc Library Documentation (Website Resmi)](https://bloclibrary.dev/) - Sumber terbaik dan terlengkap.
+- [Cubit Documentation (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/cubit)
+- [flutter_bloc Documentation (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/flutterbloc)
+- [Equatable Package (pub.dev)](https://pub.dev/packages/equatable)
+- [Bloc vs Cubit (Bloc Library)](https://www.google.com/search?q=https://bloclibrary.dev/%23/bloc-vs-cubit)
+
+**Tips dan Praktik Terbaik:**
+
+- **Pilih BLoC atau Cubit dengan Bijak:**
+  - Gunakan **Cubit** untuk _state management_ sederhana di mana Anda hanya perlu memanggil metode untuk mengubah _state_. Ideal untuk fitur-fitur yang tidak memiliki banyak _event_ atau logika kompleks.
+  - Gunakan **BLoC** ketika Anda memiliki logika bisnis yang lebih kompleks yang melibatkan banyak _event_ yang berbeda atau memerlukan pemrosesan yang lebih terstruktur (misalnya, _debounce_, _throttling_, _cancellation_).
+- **Immutability:** Selalu pastikan _state_ dan _event_ Anda bersifat _immutable_. Gunakan `const` konstruktor dan `copyWith` jika perlu. `equatable` sangat membantu di sini.
+- **Desain State yang Jelas:** Definisikan _state_ Anda dengan jelas untuk mencakup semua kemungkinan kondisi UI (loading, loaded, error, empty, etc.).
+- **Pemisahan Tanggung Jawab:** Pastikan logika bisnis hanya ada di BLoC/Cubit, dan UI hanya bertanggung jawab untuk mengirim _event_ (atau memanggil metode Cubit) dan menampilkan _state_.
+- **Gunakan `BlocObserver`:** Selalu aktifkan `BlocObserver` selama pengembangan untuk memahami aliran _state_ dan _event_ di aplikasi Anda.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** UI tidak diperbarui ketika _state_ BLoC/Cubit berubah.
+
+  - **Penyebab:**
+    - Lupa memanggil `emit(newState)` di BLoC/Cubit setelah logika selesai.
+    - Objek _state_ tidak berubah secara referensi (misalnya, memodifikasi properti pada objek _state_ yang sama daripada mengeluarkan objek _state_ baru yang _immutable_).
+    - Tidak menggunakan `Equatable` (atau `copyWith` yang benar) untuk perbandingan _state_ yang efisien, sehingga `BlocBuilder` tidak mendeteksi perubahan.
+  - **Solusi:** Pastikan Anda `emit` _state_ baru. Pastikan _state_ Anda _immutable_ dan gunakan `Equatable` (atau `copyWith`) dengan benar.
+
+- **Kesalahan:** "No BlocProvider found for type 'X'\!"
+
+  - **Penyebab:** Anda mencoba mengakses BLoC/Cubit (misalnya, `context.read<CounterBloc>()`) dari `context` yang _tidak memiliki_ `BlocProvider` untuk BLoC/Cubit tersebut sebagai _ancestor_.
+  - **Solusi:** Pastikan `BlocProvider` (atau `MultiBlocProvider` untuk beberapa BLoC/Cubit) ditempatkan di atas _widget tree_ yang cukup tinggi sehingga semua _descendant_ yang memerlukannya dapat mengaksesnya.
+
+- **Kesalahan:** Terlalu banyak _boilerplate_ atau kode yang berulang.
+
+  - **Penyebab:** Terlalu sering membuat kelas `Event` atau `State` yang sangat sederhana, atau tidak memanfaatkan fitur seperti `freezed` atau `bloc_test`.
+  - **Solusi:** Pertimbangkan untuk menggunakan Cubit jika _event_ Anda terlalu sederhana. Pelajari tentang `freezed` untuk membuat _immutable_ _data class_ dengan mudah. Ini akan sangat mengurangi _boilerplate_.
 
 ---
 
