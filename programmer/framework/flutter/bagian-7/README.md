@@ -17,6 +17,8 @@
       - [5.3.1 Dio (Advanced HTTP Client)](#531-dio-advanced-http-client)
       - [5.3.2 Error Handling \& Interceptors](#532-error-handling--interceptors)
       - [5.3.3 Working with Authentication (Tokens)](#533-working-with-authentication-tokens)
+    - [5.4 Local Data Persistence](#54-local-data-persistence)
+      - [5.4.1 Shared Preferences (Simple Key-Value)](#541-shared-preferences-simple-key-value)
 
 </details>
 
@@ -2862,6 +2864,450 @@ void main() async {
   - **Solusi:** Tambahkan mekanisme pencegahan _loop_ dalam `AuthInterceptor`, seperti batas _retry_ atau bendera untuk mencegah _refresh_ berulang kali dalam waktu singkat. Jika _refresh_ gagal dalam beberapa percobaan, paksa logout.
 
 ---
+
+### 5.4 Local Data Persistence
+
+Sub-bagian ini akan membahas berbagai metode untuk menyimpan data secara lokal di perangkat, memungkinkan aplikasi berfungsi _offline_ atau menyimpan konfigurasi pengguna.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan mempelajari perbedaan antara `shared_preferences` (untuk data sederhana), `sqflite` (untuk data relasional terstruktur), dan `Hive`/`Isar` (untuk NoSQL yang lebih cepat). Mereka akan memahami kapan harus menggunakan setiap teknologi berdasarkan kebutuhan aplikasi dan jenis data. Keterampilan ini penting untuk membangun aplikasi yang _robust_, memberikan pengalaman pengguna yang lebih baik, dan mengelola data _offline_ secara efektif.
+
+**Konsep Kunci & Filosofi Mendalam (Umum untuk Bagian Ini):**
+
+- **Offline First / Caching:** Kemampuan aplikasi untuk berfungsi tanpa koneksi internet penuh atau memuat data lebih cepat dari penyimpanan lokal.
+
+  - **Filosofi:** Meningkatkan _user experience_ dan keandalan aplikasi, terutama di lingkungan dengan koneksi tidak stabil.
+
+- **Data Consistency:** Memastikan data yang disimpan secara lokal tetap sinkron dengan data di _server_ (jika ada).
+
+  - **Filosofi:** Menjaga integritas data dan menghindari konflik antara versi _offline_ dan _online_.
+
+- **Choosing the Right Tool:** Pemahaman tentang berbagai solusi penyimpanan data lokal dan kapan menggunakan masing-masing.
+
+  - **Filosofi:** Mengoptimalkan performa, skalabilitas, dan kemudahan pengembangan dengan memilih alat yang paling sesuai untuk tugas yang diberikan.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram Pohon Keputusan: Kapan menggunakan SharedPreferences vs. SQLite vs. Hive/Isar berdasarkan kompleksitas data, kebutuhan relasional, dan kecepatan.
+- Diagram umum alur penyimpanan data: Aplikasi -\> Penyimpanan Lokal -\> Perangkat.
+
+**Hubungan dengan Modul Lain:**
+Ini melengkapi topik integrasi API (`5.2`, `5.3`) dengan menyediakan cara untuk menyimpan data yang diperoleh dari API atau data yang dihasilkan secara lokal. Konsep ini juga dapat berhubungan dengan `Fase 6: State Management` untuk persistensi _state_ aplikasi.
+
+---
+
+#### 5.4.1 Shared Preferences (Simple Key-Value)
+
+Sub-bagian ini akan memperkenalkan `shared_preferences`, solusi penyimpanan data yang paling sederhana di Flutter, ideal untuk menyimpan pasangan kunci-nilai sederhana seperti pengaturan pengguna atau _flags_.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Pembelajar akan belajar cara menggunakan `shared_preferences` untuk menyimpan dan membaca tipe data primitif (string, int, bool, double, List\<String\>). Mereka akan memahami batasan dan kasus penggunaan terbaiknya. Ini adalah titik awal yang mudah untuk memahami persistensi data lokal di Flutter.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Key-Value Store:** Data disimpan dalam bentuk pasangan kunci-nilai, mirip dengan `Map`.
+
+  - **Filosofi:** Simplicity dan kecepatan akses untuk data non-kompleks. Cocok untuk preferensi pengguna, _flag_ aplikasi (misalnya, `isLoggedIn`, `hasSeenOnboarding`), atau nilai-nilai konfigurasi kecil.
+
+- **Asynchronous API:** Semua operasi `shared_preferences` adalah asinkron, mengembalikan `Future`.
+
+  - **Filosofi:** Mencegah pemblokiran UI (juga disebut _jank_) selama operasi I/O, menjaga aplikasi tetap responsif.
+
+- **Platform-Specific Implementation:** `shared_preferences` adalah _wrapper_ di atas mekanisme penyimpanan preferensi asli platform (misalnya, `SharedPreferences` di Android, `NSUserDefaults` di iOS).
+
+  - **Filosofi:** Memanfaatkan solusi penyimpanan bawaan OS yang sudah dioptimalkan dan teruji untuk data preferensi.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+
+Pertama, tambahkan dependensi `shared_preferences` di `pubspec.yaml` Anda:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.2.3 # Periksa versi terbaru di pub.dev
+```
+
+Kemudian jalankan `flutter pub get`.
+
+```dart
+import 'package:shared_preferences/shared_preferences.dart';
+
+class UserPreferences {
+  static late SharedPreferences _preferences;
+
+  // Inisialisasi SharedPreferences. Harus dipanggil sekali di awal aplikasi (misalnya di main()).
+  static Future<void> init() async {
+    _preferences = await SharedPreferences.getInstance();
+  }
+
+  // --- Metode untuk Menyimpan Data ---
+
+  // Menyimpan String
+  static Future<bool> setUserName(String name) async {
+    return await _preferences.setString('username', name);
+  }
+
+  // Menyimpan Boolean
+  static Future<bool> setDarkMode(bool isDarkMode) async {
+    return await _preferences.setBool('isDarkMode', isDarkMode);
+  }
+
+  // Menyimpan Integer
+  static Future<bool> setUserAge(int age) async {
+    return await _preferences.setInt('userAge', age);
+  }
+
+  // Menyimpan Double
+  static Future<bool> setUserHeight(double height) async {
+    return await _preferences.setDouble('userHeight', height);
+  }
+
+  // Menyimpan List of Strings
+  static Future<bool> setRecentSearches(List<String> searches) async {
+    return await _preferences.setStringList('recentSearches', searches);
+  }
+
+  // --- Metode untuk Mengambil Data ---
+
+  // Mengambil String
+  static String? getUserName() {
+    return _preferences.getString('username');
+  }
+
+  // Mengambil Boolean
+  static bool getDarkMode() {
+    return _preferences.getBool('isDarkMode') ?? false; // Default value if not found
+  }
+
+  // Mengambil Integer
+  static int getUserAge() {
+    return _preferences.getInt('userAge') ?? 0; // Default value if not found
+  }
+
+  // Mengambil Double
+  static double getUserHeight() {
+    return _preferences.getDouble('userHeight') ?? 0.0; // Default value if not found
+  }
+
+  // Mengambil List of Strings
+  static List<String>? getRecentSearches() {
+    return _preferences.getStringList('recentSearches');
+  }
+
+  // --- Metode Lain-lain ---
+
+  // Memeriksa apakah kunci ada
+  static bool containsKey(String key) {
+    return _preferences.containsKey(key);
+  }
+
+  // Menghapus satu kunci
+  static Future<bool> removeKey(String key) async {
+    return await _preferences.remove(key);
+  }
+
+  // Menghapus semua data
+  static Future<bool> clearAll() async {
+    return await _preferences.clear();
+  }
+}
+
+void main() async {
+  // PENTING: Panggil ini di awal aplikasi Anda (misalnya di main() atau runApp())
+  // WidgetsFlutterBinding.ensureInitialized(); jika dijalankan di main() tanpa runApp()
+  // Di Flutter app, ini akan otomatis dipanggil saat runApp()
+  // Untuk contoh CLI, kita panggil manual:
+  await UserPreferences.init();
+  print('SharedPreferences initialized.');
+
+  print('\n--- Menyimpan Data ---');
+  await UserPreferences.setUserName('Alice Smith');
+  await UserPreferences.setDarkMode(true);
+  await UserPreferences.setUserAge(30);
+  await UserPreferences.setUserHeight(175.5);
+  await UserPreferences.setRecentSearches(['Flutter', 'Dart', 'API']);
+  print('Data disimpan.');
+
+  print('\n--- Mengambil Data ---');
+  print('Username: ${UserPreferences.getUserName()}');
+  print('Dark Mode: ${UserPreferences.getDarkMode()}');
+  print('User Age: ${UserPreferences.getUserAge()}');
+  print('User Height: ${UserPreferences.getUserHeight()} cm');
+  print('Recent Searches: ${UserPreferences.getRecentSearches()}');
+
+  print('\n--- Memeriksa Data ---');
+  print('Contains key "username": ${UserPreferences.containsKey('username')}');
+  print('Contains key "nonExistentKey": ${UserPreferences.containsKey('nonExistentKey')}');
+
+  print('\n--- Mengubah Data ---');
+  await UserPreferences.setUserName('Bob Johnson');
+  print('Updated Username: ${UserPreferences.getUserName()}');
+
+  print('\n--- Menghapus Data ---');
+  await UserPreferences.removeKey('userAge');
+  print('User Age after removal: ${UserPreferences.getUserAge()} (default value)');
+  print('Contains key "userAge": ${UserPreferences.containsKey('userAge')}');
+
+  print('\n--- Menghapus Semua Data ---');
+  await UserPreferences.clearAll();
+  print('Username after clear: ${UserPreferences.getUserName()} (null)');
+  print('Contains key "username" after clear: ${UserPreferences.containsKey('username')}');
+}
+
+// --- Contoh Integrasi dengan Flutter UI (Conceptual) ---
+import 'package:flutter/material.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _isDarkMode = false;
+  String? _username;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  Future<void> _loadPreferences() async {
+    await UserPreferences.init(); // Pastikan init dipanggil sebelum runApp()
+    setState(() {
+      _isDarkMode = UserPreferences.getDarkMode();
+      _username = UserPreferences.getUserName();
+    });
+  }
+
+  Future<void> _toggleDarkMode(bool value) async {
+    setState(() {
+      _isDarkMode = value;
+    });
+    await UserPreferences.setDarkMode(value);
+  }
+
+  Future<void> _saveUsername(String? value) async {
+    if (value != null && value.isNotEmpty) {
+      setState(() {
+        _username = value;
+      });
+      await UserPreferences.setUserName(value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Pengaturan Aplikasi')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ListTile(
+              title: const Text('Mode Gelap'),
+              trailing: Switch(
+                value: _isDarkMode,
+                onChanged: _toggleDarkMode,
+              ),
+            ),
+            ListTile(
+              title: const Text('Nama Pengguna'),
+              subtitle: Text(_username ?? 'Belum diatur'),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    final TextEditingController controller = TextEditingController(text: _username);
+                    return AlertDialog(
+                      title: const Text('Ubah Nama Pengguna'),
+                      content: TextField(
+                        controller: controller,
+                        decoration: const InputDecoration(hintText: 'Masukkan nama'),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Batal'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _saveUsername(controller.text);
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Simpan'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            // Tombol untuk clear all data
+            ElevatedButton(
+              onPressed: () async {
+                await UserPreferences.clearAll();
+                _loadPreferences(); // Muat ulang preferensi setelah dihapus
+              },
+              child: const Text('Hapus Semua Pengaturan'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Untuk menjalankan contoh UI ini, bungkus dalam StatelessWidget/MaterialApp
+/*
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Pastikan Flutter engine siap
+  await UserPreferences.init(); // Inisialisasi SharedPreferences
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'SharedPreferences Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        brightness: UserPreferences.getDarkMode() ? Brightness.dark : Brightness.light,
+      ),
+      home: const SettingsScreen(),
+    );
+  }
+}
+*/
+```
+
+**Penjelasan Konteks Kode:**
+
+1.  **`UserPreferences` Class:** Sebuah _wrapper_ statis yang disarankan untuk mengelola semua operasi `shared_preferences`. Ini membantu menjaga kode tetap terorganisir.
+2.  **`static late SharedPreferences _preferences;`:** Deklarasi _late_ dan _static_ untuk menyimpan satu instance `SharedPreferences` yang akan digunakan di seluruh aplikasi.
+3.  **`static Future<void> init() async { _preferences = await SharedPreferences.getInstance(); }`:** Metode inisialisasi yang **harus** dipanggil sekali sebelum Anda mencoba membaca atau menulis data. Idealnya, panggil ini di `main()` sebelum `runApp()`, setelah `WidgetsFlutterBinding.ensureInitialized()`.
+4.  **`set...()` Methods:** Menggunakan `_preferences.setString()`, `setBool()`, `setInt()`, `setDouble()`, `setStringList()` untuk menyimpan berbagai tipe data primitif. Metode ini mengembalikan `Future<bool>` yang menunjukkan apakah operasi berhasil.
+5.  **`get...()` Methods:** Menggunakan `_preferences.getString()`, `getBool()`, dll. untuk mengambil data. Penting untuk dicatat bahwa metode `get` mengembalikan nilai _nullable_ (misalnya `String?`) jika kunci tidak ditemukan. Gunakan operator `??` untuk menyediakan nilai _default_ jika diinginkan.
+6.  **`removeKey()` dan `clearAll()`:** Untuk menghapus data secara spesifik berdasarkan kunci atau menghapus semua data yang disimpan oleh aplikasi.
+7.  **`main()` Function (CLI Demo):** Menunjukkan alur penggunaan `UserPreferences` secara sekuensial. Perhatikan `await UserPreferences.init();` di awal.
+8.  **`SettingsScreen` (Flutter UI Integration):**
+    - `initState()`: Memanggil `_loadPreferences()` saat widget diinisialisasi untuk mengambil data preferensi yang sudah ada.
+    - `_loadPreferences()`: Metode asinkron untuk memuat semua preferensi dan kemudian memperbarui _state_ UI (`setState`).
+    - `_toggleDarkMode()` dan `_saveUsername()`: Metode yang memanggil fungsi `UserPreferences` untuk menyimpan data, lalu memperbarui _state_ UI.
+    - `Switch` dan `TextField` digunakan untuk mengikat UI ke data preferensi.
+
+**Visualisasi Diagram Alur/Struktur:**
+
+- Diagram sederhana `Key-Value Pair`: `Key "username"` -\> `Value "Alice"`.
+- Alur penyimpanan: UI `Switch` -\> `onChanged` -\> `UserPreferences.setBool()` -\> `SharedPreferences` (Disk).
+- Alur pengambilan: `initState()` -\> `UserPreferences.getBool()` -\> `_isDarkMode` (State UI).
+
+**Terminologi Esensial:**
+
+- **`shared_preferences`:** Paket Flutter untuk penyimpanan data key-value sederhana.
+- **Key-Value Store:** Model penyimpanan data di mana setiap data diidentifikasi oleh kunci unik.
+- **Persistent Storage:** Data yang tetap ada bahkan setelah aplikasi ditutup dan dibuka kembali.
+- **`SharedPreferences.getInstance()`:** Metode asinkron untuk mendapatkan satu instance `SharedPreferences`.
+- **`setString()`, `getBool()`, etc.:** Metode untuk menyimpan dan mengambil data berdasarkan tipe.
+- **`WidgetsFlutterBinding.ensureInitialized()`:** Harus dipanggil di `main()` jika Anda ingin menggunakan plugin Flutter (termasuk `shared_preferences`) sebelum `runApp()`.
+
+**Sumber Referensi Lengkap:**
+
+- [shared_preferences package (pub.dev)](https://pub.dev/packages/shared_preferences) - Dokumentasi resmi paket.
+- [Persist data with `shared_preferences` (Flutter documentation)](<https://www.google.com/search?q=%5Bhttps://docs.flutter.dev/data-and-backend/local-data/shared-preferences%5D(https://docs.flutter.dev/data-and-backend/local-data/shared-preferences)>) - Panduan resmi Flutter.
+
+**Tips dan Praktik Terbaik:**
+
+- **Inisialisasi Awal:** Selalu inisialisasi `shared_preferences` (`await SharedPreferences.getInstance();`) sekali di awal aplikasi, biasanya di `main()` sebelum `runApp()`.
+- **Gunakan Wrapper Class:** Buat kelas _wrapper_ (seperti `UserPreferences` di contoh) untuk mengabstraksi detail `shared_preferences` dan membuat kode lebih bersih, mudah diuji, dan aman tipe.
+- **Default Values:** Selalu sediakan nilai _default_ saat mengambil data (misalnya, `getBool('key') ?? false`) untuk menghindari `null` dan _error_.
+- **Jangan untuk Data Kompleks:** Jangan gunakan `shared_preferences` untuk menyimpan data yang sangat besar, kompleks, atau relasional. Ini bukan database dan tidak dioptimalkan untuk skenario tersebut.
+- **Hindari Data Sensitif:** Untuk data yang sangat sensitif seperti token otentikasi atau informasi pribadi, pertimbangkan menggunakan solusi penyimpanan yang lebih aman seperti `flutter_secure_storage` atau `keychain_storage` karena `shared_preferences` tidak terenkripsi secara default. (Sudah dibahas sedikit di 5.3.3)
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** `LateInitializationError: Field '_preferences@..._' has not been initialized.`
+
+  - **Penyebab:** Anda mencoba mengakses `_preferences` sebelum `UserPreferences.init()` (atau `SharedPreferences.getInstance()`) selesai dipanggil.
+  - **Solusi:** Pastikan `init()` dipanggil dan selesai sebelum ada operasi baca/tulis `shared_preferences` lainnya. Idealnya, panggil di `main()` dengan `await`.
+
+- **Kesalahan:** `PlatformException` (misalnya, _Error writing to preferences_).
+
+  - **Penyebab:** Masalah izin (jarang untuk `shared_preferences`), atau masalah ruang penyimpanan di perangkat.
+  - **Solusi:** Periksa _logcat_ (Android) atau _Xcode console_ (iOS) untuk detail _exception_ lebih lanjut. Pastikan ada ruang yang cukup di perangkat.
+
+- **Kesalahan:** Data tidak persisten setelah aplikasi di-_uninstall_ atau _data_ aplikasi dihapus.
+
+  - **Penyebab:** Ini adalah perilaku normal. `shared_preferences` menyimpan data yang terkait dengan instalasi aplikasi tertentu. Jika aplikasi di-_uninstall_ atau data dihapus, preferensi juga akan hilang.
+  - **Solusi:** Ini bukan _error_, melainkan perilaku yang diharapkan. Untuk data yang perlu bertahan dari _uninstall_, pertimbangkan layanan _cloud_ atau sinkronisasi dengan _server_.
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
