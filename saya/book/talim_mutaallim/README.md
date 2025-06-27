@@ -18,7 +18,7 @@ Karena seperti hal nya shalat, merupakan kwajiban bagi seorang muslim. Maka diwa
 
 **ويجب عليه علم مايقع له بقدرما يؤدي به الواجب**
 
-Dan diwajibkan juga bagi seorang muslim untuk mengetahui apa yang yang akan dihadapi sekiranya dia menyanggupi kewajibannya
+Dan diwajibkan juga bagi seorang muslim untuk mengetahui apa yang yang akan dihadapi sekiranya dia menyanggupi kewajiban tersebut
 
 ---
 
@@ -42,11 +42,11 @@ Demikian juga halnya dalam puasa dan zakat, ketika seorang muslim memiliki harta
 
 **وكذلك في البيوع إن كان يتجر ؛ قيل لمحمد بن الحسن رحمه الله تعالى، الأ تصنف كتابا في الزهد ؛ قال صنفت كتابا في البيوع يعني الزاهد من يتحرز عن الشهبات والمكروهات في التجارات**
 
-Demikian juga halnya dalam masalah perdagangan ketika seorang muslim tersebut adalah seorang pedagang, pernah dikatakan oleg Syaikh Muhammad bin Al-Hasan:
-Hendaknya kamu mengarang kitab tentang Zuhud
+Demikian juga halnya dalam masalah perdagangan ketika seorang muslim tersebut adalah seorang pedagang, pernah dikatakan oleh Syaikh Muhammad bin Al-Hasan:
+**`Hendaknya kamu mengarang kitab tentang Zuhud`**
 Beliau kemudian meneruskan:
-Aku mengarang kitab tentang perdagangan
-Yang di maksud beliau disini ialah Zuduhnya seseorang dari perkara syubhat dan makruhat dalam perdagangan
+**`Aku mengarang kitab tentang perdagangan`**
+Yang di maksud beliau disini ialah Zuhudnya seseorang dari perkara syubhat dan makruhat terkait bidang bisini
 
 ---
 
