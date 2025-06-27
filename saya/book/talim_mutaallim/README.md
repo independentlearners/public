@@ -77,6 +77,9 @@ Belajarlah, karena sesungguhnya ilmu adalah perhiasan bagi pemiliknya.
 ---
 
 **Terimakasih telah berkunjung**
+
 Salam hangat untuk semuanya
 
 > Tulisan dibuat pada Jumat, 1 Muharram 1447 H | 27 Juni 2025 | 09:00 Wib
+
+> 🔃 Dalam Proses
