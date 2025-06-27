@@ -46,13 +46,13 @@ Demikian juga halnya dalam masalah perdagangan ketika seorang muslim tersebut ad
 **`Hendaknya kamu mengarang kitab tentang Zuhud`**
 Beliau kemudian meneruskan:
 **`Aku mengarang kitab tentang perdagangan`**
-Yang di maksud beliau disini ialah Zuhudnya seseorang dari perkara syubhat dan makruhat terkait bidang bisini
+Yang di maksud beliau disini ialah Zuhudnya seseorang dari perkara syubhat dan makruhat terkait masalah perdagangan
 
 ---
 
 **وكذالك يجب في سائر المعاملات والحراف وكل من إشتغل بشيئ منها يفترض عليه علم التحرز عن الحرام فيه**
 
-Demikian pula kewajiban dalam sedikit banyaknya muamalat, setiap orang yang memiliki kesibukan akan sesuatu yang terkait dengannya, dia juga memiliki kewajiban untuk mengetahui batasan akan keharaman yang terkait didalamnya
+Demikian pula kewajiban dalam sedikit banyaknya muamalat (Bisnis), setiap orang yang memiliki kesibukan akan sesuatu yang terkait dengannya, dia juga memiliki kewajiban untuk mengetahui batasan akan keharaman yang terkait didalamnya
 
 ---
 
