@@ -7,8 +7,6 @@ Salam hangat untuk semuanya
 
 > Tulisan dibuat pada Jumat, 1 Muharram 1447 H | 27 Juni 2025 | 09:00 Wib
 
----
-
 <details>
   <summary>📚 Daftar Buku</summary>
 
@@ -43,7 +41,15 @@ Salam hangat untuk semuanya
         </li>
       </ul>
     </div>
+    </summary>
+  </summary>
+</summary>
+   </details>
+  </details>
+</details>
 
 ---
 
-  </details>
+Semua yang ada disini adalah sebuah proses, sebelum dikatakan secara eksplisit sebagai bagian dari sebuah referensi yang bertanggung jawab, maka semua hak dikembalikan pada tindakannya masing-masing
+
+> 🔃 Dalam Proses
