@@ -80,6 +80,6 @@ Belajarlah, karena sesungguhnya ilmu adalah perhiasan bagi pemiliknya.
 
 Salam hangat untuk semuanya
 
-> Tulisan dibuat pada Jumat, 1 Muharram 1447 H | 27 Juni 2025 | 09:00 Wib
+> Tulisan dimulai pada Jumat, 1 Muharram 1447 H | 27 Juni 2025 | 09:00 Wib | InsyaAllah akan terus di perbarui seiring berjalannya waktu
 
 > 🔃 Dalam Proses
