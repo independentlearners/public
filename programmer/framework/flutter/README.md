@@ -1572,6 +1572,6 @@ Peserta akan mampu:
 [0]: ../README.md
 [1]:../../domain-spesifik/README.md
 [2]:../flutter/bagian-1/README.md
-[3]:../flutter/bagian-4/README.md
-[4]:../flutter/bagian-5/README.md
-[5]:../flutter/bagian-6/README.md
+[3]:../flutter/bagian-2/README.md
+[4]:../flutter/bagian-3/README.md
+[5]:../flutter/bagian-4/README.md
