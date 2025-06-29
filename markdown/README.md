@@ -34,7 +34,7 @@ _Menguasai Semua Fitur Markdown dari Dasar hingga Advanced_
 
 16. [GitHub Flavored Markdown](#github-flavored-markdown-gfm)
 17. [Discord & Chat Platforms](#17-discord--chat-platforms)
-18. [Documentation Platforms](#documentation-platforms)
+18. [Documentation Platforms](#18-documentation-platforms)
 19. [Static Site Generators](#static-site-generators)
 20. [Academic & Scientific](#academic--scientific)
 
@@ -420,8 +420,6 @@ Including code blocks:
    | ------ | ---- |
    | Work   | Here |
 
-
-
 ---
 
 # BAGIAN II: CONTENT ELEMENTS
@@ -429,20 +427,24 @@ Including code blocks:
 ## 6. Links & Referensi
 
 ### 🔗 Basic Links
+
 ```markdown
 <!-- Inline links -->
+
 [Link text](https://example.com)
 [Link with title](https://example.com "Tooltip title")
 [Link to email](mailto:user@example.com)
 [Link to phone](tel:+1234567890)
 
 <!-- Automatic links -->
+
 <https://example.com>
 <user@example.com>
 
 <!-- Bare URLs (GFM) -->
+
 https://github.com akan otomatis jadi link
-````
+```
 
 ### 📚 Reference Links
 
@@ -1030,19 +1032,19 @@ Content dengan custom styling
 
 <button onclick="alert('Hello!')">Click me</button>
 
-
-
 ---
 
-## [12. Math & LaTeX](#bagian-iii-advanced-features) 
+## [12. Math & LaTeX](#bagian-iii-advanced-features)
 
 ### 🧮 Inline Math
+
 ```markdown
 <!-- KaTeX/MathJax syntax -->
+
 Persamaan linear: $ax + b = 0$
 Pythagoras: $a^2 + b^2 = c^2$
 Integral: $\int_{0}^{\infty} e^{-x} dx = 1$
-````
+```
 
 ### 📐 Display Math
 
@@ -1658,7 +1660,7 @@ CMD ["npm", "start"]
 
 ---
 
-## 17. Discord & Chat Platforms
+## [17. Discord & Chat Platforms](#bagian-iv-platform-specific)
 
 ### 💬 Discord Markdown
 
@@ -1754,15 +1756,15 @@ print("Hello Telegram!")
 [inline URL](http://www.example.com/)
 [inline mention of a user](tg://user?id=123456789)
 
-````
-
 ---
 
-## 18. Documentation Platforms {#documentation-platforms}
+## [18. Documentation Platforms](#bagian-iv-platform-specific)
 
 ### 📚 GitBook
+
 ```markdown
 <!-- GitBook hints -->
+
 {% hint style="info" %}
 This is an info hint box.
 {% endhint %}
@@ -1774,13 +1776,16 @@ This is a warning hint box.
 {% hint style="danger" %}
 This is a danger hint box.
 {% endhint %}
+```
 
 <!-- Tabs -->
+
 {% tabs %}
 {% tab title="JavaScript" %}
+
 ```javascript
 console.log("Hello from JavaScript!");
-````
+```
 
 {% endtab %}
 
@@ -1806,11 +1811,11 @@ print("Hello from Python!")
 
 {% endcode %}
 
-````
-
 ### 📖 Notion
+
 ```markdown
 <!-- Notion callouts -->
+
 > 💡 This is a light bulb callout
 >
 > Use it for tips and insights
@@ -1824,6 +1829,7 @@ print("Hello from Python!")
 > Use it for additional information
 
 <!-- Notion toggles -->
+
 > **Click to expand**
 >
 > Hidden content goes here
@@ -1832,12 +1838,13 @@ print("Hello from Python!")
 > - List item 2
 
 <!-- Notion databases -->
-| Task | Status | Priority | Due Date |
-|------|:------:|:--------:|:--------:|
-| Design mockups | In Progress | High | 2025-06-01 |
-| Write documentation | Not Started | Medium | 2025-06-05 |
-| Code review | Completed | High | 2025-05-30 |
-````
+
+| Task                |   Status    | Priority |  Due Date  |
+| ------------------- | :---------: | :------: | :--------: |
+| Design mockups      | In Progress |   High   | 2025-06-01 |
+| Write documentation | Not Started |  Medium  | 2025-06-05 |
+| Code review         |  Completed  |   High   | 2025-05-30 |
+```
 
 ### 🌐 Confluence
 
@@ -1907,6 +1914,8 @@ print("Hello from Python!")
 tag:#important
 ```
 ````
+
+`````
 
 <!-- Obsidian canvas links -->
 
@@ -2209,10 +2218,10 @@ author:
     email: "john.doe@institute.org"
 date: "May 31, 2025"
 abstract: |
-  This study investigates the impact of Markdown formatting on 
-  academic writing efficiency. Using a randomized controlled trial 
-  with 200 participants, we found that Markdown users completed 
-  writing tasks 23% faster than traditional word processor users 
+  This study investigates the impact of Markdown formatting on
+  academic writing efficiency. Using a randomized controlled trial
+  with 200 participants, we found that Markdown users completed
+  writing tasks 23% faster than traditional word processor users
   (*p* < .001).
 keywords: [markdown, academic writing, efficiency, productivity]
 bibliography: references.bib
@@ -2442,12 +2451,12 @@ More markdown content.
 
 <!-- Responsive images -->
 
-<img src="image-small.jpg" 
-     srcset="image-small.jpg 400w, 
-             image-medium.jpg 800w, 
+<img src="image-small.jpg"
+     srcset="image-small.jpg 400w,
+             image-medium.jpg 800w,
              image-large.jpg 1200w"
-     sizes="(max-width: 400px) 400px, 
-            (max-width: 800px) 800px, 
+     sizes="(max-width: 400px) 400px,
+            (max-width: 800px) 800px,
             1200px"
      alt="Responsive optimized image"
      loading="lazy">
@@ -2462,7 +2471,7 @@ More markdown content.
 ````markdown
 <!-- Lazy loaded components -->
 <lazy-component>
-  
+
 ```javascript
 // Heavy code block yang di-lazy load
 function complexCalculation() {
@@ -2476,16 +2485,16 @@ function complexCalculation() {
 <!-- Deferred content -->
 <details>
   <summary>Load Heavy Content</summary>
-  
+
   <!-- Heavy content hanya dimuat saat dibuka -->
   ```python
   import pandas as pd
   import numpy as np
-  
+
   # Large dataset processing
   df = pd.read_csv('large_dataset.csv')
   ```
-  
+
 </details>
 
 ### 📊 Bundle Size Optimization
@@ -2570,9 +2579,9 @@ Content dengan **target keywords** yang natural.
 
 ```markdown
 <!-- CSP headers untuk Markdown dengan HTML -->
-<meta http-equiv="Content-Security-Policy" 
-      content="default-src 'self'; 
-               script-src 'self' 'unsafe-inline'; 
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self' 'unsafe-inline';
                style-src 'self' 'unsafe-inline';
                img-src 'self' data: https:;">
 
@@ -2596,3 +2605,4 @@ Content dengan **target keywords** yang natural.
 <img src="legitimate-image.jpg" alt="Safe image">
 <a href="
 ```
+`````
