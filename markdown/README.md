@@ -6,34 +6,34 @@ _Menguasai Semua Fitur Markdown dari Dasar hingga Advanced_
 
 ## 🎯 Daftar Isi Utama
 
-### **BAGIAN I: FUNDAMENTAL**
+### **[BAGIAN I: FUNDAMENTAL](#bagian-i-fundamental-1)**
 
-1. [Sejarah & Varian Markdown](#sejarah--varian-markdown)
-2. [Syntax Dasar](#syntax-dasar)
-3. [Heading & Struktur](#heading--struktur)
-4. [Text Formatting](#text-formatting)
-5. [Lists & Organisasi](#lists--organisasi)
+1. [Sejarah & Varian Markdown](#1-sejarah--varian-markdown)
+2. [Syntax Dasar](#2-syntax-dasar)
+3. [Heading & Struktur](#3-heading--struktur)
+4. [Text Formatting](#4-text-formatting)
+5. [Lists & Organisasi](#5-lists--organisasi)
 
-### **BAGIAN II: CONTENT ELEMENTS**
+### **[BAGIAN II: CONTENT ELEMENTS](#bagian-ii-content-elements-1)**
 
-6. [Links & Referensi](#links--referensi)
-7. [Images & Media](#images--media)
-8. [Code & Programming](#code--programming)
-9. [Tables & Data](#tables--data)
-10. [Blockquotes & Callouts](#blockquotes--callouts)
+6. [Links & Referensi](#6-links--referensi)
+7. [Images & Media](#7-images--media)
+8. [Code & Programming](#8-code--programming)
+9. [Tables & Data](#9-tables--data)
+10. [Blockquotes & Callouts](#10-blockquotes--callouts)
 
-### **BAGIAN III: ADVANCED FEATURES**
+### **[BAGIAN III: ADVANCED FEATURES](#bagian-iii-advanced-features-1)**
 
-11. [HTML Integration](#html-integration)
-12. [Math & LaTeX](#math--latex)
-13. [Diagrams & Visualizations](#diagrams--visualizations)
-14. [Interactive Elements](#interactive-elements)
-15. [Extensions & Plugins](#extensions--plugins)
+11. [HTML Integration](#11-html-integration)
+12. [Math & LaTeX](#12-math--latex)
+13. [Diagrams & Visualizations](#13-diagrams--visualizations)
+14. [Interactive Elements](#14-interactive-elements)
+15. [Extensions & Plugins](#15-extensions--plugins)
 
-### **BAGIAN IV: PLATFORM SPECIFIC**
+### **[BAGIAN IV: PLATFORM SPECIFIC](#bagian-iv-platform-specific-1)**
 
-16. [GitHub Flavored Markdown](#github-flavored-markdown)
-17. [Discord & Chat Platforms](#discord--chat-platforms)
+16. [GitHub Flavored Markdown](#github-flavored-markdown-gfm)
+17. [Discord & Chat Platforms](#17-discord--chat-platforms)
 18. [Documentation Platforms](#documentation-platforms)
 19. [Static Site Generators](#static-site-generators)
 20. [Academic & Scientific](#academic--scientific)
@@ -50,7 +50,7 @@ _Menguasai Semua Fitur Markdown dari Dasar hingga Advanced_
 
 # BAGIAN I: FUNDAMENTAL
 
-## 1. Sejarah & Varian Markdown {#sejarah--varian-markdown}
+## 1. Sejarah & Varian Markdown
 
 ### 📜 Sejarah Singkat
 
@@ -69,7 +69,7 @@ _Menguasai Semua Fitur Markdown dari Dasar hingga Advanced_
 **Bold** dan _italic_ text
 ```
 
-#### **GitHub Flavored Markdown (GFM)**
+#### **[GitHub Flavored Markdown (GFM)](#bagian-iv-platform-specific)**
 
 ```markdown
 ~~Strikethrough~~
@@ -124,7 +124,7 @@ with multiple paragraphs
 
 ---
 
-## 2. Syntax Dasar {#syntax-dasar}
+## 2. Syntax Dasar
 
 ### 🔤 Karakter Spesial & Escaping
 
@@ -170,7 +170,7 @@ Paragraf kedua
 
 ---
 
-## 3. Heading & Struktur {#heading--struktur}
+## 3. Heading & Struktur
 
 ### 📑 Heading Styles
 
@@ -199,9 +199,9 @@ Paragraf kedua
 ```markdown
 <!-- Pandoc/kramdown syntax -->
 
-## Heading {#custom-id}
+## Heading
 
-### Another Heading {#another-id .class1 .class2}
+### Another Heading
 
 <!-- GitLab syntax -->
 
@@ -242,7 +242,7 @@ toc-depth: 3
 
 ---
 
-## 4. Text Formatting {#text-formatting}
+## 4. Text Formatting
 
 ### ✨ Basic Formatting
 
@@ -304,7 +304,7 @@ _'Italic quote'_
 
 ---
 
-## 5. Lists & Organisasi {#lists--organisasi}
+## 5. Lists & Organisasi
 
 ### 📝 Ordered Lists
 
@@ -420,13 +420,13 @@ Including code blocks:
    | ------ | ---- |
    | Work   | Here |
 
-````
+
 
 ---
 
 # BAGIAN II: CONTENT ELEMENTS
 
-## 6. Links & Referensi {#links--referensi}
+## 6. Links & Referensi
 
 ### 🔗 Basic Links
 ```markdown
@@ -508,7 +508,7 @@ Visit [Google](https://google.com), [GitHub](https://github.com), or [Stack Over
 
 ---
 
-## 7. Images & Media {#images--media}
+## 7. Images & Media
 
 ### 🖼️ Basic Images
 
@@ -590,7 +590,7 @@ _Caption text_
 
 ---
 
-## 8. Code & Programming {#code--programming}
+## 8. Code & Programming
 
 ### 💻 Inline Code
 
@@ -723,7 +723,7 @@ def secret_function():
 
 ---
 
-## 9. Tables & Data {#tables--data}
+## 9. Tables & Data
 
 ### 📋 Basic Tables
 
@@ -814,7 +814,7 @@ def secret_function():
 
 ---
 
-## 10. Blockquotes & Callouts {#blockquotes--callouts}
+## 10. Blockquotes & Callouts
 
 ### 💬 Basic Blockquotes
 
@@ -918,9 +918,9 @@ Warning content
 
 ---
 
-# BAGIAN III: ADVANCED FEATURES
+# [BAGIAN III: ADVANCED FEATURES](#bagian-iii-advanced-features)
 
-## 11. HTML Integration {#html-integration}
+## 11. HTML Integration
 
 ### 🌐 Raw HTML
 
@@ -1030,11 +1030,11 @@ Content dengan custom styling
 
 <button onclick="alert('Hello!')">Click me</button>
 
-````
+
 
 ---
 
-## 12. Math & LaTeX {#math--latex}
+## [12. Math & LaTeX](#bagian-iii-advanced-features) 
 
 ### 🧮 Inline Math
 ```markdown
@@ -1125,7 +1125,7 @@ $$\ce{^{235}U + ^{1}n -> ^{236}U -> ^{144}Ba + ^{89}Kr + 3^{1}n}$$
 
 ---
 
-## 13. Diagrams & Visualizations {#diagrams--visualizations}
+## 13. Diagrams & Visualizations
 
 ### 🌊 Mermaid Diagrams
 
@@ -1251,7 +1251,7 @@ Internet ── Router ── Switch ─┬─ Computer 1
 
 ---
 
-## 14. Interactive Elements {#interactive-elements}
+## 14. Interactive Elements
 
 ### ☑️ Forms & Input Elements
 
@@ -1372,7 +1372,7 @@ Internet ── Router ── Switch ─┬─ Computer 1
 
 ---
 
-## 15. Extensions & Plugins {#extensions--plugins}
+## 15. Extensions & Plugins
 
 ### 🔌 Pandoc Extensions
 
@@ -1537,9 +1537,9 @@ Here's a regular paragraph with **markdown** formatting.
 
 ---
 
-# BAGIAN IV: PLATFORM SPECIFIC
+# [BAGIAN IV: PLATFORM SPECIFIC](#bagian-iv-platform-specific)
 
-## 16. GitHub Flavored Markdown {#github-flavored-markdown}
+## 16. GitHub Flavored Markdown
 
 ### 🐙 GitHub-Specific Features
 
@@ -1658,7 +1658,7 @@ CMD ["npm", "start"]
 
 ---
 
-## 17. Discord & Chat Platforms {#discord--chat-platforms}
+## 17. Discord & Chat Platforms
 
 ### 💬 Discord Markdown
 
@@ -2428,7 +2428,7 @@ More markdown content.
 
 ---
 
-## 22. Performance & Optimization {#performance--optimization}
+## 22. Performance & Optimization
 
 ### ⚡ Image Optimization
 
@@ -2564,7 +2564,7 @@ Content dengan **target keywords** yang natural.
 
 ---
 
-## 23. Security Considerations {#security-considerations}
+## 23. Security Considerations
 
 ### 🔒 Content Security Policy
 
