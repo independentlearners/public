@@ -614,34 +614,36 @@ File `config.json` berisi pengaturan.
     function hello() {
         console.log("Hello World!");
     }
+```
 
 <!-- Fenced code blocks -->
+
 ```
 
 function hello() {
 console.log("Hello World!");
 }
 
-````
+```
 
 <!-- Dengan syntax highlighting -->
+
 ```javascript
 function hello() {
-    console.log("Hello World!");
+  console.log("Hello World!");
 }
-````
-
-````
+```
 
 ### 🌈 Syntax Highlighting
-```markdown
+
 <!-- Berbagai bahasa pemrograman -->
+
 ```python
 def fibonacci(n):
     if n <= 1:
         return n
     return fibonacci(n-1) + fibonacci(n-2)
-````
+```
 
 ```java
 public class HelloWorld {
@@ -684,17 +686,15 @@ INNER JOIN orders ON users.id = orders.user_id
 WHERE orders.total > 100;
 ```
 
-````
-
 ### 🔧 Advanced Code Features
-```markdown
-<!-- Line numbers (beberapa renderer) -->
+
 ```javascript {.line-numbers}
+// Line numbers (beberapa renderer)
 function example() {
-    console.log("Line 2");
-    console.log("Line 3");
+  console.log("Line 2");
+  console.log("Line 3");
 }
-````
+```
 
 <!-- Highlight specific lines -->
 

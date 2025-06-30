@@ -1,34 +1,11 @@
-<details>
+<!-- <details>
   <summary>📃 Daftar Isi</summary>
 
 </details>
+ -->
 
 
-
-
-Tentu, saya memahami dengan sangat baik instruksi dan tujuan Anda. Saya akan mendalami setiap fase, modul, dan sub-bagian dari kurikulum Flutter yang Anda berikan, menghasilkan penjelasan yang sangat detail, komprehensif, mudah dipahami, dan dapat digunakan sebagai referensi pembelajaran yang kuat dan profesional.
-
-Saya akan memastikan setiap penjelasan mencakup:
-
-1.  **Deskripsi Konkret & Peran dalam Kurikulum**
-2.  **Konsep Kunci & Filosofi Mendalam**
-3.  **Sintaks Dasar / Contoh Implementasi Inti** (termasuk perintah konsol, studi kasus, diagram alur kerja, dan visualisasi)
-4.  **Terminologi Esensial & Penjelasan Detil**
-5.  **Struktur Pembelajaran Internal** (mini-daftar isi)
-6.  **Rekomendasi Visualisasi**
-7.  **Hubungan dengan Modul Lain**
-8.  **Sumber Referensi Lengkap** (tautan langsung ke dokumentasi resmi, pub.dev, artikel terkemuka)
-9.  **Tips dan Praktik Terbaik**
-10. **Potensi Kesalahan Umum & Solusi**
-11. **Penambahan Materi Diluar Kurikulum (Jika Diperlukan):** Saya akan mengaudit kurikulum secara bertahap dan jika ada materi penting yang "melompat" atau tidak ada dalam daftar namun esensial untuk pemahaman yang komprehensif, saya akan menambahkannya dengan deskripsi khusus dan merekomendasikan penambahannya ke kurikulum.
-
-Saya akan memulai secara bertahap, fokus pada satu bagian pada satu waktu untuk memastikan kualitas dan kedalaman penjelasan.
-
-Mari kita mulai dengan **Fase 1: Foundation & Core Concepts**.
-
------
-
-# **Fase 1: Foundation & Core Concepts**
+# **[Fase 1: Foundation & Core Concepts][0]**
 
 ### **Deskripsi Konkret & Peran dalam Kurikulum:**
 
