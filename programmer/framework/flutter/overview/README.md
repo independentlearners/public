@@ -562,7 +562,7 @@ Penggunaan _Git_ akan menjadi praktik standar di setiap proyek _hands-on_ sepanj
 - **Kesalahan:** Tidak menggunakan Git sama sekali atau jarang _commit_, menyebabkan sulitnya melacak perubahan dan memulihkan dari kesalahan.
   - **Solusi:** Biasakan `git add .` dan `git commit -m "..."` setiap kali Anda menyelesaikan unit kerja yang logis.
 - **Kesalahan:** Mengalami _merge conflict_ yang membingungkan.
-  - **Solusi:** Pelajari cara mengatasi _merge conflict_. Git menyediakan _tool_ untuk membantu menyelesaikan ini. Semakin sering Anda menggunakan _branch_ dan _merge_, semakin nyaman Anda. Jangan takut, itu adalah bagian normal dari pengembangan tim.
+  - **Solusi:** Pelajari cara mengatasi _merge conflict_. Git menyediakan _tool_ untuk membantu menyelesaikan ini. Semakin sering Anda menggunakan _branch_ dan _merge_, semakin Anda merasa lebih nyaman. Jangan takut, itu adalah bagian normal dari pengembangan tim.
 - **Kesalahan:** Tidak menggunakan `.gitignore` dengan benar, menyebabkan file-file besar atau tidak relevan ter-_commit_ ke repositori.
   - **Solusi:** Pastikan file `.gitignore` Anda diatur dengan benar untuk proyek Flutter. Anda bisa menemukan contohnya di templat proyek Flutter baru.
 
