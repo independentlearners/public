@@ -1,4 +1,4 @@
-# Kurikulum Komprehensif Dart untuk Persyaratan Masuk Flutter (Fokus _Front-end_)
+# Persyaratan Masuk Flutter (Fokus _Front-end_)
 
 **Waktu Estimasi Keseluruhan Kurikulum:** 2-4 Minggu (Tergantung kecepatan belajar dan intensitas praktik)
 
@@ -84,17 +84,68 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - [Get the Dart SDK](https://dart.dev/get-dart)
     - [Install Flutter](https://flutter.dev/docs/get-started/install)
     - [Visual Studio Code - Dart Extension](https://marketplace.visualstudio.com/items?itemName=Dart-Code.dart-code)
-7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk menjelaskan alur kerja Dart JIT vs AOT Compilation.
+7.  **Visualisasi:** Berikut contoh diagram alur (ASCII) yang mencakup seluruh langkah Modul 1.1, mulai dari persiapan hingga perbedaan jalur JIT (pengembangan) dan AOT (rilis):
 
-<img src="../mobile/assets/0.png" alt="JIT-AOT" width="500" height="500"/>
+```
+┌─────────┐
+│  Start  │
+└────┬────┘
+     │
+┌────▼──────────────────────────┐
+│ 1. Install Flutter SDK        │
+│    (termasuk Dart SDK)        │
+└────┬──────────────────────────┘
+     │
+┌────▼──────────────────────────┐
+│ 2. Setup IDE                  │
+│    • VS Code + Dart plugin    │
+│    • Android Studio           │
+└────┬──────────────────────────┘
+     │
+┌────▼─────────────────────────────┐
+│ 3. Tulis Program “Hello, World!” │
+│    void main() {                 │
+│      print('Hello, World!');     │
+│    }                             │
+└────┬─────────────────────────────┘
+     │
+┌────▼──────────────────────────┐
+│ 4. Jalankan Kode:             │
+│    dart run hello.dart        │
+└────┬──────────────────────────┘
+     │
+     │
+     ├──────────────┐
+     │              │
+┌────▼────┐    ┌────▼───────┐
+│ Jalur   │    │ Jalur      │
+│ Dev     │    │ Release    │
+│ (JIT)   │    │ (AOT)      │
+└────┬────┘    └────┬───────┘
+     │              │
+┌────▼────────┐ ┌───▼──────────┐
+│ Hot Reload  │ │ AOT Compile  │
+│ & Fast Dev  │ │ – Size kecil │
+│ Experience  │ │ – Performa   │
+└────┬────────┘ └───┬──────────┘
+     │              │
+     └──────┬───────┘
+            │
+     ┌──────▼───────┐
+     │     End      │
+     └──────────────┘
+```
 
-### Modul 1.1 – Alur Kerja Dart: JIT vs AOT
+Penjelasan singkat:
 
-• Dua jalur paralel:
+1. **Install Flutter SDK**: Menginstal Flutter otomatis termasuk Dart SDK.
+2. **Setup IDE**: Mengonfigurasi VS Code/Android Studio dengan plugin Dart & Flutter.
+3. **Tulis “Hello, World!”**: Contoh program dasar.
+4. **Jalankan Kode**: Perintah `dart run`.
+5. **Dua Jalur**:
 
-1. “Development” menggunakan _Just-In-Time_ (JIT) → panah menunjuk ke kotak “Fast Refresh / Hot Reload” → loop kembali ke kode.
-2. “Release” menggunakan _Ahead-Of-Time_ (AOT) → panah menunjuk ke kotak “Optimized Native Binary” → ke ikon perangkat.  
-   • Di bawah tiap jalur dicantumkan trade-off: kecepatan build vs performa runtime.
+   - **JIT (Dev)**: Hot reload untuk pengembangan cepat.
+   - **AOT (Release)**: Kompilasi AOT untuk aplikasi produksi dengan ukuran dan performa optimal.
 
 ---
 
@@ -165,22 +216,65 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Memahami Null Safety di Dart.
     - Mendeklarasikan Tipe _Nullable_ dan _Non-nullable_.
 6.  **Sumber Referensi:**
-    - [Built-in types - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23built-in-types)
-    - [Variables - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23variables)
-    - [Sound null safety - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/effective-dart/usage%23avoid-non-nullable-types-for-parameters)
-7.  **Visualisasi:** Di sini untuk menjelaskan perbedaan `final` dan `const` serta bagaimana Null Safety bekerja dengan contoh visual dari variabel yang bisa `null` dan tidak.
+    - [Built-in types - Dart documentation](https://dart.dev/guides/language/language-tour%23built-in-types)
+    - [Variables - Dart documentation](https://dart.dev/guides/language/language-tour%23variables)
+    - [Sound null safety - Dart documentation](https://dart.dev/guides/language/effective-dart/usage%23avoid-non-nullable-types-for-parameters)
+7.  **Visualisasi:** Berikut adalah **diagram alur ASCII** yang mewakili **Modul 1.2: Variabel dan Tipe Data**, dengan alur belajar dari pengenalan variabel hingga Null Safety:
 
-<img src="../mobile/assets/1.png" alt="final-cons" width="536" height="380"/>
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼────────────────────────────┐
+│ 1. Apa itu Variabel?             │
+│    - Penyimpan data              │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 2. Deklarasi Variabel            │
+│    - `String`, `int`, `double`,  │
+│      `bool`                      │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 3. Gunakan `var` dan `dynamic`   │
+│    - `var`: Tipe otomatis        │
+│    - `dynamic`: Bebas tipe       │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 4. Gunakan Konstanta             │
+│    - `final`: Sekali assign      │
+│    - `const`: Kompilasi waktu    │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 5. Memahami Null Safety          │
+│    - Nullable (`?`)              │
+│    - Non-nullable                │
+│    - Penanganan nilai `null`     │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 6. Praktek Kode & Eksperimen     │
+│    - Buat variabel dan tes null  │
+│    - Coba `final`, `const`, dsb  │
+└─────┬────────────────────────────┘
+      │
+┌─────▼──────┐
+│    End     │
+└────────────┘
+```
 
-### Modul 1.2 – `final` vs `const` & Nullable vs Non-nullable
+### Penjelasan visualisasi:
 
-• Dua kolom berdampingan:
+- **Langkah-langkah tersusun logis**, dari konsep → sintaks → eksplorasi fitur lanjutan.
+- **Fokus penting:**
 
-- Kolom `final`: menampilkan wadah variabel yang bisa diisi sekali pada runtime.
-- Kolom `const`: menampilkan wadah yang diisi saat compile-time.  
-  • Di bawahnya diagram tipe dengan dua cabang:
-- Non-nullable (`String`) → panah ke variabel yang selalu berisi nilai.
-- Nullable (`String?`) → panah ke variabel yang bisa menunjuk “null” (digambarkan wadah kosong).
+  - Perbedaan `var` vs `dynamic` (penentuan tipe)
+  - Perbedaan `final` vs `const` (konstanta waktu runtime vs waktu kompilasi)
+  - **Null Safety:** Ciri khas Dart modern yang wajib dipahami sejak awal.
 
 ---
 
@@ -247,21 +341,65 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Precedensi Operator.
     - Membangun Ekspresi Kompleks.
 6.  **Sumber Referensi:**
-    - [Operators - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23operators)
-7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk menjelaskan diagram hirarki prioritas operator.
+    - [Operators - Dart documentation](https://dart.dev/guides/language/language-tour%23operators)
+7.  **Visualisasi:** Berikut diagram alur **ASCII** yang menggambarkan keseluruhan materi dalam **Modul 1.3: Operator dan Ekspresi**, dari pemahaman dasar hingga penerapan lanjutan seperti _type test_ dan ekspresi kompleks:
 
-<img src="../mobile/assets/2.png" alt="final-cons" width="500" height="500"/>
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼────────────────────────────┐
+│ 1. Apa itu Operator & Ekspresi   │
+│    - Operator: Simbol operasi    │
+│    - Ekspresi: Kombinasi nilai   │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 2. Operator Aritmetika           │
+│    `+`, `-`, `*`, `/`, `%`, `~/` │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 3. Operator Perbandingan         │
+│    `==`, `!=`, `<`, `>`, dsb.    │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 4. Operator Logika               │
+│    `&&`, `||`, `!`               │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 5. Operator Penugasan            │
+│    `=`, `+=`, `-=`, dsb.         │
+└─────┬────────────────────────────┘
+      │
+┌─────▼────────────────────────────┐
+│ 6. Operator Type Test            │
+│    `is`, `is!`, `as`             │
+└─────┬────────────────────────────┘
+      │
+┌─────▼─────────────────────────────┐
+│ 7. Precedensi & Ekspresi Kompleks │
+│    - Urutan evaluasi              │
+│    - Kombinasi logika & matematika│
+└─────┬─────────────────────────────┘
+      │
+┌─────▼────────┐
+│     End      │
+└──────────────┘
+```
 
-### Modul 1.3 – Hirarki Operator Dart
+---
 
-• Bentuk piramida atau tangga:
+### Penjelasan Tambahan:
 
-1. Level tertinggi: Operator _type test_ (`is`, `as`)
-2. Lalu _logical_ (`!`, `&&`, `||`)
-3. _comparison_ (`==`, `<`, `>=`, …)
-4. _arithmetic_ (`+`, `-`, `*`, `/`, …)
-5. Dasar: _assignment_ (`=`, `+=`, …)  
-   • Setiap level diberi warna berbeda dan contoh kecil di samping.
+#### 🔑 **Fokus Visualisasi:**
+
+- Menyusun topik sesuai urutan belajar: dari operasi dasar → logika → penugasan → pemeriksaan tipe → ekspresi kompleks.
+- **_Type Test_** diposisikan setelah pengguna paham bahwa ekspresi dan nilai punya tipe → baru belajar cara memeriksa dan mengubahnya.
+- Bagian **Precedence** sangat penting untuk mencegah bug, terutama saat ekspresi menjadi kompleks (misalnya `a + b > c && d == e`).
 
 ---
 
@@ -356,12 +494,101 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Loop `do-while`.
     - Menggunakan `break` dan `continue`.
 6.  **Sumber Referensi:**
-    - [Control flow statements - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23control-flow-statements)
-7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk menjelaskan diagram alur dari `if-else` dan loop `for`/`while`.
-
-### Modul 1.5: Fungsi (Functions)
+    - [Control flow statements - Dart documentation](https://dart.dev/guides/language/language-tour%23control-flow-statements)
+7.  **Visualisasi:** Berikut **diagram alur ASCII** untuk menggambarkan **Modul 1.4: Kontrol Alur**, mulai dari percabangan hingga perulangan, termasuk penggunaan `break` dan `continue`.
 
 ---
+
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼────────────────────┐
+│ 1. Pengecekan Kondisi    │
+│    dengan `if`, `else`   │
+└─────┬────────────────────┘
+      │
+      ├──────────────┐
+      │              │
+┌─────▼──────┐  ┌────▼─────────────┐
+│ Kondisi    │  │ Kondisi lain?    │
+│ terpenuhi? │  │ `else if`        │
+└─────┬──────┘  └──────────┬───────┘
+      │Yes                 │Yes
+      ▼                    ▼
+┌─────────────┐     ┌──────────────┐
+│ Jalankan A  │     │ Jalankan B   │
+└─────┬───────┘     └─────┬────────┘
+      │No                 │No
+      ▼                   ▼
+                    ┌──────────────┐
+                    │ Jalankan C   │
+                    │ (`else`)     │
+                    └─────┬────────┘
+                          │
+┌─────────────────────────▼────────────────────────┐
+│ 2. Gunakan `switch` untuk banyak kondisi nilai   │
+└─────────────┬────────────────────────────────────┘
+              │
+      ┌───────▼────────────┐
+      │ `case` cocok?      │───┐
+      └───────┬────────────┘   │
+              ▼                │
+      ┌────────────┐           │
+      │ Jalankan X │◄──────────┘
+      │ `break`    │
+      └────────────┘
+
+┌────────────────────────────────────┐
+│ 3. Perulangan: `for`, `while`, dsb │
+└───────────────┬────────────────────┘
+                │
+          ┌─────▼─────────────┐
+          │ Apakah kondisi    │
+          │ masih bernilai    │
+          │ true?             │
+          └─────┬─────────────┘
+                │Yes
+                ▼
+        ┌──────────────┐
+        │ Jalankan isi │
+        │ perulangan   │
+        └─────┬────────┘
+              │
+        ┌─────▼────────┐
+        │ `continue`?  │───► (lewati ke iterasi selanjutnya)
+        └─────┬────────┘
+              │
+        ┌─────▼─────┐
+        │ `break`?  │───► (keluar dari loop)
+        └─────┬─────┘
+              │
+              ▼
+       ┌────────────┐
+       │ Iterasi    │
+       │ berikutnya │
+       └─────┬──────┘
+             │
+           [loop]
+
+┌────────────┐
+│    End     │
+└────────────┘
+```
+
+---
+
+### 🔍 Penjelasan visual:
+
+- **Percabangan `if`–`else if`–`else`** disusun dari pengecekan berjenjang → cocok → eksekusi blok.
+- **`switch-case`** memeriksa kecocokan nilai tetap → langsung ke blok terkait → berhenti dengan `break`.
+- **Perulangan** (`for`, `while`, `do-while`) dikontrol dengan kondisi dan bisa dihentikan (`break`) atau dilewati (`continue`).
+- Diagram ini **mengalir secara terstruktur**, menunjukkan **pengambilan keputusan** dan **pengulangan instruksi** dalam satu siklus kontrol alur.
+
+---
+
+### Modul 1.5: Fungsi (Functions)
 
 1.  **Deskripsi Konkret:** Modul ini akan memperkenalkan konsep fungsi, blok kode yang dapat digunakan kembali untuk melakukan tugas tertentu. Anda akan belajar cara membuat, memanggil, dan memberikan parameter pada fungsi.
 2.  **Konsep Dasar dan Filosofi:**
@@ -433,8 +660,71 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Fungsi Panah (Arrow Functions) untuk Kode Singkat.
     - Fungsi sebagai Objek _First-Class_.
 6.  **Sumber Referensi:**
-    - [Functions - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23functions)
-7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk menjelaskan alur input (parameter) dan output (return value) fungsi.
+    - [Functions - Dart documentation](https://dart.dev/guides/language/language-tour%23functions)
+7.  **Visualisasi:** Gambar visual berikut untuk menjelaskan alur input (parameter) dan output (return value) fungsi.
+
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 1. Deklarasi Fungsi Sederhana       │
+│    void sapaPengguna() {...}        │
+└─────┬───────────────────────────────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 2. Pemanggilan Fungsi               │
+│    sapaPengguna();                  │
+└─────┬───────────────────────────────┘
+      │
+┌─────▼────────────────────────────────┐
+│ 3. Fungsi dengan Parameter Positional│
+│    void sapaNama(String nama) {...}  │
+└─────┬────────────────────────────────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 4. Fungsi dengan Nilai Kembalian    │
+│    int tambah(int a,int b) {...}    │
+└─────┬───────────────────────────────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 5. Fungsi dengan Named Parameters   │
+│    void cetakDetail({String? nama,  │
+│      int? usia}) {...}              │
+└─────┬───────────────────────────────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 6. Parameter `required`             │
+│    void daftar({required String e,  │
+│      required String p}) {...}      │
+└─────┬───────────────────────────────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 7. Arrow Function                   │
+│    int kaliDua(int x) => x * 2;     │
+└─────┬───────────────────────────────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 8. Fungsi sebagai First-Class       │
+│    • Simpan di variabel             │
+│    • Teruskan sebagai argumen       │
+│    • Kembalikan dari fungsi lain    │
+└─────┬───────────────────────────────┘
+      │
+┌─────▼────────┐
+│     End      │
+└──────────────┘
+```
+
+**Penjelasan singkat alur:**
+
+1. **Deklarasi & pemanggilan** fungsi dasar.
+2. **Positional vs named parameters** (“posisi” dan “bernama”).
+3. **Return value** untuk mengembalikan hasil.
+4. **`required`** memaksa argumen bernama wajib diisi.
+5. **Arrow function** untuk satu baris singkat.
+6. **Fungsi sebagai objek**: simpan, kirim, atau kembalikan—mendorong kode modular dan reusable.
 
 ---
 
@@ -504,10 +794,60 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Iterasi Melalui Koleksi (`for-in`, `forEach`).
     - Contoh Penggunaan Nyata Koleksi dalam Aplikasi _Front-end_.
 6.  **Sumber Referensi:**
-    - [Lists - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23lists)
-    - [Sets - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23sets)
-    - [Maps - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23maps)
-7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk membedakan antara struktur data List, Set, dan Map secara visual.
+    - [Lists - Dart documentation](https://dart.dev/guides/language/language-tour%23lists)
+    - [Sets - Dart documentation](https://dart.dev/guides/language/language-tour%23sets)
+    - [Maps - Dart documentation](https://dart.dev/guides/language/language-tour%23maps)
+7.  **Visualisasi:** Berikut diagram alur **ASCII** untuk **Modul 2.1: Koleksi (Collections)**, mulai dari pengenalan hingga iterasi:
+
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 1. Pengenalan Koleksi di Dart      │
+│    – List, Set, Map                │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 2. List                            │
+│    • Buat: []                      │
+│    • Akses/Indeks: daftar[0]       │
+│    • Manipulasi: add(), remove()   │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 3. Set                             │
+│    • Buat: {}                      │
+│    • Unik: duplikat diabaikan      │
+│    • Metode: add(), contains()     │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 4. Map                             │
+│    • Buat: {key: value}            │
+│    • Akses: map['kunci']           │
+│    • Tambah: map['baru']=val       │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 5. Iterasi Koleksi                 │
+│    • `for-in` loop                 │
+│    • `forEach((item) => …)`        │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼────────┐
+│     End      │
+└──────────────┘
+```
+
+### Penjelasan singkat alur:
+
+1. **Pengenalan** konsep dasar koleksi di Dart.
+2. **List:** struktur terurut, indeks berbasis nol, manipulasi dengan `add()`, `remove()`.
+3. **Set:** struktur tidak terurut, hanya menyimpan elemen unik, pengecekan dengan `contains()`.
+4. **Map:** pasangan kunci–nilai, akses dan modifikasi mudah.
+5. **Iterasi:** dua cara umum untuk memproses setiap elemen dalam koleksi.
 
 ### Modul 2.2: Pemrograman Berorientasi Objek (OOP) Bagian 1: Kelas & Objek
 
@@ -590,13 +930,70 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Penggunaan Kata Kunci `this`.
     - Prinsip Enkapsulasi Dasar.
 6.  **Sumber Referensi:**
-    - [Classes - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23classes)
-    - [Constructors - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23constructors)
+    - [Classes - Dart documentation](https://dart.dev/guides/language/language-tour%23classes)
+    - [Constructors - Dart documentation](https://dart.dev/guides/language/language-tour%23constructors)
 7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk menjelaskan analogi _blueprint_ (kelas) dan bangunan nyata (objek) untuk memahami OOP.
 
-### Modul 2.3: Pemrograman Berorientasi Objek (OOP) Bagian 2: Pewarisan, Polimorfisme, Abstraksi
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 1. Deklarasi Kelas                 │
+│    class Kucing { … }              │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 2. Properti & Atribut              │
+│    String nama; String warnaBulu;  │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼───────────────────────────────┐
+│ 3. Konstruktor Dasar                │
+│    Kucing(this.nama, this.warnaBulu)│
+└─────┬───────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 4. Named Constructor               │
+│    Point.origin() : x=0, y=0       │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 5. Instansiasi Objek               │
+│    Kucing kiki = Kucing('Kiki',…)  │
+│    Point p2 = Point.origin()       │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 6. Akses Properti & Panggil Metode │
+│    print(kiki.nama); kiki.meong(); │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 7. Enkapsulasi (Privasi & `this`)  │
+│    Sembunyikan detail internal,    │
+│    gunakan `this` untuk referensi  │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼────────┐
+│     End      │
+└──────────────┘
+```
+
+**Penjelasan alur:**
+
+1. **Deklarasi Kelas:** Membuat blueprint dengan properti dan metode.
+2. **Properti/Atribut:** Variabel instan yang menyimpan data objek.
+3. **Konstruktor Dasar:** Inisialisasi objek saat pembuatan.
+4. **Named Constructor:** Opsi konstruktor alternatif (misal `Point.origin()`).
+5. **Instansiasi:** Membuat objek nyata dari kelas.
+6. **Akses & Pemanggilan:** Mengambil dan menjalankan perilaku objek.
+7. **Enkapsulasi & `this`:** Sembunyikan detail, `this` untuk referensi objek saat ini.
 
 ---
+
+### Modul 2.3: Pemrograman Berorientasi Objek (OOP) Bagian 2: Pewarisan, Polimorfisme, Abstraksi
 
 1.  **Deskripsi Konkret:** Modul lanjutan ini akan menyelami konsep-konsep OOP yang lebih canggih seperti pewarisan, polimorfisme, dan abstraksi, yang sangat mendasar dalam merancang aplikasi skala besar, termasuk aplikasi Flutter.
 2.  **Konsep Dasar dan Filosofi:**
@@ -710,14 +1107,70 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Antarmuka Implisit di Dart (`implements`).
     - Studi Kasus: Desain Kelas Sederhana Menggunakan OOP.
 6.  **Sumber Referensi:**
-    - [Extending a class - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23extending-a-class)
-    - [Abstract classes - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23abstract-classes)
-    - [Implicit interfaces - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23implicit-interfaces)
+    - [Extending a class - Dart documentation](https://dart.dev/guides/language/language-tour%23extending-a-class)
+    - [Abstract classes - Dart documentation](https://dart.dev/guides/language/language-tour%23abstract-classes)
+    - [Implicit interfaces - Dart documentation](https://dart.dev/guides/language/language-tour%23implicit-interfaces)
 7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk menjelaskan hirarki kelas dengan pewarisan, serta perbedaan antara kelas abstrak dan antarmuka.
 
-### Modul 2.4: Penanganan Kesalahan (Error Handling)
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 1. Deklarasi Superclass (Hewan)    │
+│    class Hewan { … }               │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 2. Pewarisan (`extends`)           │
+│    class Anjing extends Hewan {…}  │
+│   – Panggil super(…) di konstruktor│
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 3. Polimorfisme                    │
+│    Hewan h = Anjing('Buddy','Pdl');│
+│    h.makan();                      │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 4. Menimpa Metode (`@override`)    │
+│    class Kucing extends Hewan {…}  │
+│    @override void makan() { … }    │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 5. Abstraksi (`abstract class`)    │
+│    abstract class Bentuk { … }     │
+│    class Lingkaran extends Bentuk  │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼──────────────────────────────┐
+│ 6. Interface (`implements`)        │
+│    class Mobil implements Kendaraan│
+│    – Harus implement metode maju() │
+└─────┬──────────────────────────────┘
+      │
+┌─────▼────────┐
+│     End      │
+└──────────────┘
+```
+
+**Penjelasan singkat alur**
+
+1. Mulai dengan **kelas induk** (superclass) yang mendefinisikan properti & metode umum.
+2. Buat **subkelas** dengan `extends`, gunakan `super` di konstruktor untuk meneruskan inisialisasi.
+3. Terapkan **polimorfisme** dengan memperlakukan objek subkelas sebagai tipe induk.
+4. Gunakan anotasi `@override` untuk menimpa implementasi metode induk.
+5. **Abstraksi**: buat `abstract class` yang hanya menetapkan kontrak—subkelas wajib mengimplementasi anggota abstrak.
+6. **Interface** di Dart melalui `implements`, memaksa kelas mengimplementasikan semua metode kontrak antarmuka.
+
+Diagram ini menggambarkan alur logis penerapan konsep OOP lanjutan di Dart, dari pewarisan hingga kontrak antarmuka.
 
 ---
+
+### Modul 2.4: Penanganan Kesalahan (Error Handling)
 
 1.  **Deskripsi Konkret:** Modul ini akan mengajarkan cara mengidentifikasi, mencegah, dan menangani kesalahan (eksepsi) dalam program Dart agar aplikasi tetap berjalan stabil meskipun terjadi kondisi tak terduga.
 2.  **Konsep Dasar dan Filosofi:**
@@ -800,8 +1253,66 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
     - Melemparkan Eksepsi Kustom dengan `throw`.
     - Melihat Stack Trace untuk _Debugging_.
 6.  **Sumber Referensi:**
-    - [Exceptions - Dart documentation](https://www.google.com/search?q=https://dart.dev/guides/language/language-tour%23exceptions)
-7.  **Visualisasi:** Gambar visual direkomendasikan di sini untuk menjelaskan alur `try-catch-finally` menggunakan diagram alir.
+    - [Exceptions - Dart documentation](https://dart.dev/guides/language/language-tour%23exceptions)
+7.  **Visualisasi:** Gambar visual berikut untuk menjelaskan alur `try-catch-finally` menggunakan diagram alir.
+
+```
+┌────────────┐
+│   Start    │
+└─────┬──────┘
+      │
+┌─────▼──────────────────────────────┐
+│ Masuk ke blok `try`                │
+│ – Jalankan kode berpotensi error   │
+└─────┬──────────────────────────────┘
+      │
+      ├───────────┐
+      │           │
+┌─────▼───────┐ ┌─▼────────────────┐
+│ Eksekusi    │ │ Terjadi error?   │
+│ sukses      │ │ (`throw`/runtime)│
+└─────┬───────┘ └────┬─────────────┘
+      │No            │Yes
+      │              │
+      │          ┌───▼────────────────┐
+      │          │ Tangkap spesifik?  │
+      │          │ (`on ExceptionType`│
+      │          └───┬──────────────┬─┘
+      │              │Yes           │No
+      │              ▼              ▼
+┌─────▼────────┐ ┌──────────────┐ ┌───────────────────┐
+│ Masuk ke     │ │ Masuk ke     │ │ Masuk ke blok     │
+│ `finally`    │ │ `on`-catch   │ │ `catch (e)` umum  │
+│ (selalu)     │ │ spesifik     │ │                   │
+└─────┬────────┘ └────┬─────────┘ └───────┬───────────┘
+      │               │                   │
+      └───────┬───────┴──────────┬────────┘
+              │                  │
+        ┌─────▼──────────────────▼──────┐
+        │     Blok `finally` (cleanup)  │
+        │ – Tutup sumber daya, log, dsb │
+        └───────┬───────────────────────┘
+                │
+         ┌──────▼──────┐
+         │     End     │
+         └─────────────┘
+```
+
+---
+
+**Penjelasan alur:**
+
+1. **`try`**: Masuk ke blok pengawasan.
+2. **Keputusan error?**
+
+   - **Tidak** → langsung ke **`finally`**.
+   - **Ya** → periksa apakah ada **`on ExceptionType`** (spesifik).
+
+3. **`on`-catch spesifik** atau **`catch (e)`** umum → setelah penanganan masuk ke **`finally`**.
+4. **`finally`** selalu dijalankan untuk pembersihan (menutup file, melepaskan resource, logging).
+5. **End**: Alur selesai.
+
+Diagram ini memetakan seluruh siklus penanganan kesalahan di Dart secara lengkap.
 
 ---
 
@@ -810,11 +1321,11 @@ Setelah menyelesaikan kurikulum ini, peserta akan:
 - **Komunitas:**
   - [Flutter Community on Reddit](https://www.reddit.com/r/flutterdev/)
   - [Flutter Devs Indonesia (Telegram/Discord)](Cari di Google atau Telegram/Discord untuk grup komunitas lokal)
-  - [Stack Overflow (tag `dart` dan `flutter`)](<https://www.google.com/search?q=%5Bhttps://stackoverflow.com/questions/tagged/dart%5D(https://stackoverflow.com/questions/tagged/dart)>)
+  - [Stack Overflow (tag `dart` dan `flutter`)](<%5Bhttps://stackoverflow.com/questions/tagged/dart%5D(https://stackoverflow.com/questions/tagged/dart)>)
   - [Medium (cari artikel tentang Dart dan Flutter)](https://medium.com/tag/dart)
 - **Sertifikasi:**
   - Saat ini, tidak ada sertifikasi Dart resmi yang berdiri sendiri dari Google. Namun, menguasai Dart adalah prasyarat untuk sertifikasi Flutter.
-  - [Google Associate Android Developer Certification](https://www.google.com/search?q=https://developers.google.com/training/certification/android-developer/) (Meskipun ini untuk Android asli, pondasi pengembangan _mobile_ yang baik akan membantu. Belum ada sertifikasi Flutter resmi dari Google, tetapi ini mungkin akan berubah di masa depan).
+  - [Google Associate Android Developer Certification](https://developers.google.com/training/certification/android-developer/) (Meskipun ini untuk Android asli, pondasi pengembangan _mobile_ yang baik akan membantu. Belum ada sertifikasi Flutter resmi dari Google, tetapi ini mungkin akan berubah di masa depan).
   - Mencari kursus _online_ di platform seperti Udemy, Coursera, atau edX yang menawarkan sertifikat penyelesaian untuk kursus Dart atau Flutter yang komprehensif.
 
 ---

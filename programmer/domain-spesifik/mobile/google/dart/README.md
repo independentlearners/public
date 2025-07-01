@@ -1229,6 +1229,8 @@ Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir
 
 # [Master Flutter][master-flutter]
 
+⚠️ Sebelum memasuki ke master flutter, disarankan untuk memengunjungi [halaman berikut][syarat-flutter], ini memastikan bahwa peserta memenuhi syarat kebutuhan materi yang diperlukan untuk dapat memahami bagaimana sintaks flutter yang pada dasarnya mengacuh pada bahasa pemrograman dart
+
 </details>
 
 <details>
@@ -1477,6 +1479,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 [domain-spesifik]: ../../../README.md
 [master-flutter]: ../../../../framework/flutter/README.md
+[syarat-flutter]: ../../README.md
 [dartcli]: ../dart/nich/cli/README.md
 [detailkurikulum]: ../dart/laporan-dart/README.md
 
