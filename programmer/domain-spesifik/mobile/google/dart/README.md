@@ -1238,7 +1238,7 @@ Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir
 
 ### Roadmap Dart dan Flutter
 
-## [1. Pondasi Dart](../dart/bin/dasar/README.md)
+## [1. Pondasi Dart](../dart/kursus/materi/fondation/README.md)
 
 1. **[Sintaks Dasar & Tipe Data](../dart/bin/dasar/tipe-data/README.md)(2–3 minggu)**
 

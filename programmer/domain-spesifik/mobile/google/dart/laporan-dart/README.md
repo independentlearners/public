@@ -1,4 +1,4 @@
-### Laporan Komprehensif tentang Bahasa Pemrograman Dart
+# Laporan Komprehensif tentang Bahasa Pemrograman Dart Dalam Kurikulum Ini
 
 **Pendahuluan**: Prinsip dan Karakteristik Inti DartDart adalah bahasa pemrograman yang dioptimalkan untuk klien, dikembangkan oleh Google, dengan tujuan utama untuk membangun aplikasi berperforma tinggi di berbagai platform. Meskipun seringkali diasosiasikan secara eksklusif dengan pengembangan antarmuka pengguna melalui kerangka kerja Flutter, Dart adalah bahasa serbaguna yang kapabilitasnya melampaui ranah UI. Bahasa ini dirancang untuk mendukung pengembangan aplikasi web, server, desktop, dan command-line, menjadikannya pilihan yang adaptif untuk berbagai kebutuhan pengembangan perangkat lunak.1 Sebagai bahasa open-source, Dart menawarkan fondasi yang kuat untuk inovasi dan kolaborasi dalam komunitas pengembang.Dart memiliki beberapa karakteristik inti yang mendefinisikan arsitektur dan filosofi desainnya:
 
@@ -383,4 +383,4 @@ Dart adalah bahasa pemrograman yang dirancang dengan cermat untuk berbagai kebut
 
 **[Kembali][1]**
 
-[1]:../README.md
+[1]: ../README.md

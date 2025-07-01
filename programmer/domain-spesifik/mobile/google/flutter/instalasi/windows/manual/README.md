@@ -139,7 +139,7 @@ Downloading windows-x64/font-subset tools...                     1,634ms
       (or visit https://flutter.dev/to/windows-android-setup for detailed instructions).
 
 [✓] VS Code (version 1.98.2) [10ms]
-    • VS Code at C:\Users\ameer\AppData\Local\Programs\Microsoft VS Code
+    • VS Code at C:\Users\username\AppData\Local\Programs\Microsoft VS Code
     • Flutter extension can be installed from:
       🔨 https://marketplace.visualstudio.com/items?itemName=Dart-Code.flutter
 
@@ -172,7 +172,7 @@ java --version
 #### Konfirmasi browser sebagai chrome
 Karena saya tidak menggunakan google chrome, jadi saya memaksa brave sebagai gantinya dengan cara menambahkan path brave sebagai Ekskutabel Chrome
 ```pwsh
-setx CHROME_EXECUTABLE "C:\Users\oke\AppData\Local\BraveSoftware\Brave-Browser\Application\brave.exe"
+setx CHROME_EXECUTABLE "C:\Users\username\AppData\Local\BraveSoftware\Brave-Browser\Application\brave.exe"
 ```
 
 #### Instlasi Gradel
