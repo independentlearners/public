@@ -618,7 +618,539 @@ Diagram alur data unidireksional adalah **wajib** untuk menjelaskan BLoC. Diagra
 
 Kita telah mengupas tuntas pola BLoC, dari filosofi hingga implementasi praktisnya. Ini adalah pendekatan yang sangat terstruktur dan dapat diandalkan untuk aplikasi besar.
 
-Selanjutnya dalam kurikulum, kita akan membahas "generasi penerus" dari Provider, yang bertujuan untuk memecahkan beberapa masalah `Provider` sambil tetap sederhana dan fleksibel.
+### **Riverpod (Next Generation Provider)**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Riverpod adalah sebuah _state management_ dan _dependency injection library_ yang dibuat oleh penulis yang sama dengan `Provider`. Riverpod bukanlah pembaruan dari `Provider`, melainkan sebuah **penulisan ulang total** yang dirancang dari awal untuk mengatasi kelemahan-kelemahan fundamental `Provider`. Perannya dalam kurikulum ini adalah untuk merepresentasikan pendekatan _state management_ generasi berikutnya yang bersifat _compile-safe_, terlepas dari _widget tree_, dan sangat fleksibel, menjadikannya pesaing kuat bagi BLoC untuk aplikasi skala besar.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Filosofi Inti: Terlepas dari Flutter (Decoupled from Widget Tree):** Ini adalah perubahan paradigma terbesar dari `Provider`. `Provider` terikat pada `BuildContext` dan `Widget Tree`. Riverpod, sebaliknya, mendeklarasikan _providers_ sebagai **variabel global yang _final_ dan _const_**.
+
+  - **Konsekuensinya:**
+    1.  **Tidak Ada Lagi `ProviderNotFoundException`:** Karena _provider_ bersifat global, mustahil untuk mencoba mengakses _provider_ yang belum disediakan di atas pohon widget.
+    2.  **Akses dari Mana Saja:** Anda dapat mengakses state dari _provider_ di luar _widget tree_ (misalnya, di dalam _service class_, _repository_, atau bahkan _background task_), sesuatu yang sangat sulit dilakukan dengan `Provider`.
+    3.  **Compile-Safe:** Anda tidak bisa salah mengetik nama _provider_ karena Anda mereferensikannya melalui variabel, bukan tipe generik `T`. Kesalahan akan ditangkap saat kompilasi, bukan saat runtime.
+
+- **Providers adalah Declarative:** Anda mendeklarasikan apa yang provider Anda sediakan dan apa dependensinya. Riverpod secara otomatis akan mengelola siklus hidupnya, membuat ulang dependensi jika diperlukan, dan membuang state saat tidak lagi digunakan (dengan `.autoDispose`).
+
+- **Ref sebagai Pengganti `BuildContext`:** Untuk berinteraksi dengan _providers_, Riverpod memberikan objek `ref`.
+
+  - `WidgetRef` di dalam _widgets_.
+  - `Ref` di dalam _provider_ lain.
+  - `ref.watch()`: Untuk "menonton" sebuah _provider_. Widget atau _provider_ yang memanggilnya akan otomatis dibangun ulang ketika state yang ditonton berubah. Hanya boleh digunakan di dalam metode `build` atau di dalam _body_ provider lain.
+  - `ref.read()`: Untuk "membaca" state sekali saja tanpa mendengarkan perubahan. Digunakan di dalam _callbacks_ seperti `onPressed` atau `initState`.
+
+- **Beragam Jenis Provider untuk Setiap Kebutuhan:**
+
+  - **`Provider<T>`:** Yang paling dasar. Berguna untuk menyediakan objek yang jarang berubah, seperti `Repository` atau `ApiService`.
+  - **`StateProvider<T>`:** Untuk state yang sangat sederhana (seperti `int`, `bool`, `enum`, `String`) yang bisa diubah dari UI. Pengganti yang lebih baik untuk `ValueNotifier`.
+  - **`StateNotifierProvider<Notifier, State>`:** "Kuda pacu" dari Riverpod untuk state yang lebih kompleks. Digunakan bersama kelas `StateNotifier`, yang merupakan versi `ChangeNotifier` yang lebih sederhana dan _immutable-friendly_. Logika bisnis ditempatkan di dalam `StateNotifier`.
+  - **`FutureProvider<T>` & `StreamProvider<T>`:** Bekerja langsung dengan objek `Future` dan `Stream`. Riverpod secara otomatis akan mengelola state (`AsyncLoading`, `AsyncData`, `AsyncError`), menyederhanakan UI untuk menampilkan data asinkron.
+
+- **Modifiers (Pengubah Perilaku):**
+
+  - **`.family`:** "Kekuatan super" dari Riverpod. Memungkinkan Anda membuat _provider_ yang menerima parameter eksternal. Sangat berguna untuk mengambil data spesifik (misalnya, `userProvider(userId)` atau `productProvider(productId)`).
+  - **`.autoDispose`:** Secara otomatis akan menghancurkan (_dispose_) state sebuah _provider_ ketika tidak ada lagi yang "menonton"-nya. Ini sangat efisien untuk manajemen memori, terutama pada _provider_ yang dibuat dengan `.family`.
+
+**Terminologi Esensial & Penjelasan Detil:**
+
+- **`ProviderScope`:** Widget yang harus ditempatkan di puncak aplikasi (membungkus `MaterialApp`). Di sinilah semua state dari _providers_ Anda akan disimpan.
+- **`ConsumerWidget`:** Pengganti `StatelessWidget` dari Riverpod. Metode `build`-nya memberikan `WidgetRef` untuk berinteraksi dengan _providers_.
+- **`ConsumerStatefulWidget`:** Pengganti `StatefulWidget` dari Riverpod.
+- **`StateNotifier`:** Kelas yang lebih sederhana dari `ChangeNotifier`. Ia hanya menyimpan satu objek _state_ yang _immutable_ dan diekspos melalui properti `state`. Ketika Anda ingin mengubah state, Anda harus membuat instance baru dari objek state tersebut (`state = newState`).
+- **`ref.watch` vs. `ref.read` vs. `ref.listen`:**
+  - `watch`: Berlangganan perubahan, menyebabkan _rebuild_.
+  - `read`: Mendapatkan nilai saat ini, tidak menyebabkan _rebuild_.
+  - `listen`: Mendengarkan perubahan untuk melakukan aksi (seperti `BlocListener`), misalnya menampilkan `SnackBar`.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Contoh penghitung yang sama, kini dengan Riverpod dan `StateNotifier`.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// 1. Buat StateNotifier untuk logika bisnis.
+// State-nya adalah sebuah integer (int).
+class CounterNotifier extends StateNotifier<int> {
+  // Inisialisasi state awal (0) di constructor.
+  CounterNotifier() : super(0);
+
+  // Method untuk mengubah state.
+  // Kita tidak memodifikasi state, tapi membuat state baru.
+  void increment() {
+    state = state + 1;
+  }
+}
+
+// 2. Deklarasikan provider sebagai variabel global final.
+// `StateNotifierProvider` mengambil Notifier dan State sebagai tipe generik.
+final counterProvider = StateNotifierProvider<CounterNotifier, int>((ref) {
+  return CounterNotifier();
+});
+
+// 3. Bungkus root aplikasi dengan ProviderScope.
+void main() {
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: CounterScreen());
+  }
+}
+
+// 4. Gunakan ConsumerWidget agar bisa mendapatkan `ref`.
+class CounterScreen extends ConsumerWidget {
+  const CounterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 5. 'watch' provider untuk mendapatkan state-nya dan rebuild saat berubah.
+    final int count = ref.watch(counterProvider);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Riverpod Demo')),
+      body: Center(
+        child: Text(
+          '$count',
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 6. 'read' provider-nya lalu panggil method di '.notifier'-nya.
+          ref.read(counterProvider.notifier).increment();
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+**Rekomendasi Visualisasi:**
+Diagram perbandingan arsitektur:
+
+- **Provider:** Menunjukkan `ChangeNotifierProvider` di dalam _widget tree_, dan `BuildContext` digunakan untuk mengaksesnya.
+- **Riverpod:** Menunjukkan `ProviderScope` di puncak, _provider_ dideklarasikan di luar _tree_, dan `WidgetRef` di dalam widget digunakan untuk mengakses _provider_ tersebut. Ini akan menyoroti perbedaan fundamentalnya.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Lupa membungkus `MaterialApp` dengan `ProviderScope`. Aplikasi akan langsung _crash_ saat dijalankan.
+- **Solusi:** Selalu jadikan `ProviderScope` sebagai salah satu widget paling atas di aplikasi Anda.
+- **Kesalahan:** Menggunakan `ref.watch` di dalam `onPressed` atau `initState`.
+- **Solusi:** Ini adalah _anti-pattern_ yang sering menyebabkan _rebuild_ yang tidak perlu atau bahkan _error_. **Aturan Emas:** Gunakan `ref.watch` **hanya** di dalam metode `build` (atau di dalam _body provider_ lain). Untuk _callbacks_, selalu gunakan `ref.read`.
+- **Kesalahan:** Mencoba mengubah state dari `StateNotifier` secara langsung (misalnya `state++` atau `myList.add(...)`).
+- **Solusi:** Ingat bahwa _state_ di `StateNotifier` harus _immutable_. Anda tidak boleh memodifikasinya. Anda harus **membuat instance baru**. Untuk daftar, gunakan: `state = [...state, newItem]`. Untuk objek, gunakan method `copyWith`: `state = state.copyWith(newProperty: value)`.
+
+**Sumber Referensi Lengkap:**
+
+- **Dokumentasi Resmi:** [Riverpod Documentation](https://riverpod.dev/)
+- **Contoh-contoh:** [Official Riverpod Examples](https://github.com/rrousselGit/riverpod/tree/master/examples)
+- **Perbandingan Provider vs. Riverpod:** [Riverpod vs. Provider by Code with Andrea](https://codewithandrea.com/articles/flutter-riverpod-vs-provider/)
+
+---
+
+Kita baru saja menyelami Riverpod, sebuah pendekatan modern yang memecahkan banyak masalah fundamental dari `Provider` dengan cara yang elegan dan aman. Selanjutnya dalam kurikulum, kita akan melihat beberapa solusi _state management_ populer lainnya yang memiliki filosofi yang sangat berbeda.
+
+### **GetX Framework**
+
+**Catatan Penting Sebelum Memulai:** GetX adalah sebuah "ekosistem" atau _micro-framework_, bukan sekadar _state management library_. Ia menangani _State Management_, _Dependency Injection_, dan _Route Management_ dalam satu paket. Filosofinya adalah **produktivitas dan performa maksimal dengan sintaks minimal**. Pendekatannya yang menggunakan _service locator_ global dan fungsi tanpa `BuildContext` sangat disukai sebagian developer karena kecepatannya, namun dianggap sebagai _anti-pattern_ oleh sebagian developer lain yang lebih menyukai arsitektur yang ketat dan _dependency injection_ yang eksplisit (seperti pada BLoC dan Riverpod). Memahaminya dari sudut pandang _engineering_ berarti memahami trade-off ini.
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+GetX adalah solusi "all-in-one" yang bertujuan untuk menyederhanakan pengembangan Flutter secara radikal. Perannya dalam kurikulum ini adalah untuk menunjukkan pendekatan yang berlawanan dengan BLoC/Riverpod—yaitu pendekatan yang mengutamakan kemudahan dan kecepatan development di atas segalanya, seringkali dengan mengorbankan beberapa prinsip arsitektur formal. Mempelajari GetX memberikan wawasan tentang spektrum solusi yang ada, dari yang paling ketat hingga yang paling pragmatis.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Filosofi Inti: Tiga Pilar Produktivitas**
+
+  1.  **State Management:** Menyediakan dua cara: reaktif dan sederhana, dengan sintaks yang sangat ringkas.
+  2.  **Route Management:** Memungkinkan navigasi antar halaman tanpa memerlukan `BuildContext`, menyederhanakan pemanggilan `Navigator.push`.
+  3.  **Dependency Management:** Implementasi _service locator_ yang mudah untuk mengelola siklus hidup _controller_.
+
+- **State Management Reaktif (`.obs` & `Obx`):** Ini adalah kekuatan utama GetX.
+
+  - Anda dapat membuat variabel apa pun menjadi "reaktif" atau "dapat diamati" hanya dengan menambahkan `.obs` di akhir. Contoh: `var name = 'John'.obs;`.
+  - Kemudian, Anda membungkus widget yang menggunakan variabel ini dengan widget `Obx`. `Obx` secara otomatis akan "mendengarkan" variabel `.obs` tersebut dan membangun ulang dirinya sendiri setiap kali nilainya berubah. Ini terjadi secara implisit tanpa perlu memanggil `setState()` atau `notifyListeners()`.
+
+- **Controllers (`GetxController`):** Mirip dengan `BLoC` atau `ChangeNotifier`, ini adalah kelas di mana Anda menempatkan semua variabel state dan logika bisnis Anda. `GetxController` memiliki siklus hidupnya sendiri (`onInit()`, `onReady()`, `onClose()`) yang secara otomatis dikelola oleh GetX.
+
+- **Dependency Injection & Route Management Tanpa `BuildContext`:** GetX mengelola sebuah _container_ dependensi global.
+
+  - **`Get.put(MyController())`:** Mendaftarkan sebuah instance dari _controller_ ke dalam memori GetX.
+  - **`Get.find<MyController>()`:** Mengambil instance yang sudah terdaftar dari mana saja di dalam aplikasi.
+  - **`Get.to(() => NextScreen())`:** Berpindah ke halaman baru. Ini adalah contoh bagaimana GetX menghilangkan kebutuhan akan `BuildContext` untuk operasi umum, yang membuat kode lebih pendek.
+
+**Terminologi Esensial & Penjelasan Detil:**
+
+- **`.obs`:** Sebuah _extension_ yang mengubah variabel apa pun menjadi _stream_ yang bisa diamati.
+- **`Obx`:** Sebuah widget yang secara otomatis membangun ulang anaknya ketika variabel `.obs` yang digunakannya berubah.
+- **`GetxController`:** Kelas dasar untuk semua logika bisnis dan state Anda.
+- **`GetBuilder`:** Alternatif untuk `Obx` yang bekerja dengan state management sederhana (non-reaktif). Anda harus memanggil `update()` secara manual di dalam _controller_ untuk memicu _rebuild_.
+- **`Bindings`:** Kelas khusus untuk mendeklarasikan dependensi (controllers) yang dibutuhkan oleh sebuah halaman. Ini adalah cara yang terorganisir untuk menggunakan `Get.put()` dan memastikan _controller_ dibuat saat halaman dibuka dan dihancurkan saat halaman ditutup.
+- **`Get`:** Kelas statis utama yang menjadi pintu gerbang ke hampir semua fungsionalitas GetX (`Get.to`, `Get.find`, `Get.snackbar`, dll.).
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Contoh penghitung yang sama, diimplementasikan dengan gaya reaktif GetX.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+// 1. Buat Controller yang meng-extend GetxController.
+class CounterController extends GetxController {
+  // 2. Buat variabel reaktif dengan menambahkan `.obs`.
+  var count = 0.obs;
+
+  // Logika bisnis berada di dalam method.
+  void increment() {
+    count++;
+  }
+}
+
+void main() {
+  runApp(const MyApp());
+}
+
+// GetX tidak memerlukan widget provider di puncak pohon.
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Gunakan GetMaterialApp agar bisa menggunakan route management GetX.
+    return GetMaterialApp(
+      home: CounterScreen(),
+    );
+  }
+}
+
+class CounterScreen extends StatelessWidget {
+  CounterScreen({super.key});
+
+  // 3. Daftarkan controller. Get.put() akan membuat instance baru.
+  // Di aplikasi nyata, ini lebih baik dilakukan di dalam sebuah `Binding`.
+  final CounterController controller = Get.put(CounterController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('GetX Demo')),
+      body: Center(
+        // 4. Gunakan Obx untuk membungkus widget yang perlu reaktif.
+        // Widget Text ini akan otomatis rebuild saat `controller.count` berubah.
+        child: Obx(() => Text(
+              '${controller.count.value}',
+              style: Theme.of(context).textTheme.headlineMedium,
+            )),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 5. Panggil method langsung pada controller.
+          // Controller bisa diakses langsung atau melalui `Get.find()`.
+          controller.increment();
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+**Rekomendasi Visualisasi:**
+Sebuah diagram yang menunjukkan `Get` sebagai sebuah "kotak ajaib" sentral. Panah dari UI menunjuk ke `Get` untuk _routing_ (`Get.to`) dan _dependency_ (`Get.find`). Kotak-kotak `Controller` berada di dalam `Get`. Lalu panah dari `.obs` di dalam _controller_ menunjuk langsung ke widget `Obx` di UI, menunjukkan sifat reaktifnya.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Menggunakan `Get.put()` untuk _controller_ yang sama di banyak tempat berbeda. Ini bisa menyebabkan perilaku yang tidak terduga karena `Get.put` secara default bersifat persisten.
+- **Solusi:** Gunakan `Bindings` yang terikat pada sebuah rute. Ini memastikan _controller_ memiliki siklus hidup yang benar—dibuat saat rute diakses dan dihancurkan saat tidak lagi dibutuhkan.
+- **Kesalahan:** Lupa membungkus widget dengan `Obx` dan bertanya-tanya mengapa UI tidak diperbarui.
+- **Solusi:** Ingat bahwa hanya widget di dalam _closure_ `Obx` yang akan menjadi reaktif terhadap perubahan variabel `.obs`.
+- **Kesalahan (Arsitektural):** Terlalu bergantung pada `Get.find()` di mana-mana, membuat widget sulit untuk diuji secara terpisah karena mereka memiliki dependensi tersembunyi pada _service locator_ global `Get`.
+- **Solusi:** Untuk komponen yang sangat penting atau dapat digunakan kembali, pertimbangkan untuk tetap menyuntikkan dependensi melalui _constructor_. Ini membuat dependensi menjadi eksplisit dan komponen lebih mudah diuji, meskipun membutuhkan lebih banyak kode.
+
+**Sumber Referensi Lengkap:**
+
+- **Dokumentasi Resmi (di pub.dev):** [get package - pub.dev](https://pub.dev/packages/get)
+- **GitHub Repository & Dokumentasi Lebih Detail:** [GetX GitHub](https://github.com/jonataslaw/getx)
+
+---
+
+Kita telah membahas GetX, sebuah ekosistem yang menawarkan kecepatan dan kemudahan dengan mengintegrasikan banyak fungsi ke dalam satu paket. Filosofinya sangat kontras dengan pendekatan modular yang kita lihat sebelumnya, memberikan Anda perspektif lain dalam memilih alat yang tepat untuk pekerjaan yang tepat.
+
+### **Redux Pattern**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Redux adalah sebuah _pattern_ dan _library_ untuk manajemen state yang prediktif. Awalnya diciptakan untuk React, polanya telah diadaptasi ke banyak _framework_ lain, termasuk Flutter. Inti dari Redux adalah mengelola seluruh state aplikasi Anda di dalam satu tempat terpusat yang disebut **Store**. Perannya dalam kurikulum ini adalah untuk memperkenalkan Anda pada konsep "single source of truth" (sumber kebenaran tunggal) dan alur data satu arah yang sangat ketat, yang membuat aplikasi besar menjadi lebih mudah diprediksi dan di-debug.
+
+**Konsep Kunci & Filosofi Mendalam (Tiga Prinsip Redux):**
+Redux dibangun di atas tiga prinsip fundamental yang tidak bisa ditawar.
+
+1.  **Single Source of Truth (Sumber Kebenaran Tunggal):** Seluruh state dari aplikasi Anda disimpan dalam satu pohon objek (_object tree_) di dalam satu **Store**. Ini menyederhanakan _debugging_ karena Anda hanya perlu melihat satu tempat untuk mengetahui kondisi aplikasi saat ini. Ini juga memudahkan untuk menyimpan dan memulihkan state aplikasi.
+
+2.  **State is Read-Only (State Hanya Bisa Dibaca):** Satu-satunya cara untuk mengubah state adalah dengan mengirim (_dispatch_) sebuah **Action**, yaitu objek sederhana yang mendeskripsikan apa yang telah terjadi. Anda tidak boleh mengubah state secara langsung. `UI -> dispatch(Action)`.
+
+3.  **Changes are Made with Pure Functions (Perubahan Dibuat dengan Fungsi Murni):** Untuk menentukan bagaimana state diubah oleh sebuah _action_, Anda menulis fungsi murni (_pure functions_) yang disebut **Reducers**. Sebuah _reducer_ menerima state sebelumnya dan sebuah _action_, lalu mengembalikan state **berikutnya** (`(previousState, action) => newState`). Disebut "murni" karena _reducer_ tidak boleh memodifikasi state yang masuk, melakukan panggilan API, atau memiliki _side effects_ lainnya. Ia hanya menghitung state baru.
+
+**Alur Data Redux:** Alur data yang ketat ini menciptakan sebuah siklus:
+`UI dispatches Action` -\> `Store sends Action to Reducer` -\> `Reducer returns New State` -\> `Store updates with New State` -\> `UI re-renders based on New State`.
+
+**Terminologi Esensial & Penjelasan Detil:**
+
+- **`Store`:** Objek tunggal yang menampung seluruh state aplikasi. Ia memiliki tiga tanggung jawab utama: memegang state, mengizinkan akses ke state (`store.state`), mengizinkan state diperbarui (`store.dispatch(action)`), dan mendaftarkan _listeners_.
+- **`Action`:** Objek data sederhana yang menjadi "payload" informasi. Ia harus memiliki properti `type` yang mengidentifikasi jenis aksi yang dilakukan.
+- **`Reducer`:** Fungsi murni `(State, Action) => State` yang menghubungkan `Action` dengan perubahan `State`. Untuk aplikasi yang kompleks, Anda akan memecah _reducer_ menjadi beberapa _reducer_ kecil yang mengelola bagian-bagian dari state, lalu menggabungkannya menjadi satu _root reducer_.
+- **`Middleware`:** "Penjaga" yang berada di antara `dispatch(action)` dan `reducer`. _Middleware_ dapat mencegat _action_, menundanya, mengubahnya, atau bahkan membatalkannya. Ini adalah tempat yang tepat untuk menaruh logika asinkron (seperti panggilan API) atau _logging_. Contoh populer adalah `redux_thunk`.
+- **`StoreConnector`:** Widget dari pustaka `flutter_redux` yang menghubungkan UI ke Redux _store_. Ia mengambil state dari _store_ dan mengubahnya (`convert`) menjadi sebuah _ViewModel_ yang kemudian digunakan untuk membangun UI. Ia hanya akan membangun ulang UI jika _ViewModel_ yang dihasilkan berubah.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Contoh penghitung dengan Flutter Redux.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+
+// 1. Definisikan Actions. Enum adalah cara yang baik untuk ini.
+enum CounterActions { increment, decrement }
+
+// 2. Definisikan Reducer. Ini adalah fungsi murni.
+// Ia menerima state saat ini (int) dan sebuah action, lalu mengembalikan state baru.
+int counterReducer(int state, dynamic action) {
+  if (action == CounterActions.increment) {
+    return state + 1;
+  } else if (action == CounterActions.decrement) {
+    return state - 1;
+  }
+  return state;
+}
+
+void main() {
+  // 3. Buat Store. Anda butuh reducer dan state awal.
+  final store = Store<int>(counterReducer, initialState: 0);
+
+  // 4. Sediakan Store ke aplikasi menggunakan StoreProvider.
+  runApp(StoreProvider(
+    store: store,
+    child: const MyApp(),
+  ));
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: CounterScreen());
+  }
+}
+
+class CounterScreen extends StatelessWidget {
+  const CounterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Redux Demo')),
+      body: Center(
+        // 5. Gunakan StoreConnector untuk menghubungkan UI ke store.
+        child: StoreConnector<int, String>(
+          // `converter` mengambil state dari store dan mengubahnya menjadi
+          // format yang dibutuhkan oleh UI (ViewModel).
+          converter: (store) => store.state.toString(),
+          // `builder` menerima ViewModel dan membangun UI.
+          // Ia hanya akan rebuild jika hasil `converter` berubah.
+          builder: (context, countViewModel) {
+            return Text(
+              countViewModel,
+              style: Theme.of(context).textTheme.headlineMedium,
+            );
+          },
+        ),
+      ),
+      floatingActionButton: StoreConnector<int, VoidCallback>(
+        converter: (store) {
+          // Kita juga bisa mengubah action menjadi callback untuk UI.
+          return () => store.dispatch(CounterActions.increment);
+        },
+        builder: (context, incrementCallback) {
+          return FloatingActionButton(
+            onPressed: incrementCallback, // 6. Dispatch action saat ditekan.
+            child: const Icon(Icons.add),
+          );
+        },
+      ),
+    );
+  }
+}
+```
+
+**Rekomendasi Visualisasi:**
+Diagram siklus alur data Redux yang melingkar adalah visualisasi paling fundamental dan penting untuk dipahami. UI -\> Action -\> Reducer -\> Store -\> UI.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Memodifikasi state secara langsung di dalam _reducer_ (misalnya `state.myList.add(...)`). Ini melanggar prinsip "fungsi murni" dan dapat menyebabkan bug yang tidak terduga.
+- **Solusi:** Selalu kembalikan **instance baru** dari state. Untuk list, gunakan operator _spread_: `return [...state, newItem]`. Untuk objek, gunakan method `copyWith` atau buat objek baru.
+- **Kesalahan:** Merasa kewalahan dengan _boilerplate code_ (kode berulang) untuk membuat _actions_, _reducers_, dll.
+- **Solusi:** Ini adalah kritik utama terhadap Redux. Akui bahwa Redux memang _verbose_. Pola ini bersinar dalam aplikasi yang sangat besar di mana prediktabilitas yang ketat lebih penting daripada kecepatan pengembangan awal. Untuk proyek yang lebih kecil, ini mungkin _overkill_.
+
+**Sumber Referensi Lengkap:**
+
+- **Dokumentasi Resmi Redux (konsep inti):** [Redux Documentation](https://redux.js.org/)
+- **Paket Flutter Redux:** [flutter_redux package - pub.dev](https://pub.dev/packages/flutter_redux)
+- **Middleware untuk Async:** [redux_thunk package - pub.dev](https://pub.dev/packages/redux_thunk)
+
+---
+
+Kita telah membahas Redux, sebuah pola klasik yang menekankan prediktabilitas melalui alur data yang sangat ketat. Ini memberikan fondasi yang kuat untuk memahami banyak pola state management lainnya.
+
+Terakhir dalam daftar perbandingan kita di fase ini, kita akan melihat MobX, yang mengambil pendekatan yang sangat berbeda dari Redux, lebih fokus pada reaktivitas otomatis.
+
+### **MobX State Management**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+MobX adalah _library_ manajemen state yang menerapkan prinsip **Transparent Functional Reactive Programming (TFRP)**. Ide utamanya adalah membuat _state management_ terasa "otomatis" dan tidak mengganggu. Anda cukup mendeklarasikan state Anda sebagai **Observable** (dapat diamati), mengubahnya di dalam **Actions**, dan MobX akan secara otomatis melacak di mana state tersebut digunakan (dalam **Reactions**) dan memperbarui UI yang relevan. Perannya dalam kurikulum adalah untuk menunjukkan pendekatan "bebas repot" (_hassle-free_), di mana developer bisa fokus pada logika bisnis tanpa terlalu banyak memikirkan _boilerplate code_ untuk menghubungkan state ke UI.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Filosofi Inti: Minimalisme dan Otomatisasi:** Apa pun yang dapat diturunkan secara otomatis, harus diturunkan secara otomatis. MobX secara internal membangun sebuah _dependency graph_ yang melacak hubungan antara state dan UI. Ketika Anda mengubah state, MobX tahu persis bagian UI mana yang perlu diperbarui dan hanya memperbarui bagian itu saja. Ini sangat efisien.
+
+- **Tiga Konsep Utama MobX:**
+
+  1.  **`Observables`:** Ini adalah _state_ atau "sel data" Anda. `Observables` bisa berupa properti objek, seluruh objek, array, dll. Ini adalah "sumber kebenaran" Anda yang dapat diamati.
+  2.  **`Actions`:** Ini adalah _method_ atau fungsi apa pun yang mengubah `Observables`. Membungkus logika perubahan state di dalam `Action` memastikan bahwa semua perubahan yang terjadi secara bersamaan hanya akan memicu satu kali pembaruan UI, yang baik untuk performa.
+  3.  **`Reactions`:** Ini adalah "efek samping" dari perubahan state. Tanggung jawabnya adalah bereaksi terhadap perubahan pada `Observables`. Dalam konteks Flutter, _reaction_ yang paling penting adalah widget `Observer`, yang secara otomatis membangun ulang dirinya sendiri ketika `Observables` yang digunakannya berubah.
+
+- **Code Generation (Pembuatan Kode Otomatis):** Implementasi MobX di Dart sangat bergantung pada pembuatan kode. Anda akan menulis kelas _store_ Anda, lalu menggunakan _library_ seperti `build_runner` untuk secara otomatis menghasilkan kode _boilerplate_ yang diperlukan untuk melacak dependensi. Ini mungkin terasa seperti langkah tambahan, tetapi inilah yang memungkinkan MobX bekerja secara efisien di belakang layar.
+
+**Terminologi Esensial & Penjelasan Detil:**
+
+- **`Store`:** Sama seperti di BLoC atau GetX, ini adalah kelas tempat Anda mendefinisikan semua `Observables` dan `Actions` Anda.
+- **Annotations:** Anda menggunakan anotasi (seperti `@observable`, `@action`, `@computed`) untuk memberitahu MobX peran dari setiap bagian di dalam _store_ Anda.
+  - **`@observable`:** Menandai sebuah properti sebagai _state_ yang dapat dilacak.
+  - **`@action`:** Menandai sebuah _method_ sebagai pengubah _state_.
+  - **`@computed`:** Untuk nilai yang dapat diturunkan dari _state_ yang ada. Nilai `@computed` akan diperbarui secara otomatis dan efisien hanya ketika salah satu `Observables` yang digunakannya berubah. Contoh: `fullName` yang berasal dari `firstName` dan `lastName`.
+- **`mobx_codegen` & `build_runner`:** Alat-alat yang digunakan untuk menghasilkan kode di balik layar. Anda akan menjalankan perintah `flutter pub run build_runner build` untuk membuat file `.g.dart` yang berisi implementasi reaktif dari _store_ Anda.
+- **`Observer`:** Widget dari _library_ `flutter_mobx` yang Anda gunakan untuk membungkus bagian UI Anda. Widget ini secara otomatis akan berlangganan ke `Observables` apa pun yang dibaca di dalam `builder`-nya dan membangun ulang saat `Observables` tersebut berubah.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Contoh penghitung, diimplementasikan dengan MobX.
+
+```dart
+// Perlu dependensi: mobx, flutter_mobx, mobx_codegen, build_runner
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
+
+// Ini akan menghasilkan file `counter.g.dart` setelah build_runner dijalankan
+part '../pro/bagian-3/counter.g.dart';
+
+// 1. Buat kelas Store.
+// Ini adalah kelas abstrak yang akan diimplementasikan oleh code generator.
+class CounterStore = _CounterStore with _$CounterStore;
+
+// 2. Definisikan logika Store dengan anotasi.
+abstract class _CounterStore with Store {
+  // 3. Tandai state dengan @observable.
+  @observable
+  int value = 0;
+
+  // 4. Tandai method pengubah state dengan @action.
+  @action
+  void increment() {
+    value++;
+  }
+}
+
+
+// --- Implementasi di UI ---
+final counter = CounterStore(); // Buat instance dari store
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: CounterScreen());
+  }
+}
+
+class CounterScreen extends StatelessWidget {
+  const CounterScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('MobX Demo')),
+      body: Center(
+        // 5. Bungkus UI yang bergantung pada state dengan Observer.
+        child: Observer(
+          builder: (_) => Text(
+            '${counter.value}',
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: counter.increment, // 6. Panggil action secara langsung.
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+**Perintah untuk Code Generation:**
+Setelah menulis kode _store_ di atas, Anda perlu menjalankan perintah ini di terminal Anda:
+`flutter pub run build_runner build --delete-conflicting-outputs`
+
+**Rekomendasi Visualisasi:**
+Diagram alur data yang sederhana: `UI Event` -\> `triggers Action` -\> `mutates Observable State` -\> `triggers Reaction (Observer)` -\> `re-renders UI`. Ini menyoroti sifat siklus yang otomatis dan reaktif.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** UI tidak diperbarui setelah mengubah nilai.
+- **Solusi:** Tiga kemungkinan penyebab paling umum:
+  1.  Anda lupa membungkus widget dengan `Observer`.
+  2.  Anda lupa menandai variabel di _store_ dengan anotasi `@observable`.
+  3.  Anda lupa menjalankan `build_runner` setelah melakukan perubahan pada file _store_.
+- **Kesalahan:** Mendapat error tentang _file part_ atau _mixin_ `_$CounterStore` tidak ditemukan.
+- **Solusi:** Ini berarti Anda belum menjalankan _code generator_. Jalankan perintah `build_runner` untuk menghasilkan file `.g.dart` yang diperlukan.
+
+**Sumber Referensi Lengkap:**
+
+- **Dokumentasi Resmi MobX.dart:** [MobX.dart](https://mobx.netlify.app/)
+- **Paket MobX:** [mobx package - pub.dev](https://pub.dev/packages/mobx)
+- **Paket Integrasi Flutter:** [flutter_mobx package - pub.dev](https://pub.dev/packages/flutter_mobx)
+
+---
+
+### **Ringkasan dan Penutupan Fase 3**
+
+Kita telah menyelesaikan perjalanan yang sangat penting melalui **FASE 3: State Management & Data Flow**. Anda sekarang telah diperkenalkan dengan seluruh spektrum solusi, masing-masing dengan filosofi, kekuatan, dan kelemahannya sendiri:
+
+- **`setState` & Built-ins:** Untuk _state_ lokal yang sederhana. Cepat dan mudah, tetapi tidak terukur.
+- **`Provider`:** Lapisan abstraksi yang hebat di atas `InheritedWidget`. Titik awal yang sangat baik.
+- **`BLoC`:** Untuk aplikasi yang membutuhkan arsitektur ketat, testabilitas tinggi, dan alur data yang sangat jelas.
+- **`Riverpod`:** Generasi penerus `Provider` yang _compile-safe_, terlepas dari _widget tree_, dan sangat fleksibel.
+- **`GetX`:** Solusi _all-in-one_ yang mengutamakan kecepatan pengembangan dan sintaks minimalis.
+- **`Redux`:** Pola klasik dengan _single source of truth_ yang membuat aplikasi sangat prediktif.
+- **`MobX`:** Pendekatan reaktif otomatis yang mengurangi _boilerplate_ dan membuat state terhubung ke UI secara "ajaib".
+
+Sebagai seorang _Fullstack Developer Engineer_, pemahaman mendalam tentang _trade-off_ di antara pola-pola ini adalah keterampilan yang sangat berharga. Anda tidak hanya tahu _cara_ menggunakannya, tetapi yang lebih penting, Anda tahu **kapan** harus menggunakan masing-masing. Kini aplikasi kita sudah memiliki "otak". Langkah logis berikutnya adalah memberinya kemampuan untuk "berbicara" dengan dunia luar.
+
+# Selamat!
+
+Seluruh fase 3 sudah berhasil di selesaikan, berikutnya kita akan melanjutkan ke **FASE 4: Networking, Backend Integration & Data Persistence**, di mana kita akan belajar cara mengambil data dari API, menyimpannya secara lokal, dan mengelola data JSON.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
