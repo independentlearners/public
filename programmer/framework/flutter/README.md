@@ -2,7 +2,7 @@
 
 _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hingga Enterprise Architecture_
 
-## [Overview Kurikulum][overview]
+## [Overview Initial Summary Curriculum][overview]
 
 ### Struktur Pembelajaran
 
