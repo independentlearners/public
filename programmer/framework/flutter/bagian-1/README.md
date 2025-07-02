@@ -63,14 +63,14 @@ Sub-bagian ini akan memperkenalkan Anda pada inti dari _Flutter_, menjelaskan ap
 #### **Apa itu Flutter dan Philosophy**
 
 **Deskripsi Detail & Peran:**
-Bagian ini adalah gerbang pertama Anda ke dunia _Flutter_. Ini menjelaskan definisi _Flutter_ itu sendiri dan filosofi di balik desainnya. Memahami "apa" dan "mengapa" _Flutter_ ada akan membantu Anda mengapresiasi keunggulan dan cara kerjanya, serta mempersiapkan Anda untuk pemikiran "Flutter-way" dalam pengembangan aplikasi. Ini adalah langkah awal yang krusial untuk membangun perspektif yang benar tentang _framework_ ini.
+Bagian ini adalah gerbang pertama Anda ke dunia _Flutter_. Ini menjelaskan definisi _Flutter_ itu sendiri dan filosofi di balik desainnya. Memahami "apa" dan "mengapa" _Flutter_ itu ada akan membantu Anda mengapresiasi keunggulan dan cara kerjanya, serta mempersiapkan Anda untuk pemikiran "Flutter-way" dalam pengembangan aplikasi. Ini adalah langkah awal yang krusial untuk membangun perspektif yang benar tentang _framework_ tersebut.
 
 **Konsep Kunci & Filosofi:**
 Konsep kunci di sini adalah **efisiensi pengembangan lintas _platform_** dan **pengalaman pengguna yang konsisten dan berkualitas tinggi**. Filosofi _Flutter_ berakar pada ide bahwa pengembang harus mampu membangun aplikasi indah dan berperforma tinggi untuk berbagai _platform_ (mobile, web, desktop) dari satu basis kode, tanpa mengorbankan kualitas _native_. Ini dicapai melalui beberapa pilar filosofis:
 
-- **UI Toolkit Multi-platform:** _Flutter_ bukan sekadar _framework_ untuk Android atau iOS, melainkan _toolkit_ UI yang dapat membangun aplikasi secara _native-compiled_ untuk _mobile_ (Android & iOS), _web_, dan _desktop_ (Windows, macOS, Linux). Filosofinya adalah "Write Once, Run Anywhere" namun dengan hasil yang sama atau lebih baik dari _native_.
-- **"Everything is a Widget" Philosophy:** Ini adalah filosofi inti _Flutter_. Segala sesuatu di _Flutter_, mulai dari tombol, teks, _layout_ (seperti _padding_, _row_, _column_), hingga interaksi dan bahkan aplikasi itu sendiri, direpresentasikan sebagai _widget_. Widget adalah blok bangunan UI yang _immutable_ (tidak dapat diubah setelah dibuat) dan deklaratif. Filosofi ini menyederhanakan cara Anda membangun UI dan mengelola _state_ karena Anda berinteraksi dengan satu konsep dasar yang konsisten.
-- **Reactive Programming Paradigm:** _Flutter_ menggunakan paradigma pemrograman reaktif. Ini berarti UI Anda adalah fungsi dari _state_ aplikasi Anda. Ketika _state_ berubah, _Flutter_ secara reaktif membangun ulang bagian-bagian UI yang relevan untuk mencerminkan perubahan tersebut. Anda tidak lagi secara manual memanipulasi elemen UI; Anda mendeklarasikan bagaimana UI Anda seharusnya terlihat untuk _state_ tertentu, dan _Flutter_ yang mengurus sisanya.
+- **UI Toolkit Multi-platform:** _Flutter_ bukan sekadar _framework_ untuk Android atau iOS, melainkan _toolkit_ UI yang dapat membangun aplikasi secara _native-compiled_ untuk _mobile_ (Android & iOS), _web_, dan _desktop_ (Windows, macOS, Linux). Filosofinya adalah "Write Once, Run Anywhere | Tulis Sekali, Jalankan Di Mana Saja" namun dengan hasil yang sama atau lebih baik dari _native_. Jika masih belum paham, coba lebih lanjut [Disini][1].
+- **"Everything is a Widget" Philosophy:** Ini adalah filosofi inti _Flutter_ dimana konsepnya bahwa semua dan segala sesuatunya dianggap sebagai widget. Agar lebih mudah dicerna disini kita bisa anggap bahwa widget adalah sebuah objek, jadi segala sesuatu di _Flutter_, mulai dari tombol, teks, _layout_ (seperti _padding_, _row_, _column_), hingga interaksi dan bahkan aplikasi itu sendiri, direpresentasikan sebagai _widget_. Pada dasarnya Widget itu sendiri adalah sebuah blok bangunan UI yang _immutable_ (tidak dapat diubah setelah dibuat) dan deklaratif. Filosofi ini menyederhanakan cara Anda membangun UI dan mengelola _state_ karena Anda berinteraksi dengan satu konsep dasar yang konsisten, Jika masih belum paham, coba lebih lanjut [Disini][2].
+- **Reactive Programming Paradigm:** _Flutter_ menggunakan paradigma pemrograman reaktif. Ini berarti UI Anda adalah fungsi dari _state_ aplikasi Anda. Ketika _state_ berubah, _Flutter_ secara reaktif membangun ulang bagian-bagian UI yang relevan untuk mencerminkan perubahan tersebut. Anda tidak lagi secara manual memanipulasi elemen UI; Anda mendeklarasikan bagaimana UI Anda seharusnya terlihat untuk _state_ tertentu, dan _Flutter_ yang mengurus sisanya, Jika masih belum paham, coba lebih lanjut [Disini][3].
 - **Skia Rendering Engine:** _Flutter_ menggunakan _Skia Graphics Engine_ (perpustakaan grafis 2D yang juga digunakan oleh Google Chrome dan Android) untuk menggambar UI-nya sendiri. Ini berarti _Flutter_ tidak bergantung pada _widget_ bawaan _platform_ (OEM _widgets_), melainkan "melukis" setiap _pixel_ UI-nya sendiri langsung di atas kanvas grafis. Filosofinya adalah "piksel sempurna" dan konsistensi di seluruh _platform_, menghindari inkonsistensi yang sering terjadi saat mengandalkan komponen UI _native_ yang berbeda.
 - **Dart Language Integration:** _Flutter_ dibangun dengan bahasa pemrograman Dart. Dart dirancang oleh Google dengan fokus pada pengembangan _client-side_, menawarkan fitur seperti kompilasi _Ahead-of-Time (AOT)_ untuk performa _native_ yang cepat dan kompilasi _Just-in-Time (JIT)_ untuk siklus pengembangan yang cepat (_Hot Reload_). Filosofinya adalah menyediakan bahasa yang dioptimalkan untuk _Flutter_, menawarkan produktivitas pengembang dan performa aplikasi yang tinggi.
 
@@ -197,9 +197,9 @@ Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **[Flutter Archite
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
-[2]: ../
-[3]: ../
+[1]: ../bagian-1/ui_toolkit_multi-platform/README.md
+[2]: ../bagian-1/everithing_widget_philosophy/README.md
+[3]: ../bagian-1/reactif_programming_paradigm/README.md
 [4]: ../
 [5]: ../
 [6]: ../
