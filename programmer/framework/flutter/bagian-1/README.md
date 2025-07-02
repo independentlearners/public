@@ -7,39 +7,50 @@
 
 ---
 
-1.1 Konsep Dasar dan Philosophy
+[1.1 Konsep Dasar dan Philosophy](#11-konsep-dasar-dan-philosophy)
 
-- Apa itu Flutter dan Philosophy
-- Flutter sebagai UI toolkit multi-platform
-- "Everything is a Widget" philosophy
-- Reactive programming paradigm
-- Skia rendering engine
-- Dart language integration
-- [Flutter Official Philosophy](https://flutter.dev/docs/resources/faq)
-- [Flutter vs React Native vs Native](https://medium.com/flutter/flutter-vs-native-performance-comparing-flutter-and-native-android-ios-apps-4f8c4e4cc24a)
-- [YouTube - Flutter in 100 Seconds](https://www.youtube.com)
-- Flutter Architecture Deep Dive
-- Framework Layer (Material/Cupertino, Widgets, Rendering)
-- Engine Layer (Skia, Dart VM, Platform Channels)
-- Embedder Layer (Platform-specific runners)
-- Rendering pipeline explanation
-- Widget → Element → RenderObject tree
-- [Flutter Architectural Overview](https://docs.flutter.dev/resources/architectural-overview)
-- [Flutter Rendering Pipeline](https://docs.flutter.dev/resources/architectural-overview%23the-rendering-pipeline)
-- [Flutter Engine Architecture](https://docs.flutter.dev/resources/architectural-overview%23the-engine)
-- Dart Language Fundamentals (Khusus untuk Flutter)
-- Variables dan Types (var, final, const, late)
-- Functions dan Methods
-- Classes dan Objects
-- Inheritance dan Interfaces
-- Mixins dan Extensions
-- Generics dan Collections
-- Null Safety comprehensive
-- Async/Await dan Futures
-- Streams dan Stream Controllers
-- [Dart for Flutter Developers](https://docs.flutter.dev/data-and-backend/dart-docs)
-- [Effective Dart](https://dart.dev/effective-dart)
-- [Dart Null Safety Deep Dive](https://dart.dev/null-safety/understanding-null-safety)
+- [Apa itu Flutter dan Philosophy](#apa-itu-flutter-dan-philosophy)
+- [Flutter sebagai UI toolkit multi-platform](#satu)
+- ["Everything is a Widget" philosophy](#dua)
+- [Reactive programming paradigm](#tiga)
+- [Skia rendering engine](#)
+- [Dart language integration](#)
+
+  #### Sumber referensi
+
+  - **[Flutter Official Philosophy](https://flutter.dev/docs/resources/faq "flutter.dev")**
+  - **[Flutter vs React Native vs Native](https://medium.com/flutter/flutter-vs-native-performance-comparing-flutter-and-native-android-ios-apps-4f8c4e4cc24a "medium.com")**
+  - **[YouTube - Flutter in 100 Seconds](https://www.youtube.com "youtube.com")**
+
+- [Flutter Architecture Deep Dive](#)
+- [Framework Layer (Material/Cupertino, Widgets, Rendering)](#)
+- [Engine Layer (Skia, Dart VM, Platform Channels)](#)
+- [Embedder Layer (Platform-specific runners)](#)
+- [Rendering pipeline explanation](#)
+- [Widget → Element → RenderObject tree](#)
+
+  #### Sumber referensi
+
+  - **[Flutter Architectural Overview](https://docs.flutter.dev/resources/architectural-overview "docs.flutter.dev")**
+  - **[Flutter Rendering Pipeline](https://docs.flutter.dev/resources/architectural-overview%23the-rendering-pipeline "docs.flutter.dev")**
+  - **[Flutter Engine Architecture](https://docs.flutter.dev/resources/architectural-overview%23the-engine "docs.flutter.dev")**
+
+- [Dart Language Fundamentals (Khusus untuk Flutter)](#)
+- [Variables dan Types (var, final, const, late)](#)
+- [Functions dan Methods](#)
+- [Classes dan Objects](#)
+- [Inheritance dan Interfaces](#)
+- [Mixins dan Extensions](#)
+- [Generics dan Collections](#)
+- [Null Safety comprehensive](#)
+- [Async/Await dan Futures](#)
+- [Streams dan Stream Controllers](#)
+
+  #### Sumber referensi
+
+  - **[Dart for Flutter Developers](https://docs.flutter.dev/data-and-backend/dart-docs "docs.flutter.dev")**
+  - **[Effective Dart](https://dart.dev/effective-dart "dart.dev")**
+  - **[Dart Null Safety Deep Dive](https://dart.dev/null-safety/understanding-null-safety "dart.dev")**
 
 </details>
 
@@ -67,10 +78,14 @@ Konsep kunci di sini adalah **efisiensi pengembangan lintas _platform_** dan **p
 
 **Ilustrasi Praktik:**
 
+<h3 id="satu"></h3>
+
 1.  **Flutter sebagai UI Toolkit Multi-platform:**
 
     - Visualisasi: Bayangkan Anda memiliki satu cetak biru arsitektur (kode _Flutter_) yang dapat digunakan untuk membangun rumah dengan desain identik di berbagai lokasi (Android, iOS, Web, Desktop), tanpa perlu menggambar ulang cetak biru untuk setiap lokasi.
     - Contoh Kode (Konseptual): Anda menulis satu kode untuk tombol, dan tombol itu terlihat dan berperilaku sama di Android dan iOS, bukan menggunakan dua implementasi terpisah (`Button` di Android dan `UIButton` di iOS).
+
+<h3 id="dua"></h3>
 
 2.  **"Everything is a Widget" philosophy:**
 
@@ -101,6 +116,8 @@ Konsep kunci di sini adalah **efisiensi pengembangan lintas _platform_** dan **p
       ```
 
     - Visualisasi: Anggaplah Anda membangun rumah dari balok Lego. Setiap bagian, dari dinding, pintu, jendela, hingga atap, adalah balok Lego (widget). Anda hanya perlu tahu cara menyatukan balok-balok ini.
+
+<h3 id="tiga"></h3>
 
 3.  **Reactive programming paradigm:**
 
@@ -168,12 +185,14 @@ Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **[Flutter Archite
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Sebelumnya][sebelumnya]**
 > - **[Domain Spesifik][domain]**
+> - **[Kurikulum Dart][kurikulum]**
 
+[kurikulum]: ../../../domain-spesifik/mobile/google/dart/README.md
 [domain]: ../../../../README.md
-[kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
+[sebelumnya]: ../overview/README.md
 
 <!----------------------------------------------------->
 

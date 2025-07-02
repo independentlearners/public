@@ -574,10 +574,10 @@ Anda telah menerima pendalaman tentang memahami "Overview Initial Summary Curric
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
-> - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
+> - **[Kurikulum Dart][kurikulum]**
 
+[kurikulum]: ../../../domain-spesifik/mobile/google/dart/README.md
 [domain]: ../../../../README.md
-[kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-1/README.md
 [0]: ../README.md
