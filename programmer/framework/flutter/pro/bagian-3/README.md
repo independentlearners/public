@@ -20,14 +20,13 @@
     - [4.1.3. `ValueNotifier` dan `ChangeNotifier`](#413-valuenotifier-dan-changenotifier)
   - **[4.2. Provider Pattern & Ecosystem](#42-provider-pattern--ecosystem)**
   - [**4.3. Advanced State Management Solutions** (BLoC, Riverpod, dll.)](#43-advanced-state-management-solutions)
-- **[5. Reactive Programming & Streams](#)**
-  - [5.1. Streams & Async Programming](#)
+- **[5. Reactive Programming & Streams](#5-reactive-programming--streams-lanjutan)**
+  - [5.1 RxDart Extensions](#51-rxdart-extensions)
+  - [5.2 Future & Async/Await](#52-future--asyncawait)
 
 </details>
 
 ---
-
-Mari kita mulai dengan fondasi konseptual yang saya tambahkan.
 
 ### **4. State Management Architecture**
 
@@ -1136,9 +1135,294 @@ Diagram alur data yang sederhana: `UI Event` -\> `triggers Action` -\> `mutates 
 
 ---
 
+### **5. Reactive Programming & Streams (Lanjutan)**
+
+#### **5.1 RxDart Extensions**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+**RxDart** bukanlah sebuah implementasi alternatif dari `Stream`, melainkan sebuah **tambahan (extension)** yang memperkaya `Stream` standar Dart. Ia menambahkan fungsionalitas tambahan yang terinspirasi dari ReactiveX, memberikan puluhan _operator_ (metode transformasi) yang kuat dan beberapa jenis `StreamController` khusus yang disebut **Subjects**. Perannya dalam kurikulum adalah untuk memberikan Anda "pisau bedah" untuk memanipulasi, menggabungkan, dan mengontrol aliran data asinkron dengan cara yang tidak mungkin atau sangat rumit jika hanya menggunakan `Stream` bawaan. Ini adalah alat esensial untuk skenario reaktif yang kompleks, seperti _type-ahead search_ (pencarian saat mengetik) atau mengelola dependensi antar beberapa _stream_.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Streams on Steroids:** Filosofi utama RxDart adalah mengambil `Stream` yang sudah kuat dan membuatnya lebih ekspresif dan fungsional. Jika `Stream` standar menyediakan `map` dan `where`, RxDart menyediakan `debounceTime`, `throttleTime`, `switchMap`, `combineLatest`, dan banyak lagi, memungkinkan Anda mengimplementasikan logika kompleks hanya dengan beberapa baris kode deklaratif.
+
+- **Subjects (StreamControllers Khusus):** RxDart memperkenalkan konsep `Subject`, yang merupakan `StreamController` sekaligus `Stream` yang dapat diobservasi. `Subject` adalah _broadcast stream controller_ secara default dan memiliki beberapa varian penting:
+
+  1.  **`PublishSubject`:** `StreamController` _broadcast_ standar. Ia akan memancarkan _item_ kepada semua _listener_ yang aktif pada saat _item_ tersebut dipancarkan. _Listener_ yang baru bergabung tidak akan menerima _item_ yang sudah lewat.
+  2.  **`BehaviorSubject`:** "Subject dengan memori". Ia akan menyimpan _item_ **terakhir** yang dipancarkan. Ketika seorang _listener_ baru berlangganan, ia akan segera menerima _item_ terakhir tersebut. Ini sangat berguna untuk mengelola _state_ yang harus selalu memiliki nilai awal, seperti data profil pengguna atau pengaturan tema.
+  3.  **`ReplaySubject`:** `BehaviorSubject` yang lebih kuat. Ia akan merekam dan "memutar ulang" sejumlah _item_ terakhir (yang bisa Anda tentukan) kepada setiap _listener_ baru.
+
+- **Operator adalah Segalanya:** Kekuatan sejati RxDart terletak pada operator-operatornya. Operator ini memungkinkan Anda untuk:
+
+  - **Mengontrol Waktu:** `debounceTime` (menunggu jeda sebelum memancarkan), `throttleTime` (mengabaikan _event_ dalam jendela waktu tertentu).
+  - **Memfilter Aliran:** `distinctUntilChanged` (hanya memancarkan jika _item_ berbeda dari sebelumnya).
+  - **Menggabungkan Aliran:** `combineLatest` (menggabungkan _item_ terbaru dari beberapa _stream_), `merge` (menggabungkan beberapa _stream_ menjadi satu), `zip` (menggabungkan _item_ dari beberapa _stream_ berdasarkan indeks).
+  - **Transformasi Tingkat Lanjut:** `switchMap` (beralih ke _stream_ baru dan membatalkan yang lama, sempurna untuk pencarian), `flatMap` (memetakan setiap _item_ ke _stream_ baru dan menggabungkan hasilnya).
+
+**Terminologi Esensial & Penjelasan Detil:**
+
+- **`Observable`:** Di RxDart, `Observable` adalah sinonim untuk `Stream`.
+- **`Subject`:** `StreamController` yang juga merupakan `Stream` itu sendiri.
+- **Operator:** Metode yang beroperasi pada sebuah `Stream` dan mengembalikan `Stream` baru yang telah ditransformasi.
+- **`debounceTime`:** Menunda pemancaran _item_ sampai jeda waktu tertentu telah berlalu tanpa ada _item_ baru yang masuk. Sangat vital untuk _search fields_ untuk mencegah panggilan API pada setiap ketukan tombol.
+- **`switchMap`:** Ketika _stream_ sumber memancarkan _item_ baru, `switchMap` akan berlangganan ke _stream_ baru yang dihasilkan oleh _item_ tersebut, sambil secara otomatis membatalkan langganan dari _stream_ sebelumnya. Ini mencegah _race conditions_ dalam skenario seperti pencarian.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Contoh implementasi _search field_ yang efisien menggunakan RxDart. Ini adalah kasus penggunaan klasik.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
+import 'dart:async';
+
+// --- Logika/Service Layer ---
+class ApiService {
+  // Simulasi panggilan API
+  Future<List<String>> search(String query) async {
+    await Future.delayed(const Duration(milliseconds: 500)); // Simulasi latensi jaringan
+    if (query.isEmpty) return [];
+    return ['Hasil untuk "$query" 1', 'Hasil untuk "$query" 2', 'Hasil untuk "$query" 3'];
+  }
+}
+
+class SearchBloc {
+  final _api = ApiService();
+
+  // 1. Gunakan PublishSubject untuk menangani input query dari user.
+  final _querySubject = PublishSubject<String>();
+
+  // 2. Buat stream hasil pencarian.
+  late Stream<List<String>> searchResults;
+
+  SearchBloc() {
+    searchResults = _querySubject
+        // 3. Tunggu 300ms setelah user berhenti mengetik.
+        .debounceTime(const Duration(milliseconds: 300))
+        // 4. Jangan lakukan pencarian jika query sama dengan sebelumnya.
+        .distinctUntilChanged()
+        // 5. Ubah query menjadi panggilan API. switchMap akan menangani
+        //    pembatalan request sebelumnya jika query baru masuk.
+        .switchMap((query) => Stream.fromFuture(_api.search(query)));
+  }
+
+  // Sink untuk menerima query baru dari UI.
+  void Function(String) get changeQuery => _querySubject.sink.add;
+
+  void dispose() {
+    _querySubject.close();
+  }
+}
+
+// --- Implementasi di UI ---
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) => const MaterialApp(home: SearchScreen());
+}
+
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  final _searchBloc = SearchBloc();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('RxDart Search Demo')),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onChanged: _searchBloc.changeQuery, // Kirim setiap ketikan ke BLoC
+              decoration: const InputDecoration(
+                labelText: 'Cari...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<List<String>>(
+              stream: _searchBloc.searchResults,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) return const Center(child: Text('Mulai ketik untuk mencari.'));
+                if (snapshot.data!.isEmpty) return const Center(child: Text('Tidak ada hasil.'));
+
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) => ListTile(
+                    title: Text(snapshot.data![index]),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchBloc.dispose();
+    super.dispose();
+  }
+}
+```
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Menggunakan operator yang salah untuk kasus penggunaan yang salah. Misalnya, menggunakan `flatMap` di mana seharusnya `switchMap`, yang dapat menyebabkan banyak panggilan jaringan berjalan secara bersamaan dan menampilkan hasil yang sudah usang.
+- **Solusi:** Pelajari perbedaan antara `flatMap`, `switchMap`, dan `concatMap`. **Aturan umum:** Gunakan `switchMap` untuk operasi yang ingin Anda batalkan saat input baru datang (seperti pencarian). Gunakan `flatMap` saat Anda ingin semua operasi berjalan secara paralel.
+- **Kesalahan:** Tidak mengelola siklus hidup `Subject` dengan benar (lupa memanggil `.close()`).
+- **Solusi:** Sama seperti `StreamController`, `Subject` harus selalu ditutup saat tidak lagi digunakan untuk mencegah _memory leak_.
+
+**Sumber Referensi Lengkap:**
+
+- **Paket Resmi:** [rxdart package - pub.dev](https://pub.dev/packages/rxdart)
+- **Dokumentasi dengan Diagram Marmer:** [RxDart GitHub Documentation](https://github.com/ReactiveX/rxdart) (Diagram marmer sangat membantu untuk memvisualisasikan cara kerja operator).
+- **Tutorial ReactiveX (Konsep Umum):** [ReactiveX Introduction](http://reactivex.io/intro.html)
+
+---
+
+Kita telah melihat bagaimana RxDart secara signifikan memperluas kemampuan `Stream` standar, memungkinkan kita untuk menulis kode asinkron yang kompleks dengan cara yang lebih deklaratif dan kuat.
+
+Selanjutnya, kita akan kembali ke fondasi dasar pemrograman asinkron di Dart untuk memastikan pemahaman kita solid sebelum melangkah lebih jauh.
+
+#### **5.2 Future & Async/Await**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+`Future` adalah sebuah objek yang merepresentasikan sebuah hasil potensial—baik itu sebuah nilai atau sebuah error—yang akan tersedia di masa depan. Anggap saja ini seperti sebuah "janji" atau "resi pengiriman" untuk satu hasil dari sebuah operasi yang memakan waktu (misalnya, panggilan API, membaca database). `async` dan `await` adalah kata kunci (sintaksis) yang memungkinkan kita untuk bekerja dengan `Future` seolah-olah kode kita berjalan secara sinkron, yang secara dramatis meningkatkan keterbacaan. Perannya dalam kurikulum ini adalah sebagai fondasi mutlak untuk semua interaksi dengan dunia luar, terutama untuk **Fase 4: Networking**.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Satu Hasil di Masa Depan:** Perbedaan utama dari `Stream` adalah `Future` hanya akan pernah menghasilkan **satu** nilai atau **satu** error, lalu selesai. Ia tidak bisa memancarkan data berkali-kali.
+- **Event Loop:** Dart adalah bahasa _single-threaded_. Untuk menangani operasi yang lama tanpa memblokir UI, Dart menggunakan _event loop_. Saat Anda memanggil operasi asinkron, Dart menaruhnya di "antrian" dan melanjutkan eksekusi kode lain. Saat operasi tersebut selesai, hasilnya akan diproses oleh _event loop_.
+- **`async` dan `await` - Syntactic Sugar:**
+  - `async`: Anda menandai sebuah fungsi dengan `async` untuk memberitahu Dart bahwa fungsi ini mungkin akan melakukan pekerjaan asinkron dan akan mengembalikan sebuah `Future`.
+  - `await`: Anda menggunakan `await` di depan sebuah `Future`. Ini akan **menjeda eksekusi di dalam fungsi `async` tersebut** (bukan seluruh aplikasi) hingga `Future` selesai dan memberikan hasilnya. Ini memungkinkan Anda menulis kode asinkron yang terlihat seperti kode sinkron baris per baris.
+- **Penanganan Error dengan `try-catch`:** Keindahan `async/await` adalah Anda bisa menangani error dari `Future` menggunakan blok `try-catch` standar, sama seperti pada kode sinkron, membuat penanganan error menjadi jauh lebih intuitif.
+- **`FutureBuilder`:** Sama seperti `StreamBuilder`, ini adalah widget Flutter yang mendengarkan sebuah `Future` dan membangun ulang UI-nya berdasarkan status `Future` tersebut (`waiting`, `done` dengan data, atau `done` dengan error).
+
+**Terminologi Esensial & Penjelasan Detil:**
+
+- **`Future<T>`:** Objek yang menjanjikan sebuah nilai bertipe `T` (atau error) di masa depan.
+- **`async`:** Kata kunci untuk menandai sebuah fungsi sebagai asinkron.
+- **`await`:** Kata kunci untuk menjeda eksekusi hingga sebuah `Future` selesai.
+- **`.then((value) => ...)`:** Cara "klasik" untuk menangani hasil `Future` tanpa `async/await`, menggunakan _callback function_. `async/await` umumnya lebih disukai.
+- **`Completer`:** Sebuah objek yang memungkinkan Anda membuat dan menyelesaikan sebuah `Future` secara manual. Berguna dalam skenario yang lebih kompleks atau saat mengintegrasikan dengan API berbasis _callback_.
+- **`Future.wait()`:** Sebuah metode yang menerima daftar `Future` dan mengembalikan satu `Future` yang akan selesai ketika **semua** `Future` di dalam daftar tersebut telah selesai. Sangat efisien untuk menjalankan beberapa operasi secara paralel.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Contoh pengambilan data pengguna yang disimulasikan dan menampilkannya dengan `FutureBuilder`.
+
+```dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+// --- Logika/Service Layer ---
+class UserService {
+  // 1. Tandai fungsi dengan `async`, ia akan otomatis mengembalikan Future<String>.
+  Future<String> fetchUserData(String userId) async {
+    try {
+      // 2. `await` akan menjeda di sini selama 2 detik.
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Simulasi error jika userId '0'
+      if (userId == '0') {
+        throw 'User tidak ditemukan!';
+      }
+
+      // 3. Kembalikan hasil jika sukses.
+      return 'John Doe (ID: $userId)';
+    } catch (e) {
+      // Menangkap error dan melemparkannya kembali untuk ditangani oleh UI.
+      rethrow;
+    }
+  }
+}
+
+// --- Implementasi di UI ---
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context) => const MaterialApp(home: ProfileScreen());
+}
+
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final _userService = UserService();
+  // Simpan future di dalam state agar tidak dibuat ulang setiap kali build.
+  late Future<String> _userDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Panggil fungsi async dan simpan Future-nya.
+    _userDataFuture = _userService.fetchUserData('123');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Future & async/await')),
+      body: Center(
+        // 4. Gunakan FutureBuilder untuk membangun UI berdasarkan state Future.
+        child: FutureBuilder<String>(
+          future: _userDataFuture, // Sambungkan ke Future
+          builder: (context, snapshot) {
+            // 5. Cek status koneksi dan data/error.
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red));
+            } else if (snapshot.hasData) {
+              return Text(
+                'Selamat Datang, ${snapshot.data}!',
+                style: Theme.of(context).textTheme.headlineSmall,
+              );
+            } else {
+              return const Text('Tidak ada data.');
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Lupa menggunakan `await` saat memanggil fungsi `async`. Kode akan terus berjalan tanpa menunggu hasilnya, menyebabkan variabel menjadi `null` atau `Future<T>` bukan `T`.
+- **Solusi:** Selalu gunakan `await` saat Anda membutuhkan hasil dari sebuah `Future` di dalam fungsi `async`. Gunakan _linter_ untuk membantu mendeteksi `Future` yang tidak di-`await`.
+- **Kesalahan:** Membuat `Future` baru di dalam metode `build`. `FutureBuilder` akan terus menerus menjalankan ulang `Future` setiap kali UI di-_rebuild_.
+- **Solusi:** Inisialisasi `Future` Anda di `initState()` atau di dalam _provider_ state management, lalu simpan dalam sebuah variabel. Berikan variabel tersebut ke `FutureBuilder`, bukan memanggil fungsinya langsung di properti `future`.
+
+**Sumber Referensi Lengkap:**
+
+- **Dokumentasi Resmi Dart:** [Asynchronous programming: futures](https://dart.dev/guides/language/futures)
+- **Codelab Resmi:** [Asynchronous programming: futures, async, await](https://dart.dev/codelabs/async-await)
+- **Dokumentasi `FutureBuilder`:** [FutureBuilder class - Flutter API](https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html)
+
+---
+
 ### **Ringkasan dan Penutupan Fase 3**
 
-Kita telah menyelesaikan perjalanan yang sangat penting melalui **FASE 3: State Management & Data Flow**. Anda sekarang telah diperkenalkan dengan seluruh spektrum solusi, masing-masing dengan filosofi, kekuatan, dan kelemahannya sendiri:
+Dengan ini, kita telah secara resmi menyelesaikan seluruh **FASE 3: State Management & Data Flow**. Kini Anda telah diperkenalkan dengan seluruh spektrum solusi, masing-masing dengan filosofi, kekuatan, dan kelemahannya sendiri:
 
 - **`setState` & Built-ins:** Untuk _state_ lokal yang sederhana. Cepat dan mudah, tetapi tidak terukur.
 - **`Provider`:** Lapisan abstraksi yang hebat di atas `InheritedWidget`. Titik awal yang sangat baik.
@@ -1148,11 +1432,13 @@ Kita telah menyelesaikan perjalanan yang sangat penting melalui **FASE 3: State 
 - **`Redux`:** Pola klasik dengan _single source of truth_ yang membuat aplikasi sangat prediktif.
 - **`MobX`:** Pendekatan reaktif otomatis yang mengurangi _boilerplate_ dan membuat state terhubung ke UI secara "ajaib".
 
+Sekarang aplikasi kita tidak hanya memiliki "tubuh" (UI) dan "otak" (State), tetapi juga pemahaman tentang bagaimana menangani "komunikasi" yang tidak instan. Kita sepenuhnya siap untuk melangkah ke dunia luar.
+
 Sebagai seorang _Fullstack Developer Engineer_, pemahaman mendalam tentang _trade-off_ di antara pola-pola ini adalah keterampilan yang sangat berharga. Anda tidak hanya tahu _cara_ menggunakannya, tetapi yang lebih penting, Anda tahu **kapan** harus menggunakan masing-masing. Kini aplikasi kita sudah memiliki "otak". Langkah logis berikutnya adalah memberinya kemampuan untuk "berbicara" dengan dunia luar.
 
 # Selamat!
 
-Seluruh fase 3 sudah berhasil di selesaikan, berikutnya kita akan melanjutkan ke **FASE 4: Networking, Backend Integration & Data Persistence**, di mana kita akan belajar cara mengambil data dari API, menyimpannya secara lokal, dan mengelola data JSON.
+Seluruh fase 3 sudah berhasil di selesaikan, berikutnya kita akan melanjutkan ke **FASE 4: Navigation & Routing**, di mana kita akan belajar cara membangun alur multi-halaman yang kompleks dan menangani navigasi di dalam aplikasi kita.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
@@ -1167,7 +1453,7 @@ Seluruh fase 3 sudah berhasil di selesaikan, berikutnya kita akan melanjutkan ke
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../../README.md
 [1]: ../
 [2]: ../
 [3]: ../
