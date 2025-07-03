@@ -438,7 +438,7 @@ Dart menyediakan beberapa kata kunci untuk mendeklarasikan variabel, masing-masi
 
 ##### `final`
 
-- **Deskripsi:** Mendeklarasikan variabel yang nilainya **tidak dapat diubah (immutable)** setelah diinisialisasikan. Nilai `final` ditentukan pada **waktu eksekusi (runtime)**, artinya bisa mengambil nilai dari hasil komputasi.
+- **Deskripsi:** Mendeklarasikan variabel yang nilainya **tidak dapat diubah (immutable)** setelah diinisialisasikan. Nilai `final` ditentukan pada **[waktu eksekusi (runtime)][2]**, artinya bisa mengambil nilai dari hasil komputasi.
 - **Sintaks Dasar:**
 
   ```dart
@@ -453,7 +453,7 @@ Dart menyediakan beberapa kata kunci untuk mendeklarasikan variabel, masing-masi
 
 ##### `const`
 
-- **Deskripsi:** Mendeklarasikan variabel yang nilainya adalah **konstanta waktu kompilasi (compile-time constant)**. Ini berarti nilai variabel harus diketahui sepenuhnya dan tidak bisa berubah bahkan sebelum program dimulai. `const` adalah `final` yang lebih ketat.
+- **Deskripsi:** Mendeklarasikan variabel yang nilainya adalah **[konstanta waktu kompilasi (compile-time constant)][3]**. Ini berarti nilai variabel harus diketahui sepenuhnya dan tidak bisa berubah bahkan sebelum program dimulai. `const` adalah `final` yang lebih ketat.
 - **Sintaks Dasar:**
 
   ```dart
@@ -600,7 +600,7 @@ Dengan fitur **Null Safety** di Dart (sejak Dart 2.12), setiap variabel (secara 
 
 ---
 
-### 5\. Tipe Data Bawaan (Built-in Data Types)
+### 5. Tipe Data Bawaan (Built-in Data Types)
 
 Kita sudah membahas ini sedikit di bagian Typing System, namun mari kita ulas kembali dengan fokus pada sintaks dan contoh praktis. Dart adalah bahasa yang berorientasi objek, jadi semua tipe data di Dart (termasuk `null`) adalah objek dari suatu kelas.
 
@@ -731,7 +731,7 @@ Kita sudah membahas ini sedikit di bagian Typing System, namun mari kita ulas ke
 
 ---
 
-### 6\. Operator (Operators)
+### 6. Operator (Operators)
 
 **Operator** adalah simbol khusus yang digunakan untuk melakukan operasi pada satu atau lebih nilai (disebut _operand_).
 
@@ -1000,7 +1000,7 @@ void kirimEmail() {
 
 ---
 
-### 7\. Kontrol Aliran (Control Flow)
+### 7. Kontrol Aliran (Control Flow)
 
 **Kontrol aliran** adalah mekanisme yang memungkinkan program untuk membuat keputusan dan mengulang instruksi, sehingga program dapat merespons berbagai kondisi dan data.
 
@@ -1197,7 +1197,7 @@ Digunakan untuk mengulang blok kode berkali-kali.
 
 ---
 
-### 8\. Fungsi (Functions)
+### 8. Fungsi (Functions)
 
 **Fungsi** adalah blok kode yang dapat digunakan kembali untuk melakukan tugas tertentu. Mereka membantu mengorganisir kode, membuatnya lebih modular, mudah dibaca, dan mudah dipelihara.
 
@@ -1398,7 +1398,7 @@ void main() {
 
 ---
 
-### 9\. Impor dan Ekspor (Imports & Exports)
+### 9\ Impor dan Ekspor (Imports & Exports)
 
 Dart menggunakan sistem modul untuk mengatur kode. Anda dapat mengorganisir kode Anda ke dalam beberapa file (_library_) dan kemudian mengimpor atau mengekspor fungsionalitas antar file.
 
@@ -1505,7 +1505,7 @@ void main() {
 
 ---
 
-### 10\. Kata Kunci (Keywords)
+### 10. Kata Kunci (Keywords)
 
 **Kata kunci (Keywords)** adalah kata-kata yang memiliki makna khusus dalam bahasa Dart dan tidak dapat digunakan sebagai identifiers (nama variabel, fungsi, dll.). Anda telah melihat banyak dari mereka dalam penjelasan di atas.
 
@@ -1579,7 +1579,7 @@ Berikut adalah daftar lengkap (atau hampir lengkap) kata kunci di Dart:
 
 ---
 
-### 11\. Terminologi Kunci
+### 11. Terminologi Kunci
 
 - **Syntax (Sintaks):** Aturan tata bahasa dan struktur yang mengatur bagaimana kode harus ditulis agar valid dalam bahasa pemrograman.
 - **`main()` Function:** Fungsi khusus yang menjadi titik awal eksekusi program Dart.
@@ -1610,7 +1610,7 @@ Berikut adalah daftar lengkap (atau hampir lengkap) kata kunci di Dart:
 
 ---
 
-### 12\. Ringkasan
+### 12. Ringkasan
 
 **Syntax Fundamentals** adalah fondasi Anda dalam menulis kode Dart. Memahami bagaimana struktur program dibuat, cara mendeklarasikan variabel, menggunakan operator, mengontrol aliran program, dan mendefinisikan fungsi adalah langkah awal yang krusial.
 
@@ -1631,7 +1631,7 @@ Dengan bekal pemahaman ini, Anda sudah bisa mulai menulis program Dart yang sede
 
 ---
 
-### 13\. Sumber Referensi
+### 13. Sumber Referensi
 
 - **Dart Documentation - A tour of the Dart language (relevant sections):** [https://dart.dev/guides/language/language-tour](https://dart.dev/guides/language/language-tour)
   - Variables
@@ -1659,8 +1659,8 @@ Dengan bekal pemahaman ini, Anda sudah bisa mulai menulis program Dart yang sede
 
 [0]: ../README.md
 [1]: ../../../dasar/comentar/README.md
-[2]: ../
-[3]: ../
+[2]: ../../runtime_vs_compile_time/README.md
+[3]: ../../runtime_vs_compile_time/README.md
 [4]: ../
 [5]: ../
 [6]: ../

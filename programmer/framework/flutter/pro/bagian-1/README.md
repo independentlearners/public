@@ -203,8 +203,218 @@ Flutter memiliki arsitektur berlapis (_layered architecture_). Lapisan yang lebi
 4.  Detail Embedder Layer.
 5.  Penjelasan mendalam tentang tiga pohon: Widget, Element, dan RenderObject.
 
-**Rekomendasi Visualisasi:**
-Diagram arsitektur berlapis (Layered Architecture) yang menunjukkan Framework, Engine, dan Embedder adalah wajib di sini. Selain itu, diagram yang menggambarkan hubungan antara Widget Tree, Element Tree, dan RenderObject Tree akan sangat mencerahkan.
+**Visualisasi:**
+Diagram arsitektur berlapis (Layered Architecture) yang menunjukkan Framework, Engine, dan Embedder adalah wajib di sini. Selain itu, diagram yang menggambarkan hubungan antara Widget Tree, Element Tree, dan RenderObject Tree yang mungkin membantu dalam mencerahkan pemahaman ini. Berikut dua diagram ASCII beserta **contoh kode** untuk masing‑masing lapisan arsitektur Flutter:
+
+---
+
+## 1. Diagram Layered Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      Framework Layer                         │
+│ ┌───────────────────┐  ┌───────────────┐  ┌────────────────┐ │
+│ │ Material/Cupertino│  │ Widgets Layer │  │ Rendering Layer│ │
+│ │  (high‑level UI)  │  │ (Widget Tree) │  │ (RenderObject) │ │
+│ └────────┬──────────┘  └───┬───────────┘  └──────┬─────────┘ │
+│          │                 │                     │           │
+│          ▼                 ▼                     ▼           │
+│    Dart Code             build()            layout()/paint() │
+└────────────────────────────┴─────────────────────────────────┘
+             ↓ (via Dart VM JIT/AOT & Skia)
+┌───────────────────────────────────────────────────────────┐
+│                       Engine Layer                        │
+│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  │
+│  │   Skia (C++)  │  │ Dart VM (C++) │  │PlatformChannel│  │
+│  │  rendering    │  │  runtime      │  │  machinery    │  │
+│  └──────┬────────┘  └──────┬────────┘  └──────┬────────┘  │
+│         │                  │                  │           │
+│         ▼                  ▼                  ▼           │
+│    Canvas draw        GC, Hot‑reload     JSON/MethodCall  │
+└────────────────────────────┴──────────────────────────────┘
+             ↓ (via embedder glue code)
+┌───────────────────────────────────────────────────────────┐
+│                      Embedder Layer                       │
+│  • Main entrypoint (e.g. main.cpp)                        │
+│  • OS event loop integration (keyboard, touch, etc.)      │
+│  • Thread management, platform setup                      │
+└───────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Contoh Kode per Lapisan
+
+#### A. **Framework Layer** (Dart, Widgets)
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({ super.key });
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Layer Demo',
+      home: const Scaffold(
+        appBar: AppBar(title: Text('Framework Layer')),
+        body: Center(child: Text('Hello from Widgets!')),
+      ),
+    );
+  }
+}
+```
+
+- **MaterialApp**, **Scaffold**, **Text** adalah widget‑widget high‑level di **Material/Cupertino** dan **Widgets Layer**.
+- `build()` mengonfigurasi **Widget Tree**.
+
+#### B. **Rendering Layer** (Custom RenderObject)
+
+```dart
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+
+class RedBox extends SingleChildRenderObjectWidget {
+  const RedBox({super.child});
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return _RenderRedBox();
+  }
+}
+
+class _RenderRedBox extends RenderBox {
+  @override
+  void performLayout() {
+    size = constraints.biggest; // penuhi ruang
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    final paint = Paint()..color = const Color(0xFFD32F2F);
+    context.canvas.drawRect(offset & size, paint);
+  }
+}
+
+// Penggunaan dalam widget tree:
+class RenderDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: RedBox(child: Text('Inside RedBox')),
+    );
+  }
+}
+```
+
+- `_RenderRedBox` adalah **RenderObject** yang mengatur layout & painting langsung ke **Canvas**.
+
+#### C. **Engine Layer: Platform Channels** (Dart ↔ Native)
+
+**Dart Side:**
+
+```dart
+import 'package:flutter/services.dart';
+
+class Battery {
+  static const _channel = MethodChannel('com.example/battery');
+
+  static Future<int> getLevel() async {
+    final level = await _channel.invokeMethod<int>('getBatteryLevel');
+    return level ?? -1;
+  }
+}
+```
+
+**Android (Kotlin) Side:**
+
+```kotlin
+class MainActivity: FlutterActivity() {
+  private val CHANNEL = "com.example/battery"
+
+  override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+    super.configureFlutterEngine(flutterEngine)
+
+    MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+      if (call.method == "getBatteryLevel") {
+        val batteryLevel = getBatteryLevel()
+        if (batteryLevel != -1) result.success(batteryLevel)
+        else result.error("UNAVAILABLE", "Battery level not available.", null)
+      } else {
+        result.notImplemented()
+      }
+    }
+  }
+
+  private fun getBatteryLevel(): Int {
+    val bm = getSystemService(BATTERY_SERVICE) as BatteryManager
+    return bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+  }
+}
+```
+
+- **MethodChannel** adalah bagian dari **PlatformChannel** machinery di **Engine Layer**.
+
+#### D. **Embedder Layer** (C++ Entry Point)
+
+```cpp
+// minimal embedder (simplified)
+#include "flutter_embedder.h"
+
+int main(int argc, char** argv) {
+  FlutterRendererConfig renderer_config = {};
+  // setup Skia renderer, etc.
+
+  FlutterProjectArgs project_args = {};
+  project_args.struct_size = sizeof(project_args);
+  project_args.assets_path = "flutter_assets";
+  project_args.icu_data_path = "icudtl.dat";
+  project_args.command_line_argc = argc;
+  project_args.command_line_argv = argv;
+
+  FlutterEngine engine = nullptr;
+  FlutterProjectArgs args = project_args;
+  FlutterEngineRun(FLUTTER_ENGINE_VERSION, &renderer_config, &args, nullptr, &engine);
+
+  // run event loop, handle input, etc.
+
+  FlutterEngineShutdown(engine);
+  return 0;
+}
+```
+
+- `FlutterEngineRun` dan loop native adalah inti **Embedder Layer** yang mengikat **Engine** dengan OS host.
+
+---
+
+## 2. Diagram Widget → Element → RenderObject
+
+```
+Widget Tree               Element Tree             RenderObject Tree
+───────────               ────────────             ─────────────────
+┌──────────┐              ┌──────────┐              ┌───────────────┐
+│ Text     │              │ TextElem │              │ RenderParagraph│
+└───┬──────┘              └────┬─────┘              └──────┬────────┘
+    │                          │                          │
+┌───▼──────┐      ↔      ┌─────▼─────┐      ↔       ┌──────▼────────┐
+│ Center   │              │ CenterElem│              │ RenderCenter  │
+└───┬──────┘              └─────┬─────┘              └──────┬────────┘
+    │                          │                          │
+┌───▼──────┐              ┌─────▼─────┐              ┌──────▼────────┐
+│ Scaffold │              │ ScaffoldElem│            │ RenderFlex    │
+└──────────┘              └───────────┘              └───────────────┘
+```
+
+- **Widget** (immutable): deklarasi UI.
+- **Element** (mutable): instansiasi Widget, kelola lifecycle dan diffing.
+- **RenderObject**: objek render yang menghitung layout & menggambar.
+
+---
+
+Dengan diagram dan contoh kode di atas, Anda bisa melihat **cara kerja Flutter** dari “apa” (widget) → “bagaimana” (rendering & engine) → “di mana” (embedder).
 
 **Tips dan Praktik Terbaik:**
 

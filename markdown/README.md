@@ -71,13 +71,13 @@ _Menguasai Semua Fitur Markdown dari Dasar hingga Advanced_
 
 #### **[GitHub Flavored Markdown (GFM)](#bagian-iv-platform-specific)**
 
-```markdown
 ~~Strikethrough~~
 
+```
 - [x] Task lists
-      | Tables | Support |
-      |--------|---------|
-      | Yes | Full |
+  | Tables | Support |
+  |--------|---------|
+  | Yes    | Full    |
 ```
 
 #### **MultiMarkdown (MMD)**
@@ -103,12 +103,13 @@ Math: $E = mc^2$
 
 #### **kramdown (Jekyll)**
 
-```markdown
-{:.class-name}
-Paragraph dengan CSS class
-
-- List item
-  {:toc}
+```css
+ {
+  :.class-name ;
+}
+Paragraph dengan CSS class - List item {
+  :toc ;
+}
 ```
 
 #### **Markdown Extra (PHP)**
@@ -356,7 +357,6 @@ _'Italic quote'_
 
 ### ✅ Task Lists (GFM)
 
-```markdown
 - [x] Completed task
 - [ ] Uncompleted task
 - [x] ~~Completed and crossed out~~
@@ -365,11 +365,9 @@ _'Italic quote'_
 - [ ] Task with `code`
   - [x] Nested completed task
   - [ ] Nested uncompleted task
-```
 
 ### 📋 Definition Lists (beberapa ekstensi)
 
-```markdown
 <!-- Pandoc/PHP Markdown Extra -->
 
 Term 1
@@ -392,20 +390,17 @@ with multiple paragraphs
 Including code blocks:
 
       code example
-```
 
 ### 📊 Complex Lists dengan Multiple Content
 
-````markdown
 1. **First item** with multiple elements:
 
    This is a paragraph under the first item.
 
-   ```python
-   # Code block in list
-   print("Hello from list!")
-   ```
-````
+```python
+# Code block in list
+print("Hello from list!")
+```
 
 - Nested unordered list
 - With multiple items
@@ -572,11 +567,14 @@ frameborder="0" allowfullscreen></iframe>
 
 ### 🖇️ Figure & Caption
 
-```markdown
 <!-- HTML5 figure -->
 <figure>
   <img src="image.jpg" alt="Description">
-  <figcaption>Image caption goes here</figcaption>
+  <figcaption>
+
+Image caption goes here
+
+  </figcaption>
 </figure>
 
 <!-- Pandoc figure -->
@@ -588,7 +586,6 @@ frameborder="0" allowfullscreen></iframe>
 ![Alt text](image.jpg)
 _Caption text_
 {:.caption}
-```
 
 ---
 
@@ -729,25 +726,20 @@ def secret_function():
 
 ### 📋 Basic Tables
 
-```markdown
 | Header 1 | Header 2 | Header 3 |
 | -------- | -------- | -------- |
 | Row 1    | Data     | More     |
 | Row 2    | Info     | Data     |
-```
 
 ### 🎨 Table Alignment
 
-```markdown
 | Left Align | Center Align | Right Align |
 | :--------- | :----------: | ----------: |
 | Left       |    Center    |       Right |
 | Text       |     Text     |        Text |
-```
 
 ### 📊 Complex Tables
 
-```markdown
 | Feature | Basic | Pro  | Enterprise |
 | ------- | :---: | :--: | :--------: |
 | Users   |   1   |  10  | Unlimited  |
@@ -762,11 +754,11 @@ def secret_function():
 | **Bold Name** | `code description`                      |   ✅   |
 | _Italic Name_ | [Link description](https://example.com) |   ❌   |
 | ~~Strike~~    | Multiple<br>Lines                       |   ⚠️   |
-```
+
+---
 
 ### 🔧 Table Extensions
 
-```markdown
 <!-- Colspan (tidak standar, perlu HTML) -->
 <table>
   <tr>
@@ -792,11 +784,9 @@ def secret_function():
     <td>More Data</td>
   </tr>
 </table>
-```
 
 ### 📈 Data Visualization dalam Tables
 
-```markdown
 <!-- Progress bars dengan Unicode -->
 
 | Task   | Progress        | Status      |
@@ -812,7 +802,6 @@ def secret_function():
 | Login   |   ✅   |  🔴 High  |
 | Search  |   ⚠️   | 🟡 Medium |
 | Export  |   ❌   |  🔵 Low   |
-```
 
 ---
 
@@ -820,7 +809,6 @@ def secret_function():
 
 ### 💬 Basic Blockquotes
 
-```markdown
 > Single line quote
 
 > Multi-line quote
@@ -832,11 +820,9 @@ def secret_function():
 > _Italic dalam quote_
 >
 > `Code dalam quote`
-```
 
 ### 🔗 Nested Blockquotes
 
-```markdown
 > Level 1 quote
 >
 > > Level 2 quote
@@ -851,11 +837,9 @@ def secret_function():
 > > **bold** dan _italic_
 >
 > Back to outer quote
-```
 
 ### 📚 Citation & Attribution
 
-```markdown
 > To be or not to be, that is the question.
 >
 > — William Shakespeare, _Hamlet_
@@ -871,11 +855,9 @@ def secret_function():
     <cite>Source Name</cite>
   </footer>
 </blockquote>
-```
 
 ### 🎨 Callout Boxes (platform-specific)
 
-```markdown
 <!-- GitHub Alerts -->
 
 > [!NOTE]
@@ -901,7 +883,7 @@ def secret_function():
 > [!warning] Custom Title
 > Warning with custom title
 
-> [!question]- Collapsible
+> [!question] Collapsible
 > This can be collapsed
 
 <!-- Pandoc/Quarto -->
@@ -916,7 +898,6 @@ Note content goes here
 ::: {.callout-warning}
 Warning content
 :::
-```
 
 ---
 
@@ -926,7 +907,6 @@ Warning content
 
 ### 🌐 Raw HTML
 
-```markdown
 <!-- HTML elements dalam Markdown -->
 <div class="container">
   <p>HTML paragraph</p>
@@ -938,15 +918,11 @@ Warning content
 
 <!-- Custom containers -->
 <section id="introduction">
-  # Markdown heading dalam HTML container
-  
-  Regular markdown **formatting** works here.
+# Markdown heading dalam HTML container
 </section>
-```
 
 ### 🎨 CSS Styling
 
-```markdown
 <!-- Inline styles -->
 <p style="color: blue; font-size: 18px;">Styled paragraph</p>
 
@@ -968,11 +944,9 @@ Warning content
 <div class="custom-box">
 Content dengan custom styling
 </div>
-```
 
 ### 📱 Responsive Elements
 
-```markdown
 <!-- Responsive images -->
 
 <img src="image.jpg" 
@@ -994,11 +968,9 @@ Content dengan custom styling
           style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
           frameborder="0" allowfullscreen></iframe>
 </div>
-```
 
 ### 🔧 Interactive HTML
 
-````markdown
 <!-- Forms -->
 <form>
   <label for="name">Name:</label>
@@ -1016,9 +988,9 @@ Content dengan custom styling
   
   Hidden content here!
   
-  ```python
+```python
   print("Code in collapsible section")
-````
+```
 
 - List items
 - Also work here
@@ -1131,10 +1103,9 @@ $$\ce{^{235}U + ^{1}n -> ^{236}U -> ^{144}Ba + ^{89}Kr + 3^{1}n}$$
 
 ### 🌊 Mermaid Diagrams
 
-````markdown
+```mermaid
 <!-- Flowchart -->
 
-```mermaid
 flowchart TD
     A[Start] --> B{Decision}
     B -->|Yes| C[Process 1]
@@ -1142,11 +1113,10 @@ flowchart TD
     C --> E[End]
     D --> E
 ```
-````
-
-<!-- Sequence diagram -->
 
 ```mermaid
+<!-- Sequence diagram -->
+
 sequenceDiagram
     participant A as Alice
     participant B as Bob
@@ -1155,9 +1125,9 @@ sequenceDiagram
     A->>B: See you later!
 ```
 
+```mermaid
 <!-- Gantt chart -->
 
-```mermaid
 gantt
     title Project Timeline
     dateFormat  YYYY-MM-DD
@@ -1169,9 +1139,9 @@ gantt
     Backend       :2024-02-01, 60d
 ```
 
+```mermaid
 <!-- Class diagram -->
 
-```mermaid
 classDiagram
     class Animal {
         +String name
@@ -1185,34 +1155,34 @@ classDiagram
     Animal <|-- Dog
 ```
 
-````
-
 ### 📈 Chart.js Integration (beberapa platform)
+
 ```html
 <canvas id="myChart" width="400" height="200"></canvas>
 <script>
-const ctx = document.getElementById('myChart').getContext('2d');
-const myChart = new Chart(ctx, {
-    type: 'bar',
+  const ctx = document.getElementById("myChart").getContext("2d");
+  const myChart = new Chart(ctx, {
+    type: "bar",
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
-    }
-});
+      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      datasets: [
+        {
+          label: "# of Votes",
+          data: [12, 19, 3, 5, 2, 3],
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+        },
+      ],
+    },
+  });
 </script>
-````
+```
 
 ### 🎨 ASCII Art & Diagrams
 
 ```markdown
 <!-- ASCII flowchart -->
-```
 
     ┌─────────┐
     │  Start  │
@@ -1226,29 +1196,20 @@ const myChart = new Chart(ctx, {
     │   End   │
     └─────────┘
 
-```
-
 <!-- ASCII table -->
-```
 
 ╔══════════════╦══════════════╗
-║ Header ║ Header ║
+║       Header ║ Header       ║
 ╠══════════════╬══════════════╣
-║ Data ║ Data ║
-║ Data ║ Data ║
+║         Data ║ Data         ║
+║         Data ║ Data         ║
 ╚══════════════╩══════════════╝
 
-```
-
 <!-- Network diagram -->
-```
 
 Internet ── Router ── Switch ─┬─ Computer 1
-├─ Computer 2  
- └─ Printer
-
-```
-
+├─ Computer 2
+└─ Printer
 ```
 
 ---
@@ -1328,7 +1289,6 @@ Internet ── Router ── Switch ─┬─ Computer 1
 ````
 
 </details>
-```
 
 ### 🎮 JavaScript Interactions
 
@@ -1378,8 +1338,7 @@ Internet ── Router ── Switch ─┬─ Computer 1
 
 ### 🔌 Pandoc Extensions
 
-````markdown
-## <!-- Pandoc title block -->
+## Pandoc title block
 
 title: "Document Title"
 author:
@@ -1404,6 +1363,7 @@ Seperti yang dijelaskan dalam @brown2023 [p. 42], format ini mudah dipelajari.
 
 ## References
 
+```
 <!-- Pandoc divs dan spans -->
 
 ::: {.warning}
@@ -1414,12 +1374,11 @@ This is a warning box.
 
 <!-- Include files -->
 
-```{.include}
+{.include}
 other-file.md
 ```
-````
 
-<!-- Pandoc tables -->
+Pandoc tables
 
 : Sample Table
 
@@ -1429,32 +1388,36 @@ other-file.md
 |   123 | 123  |  123   | 123     |
 |     1 | 1    |   1    | 1       |
 
-````
-
 ### 🎯 kramdown Extensions
+
 ```markdown
 <!-- Attribute lists -->
+
 {:.class #id}
 This paragraph has CSS class and ID.
 
 ![Image](image.jpg){:.center width="50%"}
 
 <!-- Table of contents -->
-* TOC
-{:toc}
+
+- TOC
+  {:toc}
 
 <!-- Footnotes -->
+
 Teks dengan footnote[^1].
 
 [^1]: Ini adalah footnote.
 
 <!-- Abbreviations -->
-*[HTML]: HyperText Markup Language
-*[CSS]: Cascading Style Sheets
+
+_[HTML]: HyperText Markup Language
+_[CSS]: Cascading Style Sheets
 
 HTML dan CSS adalah teknologi web fundamental.
 
 <!-- Math blocks -->
+
 $
 \begin{aligned}
 \nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} & = \frac{4\pi}{c}\vec{\mathbf{j}} \\
@@ -1463,11 +1426,10 @@ $
 \nabla \cdot \vec{\mathbf{B}} & = 0
 \end{aligned}
 $
-````
+```
 
 ### 📝 Python-Markdown Extensions
 
-````markdown
 <!-- Admonitions -->
 
 !!! note "Optional Title"
@@ -1498,22 +1460,20 @@ Orange
 def hello_world():
     print("Hello, World!")
     return True
-```
-````
 
 <!-- Smart symbols -->
 
 (c) (tm) (r) -- --- ... << >>
-
 <!-- Becomes: © ™ ® – — … « » -->
-
-````
+```
 
 ### 🚀 MDX (React Components)
+
 ```mdx
 <!-- Import React components -->
-import { Chart } from './Chart'
-import { Calculator } from './Calculator'
+
+import { Chart } from "./Chart";
+import { Calculator } from "./Calculator";
 
 # Interactive Document
 
@@ -1523,19 +1483,17 @@ Here's a regular paragraph with **markdown** formatting.
 
 ## Calculator Section
 
-<Calculator
-  initialValue={0}
-  operations={['add', 'subtract', 'multiply']}
-/>
+<Calculator initialValue={0} operations={["add", "subtract", "multiply"]} />
 
 <!-- Combine JSX with Markdown -->
+
 <div className="alert alert-info">
   This is JSX with **markdown** inside!
 
-  - List item 1
-  - List item 2
-</div>
-````
+- List item 1
+- List item 2
+  </div>
+```
 
 ---
 
@@ -1565,7 +1523,6 @@ Short SHA1: a5c3785
 
 ### ✅ GitHub Task Lists dengan Advanced Features
 
-```markdown
 - [x] #739
 - [ ] https://github.com/octo-org/octo-repo/issues/740
 - [ ] Add delight to the experience when all tasks are complete :tada:
@@ -1578,7 +1535,6 @@ Short SHA1: a5c3785
   - [ ] Subtask 3
     - [x] Sub-subtask A
     - [ ] Sub-subtask B
-```
 
 ### 🚨 GitHub Alerts
 
@@ -1639,24 +1595,23 @@ EXPOSE 3000
 CMD ["npm", "start"]
 ```
 
-````
-
 ### 🎯 GitHub Advanced Table Features
-```markdown
+
 <!-- Emoji dalam tables -->
-| Feature | Status | Priority |
-|---------|:------:|:--------:|
-| Authentication | ✅ | 🔴 |
-| API Integration | ⚠️ | 🟡 |
-| Testing | ❌ | 🔵 |
+
+| Feature         | Status | Priority |
+| --------------- | :----: | :------: |
+| Authentication  |   ✅   |    🔴    |
+| API Integration |   ⚠️   |    🟡    |
+| Testing         |   ❌   |    🔵    |
 
 <!-- Links dalam tables -->
-| Repository | Language | Stars |
-|------------|----------|:-----:|
-| [React](https://github.com/facebook/react) | JavaScript | ⭐ 200k+ |
-| [Vue](https://github.com/vuejs/vue) | JavaScript | ⭐ 200k+ |
-| [Angular](https://github.com/angular/angular) | TypeScript | ⭐ 90k+ |
-````
+
+| Repository                                    | Language   |  Stars   |
+| --------------------------------------------- | ---------- | :------: |
+| [React](https://github.com/facebook/react)    | JavaScript | ⭐ 200k+ |
+| [Vue](https://github.com/vuejs/vue)           | JavaScript | ⭐ 200k+ |
+| [Angular](https://github.com/angular/angular) | TypeScript | ⭐ 90k+  |
 
 ---
 
@@ -1664,7 +1619,6 @@ CMD ["npm", "start"]
 
 ### 💬 Discord Markdown
 
-````markdown
 <!-- Text formatting -->
 
 _italic_ atau _italic_
@@ -1679,7 +1633,6 @@ _italic_ atau _italic_
 ```python
 print("Hello Discord!")
 ```
-````
 
 <!-- Underline (Discord specific) -->
 
@@ -1690,10 +1643,9 @@ print("Hello Discord!")
 **_~~Bold italic strikethrough~~_**
 **Bold dengan `code` di dalam**
 
-````
-
 ### 📱 Slack Markdown
-```markdown
+
+```
 <!-- Slack formatting -->
 *bold*
 _italic_
@@ -1706,11 +1658,10 @@ _italic_
 <#C1234567890> # Channel mention
 
 <!-- Code blocks -->
-````
-
 function hello() {
 return "Hello Slack!";
 }
+```
 
 ```
 
@@ -1776,40 +1727,35 @@ This is a warning hint box.
 {% hint style="danger" %}
 This is a danger hint box.
 {% endhint %}
-```
 
 <!-- Tabs -->
 
 {% tabs %}
 {% tab title="JavaScript" %}
+```
 
 ```javascript
 console.log("Hello from JavaScript!");
-```
-
 {% endtab %}
-
-{% tab title="Python" %}
+```
 
 ```python
+{% tab title="Python" %}
 print("Hello from Python!")
-```
-
 {% endtab %}
 {% endtabs %}
+```
 
 <!-- File embeds -->
 
-{% code title="config.json" %}
-
 ```json
+{% code title="config.json" %}
 {
   "name": "My App",
   "version": "1.0.0"
 }
-```
-
 {% endcode %}
+```
 
 ### 📖 Notion
 
@@ -1880,7 +1826,7 @@ Notion databases
 
 ### 📋 Obsidian
 
-````markdown
+```markdown
 <!-- Obsidian links -->
 
 [[Internal Link]]
@@ -1909,81 +1855,85 @@ Notion databases
 ![[image.png|300]]
 
 <!-- Obsidian queries -->
+```
 
 ```query
 tag:#important
 ```
-````
-
-`````
 
 <!-- Obsidian canvas links -->
 
 [[2025-05-31]] # Daily note link
-
-````
 
 ---
 
 ## 19. Static Site Generators {#static-site-generators}
 
 ### ⚡ Next.js/MDX
-```mdx
+
 ---
+
 title: "Blog Post Title"
 date: "2025-05-31"
 tags: ["web", "development"]
+
 ---
 
-import { CustomComponent } from '../components/CustomComponent'
-import Image from 'next/image'
+import { CustomComponent } from "../components/CustomComponent";
+import Image from "next/image";
+
+;
 
 # Welcome to My Blog
 
 This is regular **markdown** content.
 
-<CustomComponent
-  data="Some data"
-  isActive={true}
-/>
+```html
+<CustomComponent data="Some data" isActive="{true}" />
 
-<Image
+<image
   src="/images/hero.jpg"
   alt="Hero image"
-  width={800}
-  height={400}
+  width="{800}"
+  height="{400}"
   priority
 />
+```
 
 ## Interactive Section
 
-{/* JSX comments work here */}
-<div className="bg-blue-100 p-4 rounded">
-  This is JSX with **markdown** inside!
+```jsx
+{
+  /_ JSX comments work here _/;
+}
 
-  - List item 1
-  - List item 2
-</div>
+<div className="bg-blue-100 p-4 rounded">
+  This is JSX with **markdown** inside! - List item 1 - List item 2
+</div>;
+```
 
 export default ({ children }) => (
+
   <div className="prose">{children}</div>
 )
-````
+```
 
 ### 🎨 Gatsby
 
-````markdown
+```
 ---
 title: "Gatsby Blog Post"
 date: "2025-05-31"
 description: "This is a sample blog post"
 tags: ["gatsby", "react", "graphql"]
 ---
+```
 
 # Gatsby Markdown Features
 
 Gatsby supports standard markdown plus GraphQL queries.
 
+```
 <!-- Gatsby images -->
 
 ![Alt text](./images/local-image.jpg)
@@ -1991,6 +1941,7 @@ Gatsby supports standard markdown plus GraphQL queries.
 <!-- Gatsby links -->
 
 [Internal link](/other-page/)
+```
 
 ## Code Highlighting
 
@@ -2003,30 +1954,33 @@ function highlightedFunction() {
   console.log("Line 5 highlighted"); // highlighted
 }
 ```
-````
-
-````
 
 ### 🔥 Nuxt Content
-```markdown
+
 ---
-title: "Nuxt Content Example"
+
+```title: "Nuxt Content Example"
 description: "Example of Nuxt Content features"
 tags: [nuxt, vue, markdown]
+```
+
 ---
 
 # Nuxt Content Features
 
 Regular markdown content with Vue components.
 
+```
 ::alert{type="info"}
 This is an info alert component.
 ::
 
 ::code-group
+```
+
 ```bash [npm]
 npm install @nuxt/content
-````
+```
 
 ```bash [yarn]
 yarn add @nuxt/content
@@ -2036,28 +1990,29 @@ yarn add @nuxt/content
 pnpm add @nuxt/content
 ```
 
-::
-
 <!-- Vue components in markdown -->
 <MyCustomComponent :data="frontmatter" />
 
 <!-- Built-in components -->
 
+```
+::
 ::list{type="success"}
 
 - Item 1
 - Item 2
 - Item 3
   ::
-
-````
+```
 
 ### 🦆 Docusaurus
-```markdown
+
 ---
+
 id: docusaurus-example
 title: Docusaurus Features
 sidebar_label: Features
+
 ---
 
 import Tabs from '@theme/Tabs';
@@ -2067,11 +2022,11 @@ import TabItem from '@theme/TabItem';
 
 ## Admonitions
 
-:::note
+::: note
 This is a note admonition.
 :::
 
-:::tip Pro tip
+::: tip Pro tip
 This is a tip with a custom title.
 :::
 
@@ -2087,19 +2042,19 @@ This is a dangerous admonition.
 
 <Tabs>
   <TabItem value="js" label="JavaScript">
-    ```js
+
     console.log("Hello from JavaScript!");
-    ```
+
   </TabItem>
   <TabItem value="py" label="Python">
-    ```py
+
     print("Hello from Python!")
-    ```
+
   </TabItem>
   <TabItem value="java" label="Java">
-    ```java
-    System.out.println("Hello from Java!");
-    ```
+
+    print("Oke");
+
   </TabItem>
 </Tabs>
 
@@ -2109,17 +2064,16 @@ This is a dangerous admonition.
 function HelloWorld() {
   return <h1>Hello, World!</h1>;
 }
-````
-
-````
+```
 
 ---
 
 ## 20. Academic & Scientific {#academic--scientific}
 
 ### 🎓 Academic Citations
-```markdown
+
 <!-- Pandoc citations -->
+
 Menurut penelitian [@smith2023], Markdown efektif untuk dokumentasi.
 
 Beberapa studi [@jones2022; @brown2023; @wilson2024] mendukung hal ini.
@@ -2129,19 +2083,19 @@ Beberapa studi [@jones2022; @brown2023; @wilson2024] mendukung hal ini.
 Seperti dijelaskan dalam [-@garcia2023], implementasi bervariasi.
 
 <!-- Citation dengan prefix/suffix -->
+
 [Lihat @johnson2023, pp. 10-15; juga @davis2023, ch. 3]
 
 <!-- Suppress author -->
+
 [@lee2023] vs [-@lee2023]
 
 ## References
 
 <!-- Bibliography akan di-generate otomatis -->
-````
 
 ### 📊 Data Visualization untuk Akademik
 
-```markdown
 <!-- Penelitian data dalam tabel -->
 
 | Variabel | Mean | SD   | Min | Max | n   |
@@ -2169,11 +2123,9 @@ Where:
 - $\beta_1$ = coefficient for study hours
 - $\beta_2$ = coefficient for age
 - $\epsilon$ = error term
-```
 
 ### 🔬 Scientific Notation & Formulas
 
-```markdown
 <!-- Chemistry -->
 
 $\ce{2H2 + O2 -> 2H2O}$
@@ -2202,29 +2154,30 @@ _p_ < .05, _p_ < .01, _p_ < .001
 Temperature: 25°C ± 2°C
 Mass: 1.25 × 10³ kg
 Concentration: 5.0 mol·L⁻¹
-```
 
 ### 📝 Research Paper Structure
 
-````markdown
 ---
+
 title: "Impact of Markdown on Academic Writing Efficiency"
 author:
-  - name: "Dr. Jane Smith"
-    affiliation: "University of Technology"
-    email: "jane.smith@university.edu"
-  - name: "Prof. John Doe"
-    affiliation: "Research Institute"
-    email: "john.doe@institute.org"
-date: "May 31, 2025"
-abstract: |
+
+- name: "Dr. Jane Smith"
+  affiliation: "University of Technology"
+  email: "jane.smith@university.edu"
+- name: "Prof. John Doe"
+  affiliation: "Research Institute"
+  email: "john.doe@institute.org"
+  date: "May 31, 2025"
+  abstract: |
   This study investigates the impact of Markdown formatting on
   academic writing efficiency. Using a randomized controlled trial
   with 200 participants, we found that Markdown users completed
   writing tasks 23% faster than traditional word processor users
-  (*p* < .001).
-keywords: [markdown, academic writing, efficiency, productivity]
-bibliography: references.bib
+  (_p_ < .001).
+  keywords: [markdown, academic writing, efficiency, productivity]
+  bibliography: references.bib
+
 ---
 
 # Introduction
@@ -2261,8 +2214,9 @@ Participants were randomly assigned to either:
 ```r
 # Statistical analysis
 t.test(speed ~ condition, data = results)
+
+
 ```
-````
 
 Table 2 shows that Markdown users completed tasks significantly
 faster (_t_(198) = 4.32, _p_ < .001, Cohen's _d_ = 0.61).
@@ -2296,8 +2250,6 @@ particularly for researchers comfortable with plain-text editing.
 
 <!-- Auto-generated bibliography -->
 
-````
-
 ---
 
 # BAGIAN V: EXPERT LEVEL
@@ -2305,35 +2257,49 @@ particularly for researchers comfortable with plain-text editing.
 ## 21. Custom Rendering {#custom-rendering}
 
 ### 🎨 Custom CSS Classes
-```markdown
-<!-- kramdown attribute syntax -->
-{:.custom-class}
-This paragraph has a custom CSS class.
 
-{:.highlight .large-text #special-id}
+<!-- kramdown attribute syntax -->
+
+```css
+ {
+  :.custom-class ;
+}
+This paragraph has a custom CSS class. {
+  :.highlight.large-text #special-id ;
+  .large-text;
+}
+#special-id
 This has multiple classes and an ID.
 
 <!-- Pandoc fenced divs -->
-::: {.warning .bordered}
-This is a warning box with custom styling.
+
+:::;
+this is a warning box with custom styling.
 :::
 
-::: {#special-section .container}
+::: {
+  #special-section .container;
+}
+```
+
 # Section with Custom Container
 
 Content inside custom div.
+
+```div
 :::
 
 <!-- Span-level attributes -->
+
 [Important text]{.highlight}
 [Button text]{.btn .btn-primary}
-````
+```
 
 ### 🔧 Preprocessor Macros
 
-````markdown
 <!-- Hugo shortcodes -->
 
+```hugo
 {{< figure src="image.jpg" title="Figure caption" >}}
 {{< youtube id="dQw4w9WgXcQ" >}}
 {{< tweet 1234567890 >}}
@@ -2356,26 +2322,22 @@ This is a custom alert shortcode.
 
 {{< tabs >}}
 {{< tab name="JavaScript" >}}
+```
 
 ```js
 console.log("Hello!");
-```
-````
-
 {{< /tab >}}
 {{< tab name="Python" >}}
+```
 
 ```python
 print("Hello!")
-```
-
 {{< /tab >}}
 {{< /tabs >}}
-
-````
+```
 
 ### 📱 Responsive Design Integration
-```markdown
+
 <!-- Responsive images dengan HTML -->
 <picture>
   <source media="(max-width: 768px)" srcset="image-mobile.jpg">
@@ -2388,12 +2350,14 @@ print("Hello!")
   <div class="grid-item">
 
 ## Column 1 Content
+
 Regular **markdown** content here.
 
   </div>
   <div class="grid-item">
 
 ## Column 2 Content
+
 More markdown content.
 
   </div>
@@ -2412,28 +2376,28 @@ More markdown content.
   }
 }
 </style>
-````
 
 ### 🎯 Advanced Custom Elements
 
-```html
+## Install This App Add this documentation to your home screen for offline
+
+access.
+
 <!-- Web Components -->
+<!-- Progressive Web App features -->
 <custom-card title="Card Title" type="info">
   **Markdown content** inside custom element. - List item 1 - List item 2
 </custom-card>
-
-<!-- Progressive Web App features -->
 <install-prompt>
-  ## Install This App Add this documentation to your home screen for offline
-  access.
 </install-prompt>
+<accessible-table>
+
+| Header 1 | Header 2 | Header 3 | |----------|----------|----------| | Data 1
+| Data 2 | Data 3 |
+
+</accessible-table>
 
 <!-- Accessibility enhancements -->
-<accessible-table>
-  | Header 1 | Header 2 | Header 3 | |----------|----------|----------| | Data 1
-  | Data 2 | Data 3 |
-</accessible-table>
-```
 
 ---
 
@@ -2468,32 +2432,28 @@ More markdown content.
 
 ### 🔄 Code Splitting & Lazy Loading
 
-````markdown
 <!-- Lazy loaded components -->
+
+```html
 <lazy-component>
-
-```javascript
-// Heavy code block yang di-lazy load
-function complexCalculation() {
-  // Expensive operations here
-  return result;
-}
-````
-
+  // Heavy code block yang di-lazy load function complexCalculation() { //
+  Expensive operations here return result; }
 </lazy-component>
+```
 
 <!-- Deferred content -->
 <details>
   <summary>Load Heavy Content</summary>
 
   <!-- Heavy content hanya dimuat saat dibuka -->
-  ```python
-  import pandas as pd
-  import numpy as np
 
-  # Large dataset processing
-  df = pd.read_csv('large_dataset.csv')
-  ```
+```python
+import pandas as pd
+import numpy as np
+
+# Large dataset processing
+df = pd.read_csv('large_dataset.csv')
+```
 
 </details>
 
@@ -2517,24 +2477,27 @@ function complexCalculation() {
 
 ### 🎯 SEO Optimization
 
-```markdown
 ---
+
+```
 title: "Optimized Page Title | Site Name"
 description: "Compelling meta description under 160 characters that includes target keywords."
 keywords: ["keyword1", "keyword2", "keyword3"]
 canonical: "https://example.com/canonical-url"
 og:
-  title: "Social Media Title"
-  description: "Social media description"
-  image: "https://example.com/og-image.jpg"
-  type: "article"
+title: "Social Media Title"
+description: "Social media description"
+image: "https://example.com/og-image.jpg"
+type: "article"
 twitter:
-  card: "summary_large_image"
-  creator: "@username"
+card: "summary_large_image"
+creator: "@username"
 schema:
-  type: "Article"
-  author: "Author Name"
-  datePublished: "2025-05-31"
+type: "Article"
+author: "Author Name"
+datePublished: "2025-05-31"
+```
+
 ---
 
 # SEO-Optimized Content Structure
@@ -2569,7 +2532,6 @@ Content dengan **target keywords** yang natural.
   "datePublished": "2025-05-31"
 }
 </script>
-```
 
 ---
 
@@ -2605,6 +2567,8 @@ Content dengan **target keywords** yang natural.
 <img src="legitimate-image.jpg" alt="Safe image">
 <a href="
 ```
-`````
+
+```
 
 <!-- <h3 id="dua"></h3> -->
+```
