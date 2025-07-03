@@ -1,3 +1,5 @@
+> flash
+
 <details>
   <summary>📃 Daftar Isi</summary>
 

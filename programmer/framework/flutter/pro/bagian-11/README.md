@@ -1,3 +1,5 @@
+> pro
+
 <details>
   <summary>📃 Daftar Isi</summary>
 

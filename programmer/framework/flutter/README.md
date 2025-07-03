@@ -91,7 +91,9 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## [FASE 2: Widget System & UI Foundation][3]
+## FASE 2: Widget System & UI Foundation
+
+[◀️][03] [▶️][3]
 
 ### 2. Widget Architecture Deep Dive
 

@@ -1,7 +1,9 @@
+> flash
+
 # **[FASE 1: Foundation & Core Concepts][0]**
 
 <details>
-  <summary>📃 Materi</summary>
+  <summary>📃 Struktur Daftar Materi</summary>
 
 ### **Pengenalan Flutter Ecosystem**
 
