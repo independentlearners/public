@@ -256,7 +256,8 @@ void main() {
 
 ### 📘 Catatan Akhir
 
-> **const** ➜ dievaluasi saat _compile-time_, sangat cepat, hemat memori
-> **final** ➜ satu kali assign saat _runtime_, cocok untuk nilai dinamis yang tidak berubah
-> **Jika bisa `const`, selalu gunakan `const` terlebih dahulu.**
-> Dengan memahami detail compile-time vs runtime, Anda akan menulis kode Dart yang **lebih cepat**, **lebih aman**, dan **mudah dipelihara**. Langkah selanjutnya: cobalah menulis modul kecil dengan perpaduan `const` dan `final`, lalu amati sumber binary AOT untuk melihat optimasinya—sesuatu yang sangat memuaskan bagi coder sejati! 🚀
+- **const** ➜ dievaluasi saat _compile-time_, sangat cepat, hemat memori
+- **final** ➜ satu kali assign saat _runtime_, cocok untuk nilai dinamis yang tidak berubah
+- **Jika bisa `const`, selalu gunakan `const` terlebih dahulu.**
+
+Dengan memahami detail compile-time vs runtime, memungkinkan menulis kode Dart yang **lebih cepat**, **lebih aman**, dan **mudah dipelihara**. Langkah selanjutnya: cobalah menulis modul kecil dengan perpaduan `const` dan `final`, lalu amati sumber binary AOT untuk melihat optimasinya 🚀
