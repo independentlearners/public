@@ -1827,8 +1827,9 @@ print("Hello from Python!")
 > 📝 This is a note callout
 >
 > Use it for additional information
+```
 
-<!-- Notion toggles -->
+Notion toggles
 
 > **Click to expand**
 >
@@ -1837,14 +1838,13 @@ print("Hello from Python!")
 > - List item 1
 > - List item 2
 
-<!-- Notion databases -->
+Notion databases
 
 | Task                |   Status    | Priority |  Due Date  |
 | ------------------- | :---------: | :------: | :--------: |
 | Design mockups      | In Progress |   High   | 2025-06-01 |
 | Write documentation | Not Started |  Medium  | 2025-06-05 |
 | Code review         |  Completed  |   High   | 2025-05-30 |
-```
 
 ### 🌐 Confluence
 

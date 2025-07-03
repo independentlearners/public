@@ -421,7 +421,7 @@ Ini adalah pendalaman untuk **FASE 1: Foundation & Core Concepts**. Setiap bagia
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../../README.md
 [1]: ../
 [2]: ../
 [3]: ../

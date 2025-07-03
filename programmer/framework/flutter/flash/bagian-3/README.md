@@ -1051,7 +1051,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 
 // Ini akan menghasilkan file `counter.g.dart` setelah build_runner dijalankan
-part '../pro/bagian-3/counter.g.dart';
+part '../../pro/bagian-3/counter.g.dart';
 
 // 1. Buat kelas Store.
 // Ini adalah kelas abstrak yang akan diimplementasikan oleh code generator.

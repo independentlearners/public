@@ -195,7 +195,7 @@ Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **[Flutter Archite
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../../README.md
 [1]: ../bagian-1/ui_toolkit_multi-platform/README.md
 [2]: ../bagian-1/everithing_widget_philosophy/README.md
 [3]: ../bagian-1/reactif_programming_paradigm/README.md
