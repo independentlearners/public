@@ -2,6 +2,45 @@
 
 _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hingga Enterprise Architecture_
 
+<details>
+  <summary>📃 Struktur Daftar Isi</summary>
+
+---
+
+- [Fase 1: Foundation & Core Concepts](#fase-1-foundation--core-concepts)
+
+- [Fase 2: Widget System & UI Foundation](#fase-2-widget-system--ui-foundation)
+
+- [Fase 3: State Management & Data Flow](#fase-3-state-management--data-flow)
+
+- [Fase 4: Navigation & Routing](#fase-4-navigation--routing)
+
+- [Fase 5: Forms & Input Handling](#fase-5-forms--input-handling)
+
+- [Fase 6: Networking & Data Management](#fase-6-networking--data-management)
+
+- [Fase 7: Styling, Theming & Responsive](#fase-7-styling-theming--responsive-design)
+
+- [Fase 8: Platform Integration & Native](#fase-8-platform-integration--native-features)
+
+- [Fase 9: Testing & Quality Assurance](#fase-9-testing--quality-assurance)
+
+- [Fase 10: Performance & Optimization](#fase-10-performance--optimization)
+
+- [Fase 11: Deployment & Distribution](#fase-11-deployment--distribution)
+
+- [Fase 12: Advanced Architectural Patterns](#fase-12-advanced-architectural-patterns)
+
+- [Fase 13: Advanced Flutter Concepts](#fase-13-advanced-flutter-concepts)
+
+- [Fase 14: Specialized Flutter Applications](#fase-14-specialized-flutter-applications)
+
+- [Fase 15: Expert Level & Specialization](#fase-15-expert-level--specialization)
+
+</details>
+
+---
+
 ## [Overview Initial Summary Curriculum][overview]
 
 ### Struktur Pembelajaran
@@ -150,7 +189,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
   - [Stack and Positioned Advanced](https://flutter.dev/docs/cookbook/animation/physics-simulation)
   - [CustomScrollView & Slivers](https://flutter.dev/docs/development/ui/advanced/slivers)
 
-### 3\. UI Components & Material Design
+### 3. UI Components & Material Design
 
 #### 3.1 Material Design Implementation
 
@@ -214,7 +253,9 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## [FASE 3: State Management & Data Flow][4]
+## FASE 3: State Management & Data Flow
+
+[◀️][04] [▶️][4]
 
 ### 4. State Management Architecture
 
@@ -329,7 +370,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
   - MobX code generation
   - [MobX for Dart](https://pub.dev/packages/mobx)
 
-### 5\. Reactive Programming & Streams
+### 5. Reactive Programming & Streams
 
 #### 5.1 Streams & Async Programming
 
@@ -366,9 +407,11 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## [FASE 4: Navigation & Routing][5]
+## FASE 4: Navigation & Routing
 
-### 6\. Navigation Architecture
+[◀️][05] [▶️][5]
+
+### 6. Navigation Architecture
 
 #### 6.1 Basic Navigation
 
@@ -439,7 +482,9 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 5: Forms & Input Handling
 
-### 7\. Form Architecture & Validation
+[◀️][06] [▶️][6]
+
+### 7. Form Architecture & Validation
 
 #### 7.1 Form Widgets & Validation
 
@@ -511,7 +556,9 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 6: Networking & Data Management
 
-### 8\. HTTP & API Integration
+[◀️][07] [▶️][7]
+
+### 8. HTTP & API Integration
 
 #### 8.1 HTTP Client Implementation
 
@@ -569,7 +616,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
   - Equality dan hashCode generation
   - [Freezed Package](https://pub.dev/packages/freezed)
 
-### 9\. Local Data Storage
+### 9. Local Data Storage
 
 #### 9.1 Key-Value Storage
 
@@ -658,7 +705,9 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 7: Styling, Theming & Responsive Design
 
-### 10\. Advanced Theming System
+[◀️][08] [▶️][8]
+
+### 10. Advanced Theming System
 
 #### 10.1 Theme Architecture
 
@@ -742,7 +791,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
   - Multi-window support
   - Window size classes
 
-### 11\. Animations & Visual Effects
+### 11. Animations & Visual Effects
 
 #### 11.1 Basic Animation System
 
@@ -810,7 +859,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
   - [Rive Animations](https://pub.dev/packages/rive)
   - [Rive Integration Guide](https://rive.app/community/doc/flutter-runtime-overview/docvZBsHzGFh)
 
-### 12\. Custom Painting & Graphics
+### 12. Custom Painting & Graphics
 
 #### 12.1 Custom Painter
 
@@ -845,7 +894,9 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 8: Platform Integration & Native Features
 
-### 13\. Platform Channels & Native Integration
+[◀️][09] [▶️][9]
+
+### 13. Platform Channels & Native Integration
 
 #### 13.1 Method Channels
 
@@ -887,7 +938,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
   - Desktop platform support
   - [Federated Plugins](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#federated-plugins)
 
-### 14\. Device Features Integration
+### 14. Device Features Integration
 
 #### 14.1 Camera & Media
 
@@ -960,7 +1011,9 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 9: Testing & Quality Assurance
 
-### 15\. Testing Architecture
+[◀️][010] [▶️][10]
+
+### 15. Testing Architecture
 
 #### 15.1 Unit Testing
 
@@ -1034,6 +1087,8 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 10: Performance & Optimization
 
+[◀️][011] [▶️][11]
+
 ### 16. Performance Monitoring & Optimization
 
 #### 16.1 Performance Analysis
@@ -1104,6 +1159,8 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 ---
 
 ## FASE 11: Deployment & Distribution
+
+[◀️][012] [▶️][12]
 
 ### 17. App Store Deployment
 
@@ -1205,6 +1262,8 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 12: Advanced Architectural Patterns
 
+[◀️][013] [▶️][13]
+
 ### 19. Enterprise Architecture Patterns
 
 #### 19.1 Clean Architecture
@@ -1272,6 +1331,8 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 ---
 
 ## FASE 13: Advanced Flutter Concepts
+
+[◀️][014] [▶️][14]
 
 ### 20. Custom Rendering & Low-Level APIs
 
@@ -1360,6 +1421,8 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ## FASE 14: Specialized Flutter Applications
 
+[◀️][015] [▶️][15]
+
 ### 22. Game Development
 
 #### 22.1 Flame Game Engine
@@ -1432,6 +1495,8 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 ---
 
 ## FASE 15: Expert Level & Specialization
+
+[◀️][016] [▶️][16]
 
 ### 24. Framework Contribution
 
