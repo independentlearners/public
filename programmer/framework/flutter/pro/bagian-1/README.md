@@ -33,7 +33,7 @@ Sub-bagian ini menjawab pertanyaan paling mendasar: "Apa itu Flutter dan apa yan
 **Konsep Kunci & Filosofi Mendalam:**
 
 - **Flutter sebagai UI Toolkit Multi-platform:** Flutter bukan _framework_ dalam artian tradisional yang mendikte seluruh arsitektur aplikasi Anda. Ia adalah sebuah _toolkit_ (perangkat) yang sangat fleksibel untuk membangun antarmuka pengguna (UI) yang indah dan cepat. Fokus utamanya adalah pada lapisan presentasi (UI). Kata "multi-platform" berarti satu basis kode (_codebase_) yang sama dapat dikompilasi menjadi aplikasi untuk Android, iOS, Web, Desktop (Windows, macOS, Linux), dan bahkan _embedded systems_.
-- **"Everything is a Widget" Philosophy:** Ini adalah filosofi inti Flutter. Berbeda dari platform lain di mana ada pemisahan antara layout (XML), styling (CSS), dan logika (Java/Kotlin), di Flutter, semua itu adalah _widget_. Teks adalah widget, tombol adalah widget, _padding_ (jarak internal) adalah widget, bahkan gestur seperti _tap_ atau _swipe_ dapat dikelola melalui widget. Ini menyederhanakan proses pengembangan secara radikal. Anda tidak belajar beberapa bahasa atau sintaks yang berbeda, Anda hanya perlu memahami cara menyusun (compose) widget.
+- **"Everything is a Widget" Philosophy:** Ini adalah filosofi inti Flutter. Berbeda dari platform lain di mana ada pemisahan antara layout (XML), styling (CSS), dan logika (Java/Kotlin), di Flutter, semua itu adalah _widget_. Teks adalah widget, tombol adalah widget, _padding_ (jarak internal) adalah widget, bahkan gestur seperti _tap_ atau _swipe_ dapat dikelola melalui widget. Ini menyederhanakan proses pengembangan secara radikal. Anda tidak belajar beberapa bahasa atau sintaks yang berbeda, sebaliknya Anda hanya perlu cukup memahami cara menyusun (compose) akan komposisi widget itu sendiri.
 - **Reactive Programming Paradigm:** UI Flutter bersifat reaktif. Artinya, UI secara otomatis "bereaksi" terhadap perubahan _state_ (data). Anda tidak perlu secara manual mengubah UI (misalnya, `textView.setText("New Text")`). Sebaliknya, Anda mengubah _state_, dan Flutter akan secara efisien membangun ulang bagian UI yang diperlukan untuk merefleksikan _state_ baru tersebut. Ini adalah pergeseran paradigma dari _imperative_ (memerintahkan UI untuk berubah) ke _declarative_ (mendeklarasikan bagaimana UI seharusnya terlihat untuk _state_ tertentu).
 - **Skia Rendering Engine:** Flutter tidak menggunakan komponen UI bawaan (OEM widgets) dari platform (Android/iOS). Sebaliknya, ia membawa _rendering engine_-nya sendiri, yaitu Skia, sebuah pustaka grafis 2D _open-source_ yang juga digunakan oleh Google Chrome, Android, dan banyak produk lainnya. Flutter mengontrol setiap piksel di layar. Inilah sebabnya mengapa aplikasi Flutter terlihat dan terasa konsisten di semua platform dan versi OS, serta memungkinkan animasi yang sangat mulus (target 60/120 fps).
 
@@ -95,8 +95,57 @@ class MyApp extends StatelessWidget {
 4.  Pengenalan paradigma _Declarative/Reactive UI_.
 5.  Peran Skia Rendering Engine.
 
-**Rekomendasi Visualisasi:**
-Visualisasi perbandingan arsitektur antara Flutter (dengan Skia), React Native (dengan Bridge), dan Native (dengan OEM Widgets) akan sangat membantu untuk memahami keunikan Flutter.
+**Visualisasi:**
+Visualisasi perbandingan arsitektur antara Flutter (dengan Skia), React Native (dengan Bridge), dan Native (dengan OEM Widgets) yang membantu untuk memahami keunikan Flutter.
+
+```
+┌─────────────────────────────────────────────┐
+│           ARCHITECTURE  COMPARISON          │
+├───────────────────────┬─────────────────────┤
+│      Flutter          │ React Native        │
+├───────────────────────┼─────────────────────┤
+│ Dart Code             │ JavaScript/JSX      │
+│ ┌───────────────────┐ │ ┌───────────────┐   │
+│ │ Flutter Engine    │ │ │ RN Bridge     │   │
+│ │ (Skia + Dart VM)  │ │ │               │   │
+│ └───┬───────────────┘ │ └───┬───────────┘   │
+│     │ Draw Widgets    │     │ JS ⇌ Native   │
+│     ▼                 │     ▼               │
+│ ┌───────────────────┐ │ ┌───────────────┐   │
+│ │ Skia Rendering    │ │ │ Native Views  │   │
+│ │ Engine            │ │ │               │   │
+│ └───────────────────┘ │ └───────────────┘   │
+└───────────────────────┴─────────────────────┘
+┌───────────────┐
+│ Native        │
+├───────────────┤
+│ Kotlin/Swift/ │
+│ Java/Obj‑C    │
+│ (platform SDK)│
+│               │
+├───────────────┤
+│ OEM Widgets   │
+│ (Material,    │
+│ Cupertino)    │
+└───────────────┘
+```
+
+- **Flutter:**
+
+  - **Dart Code** → langsung ke **Flutter Engine** (termasuk **Skia** dan AOT‑compiled Dart runtime) → menggambar semua widget sendiri.
+
+- **React Native:**
+
+  - **JS/JSX** di­-execute dalam JS runtime → pakai **bridge** untuk memanggil _native views_ platform.
+  - Kelemahan bridge: overhead komunikasi, potensi lag saat data besar.
+
+- **Native:**
+
+  - Kode platform (_Kotlin/Swift_) memanggil **OEM Widget** bawaan (Material/Cupertino).
+
+Diagram ini menekankan bagaimana Flutter **memotong jalur “bridge”** dengan menggambar sendiri via Skia, memberikan performa dan konsistensi UI tingkat tinggi.
+
+---
 
 **Potensi Kesalahan Umum & Solusi:**
 
