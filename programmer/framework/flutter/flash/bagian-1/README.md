@@ -178,9 +178,7 @@ Bagian ini adalah fondasi untuk seluruh kurikulum. Pemahaman "Everything is a Wi
 
 ---
 
-Materi "Apa itu Flutter dan Philosophy" telah dibahas secara mendalam. Ini adalah fondasi penting yang akan membentuk pemahaman Anda di sepanjang kurikulum. Ingatlah, dengan memahami mengapa _Flutter_ dirancang sedemikian rupa, Anda akan lebih mudah menguasai bagaimana menggunakannya. Tetap semangat dalam eksplorasi ini\!
-
-Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **[Flutter Architecture Deep Dive]**, atau ada aspek dari "Apa itu Flutter dan Philosophy" yang ingin Anda fokuskan lebih dalam lagi? Atau, jika sudah tuntas, saya siap menerima input baru.
+Materi "Apa itu Flutter dan Philosophy" telah dibahas secara mendalam. Ini adalah fondasi penting yang akan membentuk pemahaman Anda di sepanjang kurikulum. Ingatlah, dengan memahami mengapa _Flutter_ dirancang sedemikian rupa, Anda akan lebih mudah menguasai bagaimana menggunakannya. Tetap semangat dalam eksplorasi ini!
 
 ---
 
@@ -193,7 +191,7 @@ Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **[Flutter Archite
 [kurikulum]: ../../../domain-spesifik/mobile/google/dart/README.md
 [domain]: ../../../../README.md
 [selanjutnya]: ../bagian-2/README.md
-[sebelumnya]: ../overview/README.md
+[sebelumnya]: ../../overview/README.md
 
 <!----------------------------------------------------->
 

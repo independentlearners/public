@@ -573,11 +573,9 @@ Penggunaan _Git_ akan menjadi praktik standar di setiap proyek _hands-on_ sepanj
 Anda telah menerima pendalaman tentang memahami "Overview Initial Summary Curriculum" dan "Prasyarat" pilihan IDE untuk _Flutter_ dan strategi manajemen proyek dalam _Project-Based Learning_ serta perbedaan _Hot Reload_ dan _Hot Restart_, juga tentang penggunaan _Git_ dalam konteks _Project-Based Learning_. Pada bagian berikutnya kita akan mulai memasuki **FASE 1: Foundation & Core Concepts**
 
 > - **[Ke Atas](#)**
-> - **[Selanjutnya][selanjutnya]**
 > - **[Domain Spesifik][domain]**
 > - **[Kurikulum Dart][kurikulum]**
 
 [kurikulum]: ../../../domain-spesifik/mobile/google/dart/README.md
-[domain]: ../../../../README.md
-[selanjutnya]: ../bagian-1/README.md
+[domain]: ../../../domain-spesifik/README.md
 [0]: ../README.md
