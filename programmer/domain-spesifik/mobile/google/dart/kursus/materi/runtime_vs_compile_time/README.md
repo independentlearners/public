@@ -129,8 +129,6 @@ void main() {
 3. **Perhatikan canonicalization**: `const` membantu menghemat memori dan meningkatkan performa.
 4. **Hindari kesalahan**: Jangan paksa `const` pada ekspresi yang memerlukan runtime.
 
-Tentu! Di bawah ini saya buatkan **diagram lengkap** berdasarkan penjelasan sebelumnya. Diagram ini terbagi menjadi beberapa bagian agar tetap terstruktur, mudah dibaca, dan mendalam, dengan gaya ASCII flowchart dan tabel blok yang mencerminkan hubungan antar konsep:
-
 ---
 
 ### ⚙️ **Alur Konsep Nilai di Dart (Compile-time vs Runtime)**
@@ -149,12 +147,12 @@ Tentu! Di bawah ini saya buatkan **diagram lengkap** berdasarkan penjelasan sebe
        │       │
     YES│       │NO
        ▼       ▼
-┌────────────┐ ┌─────────────────────┐
+┌────────────┐ ┌──────────────────────┐
 │   const    │ │ final (Runtime Const)│
 │ (Compile-T)│ │  ──────────────────  │
 └────┬───────┘ │ Dihitung saat program│
      │         │ berjalan             │
-     ▼         └─────────────────────┘
+     ▼         └──────────────────────┘
 ┌──────────────┐
 │ Compiler     │
 │ Evaluasi &   │
@@ -198,7 +196,7 @@ Tentu! Di bawah ini saya buatkan **diagram lengkap** berdasarkan penjelasan sebe
                 │   inisialisasi       │
                 └─────────┬────────────┘
                           │
-         ┌────────────────┼─────────────────┐
+         ┌────────────────┼───────────────────┐
          ▼                                    ▼
 ┌──────────────────────┐       ┌──────────────────────────────┐
 │ Semua literal, const │       │ Mengandung data dari runtime │
@@ -214,14 +212,14 @@ Tentu! Di bawah ini saya buatkan **diagram lengkap** berdasarkan penjelasan sebe
 ### 🧪 **Contoh Evaluasi: Mana yang Valid?**
 
 ```
-╔═════════════════════════════════════════════════╦═════════════╗
-║ Ekspresi                                        ║  Validasi   ║
-╠═════════════════════════════════════════════════╬═════════════╣
-║ const int x = 10 * 2;                           ║ ✅ Compile-T ║
-║ final String id = 'USR-${DateTime.now()}';      ║ ✅ Runtime   ║
-║ const now = DateTime.now();                     ║ ❌ Error     ║
-║ final pi = 3.14;                                ║ ✅ Runtime   ║
-╚═════════════════════════════════════════════════╩═════════════╝
+╔═════════════════════════════════════════════════╦══════════════╗
+║ Ekspresi                                        ║  Validasi    ║
+╠═════════════════════════════════════════════════╬══════════════╣
+║ const int x = 10 * 2;                           ║  ✓ Compile-T ║
+║ final String id = 'USR-${DateTime.now()}';      ║  ✓ Runtime   ║
+║ const now = DateTime.now();                     ║  × Error     ║
+║ final pi = 3.14;                                ║  ✓ Runtime   ║
+╚═════════════════════════════════════════════════╩══════════════╝
 ```
 
 ---
