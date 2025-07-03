@@ -1,4 +1,7 @@
-**Pendahuluan**
+# Runtime VS Compile-Time
+
+### **Pendahuluan:**
+
 Dalam Dart (dan banyak bahasa pemrograman lain), mengerti perbedaan _nilai yang dievaluasi_ di **compile-time** versus **runtime** sangat krusial untuk menulis kode yang aman, efisien, dan mudah dipelihara. Di bawah ini kita akan membahas konsep-konsep kunci, istilah-istilah penting, serta contohnya, agar Anda mampu memahami secara mendalam bagaimana compiler Dart bekerja dengan nilai-nilai yang Anda tulis.
 
 ---
@@ -261,3 +264,5 @@ void main() {
 - **Jika bisa `const`, selalu gunakan `const` terlebih dahulu.**
 
 Dengan memahami detail compile-time vs runtime, memungkinkan menulis kode Dart yang **lebih cepat**, **lebih aman**, dan **mudah dipelihara**. Langkah selanjutnya: cobalah menulis modul kecil dengan perpaduan `const` dan `final`, lalu amati sumber binary AOT untuk melihat optimasinya 🚀
+
+**[Kembali](../modul-2/bagian-1/README.md)**
