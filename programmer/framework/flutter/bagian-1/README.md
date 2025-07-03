@@ -13,8 +13,8 @@
 - [Flutter sebagai UI toolkit multi-platform](#satu)
 - ["Everything is a Widget" philosophy](#dua)
 - [Reactive programming paradigm](#tiga)
-- [Skia rendering engine](#)
-- [Dart language integration](#)
+- [Skia rendering engine](#empat)
+- [Dart language integration](#lima)
 
   #### Sumber referensi
 
@@ -82,13 +82,14 @@ Konsep kunci di sini adalah **efisiensi pengembangan lintas _platform_** dan **p
 
 1.  **Flutter sebagai UI Toolkit Multi-platform:**
 
-    - Visualisasi: Bayangkan Anda memiliki satu cetak biru arsitektur (kode _Flutter_) yang dapat digunakan untuk membangun rumah dengan desain identik di berbagai lokasi (Android, iOS, Web, Desktop), tanpa perlu menggambar ulang cetak biru untuk setiap lokasi.
-    - Contoh Kode (Konseptual): Anda menulis satu kode untuk tombol, dan tombol itu terlihat dan berperilaku sama di Android dan iOS, bukan menggunakan dua implementasi terpisah (`Button` di Android dan `UIButton` di iOS).
+    - Visualisasi: Bayangkan Anda memiliki satu cetak biru arsitektur atau skema dasar dari sebuah arsitektur (kode _Flutter_) yang dapat digunakan untuk membangun rumah dengan desain identik di berbagai lokasi (Android, iOS, Web, Desktop), tanpa perlu menggambar ulang cetakan tersebut untuk setiap lokasi.
+    - Contoh Kode (Konseptual): Anda menulis satu kode untuk tombol, dan tombol itu terlihat dan berperilaku sama di Android dan iOS, bukan menggunakan dua implementasi terpisah (`Button` di Android dan `UIButton` di iOS). Artinya satu cetakan atau satu skema dasar yang lengkap dengan alat-alatnya untuk semua jenis lingkungan dengan lokasi yang berbeda-beda
 
 <h3 id="dua"></h3>
 
 2.  **"Everything is a Widget" philosophy:**
 
+    - Filosofi bahwa segala sesuatu adalah widget sedangkang widget dianggap sebagai objek. Jadi perlu dipahami bahwa semuanya di dalam dart dan flutter segalanya dianggap sebagai objek
     - Contoh Kode:
 
       ```dart
@@ -115,7 +116,7 @@ Konsep kunci di sini adalah **efisiensi pengembangan lintas _platform_** dan **p
       }
       ```
 
-    - Visualisasi: Anggaplah Anda membangun rumah dari balok Lego. Setiap bagian, dari dinding, pintu, jendela, hingga atap, adalah balok Lego (widget). Anda hanya perlu tahu cara menyatukan balok-balok ini.
+    - Visualisasi: Anggaplah Anda membangun rumah dari balok Lego 🧩. Setiap bagian, dari dinding, pintu, jendela, hingga atap, adalah balok Lego (widget). Anda hanya perlu tahu cara menyatukan balok-balok ini.
 
 <h3 id="tiga"></h3>
 
@@ -124,13 +125,19 @@ Konsep kunci di sini adalah **efisiensi pengembangan lintas _platform_** dan **p
     - Contoh Konseptual: Jika Anda memiliki _widget_ `Text` yang menampilkan jumlah _counter_. Ketika nilai _counter_ berubah (misalnya dari 0 menjadi 1), Anda tidak perlu secara manual mencari _widget_ `Text` itu dan memperbarui teksnya. Cukup ubah nilai _counter_ di _state_ Anda, dan _Flutter_ akan secara otomatis membangun ulang _widget_ \`Text\* tersebut dengan nilai baru.
     - Visualisasi: Anda adalah seorang sutradara drama. Anda tidak perlu secara personal menggerakkan setiap aktor. Anda hanya perlu memberi tahu mereka "jika karakter A marah, lakukan ini," dan mereka akan bereaksi (reaktif) sesuai dengan _state_ (kemarahan) karakter.
 
+<h3 id="empat"></h3>
+
 4.  **Skia Rendering Engine:**
 
     - Visualisasi: _Flutter_ seperti seorang seniman yang memiliki kanvas kosong dan kuasnya sendiri. Ia menggambar semua elemen UI (tombol, teks, ikon) dari awal di atas kanvas itu, bukan menggunakan elemen yang sudah digambar oleh sistem operasi Android atau iOS. Ini memastikan tampilannya konsisten dan dapat dikustomisasi sepenuhnya.
 
+<h3 id="lima"></h3>
+
 5.  **Dart Language Integration:**
 
     - Visualisasi: Dart adalah bahasa yang dioptimalkan khusus untuk _Flutter_, seperti mobil balap yang dirancang khusus untuk sirkuit tertentu. Ini memungkinkan _Flutter_ mencapai performa dan kecepatan pengembangan yang luar biasa.
+
+<h3 id="enam"></h3>
 
 **Terminologi Esensial:**
 
@@ -144,14 +151,6 @@ Konsep kunci di sini adalah **efisiensi pengembangan lintas _platform_** dan **p
 - **Skia Graphics Engine:** Perpustakaan grafis 2D _open-source_ yang digunakan oleh _Flutter_ untuk _rendering_ UI.
 - **Ahead-of-Time (AOT) Compilation:** Proses kompilasi kode program menjadi kode mesin sebelum eksekusi, menghasilkan aplikasi yang cepat dan berperforma tinggi.
 - **Just-in-Time (JIT) Compilation:** Proses kompilasi kode program saat runtime, berguna untuk siklus pengembangan yang cepat (misalnya _Hot Reload_).
-
-**Struktur Internal (Mini-DAFTAR ISI):**
-
-- Definisi dan Cakupan Flutter
-- Filosofi "Everything is a Widget"
-- Konsep Pemrograman Reaktif
-- Peran Skia Engine
-- Integrasi Bahasa Dart
 
 **Hubungan dengan Bagian Lain:**
 Bagian ini adalah fondasi untuk seluruh kurikulum. Pemahaman "Everything is a Widget" akan sangat vital di FASE 2: Widget System. Konsep reaktif akan menjadi dasar untuk FASE 3: State Management. Peran Dart akan diperdalam di sub-bagian "Dart Language Fundamentals". Tanpa memahami filosofi dasar ini, setiap langkah teknis selanjutnya mungkin terasa seperti menghafal tanpa pemahaman mendalam.
