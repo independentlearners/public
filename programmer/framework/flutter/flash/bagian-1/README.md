@@ -25,34 +25,16 @@
   - **[YouTube - Flutter in 100 Seconds](https://www.youtube.com "youtube.com")**
 
 - [Flutter Architecture Deep Dive](#flutter-architecture-deep-dive)
-- [Framework Layer (Material/Cupertino, Widgets, Rendering)](#)
-- [Engine Layer (Skia, Dart VM, Platform Channels)](#)
+- [Framework Layer (Lapisan Kerangka Kerja)](#framework-layer-lapisan-kerangka-kerja)
+- [Engine Layer (Lapisan Mesin)](#engine-layer-lapisan-mesin)
 - [Embedder Layer (Platform-specific runners)](#)
-- [Rendering pipeline explanation](#)
-- [Widget → Element → RenderObject tree](#)
+- [Rendering pipeline explanation](#rendering-pipeline-explanation)
 
   #### Sumber referensi
 
   - **[Flutter Architectural Overview](https://docs.flutter.dev/resources/architectural-overview "docs.flutter.dev")**
   - **[Flutter Rendering Pipeline](https://docs.flutter.dev/resources/architectural-overview%23the-rendering-pipeline "docs.flutter.dev")**
   - **[Flutter Engine Architecture](https://docs.flutter.dev/resources/architectural-overview%23the-engine "docs.flutter.dev")**
-
-- [Dart Language Fundamentals (Khusus untuk Flutter)](#)
-- [Variables dan Types (var, final, const, late)](#)
-- [Functions dan Methods](#)
-- [Classes dan Objects](#)
-- [Inheritance dan Interfaces](#)
-- [Mixins dan Extensions](#)
-- [Generics dan Collections](#)
-- [Null Safety comprehensive](#)
-- [Async/Await dan Futures](#)
-- [Streams dan Stream Controllers](#)
-
-  #### Sumber referensi
-
-  - **[Dart for Flutter Developers](https://docs.flutter.dev/data-and-backend/dart-docs "docs.flutter.dev")**
-  - **[Effective Dart](https://dart.dev/effective-dart "dart.dev")**
-  - **[Dart Null Safety Deep Dive](https://dart.dev/null-safety/understanding-null-safety "dart.dev")**
 
 </details>
 
@@ -187,27 +169,28 @@ Arsitektur _Flutter_ dirancang dengan filosofi **lapisan yang terpisah dan teror
 
 Berikut adalah tiga lapisan utama dalam arsitektur _Flutter_:
 
-1.  **Framework Layer (Lapisan Kerangka Kerja):**
+1. ### **Framework Layer (Lapisan Kerangka Kerja):**
 
-    - Ini adalah bagian yang paling sering Anda interaksikan sebagai pengembang _Flutter_. Seluruhnya ditulis dalam bahasa Dart.
-    - **Material/Cupertino:** Koleksi _widget_ yang mengimplementasikan pedoman desain _Material Design_ (untuk Android) dan _Cupertino_ (untuk iOS). Ini menyediakan komponen UI siap pakai seperti tombol, _text input_, navigasi, dll.
-    - **Widgets:** Lapisan inti yang berisi semua _widget_ yang Anda gunakan untuk membangun UI. Ada dua jenis utama: _StatelessWidget_ (untuk UI yang tidak berubah) dan _StatefulWidget_ (untuk UI yang dapat berubah). Lapisan ini mengelola _widget tree_.
-    - **Rendering:** Lapisan ini bertanggung jawab untuk mengubah _widget tree_ menjadi _render tree_ (RenderObject tree) yang kemudian dapat digambar ke layar. Ia menangani tata letak (_layout_), pengecatan (_painting_), dan _hit testing_.
+   - Ini adalah bagian yang paling sering Anda interaksikan sebagai pengembang _Flutter_. Seluruhnya ditulis dalam bahasa Dart.
+   - **Material/Cupertino:** Koleksi _widget_ yang mengimplementasikan pedoman desain _Material Design_ (untuk Android) dan _Cupertino_ (untuk iOS). Ini menyediakan komponen UI siap pakai seperti tombol, _text input_, navigasi, dll.
+   - **Widgets:** Lapisan inti yang berisi semua _widget_ yang Anda gunakan untuk membangun UI. Ada dua jenis utama: _StatelessWidget_ (untuk UI yang tidak berubah) dan _StatefulWidget_ (untuk UI yang dapat berubah). Lapisan ini mengelola _widget tree_.
+   - **Rendering:** Lapisan ini bertanggung jawab untuk mengubah _widget tree_ menjadi _render tree_ (RenderObject tree) yang kemudian dapat digambar ke layar. Ia menangani tata letak (_layout_), pengecatan (_painting_), dan _hit testing_.
 
-2.  **Engine Layer (Lapisan Mesin):**
+2. ### **Engine Layer (Lapisan Mesin):**
 
-    - Lapisan ini sebagian besar ditulis dalam C++ dan menyediakan API tingkat rendah yang diperlukan oleh _Flutter framework_.
-    - **Skia:** Seperti yang sudah dibahas, _Skia Graphics Engine_ digunakan untuk menggambar semua piksel UI. Ini memberikan konsistensi visual di seluruh _platform_ dan performa _rendering_ yang cepat.
-    - **Dart VM (Virtual Machine):** Lingkungan runtime untuk kode Dart Anda. Dart VM menangani eksekusi kode Anda, termasuk _Hot Reload_ selama pengembangan (melalui JIT compilation) dan eksekusi AOT-compiled code di produksi.
-    - **Platform Channels:** Mekanisme komunikasi antara kode Dart di _framework_ dan kode _native_ di lapisan _Embedder_. Ini memungkinkan aplikasi _Flutter_ untuk mengakses fitur spesifik _platform_ seperti GPS, kamera, sensor, dll.
+   - Lapisan ini sebagian besar ditulis dalam C++ dan menyediakan API tingkat rendah yang diperlukan oleh _Flutter framework_.
+   - **Skia:** Seperti yang sudah dibahas, _Skia Graphics Engine_ digunakan untuk menggambar semua piksel UI. Ini memberikan konsistensi visual di seluruh _platform_ dan performa _rendering_ yang cepat.
+   - **Dart VM (Virtual Machine):** Lingkungan runtime untuk kode Dart Anda. Dart VM menangani eksekusi kode Anda, termasuk _Hot Reload_ selama pengembangan (melalui JIT compilation) dan eksekusi AOT-compiled code di produksi.
+   - **Platform Channels:** Mekanisme komunikasi antara kode Dart di _framework_ dan kode _native_ di lapisan _Embedder_. Ini memungkinkan aplikasi _Flutter_ untuk mengakses fitur spesifik _platform_ seperti GPS, kamera, sensor, dll.
 
-3.  **Embedder Layer (Lapisan Penanam):**
+3. ### **Embedder Layer (Lapisan Penanam):**
 
-    - Lapisan ini adalah kode spesifik _platform_ yang bertanggung jawab untuk menyediakan _entry point_ untuk aplikasi _Flutter_ di sistem operasi host (Android, iOS, Web, Desktop).
-    - **Platform-specific runners:** Ini adalah "runner" aplikasi _native_ yang menginisialisasi _Flutter engine_ dan menyediakan _surface_ (_view_ atau _window_) di mana _Flutter_ dapat menggambar UI-nya. Misalnya, di Android ini adalah `FlutterActivity` atau `FlutterFragment`, dan di iOS ini adalah `FlutterViewController`.
-    - Perannya adalah untuk mengintegrasikan _Flutter_ dengan siklus hidup _platform_ dan sistem _input_ (sentuhan, mouse, keyboard).
+   - Lapisan ini adalah kode spesifik _platform_ yang bertanggung jawab untuk menyediakan _entry point_ untuk aplikasi _Flutter_ di sistem operasi host (Android, iOS, Web, Desktop).
+   - **Platform-specific runners:** Ini adalah "runner" aplikasi _native_ yang menginisialisasi _Flutter engine_ dan menyediakan _surface_ (_view_ atau _window_) di mana _Flutter_ dapat menggambar UI-nya. Misalnya, di Android ini adalah `FlutterActivity` atau `FlutterFragment`, dan di iOS ini adalah `FlutterViewController`.
+   - Perannya adalah untuk mengintegrasikan _Flutter_ dengan siklus hidup _platform_ dan sistem _input_ (sentuhan, mouse, keyboard).
 
-**Rendering Pipeline Explanation:**
+### **Rendering Pipeline Explanation:**
+
 Proses bagaimana _widget_ diubah menjadi piksel di layar adalah inti dari arsitektur _Flutter_. Ini melibatkan tiga tahap utama:
 
 - **Widget Tree:** Ini adalah representasi deklaratif dari konfigurasi UI Anda. Ketika Anda menulis kode _Flutter_, Anda sedang membangun _widget tree_. Setiap _widget_ dalam _tree_ ini adalah deskripsi dari bagian UI.
@@ -254,8 +237,6 @@ Proses bagaimana _widget_ diubah menjadi piksel di layar adalah inti dari arsite
 └──────────────────────┘
 ```
 
->[Lewati bagian ini jika sudah cukup paham dengan penjelasan diatas][4]
-
 **Terminologi Esensial:**
 
 - **Framework Layer:** Lapisan _Flutter_ yang ditulis dalam Dart, berisi _widget_ dan _rendering layer_ tingkat tinggi.
@@ -269,6 +250,8 @@ Proses bagaimana _widget_ diubah menjadi piksel di layar adalah inti dari arsite
 - **Element Tree:** Struktur hierarkis objek _Element_ yang mengelola siklus hidup _widget_ dan _RenderObject_.
 - **RenderObject Tree:** Struktur hierarkis objek _RenderObject_ yang bertanggung jawab untuk _layout_ dan _painting_ UI.
 - **Platform Channels:** Mekanisme untuk komunikasi _interoperable_ antara kode Dart dan kode _native_ platform (Kotlin/Java untuk Android, Swift/Objective-C untuk iOS).
+
+> [Lewati bagian ini jika sudah cukup paham dengan penjelasan diatas][4]
 
 **Struktur Internal (Mini-DAFTAR ISI):**
 
