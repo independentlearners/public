@@ -145,10 +145,10 @@ class LayarB extends StatelessWidget {
   │  (Objek Route)           │
   └──────────┬───────────────┘
              │
-  ┌──────────▼───────────────┐
+  ┌──────────▼────────────────┐
   │  builder: (_) => LayarB() │  // Fungsi yang membangun UI layar
-  │  (Konten Layar)          │
-  └──────────────────────────┘
+  │  (Konten Layar)           │
+  └───────────────────────────┘
   ```
 
   Diagram ini memecah perintah navigasi. `Navigator.push` adalah aksinya. `MaterialPageRoute` adalah objek yang mendeskripsikan "bagaimana" layar baru akan ditampilkan. `builder` adalah fungsi yang berisi `Widget` dari layar tujuan itu sendiri (`LayarB`).
