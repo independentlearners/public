@@ -200,41 +200,41 @@ Proses bagaimana _widget_ diubah menjadi piksel di layar adalah inti dari arsite
 **Visualisasi: Rendering Pipeline (Diagram Alir):**
 
 ```
-┌─────────────────┐
-│  Developer Code          │
-│  (Widget Tree)           │
-└───────┬─────────┘
-            │
-            ▼
-┌─────────────────┐
-│     Flutter              │
-│   (Build Phase)          │
-└───────┬─────────┘
-            │
-            ▼
-┌────────────────────┐
-│  Element Tree                 │
-│ (Manage Widgets               │
-│ & State Lifecycle)            │
-└───────┬────────────┘
-            │
-            ▼
-┌───────────────────┐
-│ RenderObject Tree           │
-│ (Layout & Paint)            │
-└───────┬───────────┘
-            │
-            ▼
-┌─────────────────┐
-│      Skia                │
-│  (GPU Rendering)         │
-└───────┬─────────┘
-            │
-            ▼
-┌──────────────────────┐
-│    Display                       │
-│   (Pixels on Screen)             │
-└──────────────────────┘
+┌───────────┐
+   Developer Code          
+   (Widget Tree)           
+└───────────┘
+        │
+        ▼
+┌─────────┐
+    Flutter              
+  (Build Phase)          
+└─────────┘
+        │
+        ▼
+┌────────────┐
+    cElement Tree                 
+   (Manage Widgets               
+  & State Lifecycle)            
+└────────────┘
+        │
+        ▼
+┌──────────┐
+ RenderObject Tree           
+ (Layout & Paint)            
+└──────────┘
+        │
+        ▼
+┌─────────┐
+      Skia                
+ (GPU Rendering)         
+└─────────┘
+        │
+        ▼
+┌────────────────┐
+│        Display          │
+│   (Pixels on Screen)    │
+└────────────────┘
 ```
 
 **Terminologi Esensial:**
