@@ -393,19 +393,19 @@ int main(int argc, char** argv) {
 ## 2. Diagram Widget → Element → RenderObject
 
 ```
-Widget Tree               Element Tree             RenderObject Tree
-───────────               ────────────             ─────────────────
-┌──────────┐              ┌──────────┐              ┌───────────────┐
-│ Text     │              │ TextElem │              │ RenderParagraph│
-└───┬──────┘              └────┬─────┘              └──────┬────────┘
-    │                          │                          │
-┌───▼──────┐      ↔      ┌─────▼─────┐      ↔       ┌──────▼────────┐
-│ Center   │              │ CenterElem│              │ RenderCenter  │
-└───┬──────┘              └─────┬─────┘              └──────┬────────┘
-    │                          │                          │
-┌───▼──────┐              ┌─────▼─────┐              ┌──────▼────────┐
-│ Scaffold │              │ ScaffoldElem│            │ RenderFlex    │
-└──────────┘              └───────────┘              └───────────────┘
+Widget Tree               Element Tree                RenderObject Tree
+───────────               ────────────                ─────────────────
+┌──────────┐              ┌───────────┐               ┌────────────────┐
+│ Text     │              │ TextElem  │               │ RenderParagraph│
+└───┬──────┘              └─────┬─────┘               └──────┬─────────┘
+    │                           │                            │
+┌───▼──────┐      ↔       ┌─────▼──────┐      ↔        ┌──────▼───────┐
+│ Center   │              │ CenterElem │               │ RenderCenter │
+└───┬──────┘              └─────┬──────┘               └──────┬───────┘
+    │                           │                             │
+┌───▼──────┐              ┌─────▼────────┐             ┌──────▼─────┐
+│ Scaffold │              │ ScaffoldElem │             │ RenderFlex │
+└──────────┘              └──────────────┘             └────────────┘
 ```
 
 - **Widget** (immutable): deklarasi UI.
