@@ -201,39 +201,39 @@ Proses bagaimana _widget_ diubah menjadi piksel di layar adalah inti dari arsite
 
 ```
 ┌─────────────────┐
-│  Developer Code │
-│  (Widget Tree)  │
+│  Developer Code          │
+│  (Widget Tree)           │
 └───────┬─────────┘
-        │
-        ▼
+            │
+            ▼
 ┌─────────────────┐
-│     Flutter     │
-│   (Build Phase) │
+│     Flutter              │
+│   (Build Phase)          │
 └───────┬─────────┘
-        │
-        ▼
+            │
+            ▼
 ┌────────────────────┐
-│  Element Tree      │
-│ (Manage Widgets    │
-│ & State Lifecycle) │
+│  Element Tree                 │
+│ (Manage Widgets               │
+│ & State Lifecycle)            │
 └───────┬────────────┘
-        │
-        ▼
+            │
+            ▼
 ┌───────────────────┐
-│ RenderObject Tree │
-│ (Layout & Paint)  │
+│ RenderObject Tree           │
+│ (Layout & Paint)            │
 └───────┬───────────┘
-        │
-        ▼
+            │
+            ▼
 ┌─────────────────┐
-│      Skia       │
-│  (GPU Rendering)│
+│      Skia                │
+│  (GPU Rendering)         │
 └───────┬─────────┘
-        │
-        ▼
+            │
+            ▼
 ┌──────────────────────┐
-│    Display           │
-│   (Pixels on Screen) │
+│    Display                       │
+│   (Pixels on Screen)             │
 └──────────────────────┘
 ```
 
