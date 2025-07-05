@@ -357,13 +357,17 @@ class _TombolCounterState extends State<TombolCounter> {
 }
 ```
 
+
+
+
 <h3 id="enam"></h3>
 
 **[Visualisasi](#)**
 
 Widget Tree dari Contoh Kode di Atas:
 
-```
+<div align="left">
+<pre>
 ┌──────────────────────────────────────────────────────────┐
 │                      MyApp (StatelessWidget)             │
 │                (Induk utama aplikasi Flutter)            │
@@ -398,7 +402,8 @@ Widget Tree dari Contoh Kode di Atas:
 │ TeksStateless (Stateless)│      │ SpasiVertikal (Stateless)│      │ TombolCounter (Stateful) │
 │("Saya adalah Stateless" )│      │ (tinggi: 20)             │      │ (Counter: 0, Tombol)     │
 └──────────────────────────┘      └──────────────────────────┘      └──────────────────────────┘
-```
+</pre>
+</div>
 
 <h3 id="tujuh"></h3>
 
