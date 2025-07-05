@@ -1,4 +1,4 @@
-> pro
+> [pro][flash1]
 
 # **[FASE 1: Foundation & Core Concepts][0]**
 
@@ -679,6 +679,7 @@ Ini adalah pendalaman untuk **FASE 1: Foundation & Core Concepts**. Setiap bagia
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
+[flash1]:../../flash/bagian-1/README.md
 
 <!----------------------------------------------------->
 

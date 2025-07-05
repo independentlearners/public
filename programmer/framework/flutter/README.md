@@ -58,7 +58,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 1: Foundation & Core Concepts
+## [FASE 1: Foundation & Core Concepts](#)
 
 [◀️][02] [▶️][2]
 
@@ -130,7 +130,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 2: Widget System & UI Foundation
+## [FASE 2: Widget System & UI Foundation](#)
 
 [◀️][03] [▶️][3]
 
@@ -253,7 +253,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 3: State Management & Data Flow
+## [FASE 3: State Management & Data Flow](#)
 
 [◀️][04] [▶️][4]
 
@@ -407,7 +407,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 4: Navigation & Routing
+## [FASE 4: Navigation & Routing](#)
 
 [◀️][05] [▶️][5]
 
@@ -480,7 +480,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 5: Forms & Input Handling
+## [FASE 5: Forms & Input Handling](#)
 
 [◀️][06] [▶️][6]
 
@@ -554,7 +554,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 6: Networking & Data Management
+## [FASE 6: Networking & Data Management](#)
 
 [◀️][07] [▶️][7]
 
@@ -703,7 +703,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 7: Styling, Theming & Responsive Design
+## [FASE 7: Styling, Theming & Responsive Design](#)
 
 [◀️][08] [▶️][8]
 
@@ -892,7 +892,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 8: Platform Integration & Native Features
+## [FASE 8: Platform Integration & Native Features](#)
 
 [◀️][09] [▶️][9]
 
@@ -1009,7 +1009,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 9: Testing & Quality Assurance
+## [FASE 9: Testing & Quality Assurance](#)
 
 [◀️][010] [▶️][10]
 
@@ -1085,7 +1085,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 10: Performance & Optimization
+## [FASE 10: Performance & Optimization](#)
 
 [◀️][011] [▶️][11]
 
@@ -1158,7 +1158,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 11: Deployment & Distribution
+## [FASE 11: Deployment & Distribution](#)
 
 [◀️][012] [▶️][12]
 
@@ -1260,7 +1260,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 12: Advanced Architectural Patterns
+## [FASE 12: Advanced Architectural Patterns](#)
 
 [◀️][013] [▶️][13]
 
@@ -1330,7 +1330,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 13: Advanced Flutter Concepts
+## [FASE 13: Advanced Flutter Concepts](#)
 
 [◀️][014] [▶️][14]
 
@@ -1419,7 +1419,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 14: Specialized Flutter Applications
+## [FASE 14: Specialized Flutter Applications](#)
 
 [◀️][015] [▶️][15]
 
@@ -1494,7 +1494,7 @@ _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hing
 
 ---
 
-## FASE 15: Expert Level & Specialization
+## [FASE 15: Expert Level & Specialization](#)
 
 [◀️][016] [▶️][16]
 

@@ -14,9 +14,9 @@
     - [6.2.1. Navigator 2.0 (Router API)](#621-navigator-20-router-api)
     - [6.2.2. GoRouter Implementation](#622-gorouter-implementation)
     - [6.2.3. Auto Route & Code Generation](#623-auto-route--code-generation)
-  - **[6.3. Deep Linking & URL Handling](#63)**
-    - [6.3.1. Web URL Strategies](#)
-    - [6.3.2. Mobile Deep Linking](#)
+  - **[6.3. Deep Linking & URL Handling](#63-deep-linking--url-handling)**
+    - [6.3.1. Web URL Strategies](#631-web-url-strategies)
+    - [6.3.2. Mobile Deep Linking](#632-mobile-deep-linking)
 
 ---
 
@@ -675,7 +675,7 @@ Berikut adalah _mockup_ visual dari UI yang dihasilkan oleh kode di atas.
 
 ```
 ┌──────────────────────────────────┐
-│ 📱 Tampilan HomeScreen           │
+│ Tampilan HomeScreen              │
 ├──────────────────────────────────┤
 │ AppBar: [Auto Route Demo]        │
 │ -------------------------------- │
@@ -693,7 +693,7 @@ Berikut adalah _mockup_ visual dari UI yang dihasilkan oleh kode di atas.
         ↓ (Setelah Tombol Ditekan)
 
 ┌──────────────────────────────────┐
-│ 📱 Tampilan DetailsScreen        │
+│ Tampilan DetailsScreen           │
 ├──────────────────────────────────┤
 │ AppBar: [Auto Route Demo]        │
 │ -------------------------------- │
@@ -770,9 +770,367 @@ Berikut adalah _mockup_ visual dari UI yang dihasilkan oleh kode di atas.
 
 ---
 
-Kita telah membahas pendekatan _code generation_ dengan Auto Route yang memberikan keuntungan besar dalam hal _type-safety_.
+Kita telah membahas pendekatan _code generation_ dengan Auto Route yang memberikan keuntungan besar dalam hal _type-safety_. Kini kita siap untuk beralih ke bagian terakhir dari fase navigasi, yaitu menangani bagaimana aplikasi kita berinteraksi dengan URL dari luar, seperti dari _browser_ atau aplikasi lain. Ini adalah langkah yang sangat krusial untuk aplikasi modern yang perlu berinteraksi dengan dunia luar.
 
-Kini kita siap untuk beralih ke bagian terakhir dari fase navigasi, yaitu menangani bagaimana aplikasi kita berinteraksi dengan URL dari luar, seperti dari _browser_ atau aplikasi lain.
+### **6.3. Deep Linking & URL Handling**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Bagian ini adalah tentang membuat aplikasi Anda menjadi "warga negara" yang baik di ekosistem web dan seluler. **Deep Linking** adalah mekanisme yang memungkinkan URL untuk membuka aplikasi Anda langsung ke konten spesifik, bukan hanya ke halaman utama. Misalnya, mengklik tautan `your-app.com/products/123` akan membuka aplikasi Anda langsung ke halaman detail produk 123. Ini sangat penting untuk kampanye pemasaran, berbagi konten, dan integrasi antar-aplikasi. **URL Handling** adalah aspek teknis yang terkait, terutama di web, tentang bagaimana URL ditampilkan dan dikelola oleh browser.
+
+---
+
+#### **6.3.1. Web URL Strategies**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Saat Anda membangun aplikasi Flutter untuk platform web, Anda harus memutuskan bagaimana URL akan ditampilkan di _address bar_ browser. Flutter menyediakan dua strategi utama. Memilih strategi yang tepat memiliki implikasi signifikan terhadap pengalaman pengguna, _Search Engine Optimization_ (SEO), dan konfigurasi server. Bagian ini penting untuk memastikan aplikasi web Flutter Anda berperilaku seperti situs web modern pada umumnya.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **URL sebagai Refleksi State:** Seperti yang telah kita pelajari di Navigator 2.0, URL harus menjadi cerminan dari state aplikasi saat ini. Strategi URL menentukan _format_ dari cerminan tersebut.
+
+- **Strategi Hash (`#`)**:
+
+  - **Format**: `yourdomain.com/#/users/123`
+  - **Cara Kerja**: Ini adalah strategi _default_ dan yang paling lawas. Semua _path_ aplikasi ditempatkan setelah tanda pagar (`#`). Bagi browser, semua yang ada setelah `#` adalah _fragment identifier_ atau "hash". Perubahan pada _hash_ **tidak** menyebabkan _full page reload_. Server web hanya melihat `yourdomain.com/` dan tidak peduli dengan bagian _hash_-nya.
+  - **Keuntungan**: Sangat mudah dikonfigurasi. Tidak memerlukan konfigurasi khusus di sisi server. Anda cukup mengunggah file `index.html` dan aset Flutter lainnya, dan semuanya akan berjalan.
+  - **Kerugian**: URL terlihat kurang bersih dan "tradisional". Dianggap kurang baik untuk SEO karena beberapa _web crawler_ mungkin tidak mengindeks konten setelah _hash_ dengan baik.
+
+- **Strategi Path (Clean URL)**:
+
+  - **Format**: `yourdomain.com/users/123`
+  - **Cara Kerja**: Ini adalah strategi modern yang diharapkan oleh pengguna. URL terlihat bersih tanpa tanda `#`. Namun, ini memerlukan kerja sama dari server. Ketika pengguna me-_refresh_ halaman di `yourdomain.com/users/123`, browser akan membuat permintaan ke server untuk _path_ tersebut. Server Anda **harus** dikonfigurasi untuk selalu merespons dengan file `index.html` utama aplikasi Flutter Anda, tidak peduli apa pun _path_-nya. Flutter kemudian akan mengambil alih, membaca URL, dan menampilkan layar yang benar.
+  - **Keuntungan**: URL bersih dan profesional. Jauh lebih baik untuk SEO.
+  - **Kerugian**: Memerlukan konfigurasi sisi server (disebut _URL rewriting_). Jika server tidak dikonfigurasi dengan benar, pengguna akan mendapatkan error 404 saat me-_refresh_ halaman.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Konfigurasi strategi ini sangat sederhana dan dilakukan sebelum aplikasi dijalankan.
+
+```dart
+// file: main.dart
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart'; // Atau package router lainnya
+
+// Untuk GoRouter
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/users/:id',
+      builder: (context, state) => const UserScreen(),
+    ),
+  ],
+);
+
+void main() {
+  // PENTING: Panggil ini sebelum runApp()
+  // Untuk menghapus '#' dari URL (Strategi Path)
+  GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
+
+  // Jika Anda ingin tetap menggunakan '#' (Strategi Hash)
+  // GoRouter.setUrlPathStrategy(UrlPathStrategy.hash); // Ini adalah default
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: _router,
+      title: 'URL Strategy Demo',
+    );
+  }
+}
+
+// ... sisa widget (HomeScreen, UserScreen)
+```
+
+**Konfigurasi Server untuk Strategi Path (Contoh untuk Firebase Hosting):**
+Jika Anda menggunakan Firebase Hosting, Anda hanya perlu menambahkan konfigurasi "rewrites" di file `firebase.json` Anda.
+
+```json
+{
+  "hosting": {
+    "public": "build/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+```
+
+Ini memberitahu Firebase: "untuk permintaan apa pun (`**`), layani file `/index.html`".
+
+---
+
+### **Visualisasi Hasil Kode**
+
+Berikut adalah _mockup_ visual dari bagaimana URL akan terlihat di browser untuk kedua strategi saat membuka halaman yang sama.
+
+```
+┌────────────────────────────────────────────────────────┐
+│  Browser - Strategi Hash (Default)                     │
+├────────────────────────────────────────────────────────┤
+│  Alamat │ yourdomain.com/#/users/123                   │
+│ ------------------------------------------------------ │
+│                                                        │
+│   ┌──────────────────────────────────────────────┐     │
+│   │ Aplikasi Flutter Anda                        │     │
+│   │                                              │     │
+│   │ Menampilkan detail untuk pengguna ID: 123    │     │
+│   └──────────────────────────────────────────────┘     │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────┐
+│ Browser - Strategi Path (Clean URL)                    │
+├────────────────────────────────────────────────────────┤
+│ Alamat │ yourdomain.com/users/123                      │
+│ ------------------------------------------------------ │
+│                                                        │
+│   ┌──────────────────────────────────────────────┐     │
+│   │ Aplikasi Flutter Anda                        │     │
+│   │                                              │     │
+│   │ Menampilkan detail untuk pengguna ID: 123    │     │
+│   └──────────────────────────────────────────────┘     │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+```
+
+### **Representasi Diagram Alur & Kode Strategi URL**
+
+```
+┌──────────────────────────────┐
+│  main()                      │ // Fungsi utama aplikasi.
+│  (Titik Awal Eksekusi)       │
+└──────────────┬───────────────┘
+               │
+┌──────────────▼───────────────┐
+│  GoRouter.setUrlPathStrategy(│ // Konfigurasi strategi URL.
+│    UrlPathStrategy.path      │─────────┐
+│  )                           │         ▼
+│  (Konfigurasi Pra-Jalan)     │ Ini harus dipanggil sebelum `runApp`
+└──────────────┬───────────────┘ untuk memberi tahu Flutter bagaimana
+               │                 cara memformat URL di web.
+┌──────────────▼───────────────┐
+│  runApp(const MyApp())       │ // Menjalankan aplikasi Flutter.
+│                              │
+└──────────────┬───────────────┘
+               │
+┌──────────────▼───────────────┐
+│  MaterialApp.router(...)     │ // Aplikasi menggunakan router
+│  (Aplikasi dengan Router)    │   yang kini sadar akan strategi URL.
+└──────────────────────────────┘
+```
+
+**Alur Kerja Permintaan (Strategi Path):**
+
+```
+┌───────────────┐        ┌─────────────────┐      ┌─────────────────┐
+│ Pengguna      │        │ Server Web      │      │ Aplikasi Flutter│
+│ (Browser)     ├───────►│ (misal Firebase)├─────►│ (index.html)    │
+│ me-refresh di │        │                 │      │                 │
+│ /users/123    │        │ Menerima        │      └────────┬────────┘
+└───────────────┘        │ permintaan untuk│               │
+                         │ path /users/123 │               │
+                         └────────┬────────┘               │
+                                  │                        │
+                         ┌────────▼────────┐               │
+                         │ Aturan Rewrite  │               │
+                         │ "source": "**"  │               │
+                         │ "dest": "/index"│               │
+                         └────────┬────────┘               │
+                                  │                        │
+                         ┌────────▼────────┐               │
+                         │ Mengirim        ├───────────────┘
+                         │ index.html      │
+                         │ kembali ke user │
+                         └─────────────────┘
+
+                         ┌─────────────────┐       ┌─────────────────┐
+                         │ GoRouter di     ├──────►│ Menampilkan     │
+                         │ Flutter membaca │       │ UserScreen      │
+                         │ URL /users/123  │       │ dengan id: 123  │
+                         └─────────────────┘       └─────────────────┘
+```
+
+Diagram ini menjelaskan bagaimana server bekerja sama dengan Flutter untuk strategi _path_. Server tidak mencoba mencari file `/users/123.html`, melainkan selalu menyajikan `index.html`, dan kemudian GoRouter di sisi klien melakukan tugasnya.
+
+**Sumber Referensi Lengkap:**
+
+- **Dokumentasi Resmi:** [strategies on the web - Flutter Docs](https://docs.flutter.dev/development/ui/navigation/url-strategies)
+- **Contoh Konfigurasi Server:** [Configuring your web server to host a Flutter app](https://docs.flutter.dev/deployment/web%23configuring-your-web-server-to-host-a-flutter-app)
+
+---
+
+Kita telah membahas bagaimana mengatur perilaku URL di aplikasi web Flutter. Ini adalah langkah penting untuk membuat aplikasi web yang terasa profesional. Selanjutnya, kita akan beralih ke platform seluler dan membahas cara kerja _deep linking_ di Android dan iOS. Dimana kita kita akan fokus pada bagaimana aplikasi seluler kita dapat dibuka secara cerdas melalui tautan. Ini adalah kapabilitas esensial yang menghubungkan aplikasi Anda dengan ekosistem digital yang lebih luas, seperti email, situs web, dan aplikasi lainnya.
+
+### **6.3.2. Mobile Deep Linking**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+**Mobile Deep Linking** adalah sebuah teknologi yang memungkinkan tautan web (seperti `https://your-brand.com/orders/54321`) untuk membuka aplikasi seluler Anda secara langsung ke konten yang spesifik (dalam hal ini, halaman detail pesanan 54321), alih-alih hanya membuka halaman utama. Jika aplikasi tidak terinstal, tautan tersebut dapat secara cerdas mengarahkan pengguna ke App Store atau Play Store. Perannya dalam kurikulum ini adalah untuk melengkapi kemampuan navigasi aplikasi Anda, memungkinkan integrasi yang mulus dengan dunia luar dan secara dramatis meningkatkan pengalaman pengguna serta efektivitas strategi pemasaran.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Dari Web ke Aplikasi:** Filosofi utamanya adalah menciptakan transisi yang mulus dari web ke aplikasi. Pengguna tidak perlu lagi membuka aplikasi secara manual dan mencari konten yang mereka lihat di web; tautan tersebut yang akan menavigasi mereka.
+
+- **Dua Jenis Tautan:**
+
+  1.  **Custom URL Schemes:**
+      - **Format:** `yourapp://orders/54321`
+      - **Cara Kerja:** Ini adalah metode lama. Anda mendaftarkan sebuah "skema" URL unik untuk aplikasi Anda. Ketika OS menemukan tautan dengan skema ini, ia akan meluncurkan aplikasi Anda.
+      - **Kelemahan:** Tidak aman (aplikasi lain bisa mengklaim skema yang sama) dan tidak memiliki mekanisme _fallback_ (jika aplikasi tidak terinstal, tautan akan mati). Oleh karena itu, metode ini **tidak lagi direkomendasikan** untuk penggunaan publik.
+  2.  **Verified App Links (Android) & Universal Links (iOS):**
+      - **Format:** `https://your-brand.com/orders/54321` (URL web standar)
+      - **Cara Kerja:** Ini adalah metode modern dan aman. Anda membuktikan kepemilikan domain web Anda kepada sistem operasi (Android/iOS). Caranya adalah dengan mengunggah sebuah file konfigurasi ke situs web Anda (`assetlinks.json` untuk Android, `apple-app-site-association` untuk iOS). Ketika pengguna mengklik tautan HTTPS ke domain Anda, OS akan memeriksa apakah ada aplikasi yang terverifikasi untuk domain tersebut. Jika ada, OS akan langsung membuka aplikasi Anda ke tautan tersebut. Jika tidak, tautan akan terbuka di browser seperti biasa.
+      - **Keuntungan:** Aman, terverifikasi, dan memiliki _fallback_ yang sempurna.
+
+- **Integrasi dengan Router:** Paket navigasi modern seperti **GoRouter** dirancang untuk menangani _deep links_ secara otomatis. Karena GoRouter sudah berbasis URL, ketika aplikasi dibuka melalui _deep link_, GoRouter hanya perlu mencocokkan _path_ dari tautan tersebut dengan daftar rute yang telah Anda definisikan dan langsung menavigasi ke sana.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Konfigurasi _deep linking_ lebih banyak terjadi di luar kode Flutter (di file manifes Android dan konfigurasi Xcode) daripada di dalam kode Dart. Kode Dart (dengan GoRouter) sebagian besar tetap sama.
+
+**Langkah 1: Konfigurasi Android (`AndroidManifest.xml`)**
+Anda perlu menambahkan sebuah `intent-filter` ke dalam `Activity` utama Anda.
+
+```xml
+<activity ...>
+    <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="https" android:host="your-brand.com" />
+    </intent-filter>
+</activity>
+```
+
+**Langkah 2: Konfigurasi iOS (`Info.plist` & `*.entitlements`)**
+Anda perlu menambahkan _Associated Domains_ di Xcode.
+
+1.  Buka proyek di Xcode.
+2.  Pilih Target -\> Signing & Capabilities.
+3.  Klik `+ Capability` dan tambahkan **Associated Domains**.
+4.  Tambahkan domain Anda dengan prefix `applinks:`, contoh: `applinks:your-brand.com`.
+
+**Langkah 3: Konfigurasi di Sisi Server**
+Anda harus meng-host file asosiasi di domain Anda.
+
+- **Untuk Android:** Buat file `assetlinks.json` dan letakkan di `https://your-brand.com/.well-known/assetlinks.json`.
+- **Untuk iOS:** Buat file `apple-app-site-association` (tanpa ekstensi) dan letakkan di `https://your-brand.com/.well-known/apple-app-site-association`.
+
+**Langkah 4: Kode Dart (dengan GoRouter)**
+Tidak ada perubahan signifikan yang diperlukan! Router yang telah kita buat sebelumnya sudah siap menangani _deep link_.
+
+```dart
+// file: main.dart (Sama seperti contoh GoRouter sebelumnya)
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(path: '/', ...),
+    GoRoute(path: '/orders/:orderId', ...), // Rute ini akan dicocokkan oleh deep link
+  ],
+);
+```
+
+---
+
+### **Visualisasi Hasil Kode & Pengalaman Pengguna**
+
+Berikut adalah _mockup_ visual dari alur kerja _deep linking_.
+
+```
+┌──────────────────────────────────┐        ┌──────────────────────────────────┐
+│  Tampilan Aplikasi Email/Web     │        │  Aplikasi Flutter Anda           │
+├──────────────────────────────────┤        ├──────────────────────────────────┤
+│                                  │        │ AppBar: [Detail Pesanan]         │
+│  Dari: Toko Kami                 │        │ -------------------------------- │
+│                                  │        │                                  │
+│  Halo, pesanan Anda telah        │  Klik  │   ID Pesanan: 54321              │
+│  dikirim!                       ┌┼───────►│   Status: Dalam Pengiriman       │
+│                                 ││        │   ...                            │
+│  Lacak di sini:        ─┐       ││        │                                  │
+│  https://your-brand.com │───────┘│        │                                  │
+|  /orders/54321/user/233 │        │        |                                  │
+│                        ─┘        │        │                                  │
+│                                  │        │                                  │
+└──────────────────────────────────┘        └──────────────────────────────────┘
+```
+
+**Penjelasan Alur:**
+
+1.  Pengguna menerima email atau melihat tautan di web.
+2.  Pengguna mengklik tautan `https://your-brand.com/orders/54321`.
+3.  Sistem Operasi (Android/iOS) mencegat klik ini.
+4.  OS memeriksa domain `your-brand.com` dan melihat bahwa aplikasi Anda telah terverifikasi untuk menangani tautan dari domain ini.
+5.  OS membuka aplikasi Anda dan meneruskan URL `/orders/54321` kepadanya.
+6.  GoRouter di dalam aplikasi Anda menerima _path_ ini, mencocokkannya dengan `GoRoute(path: '/orders/:orderId', ...)` yang telah Anda definisikan.
+7.  Aplikasi langsung menampilkan halaman `OrderDetailsScreen` dengan ID `54321`.
+
+---
+
+### **Representasi Diagram Alur & Konfigurasi**
+
+```
+┌──────────────────────────────┐
+│  User Klik Tautan            │ // https://your-brand.com/orders/54321
+│  (di Email, Web, dll.)       │
+└──────────────┬───────────────┘
+               │
+┌──────────────▼───────────────┐
+│  Sistem Operasi (Android/iOS)│ // Mencegat klik tautan HTTPS.
+│  (OS Interception)           │─────────┐
+└──────────────┬───────────────┘         ▼
+               │                   OS memeriksa file asosiasi di server
+┌──────────────▼───────────────┐       untuk verifikasi domain.
+│  Verifikasi Domain?          │
+│  (Cek `assetlinks.json` atau │
+│ `apple-app-site-association`)│
+└──────────────┬───────────────┘
+      ┌────────┴────────┐
+      │                 │
+┌─────▼─────┐     ┌─────▼─────┐
+│  TIDAK    │     │  YA       │
+│  (Gagal)  │     │  (Sukses) │
+└─────┬─────┘     └─────┬─────┘
+      │                 │
+┌─────▼─────┐     ┌─────▼─────┐
+│  Buka di  │     │  Buka App │
+│  Browser  │     │  dan kirim│
+└───────────┘     │  URL      │
+                  └─────┬─────┘
+                        │
+┌──────────────▼───────────────┐
+│  GoRouter di Aplikasi        │ // Menerima path '/orders/54321'.
+│  (Router Handling)           │─────────┐
+└──────────────┬───────────────┘         ▼
+               │                   Mencocokkan path dengan GoRoute
+┌──────────────▼───────────────┐       yang telah didefinisikan.
+│  Menampilkan Layar Spesifik  │
+│  (OrderDetailsScreen)        │
+└──────────────────────────────┘
+```
+
+---
+
+### **Ringkasan dan Penutupan Fase 4**
+
+Dengan ini, kita telah secara resmi menyelesaikan seluruh **FASE 4: Navigation & Routing**.
+
+Anda telah membangun pemahaman yang lengkap, mulai dari navigasi dasar yang imperatif dengan **Navigator 1.0**, beralih ke arsitektur deklaratif modern dengan **Navigator 2.0 API**, lalu mempelajari implementasi praktisnya menggunakan **GoRouter** dan **Auto Route**. Terakhir, kita menutupnya dengan menghubungkan aplikasi kita ke dunia luar melalui **strategi URL web** dan **mobile deep linking**.
+
+Aplikasi Anda kini tidak hanya memiliki struktur internal yang kuat, tetapi juga dapat diakses dan dinavigasi dari luar dengan cara yang cerdas dan profesional.
+
+Kini aplikasi kita sudah memiliki "tubuh" (UI), "otak" (State), dan "peta" (Navigasi). Langkah berikutnya adalah memberinya kemampuan untuk "makan" atau mengonsumsi data dari sumber eksternal seperti API.
+
+# Selamat!
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

@@ -1,4 +1,4 @@
-> pro
+> [pro][flash2]
 
 # **[FASE 2: Widget System & UI Foundation][0]**
 
@@ -1040,6 +1040,7 @@ Keterampilan ini sangat kuat, tetapi belum lengkap. Aplikasi kita belum bisa ben
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
+[flash2]:../../flash/bagian-2/README.md
 
 <!----------------------------------------------------->
 

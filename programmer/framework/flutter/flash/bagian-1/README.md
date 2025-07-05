@@ -1,4 +1,4 @@
-> flash
+> [flash][pro1]
 
 # **[FASE 1: Foundation & Core Concepts][0]**
 
@@ -200,41 +200,41 @@ Proses bagaimana _widget_ diubah menjadi piksel di layar adalah inti dari arsite
 **Visualisasi: Rendering Pipeline (Diagram Alir):**
 
 ```
-┌───────────┐
-   Developer Code          
-   (Widget Tree)           
-└───────────┘
+┌─────────────────────┐
+     Developer Code
+     (Widget Tree)
+└─────────────────────┘
         │
         ▼
-┌─────────┐
-    Flutter              
-  (Build Phase)          
-└─────────┘
+┌───────────────────┐
+      Flutter
+    (Build Phase)
+└───────────────────┘
         │
         ▼
-┌────────────┐
-    cElement Tree                 
-   (Manage Widgets               
-  & State Lifecycle)            
-└────────────┘
+┌──────────────────────┐
+     cElement Tree
+    (Manage Widgets
+   & State Lifecycle)
+└──────────────────────┘
         │
         ▼
-┌──────────┐
- RenderObject Tree           
- (Layout & Paint)            
-└──────────┘
+┌────────────────────┐
+  RenderObject Tree
+  (Layout & Paint)
+└────────────────────┘
         │
         ▼
-┌─────────┐
-      Skia                
- (GPU Rendering)         
-└─────────┘
+┌───────────────────┐
+        Skia
+   (GPU Rendering)
+└───────────────────┘
         │
         ▼
-┌────────────────┐
-│        Display          │
-│   (Pixels on Screen)    │
-└────────────────┘
+┌──────────────────────┐
+│      Display         │
+│ (Pixels on Screen)   │
+└──────────────────────┘
 ```
 
 **Terminologi Esensial:**
@@ -298,6 +298,7 @@ Memahami **Flutter Architecture Deep Dive**. adalah bagian tentang bagaimana _Fl
 [domain]: ../../../../README.md
 [selanjutnya]: ../bagian-2/README.md
 [sebelumnya]: ../../overview/README.md
+[pro1]:../../pro/bagian-1/README.md
 
 <!----------------------------------------------------->
 
