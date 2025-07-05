@@ -197,45 +197,79 @@ Proses bagaimana _widget_ diubah menjadi piksel di layar adalah inti dari arsite
 - **Element Tree:** Ketika _Flutter_ perlu memperbarui UI, ia mengubah _widget tree_ menjadi _element tree_. _Element_ adalah objek yang lebih persisten dan dapat diubah, yang mengelola siklus hidup _widget_ dan menjadi perantara antara _widget_ (konfigurasi) dan _RenderObject_ (layout & painting). _Element tree_ adalah tempat _Flutter_ melakukan _diffing_ dan _patching_ (membandingkan _widget_ lama dan baru) untuk mengidentifikasi perubahan minimal yang perlu dirender.
 - **RenderObject Tree:** Dari _element tree_, _Flutter_ membangun _RenderObject tree_. _RenderObject_ adalah objek yang menangani _layout_, _painting_, dan _hit-testing_. Mereka tidak peduli tentang _widget_ sama sekali; mereka hanya peduli tentang cara menggambar piksel di layar. _Skia_ kemudian menggunakan _RenderObject tree_ ini untuk menggambar UI ke layar.
 
-**Visualisasi: Rendering Pipeline (Diagram Alir):**
+Diagram berikut ini menjelaskan **alur eksekusi rendering Flutter dari kode developer sampai ke tampilan di layar (display)** — alias bagaimana _Flutter engine_ menerjemahkan **widget yang anda tulis ke dalam pixel di layar**.
+
+Mari kita bahas bagian-bagiannya satu per satu secara ringkas dan terstruktur:
+
+---
+
+### 1. `Developer Code (Widget Tree)`
+
+➡ Ini adalah **kode yang anda tulis sendiri** dalam Flutter, seperti:
+
+```dart
+Column(
+  children: [
+    Text('Hello'),
+    Icon(Icons.star),
+  ],
+);
+```
+
+➡ Hasil dari kode ini adalah **Widget Tree** — struktur pohon hierarkis dari semua widget di layar.
+
+---
+
+### 2. `Flutter (Build Phase)`
+
+➡ Flutter menjalankan **`build()` method** dari setiap widget.
+➡ Widget yang anda buat diubah menjadi **Element**, yakni representasi instan dari widget di runtime.
+
+---
+
+### 3. `Element Tree (cElement Tree)`
+
+➡ **Element Tree** menyimpan hubungan antara widget dan **state-nya** (terutama untuk _stateful widgets_).
+➡ Di sinilah Flutter memanajemen:
+
+- perubahan state,
+- update UI secara efisien,
+- reuse widget yang tidak berubah (menghemat performa).
+
+---
+
+### 4. `RenderObject Tree`
+
+➡ Di tahap ini, Flutter membentuk **RenderObject Tree**, yaitu pohon visual dari elemen yang bisa digambar.
+➡ Tugas utamanya:
+
+- **Layout:** Hitung ukuran dan posisi tiap widget.
+- **Paint:** Siapkan perintah gambar ke canvas.
+
+---
+
+### 5. `Skia (GPU Rendering)`
+
+➡ Skia adalah **mesin grafis** yang digunakan oleh Flutter (ditulis dalam C++).
+➡ Di sini perintah gambar dari RenderObject dikonversi ke instruksi grafis GPU.
+➡ Skia memastikan semuanya digambar dengan **performa tinggi** di semua platform (Android, iOS, Web, Desktop).
+
+---
+
+### 6. `Display (Pixels on Screen)`
+
+➡ Output akhir: gambar benar-benar muncul di layar pengguna sebagai **piksel**.
+➡ Ini yang dilihat user: UI interaktif, responsif, indah.
+
+---
+
+## Simpelnya:
 
 ```
-┌─────────────────────┐
-     Developer Code
-     (Widget Tree)
-└─────────────────────┘
-        │
-        ▼
-┌───────────────────┐
-      Flutter
-    (Build Phase)
-└───────────────────┘
-        │
-        ▼
-┌──────────────────────┐
-     cElement Tree
-    (Manage Widgets
-   & State Lifecycle)
-└──────────────────────┘
-        │
-        ▼
-┌────────────────────┐
-  RenderObject Tree
-  (Layout & Paint)
-└────────────────────┘
-        │
-        ▼
-┌───────────────────┐
-        Skia
-   (GPU Rendering)
-└───────────────────┘
-        │
-        ▼
-┌──────────────────────┐
-│      Display         │
-│ (Pixels on Screen)   │
-└──────────────────────┘
+Widget → Element → RenderObject → Skia → Layar
 ```
+
+---
 
 **Terminologi Esensial:**
 
@@ -282,9 +316,9 @@ Memahami arsitektur ini akan menjadi kunci untuk FASE 2: Widget System & UI Foun
 - **Kesalahan:** Bingung antara _Widget_, _Element_, dan _RenderObject_.
   - **Solusi:** _Widget_ adalah _konfigurasi_ (blueprint), _Element_ adalah _instansi_ (manajer), dan _RenderObject_ adalah _representasi visual_ (pelukis). Hafalkan perbedaan fundamental ini.
 
----
+# Selamat!
 
-Memahami **Flutter Architecture Deep Dive**. adalah bagian tentang bagaimana _Flutter_ dibangun dari lapisan ke lapisan, dan bagaimana proses _rendering_ mengubah kode menjadi antarmuka visual, ini adalah pemahaman yang sangat memberdayakan. Ini juga tentang arsitektur yang kokoh yang dirancang untuk efisiensi dan fleksibilitas. Kita akan menggali lebih dalam setiap fondasi ini pada bagian berikutnya!
+Kita telah memahami **Flutter Architecture Deep Dive**. ini adalah bagian tentang bagaimana _Flutter_ dibangun dari lapisan ke lapisan, dan bagaimana proses _rendering_ mengubah kode menjadi antarmuka visual, ini adalah pemahaman yang sangat memberdayakan. Ini juga tentang arsitektur yang kokoh yang dirancang untuk efisiensi dan fleksibilitas. Kita akan menggali lebih dalam setiap fondasi ini pada bagian berikutnya!
 
 ---
 
@@ -298,7 +332,7 @@ Memahami **Flutter Architecture Deep Dive**. adalah bagian tentang bagaimana _Fl
 [domain]: ../../../../README.md
 [selanjutnya]: ../bagian-2/README.md
 [sebelumnya]: ../../overview/README.md
-[pro1]:../../pro/bagian-1/README.md
+[pro1]: ../../pro/bagian-1/README.md
 
 <!----------------------------------------------------->
 

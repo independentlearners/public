@@ -16,7 +16,7 @@ Fase ini adalah tempat Anda akan mulai memahami dan membangun antarmuka pengguna
 - [Apa itu Widget (Stateless vs Stateful)](#satu)
 - [Struktur Widget Tree](#dua)
 - [Hot Reload & Widget Tree Reconstruction](#tiga)
-- [Diagrma](#empat)
+- [Apa Itu Widget Tree (Lanjutan)](#empat)
 - [Sintaks/Contoh Implementasi](#lima)
 - [Visualisasi](#enam)
 - [Terminologi Esensial](#tujuh)
@@ -97,37 +97,159 @@ Filosofi utama di sini adalah **komposisi** dan **deklaratif**. Daripada memanip
 
 <h3 id="empat"></h3>
 
-**[Diagram:](#)**
+## [🧱 Apa Itu Widget Tree?](#) (Lanjutan)
 
-Diagram yang menggambarkan konsep _widget_ dan _widget tree_.
+**Widget Tree** adalah _pohon dari widget_ yang tersusun **secara hierarkis**:
+
+Disini akan menggambarkan **struktur dasar _Widget Tree_** di Flutter — dan ini adalah fondasi dari **semua UI yang akan anda buat**. Ini adalah bagian dimana fokus anda nantinya pada **struktur hierarki komponen UI yang anda tulis sendiri dalam Dart**.
+
+---
+
+- Setiap widget bisa punya **satu atau banyak anak (children)**.
+- Widget di atas disebut **parent**, widget di bawah disebut **child**.
+- Ini seperti "pohon keluarga" dari UI yang anda buat.
+
+---
+
+## 📦 Penjelasan Isi Diagram:
+
+### 🔹 Induk atau Pembungkus (Parent Widget)
+
+Contoh:
+
+```dart
+Scaffold(
+  body: Column(
+    children: [...],
+  ),
+);
+```
+
+➡ `Scaffold` adalah parent dari `Column`.
+➡ `Column` adalah parent dari widget lainnya.
+➡ Bisa juga `Container`, `Row`, `Stack`, dll.
+
+---
+
+### 🔹 Anak-anak Widget (Child Widgets)
+
+Contoh konkret:
+
+```dart
+Column(
+  children: [
+    Text("A"), // Widget A
+    Icon(Icons.star), // Widget B
+    ElevatedButton(onPressed: () {}, child: Text("C")), // Widget C
+  ],
+);
+```
+
+- Masing-masing dari `Text`, `Icon`, dan `ElevatedButton` itu adalah **child widget**.
+- Bisa berupa `StatelessWidget` atau `StatefulWidget`, tergantung apakah mereka menyimpan state atau tidak.
+
+---
+
+## 📘 Catatan Tambahan:
+
+- **Widget bukan elemen yang tampil langsung**, tapi mereka adalah **deskripsi tentang seperti apa UI seharusnya muncul.**
+- Flutter menggunakan deskripsi ini untuk membuat:
+
+  - **Element Tree** (runtime instance),
+  - **RenderObject Tree** (yang akan menggambar ke layar).
+
+---
+
+## 🔄 Kenapa Ini Penting?
+
+- Memahami widget tree bikin anda bisa:
+
+  - Menyusun UI yang kompleks secara rapi.
+  - Mengelola state lebih baik (misal: tahu di mana harus naruh `StatefulWidget`).
+  - **Menghindari rebuild yang tidak perlu.**
+  - Ngerti debugging saat UI-nya “bertingkah”.
+
+---
+
+Berikut ini kita akan mencontohkan **kode Dart Flutter** yang sangat mudah. Dalam contoh di sini, kita akan membuat satu `Scaffold` (parent), yang berisi `Column` (pembungkus), dan di dalamnya ada beberapa child widget: `Text`, `Icon`, serta `Container`.
+
+---
+
+## ✅ Contoh Kode Flutter
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold( // Parent Widget (Induk)
+        appBar: AppBar(title: const Text("Contoh Widget Tree")),
+        body: Column( // Pembungkus Child Widgets
+          children: const [
+            Text("Widget A"), // Widget A
+            Icon(Icons.star), // Widget B
+            Container( // Widget C
+              color: Colors.amber,
+              padding: EdgeInsets.all(16),
+              child: Text("Widget C"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+## 🌲 Diagram Widget Tree (berdasarkan kode di atas)
 
 ```
-┌───────────────────────────────────────────────┐
-│     Induk atau Pembungkus (Parent Widget)     │
-│   (Misal: Scaffold, Column, Container)        │
-└───────────────┬───────────────────────────────┘
-                │
-                ▼
-┌────────────────────────────────────────────────┐
-│    anak-anak Widget UI (Child Widgets)         │
-│ ┌────────────────────────────────────────────┐ │        Keterangan:
-│ │               Widget A                     │ │          - Setiap blok adalah Widget.
-│ │(Jenis Kode: StatelessWidget/StatefulWidget)│ │          - Widget adalah deskripsi UI.
-│ └───────┬────────────────────────────────────┘ │          - Tersusun hierarkis (Parent-Child).
-│         │                                      │
-│         ▼                                      │
-│ ┌────────────────────────────────────────────┐ │
-│ │               Widget B                     │ │
-│ │(Jenis Kode: StatelessWidget/StatefulWidget)│ │
-│ └───────┬────────────────────────────────────┘ │
-│         │                                      │
-│         ▼                                      │
-│ ┌────────────────────────────────────────────┐ │
-│ │               Widget C                     │ │
-│ │(Jenis Kode: StatelessWidget/StatefulWidget)│ │
-│ └────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────┘
+MyApp (StatelessWidget)
+└── MaterialApp
+    └── Scaffold
+        ├── AppBar
+        │   └── Text("Contoh Widget Tree")
+        └── Column
+            ├── Text("Widget A")
+            ├── Icon(Icons.star)
+            └── Container
+                └── Text("Widget C")
 ```
+
+---
+
+## 📘 Penjelasan Singkat:
+
+| Widget                      | Peran                                              |
+| --------------------------- | -------------------------------------------------- |
+| `Scaffold`                  | Sebagai **Parent Widget utama**.                   |
+| `Column`                    | Pembungkus untuk beberapa widget dalam satu kolom. |
+| `Text`, `Icon`, `Container` | Masing-masing adalah **Child Widgets**.            |
+| `Container`                 | Bisa berisi widget lain (di sini: `Text`).         |
+
+---
+
+## 🎯 Tujuan Pembelajaran
+
+- Memahami **struktur hierarki** antara parent dan child.
+- Menyadari bahwa **setiap widget hanya deskripsi UI** — Flutter akan mengolah ini dalam build-rendering flow.
+- Mengenali bahwa struktur yang baik akan **mempermudah debugging, komposisi ulang, dan optimisasi**.
+
+## 📌 Kesimpulan
+
+**Diagram ini menggambarkan pola berpikir struktural dalam Flutter.** Anda sebagai developer membangun UI seperti menyusun blok LEGO: satu widget di dalam widget lain, membentuk _tree_.
+
+---
 
 <h3 id="lima"></h3>
 
@@ -241,8 +363,15 @@ class _TombolCounterState extends State<TombolCounter> {
 
 Widget Tree dari Contoh Kode di Atas:
 
-```
-┌──────────────────────────────────────────────────────────┐
+<div style="
+  overflow-x: auto;
+  white-space: pre;
+  background-color: var(--vscode-editor-background);
+  padding: 1em;
+  border-radius: 6px;
+  font-family: monospace;
+  color: var(--vscode-editor-foreground);
+">┌──────────────────────────────────────────────────────────┐
 │                      MyApp (StatelessWidget)             │
 │                (Induk utama aplikasi Flutter)            │
 └───────────────────────┬──────────────────────────────────┘
@@ -276,7 +405,7 @@ Widget Tree dari Contoh Kode di Atas:
 │ TeksStateless (Stateless)│      │ SpasiVertikal (Stateless)│      │ TombolCounter (Stateful) │
 │("Saya adalah Stateless" )│      │ (tinggi: 20)             │      │ (Counter: 0, Tombol)     │
 └──────────────────────────┘      └──────────────────────────┘      └──────────────────────────┘
-```
+</div>
 
 <h3 id="tujuh"></h3>
 
@@ -355,14 +484,14 @@ Mari kita visualisasikan hubungan antara ketiga _tree_ ini dengan diagram alir y
 **Diagram Alir Konseptual: Flutter Rendering Pipeline (Tiga Tree)**
 
 ```
-┌───────────────────────────┐      ┌───────────────────────────┐      ┌───────────────────────────┐
-│        Widget Tree        │      │        Element Tree       │      │       RenderObject Tree   │
-│ (Blueprint UI - Immutable)│      │ (Manajemen Instansi - Mutable)│      │ (Layout & Painting - Mutable)│
-└───────────┬───────────────┘      └───────────┬───────────────┘      └───────────┬───────────────┘
-            │                       │                                  │
-            │                       │  (Akses melalui BuildContext)   │
-            │                       │                                  │
-┌───────────▼───────────────┐      ┌───────────▼───────────────┐      ┌───────────▼───────────────┐
+┌───────────────────────────┐      ┌──────────────────────────────┐      ┌───────────────────────────────┐
+│        Widget Tree        │      │        Element Tree          │      │       RenderObject Tree       │
+│ (Blueprint UI - Immutable)│      │(Manajemen Instansi - Mutable)│      │ (Layout & Painting - Mutable) │
+└───────────┬───────────────┘      └───────────┬──────────────────┘      └───────────┬───────────────────┘
+            │                                  ▼                                     │
+            │                       [Akses melalui BuildContext]                     │
+            │                                  │                                     │
+┌───────────▼───────────────┐      ┌───────────▼───────────────┐      ┌──────────────▼────────────┐
 │ Root Widget (MyApp)       │      │ Root Element              │      │ Root RenderObject         │
 │  (Konfigurasi Awal)       │      │  (Mengelola MyApp)        │      │  (Mulai Layout/Paint)     │
 └───────────┬───────────────┘      └───────────┬───────────────┘      └───────────┬───────────────┘
@@ -383,9 +512,9 @@ Mari kita visualisasikan hubungan antara ketiga _tree_ ini dengan diagram alir y
 ┌────────────────────────────────────────────────────────────────────────────┐
 │ Keterangan:                                                                │
 │ - Widget Tree: Apa yang Anda tulis dalam kode Dart Anda.                   │
-│ - Element Tree: Representasi internal Flutter yang efisien dalam mengelola│
+│ - Element Tree: Representasi internal Flutter yang efisien dalam mengelola │
 │   instance widget dan membandingkan perubahan.                             │
-│ - RenderObject Tree: Representasi abstrak dari layout dan painting yang   │
+│ - RenderObject Tree: Representasi abstrak dari layout dan painting yang    │
 │   kemudian digambar oleh Skia Engine.                                      │
 └────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -399,20 +528,20 @@ Mari kita visualisasikan hubungan antara ketiga _tree_ ini dengan diagram alir y
 └────────────────┬───────────────┘
                  │
                  ▼
-┌────────────────────────────────┐
-│ 2. Flutter Membangun/Memperbarui│
-│    Element Tree                │
-│    (Mengelola instance widget, │
-│     membandingkan perubahan)   │
-└────────────────┬───────────────┘
+┌──────────────────────────────────┐
+│ 2. Flutter Membangun/Memperbarui │
+│    Element Tree                  │
+│    (Mengelola instance widget,   │
+│     membandingkan perubahan)     │
+└────────────────┬─────────────────┘
                  │
                  ▼
-┌────────────────────────────────┐
-│ 3. Element Tree Membangun/     │
-│    Memperbarui RenderObject Tree│
-│    (Menerjemahkan ke layout &  │
-│     instruksi painting)        │
-└────────────────┬───────────────┘
+┌──────────────────────────────────┐
+│ 3. Element Tree Membangun/       │
+│    Memperbarui RenderObject Tree │
+│    (Menerjemahkan ke layout &    │
+│     instruksi painting)          │
+└────────────────┬─────────────────┘
                  │
                  ▼
 ┌────────────────────────────────┐
@@ -510,13 +639,351 @@ Pemahaman ketiga _tree_ ini adalah inti dari bagaimana _Flutter_ mencapai perfor
 
 ---
 
-### **Selamat!**
-
-Anda telah menyelami **Pengenalan Widget: Building Blocks UI** dengan detail yang komprehensif, termasuk visualisasi penting dari _Widget Tree_. Memahami _widget_, perbedaannya, dan bagaimana mereka bersarang, adalah langkah pertama yang paling fundamental dalam perjalanan Anda sebagai pengembang _Flutter_. Ini adalah dasar dari segalanya! dan ini sangat Luar biasa! karena Anda kini memiliki pemahaman yang jauh lebih dalam tentang **Widget Tree Fundamentals**, termasuk peran krusial dari _Element Tree_ dan _RenderObject Tree_ dalam _rendering pipeline_ _Flutter_. Ini adalah jantung bagaimana _Flutter_ bekerja secara efisien. Dengan pemahaman ini, Anda semakin menguasai pondasi arsitektur UI _Flutter_.
+Setelah kita memahami perbedaan dan interaksi antara _Widget Tree_, _Element Tree_, dan _RenderObject Tree_, kini saatnya kita menyoroti bagaimana siklus hidup (_lifecycle_) sebuah _widget_, terutama _StatefulWidget_, dikelola oleh _Flutter_. Memahami _lifecycle_ ini sangat penting untuk mengelola _state_, mengoptimalkan performa, dan mencegah _memory leak_ dalam aplikasi Anda.
 
 ---
 
-Selanjutnya kita akan melanjutkan ke sub-bagian berikutnya, yaitu **2.2 Tipe-tipe Widget Utama**. Di sini, Anda akan mulai mengenal berbagai _widget_ yang paling sering digunakan dalam membangun antarmuka pengguna di _Flutter_. Memahami tipe-tipe _widget_ ini adalah kunci untuk merancang _layout_ yang efektif, menampilkan konten, dan menambahkan interaktivitas ke aplikasi Anda.
+### **2.1 Widget Tree & Rendering Engine (Lanjutan)**
+
+#### **Widget Lifecycle Management**
+
+**Deskripsi Detail & Peran:**
+`Widget Lifecycle Management` berfokus pada serangkaian metode yang dipanggil oleh _Flutter framework_ pada _StatefulWidget_ selama masa hidupnya. Setiap metode memiliki peran spesifik, mulai dari pembuatan _state_, inisialisasi, pembaruan, hingga pembuangan _widget_. Memahami urutan dan tujuan metode-metode ini memungkinkan Anda untuk:
+
+- Melakukan inisialisasi data.
+- Mengelola _resource_ eksternal (seperti _stream_, _timer_, atau _controller_).
+- Bereaksi terhadap perubahan konfigurasi _widget_ atau dependensi.
+- Membersihkan _resource_ saat _widget_ tidak lagi digunakan.
+
+**Konsep Kunci & Filosofi:**
+Filosofi di sini adalah **manajemen _state_ yang terstruktur** dan **pembersihan _resource_ yang tepat waktu**. _Flutter_ menyediakan _hook_ ini agar Anda dapat menyisipkan logika kustom pada berbagai tahapan siklus hidup _widget_, memastikan aplikasi efisien dan stabil.
+
+Berikut adalah metode-metode utama dalam _lifecycle_ _StatefulWidget_ secara berurutan dan penjelasannya:
+
+1.  **`createState()` method:**
+
+    - **Peran:** Ini adalah metode pertama yang dipanggil ketika _Flutter_ memutuskan untuk membangun `StatefulWidget` untuk pertama kalinya. Tugasnya adalah mengembalikan instance `State` yang terkait dengan `StatefulWidget` ini. `State` inilah yang akan menyimpan _mutable state_ untuk _widget_ tersebut.
+    - **Kapan Dipanggil:** Hanya sekali, saat _widget_ pertama kali dimasukkan ke dalam _Widget Tree_.
+
+2.  **`initState()` dan `dispose()`:**
+
+    - **`initState()`:**
+
+      - **Peran:** Dipanggil sekali setelah `State` objek dibuat dan dimasukkan ke dalam _Element Tree_. Ini adalah tempat yang ideal untuk melakukan inisialisasi satu kali yang bergantung pada `BuildContext` atau properti _widget_. Ini juga tempat yang umum untuk:
+        - Melakukan inisialisasi _controller_ (misalnya `TextEditingController`, `ScrollController`).
+        - Mendaftarkan _listener_ ke _stream_ atau `ChangeNotifier`.
+        - Mengambil data awal dari _API_ atau _database_.
+      - **Kapan Dipanggil:** Hanya sekali seumur hidup `State` objek.
+      - **Catatan Penting:** Anda tidak dapat memanggil `setState()` di `initState()` (kecuali dalam _callback_ yang dijadwalkan, misalnya `WidgetsBinding.instance.addPostFrameCallback`), karena _widget_ belum sepenuhnya diinisialisasi.
+
+    - **`dispose()`:**
+
+      - **Peran:** Dipanggil ketika `State` objek secara permanen dihapus dari _Widget Tree_. Ini adalah tempat yang sangat krusial untuk membersihkan _resource_ apa pun yang telah Anda inisialisasi di `initState()` atau di tempat lain untuk mencegah _memory leak_. Contoh:
+        - Membuang (_dispose_) _controller_.
+        - Membatalkan (_unsubscribe_) _listener_.
+        - Menutup _stream_.
+      - **Kapan Dipanggil:** Tepat sebelum _state_ dibuang.
+
+3.  **`build()` method optimization:**
+
+    - **Peran:** Ini adalah metode yang paling sering dipanggil di _lifecycle_ _widget_. Tugasnya adalah mengembalikan _widget tree_ yang mendeskripsikan tampilan UI _widget_ pada _state_ saat ini.
+    - **Kapan Dipanggil:**
+      - Setelah `initState()`.
+      - Setelah `didChangeDependencies()`.
+      - Setelah `didUpdateWidget()`.
+      - Setelah `setState()` dipanggil.
+      - Setelah `deactivate()` (jika _widget_ diaktifkan kembali).
+      - Setelah `reassemble()` (hanya saat _Hot Reload_).
+      - Ketika _parent widget_ membangun ulang _child_-nya.
+    - **Optimasi:** Karena sering dipanggil, penting untuk menjaga agar logika dalam `build()` seringan mungkin. Hindari operasi komputasi berat di sini. Fokuskan hanya pada deskripsi UI.
+
+4.  **`setState()` best practices:**
+
+    - **Peran:** Metode ini digunakan untuk memberi tahu _Flutter framework_ bahwa _state_ internal dari `State` objek telah berubah dan UI perlu dibangun ulang untuk merefleksikan perubahan tersebut.
+    - **Kapan Dipanggil:** Kapan pun _state_ yang memengaruhi UI berubah.
+    - **Best Practices:**
+      - Selalu panggil `setState()` di dalam _callback_ asinkron atau di dalam blok `setState(() { ... });` itu sendiri.
+      - Pastikan perubahan _state_ yang Anda lakukan di dalam `setState()` benar-benar memengaruhi properti yang digunakan dalam `build()` method.
+      - Jangan memanggil `setState()` jika _widget_ tidak lagi berada di _tree_ (misalnya setelah `dispose()` dipanggil), hal ini akan menyebabkan _error_.
+      - Batasi area yang di-_update_: _Flutter_ sangat efisien, tetapi pemanggilan `setState()` pada _widget_ yang sangat tinggi di _tree_ bisa memicu pembangunan ulang yang lebih luas. Usahakan untuk memanggil `setState()` di _widget_ serendah mungkin di _tree_ yang membutuhkan pembaruan.
+
+5.  **`didUpdateWidget()` usage:**
+
+    - **Peran:** Dipanggil ketika _parent widget_ membangun ulang _child_ `StatefulWidget` ini dengan _widget_ baru yang memiliki `runtimeType` dan `key` yang sama dengan _widget_ sebelumnya. Ini memberi Anda kesempatan untuk bereaksi terhadap perubahan pada properti _widget_ yang baru.
+    - **Kapan Dipanggil:** Setelah `build()` dipanggil oleh _parent_ dan sebelum `build()` milik _child_ dipanggil.
+    - **Penggunaan:** Sering digunakan untuk memperbarui _state_ internal berdasarkan properti baru yang diterima dari _parent_. Anda dapat membandingkan `widget.oldWidget.someProperty` dengan `widget.newWidget.someProperty` untuk mendeteksi perubahan.
+
+6.  **`didChangeDependencies()` timing:**
+
+    - **Peran:** Dipanggil setelah `initState()` dan setiap kali dependensi `State` objek berubah. Dependensi meliputi:
+      - Perubahan tema (`Theme.of(context)`).
+      - Perubahan ukuran media (`MediaQuery.of(context)`).
+      - Perubahan `InheritedWidget` yang diandalkan oleh _widget_ ini.
+    - **Kapan Dipanggil:**
+      - Setelah `initState()`.
+      - Ketika `InheritedWidget` yang digunakan oleh _widget_ ini diperbarui.
+    - **Penggunaan:** Ideal untuk mengambil data atau melakukan inisialisasi yang bergantung pada dependensi dari `BuildContext` (misalnya, mengakses _provider_ melalui `Provider.of(context)` tanpa `listen: false`).
+
+7.  **`deactivate()` dan `reassemble()`:**
+
+    - **`deactivate()`:**
+      - **Peran:** Dipanggil ketika _State_ untuk sementara waktu dihapus dari _tree_ (misalnya, saat _widget_ digulir keluar dari pandangan dalam `ListView`, atau saat tab aplikasi beralih). _Flutter_ mungkin akan memasukkannya kembali ke dalam _tree_ di kemudian hari.
+      - **Kapan Dipanggil:** Ketika `Element` yang terkait dengan _state_ ini dipindahkan dari satu lokasi di _tree_ ke lokasi lain, atau dihapus sementara. Ini terjadi sebelum `dispose()` jika _state_ benar-benar akan dibuang.
+    - **`reassemble()`:**
+      - **Peran:** Metode ini khusus untuk pengembangan. Ini dipanggil setiap kali Anda melakukan _Hot Reload_. Tujuannya adalah untuk memungkinkan _widget_ membangun ulang _state_ internalnya setelah kode diubah, tanpa perlu memulai ulang aplikasi sepenuhnya.
+      - **Kapan Dipanggil:** Hanya dalam mode _debug_ saat _Hot Reload_ terjadi.
+
+**Diagram Alir Siklus Hidup StatefulWidget (Penyederhanaan):**
+
+```
+┌────────────────────────────────┐
+│         Constructor            │
+│   (StatefulWidget Dibuat)      │
+└────────────────┬───────────────┘
+                 │
+                 ▼
+┌────────────────────────────────┐
+│          createState()         │
+│   (Objek State Dibuat)         │
+└────────────────┬───────────────┘
+                 │
+                 ▼
+┌────────────────────────────────┐
+│          initState()           │
+│   (Inisialisasi Awal State)    │
+└────────────────┬───────────────┘
+                 │
+                 ▼ (Jika ada perubahan dependensi)
+┌────────────────────────────────┐
+│     didChangeDependencies()    │
+│  (Dependensi Context Berubah)  │
+└────────────────┬───────────────┘
+                 │
+                 ▼
+┌────────────────────────────────┐
+│           build()              │
+│    (Membangun UI Widget)       │
+└────────────────┬───────────────┘
+                 │
+                 ▼ (Jika state berubah via setState())
+┌────────────────────────────────┐
+│          setState()            │
+│    (Memperbarui State &        │
+│     Meminta Pembangunan Ulang) │
+└────────────────┬───────────────┘
+                 │
+                 ▼ (Kembali ke build())
+┌────────────────────────────────┐
+│       didUpdateWidget()        │
+│   (Konfigurasi Widget Baru     │
+│    dari Parent)                │
+└────────────────┬───────────────┘
+                 │
+                 ▼ (Jika dihapus sementara/dipindahkan)
+┌────────────────────────────────┐
+│          deactivate()          │
+│ (Dihapus Sementara dari Tree)  │
+└────────────────┬───────────────┘
+                 │
+                 ▼ (Jika diaktifkan kembali, kembali ke build())
+                 │ (Jika dihapus permanen)
+┌────────────────────────────────┐
+│           dispose()            │
+│    (Pembersihan Resource)      │
+└────────────────┬───────────────┘
+                 │
+                 ▼
+┌────────────────────────────────┐
+│       Widget Dibuang           │
+└────────────────────────────────┘
+
+┌────────────────────────────────┐
+│ *Catatan: reassemble() hanya   │
+│          dipanggil saat        │
+│          Hot Reload.           │
+└────────────────────────────────┘
+```
+
+**Contoh Kode: Mengimplementasikan Metode Lifecycle**
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Widget Lifecycle Demo'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const LifecycleCounter(), // Widget yang akan menunjukkan lifecycle
+              ElevatedButton(
+                onPressed: () {
+                  // Contoh untuk memicu perubahan di parent, yang akan memicu didUpdateWidget
+                  // di child jika ada properti yang diubah.
+                  // Untuk demo ini, kita akan fokus pada lifecycle internal.
+                  print('Tombol di luar LifecycleCounter ditekan');
+                },
+                child: const Text('Tombol Luar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LifecycleCounter extends StatefulWidget {
+  const LifecycleCounter({super.key});
+
+  @override
+  State<LifecycleCounter> createState() {
+    print('1. createState() dipanggil');
+    return _LifecycleCounterState();
+  }
+}
+
+class _LifecycleCounterState extends State<LifecycleCounter> {
+  int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState(); // Selalu panggil super.initState()
+    print('2. initState() dipanggil. Counter diinisialisasi: $_counter');
+    // Contoh: Fetch data awal, setup listener
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies(); // Selalu panggil super.didChangeDependencies()
+    print('3. didChangeDependencies() dipanggil.');
+    // Contoh: Akses InheritedWidget, Theme.of(context), MediaQuery.of(context)
+  }
+
+  @override
+  void didUpdateWidget(covariant LifecycleCounter oldWidget) {
+    super.didUpdateWidget(oldWidget); // Selalu panggil super.didUpdateWidget()
+    print('4. didUpdateWidget() dipanggil. Widget lama: $oldWidget');
+    // Contoh: Bereaksi terhadap perubahan properti dari parent
+    // if (widget.someNewProperty != oldWidget.someNewProperty) { ... }
+  }
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+      print('5. setState() dipanggil. Counter menjadi: $_counter');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('6. build() dipanggil. Membangun UI untuk counter: $_counter');
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          'Counter: $_counter',
+          style: const TextStyle(fontSize: 40),
+        ),
+        ElevatedButton(
+          onPressed: _incrementCounter,
+          child: const Text('Tambah Counter'),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate(); // Selalu panggil super.deactivate()
+    print('7. deactivate() dipanggil.');
+    // Contoh: Widget mungkin dihapus sementara dari tree (misalnya gulir keluar layar)
+  }
+
+  @override
+  void dispose() {
+    super.dispose(); // Selalu panggil super.dispose()
+    print('8. dispose() dipanggil. Membersihkan resource.');
+    // Contoh: Buang controller, batalkan listener
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble(); // Selalu panggil super.reassemble()
+    print('9. reassemble() dipanggil (Hot Reload).');
+    // Hanya dipanggil saat Hot Reload
+  }
+}
+```
+
+**Terminologi Esensial:**
+
+- **Lifecycle Method:** Metode-metode yang dipanggil secara otomatis oleh _Flutter_ pada berbagai tahapan eksistensi sebuah _StatefulWidget_.
+- **State:** Data _mutable_ yang dipegang oleh `StatefulWidget` dan dapat memengaruhi tampilan UI-nya.
+- **Hot Reload:** Fitur _Flutter_ yang memungkinkan Anda melihat perubahan kode langsung di aplikasi tanpa kehilangan _state_ saat ini.
+- **Memory Leak:** Situasi di mana program komputer gagal mengelola memori yang dialokasikan, sehingga menyebabkan peningkatan penggunaan memori yang tidak diperlukan dan, pada akhirnya, melambatnya atau _crash_ aplikasi.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Urutan dan Tujuan Metode Lifecycle
+- `createState()`: Inisialisasi State
+- `initState()` dan `dispose()`: Pasangan Krusial
+- `build()`: Jantung UI
+- `setState()`: Memicu Pembaruan UI
+- `didUpdateWidget()`: Reaksi terhadap Perubahan Konfigurasi
+- `didChangeDependencies()`: Reaksi terhadap Perubahan Dependensi
+- `deactivate()` dan `reassemble()`: Penanganan Khusus
+
+**Hubungan dengan Bagian Lain:**
+
+- **Widget Keys:** Memahami `keys` membantu _Flutter_ untuk mencocokkan _widget_ lama dengan _element_ dan _state_ yang sesuai, sehingga mempengaruhi bagaimana metode _lifecycle_ seperti `didUpdateWidget()` dan `deactivate()`/`dispose()` dipanggil.
+- **State Management:** Metode _lifecycle_ adalah fondasi untuk mengimplementasikan _state management_ yang benar dalam aplikasi Anda, memastikan _resource_ dialokasikan dan dibersihkan dengan tepat.
+- **Performance Optimization:** Mengoptimalkan penggunaan `build()` dan memahami kapan _widget_ dibangun ulang adalah kunci untuk performa aplikasi yang halus.
+
+**Referensi Lengkap:**
+
+- [Stateful Widget Lifecycle](https://flutter.dev/docs/development/ui/interactive): Dokumentasi resmi _Flutter_ tentang _lifecycle_ _StatefulWidget_.
+- [Widget Lifecycle Deep Dive](https://medium.com/flutter-community/flutter-widget-lifecycle-in-depth-7b8c3c9f7b7b): Artikel yang sangat mendalam tentang _lifecycle_ _widget_.
+- [Widget Keys Explained](https://medium.com/flutter/keys-what-are-they-good-for-13cb51742e7d): Menjelaskan bagaimana `keys` berhubungan dengan _lifecycle_ dan _widget tree_.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Selalu Panggil `super`:** Pastikan Anda selalu memanggil implementasi `super` dari metode _lifecycle_ yang Anda _override_ (`super.initState()`, `super.dispose()`, dll.).
+- **Hati-hati dengan `setState()`:** Jangan panggil `setState()` di `initState()`. Jika perlu, gunakan `WidgetsBinding.instance.addPostFrameCallback(() => setState(() { ... }));`.
+- **Bersihkan di `dispose()`:** Ini adalah _best practice_ terpenting untuk mencegah _memory leak_. Setiap _listener_, _controller_, atau _timer_ yang diinisialisasi di `initState()` (atau di tempat lain) harus dibuang di `dispose()`.
+- **Optimalkan `build()`:** Pertahankan `build()` method sebersih mungkin dari logika bisnis atau operasi berat.
+- **Pahami `didUpdateWidget()` vs `didChangeDependencies()`:** Keduanya bereaksi terhadap perubahan, tetapi `didUpdateWidget()` bereaksi terhadap perubahan properti dari _parent_, sedangkan `didChangeDependencies()` bereaksi terhadap perubahan _inherited widgets_ atau dependensi konteks lainnya.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Lupa memanggil `dispose()` pada _controller_ atau _listener_, menyebabkan _memory leak_.
+  - **Solusi:** Selalu pasangkan inisialisasi di `initState()` dengan pembersihan di `dispose()`.
+- **Kesalahan:** Memanggil `setState()` setelah _widget_ dibuang (`setState() called on a dismounted element`).
+  - **Solusi:** Periksa `mounted` properti (`if (mounted) { setState(() { ... }); }`) sebelum memanggil `setState()` dalam _callback_ asinkron.
+- **Kesalahan:** Melakukan operasi _network_ yang berat di `build()` method.
+  - **Solusi:** Pindahkan operasi _network_ atau komputasi berat ke `initState()` atau ke lapisan _business logic_ yang terpisah, lalu perbarui _state_ dan panggil `setState()` setelah operasi selesai.
+
+---
+
+### **Luar biasa dan Selamat!**
+
+Anda telah berhasil menuntaskan pembahasan mendalam mengenai **Widget Lifecycle Management** di _Flutter_. Ini adalah salah satu aspek krusial untuk membangun aplikasi yang stabil, efisien, dan bebas _bug_. Dengan pemahaman ini, Anda tidak hanya tahu _bagaimana_ UI Anda dibangun, tetapi juga _kapan_ dan _mengapa_ _Flutter_ melakukan berbagai operasi di balik layar. Anda juga telah menyelami **Pengenalan Widget: Building Blocks UI** dengan detail yang komprehensif, termasuk visualisasi penting dari _Widget Tree_. Memahami _widget_, perbedaannya, dan bagaimana mereka bersarang, adalah langkah pertama yang paling fundamental dalam perjalanan Anda sebagai pengembang _Flutter_. Ini adalah dasar dari segalanya! dan ini sangat Luar biasa! karena Anda kini memiliki pemahaman yang jauh lebih dalam tentang **Widget Tree Fundamentals**, termasuk peran krusial dari _Element Tree_ dan _RenderObject Tree_ dalam _rendering pipeline_ _Flutter_. Ini adalah jantung bagaimana _Flutter_ bekerja secara efisien. Dengan pemahaman ini, Anda semakin menguasai pondasi arsitektur UI _Flutter_.
+
+---
+
+Selanjutnya kita akan masuk pada sub-bagian berikutnya, yaitu **2.2 Tipe-tipe Widget Utama**. Di sini, Anda akan mulai mengenal berbagai _widget_ yang paling sering digunakan dalam membangun antarmuka pengguna di _Flutter_. Memahami tipe-tipe _widget_ ini adalah kunci untuk merancang _layout_ yang efektif, menampilkan konten, dan menambahkan interaktivitas ke aplikasi Anda.
 
 ### **[2.2 Tipe-tipe Widget Utama](#)**
 
@@ -889,7 +1356,413 @@ class WidgetKompleks extends StatelessWidget {
 - _Kesalahan_: Lupa menambahkan padding atau margin, sehingga UI terlihat terlalu padat.
   - _Solusi_: Gunakan _widget Padding_ atau _Container_ untuk menambahkan ruang kosong di sekitar _widget_ Anda.
 
-Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **2.4 Navigasi Dasar (Navigator 1.0)**, atau ada aspek dari "Membangun UI Kompleks dengan Komposisi Widget" yang ingin Anda fokuskan lebih dalam lagi?
+---
+
+Setelah menyelami arsitektur _widget_ dan siklus hidupnya, kini kita akan fokus pada bagaimana menata (_layout_) _widget-widget_ tersebut di layar dengan presisi dan fleksibilitas. Ini adalah dasar untuk menciptakan antarmuka pengguna yang visualnya menarik dan fungsional.
+
+---
+
+### **2.2 Layout System Mastery(lanjutan)**
+
+#### **Core Layout Widgets**
+
+**Deskripsi Detail & Peran:**
+Sub-bagian ini akan membahas _widget-widget_ fundamental yang digunakan untuk mengatur posisi, ukuran, dan hubungan antar _widget_ di dalam UI Anda. Menguasai _core layout widgets_ adalah esensial, karena merekalah yang membentuk struktur visual setiap aplikasi _Flutter_. _Widget-widget_ ini dirancang untuk bekerja secara komposisi, memungkinkan Anda untuk membangun _layout_ yang kompleks dari komponen-komponen yang lebih kecil dan sederhana.
+
+**Konsep Kunci & Filosofi:**
+Filosofi di balik sistem _layout_ _Flutter_ adalah **constraint-based layout** dan **declarative UI**. Setiap _widget_ memberikan _constraint_ kepada _child_-nya, dan _child_ tersebut kemudian menentukan ukurannya sendiri dalam _constraint_ tersebut, lalu _parent_ memposisikannya. Ini membuat _layout_ sangat fleksibel dan prediktabel.
+
+Berikut adalah _core layout widgets_ yang akan kita bahas secara mendetail:
+
+1.  **`Container` (padding, margin, decoration):**
+
+    - **Peran:** `Container` adalah _widget_ serbaguna yang dapat digunakan untuk menggambar, memposisikan, dan memberi gaya pada _widget_ lain. Ini seperti kotak di mana Anda dapat mengatur berbagai properti untuk memengaruhi tampilan dan _layout child_-nya.
+    - **Properti Kunci:**
+      - `child`: _Widget_ yang akan ditempatkan di dalam `Container`.
+      - `padding`: Ruang kosong di dalam `Container`, antara _border_ dan `child`.
+      - `margin`: Ruang kosong di luar `Container`, antara _border_ dan _widget_ lain di sekitarnya.
+      - `color`: Warna latar belakang `Container`.
+      - `decoration`: Dekorasi visual yang lebih kompleks (misalnya _border_, _box shadow_, _gradient_, _shape_, _image_). Jika `decoration` digunakan, properti `color` harus berada di dalam `decoration` (misalnya `BoxDecoration(color: Colors.blue)`).
+      - `width`, `height`: Ukuran eksplisit `Container`. Jika tidak ditentukan, `Container` akan mencoba mengisi _constraint_ _parent_-nya (jika memiliki _child_) atau mengecil sekecil mungkin (jika tanpa _child_).
+      - `alignment`: Menentukan bagaimana `child` diposisikan di dalam `Container`.
+      - `transform`: Menerapkan transformasi 3D ke `Container`.
+    - **Filosofi:** `Container` adalah _widget_ pembungkus yang dapat mengimplementasikan beberapa efek _layout_ dan gaya sekaligus, menjadikannya pilihan pertama untuk banyak kebutuhan dasar.
+
+2.  **`Row`, `Column`, dan `Flex` properties:**
+
+    - **Peran:** `Row` dan `Column` adalah _widget_ _layout_ dasar untuk menempatkan beberapa _child widget_ secara linear: `Row` mengatur mereka secara horizontal, sedangkan `Column` mengatur mereka secara vertikal. `Flex` adalah _widget_ dasar yang mendasari `Row` dan `Column`, menyediakan kontrol yang lebih granular atas bagaimana _child_ menggunakan ruang.
+    - **Properti Kunci (untuk `Row` dan `Column`):**
+      - `children`: Daftar _widget_ yang akan diatur.
+      - `mainAxisAlignment`: Menentukan bagaimana _child_ ditempatkan sepanjang sumbu utama (`main axis`). Untuk `Row`, sumbu utama adalah horizontal; untuk `Column`, itu vertikal. Nilai-nilai umum: `start`, `end`, `center`, `spaceBetween`, `spaceAround`, `spaceEvenly`.
+      - `crossAxisAlignment`: Menentukan bagaimana _child_ ditempatkan sepanjang sumbu silang (`cross axis`). Untuk `Row`, sumbu silang adalah vertikal; untuk `Column`, itu horizontal. Nilai-nilai umum: `start`, `end`, `center`, `stretch`, `baseline`.
+      - `mainAxisSize`: Menentukan seberapa banyak ruang yang harus diambil oleh _parent_ di sepanjang sumbu utama.
+        - `MainAxisSize.max`: Mengambil ruang sebanyak mungkin.
+        - `MainAxisSize.min`: Mengambil ruang sesedikit mungkin yang dibutuhkan oleh _child_-nya.
+      - `textDirection` (untuk `Row`): Menentukan arah horizontal teks, yang juga memengaruhi arah `mainAxisAlignment.start`/`end`.
+      - `verticalDirection` (untuk `Column`): Menentukan arah vertikal _layout_.
+    - **Filosofi:** Konsep "sumbu utama" dan "sumbu silang" adalah fundamental dalam _Flutter layout_. Memahaminya sangat penting untuk memposisikan _widget_ secara akurat dalam `Row` dan `Column`.
+
+3.  **`Stack` dan `Positioned` widgets:**
+
+    - **Peran:** `Stack` adalah _widget_ yang memungkinkan Anda untuk menumpuk _widget-widget_ di atas satu sama lain, seperti lapisan-lapisan dalam tumpukan kartu. Ini berguna untuk melapisi elemen UI (misalnya, _overlay_, _badge_, atau tombol di atas gambar). `Positioned` adalah _widget_ yang hanya dapat digunakan sebagai _child_ dari `Stack` untuk mengontrol posisi _child_ secara tepat dalam `Stack`.
+    - **Properti Kunci (`Stack`):**
+      - `children`: Daftar _widget_ yang akan ditumpuk. _Widget_ yang terakhir dalam daftar akan berada di paling atas.
+      - `alignment`: Menentukan bagaimana _child_ yang tidak di-_positioned_ (yaitu, tidak dibungkus oleh `Positioned`) akan ditempatkan dalam `Stack`.
+      - `fit`: Menentukan bagaimana _child_ yang tidak di-_positioned_ harus mengisi ruang `Stack`.
+    - **Properti Kunci (`Positioned`):**
+      - `left`, `top`, `right`, `bottom`: Jarak dari tepi `Stack`.
+      - `width`, `height`: Ukuran eksplisit _child_ yang di-_positioned_.
+    - **Filosofi:** `Stack` sangat kuat untuk _overlays_ dan _layout_ yang melibatkan tumpang tindih elemen. `Positioned` memberikan kontrol absolut dalam ruang yang disediakan oleh `Stack`.
+
+4.  **`Expanded` vs `Flexible` differences:**
+
+    - **Peran:** Keduanya adalah _widget_ yang hanya dapat digunakan sebagai _child_ dari `Row`, `Column`, atau `Flex`. Mereka digunakan untuk mengalokasikan ruang di sepanjang sumbu utama kepada _child_-nya.
+    - **`Expanded`:**
+      - Memaksa _child_ untuk mengisi semua ruang kosong yang tersedia di sepanjang sumbu utama.
+      - `flex` properti: Menentukan rasio ruang yang harus diambil oleh _child_ ini relatif terhadap _child Expanded_ atau _Flexible_ lainnya.
+    - **`Flexible`:**
+      - Memberi _child_ fleksibilitas untuk mengisi ruang yang tersedia, tetapi tidak memaksanya untuk mengisi semua ruang.
+      - `flex` properti: Sama seperti `Expanded`.
+      - `fit` properti:
+        - `FlexFit.tight`: Mirip dengan `Expanded` (memaksa _child_ untuk mengisi ruang).
+        - `FlexFit.loose`: Memungkinkan _child_ untuk mengambil ruang sesedikit mungkin hingga _max constraint_ yang diberikan oleh `Flexible`.
+    - **Filosofi:** Keduanya penting untuk _layout_ responsif di dalam `Row` atau `Column`, memungkinkan _child_ untuk beradaptasi dengan ruang yang tersedia. `Expanded` lebih agresif dalam mengambil ruang.
+
+5.  **`Wrap` widget untuk responsive layouts:**
+
+    - **Peran:** `Wrap` adalah _widget_ _layout_ yang mirip dengan `Row` atau `Column`, tetapi dengan satu perbedaan utama: jika ada terlalu banyak _child_ untuk muat di satu baris/kolom, _child_ tersebut akan "membungkus" ke baris/kolom berikutnya. Ini sangat berguna untuk _layout_ yang responsif seperti daftar _chip_ atau tag.
+    - **Properti Kunci:**
+      - `direction`: Arah sumbu utama (`Axis.horizontal` atau `Axis.vertical`).
+      - `alignment`: Bagaimana _children_ ditempatkan sepanjang sumbu utama.
+      - `spacing`: Jarak antar _children_ di sepanjang sumbu utama.
+      - `runAlignment`: Bagaimana "jalur" (_run_) baru ditempatkan di sepanjang sumbu silang.
+      - `runSpacing`: Jarak antar jalur baru di sepanjang sumbu silang.
+    - **Filosofi:** Solusi elegan untuk _layout_ yang perlu beradaptasi secara dinamis dengan ruang yang tersedia, tanpa perlu logika _media query_ yang rumit.
+
+6.  **`SizedBox` dan `Spacer` utilities:**
+
+    - **Peran:** Ini adalah _widget_ sederhana namun sangat efektif untuk mengontrol ruang dalam _layout_.
+    - **`SizedBox`:**
+      - **Peran:** Membuat kotak dengan ukuran tetap. Dapat digunakan untuk menambahkan ruang kosong spesifik (`width` dan `height`) atau untuk memaksa _child_ memiliki ukuran tertentu.
+      - **Penggunaan:** `SizedBox(width: 10)`, `SizedBox(height: 20)`, atau `SizedBox.expand()` untuk mengisi semua ruang yang tersedia.
+    - **`Spacer`:**
+      - **Peran:** Hanya dapat digunakan sebagai _child_ dari `Row`, `Column`, atau `Flex`. `Spacer` mengambil semua ruang kosong yang tersisa di sepanjang sumbu utama.
+      - **Penggunaan:** Sangat berguna untuk mendorong _widget_ ke ujung `Row` atau `Column` atau untuk mendistribusikan ruang secara merata. Memiliki properti `flex` seperti `Expanded`.
+    - **Filosofi:** Memberikan kontrol yang tepat atas _spacing_ dan dimensi, seringkali lebih bersih daripada menggunakan `Padding` atau `Container` hanya untuk tujuan _spacing_.
+
+**Sintaks/Contoh Implementasi & Visualisasi:**
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Core Layout Widgets Demo'),
+        ),
+        body: SingleChildScrollView( // Agar bisa di-scroll jika kontennya panjang
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text('1. Container (Padding, Margin, Decoration)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.lightBlue[100],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.blue, width: 2),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black26, blurRadius: 5, offset: Offset(0, 3)),
+                    ],
+                  ),
+                  child: const Text(
+                    'Ini adalah Container dengan margin, padding, dan decoration.',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const Divider(),
+
+                const Text('2. Row, Column, dan Flex properties', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                // Contoh Row
+                Container(
+                  color: Colors.grey[200],
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(color: Colors.red, width: 50, height: 50),
+                      Container(color: Colors.green, width: 50, height: 50),
+                      Container(color: Colors.blue, width: 50, height: 50),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Contoh Column
+                Container(
+                  color: Colors.grey[200],
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min, // Penting untuk Column yang tidak mengisi semua ruang
+                    children: <Widget>[
+                      Container(color: Colors.orange, width: 50, height: 50),
+                      Container(color: Colors.purple, width: 50, height: 50),
+                      Container(color: Colors.brown, width: 50, height: 50),
+                    ],
+                  ),
+                ),
+                const Divider(),
+
+                const Text('3. Stack dan Positioned', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: 300,
+                  height: 150,
+                  child: Stack(
+                    alignment: Alignment.center, // Untuk child yang tidak di-positioned
+                    children: <Widget>[
+                      Container(color: Colors.yellow, width: 200, height: 100),
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: Container(color: Colors.black, width: 50, height: 50),
+                      ),
+                      const Positioned(
+                        bottom: 0,
+                        left: 0,
+                        child: Text(
+                          'Teks di Bawah Kiri',
+                          style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+
+                const Text('4. Expanded vs Flexible', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Container(
+                  color: Colors.grey[300],
+                  height: 100,
+                  child: Row(
+                    children: <Widget>[
+                      Container(color: Colors.cyan, width: 50, height: 80),
+                      Expanded(
+                        flex: 2, // Mengambil 2 bagian dari total fleksibilitas
+                        child: Container(color: Colors.pink, height: 80, child: const Center(child: Text('Expanded (2)'))),
+                      ),
+                      Flexible(
+                        flex: 1, // Mengambil 1 bagian
+                        fit: FlexFit.loose, // Mengambil ruang sesedikit mungkin
+                        child: Container(color: Colors.lime, height: 80, child: const Center(child: Text('Flexible Loose (1)'))),
+                      ),
+                      Flexible(
+                        flex: 1, // Mengambil 1 bagian
+                        fit: FlexFit.tight, // Mengambil ruang sebanyak mungkin
+                        child: Container(color: Colors.deepOrange, height: 80, child: const Center(child: Text('Flexible Tight (1)'))),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+
+                const Text('5. Wrap Widget', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Container(
+                  color: Colors.grey[200],
+                  padding: const EdgeInsets.all(8),
+                  child: Wrap(
+                    spacing: 8.0, // Jarak antar item
+                    runSpacing: 4.0, // Jarak antar baris/kolom
+                    children: List.generate(
+                      10,
+                      (index) => Chip(
+                        label: Text('Tag ${index + 1}'),
+                        backgroundColor: Colors.amber[100],
+                      ),
+                    ),
+                  ),
+                ),
+                const Divider(),
+
+                const Text('6. SizedBox dan Spacer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Container(
+                  color: Colors.grey[200],
+                  child: Row(
+                    children: <Widget>[
+                      Container(color: Colors.teal, width: 50, height: 50),
+                      const SizedBox(width: 20), // Spasi horizontal tetap
+                      Container(color: Colors.indigo, width: 50, height: 50),
+                      const Spacer(), // Mengambil semua ruang yang tersisa
+                      Container(color: Colors.greenAccent, width: 50, height: 50),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20), // Spasi vertikal tetap
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Visualisasi Konseptual Layout Widgets:**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                   Container                              │
+│ (Margin) ┌───────────────────────────────┐ (Margin)      │
+│          │             Padding           │               │
+│          │   ┌─────────────────────────┐ │               │
+│          │   │         Child           │ │               │
+│          │   └─────────────────────────┘ │               │
+│          └───────────────────────────────┘               │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────┐
+│                   Row                    │
+│ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐  │
+│ │ Child │ │ Child │ │ Child │ │ Child │  │
+│ └───────┘ └───────┘ └───────┘ └───────┘  │
+└──────────────────────────────────────────┘
+
+┌─────────────────┐
+│     Column      │
+│ ┌───────────┐   │
+│ │   Child   │   │
+│ └───────────┘   │
+│ ┌───────────┐   │
+│ │   Child   │   │
+│ └───────────┘   │
+│ ┌───────────┐   │
+│ │   Child   │   │
+│ └───────────┘   │
+└─────────────────┘
+
+┌──────────────────────────────────────────┐
+│                   Stack                  │
+│ ┌──────────────────────────────────────┐ │
+│ │ Layer 3 (Paling Atas)                │ │
+│ │   ┌────────────────────────────────┐ │ │
+│ │   │ Layer 2                        │ │ │
+│ │   │   ┌──────────────────────────┐ │ │ │
+│ │   │   │ Layer 1 (Paling Bawah)   │ │ │ │
+│ │   │   │                          │ │ │ │
+│ │   │   └──────────────────────────┘ │ │ │
+│ │   └────────────────────────────────┘ │ │
+│ └──────────────────────────────────────┘ │
+└──────────────────────────────────────────┘
+
+┌────────────────────────────────────────────┐
+│   Row (dengan Expanded/Flexible)           │
+│ ┌───────┐ ┌───────────────┐ ┌───────┐      │
+│ │ Tetap │ │ Expanded/     │ │ Tetap │      │
+│ │       │ │ Flexible      │ │       │      │
+│ └───────┘ └───────────────┘ └───────┘      │
+└────────────────────────────────────────────┘
+(Expanded akan mengisi sisa ruang, Flexible bisa mengisi sebagian atau sesuai child)
+
+┌──────────────────────────────────────────┐
+│                   Wrap                   │
+│ ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐  │
+│ │ Item  │ │ Item  │ │ Item  │ │ Item  │  │
+│ └───────┘ └───────┘ └───────┘ └───────┘  │
+│ ┌───────┐ ┌───────┐ ┌───────┐            │
+│ │ Item  │ │ Item  │ │ Item  │            │
+│ └───────┘ └───────┘ └───────┘            │
+└──────────────────────────────────────────┘
+(Item akan membungkus ke baris berikutnya jika tidak muat)
+
+┌──────────────────────────────────────────┐
+│              Row/Column                  │
+│ ┌───────┐┌─────────┐┌───────┐            │
+│ │ Child ││SizedBox ││ Child │            │
+│ └───────┘└─────────┘└───────┘            │
+│                                          │
+│ ┌───────┐           ┌───────┐            │
+│ │ Child │   Spacer  │ Child │            │
+│ └───────┘           └───────┘            │
+└──────────────────────────────────────────┘
+```
+
+**Terminologi Esensial:**
+
+- **Layout:** Proses mengatur ukuran dan posisi _widget_ di layar.
+- **Constraint-based Layout:** Sistem di mana _parent widget_ memberikan batasan (_constraint_) kepada _child_-nya, dan _child_ kemudian menentukan ukurannya dalam batasan tersebut.
+- **Main Axis:** Sumbu utama tempat _widget_ diatur dalam `Row` (horizontal) atau `Column` (vertikal).
+- **Cross Axis:** Sumbu silang, tegak lurus dengan sumbu utama.
+- **Flex Factor:** Angka yang menunjukkan rasio ruang yang harus diambil oleh _widget_ `Expanded` atau `Flexible` relatif terhadap _widget flex_ lainnya.
+- **Box Decoration:** Konfigurasi visual untuk `Container` seperti _border_, _radius_, _shadow_, dll.
+- **Run:** Dalam `Wrap`, ini adalah baris atau kolom _child_ yang baru dibungkus.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Container: Pembungkus Serbaguna
+- Row & Column: Pengatur Linear
+- Stack & Positioned: Penumpuk Berlapis
+- Expanded & Flexible: Pengatur Ruang Fleksibel
+- Wrap: Pengatur Responsif Otomatis
+- SizedBox & Spacer: Pengatur Jarak Presisi
+
+**Hubungan dengan Bagian Lain:**
+
+- **Widget Tree & Rendering Engine:** Memahami bagaimana _layout widgets_ ini bekerja secara internal terkait erat dengan konsep _RenderObject Tree_, karena _RenderObject_ yang sebenarnya melakukan perhitungan _layout_.
+- **UI Components & Material Design:** Sebagian besar komponen Material Design (seperti `Card`, `AppBar`) menggunakan kombinasi dari _core layout widgets_ ini di bawah kap.
+- **Responsive UI:** _Core layout widgets_ adalah fondasi untuk membangun UI yang responsif dan beradaptasi dengan berbagai ukuran layar.
+
+**Referensi Lengkap:**
+
+- [Flutter Layout Widgets](https://flutter.dev/docs/development/ui/widgets/layout): Dokumentasi resmi yang merangkum _widget-widget layout_ utama.
+- [Layout Cheat Sheet](https://medium.com/flutter-community/flutter-layout-cheat-sheet-5363348d037e): Sumber daya visual yang bagus untuk memahami berbagai properti _layout_.
+- [Understanding Constraints](https://flutter.dev/docs/development/ui/layout/constraints): Artikel penting untuk memahami bagaimana sistem _layout_ _Flutter_ bekerja di balik layar.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Pahami Aliran Constraints:** Ingatlah selalu bahwa _parent_ memberikan _constraint_ kepada _child_, dan _child_ menentukan ukurannya sendiri dalam _constraint_ tersebut.
+- **Gunakan _Widget_ Paling Sederhana:** Jika Anda hanya butuh ruang, gunakan `SizedBox` atau `Spacer` daripada `Container` yang lebih berat.
+- **Visualisasikan:** Gunakan _Flutter Inspector_ di _DevTools_ untuk melihat _layout_ _widget tree_ Anda secara visual; ini sangat membantu dalam _debugging layout_ yang kompleks.
+- **Coba Kombinasi:** _Layout_ yang kompleks hampir selalu merupakan kombinasi dari _widget-widget layout_ sederhana yang disarang (_nested_) satu sama lain.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Mengatur `width` atau `height` pada _child_ `Row` atau `Column` yang juga dibungkus oleh `Expanded` atau `Flexible`. Ini seringkali akan menyebabkan _error_ karena _constraint_ saling bertentangan.
+  - **Solusi:** Biarkan `Expanded` atau `Flexible` mengelola dimensi di sepanjang sumbu utama. Jika Anda perlu ukuran tetap, jangan gunakan `Expanded` atau `Flexible` untuk _widget_ tersebut.
+- **Kesalahan:** _Widget_ di dalam `Column` atau `Row` melimpah (_overflow_) dari layar.
+  - **Solusi:**
+    - Gunakan `Expanded` atau `Flexible` pada _child_ yang harus mengisi ruang.
+    - Bungkus `Row` atau `Column` dengan `SingleChildScrollView` jika Anda ingin konten dapat digulir.
+    - Pastikan `mainAxisSize` diatur dengan benar, terutama `MainAxisSize.min` untuk `Column` jika Anda tidak ingin ia mengambil seluruh tinggi _parent_.
+- **Kesalahan:** Properti `color` tidak bekerja pada `Container` saat `decoration` juga ada.
+  - **Solusi:** Pindahkan properti `color` ke dalam `BoxDecoration` (misalnya `decoration: BoxDecoration(color: Colors.blue)`).
+
+---
+
+Sangat bagus\! Anda kini telah menuntaskan pembahasan mendalam tentang **Core Layout Widgets** di _Flutter_. Ini adalah fondasi kuat untuk merancang dan membangun antarmuka pengguna yang visualnya menarik dan berfungsi dengan baik.
+
+Selanjutnya, kita akan melanjutkan ke bagian yang lebih canggih dari sistem _layout_ di _Flutter_.
+
+Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **[Advanced Layout Techniques]**, atau ada aspek dari "Core Layout Widgets" yang ingin Anda diskusikan lebih dalam lagi?
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

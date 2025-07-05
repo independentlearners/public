@@ -2572,3 +2572,91 @@ Content dengan **target keywords** yang natural.
 
 <!-- <h3 id="dua"></h3> -->
 ```
+
+
+Untuk membuat **tampilan di Markdown yang bisa digeser secara horizontal** (scroll horizontal) dan **tidak pecah** meskipun lebar kontennya melebihi viewport (misalnya diagram seperti yang kamu contohkan), kamu bisa membungkus blok kode tersebut dalam tag HTML `<pre>` dan memberikan style CSS inline `overflow-x: auto`.
+
+Berikut format **Markdown + HTML**-nya:
+
+```markdown
+<div style="overflow-x: auto; white-space: pre;">
+
+```
+
+┌──────────────────────────────────────────────────────────┐
+│                      MyApp (StatelessWidget)             │
+│                (Induk utama aplikasi Flutter)            │
+└───────────────────────┬──────────────────────────────────┘
+│
+▼
+┌──────────────────────────────────────────────────────────┐
+│                   MaterialApp (StatelessWidget)          │
+│         (Pembungkus konfigurasi Material Design)         │
+└───────────────────────┬──────────────────────────────────┘
+│
+▼
+
+```
+
+</div>
+```
+
+### Penjelasan:
+
+* `<div style="overflow-x: auto; white-space: pre;">` → membuat blok teks horizontal scroll jika isinya melebar.
+* `white-space: pre` → menjaga semua spasi dan line break agar tampil sesuai format ASCII.
+* Kontennya ditulis langsung di antara tag `<div>` dan `</div>`, tanpa blok kode triple backtick lagi di dalamnya (hindari nested backtick karena bisa rusak parsing-nya).
+
+---
+
+### Catatan Tambahan:
+
+* **GitHub, GitLab, atau platform markdown lainnya yang mendukung HTML inline** bisa langsung membaca ini.
+* Jika Markdown parser **tidak mengizinkan HTML**, maka cara alternatifnya adalah menggunakan *scrollable block* bawaan seperti yang biasa digunakan pada GitHub:
+
+````markdown
+```text
+(isi panjang diagram di sini)
+````
+
+```
+
+Namun, yang ini hanya *muncul horizontal scroll* **jika layout halaman memang tidak cukup lebar**. Tidak **force-scrollable** seperti solusi `<div>` di atas.
+
+---
+
+<div style="overflow-x: auto;white-space: pre;background-color: var(--vscode-editor-background);padding: 1em;border-radius: 6px;font-family: monospace;color: var(--vscode-editor-foreground);
+">┌──────────────────────────────────────────────────────────┐
+│                      MyApp (StatelessWidget)             │
+│                (Induk utama aplikasi Flutter)            │
+└───────────────────────┬──────────────────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────────────────┐
+│                   MaterialApp (StatelessWidget)          │
+│         (Pembungkus konfigurasi Material Design)         │
+└───────────────────────┬──────────────────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────────────────┐
+│                   Scaffold (StatelessWidget)             │
+│           (Pembungkus struktur halaman dasar)            │
+└───────────────────────┬──────────────────────────────────┘
+            ┌───────────┴───────────┐
+            ▼                       ▼
+┌─────────────────┐       ┌────────────────────────────────────────────────┐
+│AppBar(Stateless)│       │        Center (StatelessWidget)                │
+│                 │       │ (Pembungkus untuk menengahkan anaknya)         │
+└────────┬────────┘       └───────────────────────┬────────────────────────┘
+         │                                        │
+         ▼                                        ▼
+┌─────────────────┐             ┌──────────────────────────────────────────┐
+│ Text (Stateless)│             │               Column (StatelessWidget)   │
+│ ("Pengenalan   "│             │   (Pembungkus untuk menata anak vertikal)│
+│ " Widget")      │             └───────────────────┬──────────────────────┘
+└─────────────────┘                         ┌───────┴────────────────────────────┐
+                                            ▼                                    ▼
+┌──────────────────────────┐      ┌──────────────────────────┐      ┌──────────────────────────┐
+│ TeksStateless (Stateless)│      │ SpasiVertikal (Stateless)│      │ TombolCounter (Stateful) │
+│("Saya adalah Stateless" )│      │ (tinggi: 20)             │      │ (Counter: 0, Tombol)     │
+└──────────────────────────┘      └──────────────────────────┘      └──────────────────────────┘</div>
