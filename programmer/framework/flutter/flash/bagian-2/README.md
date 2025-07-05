@@ -2118,7 +2118,7 @@ class RadialFlowDelegate extends FlowDelegate {
 **Referensi Lengkap:**
 
 - [Flutter Layout Widgets](https://flutter.dev/docs/development/ui/widgets/layout): Selalu menjadi referensi utama untuk _widget-widget layout_.
-- [Understanding Constraints](https://www.google.com/search?q=https://flutter.dev/docs/docs/development/ui/layout/constraints): Artikel yang menjelaskan model _constraint_ _Flutter_ secara mendalam.
+- [Understanding Constraints](https://flutter.dev/docs/docs/development/ui/layout/constraints): Artikel yang menjelaskan model _constraint_ _Flutter_ secara mendalam.
 - [Flex and Flexible Widgets](https://flutter.dev/docs/development/ui/layout/flex): Detail tentang penggunaan `flex` dan `fit`.
 - [Stack and Positioned Advanced](https://flutter.dev/docs/cookbook/animation/physics-simulation): Meskipun judulnya tentang animasi, bagian ini menjelaskan lebih banyak tentang `Stack` dan `Positioned`.
 - [CustomScrollView & Slivers](https://flutter.dev/docs/development/ui/advanced/slivers): Akan kita bahas lebih lanjut di bagian _scrolling_, namun relevan dengan _layout_ tingkat lanjut.
@@ -2140,9 +2140,2629 @@ class RadialFlowDelegate extends FlowDelegate {
 - **Kesalahan:** Bingung kapan menggunakan `Expanded` vs `Flexible`.
   - **Solusi:** `Expanded` akan _selalu_ mengisi sisa ruang yang tersedia. `Flexible` hanya akan mengisi ruang _jika child-nya membutuhkan_ (dengan `FlexFit.loose`) atau mengisi _jika dipaksa_ (dengan `FlexFit.tight`). Pikirkan `Expanded` sebagai `Flexible(fit: FlexFit.tight)`.
 
+# Luar biasa dan Selamat!
+
+Anda telah berhasil menuntaskan pembahasan mendalam tentang **Core Layout Widgets** di _Flutter_. Ini adalah fondasi kuat untuk merancang dan membangun antarmuka pengguna yang visualnya menarik dan berfungsi dengan baik. Bagian **Advanced Layout Techniques** juga membekali Anda dengan alat untuk menangani skenario _layout_ yang paling menantang sekalipun, memastikan Anda dapat membangun UI yang presisi, responsif, dan performatif.
+
+---
+
+### **3: UI Components & Material Design**.
+
+#### **3.1 Material Design Implementation**
+
+Pada bagian ini, kita akan mulai membangun antarmuka pengguna yang indah dan fungsional dengan memanfaatkan komponen-komponen yang telah disediakan oleh _Flutter_, khususnya yang mengikuti pedoman Material Design.
+
+##### **Material Components**
+
+**Deskripsi Detail & Peran:**
+Sub-bagian ini akan memperkenalkan Anda pada _Material Components_, yaitu serangkaian _widget_ yang mengimplementasikan pedoman desain Material Design dari Google. _Material Design_ adalah sistem desain komprehensif untuk aplikasi digital, dan _Flutter_ menyediakan implementasi _widget_ yang kaya untuk memudahkan Anda membangun aplikasi yang konsisten, intuitif, dan menarik secara visual di berbagai platform. Memahami _Material Components_ adalah langkah fundamental untuk membangun aplikasi _Flutter_ yang tampak profesional.
+
+**Konsep Kunci & Filosofi:**
+Filosofi inti di balik _Material Components_ adalah **konsistensi**, **aksesibilitas**, dan **pengalaman pengguna yang intuitif**. Setiap komponen dirancang untuk memiliki tampilan dan perilaku yang dapat diprediksi, mengurangi beban kognitif pengguna, dan memungkinkan pengembangan yang cepat. _Flutter_ mewujudkan ini dengan menyediakan _widget_ siap pakai yang dapat disesuaikan.
+
+Berikut adalah _Material Components_ utama yang akan kita bahas:
+
+1.  **`Scaffold` structure dan components:**
+
+    - **Peran:** `Scaffold` adalah _widget_ _top-level_ yang menyediakan struktur _layout_ dasar untuk aplikasi Material Design. Ini adalah fondasi di mana Anda akan menempatkan sebagian besar _widget_ UI lainnya. Ibaratnya, ini adalah kerangka bangunan aplikasi Anda.
+    - **Properti Kunci & Komponen Internal:**
+      - `appBar`: Sebuah `AppBar` yang ditampilkan di bagian atas layar.
+      - `body`: Konten utama layar, menempati sisa ruang yang tidak digunakan oleh `AppBar`, `bottomNavigationBar`, dll.
+      - `floatingActionButton`: Tombol aksi mengambang yang biasanya digunakan untuk aksi utama pada layar.
+      - `floatingActionButtonLocation`: Mengatur posisi `FloatingActionButton`.
+      - `drawer`: Panel samping yang muncul dari kiri (biasanya menu navigasi).
+      - `endDrawer`: Panel samping yang muncul dari kanan (biasanya pengaturan atau info tambahan).
+      - `bottomNavigationBar`: Bar navigasi di bagian bawah layar, sering digunakan untuk navigasi antar bagian utama aplikasi.
+      - `bottomSheet`: Sebuah panel yang muncul dari bawah layar, dapat di-_dismiss_ atau persisten.
+      - `backgroundColor`: Warna latar belakang `Scaffold`.
+      - `resizeToAvoidBottomInset`: Mengontrol apakah `Scaffold` akan mengubah ukurannya untuk menghindari _keyboard_ yang muncul.
+    - **Filosofi:** `Scaffold` mengkonsolidasikan elemen-elemen UI umum yang ditemukan di hampir setiap aplikasi modern, memungkinkan _developer_ fokus pada konten.
+
+    <!-- end list -->
+
+    ```
+    Scaffold
+    ├── AppBar
+    │   └── Title, Actions
+    ├── body
+    │   └── Content Widget Tree
+    ├── floatingActionButton
+    ├── drawer
+    ├── endDrawer
+    └── bottomNavigationBar
+        └── Items (e.g., BottomNavigationBarItem)
+    ```
+
+2.  **`AppBar` customization dan variants:**
+
+    - **Peran:** `AppBar` adalah bilah di bagian atas layar yang menyediakan informasi, tindakan, dan navigasi kontekstual untuk layar saat ini.
+    - **Properti Kunci:**
+      - `title`: Judul utama `AppBar`, biasanya berupa `Text` _widget_.
+      - `leading`: _Widget_ di sisi kiri `title` (misalnya tombol _drawer_ atau tombol _back_).
+      - `actions`: Daftar _widget_ di sisi kanan `title` (misalnya ikon pencarian, pengaturan).
+      - `bottom`: _Widget_ yang ditampilkan di bawah `AppBar` utama (misalnya `TabBar`).
+      - `backgroundColor`: Warna latar belakang `AppBar`.
+      - `elevation`: Tinggi `AppBar` di atas _body_, memberikan efek bayangan.
+      - `toolbarHeight`: Tinggi `toolbar` `AppBar` itu sendiri.
+      - `flexibleSpace`: _Widget_ yang ditumpuk di belakang `toolbar` dan `bottom`, berguna untuk efek _parallax_.
+    - **Varian:**
+      - `SliverAppBar`: Digunakan dalam `CustomScrollView` untuk efek _collapsible_ atau _expandable_ saat menggulir.
+    - **Filosofi:** Menyediakan cara yang konsisten dan dapat disesuaikan untuk menampilkan kontrol dan informasi penting di bagian atas layar.
+
+    <!-- end list -->
+
+    ```
+    AppBar
+    ├── leading (e.g., IconButton for Drawer)
+    ├── title (e.g., Text)
+    ├── actions (List of IconButtons/Widgets)
+    └── bottom (Optional: TabBar)
+    ```
+
+3.  **`FloatingActionButton` types:**
+
+    - **Peran:** Tombol aksi mengambang adalah tombol melingkar yang mengambang di atas UI dan digunakan untuk mempromosikan aksi utama pada layar.
+    - **Properti Kunci:**
+      - `child`: _Widget_ yang ditampilkan di dalam tombol (biasanya `Icon`).
+      - `onPressed`: _Callback_ yang dipanggil saat tombol ditekan.
+      - `backgroundColor`: Warna latar belakang tombol.
+      - `mini`: Membuat tombol lebih kecil.
+      - `heroTag`: Digunakan untuk animasi _hero_ antar layar. Penting jika ada lebih dari satu `FloatingActionButton` dalam _route tree_.
+    - **Tipe/Varian:**
+      - **Standard FAB:** Bentuk lingkaran standar.
+      - **Mini FAB:** Versi lebih kecil dari standar FAB.
+      - **Extended FAB:** Bentuk persegi panjang dengan label teks dan ikon, lebih menonjol.
+    - **Filosofi:** Menarik perhatian ke aksi terpenting di layar saat ini.
+
+    <!-- end list -->
+
+    ```
+    FloatingActionButton
+    └── Icon / Text (for Extended FAB)
+    ```
+
+4.  **`Drawer` dan `EndDrawer`:**
+
+    - **Peran:** `Drawer` adalah panel navigasi yang biasanya tersembunyi dan muncul dari tepi layar (defaultnya kiri). `EndDrawer` adalah `Drawer` yang muncul dari tepi berlawanan (defaultnya kanan).
+    - **Properti Kunci:**
+      - `child`: _Widget_ yang ditampilkan di dalam `Drawer`, biasanya `ListView` yang berisi `DrawerHeader` dan daftar `ListTile` untuk item navigasi.
+    - **Penggunaan:** Sering digunakan untuk navigasi tingkat atas, pengaturan, atau informasi akun pengguna.
+    - **Filosofi:** Menyediakan akses ke navigasi atau opsi sekunder tanpa mengganggu konten utama layar.
+
+    <!-- end list -->
+
+    ```
+    Drawer
+    └── ListView
+        ├── DrawerHeader
+        │   └── User Info / App Logo
+        └── ListTile (for each navigation item)
+            ├── Icon
+            └── Text
+    ```
+
+5.  **`BottomNavigationBar` vs `NavigationRail`:**
+
+    - **Peran:** Keduanya menyediakan navigasi persisten di antara beberapa tujuan di tingkat atas aplikasi.
+    - **`BottomNavigationBar`:**
+      - **Peran:** Bar navigasi yang ditampilkan di bagian bawah layar. Ideal untuk 3-5 tujuan tingkat atas.
+      - **Properti Kunci:**
+        - `items`: Daftar `BottomNavigationBarItem` (ikon dan label).
+        - `onTap`: _Callback_ saat item ditekan.
+        - `currentIndex`: Indeks item yang saat ini dipilih.
+        - `type`: Mengontrol perilaku visual (fixed/shifting).
+      - **Batasan:** Tidak ideal untuk lebih dari 5 item.
+    - **`NavigationRail`:**
+      - **Peran:** Alternatif untuk `BottomNavigationBar` yang cocok untuk _layout_ yang lebih besar (tablet, desktop). Menampilkan navigasi secara vertikal di sepanjang sisi kiri atau kanan layar.
+      - **Properti Kunci:**
+        - `destinations`: Daftar `NavigationRailDestination` (ikon dan label).
+        - `selectedIndex`: Indeks item yang saat ini dipilih.
+        - `onDestinationSelected`: _Callback_ saat item dipilih.
+        - `leading`, `trailing`: _Widget_ opsional di bagian atas/bawah rel navigasi.
+        - `extended`: Mengontrol apakah rel diperluas untuk menampilkan label teks.
+      - **Penggunaan:** Sangat baik untuk aplikasi yang perlu beradaptasi dengan berbagai ukuran layar, menyediakan pengalaman navigasi yang optimal.
+    - **Filosofi:** Memastikan navigasi yang mudah diakses dan konsisten di berbagai form factor.
+
+    <!-- end list -->
+
+    ```
+    BottomNavigationBar
+    ├── BottomNavigationBarItem (Icon, Label)
+    ├── BottomNavigationBarItem (Icon, Label)
+    └── ...
+
+    NavigationRail
+    ├── leading (Optional)
+    ├── destinations (List of NavigationRailDestination)
+    │   ├── Icon
+    │   └── Label
+    └── trailing (Optional)
+    ```
+
+6.  **`SnackBar` dan `Banner` notifications:**
+
+    - **Peran:** Keduanya digunakan untuk menampilkan pesan singkat dan informatif kepada pengguna.
+    - **`SnackBar`:**
+      - **Peran:** Pesan ringan yang muncul sementara di bagian bawah layar. Ideal untuk pemberitahuan singkat yang tidak mengganggu aliran pengguna (misalnya "Item ditambahkan ke keranjang").
+      - **Penggunaan:** Ditampilkan menggunakan `ScaffoldMessenger.of(context).showSnackBar()`.
+      - **Interaksi:** Dapat memiliki aksi opsional (misalnya tombol "Undo"). Akan hilang secara otomatis setelah beberapa detik atau saat pengguna berinteraksi.
+    - **`MaterialBanner` (sering disebut `Banner`):**
+      - **Peran:** Pesan penting yang muncul di bagian atas layar, di bawah `AppBar`, dan tetap terlihat hingga ditutup oleh pengguna. Ideal untuk pesan yang memerlukan perhatian atau interaksi segera (misalnya, masalah koneksi, pemberitahuan persetujuan cookie).
+      - **Penggunaan:** Ditampilkan menggunakan `ScaffoldMessenger.of(context).showMaterialBanner()`.
+      - **Interaksi:** Memiliki aksi dan tombol tutup eksplisit.
+    - **Filosofi:** Memberikan umpan balik kepada pengguna secara non-intrusif (SnackBar) atau lebih menonjol (Banner) sesuai dengan tingkat urgensi pesan.
+
+7.  **`Dialog` variants (`AlertDialog`, `SimpleDialog`, `Custom`):**
+
+    - **Peran:** `Dialog` adalah _popup_ yang muncul di atas konten layar saat ini untuk meminta informasi atau keputusan dari pengguna. Mereka menghalangi interaksi dengan konten di belakangnya.
+    - **`AlertDialog`:**
+      - **Peran:** Dialog yang digunakan untuk memberi tahu pengguna tentang situasi yang memerlukan konfirmasi. Memiliki judul, konten, dan daftar aksi (tombol).
+      - **Penggunaan:** Sering digunakan untuk konfirmasi penghapusan, peringatan _error_, atau pertanyaan ya/tidak.
+    - **`SimpleDialog`:**
+      - **Peran:** Dialog yang menawarkan daftar opsi kepada pengguna. Memiliki judul opsional dan daftar _child_ (biasanya `SimpleDialogOption`).
+      - **Penggunaan:** Ideal untuk memilih dari daftar opsi yang sederhana.
+    - **Custom Dialog:**
+      - **Peran:** Menggunakan `showDialog` dengan _widget_ `Dialog` dasar atau `Container` untuk membuat _popup_ dengan _layout_ yang sepenuhnya kustom.
+      - **Penggunaan:** Ketika `AlertDialog` atau `SimpleDialog` tidak cukup fleksibel untuk kebutuhan UI Anda.
+    - **Filosofi:** Mengambil fokus pengguna untuk keputusan penting atau input.
+
+    <!-- end list -->
+
+    ```
+    Dialog (Conceptual)
+    ├── Title (Optional)
+    ├── Content (Text, List of Options, Custom Widget)
+    └── Actions (Buttons - for AlertDialog)
+    ```
+
+**Sintaks/Contoh Implementasi Lengkap:**
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Material Components Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: false, // Menggunakan Material 2 untuk demo ini
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _showSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Ini adalah SnackBar!'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            // Kode untuk aksi Undo
+          },
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _showBanner(BuildContext context) {
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      MaterialBanner(
+        content: const Text('Ini adalah Material Banner yang penting!'),
+        leading: const Icon(Icons.info, color: Colors.blue),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            },
+            child: const Text('DISMISS'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Aksi lain
+            },
+            child: const Text('PELAJARI LEBIH'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showAlertDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap a button!
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Konfirmasi Hapus'),
+          content: const Text('Apakah Anda yakin ingin menghapus item ini?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('BATAL'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Tutup dialog
+              },
+            ),
+            TextButton(
+              child: const Text('HAPUS'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Tutup dialog
+                _showSnackBar(context); // Tampilkan SnackBar setelah hapus
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showSimpleDialog(BuildContext context) async {
+    switch (await showDialog<String>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return SimpleDialog(
+          title: const Text('Pilih Opsi'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(dialogContext, 'Opsi 1');
+              },
+              child: const Text('Opsi Satu'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(dialogContext, 'Opsi 2');
+              },
+              child: const Text('Opsi Dua'),
+            ),
+          ],
+        );
+      },
+    )) {
+      case 'Opsi 1':
+        print('Anda memilih Opsi Satu');
+        break;
+      case 'Opsi 2':
+        print('Anda memilih Opsi Dua');
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // 1. AppBar
+      appBar: AppBar(
+        title: const Text('Material Components Demo'),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer(); // Membuka Drawer
+              },
+            );
+          },
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              _showSnackBar(context); // Demo SnackBar
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.info),
+            onPressed: () {
+              _showBanner(context); // Demo Banner
+            },
+          ),
+        ],
+      ),
+      // 2. Drawer
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Menu Aplikasi',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () {
+                Navigator.pop(context); // Tutup drawer
+                _onItemTapped(0);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Pengaturan'),
+              onTap: () {
+                Navigator.pop(context); // Tutup drawer
+                _onItemTapped(1);
+              },
+            ),
+          ],
+        ),
+      ),
+      // 3. Body
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Halaman saat ini: ${['Home', 'Pengaturan', 'Profil'][_selectedIndex]}',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _showAlertDialog(context),
+              child: const Text('Tampilkan AlertDialog'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => _showSimpleDialog(context),
+              child: const Text('Tampilkan SimpleDialog'),
+            ),
+            const SizedBox(height: 10),
+            // Example of using NavigationRail for larger screens (conceptual for this single screen app)
+            // You'd typically use LayoutBuilder or MediaQuery to conditionally show it
+            if (MediaQuery.of(context).size.width > 600)
+              SizedBox(
+                height: 150, // Hanya untuk demo, agar terlihat
+                child: Row(
+                  children: [
+                    NavigationRail(
+                      selectedIndex: _selectedIndex,
+                      onDestinationSelected: (index) {
+                        setState(() {
+                          _selectedIndex = index;
+                        });
+                      },
+                      labelType: NavigationRailLabelType.all,
+                      destinations: const <NavigationRailDestination>[
+                        NavigationRailDestination(
+                          icon: Icon(Icons.home),
+                          selectedIcon: Icon(Icons.home_filled),
+                          label: Text('Home'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.settings),
+                          selectedIcon: Icon(Icons.settings_suggest),
+                          label: Text('Pengaturan'),
+                        ),
+                        NavigationRailDestination(
+                          icon: Icon(Icons.person),
+                          selectedIcon: Icon(Icons.person),
+                          label: Text('Profil'),
+                        ),
+                      ],
+                    ),
+                    const VerticalDivider(thickness: 1, width: 1),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'Konten Rail: ${['Home', 'Pengaturan', 'Profil'][_selectedIndex]}',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+      // 4. FloatingActionButton
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          print('FAB ditekan!');
+          _showSnackBar(context);
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('Tambah Baru'),
+      ),
+      // 5. BottomNavigationBar
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Pengaturan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+```
+
+**Terminologi Esensial:**
+
+- **Material Design:** Sistem desain yang dibuat oleh Google untuk aplikasi di berbagai platform, fokus pada grid-based layout, responsif, dan _deep motion_.
+- **Scaffold:** Kerangka utama aplikasi Material Design.
+- **AppBar:** Bilah atas yang berisi judul dan aksi.
+- **FloatingActionButton (FAB):** Tombol aksi utama yang mengambang.
+- **Drawer:** Panel navigasi samping yang muncul dari tepi.
+- **BottomNavigationBar:** Bar navigasi di bagian bawah layar.
+- **NavigationRail:** Bar navigasi vertikal, cocok untuk layar lebih besar.
+- **SnackBar:** Pesan pemberitahuan sementara di bagian bawah layar.
+- **MaterialBanner:** Pesan pemberitahuan persisten di bagian atas layar.
+- **Dialog:** _Pop-up_ yang meminta input atau konfirmasi pengguna.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Struktur `Scaffold`
+- Kustomisasi `AppBar`
+- Jenis `FloatingActionButton`
+- Penggunaan `Drawer` dan `EndDrawer`
+- Perbandingan `BottomNavigationBar` dan `NavigationRail`
+- Pemberitahuan `SnackBar` dan `Banner`
+- Varian `Dialog`
+
+**Hubungan dengan Bagian Lain:**
+
+- **Layout System Mastery:** `Scaffold` menyediakan kerangka _layout_ yang kemudian diisi oleh _widget-widget layout_ lainnya.
+- **State Management:** Perubahan pada _state_ seperti pemilihan item di `BottomNavigationBar` atau `NavigationRail` akan memicu `setState()` untuk membangun ulang UI yang relevan.
+- **Responsif UI:** Pemilihan antara `BottomNavigationBar` dan `NavigationRail` adalah contoh bagaimana Anda dapat membuat UI Anda responsif terhadap ukuran layar yang berbeda.
+
+**Referensi Lengkap:**
+
+- [Material Components Flutter](https://flutter.dev/docs/development/ui/widgets/material): Dokumentasi resmi semua _Material Components_.
+- [Material Design 3 Guidelines](https://m3.material.io/): Panduan desain resmi dari Google.
+- [Material You Implementation](https://medium.com/flutter/material-3-in-flutter-f84e4a5b9d4c): Artikel tentang implementasi Material Design 3 di Flutter.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Gunakan `ScaffoldMessenger`:** Untuk menampilkan `SnackBar` dan `MaterialBanner`, selalu gunakan `ScaffoldMessenger.of(context)`. Ini memastikan mereka ditampilkan dengan benar bahkan jika `Scaffold` yang awalnya menampilkannya sudah tidak ada di _tree_.
+- **Konsisten dengan Desain:** Ikuti pedoman Material Design (atau Cupertino Design untuk iOS) untuk memastikan aplikasi Anda terlihat dan terasa familiar bagi pengguna.
+- **Prioritaskan Aksesibilitas:** Pastikan Anda menyediakan label yang jelas dan mudah diakses untuk semua komponen, terutama untuk pengguna dengan kebutuhan khusus.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Mencoba memanggil `Scaffold.of(context)` di dalam `build` _method_ dari _widget_ yang sama dengan `Scaffold` tanpa menggunakan `Builder`.
+  - **Solusi:** Bungkus _widget_ yang memanggil `Scaffold.of(context)` dengan `Builder` _widget_ (`Builder(builder: (BuildContext newContext) { return IconButton(... Scaffold.of(newContext).openDrawer(); });`). Ini memastikan `context` yang digunakan adalah anak dari `Scaffold`.
+- **Kesalahan:** Lebih dari satu `FloatingActionButton` dalam _route tree_ tanpa `heroTag` yang unik, menyebabkan _hero animation error_.
+  - **Solusi:** Berikan `heroTag: null` jika Anda tidak membutuhkan animasi _hero_ atau `heroTag: 'uniqueTag'` untuk setiap `FloatingActionButton` yang berbeda.
+- **Kesalahan:** `BottomNavigationBar` tidak menampilkan label teks.
+  - **Solusi:** Periksa `type` properti. Jika `type` adalah `BottomNavigationBarType.fixed`, label akan selalu terlihat. Jika `type` adalah `BottomNavigationBarType.shifting` (default jika ada 4+ item), label hanya muncul saat item dipilih. Pastikan `selectedItemColor` dan `unselectedItemColor` juga diatur.
+
+---
+
+Setelah mendalami **Material Components** standar, kini saatnya kita melangkah ke evolusi berikutnya dari Material Design, yaitu **Material Design 3**, yang sering disebut juga **Material You**. Ini adalah pembaruan besar yang membawa personalisasi dan ekspresivitas yang lebih kaya ke antarmuka pengguna Anda.
+
+---
+
+### **3.1 Material Design Implementation (Lanjutan)**
+
+##### **Material Design 3 (Material You)**
+
+**Deskripsi Detail & Peran:**
+_Material Design 3_ (M3), atau _Material You_, adalah versi terbaru dari sistem desain Material Design dari Google. Fokus utamanya adalah pada personalisasi, ekspresi diri, dan adaptasi UI berdasarkan preferensi pengguna dan konteks perangkat. Ini membawa perubahan signifikan pada estetika visual, sistem warna dinamis, tipografi, elevasi, dan komponen UI. Memahami M3 sangat penting untuk membangun aplikasi _Flutter_ yang modern, adaptif, dan responsif terhadap tema perangkat pengguna.
+
+**Konsep Kunci & Filosofi:**
+Filosofi inti M3 adalah **"personalization"**, **"adaptability"**, dan **"fluidity"**. Ini bertujuan untuk menciptakan pengalaman digital yang terasa lebih unik dan personal bagi setiap individu, memungkinkan aplikasi untuk beradaptasi secara mulus dengan tema perangkat, preferensi warna, dan ukuran layar. Ini juga mendorong penggunaan desain yang lebih ekspresif dan berani.
+
+Berikut adalah aspek-aspek utama dari Material Design 3:
+
+1.  **Dynamic Color System:**
+
+    - **Peran:** Ini adalah fitur paling menonjol dari _Material You_. Sistem ini memungkinkan aplikasi untuk secara otomatis menyesuaikan skema warnanya berdasarkan _wallpaper_ atau tema sistem operasi perangkat pengguna.
+    - **Detail:** M3 memperkenalkan konsep palet warna algoritmik yang berasal dari warna utama yang dipilih pengguna (misalnya dari _wallpaper_). Warna-warna ini kemudian diperluas menjadi palet _tonal_ yang kaya (misalnya _primary_, _secondary_, _tertiary_, _error_, dan variannya) yang digunakan di seluruh UI aplikasi.
+    - **Filosofi:** Menciptakan pengalaman yang lebih kohesif dan pribadi antara aplikasi dan sistem operasi.
+
+2.  **Material 3 tokens:**
+
+    - **Peran:** _Tokens_ adalah nilai-nilai desain yang dapat disesuaikan dan distandarisasi (seperti warna, tipografi, bentuk, elevasi, _motion_) yang mendefinisikan tampilan dan perilaku UI. M3 sangat bergantung pada sistem _token_ ini untuk konsistensi dan kemudahan kustomisasi.
+    - **Detail:** Alih-alih langsung menggunakan nilai heksadesimal untuk warna atau piksel untuk ukuran, Anda akan menggunakan _token_ seperti `color.primary`, `typography.headlineLarge`, atau `shape.cornerMedium`. Ini memungkinkan perubahan skala di seluruh aplikasi dengan mengubah nilai _token_ di satu tempat.
+    - **Filosofi:** Mempermudah penskalaan desain, memungkinkan perubahan tema yang cepat, dan memastikan konsistensi desain di seluruh aplikasi.
+
+3.  **Color roles dan usage:**
+
+    - **Peran:** M3 mendefinisikan serangkaian _peran_ warna yang jelas (misalnya `primary`, `onPrimary`, `primaryContainer`, `onPrimaryContainer`, `secondary`, dll.) yang harus dipatuhi.
+    - **Detail:** Setiap peran memiliki tujuan spesifik:
+      - `primary`: Warna utama merek Anda.
+      - `onPrimary`: Warna untuk konten yang diletakkan di atas `primary` (agar terbaca).
+      - `primaryContainer`: Warna untuk elemen _container_ yang menonjol.
+      - `onPrimaryContainer`: Warna untuk konten di atas `primaryContainer`.
+      - Siklus ini berulang untuk `secondary`, `tertiary`, dan `error` _roles_.
+    - **Penggunaan:** Memisahkan _makna_ warna dari _nilai_ warnanya, membuatnya lebih mudah untuk menerapkan _dynamic color_ dan tema yang konsisten.
+    - **Filosofi:** Memberikan struktur yang kuat untuk sistem warna, memastikan aksesibilitas dan adaptasi tema.
+
+4.  **Typography scale M3:**
+
+    - **Peran:** M3 memperkenalkan skala tipografi yang disederhanakan dan lebih ekspresif dengan nama-nama yang intuitif.
+    - **Detail:** Skala ini mencakup `display`, `headline`, `title`, `body`, dan `label` dengan varian `large`, `medium`, `small` di masing-masingnya. Misalnya, `displayLarge`, `headlineMedium`, `bodySmall`.
+    - **Penggunaan:** Memungkinkan Anda memilih gaya teks yang tepat untuk berbagai hierarki informasi dan konteks, tanpa perlu banyak kustomisasi font secara manual.
+    - **Filosofi:** Meningkatkan keterbacaan, hierarki visual, dan ekspresivitas tipografi.
+
+5.  **Elevation dan shadows M3:**
+
+    - **Peran:** Model elevasi dan bayangan di M3 telah disederhanakan dan lebih menekankan pada cahaya ambien.
+    - **Detail:** Alih-alih bayangan berlapis yang kompleks, M3 menggunakan campuran warna `surface` dan `primary` untuk menciptakan efek elevasi yang lebih halus dan adaptif terhadap tema dinamis. Semakin tinggi elevasi, semakin besar tintanya.
+    - **Penggunaan:** Memberikan kesan kedalaman dan hierarki visual antar elemen UI.
+    - **Filosofi:** Menciptakan tampilan yang lebih bersih, modern, dan terintegrasi dengan sistem warna dinamis.
+
+6.  **Component variants M3:**
+
+    - **Peran:** Banyak _Material Components_ telah diperbarui di M3 dengan varian baru yang lebih ekspresif, seringkali dengan bentuk yang lebih membulat dan visual yang lebih berani.
+    - **Detail:** Contohnya termasuk `FilledButton`, `ElevatedButton`, `OutlinedButton` yang memiliki tampilan berbeda, _Card_ dengan bentuk yang lebih bervariasi, `NavigationBar` (pengganti `BottomNavigationBar` yang lebih fleksibel), dan banyak lagi.
+    - **Penggunaan:** Memberikan _developer_ lebih banyak pilihan untuk mengekspresikan merek dan tujuan aplikasi melalui komponen.
+    - **Filosofi:** Meningkatkan ekspresivitas dan fleksibilitas visual komponen, selaras dengan estetika _Material You_.
+
+7.  **Migration dari M2 ke M3:**
+
+    - **Peran:** Memandu _developer_ dalam memperbarui aplikasi yang sudah ada dari Material Design 2 ke Material Design 3.
+    - **Detail:** Proses migrasi melibatkan pembaruan `ThemeData` untuk menggunakan properti M3, mengganti _widget_ M2 lama dengan varian M3 baru, dan menyesuaikan sistem warna serta tipografi. `useMaterial3: true` di `ThemeData` adalah langkah pertama.
+    - **Filosofi:** Memfasilitasi adopsi M3 sambil meminimalkan upaya migrasi.
+
+**Sintaks/Contoh Implementasi (Pengaturan Dasar M3):**
+
+Untuk mengaktifkan Material Design 3 di aplikasi _Flutter_ Anda, perubahan utamanya ada di `ThemeData`:
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Material 3 Demo',
+      theme: ThemeData(
+        useMaterial3: true, // AKTIFKAN MATERIAL 3 DI SINI!
+        // Di bawah ini adalah contoh bagaimana warna akan bereaksi dengan M3
+        // Jika Anda memiliki Dynamic Color (di Android 12+), ini akan diabaikan.
+        // Jika tidak, ini akan menjadi dasar tema Anda.
+        colorSchemeSeed: Colors.deepPurple, // Warna dasar yang akan digunakan M3 untuk membuat skema warna
+        brightness: Brightness.light, // Tema terang
+        // Atur properti M3 lainnya sesuai kebutuhan (misalnya shape, typography)
+        appBarTheme: AppBarTheme(
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer, // Menggunakan warna dari skema M3
+          foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+          foregroundColor: Theme.of(context).colorScheme.onTertiaryContainer,
+        ),
+        // Contoh tipografi M3:
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(fontSize: 57, fontWeight: FontWeight.normal),
+          headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.normal),
+          bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+        ),
+      ),
+      darkTheme: ThemeData( // Contoh tema gelap M3
+        useMaterial3: true,
+        colorSchemeSeed: Colors.deepPurple,
+        brightness: Brightness.dark,
+        // Properti tema gelap lainnya
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Mengakses ColorScheme M3
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    final TextTheme textStyles = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Material 3 App'),
+        // AppBar secara otomatis akan mengikuti tema warna M3
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Selamat Datang di Material 3!',
+                style: textStyles.headlineMedium, // Menggunakan skala tipografi M3
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              // Contoh Button M3
+              FilledButton(
+                onPressed: () {},
+                child: const Text('Filled Button'),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text('Elevated Button'),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                onPressed: () {},
+                child: const Text('Outlined Button'),
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () {},
+                child: const Text('Text Button'),
+              ),
+              const SizedBox(height: 20),
+              Card( // Card akan mengadopsi bentuk dan elevasi M3
+                color: colors.surfaceVariant, // Warna permukaan varian dari M3
+                elevation: 1.0, // Elevasi M3 yang lebih halus
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    'Ini adalah Card dengan gaya Material 3.',
+                    style: textStyles.bodyLarge,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Contoh penggunaan warna dari ColorScheme M3
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    color: colors.primary,
+                    child: Center(child: Text('P', style: TextStyle(color: colors.onPrimary))),
+                  ),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    color: colors.secondary,
+                    child: Center(child: Text('S', style: TextStyle(color: colors.onSecondary))),
+                  ),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    color: colors.tertiary,
+                    child: Center(child: Text('T', style: TextStyle(color: colors.onTertiary))),
+                  ),
+                  Container(
+                    width: 50,
+                    height: 50,
+                    color: colors.error,
+                    child: Center(child: Text('E', style: TextStyle(color: colors.onError))),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
+      // Bottom navigation bar M3 variant: NavigationBar
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: 0,
+        destinations: <Widget>[
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined, color: colors.onSurfaceVariant),
+            selectedIcon: Icon(Icons.home_filled, color: colors.primary),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.favorite_outline, color: colors.onSurfaceVariant),
+            selectedIcon: Icon(Icons.favorite, color: colors.primary),
+            label: 'Favorites',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined, color: colors.onSurfaceVariant),
+            selectedIcon: Icon(Icons.settings, color: colors.primary),
+            label: 'Settings',
+          ),
+        ],
+        onDestinationSelected: (int index) {
+          // Handle navigation
+        },
+      ),
+    );
+  }
+}
+```
+
+**Visualisasi Konseptual (Adaptasi Warna Dinamis):**
+
+```
+[Sistem Operasi (misal Android 12+)]
+   └── Wallpaper / Tema Pengguna (misal: Warna Ungu)
+       │
+       ▼
+[Flutter App (dengan useMaterial3: true)]
+   └── ThemeData (colorSchemeSeed: Colors.deepPurple)
+       │
+       ▼
+   Material 3 Dynamic Color System
+       │
+       ▼
+   [Generated ColorScheme M3]
+   ├── primary (ungu tua)
+   ├── onPrimary (putih/kontras)
+   ├── primaryContainer (ungu muda)
+   ├── onPrimaryContainer (ungu tua)
+   ├── secondary (aksen sekunder dari ungu)
+   ├── tertiary (aksen tersier)
+   └── ... (semua color roles lainnya)
+       │
+       ▼
+   [UI Komponen Aplikasi]
+   ├── AppBar (menggunakan primaryContainer)
+   ├── Buttons (menggunakan primary/secondary/tertiary)
+   ├── Card (menggunakan surfaceVariant)
+   └── Text (menggunakan onPrimary/onSurface, dll.)
+```
+
+**Terminologi Esensial:**
+
+- **Material Design 3 (M3) / Material You:** Versi terbaru dari sistem desain Material Design yang fokus pada personalisasi.
+- **Dynamic Color:** Kemampuan aplikasi untuk secara otomatis menyesuaikan skema warnanya berdasarkan _wallpaper_ atau tema sistem perangkat.
+- **Color Roles:** Penamaan standar untuk penggunaan warna dalam UI (misalnya `primary`, `onPrimary`, `surface`, `onSurface`, dll.).
+- **Tokens:** Nilai desain yang dapat disesuaikan (warna, tipografi, bentuk) yang digunakan untuk mendefinisikan tampilan UI.
+- **ColorScheme:** Kelas di _Flutter_ yang mendefinisikan palet warna lengkap untuk tema Material Design 3.
+- **NavigationBar:** _Widget_ navigasi dasar baru di M3, pengganti modern untuk `BottomNavigationBar`.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Pengantar Material Design 3
+- Sistem Warna Dinamis
+- _Material 3 Tokens_ dan _Color Roles_
+- Skala Tipografi M3
+- Elevasi dan Bayangan M3
+- Varian Komponen M3
+- Migrasi M2 ke M3
+
+**Hubungan dengan Bagian Lain:**
+
+- **Material Components:** M3 adalah evolusi dari Material Components. _Widget_ yang sama (seperti `Button`, `Card`, `AppBar`) akan memiliki tampilan dan perilaku M3 ketika `useMaterial3: true` diaktifkan.
+- **Custom Widget Development:** Saat membuat _widget_ kustom, Anda dapat sepenuhnya memanfaatkan `ColorScheme` dan `TextTheme` dari M3 untuk memastikan _widget_ Anda terintegrasi dengan mulus ke dalam tema aplikasi secara keseluruhan.
+- **Responsif UI & Adaptasi Platform:** M3 mendukung adaptasi ke berbagai ukuran layar dan preferensi pengguna (mode terang/gelap, tema dinamis).
+
+**Referensi Lengkap:**
+
+- [Material Design 3 Guidelines](https://m3.material.io/): Panduan resmi dan terlengkap dari Google tentang Material Design 3. Ini adalah sumber daya yang wajib Anda baca untuk memahami filosofi dan implementasi.
+- [Material You in Flutter](https://medium.com/flutter/material-3-in-flutter-f84e4a5b9d4c): Artikel Medium resmi Flutter yang membahas implementasi Material 3 di Flutter.
+- [What's New in Material 3 for Flutter](https://docs.flutter.dev/release/breaking-changes/material-3): Dokumentasi perubahan dan fitur baru Material 3 di Flutter.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Aktifkan M3 Sejak Awal:** Jika Anda memulai proyek baru, selalu aktifkan `useMaterial3: true` di `ThemeData` Anda dari awal. Ini akan sangat memudahkan Anda dalam jangka panjang.
+- **Gunakan `ColorScheme`:** Daripada menentukan warna secara _hardcode_, selalu akses warna dari `Theme.of(context).colorScheme` (misalnya `Theme.of(context).colorScheme.primary`). Ini memastikan aplikasi Anda akan merespons tema dinamis atau kustom yang Anda atur.
+- **Eksplorasi Varian Komponen:** Luangkan waktu untuk melihat dan menggunakan varian komponen M3 yang baru (misalnya `FilledButton`, `NavigationBar`).
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Mengaktifkan `useMaterial3: true` tetapi UI tidak berubah seperti yang diharapkan (misalnya tombol masih terlihat seperti M2).
+  - **Solusi:** Pastikan Anda menggunakan _widget_ `MaterialApp` dan bahwa _widget_ _container_ Anda (seperti `Scaffold`) juga berada di bawah `MaterialApp`. Kadang, beberapa properti _widget_ perlu diatur ulang agar mengikuti tema M3 (misalnya `AppBarTheme` di `ThemeData`). Pastikan juga tidak ada properti _hardcoded_ di _widget_ individual yang menimpa tema.
+- **Kesalahan:** Warna _dynamic color_ tidak berfungsi di perangkat Android.
+  - **Solusi:** _Dynamic Color_ hanya tersedia secara otomatis pada perangkat Android 12 (API level 31) ke atas. Selain itu, Anda perlu memastikan aplikasi Anda menggunakan _theme_ yang tepat (misalnya `Theme.of(context).colorScheme.primary`) dan tidak menimpa warna secara _hardcode_.
+- **Kesalahan:** Menggunakan `BottomNavigationBar` di M3, padahal `NavigationBar` lebih direkomendasikan.
+  - **Solusi:** `BottomNavigationBar` masih berfungsi di M3, tetapi `NavigationBar` adalah _widget_ yang diperbarui dan direkomendasikan untuk pengalaman M3 yang lebih baik, dengan estetika visual dan fungsionalitas yang lebih selaras dengan pedoman M3.
+
+---
+
+Dengan ini, kita telah menyelesaikan pembahasan mendalam tentang **Material Design 3 (Material You)** Anda sekarang memiliki pemahaman yang kuat tentang bagaimana membangun aplikasi _Flutter_ yang modern dan adaptif dengan estetika Material Design terbaru.
+
+Berikutnya kita akan menjelajahi Material Design, ini juga termasuk pembaruan Material Design 3 yang berfokus pada personalisasi dan adaptasi Android, kini saatnya kita beralih ke sisi lain spektrum desain: **Cupertino (iOS) Design**. _Flutter_ menawarkan serangkaian _widget_ yang secara khusus meniru tampilan dan nuansa aplikasi iOS, memungkinkan Anda untuk membangun aplikasi yang terasa _native_ di ekosistem Apple.
+
+---
+
+### **3.1 Material Design Implementation (Lanjutan)**
+
+##### **Cupertino (iOS) Design**
+
+**Deskripsi Detail & Peran:**
+_Cupertino Design_ adalah implementasi pedoman desain _Human Interface Guidelines_ (HIG) dari Apple untuk platform iOS. _Flutter_ menyediakan satu set _widget_ yang dinamakan _Cupertino widgets_ yang secara visual dan perilaku meniru komponen UI iOS. Ini sangat penting jika Anda ingin aplikasi Anda memiliki tampilan dan nuansa yang akrab bagi pengguna iPhone dan iPad, atau jika Anda mengembangkan aplikasi yang secara spesifik menargetkan pasar iOS dengan estetika yang konsisten.
+
+**Konsep Kunci & Filosofi:**
+Filosofi inti _Cupertino Design_ adalah **"clarity"**, **"deference"**, dan **"depth"**. Ini menekankan pada desain minimalis, penggunaan ruang putih yang efektif, tipografi yang bersih, dan transisi yang halus untuk menciptakan pengalaman pengguna yang intuitif dan mudah dipahami. _Cupertino widgets_ di _Flutter_ berusaha untuk meniru estetika ini, memastikan aplikasi Anda terasa _native_ di perangkat iOS.
+
+Berikut adalah komponen-komponen utama dalam _Cupertino Design_:
+
+1.  **`CupertinoApp` structure:**
+
+    - **Peran:** Ini adalah _widget_ _root_ untuk aplikasi yang ingin mengadopsi tampilan dan nuansa iOS secara keseluruhan. Ini mirip dengan `MaterialApp` tetapi dirancang untuk gaya Cupertino.
+    - **Detail:** `CupertinoApp` menyediakan konfigurasi dasar seperti navigasi, tema, dan lokal untuk aplikasi bergaya iOS. Menggunakannya akan membuat _widget-widget_ _Cupertino_ berperilaku dan terlihat konsisten dengan iOS.
+    - **Filosofi:** Menyiapkan fondasi yang tepat untuk pengalaman pengguna iOS yang otentik.
+
+    <!-- end list -->
+
+    ```
+    CupertinoApp
+    └── CupertinoPageScaffold / CupertinoTabScaffold
+        └── (Cupertino Widgets)
+    ```
+
+2.  **`CupertinoNavigationBar`:**
+
+    - **Peran:** Bilah navigasi di bagian atas layar untuk aplikasi iOS. Mirip dengan `AppBar` di Material Design, tetapi dengan estetika dan perilaku iOS yang khas (misalnya, judul yang memudar saat digulir, tombol kembali otomatis).
+    - **Properti Kunci:**
+      - `leading`, `middle`, `trailing`: Slot untuk _widget_ di kiri, tengah (judul), dan kanan bilah navigasi.
+      - `border`: Garis batas bawah bilah navigasi.
+      - `backgroundColor`: Warna latar belakang bilah.
+      - `previousPageTitle`: Digunakan untuk menampilkan judul halaman sebelumnya di tombol kembali.
+    - **Filosofi:** Menyediakan navigasi yang jelas dan konsisten dengan sentuhan iOS.
+
+    <!-- end list -->
+
+    ```
+    CupertinoNavigationBar
+    ├── leading (e.g., CupertinoBackButton)
+    ├── middle (e.g., Text for Title)
+    └── trailing (e.g., CupertinoButton for Actions)
+    ```
+
+3.  **`CupertinoTabScaffold`:**
+
+    - **Peran:** Sebuah _widget_ yang mengimplementasikan struktur aplikasi berbasis tab ala iOS, dengan bar tab di bagian bawah layar.
+    - **Detail:** Ini mengelola beberapa _tab_ dan menjaga _state_ dari setiap _tab_ saat beralih. Setiap _tab_ memiliki `CupertinoTabView` sendiri yang mengelola _stack_ navigasinya.
+    - **Properti Kunci:**
+      - `tabBar`: `CupertinoTabBar` yang ditampilkan di bagian bawah.
+      - `tabBuilder`: Sebuah fungsi yang membangun konten untuk setiap _tab_.
+    - **Filosofi:** Menyediakan navigasi tingkat atas yang mudah diakses dan konsisten di iOS.
+
+    <!-- end list -->
+
+    ```
+    CupertinoTabScaffold
+    ├── CupertinoTabBar (Bottom)
+    │   └── List of BottomNavigationBarItem (Icon, Label)
+    └── CupertinoTabView (for each tab's content/navigation)
+        └── ...
+    ```
+
+4.  **`CupertinoPageScaffold`:**
+
+    - **Peran:** Kerangka _layout_ dasar untuk satu halaman di aplikasi Cupertino, yang mencakup `CupertinoNavigationBar` di bagian atas dan _body_ utama.
+    - **Detail:** Ini adalah analog `Scaffold` untuk Material Design, tetapi dengan komponen-komponen Cupertino.
+    - **Properti Kunci:**
+      - `navigationBar`: Sebuah `CupertinoNavigationBar`.
+      - `child`: Konten utama halaman.
+      - `backgroundColor`: Warna latar belakang halaman.
+      - `resizeToAvoidBottomInset`: Mengontrol apakah _body_ harus mengubah ukurannya untuk menghindari _keyboard_.
+    - **Filosofi:** Menyediakan struktur halaman tunggal yang sesuai dengan pedoman iOS.
+
+    <!-- end list -->
+
+    ```
+    CupertinoPageScaffold
+    ├── navigationBar (CupertinoNavigationBar)
+    └── child (Main content Widget Tree)
+    ```
+
+5.  **iOS-style dialogs dan action sheets:**
+
+    - **Peran:** Dialog dan _action sheets_ yang meniru tampilan dan perilaku sistem iOS, penting untuk memberikan umpan balik atau meminta input pengguna secara _native_.
+    - **`CupertinoAlertDialog`:** Mirip dengan `AlertDialog`, tetapi dengan gaya iOS yang lebih halus dan tombol aksi di bagian bawah.
+    - **`CupertinoActionSheet`:** Sebuah _popup_ yang muncul dari bagian bawah layar, menawarkan serangkaian opsi yang dapat diklik. Umum digunakan untuk tindakan kontekstual atau pilihan.
+    - **Penggunaan:** Ditampilkan menggunakan `showCupertinoDialog` atau `showCupertinoModalPopup`.
+    - **Filosofi:** Memberikan interaksi _native_ untuk peringatan dan pilihan penting.
+
+6.  **Cupertino form components:**
+
+    - **Peran:** Serangkaian _widget_ input formulir yang dirancang agar terlihat dan berperilaku seperti kontrol formulir standar iOS.
+    - **Contoh:**
+      - `CupertinoTextField`: Bidang teks input dengan gaya iOS.
+      - `CupertinoSwitch`: Tombol _toggle_ gaya iOS.
+      - `CupertinoSlider`: Slider gaya iOS.
+      - `CupertinoSegmentedControl`: Kontrol tersegmentasi gaya iOS.
+      - `CupertinoPicker` dan `CupertinoDatePicker`: Pemilih nilai dan tanggal/waktu gaya iOS.
+    - **Filosofi:** Menyediakan elemen formulir yang familiar bagi pengguna iOS, meningkatkan konsistensi pengalaman.
+
+7.  **`Cupertino Widgets` (Umum):**
+
+    - Secara keseluruhan, _Flutter_ menyediakan berbagai _widget_ Cupertino lainnya, seperti `CupertinoButton`, `CupertinoActivityIndicator`, `CupertinoScrollbar`, dll., yang semuanya dirancang untuk mencerminkan estetika dan fungsionalitas iOS.
+
+8.  **iOS Human Interface Guidelines (HIG):**
+
+    - **Peran:** Ini adalah panduan desain resmi dari Apple yang menjelaskan prinsip-prinsip desain, komponen UI, ikonografi, dan perilaku yang diharapkan dari aplikasi iOS.
+    - **Detail:** Meskipun _Flutter_ menyediakan _widget_ Cupertino, memahami HIG sangat penting untuk membuat keputusan desain yang tepat dan memastikan aplikasi Anda terasa _native_, bahkan di luar komponen visual.
+    - **Filosofi:** Mengkomunikasikan standar kualitas dan konsistensi yang diharapkan oleh Apple dari semua aplikasi di platform mereka.
+
+9.  **Platform Adaptive Design:**
+
+    - **Peran:** Konsep ini membahas bagaimana membangun aplikasi yang dapat beradaptasi secara cerdas dengan platform di mana aplikasi tersebut dijalankan (Android atau iOS).
+    - **Detail:** Anda dapat menggunakan `Theme.of(context).platform` atau `defaultTargetPlatform` dari `package:flutter/foundation.dart` untuk mendeteksi platform dan kemudian secara kondisional merender _Material widgets_ atau _Cupertino widgets_.
+    - **Contoh:** Menggunakan `if (Theme.of(context).platform == TargetPlatform.iOS) { return CupertinoButton(...) } else { return ElevatedButton(...) }`
+    - **Filosofi:** Menciptakan pengalaman _native_ yang optimal di kedua platform dari satu basis kode.
+
+**Sintaks/Contoh Implementasi Lengkap:**
+
+```dart
+import 'package:flutter/cupertino.dart'; // Import khusus untuk widget Cupertino
+import 'package:flutter/material.dart'; // Masih bisa diimport untuk fungsi dasar atau MaterialApp
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Menggunakan CupertinoApp sebagai root untuk aplikasi bergaya iOS
+    return const CupertinoApp(
+      title: 'Cupertino Design Demo',
+      home: CupertinoHomeScreen(),
+      debugShowCheckedModeBanner: false, // Untuk menyembunyikan banner debug
+    );
+  }
+}
+
+class CupertinoHomeScreen extends StatefulWidget {
+  const CupertinoHomeScreen({super.key});
+
+  @override
+  State<CupertinoHomeScreen> createState() => _CupertinoHomeScreenState();
+}
+
+class _CupertinoHomeScreenState extends State<CupertinoHomeScreen> {
+  int _selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoTabScaffold(
+      // 1. CupertinoTabBar (untuk navigasi bawah)
+      tabBar: CupertinoTabBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.settings),
+            label: 'Settings',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(CupertinoIcons.profile_circled),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
+      // 2. Tab Builder untuk setiap tab (CupertinoTabView)
+      tabBuilder: (BuildContext context, int index) {
+        return CupertinoTabView(
+          builder: (BuildContext context) {
+            switch (index) {
+              case 0:
+                return const HomePage();
+              case 1:
+                return const SettingsPage();
+              case 2:
+                return const ProfilePage();
+              default:
+                return const Center(child: Text('Halaman tidak ditemukan'));
+            }
+          },
+        );
+      },
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  Future<void> _showCupertinoAlert(BuildContext context) async {
+    return showCupertinoDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => CupertinoAlertDialog(
+        title: const Text('Peringatan iOS'),
+        content: const Text('Ini adalah contoh Cupertino Alert Dialog.'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            child: const Text('Batal'),
+            onPressed: () {
+              Navigator.pop(dialogContext);
+            },
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true, // Untuk teks aksi yang destruktif (merah)
+            onPressed: () {
+              Navigator.pop(dialogContext);
+            },
+            child: const Text('Oke'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showCupertinoActionSheet(BuildContext context) async {
+    return showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext popupContext) => CupertinoActionSheet(
+        title: const Text('Pilih Opsi'),
+        message: const Text('Ini adalah contoh Cupertino Action Sheet.'),
+        actions: <CupertinoActionSheetAction>[
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(popupContext, 'Opsi 1');
+            },
+            child: const Text('Opsi Satu'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(popupContext, 'Opsi 2');
+            },
+            child: const Text('Opsi Dua'),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () {
+            Navigator.pop(popupContext, 'Batal');
+          },
+          child: const Text('Batal'),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      // 3. CupertinoNavigationBar
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Home Page'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            _showCupertinoAlert(context);
+          },
+          child: const Icon(CupertinoIcons.info),
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Selamat Datang di Aplikasi iOS!',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            // 4. Contoh Cupertino Button
+            CupertinoButton.filled(
+              onPressed: () {
+                _showCupertinoAlert(context);
+              },
+              child: const Text('Tampilkan Alert iOS'),
+            ),
+            const SizedBox(height: 10),
+            CupertinoButton(
+              onPressed: () {
+                _showCupertinoActionSheet(context);
+              },
+              child: const Text('Tampilkan Action Sheet iOS'),
+            ),
+            const SizedBox(height: 20),
+            // 5. Contoh Cupertino Form Component: Switch
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Aktifkan Notifikasi'),
+                CupertinoSwitch(
+                  value: true, // Anda bisa menggunakan state di sini
+                  onChanged: (bool value) {
+                    // Handle perubahan switch
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // Contoh Cupertino Form Component: TextField
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: CupertinoTextField(
+                placeholder: 'Masukkan Teks Disini',
+                clearButtonMode: OverlayVisibilityMode.editing,
+                keyboardType: TextInputType.text,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: CupertinoColors.lightBackgroundGray),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Settings'),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Halaman Pengaturan',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            // Contoh Cupertino Activity Indicator
+            const CupertinoActivityIndicator(
+              radius: 20.0,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Profile'),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Halaman Profil',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            CupertinoButton.filled(
+              onPressed: () {
+                // Contoh penggunaan date picker
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: (BuildContext builder) {
+                    return Container(
+                      height: MediaQuery.of(context).copyWith().size.height / 3,
+                      color: CupertinoColors.systemBackground.resolveFrom(context),
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.date,
+                        initialDateTime: DateTime.now(),
+                        onDateTimeChanged: (DateTime newDateTime) {
+                          print(newDateTime);
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+              child: const Text('Pilih Tanggal Lahir'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Visualisasi Konseptual (Struktur Aplikasi Cupertino):**
+
+```
+CupertinoApp
+└── CupertinoTabScaffold
+    ├── CupertinoTabBar (Bottom Navigation)
+    │   ├── Tab 1 Icon & Label (Home)
+    │   ├── Tab 2 Icon & Label (Settings)
+    │   └── Tab 3 Icon & Label (Profile)
+    └── CupertinoTabView (Per Tab)
+        ├── TabView 1 (Home)
+        │   └── CupertinoPageScaffold
+        │       ├── CupertinoNavigationBar (Home Title, Info Button)
+        │       └── Child (Page Content: Buttons, Form fields)
+        ├── TabView 2 (Settings)
+        │   └── CupertinoPageScaffold
+        │       ├── CupertinoNavigationBar (Settings Title)
+        │       └── Child (Page Content: Activity Indicator)
+        └── TabView 3 (Profile)
+            └── CupertinoPageScaffold
+                ├── CupertinoNavigationBar (Profile Title)
+                └── Child (Page Content: Date Picker)
+```
+
+**Terminologi Esensial:**
+
+- **Cupertino Widgets:** Sekumpulan _widget_ di _Flutter_ yang meniru tampilan dan nuansa komponen UI iOS.
+- **CupertinoApp:** _Root widget_ untuk aplikasi bergaya iOS.
+- **CupertinoNavigationBar:** Bilah navigasi atas gaya iOS.
+- **CupertinoTabScaffold:** Struktur aplikasi berbasis tab gaya iOS.
+- **CupertinoPageScaffold:** Kerangka _layout_ untuk satu halaman gaya iOS.
+- **CupertinoAlertDialog:** Dialog peringatan gaya iOS.
+- **CupertinoActionSheet:** Lembar aksi (menu pop-up) gaya iOS yang muncul dari bawah.
+- **iOS Human Interface Guidelines (HIG):** Pedoman desain resmi Apple untuk aplikasi iOS.
+- **Platform Adaptive Design:** Strategi pengembangan untuk membuat aplikasi yang beradaptasi secara otomatis dengan platform (Android/iOS) di mana ia berjalan.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Pengantar Desain Cupertino
+- Struktur Aplikasi Cupertino (`CupertinoApp`, `CupertinoPageScaffold`, `CupertinoTabScaffold`)
+- Komponen Navigasi (`CupertinoNavigationBar`, `CupertinoTabBar`)
+- Dialog dan Lembar Aksi Gaya iOS
+- Komponen Formulir Cupertino
+- Pentingnya iOS HIG
+- Strategi Desain Adaptif Platform
+
+**Hubungan dengan Bagian Lain:**
+
+- **Material Components:** Desain Cupertino adalah alternatif dari Material Design. Anda akan memilih salah satu atau mengimplementasikan desain adaptif untuk mendukung keduanya.
+- **Widget Tree & Rendering Engine:** Memahami bagaimana _widget_ Cupertino dibangun dan di-_render_ membantu dalam mengkustomisasi atau memecahkan masalah.
+- **Layout System Mastery:** Prinsip-prinsip _layout_ dasar tetap berlaku, tetapi _widget_ Cupertino menyediakan implementasi yang spesifik untuk gaya iOS.
+
+**Referensi Lengkap:**
+
+- [Cupertino Widgets](https://flutter.dev/docs/development/ui/widgets/cupertino): Dokumentasi resmi semua _Cupertino widgets_.
+- [iOS Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/): Panduan desain resmi Apple. Ini adalah sumber penting untuk memahami filosofi di balik desain iOS.
+- [Platform Adaptive Design](https://flutter.dev/docs/development/ui/layout/adaptive-responsive): Dokumentasi Flutter tentang bagaimana membangun aplikasi yang adaptif untuk berbagai platform.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Pilih Tema dengan Jelas:** Putuskan apakah Anda akan membuat aplikasi yang murni Material, murni Cupertino, atau adaptif. Ini akan memandu pilihan _widget_ _root_ Anda (`MaterialApp` atau `CupertinoApp`).
+- **Gunakan Paket Tambahan untuk HIG:** Untuk beberapa komponen iOS yang kompleks atau sangat spesifik, Anda mungkin perlu mencari paket dari `pub.dev` jika _Flutter_ tidak menyediakan implementasi _native_ langsung.
+- **Perhatikan Perilaku:** Selain tampilan, pastikan perilaku _widget_ Anda juga sesuai dengan harapan pengguna iOS (misalnya _scrolling physics_, transisi navigasi).
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Menggunakan `CupertinoApp` tetapi mengharapkan _Material widgets_ berfungsi penuh secara default atau sebaliknya.
+  - **Solusi:** `CupertinoApp` menyediakan tema dan perilaku untuk _Cupertino widgets_. Jika Anda mencampuradukkan `Material widgets` di dalamnya, mereka mungkin tidak terlihat atau berperilaku sebagaimana mestinya. Gunakan `MaterialApp` jika mayoritas UI Anda adalah Material, atau gunakan desain adaptif.
+- **Kesalahan:** Kesulitan dalam mengelola navigasi di `CupertinoTabView`.
+  - **Solusi:** Setiap `CupertinoTabView` memiliki `Navigator` sendiri. Pahami bahwa `Navigator.of(context)` di dalam satu _tab_ hanya akan memengaruhi _stack_ navigasi _tab_ tersebut. Untuk navigasi antar _tab_, gunakan `CupertinoTabController`.
+- **Kesalahan:** Tombol kembali di `CupertinoNavigationBar` tidak muncul.
+  - **Solusi:** Tombol kembali akan muncul secara otomatis jika ada _route_ sebelumnya di _stack_ navigasi yang dapat di-_pop_. Pastikan Anda menggunakan `CupertinoPageRoute` untuk navigasi antar halaman, atau tambahkan `leading` _widget_ kustom jika tidak ada _route_ sebelumnya.
+
 # Selamat!
 
-Luar biasa! Anda telah berhasil menuntaskan pembahasan mendalam tentang **Core Layout Widgets** di _Flutter_. Ini adalah fondasi kuat untuk merancang dan membangun antarmuka pengguna yang visualnya menarik dan berfungsi dengan baik. Bagian **Advanced Layout Techniques** juga membekali Anda dengan alat untuk menangani skenario _layout_ yang paling menantang sekalipun, memastikan Anda dapat membangun UI yang presisi, responsif, dan performatif.
+Anda telah menyelesaikan pembahasan mendalam tentang **Material Components**. Ini adalah landasan utama untuk membangun antarmuka pengguna yang sesuai dengan pedoman Material Design. Pada **Cupertino (iOS) Design** kita telah memahami bagaimana membuat aplikasi _Flutter_ Anda terasa _native_ di perangkat iOS.
+
+Setelah membahas berbagai komponen UI bawaan Material Design dan Cupertino, kini saatnya kita melangkah lebih jauh dan belajar bagaimana membangun _widget_ kustom Anda sendiri. Kemampuan untuk membuat _widget_ kustom adalah inti dari fleksibilitas _Flutter_, memungkinkan Anda untuk merancang UI apa pun yang dapat Anda bayangkan.
+
+---
+
+### **3.2 Custom Widget Development**
+
+##### **Creating Custom Widgets**
+
+**Deskripsi Detail & Peran:**
+_Creating Custom Widgets_ adalah proses mendefinisikan _widget_ baru yang sesuai dengan kebutuhan spesifik aplikasi Anda. Meskipun _Flutter_ menyediakan banyak _widget_ bawaan, seringkali Anda perlu mengombinasikannya atau membuat elemen UI yang unik yang tidak ada di perpustakaan standar. Bagian ini akan mengajarkan Anda prinsip-prinsip dan praktik terbaik untuk membangun _widget_ kustom Anda sendiri, baik itu `StatelessWidget` sederhana atau `StatefulWidget` yang lebih kompleks.
+
+**Konsep Kunci & Filosofi:**
+Filosofi utama di balik pengembangan _widget_ kustom di _Flutter_ adalah **komposisi**. Alih-alih mewarisi dari _widget_ yang sudah ada dan mengubah perilakunya (walaupun kadang diperlukan), Anda akan sering kali _menggabungkan_ beberapa _widget_ yang lebih kecil dan sederhana menjadi _widget_ yang lebih besar dan kompleks. Ini menghasilkan kode yang lebih modular, _reusable_, dan mudah di-_maintain_.
+
+Berikut adalah aspek-aspek utama dalam membuat _widget_ kustom:
+
+1.  **Composition vs Inheritance Approach:**
+
+    - **Komposisi (Composition):**
+      - **Peran:** Ini adalah pendekatan yang paling umum dan direkomendasikan di _Flutter_. Anda membangun _widget_ kustom dengan menggabungkan (mengompilasi) _widget-widget_ yang lebih kecil yang sudah ada.
+      - **Detail:** Sebuah _widget_ kustom akan memiliki `build` _method_ yang mengembalikan sebuah _widget tree_ yang terdiri dari _widget_ bawaan atau _widget_ kustom lainnya. Ini seperti membangun rumah dari batu bata yang sudah jadi.
+      - **Keuntungan:** Fleksibilitas tinggi, kode modular, mudah dibaca, dan mudah diuji. Perubahan pada satu komponen tidak terlalu memengaruhi komponen lain.
+    - **Pewarisan (Inheritance):**
+      - **Peran:** Meskipun tidak sepopuler komposisi untuk membangun UI biasa, pewarisan tetap penting untuk _widget_ fundamental tertentu (misalnya, membuat _widget_ seperti `InheritedWidget` atau `RenderObjectWidget` Anda sendiri).
+      - **Detail:** Anda akan memperluas (mewarisi dari) kelas _widget_ yang sudah ada dan menimpa _method_ serta propertinya.
+      - **Penggunaan:** Lebih jarang untuk _widget_ UI tingkat aplikasi, tetapi krusial untuk _framework extension_ atau _widget_ yang sangat fundamental.
+    - **Filosofi:** **"Favor composition over inheritance"** adalah prinsip desain perangkat lunak umum yang sangat relevan di _Flutter_.
+
+2.  **`StatelessWidget` Custom Widgets:**
+
+    - **Peran:** Membuat _widget_ kustom yang tidak memiliki _state_ yang berubah sepanjang siklus hidupnya. Semua datanya bersifat final dan disediakan saat _widget_ dibuat.
+    - **Detail:** Anda perlu memperluas kelas `StatelessWidget` dan menimpa _method_ `build(BuildContext context)`. _Method_ `build` ini akan mengembalikan _widget tree_ yang mewakili UI _widget_ kustom Anda.
+    - **Kapan Digunakan:** Untuk elemen UI yang statis atau hanya merespons input eksternal (data yang diteruskan melalui konstruktor) tanpa menyimpan _state_ internalnya sendiri. Contoh: `Text`, `Icon`, `Container` sederhana.
+
+    <!-- end list -->
+
+    ```dart
+    class MyCustomStatelessWidget extends StatelessWidget {
+      final String title; // Parameter untuk widget kustom
+
+      const MyCustomStatelessWidget({super.key, required this.title});
+
+      @override
+      Widget build(BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          color: Colors.blueAccent,
+          child: Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+        );
+      }
+    }
+    ```
+
+3.  **`StatefulWidget` Custom Widgets:**
+
+    - **Peran:** Membuat _widget_ kustom yang memiliki _state_ yang dapat berubah sepanjang siklus hidupnya, dan UI-nya diperbarui untuk merefleksikan perubahan _state_ tersebut.
+    - **Detail:** Anda perlu memperluas kelas `StatefulWidget` dan menimpa _method_ `createState()`, yang akan mengembalikan sebuah objek `State`. Objek `State` inilah yang akan menyimpan data yang dapat berubah dan memiliki _method_ `build(BuildContext context)` untuk merender UI. Perubahan _state_ dipicu oleh `setState()`.
+    - **Kapan Digunakan:** Untuk elemen UI yang interaktif atau data yang berubah seiring waktu. Contoh: _Checkbox_, _Slider_, _Form fields_, _Animated widgets_.
+
+    <!-- end list -->
+
+    ```dart
+    class MyCustomStatefulWidget extends StatefulWidget {
+      final String initialText;
+
+      const MyCustomStatefulWidget({super.key, required this.initialText});
+
+      @override
+      State<MyCustomStatefulWidget> createState() => _MyCustomStatefulWidgetState();
+    }
+
+    class _MyCustomStatefulWidgetState extends State<MyCustomStatefulWidget> {
+      late String _currentText; // State yang bisa berubah
+
+      @override
+      void initState() {
+        super.initState();
+        _currentText = widget.initialText; // Inisialisasi state dari parameter widget
+      }
+
+      void _changeText() {
+        setState(() {
+          _currentText = 'Teks Berubah!'; // Memperbarui state
+        });
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        return Column(
+          children: [
+            Text(_currentText, style: const TextStyle(fontSize: 24)),
+            ElevatedButton(
+              onPressed: _changeText,
+              child: const Text('Ubah Teks'),
+            ),
+          ],
+        );
+      }
+    }
+    ```
+
+4.  **Widget Parameters dan Configuration:**
+
+    - **Peran:** Bagaimana Anda meneruskan data ke _widget_ kustom Anda dari _parent_ _widget_.
+    - **Detail:** Parameter ini didefinisikan sebagai _final fields_ di dalam kelas `StatelessWidget` atau `StatefulWidget`. Untuk `StatefulWidget`, parameter ini diakses melalui properti `widget` dari objek `State` terkait (misalnya `widget.propertyName`).
+    - **Praktik Terbaik:** Gunakan `required` pada parameter yang wajib dan berikan _default value_ jika parameter opsional. Gunakan `const` konstruktor jika memungkinkan untuk `StatelessWidget` atau `StatefulWidget` agar kompilasi waktu konstanta dapat dioptimalkan.
+    - **Filosofi:** Membuat _widget_ Anda _reusable_ dan dapat dikonfigurasi.
+
+5.  **Widget Testing Considerations:**
+
+    - **Peran:** Memastikan bahwa _widget_ kustom Anda berfungsi seperti yang diharapkan dan tidak rusak oleh perubahan kode di masa mendatang.
+    - **Detail:** _Flutter_ menyediakan _testing framework_ yang kuat (`flutter_test`). Anda akan menulis _widget tests_ untuk memverifikasi tampilan dan interaksi _widget_ kustom Anda.
+    - **Kapan Dilakukan:** Sebaiknya tulis _widget tests_ saat Anda mengembangkan _widget_ kustom untuk memastikan keandalannya.
+    - **Filosofi:** Pengembangan yang didorong oleh tes (TDD) dan jaminan kualitas.
+
+6.  **Documentation dan Examples:**
+
+    - **Peran:** Membuat _widget_ kustom Anda mudah dipahami dan digunakan oleh _developer_ lain (termasuk diri Anda di masa depan\!).
+    - **Detail:** Gunakan _doc comments_ (komentar `///`) untuk mendeskripsikan tujuan _widget_, parameternya, dan contoh penggunaannya. Sertakan contoh kode yang jelas.
+    - **Filosofi:** Kode yang terdokumentasi dengan baik sama pentingnya dengan kode yang berfungsi.
+
+7.  **Building Custom Widgets (Proses Umum):**
+
+    - **Langkah 1: Identifikasi Kebutuhan:** Apa yang harus dilakukan _widget_ ini? Data apa yang dibutuhkannya? Apakah _state_-nya berubah?
+    - **Langkah 2: Pilih Jenis Widget:** `StatelessWidget` atau `StatefulWidget`?
+    - **Langkah 3: Desain API:** Parameter apa yang akan diterima _widget_ ini? (misalnya `text`, `onPressed`, `color`).
+    - **Langkah 4: Tulis Kode `build`:** Gunakan komposisi dari _widget_ yang lebih kecil untuk membangun UI yang diinginkan.
+    - **Langkah 5: Tambahkan Logika (Jika Stateful):** Kelola _state_ menggunakan `setState()` dan _lifecycle methods_.
+    - **Langkah 6: Uji:** Tulis _widget tests_ untuk memastikan fungsionalitas.
+    - **Langkah 7: Dokumentasikan:** Tambahkan komentar yang jelas.
+
+**Sintaks/Contoh Implementasi Lengkap (Custom Progress Bar):**
+
+Mari kita buat _widget_ kustom yang sederhana: `CustomProgressBar`.
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Custom Widget Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  double _progressValue = 0.0;
+
+  void _increaseProgress() {
+    setState(() {
+      _progressValue += 0.1;
+      if (_progressValue > 1.0) {
+        _progressValue = 0.0; // Reset jika sudah penuh
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Custom Widget Progress Bar'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Menggunakan custom widget yang telah kita buat
+              CustomProgressBar(
+                progress: _progressValue,
+                height: 20,
+                backgroundColor: Colors.grey[300]!,
+                progressBarColor: Colors.teal,
+                borderRadius: 10,
+              ),
+              const SizedBox(height: 30),
+              Text(
+                'Progress: ${(_progressValue * 100).toStringAsFixed(0)}%',
+                style: const TextStyle(fontSize: 24),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: _increaseProgress,
+                child: const Text('Tambah Progress'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A custom progress bar widget.
+/// This widget displays a progress bar with customizable colors, height, and border radius.
+/// It's a StatelessWidget because its appearance is entirely determined by its input parameters.
+class CustomProgressBar extends StatelessWidget {
+  /// The current progress value, from 0.0 to 1.0.
+  final double progress;
+
+  /// The height of the progress bar.
+  final double height;
+
+  /// The background color of the progress bar track.
+  final Color backgroundColor;
+
+  /// The color of the filled progress indicator.
+  final Color progressBarColor;
+
+  /// The border radius for the progress bar.
+  final double borderRadius;
+
+  const CustomProgressBar({
+    super.key,
+    required this.progress,
+    this.height = 10.0,
+    this.backgroundColor = Colors.grey,
+    this.progressBarColor = Colors.blue,
+    this.borderRadius = 5.0,
+  }) : assert(progress >= 0.0 && progress <= 1.0, 'Progress value must be between 0.0 and 1.0');
+       // Assertions for validation
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity, // Mengisi lebar yang tersedia
+      height: height,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(borderRadius),
+      ),
+      child: Stack(
+        children: [
+          // Bagian progress yang terisi
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return Container(
+                width: constraints.maxWidth * progress, // Lebar dihitung berdasarkan progress
+                decoration: BoxDecoration(
+                  color: progressBarColor,
+                  borderRadius: BorderRadius.circular(borderRadius),
+                ),
+              );
+            },
+          ),
+          // Opsional: Teks persentase di tengah progress bar
+          // Center(
+          //   child: Text(
+          //     '${(progress * 100).toStringAsFixed(0)}%',
+          //     style: const TextStyle(color: Colors.white, fontSize: 12),
+          //   ),
+          // ),
+        ],
+      ),
+    );
+  }
+}
+```
+
+**Visualisasi Konseptual (Komposisi Widget Kustom):**
+
+```
+MyApp
+└── MaterialApp
+    └── MyHomePage (StatefulWidget)
+        ├── Scaffold
+        │   ├── AppBar
+        │   └── body
+        │       └── Column
+        │           ├── CustomProgressBar (StatelessWidget)
+        │           │   └── Container (background)
+        │           │       └── Stack
+        │           │           └── LayoutBuilder
+        │           │               └── Container (progress fill)
+        │           ├── Text (showing percentage)
+        │           └── ElevatedButton (to change progress)
+```
+
+**Terminologi Esensial:**
+
+- **Custom Widget:** _Widget_ yang Anda definisikan sendiri untuk memenuhi kebutuhan UI spesifik.
+- **Composition:** Pendekatan membangun _widget_ kustom dengan menggabungkan _widget_ yang lebih kecil.
+- **Inheritance:** Pendekatan membangun _widget_ kustom dengan memperluas kelas _widget_ yang sudah ada.
+- **`StatelessWidget`:** _Widget_ yang tidak memiliki _state_ yang berubah.
+- **`StatefulWidget`:** _Widget_ yang memiliki _state_ yang dapat berubah.
+- **Widget Parameters:** Properti yang diteruskan ke _widget_ kustom melalui konstruktornya.
+- **`super.key`:** Penting untuk meneruskan `key` ke _constructor_ _parent_ _widget_ untuk identifikasi yang benar dalam _widget tree_.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Komposisi vs Pewarisan
+- Membuat `StatelessWidget` Kustom
+- Membuat `StatefulWidget` Kustom
+- Meneruskan Parameter ke _Widget_
+- Pertimbangan Pengujian _Widget_
+- Pentingnya Dokumentasi
+
+**Hubungan dengan Bagian Lain:**
+
+- **Widget Architecture Deep Dive:** Membangun _widget_ kustom sangat bergantung pada pemahaman `StatelessWidget` vs `StatefulWidget`, siklus hidup _widget_, dan `BuildContext`.
+- **Layout System Mastery:** _Widget_ kustom Anda akan sering menggunakan _widget_ _layout_ (`Column`, `Row`, `Stack`, `Container`, dll.) untuk mengatur elemen-elemennya.
+- **UI Components & Material Design:** _Widget_ kustom Anda dapat mengintegrasikan dan memperluas _Material Components_ atau _Cupertino Components_.
+
+**Referensi Lengkap:**
+
+- [Building Custom Widgets](https://flutter.dev/docs/development/ui/widgets/building-layouts%23building-custom-widgets): Dokumentasi resmi Flutter tentang membuat _widget_ kustom.
+- [Custom Widget Best Practices](https://medium.com/flutter/the-flutter-way-creating-custom-widgets-d56ee3f114c2): Artikel Medium tentang praktik terbaik dalam membuat _widget_ kustom.
+- [Composition vs Inheritance](https://www.geeksforgeeks.org/composition-vs-inheritance-in-object-oriented-programming/): Konsep pemrograman umum yang relevan di Flutter.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Mulai dari yang Kecil:** Selalu mulai dengan membangun _widget_ yang lebih kecil dan fungsional, lalu kombinasikan untuk membentuk _widget_ yang lebih kompleks.
+- **Pisahkan Kekhawatiran:** Jika _widget_ Anda mulai menjadi terlalu besar atau kompleks, pertimbangkan untuk memisahkannya menjadi _widget_ yang lebih kecil yang memiliki tanggung jawab tunggal.
+- **Pertimbangkan Kembali `StatefulWidget`:** Jika Anda merasa perlu menggunakan `StatefulWidget` hanya untuk meneruskan data ke bawah, pertimbangkan apakah `InheritedWidget` atau manajemen _state_ lainnya akan menjadi solusi yang lebih baik dan lebih efisien.
+- **Gunakan `const` dengan Bijak:** Jika _widget_ atau bagian dari _widget tree_ Anda tidak akan berubah, gunakan `const` untuk membantu _Flutter_ mengoptimalkan kinerja _rendering_.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Mencoba memanggil `setState()` di dalam `StatelessWidget`.
+  - **Solusi:** `StatelessWidget` tidak memiliki _state_ yang dapat diubah. Jika Anda memerlukan _state_ internal, ubah _widget_ Anda menjadi `StatefulWidget`.
+- **Kesalahan:** Mengakses properti `StatefulWidget` di dalam `State` _object_ tanpa menggunakan kata kunci `widget` (misalnya `initialText` alih-alih `widget.initialText`).
+  - **Solusi:** Properti _widget_ diakses melalui `widget.propertyName` di dalam kelas `State` yang terkait.
+- **Kesalahan:** `Hot Reload` tidak memperbarui _state_ yang diharapkan dalam `StatefulWidget`.
+  - **Solusi:** `Hot Reload` hanya membangun ulang _widget tree_ dari _scratch_, tetapi _state_ itu sendiri akan dipertahankan. Jika Anda mengubah parameter _widget_ yang digunakan untuk menginisialisasi _state_ di `initState`, perubahan itu tidak akan terlihat hingga `Hot Restart`. Gunakan `didUpdateWidget` jika Anda ingin _state_ bereaksi terhadap perubahan properti dari _parent_.
+
+# Luar biasa!
+
+Anda telah berhasil menuntaskan pembahasan mendalam tentang **Creating Custom Widgets** di _Flutter_. Ini adalah keterampilan yang sangat memberdayakan yang akan memungkinkan Anda untuk membangun hampir semua UI yang Anda inginkan.
+
+Setelah menjelajahi _Material Design_ dan _Cupertino Design_ dengan komponen-komponen siap pakai, kini saatnya kita melangkah lebih jauh. Kita akan masuk ke bagian yang sangat penting dan memberdayakan: **3.2 Custom Widget Development**. Di sini, Anda akan belajar bagaimana membangun _widget_ Anda sendiri dari nol, memberikan kontrol penuh atas tampilan dan perilaku UI Anda.
+
+---
+
+### **3.2 Custom Widget Development**
+
+[versi kedua][1]
+
+##### **Creating Custom Widgets**
+
+**Deskripsi Detail & Peran:**
+_Creating Custom Widgets_ adalah inti dari fleksibilitas _Flutter_. Meskipun _Flutter_ menyediakan banyak _widget_ bawaan, Anda akan sering menemukan kebutuhan untuk membuat _widget_ yang unik dan spesifik untuk aplikasi Anda. Ini memungkinkan Anda untuk mengkapsulasi logika UI yang kompleks, meningkatkan _reusability_ (penggunaan kembali), dan menjaga basis kode Anda tetap rapi serta mudah dikelola.
+
+**Konsep Kunci & Filosofi:**
+Filosofi utama di balik pengembangan _custom widget_ di _Flutter_ adalah **komposisi (composition) daripada pewarisan (inheritance)**. Ini berarti Anda lebih sering membangun _widget_ baru dengan menggabungkan (mengkomposisikan) _widget_ yang sudah ada, daripada memperluas (mewarisi) dari _widget_ yang sudah ada. Pendekatan ini menghasilkan kode yang lebih fleksibel, mudah diuji, dan lebih mudah dipahami.
+
+Berikut adalah aspek-aspek utama dalam membuat _custom widget_:
+
+1.  **Composition vs Inheritance approach:**
+
+    - **Komposisi (Composition):** Ini adalah pendekatan yang paling direkomendasikan di _Flutter_. Anda membangun _widget_ baru dengan menggabungkan beberapa _widget_ yang lebih kecil dan sederhana sebagai _children_ atau properti. _Custom widget_ Anda akan berisi `Row`, `Column`, `Container`, `Text`, `Icon`, dll.
+      - **Contoh:** Membuat `CustomCard` yang terdiri dari `Card`, `Column`, `Text`, dan `Image`.
+      - **Kelebihan:** Kode lebih fleksibel, _reusable_, mudah diuji, dan mengurangi _coupling_ antar bagian.
+    - **Pewarisan (Inheritance):** Anda akan mewarisi dari `StatelessWidget` atau `StatefulWidget` (yang merupakan bentuk pewarisan dasar untuk semua _widget_), tetapi jarang memperluas _widget_ UI spesifik lainnya seperti `Button` atau `Text` untuk mengubah perilakunya secara fundamental.
+      - **Kelebihan:** Berguna untuk _widget_ dasar yang perlu mendefinisikan ulang _rendering_ atau _layout_ level rendah (ini adalah pekerjaan yang lebih kompleks dan jarang dilakukan _developer_ aplikasi).
+      - **Batasan:** Dapat menghasilkan hierarki yang kaku dan sulit dikelola jika digunakan secara berlebihan untuk tujuan UI.
+    - **Filosofi:** Komposisi adalah "seni" di _Flutter_. Ini memungkinkan Anda membangun UI yang kompleks dari blok-blok bangunan yang sederhana dan modular.
+
+2.  **`StatelessWidget` custom widgets:**
+
+    - **Peran:** Digunakan untuk _widget_ yang tidak memerlukan _state_ yang dapat berubah seiring waktu. Mereka hanya bergantung pada konfigurasi yang diberikan saat _widget_ dibuat.
+    - **Implementasi:** Anda memperluas kelas `StatelessWidget` dan mengimplementasikan metode `build(BuildContext context)`. Metode `build` ini harus mengembalikan _widget tree_ yang menjelaskan UI yang akan ditampilkan oleh _widget_ kustom Anda.
+    - **Contoh:** Tombol sederhana, ikon, teks statis, atau kartu dengan konten tetap.
+    - **Kelebihan:** Ringan, efisien, dan mudah dipahami karena tidak ada _state_ internal yang perlu dikelola.
+
+    <!-- end list -->
+
+    ```
+    CustomWidget (StatelessWidget)
+    └── build(context) method
+        └── Returns a Widget Tree (composed of other widgets)
+    ```
+
+3.  **`StatefulWidget` custom widgets:**
+
+    - **Peran:** Digunakan untuk _widget_ yang memiliki _state_ yang dapat berubah seiring waktu atau berdasarkan interaksi pengguna.
+    - **Implementasi:** Anda memperluas kelas `StatefulWidget` dan mengimplementasikan metode `createState()`, yang mengembalikan sebuah objek `State` yang terkait dengan _widget_ ini. Objek `State` inilah yang akan mengelola _state_ dan memiliki metode `build(BuildContext context)` serta metode _lifecycle_ lainnya.
+    - **Contoh:** _Checkbox_, _toggle switch_, _form input_ dengan validasi dinamis, atau _widget_ yang menampilkan data yang dimuat dari jaringan.
+    - **Kelebihan:** Mampu mengelola data internal yang berubah, memungkinkan interaktivitas dan UI yang dinamis.
+
+    <!-- end list -->
+
+    ```
+    CustomWidget (StatefulWidget)
+    └── createState() method
+        └── Returns _CustomWidgetState
+            └── _CustomWidgetState (State)
+                ├── State properties (data that changes)
+                ├── build(context) method
+                │   └── Returns a Widget Tree (depends on state)
+                └── Other lifecycle methods (initState, dispose, etc.)
+    ```
+
+4.  **Widget parameters dan configuration:**
+
+    - **Peran:** _Custom widget_ seringkali perlu menerima data atau konfigurasi dari _parent widget_-nya. Ini dilakukan melalui _constructor_ _widget_.
+    - **Implementasi:** Anda mendefinisikan _final fields_ di dalam kelas `StatelessWidget` atau `StatefulWidget` Anda. Ini adalah properti yang akan diterima oleh _widget_ saat instansiasi.
+    - **Contoh:** `CustomButton({Key? key, required this.text, required this.onPressed})`.
+    - **Kelebihan:** Membuat _widget_ Anda fleksibel dan _reusable_, karena dapat digunakan di berbagai konteks dengan konfigurasi yang berbeda.
+
+5.  **Widget testing considerations:**
+
+    - **Peran:** Menguji _custom widget_ adalah bagian penting dari proses pengembangan untuk memastikan _widget_ berfungsi seperti yang diharapkan dalam berbagai skenario.
+    - **Detail:** _Flutter_ menyediakan _framework_ pengujian yang kuat (unit, _widget_, dan integrasi). Untuk _custom widget_, Anda akan sering melakukan _widget testing_ untuk memverifikasi tampilan, interaksi, dan respons terhadap perubahan _state_.
+    - **Filosofi:** Pastikan _widget_ Anda kokoh dan bebas dari _bug_ sebelum diintegrasikan ke dalam aplikasi yang lebih besar.
+
+6.  **Documentation dan examples:**
+
+    - **Peran:** Mendokumentasikan _custom widget_ Anda sangat penting, terutama jika Anda bekerja dalam tim atau jika _widget_ tersebut akan digunakan kembali di proyek lain.
+    - **Detail:** Gunakan _doc comments_ (`///`) di Dart untuk menjelaskan tujuan _widget_, properti yang diterimanya, dan bagaimana cara menggunakannya. Sertakan contoh penggunaan jika perlu.
+    - **Kelebihan:** Mempermudah _developer_ lain (dan diri Anda sendiri di masa depan) untuk memahami dan menggunakan _widget_ Anda secara efektif.
+
+7.  **Building Custom Widgets (Proses):**
+
+    - **Identifikasi Kebutuhan:** Apa yang harus dilakukan _widget_ ini? Apa saja properti yang dibutuhkan? Apakah ia perlu _state_?
+    - **Pilih Jenis Widget:** `StatelessWidget` atau `StatefulWidget`?
+    - **Desain Kontraktor:** Tentukan parameter yang dibutuhkan. Gunakan `Key` untuk _widget_ yang perlu diidentifikasi secara unik atau yang berinteraksi dengan daftar dinamis.
+    - **Bangun UI (Metode `build`):** Komposisikan _widget_ bawaan _Flutter_ atau _custom widget_ lainnya untuk menciptakan UI yang diinginkan.
+    - **Tambahkan Logika (untuk `StatefulWidget`):** Kelola _state_ internal dan tanggapi interaksi pengguna (misalnya dengan `setState()`).
+    - **Uji:** Tulis _widget tests_.
+    - **Dokumentasikan:** Tambahkan _doc comments_.
+
+**Sintaks/Contoh Implementasi Lengkap (Custom Widget):**
+
+Mari kita buat contoh `CustomButton` (Stateless) dan `CounterWidget` (Stateful).
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Custom Widget Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true, // Mengaktifkan Material 3
+      ),
+      home: const CustomWidgetScreen(),
+    );
+  }
+}
+
+// 1. Contoh StatelessWidget Custom Widget: CustomButton
+// Widget ini tidak memiliki state internal yang berubah.
+class CustomButton extends StatelessWidget {
+  // Parameter (Konfigurasi) dari widget ini
+  final String label;
+  final VoidCallback onPressed; // VoidCallback adalah typedef untuk func tanpa argumen & return value
+  final Color backgroundColor;
+  final Color textColor;
+
+  // Constructor dengan parameter yang diperlukan
+  const CustomButton({
+    Key? key, // Key untuk identifikasi widget, opsional
+    required this.label, // Wajib diisi
+    required this.onPressed, // Wajib diisi
+    this.backgroundColor = Colors.blue, // Nilai default jika tidak disediakan
+    this.textColor = Colors.white, // Nilai default
+  }) : super(key: key); // Meneruskan key ke superclass
+
+  @override
+  Widget build(BuildContext context) {
+    // Komposisi dari widget Material standar
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor,
+        foregroundColor: textColor,
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 18),
+      ),
+    );
+  }
+}
+
+// 2. Contoh StatefulWidget Custom Widget: CounterWidget
+// Widget ini memiliki state internal (nilai counter) yang berubah.
+class CounterWidget extends StatefulWidget {
+  // StatelessWidget menerima parameter awal, tetapi StatefulWidget tidak membutuhkan
+  // parameter untuk state-nya di sini, hanya untuk konfigurasi awal jika ada.
+  final int initialValue;
+
+  const CounterWidget({Key? key, this.initialValue = 0}) : super(key: key);
+
+  @override
+  State<CounterWidget> createState() => _CounterWidgetState();
+}
+
+// Objek State yang terkait dengan CounterWidget
+class _CounterWidgetState extends State<CounterWidget> {
+  late int _counter; // Variabel state yang akan berubah
+
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi state dari parameter widget
+    _counter = widget.initialValue;
+  }
+
+  // Metode untuk mengubah state
+  void _incrementCounter() {
+    setState(() {
+      _counter++; // Perubahan state
+    });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      _counter--; // Perubahan state
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // UI bergantung pada nilai _counter (state)
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const Text(
+          'Nilai Counter:',
+          style: TextStyle(fontSize: 20),
+        ),
+        Text(
+          '$_counter',
+          style: Theme.of(context).textTheme.headlineLarge,
+        ),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _decrementCounter,
+              child: const Icon(Icons.remove),
+            ),
+            const SizedBox(width: 20),
+            ElevatedButton(
+              onPressed: _incrementCounter,
+              child: const Icon(Icons.add),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    // Pastikan resource dibersihkan jika ada (misal: controller, listener)
+    super.dispose();
+  }
+}
+
+// Layar utama yang menggunakan Custom Widget
+class CustomWidgetScreen extends StatelessWidget {
+  const CustomWidgetScreen({super.key});
+
+  void _onButtonPressed() {
+    print("Tombol kustom ditekan!");
+    // Dalam aplikasi nyata, ini bisa memicu navigasi, aksi data, dll.
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Pengembangan Custom Widget'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // Menggunakan CustomButton
+            CustomButton(
+              label: 'Klik Saya!',
+              onPressed: _onButtonPressed,
+              backgroundColor: Colors.teal,
+              textColor: Colors.yellow,
+            ),
+            const SizedBox(height: 30),
+            // Menggunakan CounterWidget
+            const CounterWidget(initialValue: 10), // Memberikan nilai awal
+            const SizedBox(height: 30),
+            // Contoh CustomButton lain dengan warna default
+            CustomButton(
+              label: 'Default Button',
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Default button ditekan!')),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Visualisasi Konseptual (Komposisi Widget):**
+
+```
+CustomWidgetScreen (StatelessWidget)
+└── Scaffold
+    ├── AppBar
+    ├── body (Center)
+    │   └── Column
+    │       ├── CustomButton (StatelessWidget)
+    │       │   └── ElevatedButton (composed)
+    │       │       └── Text (composed)
+    │       ├── CounterWidget (StatefulWidget)
+    │       │   └── _CounterWidgetState (State)
+    │       │       └── Column (composed)
+    │       │           ├── Text
+    │       │           ├── Text (displaying _counter state)
+    │       │           └── Row
+    │       │               ├── ElevatedButton (decrement)
+    │       │               └── ElevatedButton (increment)
+    │       └── CustomButton (StatelessWidget)
+    │           └── ElevatedButton (composed)
+    │               └── Text (composed)
+```
+
+**Terminologi Esensial:**
+
+- **Custom Widget:** _Widget_ yang Anda buat sendiri untuk kebutuhan spesifik aplikasi.
+- **Komposisi (Composition):** Membangun _widget_ baru dengan menggabungkan _widget_ yang sudah ada.
+- **Pewarisan (Inheritance):** Mengambil fungsionalitas dari kelas _parent_. Di _Flutter_, ini umum untuk `StatelessWidget` dan `StatefulWidget` tetapi jarang untuk _widget_ UI spesifik lainnya.
+- **Widget Parameters:** Properti yang dilewatkan ke _constructor_ _widget_ untuk konfigurasinya.
+- **`Key`:** Pengidentifikasi opsional untuk _widget_ yang membantu _Flutter_ mengelola _widget tree_ secara efisien, terutama dalam daftar dinamis.
+- **`VoidCallback`:** _typedef_ untuk fungsi yang tidak menerima argumen dan tidak mengembalikan nilai, sering digunakan untuk _callback_ tombol.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Filosofi Komposisi vs Pewarisan
+- Membuat `StatelessWidget` Kustom
+- Membuat `StatefulWidget` Kustom
+- Melewatkan Parameter ke _Widget_
+- Pertimbangan Pengujian _Widget_
+- Pentingnya Dokumentasi _Widget_
+
+**Hubungan dengan Bagian Lain:**
+
+- **Widget Tree & Rendering Engine:** Memahami bagaimana _custom widget_ Anda diintegrasikan ke dalam _widget tree_ dan bagaimana perubahan _state_ memicu _re-rendering_ sangat penting.
+- **Widget Lifecycle Management:** Ini sangat relevan untuk `StatefulWidget` kustom, di mana Anda akan mengelola _state_ di dalam metode _lifecycle_ seperti `initState()` dan `dispose()`.
+- **Layout System Mastery:** Saat menyusun _custom widget_, Anda akan menggunakan kembali semua _widget_ _layout_ yang sudah Anda pelajari (`Column`, `Row`, `Container`, dll.).
+- **State Management:** Untuk _widget_ dengan _state_ internal yang kompleks, ini adalah langkah pertama sebelum menjelajahi solusi manajemen _state_ yang lebih canggih.
+
+**Referensi Lengkap:**
+
+- [Building Custom Widgets](https://flutter.dev/docs/development/ui/widgets-intro%23building-custom-widgets): Bagian dari dokumentasi resmi Flutter yang membahas pembuatan _custom widget_.
+- [Custom Widget Best Practices](https://medium.com/flutter-community/flutter-custom-widget-best-practices-2022-7f9a1f2e1b1d): Artikel dari komunitas Flutter tentang praktik terbaik.
+- [Composition vs Inheritance](https://blog.codemagic.io/composition-vs-inheritance-in-flutter-explained-with-examples/): Sebuah artikel yang menjelaskan perbedaan komposisi dan pewarisan di Flutter.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Keep It Small and Focused:** Buat _custom widget_ sekecil dan sefokus mungkin pada satu tujuan. Ini meningkatkan _reusability_ dan kemudahan pengujian.
+- **Gunakan `const` Constructor:** Jika _widget_ Anda `StatelessWidget` dan semua propertinya `final`, buat *constructor*nya `const`. Ini memungkinkan _Flutter_ untuk melakukan optimasi kinerja.
+- **Hindari `setState()` Berlebihan:** Di `StatefulWidget`, panggil `setState()` hanya ketika _state_ yang memengaruhi UI benar-benar berubah.
+- **Gunakan `Key` dengan Bijak:** Pertimbangkan penggunaan `Key` saat Anda memiliki daftar _widget_ yang dinamis atau _widget_ yang perlu mempertahankan *state*nya ketika posisinya diubah di _tree_.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Mengubah properti `final` dari `StatelessWidget` atau `StatefulWidget` dari luar _widget_.
+  - **Solusi:** Properti `final` hanya dapat diatur saat _widget_ dibuat. Untuk _widget_ yang perlu berubah, gunakan `StatefulWidget` dan ubah _state_ internalnya melalui `setState()`.
+- **Kesalahan:** Mencoba memanggil `setState()` di dalam `StatelessWidget`.
+  - **Solusi:** `setState()` hanya tersedia di objek `State` dari `StatefulWidget`. Jika _widget_ Anda perlu mengubah UI-nya secara internal, itu harus menjadi `StatefulWidget`.
+- **Kesalahan:** _Widget_ tidak memperbarui tampilan setelah data berubah.
+  - **Solusi:** Pastikan Anda memanggil `setState()` setelah memodifikasi _state_ internal di `StatefulWidget`. Jika data datang dari _parent widget_ dan tidak memicu pembangunan ulang, periksa apakah *parent*nya juga memanggil `setState()` atau menggunakan _state management_ yang tepat.
+
+---
+
+Setelah memahami dasar-dasar pembuatan _widget_ kustom dengan `StatelessWidget` dan `StatefulWidget` serta pentingnya komposisi, kini kita akan mendalami **Widget Composition Patterns**. Ini adalah berbagai pola dan teknik yang lebih canggih untuk mengorganisir _widget_ kustom Anda, membuatnya lebih fleksibel, _reusable_, dan mudah di-_maintain_.
+
+---
+
+### **3.2 Custom Widget Development (Lanjutan)**
+
+##### **Widget Composition Patterns**
+
+**Deskripsi Detail & Peran:**
+_Widget Composition Patterns_ adalah kumpulan teknik dan praktik yang memungkinkan Anda menyusun _widget_ secara lebih efektif dan modular. Ini melampaui sekadar menyatukan _widget_ menjadi satu `Column` atau `Row`, melainkan berfokus pada cara Anda merancang API _widget_, bagaimana mereka menerima dan memproses data, serta bagaimana mereka dapat diperluas atau dimodifikasi tanpa merusak desain aslinya.
+
+**Konsep Kunci & Filosofi:**
+Filosofi di balik pola komposisi adalah memaksimalkan **modularity**, **reusability**, **testability**, dan **separation of concerns**. Dengan menerapkan pola-pola ini, Anda dapat membangun _widget tree_ yang kompleks dari bagian-bagian yang lebih kecil dan independen, yang masing-masing memiliki tanggung jawab yang jelas.
+
+Berikut adalah pola-pola komposisi _widget_ utama:
+
+1.  **Builder Pattern untuk Widgets:**
+
+    - **Peran:** Pola _builder_ di _Flutter_ sering digunakan untuk menunda pembuatan bagian dari _widget tree_ hingga konteks tertentu tersedia, atau untuk memungkinkan _parent widget_ menyediakan _dependency_ ke _child widget_ secara lebih fleksibel.
+    - **Detail:** Anda akan sering melihat `builder` _callback_ di berbagai _widget_ (misalnya `LayoutBuilder`, `StreamBuilder`, `FutureBuilder`, `Consumer` dari Provider). _Builder_ _callback_ menerima `BuildContext` sebagai argumen, yang sangat penting karena _context_ hanya tersedia setelah _widget_ dimasukkan ke dalam _widget tree_.
+    - **Keuntungan:** Memungkinkan _widget_ untuk merespons perubahan _constraints_, _data asynchronous_, atau _state_ secara efisien tanpa harus membangun ulang seluruh _widget tree_.
+    - **Filosofi:** **"Lazy initialization"** dan **"context-aware rendering"**.
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh: Menggunakan LayoutBuilder
+    // Membangun UI berdasarkan ukuran yang tersedia
+    class ResponsiveText extends StatelessWidget {
+      final String text;
+      const ResponsiveText({super.key, required this.text});
+
+      @override
+      Widget build(BuildContext context) {
+        return LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            if (constraints.maxWidth > 600) {
+              return Text(text, style: const TextStyle(fontSize: 30));
+            } else {
+              return Text(text, style: const TextStyle(fontSize: 18));
+            }
+          },
+        );
+      }
+    }
+    ```
+
+2.  **Factory Constructors:**
+
+    - **Peran:** _Factory constructor_ adalah jenis _constructor_ khusus yang memungkinkan Anda mengembalikan instance _class_ yang _sudah ada_ atau _subclass_ dari _class_ tersebut, daripada selalu membuat instance baru dari _class_ yang sama.
+    - **Detail:** Dideklarasikan dengan kata kunci `factory`. Berguna ketika inisialisasi objek adalah proses yang kompleks, membutuhkan logika, atau mengembalikan objek _cached_ atau _singleton_.
+    - **Kapan Digunakan:**
+      - Ketika Anda ingin mengembalikan _instance_ yang sudah ada dari sebuah _cache_.
+      - Ketika Anda ingin mengembalikan _subclass_ yang berbeda berdasarkan parameter input.
+      - Ketika _constructor_ harus melakukan logika yang kompleks sebelum membuat objek.
+    - **Filosofi:** **"Flexible instantiation"** dan **"controlled object creation"**.
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh: Factory Constructor untuk Widget
+    class ButtonFactory {
+      factory ButtonFactory.createPrimary(String text, VoidCallback onPressed) {
+        return ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+          child: Text(text, style: const TextStyle(color: Colors.white)),
+        );
+      }
+
+      factory ButtonFactory.createSecondary(String text, VoidCallback onPressed) {
+        return OutlinedButton(
+          onPressed: onPressed,
+          style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.blue)),
+          child: Text(text, style: const TextStyle(color: Colors.blue)),
+        );
+      }
+    }
+
+    // Penggunaan:
+    // ButtonFactory.createPrimary('Submit', () {});
+    // ButtonFactory.createSecondary('Cancel', () {});
+    ```
+
+3.  **Named Constructors:**
+
+    - **Peran:** _Constructor_ tambahan dengan nama yang berbeda dari nama kelas utama. Ini memungkinkan Anda untuk menyediakan beberapa cara yang jelas dan ekspresif untuk membuat instance sebuah kelas, masing-masing dengan tujuan yang spesifik.
+    - **Detail:** Didefinisikan dengan `ClassName.constructorName(parameters)`.
+    - **Kapan Digunakan:** Ketika Anda memiliki beberapa cara inisialisasi yang berbeda untuk _widget_ yang sama, yang masing-masing membutuhkan parameter yang berbeda atau memiliki makna semantik yang berbeda.
+    - **Keuntungan:** Meningkatkan keterbacaan kode dan kejelasan maksud.
+    - **Filosofi:** **"Clarity in instantiation"** dan **"multiple initialization paths"**.
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh: Named Constructor untuk Widget Kustom
+    class ProductCard extends StatelessWidget {
+      final String title;
+      final double price;
+      final String? imageUrl;
+      final bool isFeatured;
+
+      // Constructor utama
+      const ProductCard({
+        super.key,
+        required this.title,
+        required this.price,
+        this.imageUrl,
+        this.isFeatured = false,
+      });
+
+      // Named constructor untuk produk unggulan
+      const ProductCard.featured({
+        super.key,
+        required this.title,
+        required this.price,
+        this.imageUrl,
+      }) : isFeatured = true; // Langsung set isFeatured menjadi true
+
+      @override
+      Widget build(BuildContext context) {
+        return Card(
+          color: isFeatured ? Colors.yellow[100] : null,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                if (imageUrl != null) Image.network(imageUrl!),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text('\$${price.toStringAsFixed(2)}'),
+                if (isFeatured) const Icon(Icons.star, color: Colors.amber),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+
+    // Penggunaan:
+    // ProductCard(title: 'Buku', price: 25.0);
+    // ProductCard.featured(title: 'Buku Unggulan', price: 30.0);
+    ```
+
+4.  **Widget Mixins:**
+
+    - **Peran:** _Mixins_ di Dart (dan Flutter) memungkinkan Anda untuk menggunakan kembali kode di banyak _class hierarchy_ tanpa menggunakan pewarisan. Mereka "mencampur" fungsionalitas ke dalam sebuah kelas.
+    - **Detail:** Didefinisikan dengan kata kunci `mixin` dan digunakan dengan kata kunci `with`. Sebuah _mixin_ dapat berisi _method_ dan _properties_.
+    - **Kapan Digunakan:** Ketika Anda memiliki sekelompok _method_ atau properti yang ingin Anda tambahkan ke beberapa _class_ yang tidak berbagi _parent class_ yang sama secara langsung, atau untuk menambahkan perilaku tertentu (misalnya, _mixin_ untuk _lifecycle events_ yang spesifik, atau _mixin_ untuk fungsionalitas _scrolling_).
+    - **Filosofi:** **"Behavioral reuse"** dan **"adding capabilities"**.
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh: Mixin untuk logging lifecycle
+    mixin WidgetLifecycleLogger<T extends StatefulWidget> on State<T> {
+      @override
+      void initState() {
+        super.initState();
+        debugPrint('WIDGET LIFECYCLE: ${T.toString()} initState called');
+      }
+
+      @override
+      void dispose() {
+        debugPrint('WIDGET LIFECYCLE: ${T.toString()} dispose called');
+        super.dispose();
+      }
+
+      // Anda bisa menambahkan method lifecycle lainnya
+    }
+
+    // Penggunaan:
+    class MyLoggingWidget extends StatefulWidget {
+      const MyLoggingWidget({super.key});
+
+      @override
+      State<MyLoggingWidget> createState() => _MyLoggingWidgetState();
+    }
+
+    class _MyLoggingWidgetState extends State<MyLoggingWidget> with WidgetLifecycleLogger<MyLoggingWidget> {
+      @override
+      Widget build(BuildContext context) {
+        return const Text('Widget dengan logging lifecycle');
+      }
+    }
+    ```
+
+5.  **Abstract Widget Classes:**
+
+    - **Peran:** _Class_ abstrak adalah _class_ yang tidak dapat di-_instantiate_ secara langsung. Mereka sering digunakan sebagai _base class_ untuk _class_ lain, mendefinisikan _interface_ umum atau _method_ abstrak yang harus diimplementasikan oleh _subclass_.
+    - **Detail:** Didefinisikan dengan kata kunci `abstract class`. Bisa memiliki _method_ abstrak (tanpa implementasi) atau _method_ konkret (dengan implementasi).
+    - **Kapan Digunakan:** Ketika Anda ingin mendefinisikan kontrak untuk sekelompok _widget_ yang berbagi fungsionalitas inti, tetapi detail implementasinya bervariasi. Misalnya, _base class_ untuk berbagai jenis tombol kustom yang semuanya harus memiliki properti `onPressed` dan `child`.
+    - **Filosofi:** **"Defining contracts"** dan **"enforcing structure"**.
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh: Abstract base class untuk Custom Button
+    abstract class CustomBaseButton extends StatelessWidget {
+      final Widget child;
+      final VoidCallback onPressed;
+
+      const CustomBaseButton({super.key, required this.child, required this.onPressed});
+
+      // Abstract method yang harus diimplementasikan oleh subclass
+      Widget buildButton(BuildContext context);
+
+      @override
+      Widget build(BuildContext context) {
+        return buildButton(context); // Memanggil method abstrak
+      }
+    }
+
+    class PrimaryCustomButton extends CustomBaseButton {
+      const PrimaryCustomButton({super.key, required super.child, required super.onPressed});
+
+      @override
+      Widget buildButton(BuildContext context) {
+        return ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+          child: child,
+        );
+      }
+    }
+
+    class SecondaryCustomButton extends CustomBaseButton {
+      const SecondaryCustomButton({super.key, required super.child, required super.onPressed});
+
+      @override
+      Widget buildButton(BuildContext context) {
+        return OutlinedButton(
+          onPressed: onPressed,
+          style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red)),
+          child: child,
+        );
+      }
+    }
+    ```
+
+6.  **Widget Inheritance Hierarchy:**
+
+    - **Peran:** Merujuk pada struktur bagaimana _widget_ di _Flutter_ (dan _widget_ kustom Anda) diatur dalam hirarki pewarisan. Meskipun komposisi lebih disukai untuk membangun UI, _framework_ _Flutter_ itu sendiri sangat bergantung pada pewarisan.
+    - **Detail:** Semua _widget_ di _Flutter_ pada akhirnya mewarisi dari kelas `Widget`. Kemudian ada `StatelessWidget`, `StatefulWidget`, `ProxyWidget`, `RenderObjectWidget`, dll. Memahami hirarki ini membantu Anda memilih _base class_ yang tepat untuk _widget_ Anda.
+    - **Filosofi:** **"Foundation structure"** dan **"framework extension"**.
+    - **Contoh Hirarki Sederhana:**
+      - `Object`
+        - `Diagnosticable`
+          - `DiagnosticableTree`
+            - `Widget`
+              - `StatelessWidget` (misal: `Text`, `Icon`, `Container`)
+              - `StatefulWidget` (misal: `Checkbox`, `Slider`)
+              - `InheritedWidget` (misal: `Theme`, `MediaQuery`)
+              - `RenderObjectWidget` (widget yang mengelola RenderObject)
+
+**Sintaks/Contoh Implementasi Gabungan (Advanced):**
+
+Menggabungkan beberapa pola untuk _widget_ kustom yang lebih kompleks:
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Composition Patterns Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        useMaterial3: true,
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+// =========================================================
+// 1. Contoh Abstract Widget Class dan Named Constructor
+// =========================================================
+abstract class AppCard extends StatelessWidget {
+  final Widget content;
+  final String? title;
+  final VoidCallback? onTap;
+
+  const AppCard({
+    super.key,
+    required this.content,
+    this.title,
+    this.onTap,
+  });
+
+  // Abstract method to define the specific card appearance
+  Widget buildCardContent(BuildContext context);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        margin: const EdgeInsets.all(8.0),
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (title != null) ...[
+                Text(
+                  title!,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 8.0),
+              ],
+              buildCardContent(context), // Call the abstract method
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BasicAppCard extends AppCard {
+  const BasicAppCard({super.key, required super.content, super.title, super.onTap});
+
+  @override
+  Widget buildCardContent(BuildContext context) {
+    return content; // Simple content
+  }
+}
+
+class ImageAppCard extends AppCard {
+  final String imageUrl;
+  final double imageHeight;
+
+  const ImageAppCard.fromNetwork({
+    super.key,
+    required this.imageUrl,
+    this.imageHeight = 150.0,
+    required super.content,
+    super.title,
+    super.onTap,
+  }) : super(); // Using named constructor
+
+  @override
+  Widget buildCardContent(BuildContext context) {
+    return Column(
+      children: [
+        Image.network(
+          imageUrl,
+          height: imageHeight,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        const SizedBox(height: 12.0),
+        content,
+      ],
+    );
+  }
+}
+
+// =========================================================
+// 2. Contoh Mixin dan Builder Pattern
+// =========================================================
+mixin LoadingIndicatorMixin<T extends StatefulWidget> on State<T> {
+  bool isLoading = false;
+
+  void setLoading(bool value) {
+    setState(() {
+      isLoading = value;
+    });
+  }
+
+  Widget buildLoadingOverlay() {
+    return isLoading
+        ? Container(
+            color: Colors.black.withOpacity(0.5),
+            alignment: Alignment.center,
+            child: const CircularProgressIndicator(color: Colors.white),
+          )
+        : const SizedBox.shrink();
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with LoadingIndicatorMixin<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Widget Patterns')),
+      body: Stack( // Menggunakan Stack untuk overlay loading
+        children: [
+          ListView(
+            padding: const EdgeInsets.all(8.0),
+            children: <Widget>[
+              // Menggunakan AppCard dasar
+              BasicAppCard(
+                title: 'Informasi Dasar',
+                content: const Text(
+                  'Ini adalah contoh kartu dasar yang dibuat dengan komposisi.',
+                ),
+                onTap: () {
+                  setLoading(true);
+                  Future.delayed(const Duration(seconds: 2), () {
+                    setLoading(false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Kartu Dasar Diklik!')),
+                    );
+                  });
+                },
+              ),
+              // Menggunakan AppCard dengan gambar via named constructor
+              ImageAppCard.fromNetwork(
+                title: 'Kartu Gambar Unggulan',
+                imageUrl: 'https://picsum.photos/id/237/200/150', // Gambar random
+                imageHeight: 120,
+                content: const Text(
+                  'Ini adalah kartu dengan gambar, dibuat menggunakan named constructor.',
+                ),
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Kartu Gambar Diklik!')),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              // Contoh penggunaan LayoutBuilder (builder pattern)
+              Text('Contoh Responsive Text:', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 10),
+              ResponsiveText(text: 'Ukuran font akan berubah berdasarkan lebar layar.'),
+            ],
+          ),
+          buildLoadingOverlay(), // Mixin method
+        ],
+      ),
+    );
+  }
+}
+```
+
+**Visualisasi Konseptual (Pola Komposisi):**
+
+```
+HomeScreen (StatefulWidget + LoadingIndicatorMixin)
+└── Stack (for loading overlay)
+    ├── ListView (main content)
+    │   ├── BasicAppCard (AbstractAppCard)
+    │   │   └── Card (Composition)
+    │   │       └── Column (Title + Content)
+    │   │           └── Text ('Informasi Dasar')
+    │   │           └── Text ('Ini adalah contoh kartu dasar...')
+    │   ├── ImageAppCard.fromNetwork (AbstractAppCard + Named Constructor)
+    │   │   └── Card (Composition)
+    │   │       └── Column (Title + Image + Content)
+    │   │           └── Text ('Kartu Gambar Unggulan')
+    │   │           └── Image.network (from imageUrl)
+    │   │           └── Text ('Ini adalah kartu dengan gambar...')
+    │   └── ResponsiveText (Builder Pattern)
+    │       └── LayoutBuilder (builds Text based on constraints)
+    └── buildLoadingOverlay() (Mixin Method)
+        └── (Conditional) Container + CircularProgressIndicator (loading overlay)
+```
+
+**Terminologi Esensial (Revisited):**
+
+- **Builder Pattern:** Penggunaan fungsi `builder` untuk menunda atau mengkondisikan pembangunan sebagian _widget tree_.
+- **Factory Constructor:** _Constructor_ yang dapat mengembalikan _instance_ yang sudah ada atau _instance_ dari _subclass_.
+- **Named Constructor:** _Constructor_ dengan nama spesifik untuk inisialisasi alternatif.
+- **Mixin:** Cara untuk menggunakan kembali kode di banyak _class hierarchy_ tanpa pewarisan ketat.
+- **Abstract Class:** _Class_ yang tidak dapat di-_instantiate_ langsung, mendefinisikan _interface_ untuk _subclass_.
+- **Inheritance Hierarchy:** Struktur pewarisan kelas di mana _widget_ di-_build_ di atas _base class_ tertentu.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- _Builder Pattern_ dalam Konteks _Widgets_
+- Penggunaan _Factory Constructors_
+- Implementasi _Named Constructors_
+- Penerapan _Widget Mixins_
+- Peran _Abstract Widget Classes_
+- Memahami Hirarki Pewarisan _Widget_
+
+**Hubungan dengan Bagian Lain:**
+
+- **Creating Custom Widgets:** Pola-pola ini adalah teknik lanjutan untuk apa yang telah kita pelajari tentang membangun `StatelessWidget` dan `StatefulWidget`.
+- **State Management:** Pola _builder_ (`StreamBuilder`, `FutureBuilder`, dll.) adalah kunci dalam pola manajemen _state_ reaktif.
+- **Widget Testing:** Menggunakan pola-pola ini seringkali membuat _widget_ lebih mudah diuji karena mereka lebih modular dan memiliki tanggung jawab yang terdefinisi dengan baik.
+
+**Referensi Lengkap:**
+
+- [Effective Dart: Design](https://dart.dev/guides/language/effective-dart/design%23prefer-composition-over-inheritance): Prinsip komposisi dalam konteks Dart dan Flutter.
+- [Dart Language Tour: Constructors](https://dart.dev/guides/language/language-tour%23constructors): Penjelasan tentang _factory_ dan _named constructors_.
+- [Dart Language Tour: Mixins](https://dart.dev/guides/language/language-tour%23mixins): Penjelasan tentang bagaimana _mixins_ bekerja di Dart.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Jangan Terlalu Banyak Bereksperimen dengan Pewarisan:** Ingat, komposisi adalah raja di Flutter untuk UI. Gunakan pewarisan dan _abstract classes_ hanya ketika Anda benar-benar perlu mendefinisikan kontrak yang ketat atau memperluas fungsionalitas inti _framework_.
+- **Gunakan _Named Constructors_ untuk Kejelasan:** Ketika _widget_ Anda memiliki beberapa cara untuk diinisialisasi, _named constructors_ akan sangat meningkatkan keterbacaan kode.
+- **Mixins untuk Perilaku Lintas Hierarki:** Jika Anda ingin menambahkan perilaku yang sama ke _widget_ yang tidak terkait secara langsung, pertimbangkan _mixins_.
+- **Pola _Builder_ itu Kuat:** Biasakan diri Anda dengan `LayoutBuilder`, `ValueListenableBuilder`, `StreamBuilder`, dan `FutureBuilder`. Mereka adalah alat yang sangat kuat untuk membuat UI yang dinamis dan efisien.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Menggunakan `factory constructor` untuk membuat _state_ baru di `StatefulWidget` setiap kali _widget_ dibangun ulang, menyebabkan _state_ hilang.
+  - **Solusi:** `factory constructor` biasanya digunakan untuk `StatelessWidget` atau untuk kasus `StatefulWidget` yang sangat spesifik di mana Anda ingin mengontrol _instance_ _widget_ itu sendiri, bukan _state_-nya. Ingat, _state_ hidup di _object_ `State`, bukan di _widget_ itu sendiri.
+- **Kesalahan:** Mixin memiliki _method_ yang bertabrakan dengan _method_ kelas yang digunakannya.
+  - **Solusi:** Dart memiliki aturan resolusi konflik untuk _mixins_. Jika ada _method_ dengan nama yang sama, _method_ dari _mixin_ terakhir dalam daftar `with` yang akan digunakan, atau Anda harus secara eksplisit menimpa _method_ tersebut di kelas Anda.
+- **Kesalahan:** Tidak memahami perbedaan antara _widget tree_, _element tree_, dan _render object tree_ saat debugging perilaku _widget_ yang kompleks.
+  - **Solusi:** Perkuat pemahaman Anda tentang ketiga pohon ini. _Builder pattern_ memengaruhi _element tree_ karena ia membuat _element_ baru, sedangkan _widget tree_ adalah konfigurasi deklaratif.
+
+---
+
+# Luar biasa dan Selamats!
+
+Anda telah berhasil menuntaskan pembahasan mendalam tentang **Widget Composition Patterns** di _Flutter_. Memahami pola-pola ini akan sangat meningkatkan kemampuan Anda dalam merancang dan membangun UI yang kompleks dan terstruktur dengan baik.
+
+Semua materi yang terkait dengan **Widget System & UI Foundation** telah berhasil kita selesaikan secara mendalam, tanpa melewatkan satu pun dari sub-bagian yang tercantum di dalamnya. Dengan ini, kita telah menyelesaikan seluruh **FASE 2: Widget System & UI Foundation**
+
+Kita telah membahas tuntas:
+
+- **2. Widget Architecture Deep Dive:**
+  - `2.1 Widget Tree & Rendering Engine` (termasuk StatelessWidget vs StatefulWidget, lifecycle, BuildContext, Widget Keys, dll.)
+  - `2.2 Layout System Mastery` (mencakup berbagai widget layout inti dan teknik layout lanjutan)
+- **3. UI Components & Material Design:**
+  - `3.1 Material Design Implementation` (meliputi Material Components, Material Design 3 (Material You), dan Cupertino (iOS) Design)
+  - `3.2 Custom Widget Development` (mulai dari membuat custom widget dasar hingga pola komposisi widget yang lebih canggih)
+
+Dengan demikian, Anda telah memiliki pemahaman yang komprehensif mengenai pondasi sistem _widget_ di _Flutter_.
+
+---
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
@@ -2159,7 +4779,7 @@ Luar biasa! Anda telah berhasil menuntaskan pembahasan mendalam tentang **Core L
 <!----------------------------------------------------->
 
 [0]: ../../README.md#fase-2-widget-system--ui-foundation
-[1]: ../
+[1]: ../bagian-2/versi2/README.md
 [2]: ../
 [3]: ../
 [4]: ../
