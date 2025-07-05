@@ -357,9 +357,6 @@ class _TombolCounterState extends State<TombolCounter> {
 }
 ```
 
-
-
-
 <h3 id="enam"></h3>
 
 **[Visualisasi](#)**
@@ -368,40 +365,40 @@ Widget Tree dari Contoh Kode di Atas:
 
 <div align="left">
 <pre>
-┌──────────────────────────────────────────────────────────┐
-│                      MyApp (StatelessWidget)             │
-│                (Induk utama aplikasi Flutter)            │
-└───────────────────────┬──────────────────────────────────┘
-                        │
-                        ▼
-┌──────────────────────────────────────────────────────────┐
-│                   MaterialApp (StatelessWidget)          │
-│         (Pembungkus konfigurasi Material Design)         │
-└───────────────────────┬──────────────────────────────────┘
-                        │
-                        ▼
-┌──────────────────────────────────────────────────────────┐
-│                   Scaffold (StatelessWidget)             │
-│           (Pembungkus struktur halaman dasar)            │
-└───────────────────────┬──────────────────────────────────┘
+┌────────────────────────────────┐
+│    MyApp (StatelessWidget)     │
+│ (Induk utama aplikasi Flutter) │
+└─────┬──────────────────────────┘
+      │                  
+      ▼                  
+┌──────────────────────────────────────────┐
+│      MaterialApp (StatelessWidget)       │
+│ (Pembungkus konfigurasi Material Design) │
+└─────┬────────────────────────────────────┘
+      │                  
+      ▼                  
+┌─────────────────────────────────────┐
+│     Scaffold (StatelessWidget)      │
+│ (Pembungkus struktur halaman dasar) │
+└───────────────────────┬─────────────┘
             ┌───────────┴───────────┐
             ▼                       ▼
-┌─────────────────┐       ┌────────────────────────────────────────────────┐
-│AppBar(Stateless)│       │        Center (StatelessWidget)                │
-│                 │       │ (Pembungkus untuk menengahkan anaknya)         │
-└────────┬────────┘       └───────────────────────┬────────────────────────┘
-         │                                        │
-         ▼                                        ▼
-┌─────────────────┐             ┌──────────────────────────────────────────┐
-│ Text (Stateless)│             │               Column (StatelessWidget)   │
-│ ("Pengenalan   "│             │   (Pembungkus untuk menata anak vertikal)│
-│ " Widget")      │             └───────────────────┬──────────────────────┘
-└─────────────────┘                         ┌───────┴────────────────────────────┐
-                                            ▼                                    ▼
-┌──────────────────────────┐      ┌──────────────────────────┐      ┌──────────────────────────┐
-│ TeksStateless (Stateless)│      │ SpasiVertikal (Stateless)│      │ TombolCounter (Stateful) │
-│("Saya adalah Stateless" )│      │ (tinggi: 20)             │      │ (Counter: 0, Tombol)     │
-└──────────────────────────┘      └──────────────────────────┘      └──────────────────────────┘
+┌─────────────────┐       ┌────────────────────────────────────────┐
+│AppBar(Stateless)│       │       Center (StatelessWidget)         │
+│                 │       │ (Pembungkus untuk menengahkan anaknya) │
+└────────┬────────┘       └───────────┬────────────────────────────┘
+         │                            │            
+         ▼                            ▼            
+┌─────────────────┐             ┌─────────────────────────────────────────┐
+│ Text (Stateless)│             │        Column (StatelessWidget)         │
+│ ("Pengenalan   "│             │ (Pembungkus untuk menata anak vertikal) │
+│ " Widget")      │             └─────────┬───────────────────────────────┘
+└─────────────────┘                    ┌──┴──────────────────────────┐
+                                       ▼                             ▼
+┌──────────────────────────┐      ┌──────────────────────────┐   ┌──────────────────────────┐
+│ TeksStateless (Stateless)│      │ SpasiVertikal (Stateless)│   │ TombolCounter (Stateful) │
+│("Saya adalah Stateless" )│      │ (tinggi: 20)             │   │ (Counter: 0, Tombol)     │
+└──────────────────────────┘      └──────────────────────────┘   └──────────────────────────┘
 </pre>
 </div>
 
@@ -489,22 +486,22 @@ Mari kita visualisasikan hubungan antara ketiga _tree_ ini dengan diagram alir y
             │                                  ▼                                     │
             │                       [Akses melalui BuildContext]                     │
             │                                  │                                     │
-┌───────────▼───────────────┐      ┌───────────▼───────────────┐      ┌──────────────▼────────────┐
-│ Root Widget (MyApp)       │      │ Root Element              │      │ Root RenderObject         │
-│  (Konfigurasi Awal)       │      │  (Mengelola MyApp)        │      │  (Mulai Layout/Paint)     │
-└───────────┬───────────────┘      └───────────┬───────────────┘      └───────────┬───────────────┘
+┌───────────▼─────────┐            ┌───────────▼────────┐             ┌──────────────▼───────┐
+│ Root Widget (MyApp) │            │ Root Element       │             │ Root RenderObject    │
+│ (Konfigurasi Awal)  │            │  (Mengelola MyApp) │             │ (Mulai Layout/Paint) │
+└───────────┬─────────┘            └───────────┬────────┘             └───────────┬──────────┘
             │                                  │                                  │
             │                                  │                                  │
             ▼                                  ▼                                  ▼
-┌───────────────────────────┐      ┌───────────────────────────┐      ┌───────────────────────────┐
-│   Widget X (misal Column) │      │   Element X               │      │   RenderObject X          │
-│    (Konfigurasi Layout)   │      │  (Mengelola Widget X)     │      │  (Layout Column)          │
-└───────────┬───────────────┘      └───────────┬───────────────┘      └───────────┬───────────────┘
+┌───────────────────────────┐      ┌───────────────────────┐          ┌───────────────────┐
+│   Widget X (misal Column) │      │   Element X           │          │   RenderObject X  │
+│    (Konfigurasi Layout)   │      │  (Mengelola Widget X) │          │  (Layout Column)  │
+└───────────┬───────────────┘      └───────────┬───────────┘          └───────────┬───────┘
             │                                  │                                  │
 ┌───────────┴───────────┐          ┌───────────┴───────────┐          ┌───────────┴───────────┐
 │ Widget A (misal Text) │          │ Element A             │          │ RenderObject A        │
 │ (Konfigurasi Teks)    │          │ (Mengelola Widget A)  │          │ (Layout/Paint Teks)   │
-└───────────────────────┘          └───────────────────────┘          └───────────────────────┘
+└───────────┬───────────┘          └───────────────────────┘          └───────────────────────┘
             │
             ▼
 ┌────────────────────────────────────────────────────────────────────────────┐
@@ -1093,7 +1090,7 @@ class MyApp extends StatelessWidget {
             ▼                       ▼
 ┌─────────────────┐       ┌──────────────────────────┐
 │ Text (Material) │       │   Icon (Material)        │
-│ (Menampilkan   )│       │  (Menampilkan ikon)      │
+│ (Menampilkan)   │       │  (Menampilkan ikon)      │
 │ (teks)          │       └──────────┬───────────────┘
 └─────────────────┘                  │
             ┌────────────────────────▼──────────────────────────┐
@@ -1264,52 +1261,52 @@ class WidgetKompleks extends StatelessWidget {
 **[Visualisasi:](#daftar-isi-fase)**
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│               Column (Layout Widget)                     │
-│         (Mengatur widget secara vertikal)                │
-└───────────────────────┬──────────────────────────────────┘
-            ┌───────────┴─────────────────────────────────────────┐
-            ▼                                                     ▼
-┌─────────────────┐                                  ┌────────────────────────┐
-│ Text (Material) │                                  │    WidgetKompleks      │
-│ (Menampilkan   )│                                  │  (Widget kompleks yang │
-│ teks)           │                                  │  terdiri dari widget   │
-└─────────────────┘                                  │  lainnya)              │
-                                                     └────────────────────────┘
-            ┌────────────────────────▼──────────────────────────┐
-            ▼                                                   ▼
-         ┌──────────────────────────────────────────────────────────┐
-         │               Container (Layout Widget)                  │
-         │    (Pembungkus dengan padding dan dekorasi)              │
-         └───────────────────────┬──────────────────────────────────┘
-                                 │
-                                 ▼
-         ┌──────────────────────────────────────────────────────────┐
-         │                     Row (Layout Widget)                  │
-         │           (Mengatur widget secara horizontal)            │
-         └───────────────────────┬──────────────────────────────────┘
-            ┌────────────────────┴───────────┐
-            ▼                                ▼
-┌─────────────────┐       ┌──────────────────────────┐
-│  Column (Layout)│       │  Column (Layout)         │
-│  (Mengatur     )│       │  (Mengatur               │
-│  widget         │       │  widget                  │
-│  vertikal)      │       │  vertikal)               │
-└────────┬────────┘       └──────────┬───────────────┘
+┌───────────────────────────────────┐
+│ (Mengatur widget secara vertikal) │
+│       Column (Layout Widget)      │
+└────────────┬──────────────────────┘
+ ┌───────────┴──────────────┐
+ ▼                          ▼
+┌─────────────────┐   ┌────────────────────────┐
+│ Text (Material) │   │    WidgetKompleks      │
+│ (Menampilkan)   │─┬─│  (Widget kompleks yang │
+│ teks)           │ │ │  terdiri dari widget   │
+└─────────────────┘ │ │  lainnya)              │
+                    │ └────────────────────────┘
+            ┌───────▼───────────────┐
+            ▼                       ▼
+         ┌──────────────────────────────────────────┐
+         │        Container (Layout Widget)         │
+         │ (Pembungkus dengan padding dan dekorasi) │
+         └───────────┬──────────────────────────────┘
+                     │
+                     ▼
+         ┌─────────────────────────────────────┐
+         │        Row (Layout Widget)          │
+         │ (Mengatur widget secara horizontal) │
+         └───────────────────────┬─────────────┘
+            ┌────────────────────┴────┐
+            ▼                         ▼
+┌─────────────────┐       ┌───────────────────┐
+│  Column (Layout)│       │  Column (Layout)  │
+│  (Mengatur)     │       │  (Mengatur        │
+│  widget         │       │  widget           │
+│  vertikal)      │       │  vertikal)        │
+└────────┬────────┘       └──────────┬────────┘
          │                           │
          ▼                           ▼
-┌─────────────────┐       ┌──────────────────────────┐
-│  Icon (Material)│       │  Icon (Material)         │
-│  (Menampilkan  )│       │  (Menampilkan            │
-│  ikon)          │       │  ikon)                   │
-└────────┬────────┘       └──────────┬───────────────┘
+┌─────────────────┐       ┌───────────────────┐
+│  Icon (Material)│       │  Icon (Material)  │
+│  (Menampilkan)  │       │  (Menampilkan     │
+│  ikon)          │       │  ikon)            │
+└────────┬────────┘       └──────────┬────────┘
          │                           │
          ▼                           ▼
-┌─────────────────┐       ┌──────────────────────────┐
-│  Text (Material)│       │  Text (Material)         │
-│  (Menampilkan  )│       │  (Menampilkan            │
-│  teks)          │       │  teks)                   │
-└─────────────────┘       └──────────────────────────┘
+┌─────────────────┐       ┌───────────────────┐
+│  Text (Material)│       │  Text (Material)  │
+│  (Menampilkan)  │       │  (Menampilkan     │
+│  teks)          │       │  teks)            │
+└─────────────────┘       └───────────────────┘
 ```
 
 <h3 id="duapuluhlima"></h3>
@@ -1756,11 +1753,396 @@ class MyApp extends StatelessWidget {
 
 ---
 
-Sangat bagus\! Anda kini telah menuntaskan pembahasan mendalam tentang **Core Layout Widgets** di _Flutter_. Ini adalah fondasi kuat untuk merancang dan membangun antarmuka pengguna yang visualnya menarik dan berfungsi dengan baik.
+Setelah menguasai _core layout widgets_, kini saatnya kita melangkah lebih jauh ke teknik _layout_ yang lebih canggih. Ini akan memungkinkan Anda menciptakan antarmuka pengguna yang sangat fleksibel, efisien, dan presisi, bahkan untuk skenario yang kompleks.
 
-Selanjutnya, kita akan melanjutkan ke bagian yang lebih canggih dari sistem _layout_ di _Flutter_.
+---
 
-Apakah Anda ingin melanjutkan ke sub-bagian berikutnya, yaitu **[Advanced Layout Techniques]**, atau ada aspek dari "Core Layout Widgets" yang ingin Anda diskusikan lebih dalam lagi?
+#### **Advanced Layout Techniques**
+
+**Deskripsi Detail & Peran:**
+Sub-bagian ini akan membawa Anda melampaui penggunaan dasar _layout widgets_. Kita akan menyelami properti dan _widget_ yang memungkinkan kontrol lebih granular atas bagaimana _widget_ diukur dan diposisikan, serta bagaimana membangun _layout_ kustom yang tidak dapat dicapai dengan _widget_ standar. Memahami teknik-teknik ini adalah kunci untuk optimasi performa dan pengembangan UI yang benar-benar unik.
+
+**Konsep Kunci & Filosofi:**
+Filosofi di sini adalah **"Constraints go down, sizes go up, parent sets position"**. Ini adalah aturan fundamental dalam sistem _layout_ _Flutter_. _Parent_ memberikan _constraint_ (batas ukuran) kepada _child_, _child_ memilih ukurannya sendiri dalam _constraint_ tersebut, lalu _parent_ memposisikan _child_. Teknik lanjutan ini akan mengeksplorasi bagaimana kita dapat memanipulasi atau memanfaatkan aturan ini untuk efek _layout_ yang lebih kompleks.
+
+Berikut adalah teknik dan konsep yang akan kita bahas:
+
+1.  **`MainAxisAlignment` dan `CrossAxisAlignment` (Re-visit & Advanced Context):**
+
+    - **Peran:** Meskipun sudah disinggung pada `Row` dan `Column`, kedua properti ini memiliki nuansa lanjutan, terutama saat berinteraksi dengan `MainAxisSize`, `Expanded`, dan `Flexible`. Mereka menentukan bagaimana _child_ didistribusikan dan disejajarkan dalam ruang yang tersedia di sepanjang sumbu utama dan sumbu silang.
+    - **Detail Lanjutan:**
+      - `MainAxisAlignment`: Mengontrol distribusi ruang _kosong_ di sepanjang sumbu utama. Misalnya, `spaceBetween` dan `spaceEvenly` sangat efektif untuk distribusi otomatis.
+      - `CrossAxisAlignment`: Mengontrol penempatan _child_ yang mungkin lebih kecil dari ruang yang dialokasikan di sepanjang sumbu silang. `CrossAxisAlignment.stretch` adalah properti yang kuat untuk membuat _child_ mengisi seluruh ruang silang yang tersedia.
+    - **Filosofi:** Pengaturan alignment yang tepat adalah kunci untuk _layout_ yang rapi dan seimbang.
+
+2.  **`MainAxisSize` properties (Re-visit & Advanced Context):**
+
+    - **Peran:** Properti ini sangat penting untuk `Row` dan `Column` dan sering diabaikan. `MainAxisSize` menentukan seberapa banyak ruang yang harus diambil oleh `Row` atau `Column` itu sendiri di sepanjang sumbu utamanya.
+    - **Detail Lanjutan:**
+      - `MainAxisSize.max`: (Default untuk `Row`) `Row`/`Column` akan mencoba mengambil ruang sebanyak mungkin di sepanjang sumbu utamanya.
+      - `MainAxisSize.min`: (Default untuk `Column`) `Row`/`Column` akan mengambil ruang sesedikit mungkin di sepanjang sumbu utamanya, hanya cukup untuk menampung _child_-nya.
+    - **Penggunaan Lanjutan:** Sering digunakan ketika Anda ingin sebuah `Column` atau `Row` tidak mengisi seluruh lebar/tinggi yang tersedia dari _parent_-nya, tetapi hanya sebatas kontennya.
+
+3.  **`TextDirection` dan `VerticalDirection`:**
+
+    - **Peran:** Properti ini memengaruhi bagaimana _children_ diatur dalam `Row` dan `Column` sehubungan dengan sumbu utamanya.
+    - **`TextDirection` (untuk `Row`):**
+      - **Peran:** Menentukan arah horizontal _layout_ untuk `Row` (dan secara implisit memengaruhi `start`/`end` dari `MainAxisAlignment`).
+      - **Nilai:** `TextDirection.ltr` (kiri-ke-kanan, default untuk bahasa seperti Inggris/Indonesia) atau `TextDirection.rtl` (kanan-ke-kiri, untuk bahasa seperti Arab/Ibrani).
+    - **`VerticalDirection` (untuk `Column`):**
+      - **Peran:** Menentukan arah vertikal _layout_ untuk `Column` (dan memengaruhi `start`/`end` dari `MainAxisAlignment`).
+      - **Nilai:** `VerticalDirection.down` (atas-ke-bawah, default) atau `VerticalDirection.up` (bawah-ke-atas).
+    - **Filosofi:** Penting untuk lokalisasi (mendukung bahasa RTL) dan untuk _layout_ yang perlu disusun secara terbalik.
+
+4.  **`Intrinsic width` dan `height`:**
+
+    - **Peran:** Kadang-kadang Anda perlu agar sebuah _widget_ memiliki lebar atau tinggi yang "inheren" dari _child_-nya yang paling lebar/tinggi, bahkan jika _parent_ memberikan _constraint_ tak terbatas. Ini diatasi dengan `IntrinsicWidth` dan `IntrinsicHeight`.
+    - **`IntrinsicWidth`:** Membuat _child_ memiliki lebar yang sama dengan lebar intrinsik _child_-nya yang paling lebar.
+    - **`IntrinsicHeight`:** Membuat _child_ memiliki tinggi yang sama dengan tinggi intrinsik _child_-nya yang paling tinggi.
+    - **Peringatan:** Penggunaan ini cenderung **mahal secara komputasi** karena memerlukan dua _layout pass_. Hindari jika ada alternatif lain.
+    - **Filosofi:** Memungkinkan _child_ untuk "memberi tahu" _parent_ tentang ukuran idealnya, memecah aturan "constraint goes down, size goes up".
+
+5.  **`Baseline alignment`:**
+
+    - **Peran:** `Baseline` adalah cara untuk menyelaraskan _child_ dalam `Row` berdasarkan garis dasar teks mereka, bukan tepi atas atau bawahnya. Ini sangat berguna ketika Anda memiliki teks dengan ukuran font berbeda yang ingin disejajarkan dengan rapi.
+    - **Penggunaan:** Digunakan dengan `CrossAxisAlignment.baseline` di `Row` dan memerlukan properti `textBaseline` yang ditentukan.
+    - **Filosofi:** Menyediakan kontrol _alignment_ yang sangat spesifik untuk _layout_ berbasis teks.
+
+6.  **Custom layout dengan `Flow` widget:**
+
+    - **Peran:** `Flow` adalah _widget_ _low-level_ yang memungkinkan Anda untuk melakukan _custom painting_ dan _layout_ yang sangat efisien dan dapat dioptimalkan. Berbeda dengan sebagian besar _layout widgets_ yang melakukan dua _pass_ (_measure_ dan _layout_), `Flow` dapat melakukan _layout_ _child_-nya dalam satu _pass_.
+    - **Kapan Digunakan:**
+      - Ketika Anda memiliki _layout_ yang sangat spesifik dan kompleks yang tidak dapat dicapai dengan _widget_ standar.
+      - Untuk animasi yang melibatkan pergerakan banyak _child_ secara bersamaan (misalnya _radial menu_, _tag cloud_ dinamis) di mana performa sangat kritis.
+    - **Kompleksitas:** `Flow` jauh lebih kompleks untuk digunakan daripada _layout widgets_ lainnya karena Anda harus secara manual menghitung posisi dan ukuran setiap _child_.
+    - **Filosofi:** Memberikan kendali penuh pada _developer_ untuk _layout_ dan _painting_ kustom, dengan biaya peningkatan kompleksitas.
+
+**Contoh Implementasi & Visualisasi:**
+
+```dart
+import 'package:flutter/material.dart';
+import 'dart:math' as math;
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Advanced Layout Techniques'),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const Text('1. MainAxisAlignment & CrossAxisAlignment (Advanced)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              // Contoh CrossAxisAlignment.stretch
+              Container(
+                height: 120,
+                color: Colors.blue[50],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.stretch, // Membuat children meregang di sumbu silang
+                  children: [
+                    Container(width: 50, color: Colors.red, child: const Center(child: Text('A'))),
+                    Container(width: 50, color: Colors.green, child: const Center(child: Text('B'))),
+                    Container(width: 50, color: Colors.blue, child: const Center(child: Text('C'))),
+                  ],
+                ),
+              ),
+              const Divider(),
+
+              const Text('2. MainAxisSize properties (Advanced)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              // Column dengan MainAxisSize.min
+              Container(
+                color: Colors.orange[50],
+                width: double.infinity, // Ambil lebar penuh agar Column bisa memusat
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Column hanya setinggi child-nya
+                  mainAxisAlignment: MainAxisAlignment.center, // Memusatkan Column itu sendiri
+                  children: [
+                    Container(height: 50, width: 50, color: Colors.orange, child: const Center(child: Text('1'))),
+                    Container(height: 50, width: 50, color: Colors.deepOrange, child: const Center(child: Text('2'))),
+                  ],
+                ),
+              ),
+              const Divider(),
+
+              const Text('3. TextDirection dan VerticalDirection', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              // Row dengan TextDirection.rtl
+              Container(
+                color: Colors.purple[50],
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  textDirection: TextDirection.rtl, // Dari kanan ke kiri
+                  mainAxisAlignment: MainAxisAlignment.start, // Mulai dari kanan
+                  children: [
+                    Container(width: 50, height: 50, color: Colors.purple, child: const Center(child: Text('1'))),
+                    Container(width: 50, height: 50, color: Colors.pink, child: const Center(child: Text('2'))),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              // Column dengan VerticalDirection.up
+              Container(
+                color: Colors.teal[50],
+                height: 150,
+                child: Column(
+                  verticalDirection: VerticalDirection.up, // Dari bawah ke atas
+                  mainAxisAlignment: MainAxisAlignment.start, // Mulai dari bawah
+                  children: [
+                    Container(width: 50, height: 50, color: Colors.teal, child: const Center(child: Text('A'))),
+                    Container(width: 50, height: 50, color: Colors.cyan, child: const Center(child: Text('B'))),
+                  ],
+                ),
+              ),
+              const Divider(),
+
+              const Text('4. Intrinsic Width dan Height', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              IntrinsicHeight( // Memaksa Column memiliki tinggi dari child tertinggi
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch, // Agar children meregang vertikal
+                  children: [
+                    Container(width: 100, color: Colors.grey[200], child: const Text('Ini adalah teks pendek.')),
+                    Container(
+                      width: 100,
+                      color: Colors.grey[300],
+                      child: const Text('Ini adalah teks yang sangat panjang dan butuh beberapa baris untuk ditampilkan dengan rapi.'),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              IntrinsicWidth( // Memaksa Row memiliki lebar dari child terlebar
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch, // Agar children meregang horizontal
+                  children: [
+                    Container(height: 50, color: Colors.brown[100], child: const Center(child: Text('Pendek'))),
+                    Container(height: 50, color: Colors.brown[200], child: const Center(child: Text('Ini agak panjang'))),
+                    Container(height: 50, color: Colors.brown[300], child: const Center(child: Text('Ini sangat sangat panjang'))),
+                  ],
+                ),
+              ),
+              const Divider(),
+
+              const Text('5. Baseline Alignment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Container(
+                color: Colors.lime[50],
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic, // Penting untuk baseline
+                  children: [
+                    const Text('Hello', style: TextStyle(fontSize: 20)),
+                    const SizedBox(width: 10),
+                    const Text('World', style: TextStyle(fontSize: 40)),
+                    const SizedBox(width: 10),
+                    const Text('!', style: TextStyle(fontSize: 15)),
+                  ],
+                ),
+              ),
+              const Divider(),
+
+              const Text('6. Custom layout dengan Flow Widget', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 200,
+                child: Flow(
+                  delegate: RadialFlowDelegate(),
+                  children: List.generate(5, (index) => _buildCircle(index + 1)),
+                ),
+              ),
+              const Divider(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCircle(int number) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.primaries[number % Colors.primaries.length],
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          '$number',
+          style: const TextStyle(color: Colors.white, fontSize: 20),
+        ),
+      ),
+    );
+  }
+}
+
+// Delegate kustom untuk Flow widget (contoh Radial Menu)
+class RadialFlowDelegate extends FlowDelegate {
+  @override
+  void paintChildren(FlowPaintingContext context) {
+    const double radius = 80; // Radius lingkaran
+    final double angle = math.pi * 2 / context.childCount; // Sudut antar children
+
+    for (int i = 0; i < context.childCount; i++) {
+      final double x = radius * math.cos(i * angle);
+      final double y = radius * math.sin(i * angle);
+
+      context.paintChild(
+        i,
+        transform: Matrix4.translationValues(
+          x + context.size.width / 2 - 25, // Pusatkan child
+          y + context.size.height / 2 - 25,
+          0,
+        ),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant FlowDelegate oldDelegate) {
+    return false; // Tidak perlu repaint kecuali ada perubahan
+  }
+}
+```
+
+**Visualisasi Konseptual Advanced Layout Techniques:**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│       Row (CrossAxisAlignment.stretch)                   │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐                │
+│  │ Child A  │  │ Child B  │  │ Child C  │                │
+│  │(Meregang │  │(Meregang │  │(Meregang │                │
+│  │ Vertikal)│  │ Vertikal)│  │ Vertikal)│                │
+│  └──────────┘  └──────────┘  └──────────┘                │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│               Column (MainAxisSize.min)                  │
+│              (Hanya setinggi kontennya)                  │
+│  ┌─────────────────┐                                     │
+│  │     Child 1     │                                     │
+│  └─────────────────┘                                     │
+│  ┌─────────────────┐                                     │
+│  │     Child 2     │                                     │
+│  └─────────────────┘                                     │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│          Row (TextDirection.rtl)                         │
+│  ┌───────┐ ┌───────┐ ┌───────┐ ┌───────┐                 │
+│  │ Item D│ │ Item C│ │ Item B│ │ Item A│                 │
+│  └───────┘ └───────┘ └───────┘ └───────┘                 │
+│  (Mulai dari kanan)                                      │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│              Column (VerticalDirection.up)               │
+│  ┌───────┐                                               │
+│  │ Item D│                                               │
+│  └───────┘                                               │
+│  ┌───────┐                                               │
+│  │ Item C│                                               │
+│  └───────┘                                               │
+│  ┌───────┐                                               │
+│  │ Item B│                                               │
+│  └───────┘                                               │
+│  ┌───────┐                                               │
+│  │ Item A│                                               │
+│  └───────┘                                               │
+│  (Mulai dari bawah)                                      │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│    Row (CrossAxisAlignment.baseline)                     │
+│    Teks pendek                                           │
+│                 Teks panjang                             │
+│                      Teks                                │
+│    ────────────── Baseline ────────────────────────────  │
+└──────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────┐
+│                   Flow Widget (Radial)                   │
+│        .  .  .  .  .  .  .  .  .  .  .  .                │
+│    .                                        .            │
+│  .                                            .          │
+│ .            [1]                           [5]  .        │
+│ .                                               .        │
+│ .                                               .        │
+│ .                                               .        │
+│ .          [2]                         [4]      .        │
+│  .                                            .          │
+│    .            [3]                     .  .             │
+│      .  .  .  .  .  .  .  .  .  .  .  .                  │
+└──────────────────────────────────────────────────────────┘
+```
+
+**Terminologi Esensial:**
+
+- **Constraint-based Layout:** Aturan dasar _Flutter_ di mana _parent_ memberikan batasan ukuran kepada _child_.
+- **Two-pass Layout:** Sebagian besar _widget_ melakukan dua _pass_ untuk _layout_: _measure_ (_child_ memberitahu _parent_ ukuran idealnya) dan _layout_ (_parent_ memposisikan _child_). `Intrinsic` _widgets_ seringkali memicu _two-pass layout_.
+- **Intrinsic Size:** Ukuran "alami" atau "ideal" sebuah _widget_ berdasarkan kontennya, bukan _constraint_ dari _parent_.
+- **Baseline:** Garis imajiner di mana karakter teks diletakkan.
+- **Flow Delegate:** Kelas kustom yang digunakan dengan `Flow` _widget_ untuk menentukan bagaimana _child_ diukur dan diposisikan secara manual.
+
+**Struktur Internal (Mini-DAFTAR ISI):**
+
+- Penjajaran Lanjutan (`MainAxisAlignment`, `CrossAxisAlignment`)
+- Ukuran Sumbu Utama (`MainAxisSize`)
+- Arah Teks & Vertikal (`TextDirection`, `VerticalDirection`)
+- Ukuran Intrinsik (`IntrinsicWidth`, `IntrinsicHeight`)
+- Penjajaran Baseline
+- Layout Kustom (`Flow` Widget)
+
+**Hubungan dengan Bagian Lain:**
+
+- **Performance Optimization:** Memahami `Intrinsic` _widgets_ dan `Flow` adalah kunci untuk mengoptimalkan performa _layout_ di skenario yang menantang.
+- **Responsive UI:** Teknik ini memungkinkan kontrol yang sangat halus untuk membuat UI beradaptasi dengan berbagai skenario.
+- **Custom Painting:** `Flow` _widget_ sangat erat kaitannya dengan konsep _custom painting_ karena Anda sering menggambar _child_ pada posisi yang dihitung secara manual.
+
+**Referensi Lengkap:**
+
+- [Flutter Layout Widgets](https://flutter.dev/docs/development/ui/widgets/layout): Selalu menjadi referensi utama untuk _widget-widget layout_.
+- [Understanding Constraints](https://www.google.com/search?q=https://flutter.dev/docs/docs/development/ui/layout/constraints): Artikel yang menjelaskan model _constraint_ _Flutter_ secara mendalam.
+- [Flex and Flexible Widgets](https://flutter.dev/docs/development/ui/layout/flex): Detail tentang penggunaan `flex` dan `fit`.
+- [Stack and Positioned Advanced](https://flutter.dev/docs/cookbook/animation/physics-simulation): Meskipun judulnya tentang animasi, bagian ini menjelaskan lebih banyak tentang `Stack` dan `Positioned`.
+- [CustomScrollView & Slivers](https://flutter.dev/docs/development/ui/advanced/slivers): Akan kita bahas lebih lanjut di bagian _scrolling_, namun relevan dengan _layout_ tingkat lanjut.
+- [Flow Widget](https://api.flutter.dev/flutter/widgets/Flow-class.html): Dokumentasi API untuk `Flow` _widget_.
+
+**Tips & Best Practices (untuk peserta):**
+
+- **Gunakan `Intrinsic` dengan Hati-hati:** Hindari `IntrinsicWidth` dan `IntrinsicHeight` jika ada cara lain yang lebih ringan untuk mencapai efek yang diinginkan, karena mereka memicu _layout pass_ kedua yang mahal.
+- **Mulai dari Sederhana:** Selalu coba selesaikan masalah _layout_ dengan `Row`, `Column`, `Stack`, `Expanded`, `Flexible`, `SizedBox`, dan `Padding` terlebih dahulu. `Flow` adalah pilihan terakhir untuk _layout_ yang sangat spesifik.
+- **Debug dengan Visualisasi:** Gunakan `debugPaintSizeEnabled = true;` (import `package:flutter/rendering.dart;` di `main.dart` Anda) untuk melihat batas-batas _layout_ _widget_, dan _Flutter Inspector_ di _DevTools_ untuk memeriksa _layout tree_ dan _constraint_.
+- **Pahami `flex`:** Dalam `Expanded` dan `Flexible`, `flex` adalah rasio, bukan ukuran absolut. Total `flex` dari semua _child_ akan dibagi untuk menentukan proporsi ruang.
+
+**Potensi Kesalahan Umum & Solusi:**
+
+- **Kesalahan:** Menggunakan `MainAxisSize.max` pada `Column` di dalam `SingleChildScrollView` (atau sebaliknya). Ini sering menyebabkan _render overflow_ karena `Column` mencoba mengisi tak terbatas sementara _ScrollView_ juga menyediakan ruang tak terbatas.
+  - **Solusi:** Pastikan _constraint_ yang mengalir ke bawah adalah _bounded_ (terbatas) di salah satu titik. `Column` di dalam `SingleChildScrollView` harus memiliki `mainAxisSize: MainAxisSize.min` (default untuk `Column`).
+- **Kesalahan:** `CrossAxisAlignment.baseline` tidak bekerja.
+  - **Solusi:** Pastikan semua _child_ yang ingin disejajarkan memiliki `Text` _widget_ dan `textBaseline` properti `Row` diatur (misalnya `TextBaseline.alphabetic`).
+- **Kesalahan:** Bingung kapan menggunakan `Expanded` vs `Flexible`.
+  - **Solusi:** `Expanded` akan _selalu_ mengisi sisa ruang yang tersedia. `Flexible` hanya akan mengisi ruang _jika child-nya membutuhkan_ (dengan `FlexFit.loose`) atau mengisi _jika dipaksa_ (dengan `FlexFit.tight`). Pikirkan `Expanded` sebagai `Flexible(fit: FlexFit.tight)`.
+
+# Selamat!
+
+Luar biasa! Anda telah berhasil menuntaskan pembahasan mendalam tentang **Core Layout Widgets** di _Flutter_. Ini adalah fondasi kuat untuk merancang dan membangun antarmuka pengguna yang visualnya menarik dan berfungsi dengan baik. Bagian **Advanced Layout Techniques** juga membekali Anda dengan alat untuk menangani skenario _layout_ yang paling menantang sekalipun, memastikan Anda dapat membangun UI yang presisi, responsif, dan performatif.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
