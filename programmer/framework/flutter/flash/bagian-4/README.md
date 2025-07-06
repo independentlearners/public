@@ -1929,7 +1929,7 @@ Kita telah menyelesaikan pembahasan **Navigator 2.0 (Router API)**, termasuk `Ro
 
 - **Contoh Integrasi dengan `Provider` (simulasi):**
 
-  ```dart
+```dart
   import 'package:flutter/material.dart';
   import 'package:go_router/go_router.dart';
   import 'package:provider/provider.dart';
