@@ -1,4 +1,4 @@
-> flash
+> [flash][pro3]
 
 # **[FASE 3: State Management & Data Flow][0]**
 
@@ -4873,62 +4873,61 @@ Berikut adalah aspek-aspek utama dari _Pemilihan State Management yang Tepat_:
 
 Meskipun setiap _package_ memiliki contoh sintaksnya sendiri, penting untuk memahami bagaimana mereka secara konseptual memengaruhi struktur aplikasi Anda:
 
-```
+```yml
 // Konseptual: Bagaimana State Mengalir di Berbagai Pendekatan
 
-// setState():
-// Widget A (StatefulWidget)
-//   - _localState
-//   - setState() modifies _localState
-//   - Build method uses _localState
-//   - Child Widget B (StatelessWidget) -- needs props drilling
+setState():
+Widget A (StatefulWidget)
+  - _localState
+  - setState() modifies _localState
+  - Build method uses _localState
+   - Child Widget B (StatelessWidget) -- needs props drilling
 
-// InheritedWidget:
-// Top Widget (Provides InheritedWidget)
-//   - InheritedWidget (contains data)
-//     - Middle Widget (accesses data)
-//       - Child Widget (accesses data)
-//
-// Updates: Top Widget rebuilds -> InheritedWidget rebuilds -> If updateShouldNotify true -> Child Widgets rebuild
+InheritedWidget:
+Top Widget (Provides InheritedWidget)
+  - InheritedWidget (contains data)
+    - Middle Widget (accesses data)
+      - Child Widget (accesses data)
 
-// Provider:
-// Root (MultiProvider)
-//   - ChangeNotifierProvider (provides CounterModel)
-//     - ...
-//       - Consumer<CounterModel> (listens to CounterModel, rebuilds)
-//       - Widget (context.read<CounterModel>().increment()) (accesses and modifies CounterModel)
+Updates: Top Widget rebuilds -> InheritedWidget rebuilds -> If updateShouldNotify true -> Child Widgets rebuild
 
-// Riverpod:
-// Root (ProviderScope)
-//   - Global Provider Declaration (e.g., final counterProvider = StateProvider<int>((ref) => 0);)
-//     - ...
-//       - Consumer (ref.watch(counterProvider)) (watches provider, rebuilds)
-//       - Widget (ref.read(counterProvider.notifier).update((state) => state + 1)) (reads and modifies provider)
+Provider:
+Root (MultiProvider)
+  - ChangeNotifierProvider (provides CounterModel)
+    - ...
+      - Consumer<CounterModel> (listens to CounterModel, rebuilds)
+      - Widget (context.read<CounterModel>().increment()) (accesses and modifies CounterModel)
 
-// BLoC/Cubit:
-// Root (BlocProvider)
-//   - CounterCubit (Business Logic Component)
-//     - input: Stream of Events (e.g., _incrementController)
-//     - output: Stream of States (e.g., _counterState)
-//     - mapEventToState logic (transforms events to states)
-//     - ...
-//       - BlocBuilder<CounterCubit, int> (listens to state stream, rebuilds UI)
-//       - Widget (context.read<CounterCubit>().increment()) (sends event/calls method to Cubit)
+Riverpod:
+Root (ProviderScope)
+  - Global Provider Declaration (e.g., final counterProvider = StateProvider<int>((ref) => 0);)
+    - ...
+      - Consumer (ref.watch(counterProvider)) (watches provider, rebuilds)
+      - Widget (ref.read(counterProvider.notifier).update((state) => state + 1)) (reads and modifies provider)
 
-// GetX:
-// Root (GetMaterialApp)
-//   - Global Controller Instance (Get.put(CounterGetXController()))
-//     - CounterGetXController (contains .obs reactive state)
-//       - ...
-//         - Obx(() => Text(controller.count.value)) (observes .obs state, rebuilds UI)
-//         - Widget (controller.increment()) (calls method on controller)
+BLoC/Cubit:
+Root (BlocProvider)
+  - CounterCubit (Business Logic Component)
+    - input: Stream of Events (e.g., _incrementController)
+    - output: Stream of States (e.g., _counterState)
+    - mapEventToState logic (transforms events to states)
+    - ...
+      - BlocBuilder<CounterCubit, int> (listens to state stream, rebuilds UI)
+      - Widget (context.read<CounterCubit>().increment()) (sends event/calls method to Cubit)
 
-// MobX:
-// Root (MyApp, using GetIt to access store)
-//   - CounterStore (@observable count, @action increment)
-//     - ...
-//       - Observer (listens to @observable state, rebuilds UI)
-//       - Widget (counterStore.increment()) (calls action on store)
+GetX:
+Root (GetMaterialApp)
+  - Global Controller Instance (Get.put(CounterGetXController()))
+    - CounterGetXController (contains .obs reactive state)
+      - ...
+        - Obx(() => Text(controller.count.value)) (observes .obs state, rebuilds UI)
+        - Widget (controller.increment()) (calls method on controller)
+MobX:
+Root (MyApp, using GetIt to access store)
+  - CounterStore (@observable count, @action increment)
+    - ...
+      - Observer (listens to @observable state, rebuilds UI)
+      - Widget (counterStore.increment()) (calls action on store)
 ```
 
 **Terminologi Esensial:**
@@ -5002,11 +5001,9 @@ Meskipun setiap _package_ memiliki contoh sintaksnya sendiri, penting untuk mema
 - **Kesalahan:** Kesulitan dalam menguji logika _state management_.
   - **Solusi:** Pastikan Anda memisahkan logika _state management_ ke dalam kelas _Dart_ murni (tanpa dependensi UI) sehingga dapat diuji secara independen. BLoC/Cubit dan Riverpod sangat mendukung ini.
 
----
+# Menakjubkan!
 
-Luar biasa! Kita telah menyelesaikan pembahasan fundamental dan komprehensif tentang **State Management Approaches** di Flutter. Ini adalah salah satu area paling krusial dalam pengembangan aplikasi Flutter, dan pemahaman yang mendalam di sini akan sangat meningkatkan kemampuan Anda membangun aplikasi yang berkualitas.
-
-Menurut kurikulum kita, selanjutnya adalah **7. Dependency Injection & Service Locators**. Bagian ini akan membahas bagaimana kita dapat mengelola dependensi antar kelas dan _service_ di aplikasi kita, yang merupakan pelengkap penting untuk _state management_ yang baik.
+Kita telah menyelesaikan pembahasan fundamental dan komprehensif tentang **FASE 3: State Management & Data Flow** di Flutter. Ini adalah salah satu area paling krusial dalam pengembangan aplikasi Flutter, dan pemahaman yang mendalam di sini akan sangat meningkatkan kemampuan Anda membangun aplikasi yang berkualitas.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
@@ -5018,7 +5015,7 @@ Menurut kurikulum kita, selanjutnya adalah **7. Dependency Injection & Service L
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-2/README.md
 [selanjutnya]: ../bagian-4/README.md
-
+[pro3]:../../pro/bagian-3/README.md
 <!----------------------------------------------------->
 
 [0]: ../../README.md

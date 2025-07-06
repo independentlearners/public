@@ -52,17 +52,6 @@ Fase ini adalah tempat Anda akan mulai memahami dan membangun antarmuka pengguna
 - [Tips & Best Practices](#duapuluhtujuh)
 - [Potensi Kesalahan Umum & Solusi](#duapuluhdelapan)
 
----
-
-2.4 Navigasi Dasar (Navigator 1.0)
-
-- Push & Pop Routes
-- Passing Data Between Routes
-
----
-
-2.5 Pengenalan Asset (Images, Fonts, Icons)
-
 </details>
 
 ---
