@@ -7,55 +7,55 @@
 <details>
   <summary>📃 Struktur Daftar Materi</summary>
 
-- **6. Navigation Architecture**
+- **[6. Navigation Architecture](#6-navigation-architecture)**
 
-  - **6.1 Basic Navigation**
-    - Navigator 1.0
+  - **[6.1 Basic Navigation](#61-basic-navigation)**
+    - [Navigator 1.0](#navigator-10)
       - Konsep Dasar Navigator Stack
       - Metode `Navigator.push()` dan `Navigator.pop()`
       - Objek `Route` dan `MaterialPageRoute`
       - Metode `pushReplacement()` dan `pushAndRemoveUntil()`
 
-- **6. Navigation Architecture**
+- **[6. Navigation Architecture](#6-navigation-architecture-lanjutan)**
 
-  - **6.1 Basic Navigation (Lanjutan)**
+  - **[6.1 Basic Navigation (Lanjutan)](#61-basic-navigation-lanjutan)**
 
-    - **Named routes setup:** Bagaimana mendefinisikan dan menggunakan _named routes_ untuk navigasi yang lebih terstruktur.
-    - **Route arguments passing:** Mekanisme untuk mengirimkan data antar layar saat bernavigasi.
-    - **`onGenerateRoute` callback:** Penggunaan _callback_ ini untuk kontrol navigasi yang lebih dinamis dan terpusat.
-    - **Route guards dan conditions:** Implementasi logika untuk melindungi _route_ atau mengarahkan ulang navigasi berdasarkan kondisi tertentu (misalnya, otentikasi pengguna).
+    - **[Named routes setup:](#named-routes-setup)** Bagaimana mendefinisikan dan menggunakan _named routes_ untuk navigasi yang lebih terstruktur.
+    - **[Route arguments passing:](#route-arguments-passing)** Mekanisme untuk mengirimkan data antar layar saat bernavigasi.
+    - **[`onGenerateRoute` callback:](#ongenerateroute-callback)** Penggunaan _callback_ ini untuk kontrol navigasi yang lebih dinamis dan terpusat.
+    - **[Route guards dan conditions:](#route-guards-dan-conditions)** Implementasi logika untuk melindungi _route_ atau mengarahkan ulang navigasi berdasarkan kondisi tertentu (misalnya, otentikasi pengguna).
     - _Tambahan Pendalaman:_ Praktik terbaik untuk arsitektur navigasi dasar.
 
-  - **6.2 Advanced Navigation**
+  - **[6.2 Advanced Navigation](#62-advanced-navigation-lanjutan)**
 
-    - **Navigator 2.0 (Router API):** Pendekatan deklaratif untuk navigasi di Flutter.
+    - **[Navigator 2.0 (Router API):](#navigator-20-router-api)** Pendekatan deklaratif untuk navigasi di Flutter.
       - `RouterDelegate` implementation
       - `RouteInformationParser` usage
       - `RouteInformationProvider` setup
       - `Router` widget configuration
       - `Nested routing strategies`
       - `Back button handling`
-    - **GoRouter Implementation:** Menggunakan _package_ `GoRouter` sebagai solusi _routing_ yang populer dan modern.
+    - **[GoRouter Implementation:](#gorouter-implementation)** Menggunakan _package_ `GoRouter` sebagai solusi _routing_ yang populer dan modern.
       - `GoRouter setup dan configuration`
       - `Route definitions dan sub-routes`
       - `Route parameters dan query parameters`
       - `Route redirects dan guards`
       - `ShellRoute untuk persistent UI`
       - `GoRouter dengan state management`
-    - **Auto Route & Code Generation:** Mengotomatiskan definisi _route_ menggunakan _code generation_ dengan `Auto Route`.
+    - **[Auto Route & Code Generation:](#auto-route--code-generation)** Mengotomatiskan definisi _route_ menggunakan _code generation_ dengan `Auto Route`.
       - `Auto route setup dan annotations`
       - `Route generation process`
       - `Nested routes dengan AutoRoute`
       - `Route guards implementation`
       - `Auto route testing`
 
-  - **6.3 Deep Linking & URL Handling**
-    - **Web URL Strategies:** Mengelola URL aplikasi Flutter di _web_.
+  - **[6.3 Deep Linking & URL Handling](#63-deep-linking--url-handling)**
+    - **[Web URL Strategies:](#web-url-strategies)** Mengelola URL aplikasi Flutter di _web_.
       - `Hash vs Path URL strategies`
       - `Browser history integration`
       - `URL parameter handling`
       - `SEO considerations`
-    - **Mobile Deep Linking:** Mengkonfigurasi dan menangani _deep link_ di perangkat _mobile_.
+    - **[Mobile Deep Linking:](#mobile-deep-linking)** Mengkonfigurasi dan menangani _deep link_ di perangkat _mobile_.
       - `Android App Links setup`
       - `iOS Universal Links setup`
       - `Custom URL schemes`
@@ -2104,7 +2104,7 @@ Kita telah menyelesaikan pembahasan **Navigator 2.0 (Router API)**, termasuk `Ro
       return Scaffold(appBar: AppBar(title: const Text('Dashboard')), body: const Center(child: Text('Selamat datang di Dashboard!')));
     }
   }
-  ```
+```
 
 - **Visualisasi GoRouter dengan State Management:**
 
@@ -2580,8 +2580,8 @@ Kita telah menyelesaikan pembahasan **GoRouter Implementation** secara mendalam.
   ┌───────────┐     ┌───────────────┐
   │ Logged In │     │ Not Logged In │
   └─────┬─────┘     └─────────────┬─┘
-        │                         │   
-        ▼                         ▼   
+        │                         │
+        ▼                         ▼
   ┌────────────────────┐       ┌───────────────────────────┐
   │ resolver.next(true)│       │ router.push(LoginRoute()) │
   │                    │       │ resolver.next(false)      │
@@ -2672,11 +2672,380 @@ Kita telah menyelesaikan pembahasan **GoRouter Implementation** secara mendalam.
 
 ---
 
-Kita telah menyelesaikan pembahasan **Auto Route & Code Generation**. Ini melengkapi diskusi kita tentang _Advanced Navigation_ di **FASE 4**.
+Kita telah menyelesaikan pembahasan **Auto Route & Code Generation**. Ini melengkapi diskusi kita tentang _Advanced Navigation_ di **FASE 4**. Selanjutnya, kita akan beralih ke **6.3 Deep Linking & URL Handling**, yang merupakan bagian terakhir dari FASE 4.
 
-Selanjutnya, kita akan beralih ke **6.3 Deep Linking & URL Handling**, yang merupakan bagian terakhir dari FASE 4.
+##### **6.3 Deep Linking & URL Handling**
 
-Apakah Anda siap untuk melanjutkan, atau ada pertanyaan lebih lanjut tentang **Auto Route**?
+###### **Web URL Strategies**
+
+- **Peran:** Ketika aplikasi Flutter di-deploy ke web, bagaimana URL di _browser_ dikelola adalah aspek krusial. Strategi URL web menentukan bagaimana rute internal aplikasi Flutter Anda direpresentasikan dalam URL _browser_, yang memengaruhi _bookmarking_, berbagi tautan, dan _Search Engine Optimization_ (SEO).
+
+- **Detail:** Flutter menyediakan dua strategi utama untuk URL di web:
+
+  1.  **Hash URL Strategy:** Ini adalah _default_ untuk aplikasi Flutter web. URL akan selalu menyertakan tanda `#` (hash) sebelum _path_ rute aplikasi Anda (misalnya `www.example.com/#/home`). Bagian setelah `#` tidak dikirim ke _server_ dan sepenuhnya ditangani oleh _client-side_ JavaScript.
+  2.  **Path URL Strategy:** Ini menghilangkan tanda `#` dan menggunakan _path_ URL yang "bersih" (misalnya `www.example.com/home`). Ini sering kali lebih disukai untuk tujuan SEO dan estetika. Namun, ini membutuhkan konfigurasi _server_ agar semua _path_ yang tidak cocok dengan file fisik di _server_ diarahkan kembali ke `index.html` aplikasi Flutter Anda.
+
+- **Hash vs Path URL Strategies:**
+
+  - **Hash Strategy (`/#/home`)**:
+
+    - **Kelebihan:** Tidak memerlukan konfigurasi _server_ tambahan. Langsung berfungsi _out-of-the-box_.
+    - **Kekurangan:** URL kurang "bersih", tidak terlalu SEO-friendly karena _search engine crawler_ mungkin mengabaikan bagian _hash_.
+    - **Implementasi:** Ini adalah _default_. Tidak perlu kode khusus, atau bisa diatur secara eksplisit:
+
+      ```dart
+      import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+
+      void main() {
+        usePathUrlStrategy(); // Atau useHashUrlStrategy() jika ingin eksplisit
+        // ...
+        runApp(MyApp());
+      }
+      ```
+
+  - **Path Strategy (`/home`)**:
+
+    - **Kelebihan:** URL yang lebih bersih dan SEO-friendly (crawler dapat mengindeks _path_).
+    - **Kekurangan:** Membutuhkan konfigurasi _server_ yang tepat untuk mengarahkan semua _path_ ke `index.html` Anda. Jika tidak, mencoba mengakses `www.example.com/home` secara langsung akan menghasilkan 404 dari _server_.
+    - **Implementasi Flutter:** Panggil `usePathUrlStrategy()` di `main()`:
+
+      ```dart
+      import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+
+      void main() {
+        usePathUrlStrategy();
+        // ...
+        runApp(MyApp());
+      }
+      ```
+
+    - **Konfigurasi Server Contoh (Nginx):**
+
+      ```nginx
+      server {
+          listen 80;
+          server_name yourdomain.com;
+
+          location / {
+              try_files $uri $uri/ /index.html; # Penting: arahkan ke index.html
+          }
+      }
+      ```
+
+      _(Konfigurasi akan bervariasi tergantung pada web server atau hosting provider yang digunakan, seperti Apache, Firebase Hosting, dsb.)_
+
+- **Visualisasi Konseptual URL Strategies:**
+
+  ```
+  ┌───────────────────────────┐     ┌───────────────────────────┐
+  │       Browser URL         │     │    Flutter App (Web)      │
+  └────────────┬──────────────┘     └────────────┬──────────────┘
+               │                                 │
+               │   www.example.com/#/dashboard   │
+               │ (Hash Strategy)                 │
+               │                                 │  URL hanya bagian setelah '#'
+               ▼                                 ▼
+  ┌───────────────────────────┐     ┌─────────────────────────────────┐
+  │    Web Server             │     │    Internal Routing Logic       │
+  │ (Ignored part after '#')  │     │ (e.g., Navigator 2.0, GoRouter) │
+  └───────────────────────────┘     └─────────────────────────────────┘
+
+  ┌───────────────────────────┐     ┌───────────────────────────┐
+  │       Browser URL         │     │    Flutter App (Web)      │
+  └────────────┬──────────────┘     └────────────┬──────────────┘
+               │                                 │
+               │   www.example.com/dashboard     │
+               │ (Path Strategy)                 │
+               │                                 │  Full URL diproses oleh server
+               ▼                                 ▼
+  ┌───────────────────────────┐     ┌─────────────────────────────────┐
+  │    Web Server             │     │    Internal Routing Logic       │
+  │ (Redirects to index.html  │     │ (e.g., Navigator 2.0, GoRouter) │
+  │   if path not found)      │     └─────────────────────────────────┘
+  └───────────────────────────┘
+  ```
+
+  **Penjelasan Visual:**
+  Diagram ini membandingkan `Hash Strategy` dan `Path Strategy`. Dengan `Hash Strategy`, _web server_ mengabaikan bagian URL setelah `#`, dan Flutter menangani _routing_ internal. Dengan `Path Strategy`, _web server_ harus dikonfigurasi untuk mengarahkan permintaan _path_ yang tidak dikenal kembali ke `index.html` agar aplikasi Flutter dapat mengambil alih _routing_.
+
+- **Browser History Integration**
+  Baik `Hash` maupun `Path` strategi secara otomatis terintegrasi dengan _history_ _browser_. Ketika Anda menggunakan `Navigator 2.0`, `GoRouter`, atau `Auto Route`, perubahan _state_ navigasi Anda di aplikasi Flutter akan tercermin dalam _history_ _browser_. Ini memungkinkan pengguna untuk menggunakan tombol kembali/_forward_ _browser_ secara normal.
+
+  - Jika Anda menggunakan `GoRouter` atau `Auto Route`, mereka secara otomatis akan memicu perubahan URL yang sesuai dengan _history_ _browser_ saat Anda bernavigasi menggunakan `context.go()` atau `context.pushRoute()`.
+  - `RouterDelegate` di Navigator 2.0 bertanggung jawab untuk memperbarui `RouteInformation` yang pada gilirannya akan memengaruhi URL _browser_.
+
+- **URL Parameter Handling**
+  Penanganan parameter URL di web sangat penting untuk _deep linking_ dan menyediakan konten dinamis.
+
+  - **Path Parameters:** Bagian dari URL _path_ (misalnya `/users/123`). Di Flutter, ini paling baik ditangani oleh _router_ deklaratif seperti `GoRouter` (dengan `:paramName`) atau `Auto Route` (dengan `@PathParam()`).
+    - Contoh `GoRouter`: `state.pathParameters['paramName']`
+    - Contoh `Auto Route`: `@PathParam('paramName') required this.paramName`
+  - **Query Parameters:** Bagian dari URL setelah `?` (misalnya `/products?category=food&sort=asc`). Juga ditangani dengan baik oleh _router_ deklaratif.
+    - Contoh `GoRouter`: `GoRouterState.of(context).uri.queryParameters['paramName']`
+    - Contoh `Auto Route`: `@QueryParam('paramName') String? paramName`
+
+  Parameter ini dapat digunakan untuk:
+
+  - Memuat data spesifik (misalnya, ID produk).
+  - Menerapkan filter atau opsi pengurutan.
+  - Menginisialisasi _state_ aplikasi dari URL.
+
+- **SEO Considerations**
+
+  - **Path Strategy Lebih Baik:** Untuk sebagian besar kasus, `Path URL Strategy` lebih disukai untuk SEO karena _search engine crawler_ (seperti Googlebot) dapat dengan lebih mudah mengindeks _path_ URL yang bersih. URL yang mengandung `#` cenderung kurang diindeks.
+  - **Prerendering/SSR:** Untuk SEO yang optimal, aplikasi Flutter web sering kali memerlukan strategi _prerendering_ (menghasilkan HTML statis untuk setiap _route_ saat _build time_) atau _Server-Side Rendering_ (SSR) agar _crawler_ dapat melihat konten lengkap halaman tanpa harus menjalankan JavaScript. Flutter sendiri belum memiliki dukungan SSR bawaan yang matang, sehingga sering memerlukan _tooling_ pihak ketiga atau konfigurasi _server_ yang kompleks.
+  - **Metadata (HTML `<head>`):** Pastikan `index.html` Anda memiliki tag `<title>`, `<meta name="description">`, `og:`, dan `twitter:` yang relevan. Meskipun Flutter mengubah konten DOM, metadata ini penting untuk _crawler_.
+  - **Sitemap:** Buat _sitemap.xml_ untuk membantu _search engine_ menemukan dan mengindeks semua _route_ Anda.
+
+- **Terminologi Esensial:**
+
+  - **Hash URL Strategy:** Penggunaan `#` dalam URL untuk navigasi _client-side_.
+  - **Path URL Strategy:** Penggunaan _path_ URL "bersih" tanpa `#`, memerlukan konfigurasi _server_.
+  - **`usePathUrlStrategy()`:** Fungsi Flutter untuk mengaktifkan Path URL Strategy.
+  - **Browser History API:** API standar _browser_ yang digunakan Flutter untuk mengelola _history_ navigasi.
+  - **Path Parameters:** Data dinamis dalam _path_ URL.
+  - **Query Parameters:** Data dinamis dalam _query string_ URL.
+  - **SEO (Search Engine Optimization):** Praktik untuk meningkatkan visibilitas aplikasi di hasil pencarian.
+  - **Prerendering/SSR:** Teknik untuk menghasilkan HTML sebelum _client-side_ JavaScript dieksekusi, untuk tujuan SEO.
+
+- **Hubungan dengan Bagian Lain:**
+
+  - **Navigator 2.0/GoRouter/Auto Route:** _Router_ ini berinteraksi langsung dengan URL _browser_ dan menyediakan API untuk menangani parameter URL.
+  - **Deployment:** Pemilihan strategi URL sangat relevan dengan cara aplikasi Flutter web Anda di-deploy dan dikonfigurasi di _server_ web.
+
+- **Tips & Best Practices (untuk peserta):**
+
+  - **Prioritaskan Path Strategy:** Jika SEO dan URL bersih penting bagi Anda, selalu usahakan untuk menggunakan `Path URL Strategy`.
+  - **Uji Konfigurasi Server:** Setelah beralih ke `Path URL Strategy`, pastikan untuk menguji _server_ Anda secara menyeluruh untuk memastikan semua _path_ berfungsi dengan benar.
+  - **Pertimbangkan Prerendering untuk SEO Maksimal:** Untuk aplikasi yang sangat bergantung pada SEO (misalnya, blog, situs _e-commerce_), pertimbangkan solusi _prerendering_ atau SSR yang ada.
+
+- **Potensi Kesalahan Umum & Solusi:**
+
+  - **Kesalahan:** Navigasi ke URL langsung di _browser_ menghasilkan 404 saat menggunakan `Path URL Strategy`.
+    - **Solusi:** Ini berarti _server_ Anda tidak dikonfigurasi dengan benar untuk mengarahkan semua _path_ yang tidak ada ke `index.html` aplikasi Flutter Anda. Periksa kembali konfigurasi _server_ web Anda (Nginx, Apache, dll.).
+  - **Kesalahan:** URL tidak diperbarui di _browser_ saat navigasi terjadi di aplikasi.
+    - **Solusi:** Pastikan Anda menggunakan API navigasi yang benar dari _router_ Anda (`context.go()`, `context.pushRoute()`, dll.) yang dirancang untuk berinterinteraksi dengan _history_ _browser_.
+
+---
+
+### **Mobile Deep Linking**
+
+- **Peran:** _Deep Linking_ di _mobile_ memungkinkan Anda untuk menautkan (link) langsung ke konten spesifik di dalam aplikasi seluler Anda dari sumber eksternal, seperti situs web, email, SMS, atau aplikasi lain. Ini meningkatkan pengalaman pengguna dengan membawa mereka langsung ke informasi yang relevan tanpa harus menavigasi secara manual di dalam aplikasi.
+
+- **Detail:** Implementasi _deep linking_ bervariasi antara platform Android dan iOS. Konsep utamanya adalah:
+
+  1.  **URL Schemes Kustom:** Skema URL yang dibuat khusus untuk aplikasi Anda (misalnya `myapp://product/123`).
+  2.  **App Links (Android) / Universal Links (iOS):** URL HTTP/HTTPS standar yang diverifikasi milik aplikasi Anda, sehingga jika tautan tersebut diklik, aplikasi akan langsung terbuka tanpa melalui _browser_ terlebih dahulu.
+
+- **Android App Links Setup**
+
+  - **Peran:** App Links adalah _deep link_ HTTP/HTTPS standar yang dapat diverifikasi oleh Android, sehingga jika pengguna mengklik tautan di web, aplikasi Anda akan terbuka langsung jika diinstal, tanpa dialog pilihan aplikasi. Ini memberikan pengalaman yang mulus dan aman.
+  - **Konfigurasi:**
+    1.  **Tambah `intent-filter` di `AndroidManifest.xml`:** Anda perlu mendeklarasikan `intent-filter` di dalam `<activity>` utama aplikasi Anda untuk setiap URL _host_ dan _path_ yang ingin Anda dukung sebagai App Link.
+        ```xml
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+            <application ...>
+                <activity ...>
+                    <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
+                    <intent-filter android:autoVerify="true">
+                        <action android:name="android.intent.action.VIEW" />
+                        <category android:name="android.intent.category.DEFAULT" />
+                        <category android:name="android.intent.category.BROWSABLE" />
+                        <data android:scheme="http" android:host="yourdomain.com" />
+                        <data android:scheme="https" android:host="yourdomain.com" />
+                        </intent-filter>
+                </activity>
+            </application>
+        </manifest>
+        ```
+        - `android:autoVerify="true"`: Sangat penting agar Android otomatis memverifikasi asosiasi _domain_ dengan aplikasi Anda.
+        - `android:scheme="http"` dan `android:scheme="https"`: Untuk menerima tautan web.
+        - `android:host="yourdomain.com"`: Ganti dengan _domain_ situs web Anda.
+    2.  **Hosting `assetlinks.json` di _domain_ Anda:** Anda perlu meng-host file `assetlinks.json` di `https://yourdomain.com/.well-known/assetlinks.json`. File ini berisi informasi tentang _package_ aplikasi Anda dan _fingerprint_ sertifikat penandatanganan aplikasi. Android akan mengunduh dan memverifikasi file ini.
+        - Anda bisa menghasilkan konten `assetlinks.json` menggunakan [Digital Asset Links Generator](https://developers.google.com/digital-asset-links/tools/generator).
+        - Pastikan file tersebut dapat diakses melalui HTTPS dan memiliki _content-type_ `application/json`.
+  - **Manfaat:** Lebih aman (diverifikasi), pengalaman mulus tanpa _disambiguation dialog_.
+
+- **iOS Universal Links Setup**
+
+  - **Peran:** Universal Links adalah _deep link_ HTTP/HTTPS standar untuk iOS yang memungkinkan iOS secara cerdas membuka aplikasi Anda secara langsung ketika URL yang cocok diklik, asalkan aplikasi diinstal. Jika tidak diinstal, URL akan dibuka di Safari.
+  - **Konfigurasi:**
+    1.  **Aktifkan Associated Domains di Xcode:** Di Xcode, buka proyek Anda, pilih _target_ aplikasi Anda, pergi ke tab "Signing & Capabilities", lalu tambahkan kapabilitas "Associated Domains". Tambahkan entri untuk setiap _domain_ yang ingin Anda dukung, dimulai dengan `applinks:`.
+        - Contoh: `applinks:yourdomain.com`
+        - Contoh: `applinks:yourdomain.com/product/` (jika ingin lingkup terbatas)
+    2.  **Hosting `apple-app-site-association` (AASA) file di _domain_ Anda:** Anda perlu meng-host file `apple-app-site-association` di `https://yourdomain.com/.well-known/apple-app-site-association` (tanpa ekstensi `.json`). File ini adalah JSON yang berisi daftar _path_ yang harus ditangani oleh aplikasi Anda.
+        ```json
+        {
+          "applinks": {
+            "apps": [],
+            "details": [
+              {
+                "appID": "YOUR_TEAM_ID.com.yourcompany.yourapp", // Ganti dengan Team ID dan Bundle ID Anda
+                "paths": ["/product/*", "/user/*", "*"] // Path yang ingin Anda dukung
+              }
+            ]
+          }
+        }
+        ```
+        - `appID`: Gabungan _Team ID_ (dari Apple Developer Program) dan _Bundle ID_ aplikasi Anda.
+        - `paths`: Daftar _path_ yang harus ditangani oleh aplikasi. `*` berarti semua _path_.
+        - Pastikan file di-host melalui HTTPS, tidak ada _redirect_, dan _content-type_ `application/json` atau `application/octet-stream`.
+  - **Manfaat:** Pengalaman mulus di iOS, dapat menangani _fallback_ ke _browser_ jika aplikasi tidak diinstal.
+
+- **Custom URL Schemes**
+
+  - **Peran:** Skema URL kustom adalah protokol non-HTTP/HTTPS yang khusus untuk aplikasi Anda (misalnya `myapp://`, `mycoolapp://`). Mereka adalah bentuk _deep linking_ yang lebih lama dan kurang aman dibandingkan App/Universal Links, tetapi masih berguna untuk interaksi antar aplikasi atau dalam skenario di mana Anda tidak memiliki _domain_ web.
+  - **Konfigurasi:**
+    1.  **Android:** Tambahkan `intent-filter` lain di `AndroidManifest.xml` dengan `android:scheme` kustom Anda.
+        ```xml
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="myapp" android:host="*"/> </intent-filter>
+        ```
+    2.  **iOS:** Daftarkan skema URL kustom di Xcode, di tab "Info" proyek Anda, di bawah "URL Types".
+        - Tambahkan _URL Scheme_ baru, misalnya `myapp`.
+  - **Kekurangan:** Jika banyak aplikasi mendaftar skema yang sama, sistem akan menampilkan dialog pilihan. Tidak ada _fallback_ otomatis ke _browser_ jika aplikasi tidak diinstal.
+
+- **Deep Link Parameter Extraction**
+  Setelah aplikasi dibuka oleh _deep link_, Anda perlu mengekstrak parameter dari URL untuk menavigasi ke konten yang benar. _Router_ deklaratif Flutter (GoRouter, Auto Route) sangat bagus dalam hal ini.
+
+  - **Menggunakan `GoRouter`:**
+    `GoRouter` secara otomatis menangani _deep links_ jika _path_ yang sesuai didefinisikan dalam konfigurasi _router_ Anda. Parameter dapat diakses melalui `GoRouterState`.
+
+    ```dart
+    // app_router.dart (dengan GoRouter)
+    GoRoute(
+      path: '/product/:id',
+      builder: (BuildContext context, GoRouterState state) {
+        final productId = state.pathParameters['id'];
+        final fromSource = state.uri.queryParameters['source']; // Contoh query parameter
+        return ProductDetailScreen(productId: productId!, source: fromSource);
+      },
+    ),
+    ```
+
+    Ketika tautan seperti `https://yourdomain.com/product/123?source=web` diklik, `GoRouter` akan memprosesnya dan Anda dapat mengakses `id` dan `source` di `ProductDetailScreen`.
+
+  - **Menggunakan `Auto Route`:**
+    `Auto Route` juga secara otomatis mendukung _deep links_ dan memungkinkan Anda mengekstrak parameter secara _type-safe_.
+
+    ```dart
+    // lib/router/app_router.dart (dengan Auto Route)
+    AutoRoute(page: ProductDetailRoute.page, path: '/product/:id'),
+
+    // lib/screens/product_detail_screen.dart
+    @RoutePage()
+    class ProductDetailScreen extends StatelessWidget {
+      final String id;
+      final String? source; // Opsional query parameter
+
+      const ProductDetailScreen({
+        @PathParam('id') required this.id,
+        @QueryParam('source') this.source,
+        super.key,
+      });
+      // ...
+    }
+    ```
+
+    `flutter_app_links` atau `uni_links` adalah _package_ yang dapat membantu mendengarkan _deep links_ jika Anda tidak menggunakan _router_ deklaratif atau membutuhkan kontrol lebih granular.
+
+- **Visualisasi Deep Link Flow:**
+
+  ```
+  ┌────────────────────────────┐              ┌───────────────────────────┐
+  │     External Source        │              │        Mobile OS          │
+  │ (Website, Email, SMS, etc.)│              │     (Android / iOS)       │
+  └────────────┬───────────────┘              └────────────┬──────────────┘
+               │ Klik Link:                                │
+               │ - https://yourdomain.com/item/123         │ (App/Universal Link)
+               │ - myapp://detail?id=456                   │    (Custom Scheme)
+               ▼                                           ▼
+  ┌───────────────────────────┐               ┌───────────────────────────┐
+  │     OS Deep Link Handler  │               │   Aplikasi Flutter Anda   │
+  │ (Verifies, launches app)  │               │   (GoRouter/Auto Route)   │
+  └────────────┬──────────────┘               └────────────┬──────────────┘
+               │                                           │
+               │        (Meneruskan URL ke aplikasi)       │
+               ▼                                           ▼
+  ┌────────────────────────────────────────────────────────────────┐
+  │              Flutter App - Router (e.g., GoRouter)             │
+  │ (Mencocokkan URL dengan definisi rute & mengekstrak parameter) │
+  └───────────────────────────┬────────────────────────────────────┘
+                              │
+                              ▼
+               ┌─────────────────────────────┐
+               │   Specific App Content      │
+               │ (e.g., Product Detail Page) │
+               └─────────────────────────────┘
+  ```
+
+  **Penjelasan Visual:**
+  Diagram ini menggambarkan alur _deep link_: pengguna mengklik tautan di sumber eksternal, sistem operasi menangani tautan tersebut, meluncurkan aplikasi (jika diinstal dan terverifikasi), dan kemudian _router_ dalam aplikasi Flutter akan mengurai URL dan menavigasi ke konten yang sesuai.
+
+- **Deep Link Testing**
+  Pengujian _deep link_ sangat penting karena melibatkan konfigurasi di luar kode aplikasi itu sendiri.
+
+  - **Android:**
+
+    - Gunakan `adb` command line:
+      ```bash
+      adb shell am start -W -a android.intent.action.VIEW -d "https://yourdomain.com/product/123" com.yourcompany.yourapp
+      ```
+      Ganti `com.yourcompany.yourapp` dengan _package name_ aplikasi Anda.
+    - Klik tautan dari _browser_ atau email di perangkat fisik/emulator.
+    - Verifikasi `assetlinks.json` dengan [Digital Asset Links API Tester](https://www.google.com/search?q=https://digitalassetlinks.googleapis.com/v1/statements:list%3Fsource.web.site%3Dhttps://yourdomain.com%26relation%3Ddelegate_permission/common.handle_all_urls).
+
+  - **iOS:**
+
+    - Gunakan `xcrun simctl openurl` untuk simulator:
+      ```bash
+      xcrun simctl openurl booted "https://yourdomain.com/product/123"
+      ```
+    - Klik tautan dari Safari, Mail, atau iMessage di perangkat fisik/simulator.
+    - Verifikasi AASA file dengan alat daring atau pastikan ia dapat diakses dengan benar dari _domain_ Anda.
+
+  - **Flutter (Internal Testing):**
+
+    - Setelah aplikasi dibuka oleh _deep link_, Anda dapat mencetak atau menggunakan _debugger_ untuk memeriksa nilai parameter yang diekstrak oleh _router_ Anda.
+
+- **Terminologi Esensial:**
+
+  - **Deep Link:** Tautan yang membuka aplikasi _mobile_ ke konten spesifik.
+  - **App Links (Android):** _Deep link_ HTTP/HTTPS yang diverifikasi untuk Android.
+  - **Universal Links (iOS):** _Deep link_ HTTP/HTTPS yang diverifikasi untuk iOS.
+  - **Custom URL Scheme:** Protokol kustom (misalnya `myapp://`) untuk _deep linking_.
+  - **`AndroidManifest.xml`:** File konfigurasi Android untuk mendeklarasikan _intent filters_.
+  - **`assetlinks.json`:** File verifikasi untuk Android App Links.
+  - **Associated Domains:** Kapabilitas Xcode untuk Universal Links.
+  - **`apple-app-site-association` (AASA):** File verifikasi untuk iOS Universal Links.
+
+- **Hubungan dengan Bagian Lain:**
+
+  - **Navigation Architecture:** _Deep linking_ adalah cara eksternal untuk memicu navigasi internal aplikasi Anda. _Router_ deklaratif (GoRouter, Auto Route) sangat integral dalam menangani ini.
+  - **URL Parameter Handling:** Konsep ekstraksi parameter URL dari _Web URL Strategies_ juga berlaku sepenuhnya di _mobile deep linking_.
+
+- **Tips & Best Practices (untuk peserta):**
+
+  - **Prioritaskan App/Universal Links:** Selalu usahakan untuk menggunakan App/Universal Links daripada _custom URL schemes_ karena pengalaman pengguna yang lebih baik dan keamanan yang ditingkatkan.
+  - **Uji Menyeluruh:** Pengujian _deep link_ bisa rumit karena melibatkan konfigurasi di luar aplikasi. Uji di berbagai perangkat dan skenario (aplikasi diinstal, tidak diinstal, dari _browser_, dari aplikasi lain).
+  - **Fallbacks:** Pertimbangkan skenario _fallback_ jika aplikasi tidak diinstal. Universal Links akan secara otomatis membuka _browser_, tetapi untuk App Links dan _custom schemes_, Anda mungkin perlu mengimplementasikan logika _redirect_ ke _app store_.
+  - **Plugin:** Gunakan _package_ seperti `uni_links` atau `flutter_app_links` jika Anda membutuhkan _listener_ _deep link_ di dalam aplikasi Anda, terutama jika Anda tidak menggunakan _router_ deklaratif yang menanganinya secara otomatis.
+
+- **Potensi Kesalahan Umum & Solusi:**
+
+  - **Kesalahan:** App/Universal Links tidak membuka aplikasi dan malah membuka _browser_.
+    - **Solusi:** Periksa konfigurasi `AndroidManifest.xml` (App Links) atau _Associated Domains_ / file AASA (Universal Links). Pastikan _domain_ Anda dapat diakses dengan benar, file JSON/AASA tidak memiliki kesalahan sintaks, dan sertifikat penandatanganan aplikasi cocok.
+  - **Kesalahan:** Parameter _deep link_ tidak terekstrak dengan benar.
+    - **Solusi:** Periksa kembali definisi _path_ _router_ Anda (misalnya `/item/:id` harus cocok dengan `/item/123`), dan cara Anda mengekstrak parameter (misalnya `state.pathParameters['id']`). Pastikan nama parameter cocok.
+  - **Kesalahan:** Link tidak diverifikasi secara otomatis di Android (dialog pilihan tetap muncul).
+    - **Solusi:** Pastikan `android:autoVerify="true"` ada dan `assetlinks.json` di-host dengan benar dan valid. Gunakan _Digital Asset Links API Tester_ untuk memverifikasi.
+
+# Selamat!
+
+Dengan ini, kita telah menyelesaikan seluruh pembahasan **FASE 4: Navigation & Routing**, termasuk **Deep Linking & URL Handling**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

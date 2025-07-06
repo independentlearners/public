@@ -1,4 +1,4 @@
-> pro
+> [pro][flash4]
 
 # **[FASE 4: Navigation & Routing][0]**
 
@@ -1142,7 +1142,7 @@ Kini aplikasi kita sudah memiliki "tubuh" (UI), "otak" (State), dan "peta" (Navi
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-3/README.md
 [selanjutnya]: ../bagian-5/README.md
-
+[flash4]: ../../flash/bagian-4/README.md
 <!----------------------------------------------------->
 
 [0]: ../../README.md
