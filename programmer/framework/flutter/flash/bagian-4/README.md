@@ -2,7 +2,7 @@
 
 # **[FASE 4: Navigation & Routing][0]**
 
-### **DAFTAR ISI FASE**
+### **Daftar Isi Fase**
 
 <details>
   <summary>📃 Struktur Daftar Materi</summary>
@@ -3045,7 +3045,7 @@ Kita telah menyelesaikan pembahasan **Auto Route & Code Generation**. Ini meleng
 
 # Selamat!
 
-Dengan ini, kita telah menyelesaikan seluruh pembahasan **FASE 4: Navigation & Routing**, termasuk **Deep Linking & URL Handling**.
+Dengan ini, kita telah menyelesaikan seluruh pembahasan **FASE 4: Navigation & Routing**
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

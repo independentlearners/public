@@ -1062,7 +1062,7 @@ Aplikasi Anda kini tidak hanya dapat menampilkan data dan bernavigasi, tetapi ju
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-4/README.md
 [selanjutnya]: ../bagian-6/README.md
-[fase6]:../../flash/bagian-6/README.md
+[fase6]:../../flash/bagian-5/README.md
 
 <!----------------------------------------------------->
 
