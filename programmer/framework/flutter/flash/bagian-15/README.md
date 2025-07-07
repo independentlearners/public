@@ -257,7 +257,7 @@ Jaga terus semangat belajar ini. Dunia teknologi berkembang pesat, dan kemampuan
 
 <!----------------------------------------------------->
 
-[0]: ../README.md
+[0]: ../../README.md
 [1]: ../
 [2]: ../
 [3]: ../
