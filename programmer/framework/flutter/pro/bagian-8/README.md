@@ -1,4 +1,4 @@
-> pro
+> [pro][flash8]
 
 <details>
   <summary>📃 Daftar Isi</summary>
@@ -17,6 +17,7 @@
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-7/README.md
 [selanjutnya]: ../bagian-9/README.md
+[flash8]:../../flash/bagian-8/README.md
 
 <!----------------------------------------------------->
 

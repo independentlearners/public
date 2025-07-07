@@ -18,7 +18,7 @@
     - Form submission handling
     - Form Validation
   - [7.2 Advanced Form Management](#72-advanced-form-management)
-  - [7.3 Input Formatters & Masks](#)
+  - [7.3 Input Formatters & Masks](#73-input-formatters--masks)
 
 </details>
 
@@ -893,7 +893,7 @@ Kedua pendekatan ini menawarkan solusi yang lebih canggih dibandingkan manajemen
 
 #### **7. Form Architecture & Validation (Lanjutan)**
 
-##### **7.2 Advanced Form Management**
+### **7.2 Advanced Form Management**
 
 - **Peran:** Meskipun `Form` dan `TextFormField` bawaan Flutter sudah cukup untuk formulir sederhana, aplikasi yang lebih kompleks seringkali membutuhkan solusi yang lebih kuat untuk mengurangi _boilerplate_, mempermudah validasi, dan mengelola formulir dinamis. `Flutter Form Builder` adalah salah satu _package_ populer yang mengatasi tantangan ini.
 
@@ -1300,7 +1300,1139 @@ Kedua pendekatan ini menawarkan solusi yang lebih canggih dibandingkan manajemen
 
 ---
 
-Kita telah menyelesaikan pembahasan mendetail tentang **Flutter Form Builder**. Ini adalah alat yang sangat kuat untuk membangun formulir yang efisien di Flutter. Selanjutnya, kita akan berpindah ke pendekatan lain untuk manajemen formulir lanjutan: **Reactive Forms**.
+Kita telah menyelesaikan pembahasan mendetail tentang **Flutter Form Builder**. Ini adalah alat yang sangat kuat untuk membangun formulir yang efisien di Flutter. Selanjutnya, **Reactive Forms**.
+
+- **Peran:** Berbeda dengan pendekatan deklaratif `FormBuilder` yang menyediakan _widget_ siap pakai, `Reactive Forms` menawarkan pendekatan yang lebih _imperatif_ dan _berbasis model_ untuk manajemen formulir. Ini sangat cocok untuk skenario di mana _state_ formulir sangat kompleks, dinamis, atau membutuhkan interaksi yang reaktif dengan bagian lain dari aplikasi.
+
+---
+
+###### **Reactive Forms**
+
+- **Gambaran Umum:** `Reactive Forms` adalah _package_ yang terinspirasi dari `Reactive Forms` di Angular. Ia memperlakukan formulir sebagai model data yang bereaksi terhadap perubahan. Setiap _input field_ direpresentasikan oleh sebuah `FormControl`, dan sekelompok _field_ dapat dikelompokkan ke dalam `FormGroup`. Pendekatan ini memungkinkan validasi yang lebih canggih, manipulasi _state_ formulir yang programatis, dan integrasi yang mudah dengan _stream_ data.
+
+- **1. Reactive Form Model**
+
+  - **Peran:** Dalam `Reactive Forms`, struktur formulir Anda didefinisikan sebagai model data Dart, bukan secara langsung di _widget tree_. Ini memisahkan logika formulir dari UI.
+  - **Detail:** Model formulir ini terdiri dari `FormGroup` dan `FormControl`. `FormGroup` adalah objek yang menampung koleksi `FormControl` dan/atau `FormGroup` lainnya. `FormControl` merepresentasikan _state_ dari satu _input field_.
+  - **Pendekatan Deklaratif vs Reaktif:**
+    - **Deklaratif (Form/FormBuilder):** Anda membangun UI dan memasang validator serta `onSaved` langsung ke _widget_.
+    - **Reaktif (Reactive Forms):** Anda mendefinisikan struktur formulir (model) secara terpisah. UI kemudian "mengikat" dirinya ke model ini. Perubahan pada UI memperbarui model, dan perubahan pada model memperbarui UI.
+
+  <!-- end list -->
+
+  ```dart
+  // Import package
+  import 'package:flutter/material.dart';
+  import 'package:reactive_forms/reactive_forms.dart';
+
+  // Definisikan FormGroup di StatefulWidget Anda
+  class MyReactiveFormPage extends StatefulWidget {
+    const MyReactiveFormPage({super.key});
+
+    @override
+    State<MyReactiveFormPage> createState() => _MyReactiveFormPageState();
+  }
+
+  class _MyReactiveFormPageState extends State<MyReactiveFormPage> {
+    // Deklarasikan FormGroup untuk formulir Anda
+    late final FormGroup form;
+
+    @override
+    void initState() {
+      super.initState();
+      // Inisialisasi FormGroup dengan FormControl-nya
+      form = FormGroup({
+        'username': FormControl<String>(
+          value: '', // Nilai awal
+          validators: [Validators.required, Validators.minLength(3)],
+        ),
+        'email': FormControl<String>(
+          value: '',
+          validators: [Validators.required, Validators.email],
+        ),
+        'password': FormControl<String>(
+          value: '',
+          validators: [Validators.required, Validators.minLength(6)],
+        ),
+        'confirmPassword': FormControl<String>(
+          value: '',
+          validators: [Validators.required],
+        ),
+      }, validators: [
+        // Contoh validator lintas field di FormGroup level
+        Validators.mustMatch('password', 'confirmPassword', true),
+      ]);
+    }
+
+    @override
+    void dispose() {
+      form.dispose(); // Penting: Buang FormGroup saat widget dibuang
+      super.dispose();
+    }
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Reactive Forms Demo')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ReactiveForm(
+            formGroup: form, // Ikat UI ke model form
+            child: Column(
+              children: <Widget>[
+                // Menggunakan ReactiveTextField untuk mengikat ke FormControl 'username'
+                ReactiveTextField<String>(
+                  formControlName: 'username',
+                  decoration: const InputDecoration(labelText: 'Nama Pengguna'),
+                  validationMessages: {
+                    ValidationMessage.required: (error) => 'Nama pengguna harus diisi',
+                    ValidationMessage.minLength: (error) => 'Minimal 3 karakter',
+                  },
+                ),
+                const SizedBox(height: 16),
+                ReactiveTextField<String>(
+                  formControlName: 'email',
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  validationMessages: {
+                    ValidationMessage.required: (error) => 'Email harus diisi',
+                    ValidationMessage.email: (error) => 'Format email tidak valid',
+                  },
+                ),
+                const SizedBox(height: 16),
+                ReactiveTextField<String>(
+                  formControlName: 'password',
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  validationMessages: {
+                    ValidationMessage.required: (error) => 'Password harus diisi',
+                    ValidationMessage.minLength: (error) => 'Minimal 6 karakter',
+                  },
+                ),
+                const SizedBox(height: 16),
+                ReactiveTextField<String>(
+                  formControlName: 'confirmPassword',
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Konfirmasi Password'),
+                  validationMessages: {
+                    ValidationMessage.required: (error) => 'Konfirmasi password harus diisi',
+                    ValidationMessage.mustMatch: (error) => 'Password tidak cocok',
+                  },
+                ),
+                const SizedBox(height: 24),
+                ReactiveFormConsumer( // Rebuild hanya sebagian kecil saat form berubah
+                  builder: (context, form, child) {
+                    return ElevatedButton(
+                      onPressed: form.valid ? () => _submitForm(form) : null, // Tombol aktif jika form valid
+                      child: const Text('Submit'),
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    form.reset(); // Reset form
+                  },
+                  child: const Text('Reset'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    void _submitForm(FormGroup form) {
+      if (form.valid) {
+        print('Form valid!');
+        print(form.value); // Ambil semua nilai form
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Form submitted! Values: ${form.value}')),
+        );
+        // form.reset(); // Reset setelah submit
+      } else {
+        print('Form not valid!');
+        form.markAllAsTouched(); // Tandai semua field sebagai touched untuk menampilkan error
+      }
+    }
+  }
+  ```
+
+- **2. Form Control dan Form Group**
+
+  - **`FormControl<T>`:**
+
+    - **Peran:** Merepresentasikan satu _input field_. Ini menyimpan nilai _field_, _status validasi_ (valid/invalid, touched/untouched, dirty/pristine), dan _error messages_ untuk _field_ tersebut.
+    - **Detail:** Anda dapat mengakses nilai (`.value`), mengubah nilai (`.updateValue()`, `.patchValue()`), menambahkan/menghapus validator (`.setValidators()`, `.addValidators()`), dan memicu validasi (`.markAsTouched()`, `.markAllAsTouched()`).
+    - **Contoh Inisialisasi:** `FormControl<String>(value: 'initial', validators: [Validators.required])`
+
+  - **`FormGroup`:**
+
+    - **Peran:** Mengelompokkan koleksi `FormControl` dan/atau `FormGroup` lainnya. `FormGroup` juga memiliki nilai dan _status validasi_ sendiri, yang merupakan agregasi dari semua kontrol di dalamnya.
+    - **Detail:** Anda mengakses `FormControl` atau `FormGroup` anaknya menggunakan kurung siku (misalnya `form.control('username')`) atau `dot notation` jika menggunakan _code generation_. `FormGroup` memungkinkan validasi lintas _field_ pada level grup.
+    - **Contoh Inisialisasi:**
+      ```dart
+      FormGroup({
+        'personalInfo': FormGroup({
+          'firstName': FormControl<String>(validators: [Validators.required]),
+          'lastName': FormControl<String>(),
+        }),
+        'contactInfo': FormGroup({
+          'email': FormControl<String>(validators: [Validators.email]),
+          'phone': FormControl<String>(),
+        }),
+      });
+      ```
+
+  - **`FormArray<T>`:**
+
+    - **Peran:** Sebuah tipe `FormGroup` khusus yang mengelola _array_ dari `FormControl` atau `FormGroup`. Ini sangat berguna untuk skenario di mana Anda memiliki daftar _input_ yang dapat ditambahkan atau dihapus secara dinamis, seperti daftar _item_ dalam pesanan.
+    - **Detail:** Mendukung penambahan (`.add()`), penghapusan (`.removeAt()`), dan akses ke elemen (`.at(index)`).
+
+- **Visualisasi Reactive Form Model:**
+
+  ```
+  ┌───────────────────────────────────┐
+  │          FormGroup (Root)         │
+  │ (e.g., UserRegistrationForm)      │
+  └────────────┬────────────────────┬─┘      
+               │                    │       
+     ┌─────────▼─────────┐    ┌─────▼─────────────┐
+     │   FormControl     │    │   FormGroup       │
+     │ (e.g., 'username')│    │ (e.g., 'address') │
+     └───────────────────┘    └─────────┬─────────┘
+                                        │
+                              ┌─────────▼─────────┐
+                              │   FormControl     │
+                              │ (e.g., 'street')  │
+                              └───────────────────┘
+                              ┌───────────────────┐
+                              │   FormControl     │
+                              │ (e.g., 'city')    │
+                              └───────────────────┘
+
+  ┌───────────────────────────────────┐
+  │          FormGroup (Root)         │
+  │ (e.g., OrderForm)                 │
+  └────────────┬────────────────────┬─┘
+               │                    │
+     ┌─────────▼─────────┐    ┌─────▼─────────────┐
+     │   FormControl     │    │   FormArray       │
+     │ (e.g., 'orderId') │    │ (e.g., 'items')   │
+     └───────────────────┘    └─────────┬─────────┘
+                                        │
+                              ┌─────────▼─────────┐
+                              │   FormGroup       │  (Item 1)
+                              │(e.g., ProductForm)│
+                              └───────────────────┘
+                              ┌───────────────────┐
+                              │   FormGroup       │  (Item 2)
+                              │(e.g., ProductForm)│
+                              └───────────────────┘
+                              (... dynamic items)
+  ```
+
+  **Penjelasan Visual:**
+  Diagram ini menunjukkan hierarki `FormGroup`, `FormControl`, dan `FormArray`. `FormGroup` dapat berisi `FormControl` dan `FormGroup` lainnya, menciptakan struktur data yang kompleks. `FormArray` memungkinkan manajemen daftar elemen formulir yang dinamis.
+
+- **3. Reactive Validators**
+
+  - **Peran:** `Reactive Forms` menyediakan set validator yang kaya dan dapat digunakan secara sinkron maupun asinkron. Validator ini diterapkan langsung pada `FormControl` atau `FormGroup` di model formulir Anda.
+
+  - **Detail:** Validator adalah fungsi yang mengembalikan `Map<String, dynamic>?` jika tidak valid (di mana kunci adalah nama kesalahan validasi, misalnya `required`, `email`) atau `null` jika valid.
+
+  - **Contoh Validator Bawaan (`Validators` class):**
+
+    - `Validators.required`: Memastikan nilai tidak kosong.
+    - `Validators.email`: Memvalidasi format email.
+    - `Validators.minLength(min)`: Panjang string minimal.
+    - `Validators.maxLength(max)`: Panjang string maksimal.
+    - `Validators.pattern(regex)`: Memvalidasi dengan _regular expression_.
+    - `Validators.min(value)`: Nilai numerik minimal.
+    - `Validators.max(value)`: Nilai numerik maksimal.
+    - `Validators.mustMatch(controlName1, controlName2, [hide=false])`: Validasi lintas _field_ untuk kecocokan (misalnya, password konfirmasi). Ini adalah validator `FormGroup`.
+    - `Validators.compose(validators)`: Menggabungkan beberapa validator.
+
+  - **Custom Validator Functions:** Anda dapat membuat validator kustom sendiri:
+
+    ```dart
+    // Contoh validator kustom: memastikan nilai adalah bilangan genap
+    Map<String, dynamic>? evenNumberValidator(AbstractControl<dynamic> control) {
+      if (control.value == null) {
+        return null; // Tidak validasi jika kosong (gunakan Validators.required jika perlu)
+      }
+      final int? value = int.tryParse(control.value.toString());
+      if (value == null || value % 2 != 0) {
+        return {'evenNumber': true}; // Mengembalikan Map error
+      }
+      return null; // Valid
+    }
+
+    // Penggunaan:
+    // 'myNumber': FormControl<String>(
+    //   value: '10',
+    //   validators: [Validators.required, evenNumberValidator],
+    // ),
+    ```
+
+  - **Async Validation:**
+
+    - **Peran:** Menangani validasi yang memerlukan operasi asinkron (misalnya, memanggil API untuk memeriksa ketersediaan nama pengguna).
+    - **Detail:** Validator asinkron adalah fungsi yang mengembalikan `Future<Map<String, dynamic>?>`. Ini ditambahkan ke `asyncValidators` pada `FormControl`.
+    - **Perilaku:** Formulir akan berada dalam _state_ `pending` selama validasi asinkron berlangsung.
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh validator asinkron: memeriksa ketersediaan username di server
+    Future<Map<String, dynamic>?> uniqueUsernameValidator(AbstractControl<dynamic> control) async {
+      if (control.value == null || control.value.toString().isEmpty) {
+        return null; // Biarkan validator 'required' menangani ini
+      }
+      await Future.delayed(const Duration(seconds: 1)); // Simulasi API call
+      if (control.value == 'admin') {
+        return {'uniqueUsername': true}; // Nama pengguna 'admin' tidak tersedia
+      }
+      return null;
+    }
+
+    // Penggunaan:
+    // 'username': FormControl<String>(
+    //   value: '',
+    //   validators: [Validators.required],
+    //   asyncValidators: [uniqueUsernameValidator],
+    // ),
+    ```
+
+    - Saat `username` berubah, validator asinkron akan dijalankan. Selama 1 detik simulasi, _control_ `username` akan memiliki _status_ `pending`.
+
+- **4. Dynamic Forms dengan Arrays**
+
+  - **Peran:** `Reactive Forms` sangat unggul dalam menangani formulir dinamis, terutama dengan `FormArray`. Anda dapat dengan mudah menambahkan atau menghapus grup _field_ secara _runtime_.
+  - **Detail:** Gunakan `FormArray` untuk mengelola daftar `FormControl` atau `FormGroup`. Di UI, Anda dapat menggunakan `ReactiveFormArray` atau membangun secara manual dengan `ListView.builder` dan `ReactiveTextField`.
+  - **Contoh:** Mengelola daftar email atau daftar _skill_.
+
+  <!-- end list -->
+
+  ```dart
+  // Dalam _MyReactiveFormPageState initState:
+  form = FormGroup({
+    'emails': FormArray<String>([ // FormArray of Strings (simple emails)
+      FormControl<String>(value: 'email1@example.com', validators: [Validators.email]),
+      FormControl<String>(value: 'email2@example.com', validators: [Validators.email]),
+    ], validators: [Validators.minLength(1)]), // Minimal 1 email
+
+    // Contoh FormArray of FormGroups (misalnya, daftar pengalaman kerja)
+    'experiences': FormArray<FormGroup>([
+      _buildExperienceFormGroup(), // Metode helper untuk membuat FormGroup pengalaman
+    ]),
+  });
+
+  // Metode helper untuk membuat FormGroup pengalaman
+  FormGroup _buildExperienceFormGroup() {
+    return FormGroup({
+      'company': FormControl<String>(validators: [Validators.required]),
+      'role': FormControl<String>(validators: [Validators.required]),
+      'years': FormControl<int>(validators: [Validators.min(1)]),
+    });
+  }
+
+  // Di dalam build method, untuk menampilkan FormArray:
+  Column(
+    children: [
+      // Daftar Email
+      ReactiveFormArray<String>(
+        formArrayName: 'emails',
+        builder: (context, formArray, child) {
+          return Column(
+            children: [
+              ...formArray.controls.asMap().entries.map((entry) {
+                int index = entry.key;
+                AbstractControl<dynamic> control = entry.value;
+                return Row(
+                  children: [
+                    Expanded(
+                      child: ReactiveTextField<String>(
+                        formControlName: 'emails[${index}]', // Akses elemen FormArray
+                        decoration: InputDecoration(
+                          labelText: 'Email ${index + 1}',
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              formArray.removeAt(index);
+                            },
+                          ),
+                        ),
+                        validationMessages: {
+                          ValidationMessage.email: (error) => 'Format email tidak valid',
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+              ElevatedButton(
+                onPressed: () {
+                  formArray.add(FormControl<String>(validators: [Validators.email]));
+                },
+                child: const Text('Tambah Email'),
+              ),
+            ],
+          );
+        },
+      ),
+      const SizedBox(height: 16),
+
+      // Daftar Pengalaman (lebih kompleks)
+      ReactiveFormArray<FormGroup>(
+        formArrayName: 'experiences',
+        builder: (context, formArray, child) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Pengalaman Kerja', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              ...formArray.controls.asMap().entries.map((entry) {
+                int index = entry.key;
+                FormGroup experienceFormGroup = entry.value as FormGroup;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          ReactiveTextField<String>(
+                            formControl: experienceFormGroup.control('company') as FormControl<String>,
+                            decoration: InputDecoration(
+                              labelText: 'Perusahaan ${index + 1}',
+                            ),
+                            validationMessages: {
+                              ValidationMessage.required: (error) => 'Nama perusahaan harus diisi',
+                            },
+                          ),
+                          ReactiveTextField<String>(
+                            formControl: experienceFormGroup.control('role') as FormControl<String>,
+                            decoration: const InputDecoration(labelText: 'Jabatan'),
+                            validationMessages: {
+                              ValidationMessage.required: (error) => 'Jabatan harus diisi',
+                            },
+                          ),
+                          ReactiveTextField<int>(
+                            formControl: experienceFormGroup.control('years') as FormControl<int>,
+                            decoration: const InputDecoration(labelText: 'Tahun Pengalaman'),
+                            keyboardType: TextInputType.number,
+                            validationMessages: {
+                              ValidationMessage.min: (error) => 'Minimal 1 tahun',
+                            },
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                formArray.removeAt(index);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+              ElevatedButton(
+                onPressed: () {
+                  formArray.add(_buildExperienceFormGroup());
+                },
+                child: const Text('Tambah Pengalaman'),
+              ),
+            ],
+          );
+        },
+      ),
+    ],
+  );
+  ```
+
+- **5. Form State Streaming**
+
+  - **Peran:** Salah satu kekuatan utama `Reactive Forms` adalah kemampuannya untuk mengekspos perubahan _state_ formulir sebagai _stream_. Ini memungkinkan Anda untuk mendengarkan perubahan pada _field_ individual atau seluruh formulir dan bereaksi secara reaktif, tanpa perlu menggunakan `setState` berlebihan.
+  - **Detail:** Setiap `FormControl`, `FormGroup`, dan `FormArray` memiliki properti `valueChanges` dan `statusChanges` yang merupakan _stream_.
+    - `valueChanges`: Mengeluarkan nilai terbaru setiap kali ada perubahan pada kontrol atau formulir.
+    - `statusChanges`: Mengeluarkan _status validasi_ terbaru (`VALID`, `INVALID`, `PENDING`, `DISABLED`).
+  - **Penggunaan:** Anda dapat menggunakan `StreamBuilder` atau mendengarkan _stream_ secara langsung di `initState` (dengan langganan yang dibuang di `dispose`). Ini sangat berguna untuk:
+    - Mengaktifkan/menonaktifkan tombol submit secara dinamis.
+    - Menampilkan pesan _loading_ saat validasi asinkron.
+    - Memicu logika bisnis lain saat nilai tertentu berubah.
+  - **Contoh:** Tombol submit yang hanya aktif ketika formulir valid (seperti di contoh kode lengkap di atas dengan `ReactiveFormConsumer`).
+    ```dart
+    // Menggunakan StreamBuilder untuk menampilkan status validitas formulir secara real-time
+    StreamBuilder<ControlStatus>(
+      stream: form.statusChanged,
+      builder: (context, snapshot) {
+        final isValid = snapshot.data == ControlStatus.valid;
+        return Text(
+          'Status Formulir: ${isValid ? "Valid" : "Invalid"}',
+          style: TextStyle(color: isValid ? Colors.green : Colors.red),
+        );
+      },
+    ),
+    // Atau mendengarkan perubahan nilai specific control:
+    // StreamBuilder<String?>(
+    //   stream: form.control('username').valueChanges,
+    //   builder: (context, snapshot) {
+    //     if (snapshot.hasData) {
+    //       return Text('Username berubah menjadi: ${snapshot.data}');
+    //     }
+    //     return const Text('Belum ada perubahan username');
+    //   },
+    // ),
+    ```
+  - `ReactiveFormConsumer` adalah _widget_ praktis dari _package_ ini yang menyediakan `formGroup` sebagai parameter _builder_, dan hanya merekonstruksi ketika _status_ atau nilai formulir berubah, memberikan optimisasi performa.
+
+- **6. Code Generation untuk Forms (Reactive Forms Generator)**
+
+  - **Peran:** Untuk mengurangi _boilerplate_ yang terkait dengan pendefinisian `FormGroup` dan `FormControl` secara manual, `reactive_forms` menyediakan _package_ `reactive_forms_generator`. Ini memungkinkan Anda mendefinisikan model formulir Anda sebagai kelas Dart biasa dengan anotasi, dan kemudian menghasilkan kode formulir secara otomatis.
+  - **Detail:** Anda perlu menambahkan `reactive_forms_generator`, `build_runner`, dan `freezed_annotation` (opsional, untuk _utility_ model) ke `pubspec.yaml` Anda.
+  - **`pubspec.yaml`:**
+
+    ```yaml
+    dependencies:
+      reactive_forms: ^latest_version
+      json_annotation: ^latest_version # Untuk serialisasi jika perlu
+
+    dev_dependencies:
+      build_runner: ^latest_version
+      reactive_forms_generator: ^latest_version
+      json_serializable: ^latest_version # Untuk serialisasi jika perlu
+    ```
+
+  - **Proses:**
+    1.  Definisikan kelas model data dengan anotasi `@FormGroup()`, `@FormControl()`, `@FormArray()`.
+    2.  Jalankan `flutter pub run build_runner build --delete-conflicting-outputs`.
+    3.  Kode yang dihasilkan (misalnya `*.g.dart` dan `*.form.dart`) akan menyediakan `FormGroup` siap pakai dan _extension_ untuk memudahkan akses _type-safe_.
+  - **Contoh (Konseptual dengan generator):**
+
+  <!-- end list -->
+
+  ```dart
+  // user_data.dart
+  import 'package:reactive_forms/reactive_forms.dart';
+  import 'package:reactive_forms_generator/reactive_forms_generator.dart';
+
+  part 'user_data.form.dart'; // File yang akan di-generate
+
+  @ReactiveFormAnnotation()
+  class UserData {
+    @FormControlAnnotation(validators: [Validators.required, Validators.minLength(3)])
+    final String? username;
+
+    @FormControlAnnotation(validators: [Validators.required, Validators.email])
+    final String? email;
+
+    @FormControlAnnotation(validators: [Validators.required, Validators.minLength(6)])
+    final String? password;
+
+    @FormControlAnnotation<String>() // @FormControlAnnotation tanpa validator untuk konfirmasi
+    final String? confirmPassword;
+
+    // Contoh nested form group
+    @FormGroupAnnotation()
+    final Address? address;
+
+    // Contoh form array
+    @FormArrayAnnotation<String>(validators: [Validators.minLength(1)])
+    final List<String> hobbies;
+
+    UserData({
+      this.username,
+      this.email,
+      this.password,
+      this.confirmPassword,
+      this.address,
+      List<String>? hobbies,
+    }) : hobbies = hobbies ?? [];
+  }
+
+  @ReactiveFormAnnotation()
+  class Address {
+    @FormControlAnnotation(validators: [Validators.required])
+    final String? street;
+    @FormControlAnnotation(validators: [Validators.required])
+    final String? city;
+
+    Address({this.street, this.city});
+  }
+
+  // Setelah build_runner dijalankan, Anda akan memiliki:
+  // user_data.form.dart yang berisi UserDataForm, ReactiveUserDataForm, dll.
+  // Kemudian di UI:
+  // ReactiveUserDataForm(
+  //   form: UserDataForm(
+  //     username: '',
+  //     email: '',
+  //     password: '',
+  //     confirmPassword: '',
+  //     address: Address(street: '', city: ''),
+  //     hobbies: ['coding'],
+  //   ).form, // Mengambil FormGroup yang dihasilkan
+  //   builder: (context, form, child) {
+  //     return Column(
+  //       children: [
+  //         ReactiveTextField(
+  //           formControl: form.usernameControl, // Akses type-safe control
+  //           decoration: const InputDecoration(labelText: 'Username'),
+  //         ),
+  //         // ... dan field lainnya
+  //         ReactiveTextField(
+  //           formControl: form.address.streetControl, // Akses nested control
+  //         ),
+  //         ReactiveFormArray(
+  //           formArray: form.hobbiesControl,
+  //           // ...
+  //         )
+  //       ],
+  //     );
+  //   },
+  // );
+  ```
+
+  - **Manfaat:** Mengurangi _boilerplate_, _type-safety_ yang lebih baik, kemudahan dalam manajemen formulir yang sangat kompleks.
+
+- **Terminologi Esensial:**
+
+  - **Reactive Forms:** Pendekatan berbasis model untuk manajemen formulir.
+  - **`FormGroup`:** Objek yang mengelompokkan `FormControl` atau `FormGroup` lainnya.
+  - **`FormControl`:** Merepresentasikan satu _input field_ dalam model formulir.
+  - **`FormArray`:** `FormGroup` khusus untuk mengelola daftar `FormControl` atau `FormGroup` secara dinamis.
+  - **`ReactiveForm`:** _Widget_ utama yang mengikat UI ke `FormGroup` model.
+  - **`ReactiveTextField` (dll.):** _Widget_ input yang disediakan oleh `reactive_forms` untuk mengikat ke `FormControl` berdasarkan `formControlName` atau `formControl` langsung.
+  - **`Validators`:** Kelas yang menyediakan validator bawaan untuk `Reactive Forms`.
+  - **`asyncValidators`:** Properti pada `FormControl` untuk validator asinkron.
+  - **`valueChanges` / `statusChanges`:** Properti _stream_ pada kontrol formulir untuk mendengarkan perubahan _state_.
+  - **`reactive_forms_generator`:** _Package_ untuk menghasilkan kode formulir secara otomatis dari model Dart.
+
+- **Hubungan dengan Bagian Lain:**
+
+  - **State Management:** `Reactive Forms` sendiri adalah bentuk manajemen _state_ untuk formulir. Integrasinya dengan _stream_ membuatnya cocok untuk arsitektur berbasis _stream_ atau _reactive programming_.
+  - **Validasi:** Menyediakan kerangka kerja yang kuat untuk validasi sinkron, asinkron, dan lintas _field_.
+  - **`build_runner`:** Digunakan oleh `reactive_forms_generator` untuk proses _code generation_, sama seperti yang digunakan oleh `Auto Route`.
+
+- **Tips & Best Practices (untuk peserta):**
+
+  - **Pahami Model:** Fokus pada pendefinisian model formulir Anda (`FormGroup`, `FormControl`, `FormArray`) terlebih dahulu sebelum membangun UI.
+  - **Gunakan Validator yang Tepat:** Manfaatkan validator bawaan `Validators` dan buat validator kustom jika diperlukan.
+  - **Untuk Formulir Kompleks/Dinamis:** Pertimbangkan `Reactive Forms` sebagai pilihan utama, terutama jika Anda membutuhkan validasi asinkron atau manipulasi _state_ programatis yang ekstensif.
+  - **Pertimbangkan Generator:** Untuk formulir yang sangat besar atau jika Anda mengutamakan _type-safety_, `reactive_forms_generator` sangat direkomendasikan.
+  - **Dispose Form:** Selalu panggil `.dispose()` pada `FormGroup` Anda di `dispose()` _method_ dari `StatefulWidget` untuk mencegah _memory leak_.
+
+- **Potensi Kesalahan Umum & Solusi:**
+
+  - **Kesalahan:** `FormControl` atau `FormGroup` tidak ditemukan.
+    - **Solusi:** Periksa `formControlName` di `ReactiveTextField` (atau _widget_ Reactive lainnya). Pastikan `formControlName` cocok dengan kunci yang digunakan saat mendefinisikan `FormGroup` atau `FormArray`.
+  - **Kesalahan:** Error terkait _type safety_ saat mengakses nilai.
+    - **Solusi:** Pastikan Anda mendefinisikan `FormControl` dengan tipe yang benar (misalnya `FormControl<String>`, `FormControl<int>`). Ketika mengambil nilai, pastikan Anda melakukan _casting_ yang tepat jika perlu, meskipun generator akan sangat membantu.
+  - **Kesalahan:** Validasi asinkron tidak berfungsi atau formulir tetap `pending`.
+    - **Solusi:** Pastikan Anda menempatkan validator asinkron di properti `asyncValidators` pada `FormControl` (bukan `validators`). Pastikan fungsi validator asinkron mengembalikan `Future<Map<String, dynamic>?>` dan menyelesaikan _future_ tersebut.
+
+---
+
+Salesai pembahasan mendalam tentang **Reactive Forms**, termasuk modelnya, kontrol, validator, formulir dinamis, _state streaming_, dan _code generation_.
+
+### **7.3 Input Formatters & Masks**
+
+- **Peran:** `Input Formatters` dan _masks_ adalah teknik yang digunakan untuk mengontrol dan memformat teks yang dimasukkan pengguna ke dalam _input field_ secara _real-time_. Ini memastikan bahwa data yang dimasukkan konsisten dengan format yang diharapkan, meningkatkan pengalaman pengguna, dan meminimalkan kesalahan validasi.
+
+---
+
+###### **Input Formatters & Masks**
+
+- **1. Text Input Formatting**
+
+  - **Peran:** Mengimplementasikan batasan atau transformasi pada teks saat pengguna mengetik, memastikan format data yang valid sejak awal.
+
+  - **Detail:** Ini dicapai menggunakan kelas `TextInputFormatter` yang merupakan bagian dari `flutter/services.dart`. Anda dapat melampirkannya ke `TextField` atau `TextFormField` melalui properti `inputFormatters`.
+
+  - **Built-in Input Formatters:**
+
+    - Flutter menyediakan beberapa `TextInputFormatter` bawaan yang berguna untuk kasus umum:
+
+      - **`FilteringTextInputFormatter.digitsOnly`:** Hanya mengizinkan masukan angka (0-9).
+      - **`FilteringTextInputFormatter.allow(RegExp regex)`:** Hanya mengizinkan karakter yang cocok dengan _regular expression_ yang diberikan.
+      - **`FilteringTextInputFormatter.deny(RegExp regex)`:** Melarang karakter yang cocok dengan _regular expression_ yang diberikan.
+      - **`LengthLimitingTextInputFormatter(maxLength)`:** Membatasi panjang teks hingga jumlah karakter tertentu.
+      - **`UpperCaseTextFormatter` (Contoh Kustom):** Mengubah semua teks menjadi huruf besar secara _real-time_. (Tidak ada bawaan langsung, perlu kustomisasi)
+
+    - **Contoh Kode:**
+
+    <!-- end list -->
+
+    ```dart
+    import 'package:flutter/material.dart';
+    import 'package:flutter/services.dart'; // Penting untuk TextInputFormatter
+
+    class InputFormatterDemo extends StatefulWidget {
+      const InputFormatterDemo({super.key});
+
+      @override
+      State<InputFormatterDemo> createState() => _InputFormatterDemoState();
+    }
+
+    class _InputFormatterDemoState extends State<InputFormatterDemo> {
+      final TextEditingController _phoneNumberController = TextEditingController();
+      final TextEditingController _amountController = TextEditingController();
+      final TextEditingController _dateController = TextEditingController();
+
+      @override
+      void dispose() {
+        _phoneNumberController.dispose();
+        _amountController.dispose();
+        _dateController.dispose();
+        super.dispose();
+      }
+
+      @override
+      Widget build(BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Input Formatter & Mask Demo')),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView(
+              children: [
+                // Hanya Angka
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Nomor Telepon (Hanya Angka)'),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly, // Hanya izinkan angka
+                    LengthLimitingTextInputFormatter(15), // Batasi panjang
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Hanya Huruf (a-z, A-Z)
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Nama (Hanya Huruf)'),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')), // Hanya izinkan huruf dan spasi
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Huruf Besar Otomatis (Membutuhkan Custom Formatter)
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'Kode Produk (Uppercase Otomatis)'),
+                  inputFormatters: [
+                    UpperCaseTextFormatter(), // Custom formatter
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+
+    // Custom Formatter: Mengubah semua teks menjadi huruf besar
+    class UpperCaseTextFormatter extends TextInputFormatter {
+      @override
+      TextEditingValue formatEditUpdate(
+          TextEditingValue oldValue, TextEditingValue newValue) {
+        return TextEditingValue(
+          text: newValue.text.toUpperCase(),
+          selection: newValue.selection,
+        );
+      }
+    }
+    ```
+
+  - **Custom Input Formatter Creation:**
+
+    - **Peran:** Membuat _formatter_ sendiri untuk logika pemformatan yang lebih kompleks yang tidak disediakan oleh _formatter_ bawaan.
+    - **Detail:** Anda membuat kelas baru yang memperluas `TextInputFormatter` dan mengimplementasikan metode `formatEditUpdate`. Metode ini menerima `oldValue` dan `newValue` (objek `TextEditingValue`) dan harus mengembalikan `TextEditingValue` baru yang diformat.
+    - **Konsep `TextEditingValue`:** Ini berisi teks dan informasi _selection_ (posisi kursor). Penting untuk mempertahankan posisi kursor yang benar setelah pemformatan.
+
+  - **Phone Number Formatting:**
+
+    - **Peran:** Memformat nomor telepon menjadi pola yang mudah dibaca (misalnya, `(XXX) XXX-XXXX` atau `XXX-XXXX-XXXX`).
+    - **Detail:** Ini biasanya melibatkan `FilteringTextInputFormatter.digitsOnly` dan kemudian `CustomTextInputFormatter` yang menambahkan spasi, tanda kurung, atau tanda hubung pada posisi tertentu.
+    - **Contoh Kustom (`PhoneNumberFormatter`):**
+
+    <!-- end list -->
+
+    ```dart
+    // Contoh PhoneNumberFormatter untuk format +XX XXX-XXXX-XXXX
+    class PhoneNumberFormatter extends TextInputFormatter {
+      @override
+      TextEditingValue formatEditUpdate(
+          TextEditingValue oldValue, TextEditingValue newValue) {
+        final text = newValue.text;
+        if (text.isEmpty) {
+          return newValue;
+        }
+
+        final newText = StringBuffer();
+        int offset = 0;
+
+        // Pastikan hanya angka
+        final digitsOnly = text.replaceAll(RegExp(r'\D'), '');
+
+        if (digitsOnly.isNotEmpty) {
+          // Contoh format +XX XXX-XXXX-XXXX (untuk 13 digit)
+          if (digitsOnly.length > 0) newText.write('+');
+          if (digitsOnly.length > 0) newText.write(digitsOnly.substring(0, digitsOnly.length.clamp(0, 2))); // Prefix negara
+          if (digitsOnly.length > 2) newText.write(' ');
+          if (digitsOnly.length > 2) newText.write(digitsOnly.substring(2, digitsOnly.length.clamp(2, 5))); // 3 digit awal
+          if (digitsOnly.length > 5) newText.write('-');
+          if (digitsOnly.length > 5) newText.write(digitsOnly.substring(5, digitsOnly.length.clamp(5, 9))); // 4 digit berikutnya
+          if (digitsOnly.length > 9) newText.write('-');
+          if (digitsOnly.length > 9) newText.write(digitsOnly.substring(9, digitsOnly.length.clamp(9, 13))); // 4 digit terakhir
+        }
+
+
+        offset = newValue.selection.end + (newText.length - text.length);
+
+        return TextEditingValue(
+          text: newText.toString(),
+          selection: TextSelection.collapsed(offset: offset.clamp(0, newText.length)),
+        );
+      }
+    }
+    // Penggunaan:
+    // TextFormField(
+    //   decoration: const InputDecoration(labelText: 'Nomor Telepon (+XX XXX-XXXX-XXXX)'),
+    //   keyboardType: TextInputType.phone,
+    //   inputFormatters: [
+    //     PhoneNumberFormatter(),
+    //     LengthLimitingTextInputFormatter(18), // Estimasi panjang setelah format
+    //   ],
+    // ),
+    ```
+
+    - **Catatan:** Pemformatan nomor telepon bisa sangat kompleks karena variasi format global. Untuk solusi yang lebih robust, pertimbangkan _package_ pihak ketiga seperti `mask_text_input_formatter`.
+
+  - **Currency Formatting:**
+
+    - **Peran:** Memformat masukan numerik menjadi format mata uang (misalnya, `Rp 1.000.000,00` atau `$1,000.00`).
+    - **Detail:** Ini melibatkan kombinasi `FilteringTextInputFormatter.digitsOnly` (atau `allow` untuk titik/koma desimal) dan `CustomTextInputFormatter` yang menambahkan pemisah ribuan dan simbol mata uang. Anda juga bisa menggunakan `NumberFormat` dari _package_ `intl`.
+    - **Contoh Kustom (`CurrencyInputFormatter`):**
+
+    <!-- end list -->
+
+    ```dart
+    import 'package:intl/intl.dart'; // Tambahkan intl: ^latest_version di pubspec.yaml
+
+    class CurrencyInputFormatter extends TextInputFormatter {
+      @override
+      TextEditingValue formatEditUpdate(
+          TextEditingValue oldValue, TextEditingValue newValue) {
+        if (newValue.text.isEmpty) {
+          return newValue;
+        }
+
+        // Hapus semua non-digit dan non-titik (untuk desimal)
+        String cleanedText = newValue.text.replaceAll(RegExp(r'[^\d.]'), '');
+
+        // Tangani titik desimal
+        List<String> parts = cleanedText.split('.');
+        String integerPart = parts[0];
+        String decimalPart = parts.length > 1 ? parts[1] : '';
+
+        // Format bagian integer dengan pemisah ribuan
+        final formatter = NumberFormat('#,##0', 'id_ID'); // Format Indonesia
+        String formattedIntegerPart = integerPart.isEmpty ? '' : formatter.format(int.parse(integerPart));
+
+        String formattedText = formattedIntegerPart;
+        if (parts.length > 1) {
+          formattedText += ',$decimalPart'; // Gunakan koma untuk desimal di ID
+        }
+
+        return TextEditingValue(
+          text: formattedText,
+          selection: TextSelection.collapsed(offset: formattedText.length),
+        );
+      }
+    }
+    // Penggunaan:
+    // TextFormField(
+    //   decoration: const InputDecoration(labelText: 'Jumlah Uang (Rp.)'),
+    //   keyboardType: TextInputType.number,
+    //   inputFormatters: [
+    //     CurrencyInputFormatter(),
+    //   ],
+    // ),
+    ```
+
+  - **Date Formatting:**
+
+    - **Peran:** Memandu pengguna untuk memasukkan tanggal dalam format tertentu (misalnya, `DD/MM/YYYY`).
+    - **Detail:** Mirip dengan nomor telepon, ini melibatkan `FilteringTextInputFormatter.digitsOnly` dan _custom formatter_ yang menambahkan pemisah ( `/` atau `-`) pada posisi yang benar.
+    - **Contoh Kustom (`DateInputFormatter`):**
+
+    <!-- end list -->
+
+    ```dart
+    class DateInputFormatter extends TextInputFormatter {
+      @override
+      TextEditingValue formatEditUpdate(
+          TextEditingValue oldValue, TextEditingValue newValue) {
+        final text = newValue.text;
+        if (text.isEmpty) {
+          return newValue;
+        }
+
+        final newText = StringBuffer();
+        final digitsOnly = text.replaceAll(RegExp(r'\D'), ''); // Hanya angka
+
+        if (digitsOnly.length >= 1) {
+          newText.write(digitsOnly.substring(0, digitsOnly.length.clamp(0, 2))); // DD
+        }
+        if (digitsOnly.length >= 3) {
+          newText.write('/');
+          newText.write(digitsOnly.substring(2, digitsOnly.length.clamp(2, 4))); // MM
+        }
+        if (digitsOnly.length >= 5) {
+          newText.write('/');
+          newText.write(digitsOnly.substring(4, digitsOnly.length.clamp(4, 8))); // YYYY
+        }
+
+        return TextEditingValue(
+          text: newText.toString(),
+          selection: TextSelection.collapsed(offset: newText.length),
+        );
+      }
+    }
+    // Penggunaan:
+    // TextFormField(
+    //   decoration: const InputDecoration(labelText: 'Tanggal (DD/MM/YYYY)'),
+    //   keyboardType: TextInputType.datetime,
+    //   inputFormatters: [
+    //     DateInputFormatter(),
+    //     LengthLimitingTextInputFormatter(10), // Max length "DD/MM/YYYY"
+    //   ],
+    // ),
+    ```
+
+- **2. Mask Text Input Formatter (`mask_text_input_formatter` package)**
+
+  - **Peran:** Untuk pemformatan input yang lebih canggih dan berbasis _mask_ (pola), seperti nomor kartu kredit, nomor telepon internasional, atau kode pos, _package_ `mask_text_input_formatter` sangat direkomendasikan. Ini menyediakan cara deklaratif untuk mendefinisikan _mask_.
+  - **Detail:**
+    1.  **Tambahkan Dependency:** `mask_text_input_formatter: ^latest_version` ke `pubspec.yaml`.
+    2.  **Inisialisasi:** Buat instance `MaskTextInputFormatter` dengan _mask_ dan _filter_ yang diinginkan.
+    3.  **Terapkan:** Masukkan objek _formatter_ ini ke properti `inputFormatters` pada `TextField` atau `TextFormField`.
+  - **Konsep Mask:**
+    - `##`: Digit (0-9)
+    - `AA`: Huruf (a-z, A-Z)
+    - `NN`: Huruf atau Digit
+    - `XX`: Karakter apa pun
+    - Karakter lain dalam _mask_ (seperti `-`, `(`, `)`, `/`, `     `) akan menjadi bagian literal dari _mask_.
+  - **Contoh Kode:**
+
+  <!-- end list -->
+
+  ```dart
+  import 'package:flutter/material.dart';
+  import 'package:flutter/services.dart';
+  import 'package:mask_text_input_formatter/mask_text_input_formatter.dart'; // Import package
+
+  class MaskInputFormatterDemo extends StatelessWidget {
+    MaskInputFormatterDemo({super.key});
+
+    // Masker untuk nomor telepon (+XX XXX-XXXX-XXXX)
+    final phoneMaskFormatter = MaskTextInputFormatter(
+      mask: '+## ###-####-####',
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+
+    // Masker untuk nomor kartu kredit (XXXX-XXXX-XXXX-XXXX)
+    final creditCardMaskFormatter = MaskTextInputFormatter(
+      mask: '####-####-####-####',
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+
+    // Masker untuk tanggal (DD/MM/YYYY)
+    final dateMaskFormatter = MaskTextInputFormatter(
+      mask: '##/##/####',
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Mask Input Formatter Demo')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ListView(
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Nomor Telepon (+XX XXX-XXXX-XXXX)'),
+                keyboardType: TextInputType.phone,
+                inputFormatters: [phoneMaskFormatter],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Nomor Kartu Kredit (XXXX-XXXX-XXXX-XXXX)'),
+                keyboardType: TextInputType.number,
+                inputFormatters: [creditCardMaskFormatter],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Tanggal Lahir (DD/MM/YYYY)'),
+                keyboardType: TextInputType.datetime,
+                inputFormatters: [dateMaskFormatter],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+  ```
+
+- **3. Advanced Input Handling**
+
+  - **Peran:** Melampaui pemformatan dasar untuk meningkatkan interaksi pengguna dengan _input field_ dan mengintegrasikan kemampuan input lainnya.
+
+  - **Keyboard Type Optimization:**
+
+    - **Peran:** Menampilkan jenis _keyboard_ yang paling sesuai untuk jenis masukan yang diharapkan, membuat _input_ lebih cepat dan akurat bagi pengguna.
+    - **Detail:** Properti `keyboardType` pada `TextField` atau `TextFormField`.
+    - **Contoh:**
+      - `TextInputType.text`: _Keyboard_ standar.
+      - `TextInputType.number`: Hanya angka.
+      - `TextInputType.emailAddress`: _Keyboard_ dengan `@` dan `.` yang mudah diakses.
+      - `TextInputType.phone`: _Keyboard_ numerik dengan simbol telepon.
+      - `TextInputType.datetime`: _Keyboard_ yang cocok untuk input tanggal/waktu.
+      - `TextInputType.url`: _Keyboard_ dengan `/` dan `.` yang mudah diakses.
+
+  - **Text Input Actions:**
+
+    - **Peran:** Mengubah tombol "Enter" pada _keyboard_ menjadi aksi yang lebih relevan untuk konteks _input_, seperti "Next", "Done", "Send", "Search".
+    - **Detail:** Properti `textInputAction` pada `TextField` atau `TextFormField`. Anda dapat merespons aksi ini menggunakan _callback_ `onFieldSubmitted`.
+    - **Contoh:**
+      - `TextInputAction.next`: Pindah _focus_ ke _field_ berikutnya.
+      - `TextInputAction.done`: Selesaikan _input_, seringkali menutup _keyboard_.
+      - `TextInputAction.send`: Untuk mengirim pesan atau data.
+      - `TextInputAction.search`: Untuk memulai pencarian.
+      - `TextInputAction.go`: Untuk menavigasi.
+    - **Implementasi:**
+
+    <!-- end list -->
+
+    ```dart
+    TextFormField(
+      decoration: const InputDecoration(labelText: 'Nama Depan'),
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).nextFocus(); // Pindahkan focus ke field selanjutnya
+      },
+    ),
+    const SizedBox(height: 16),
+    TextFormField(
+      decoration: const InputDecoration(labelText: 'Pesan'),
+      textInputAction: TextInputAction.send,
+      onFieldSubmitted: (value) {
+        print('Pesan dikirim: $value');
+        FocusScope.of(context).unfocus(); // Tutup keyboard
+      },
+    ),
+    ```
+
+  - **Auto-correction dan Suggestions:**
+
+    - **Peran:** Mengontrol apakah _keyboard_ sistem harus memberikan koreksi otomatis atau saran kata saat pengguna mengetik.
+    - **Detail:** Properti `autocorrect` dan `enableSuggestions` pada `TextField`/`TextFormField`.
+    - **Contoh:**
+      - `autocorrect: false`: Nonaktifkan koreksi otomatis (berguna untuk nama pengguna atau kode).
+      - `enableSuggestions: false`: Nonaktifkan saran kata.
+      - `spellCheck: false`: Nonaktifkan pemeriksaan ejaan (tersedia di Flutter 3.0+).
+
+  - **Speech-to-text integration:**
+
+    - **Peran:** Memungkinkan pengguna memasukkan teks melalui suara, menggunakan API pengenalan suara perangkat.
+    - **Detail:** Flutter tidak memiliki _widget_ bawaan untuk ini. Anda perlu menggunakan _package_ pihak ketiga seperti `speech_to_text`.
+    - **Alur Umum:**
+      1.  Tambahkan _package_ `speech_to_text` ke `pubspec.yaml`.
+      2.  Minta izin mikrofon.
+      3.  Inisialisasi _listener_ suara.
+      4.  Mulai mendengarkan input suara dan perbarui `TextEditingController` dengan teks yang dikenali.
+    - **Catatan:** Ini akan sangat bergantung pada SDK perangkat dan ketersediaan layanan pengenalan suara.
+
+  - **Barcode scanning input:**
+
+    - **Peran:** Mengintegrasikan pemindai _barcode_ atau QR Code sebagai metode input.
+    - **Detail:** Mirip dengan _speech-to-text_, ini memerlukan _package_ pihak ketiga, seperti `barcode_widget`, `mobile_scanner`, atau `qr_code_scanner`.
+    - **Alur Umum:**
+      1.  Tambahkan _package_ pemindai ke `pubspec.yaml`.
+      2.  Minta izin kamera.
+      3.  Buka _view_ pemindai kamera.
+      4.  Ketika _barcode_ terdeteksi, ambil datanya dan perbarui `TextEditingController` atau kirimkan data.
+    - **Catatan:** Ini seringkali melibatkan tampilan kamera _overlay_ dan penanganan _permissions_.
+
+- **Visualisasi Input Formatter Flow:**
+
+  ```
+  ┌───────────────────────────┐
+  │     User Typing Input     │
+  │ (e.g., in TextFormField)  │
+  └────────────┬──────────────┘
+               │
+               ▼
+  ┌───────────────────────────┐
+  │  inputFormatters Property │
+  │ ┌───────────────────────┐ │
+  │ │ TextInputFormatter 1  │ │
+  │ │ (e.g., digitsOnly)    │ │
+  │ └────────────┬──────────┘ │
+  └──────────────│────────────┘
+                 │  (Passes through formatEditUpdate)
+                 ▼
+  ┌─────────────────────────────┐
+  │  TextInputFormatter 2       │
+  │ (e.g., PhoneNumberFormatter)│
+  └────────────┬────────────────┘
+               │  (Transforms text)
+               ▼
+  ┌───────────────────────────┐
+  │  Formatted Text Displayed │
+  │  in TextFormField         │
+  └───────────────────────────┘
+  ```
+
+  **Penjelasan Visual:**
+  Alur ini menunjukkan bagaimana teks yang diketik pengguna melewati serangkaian `TextInputFormatter` yang diatur dalam properti `inputFormatters`. Setiap _formatter_ memiliki kesempatan untuk memodifikasi teks, dan hasil akhirnya adalah teks yang diformat yang ditampilkan di _input field_.
+
+- **Terminologi Esensial:**
+
+  - **`TextInputFormatter`:** Kelas abstrak di Flutter untuk memformat teks input.
+  - **`formatEditUpdate`:** Metode yang harus diimplementasikan oleh _custom formatter_ untuk melakukan transformasi teks.
+  - **`TextEditingValue`:** Objek yang berisi teks dan informasi posisi kursor dalam _input field_.
+  - **`FilteringTextInputFormatter`:** _Formatter_ bawaan untuk memfilter karakter (misalnya, `digitsOnly`, `allow`, `deny`).
+  - **`LengthLimitingTextInputFormatter`:** _Formatter_ bawaan untuk membatasi panjang input.
+  - **`mask_text_input_formatter`:** _Package_ pihak ketiga untuk pemformatan input berbasis pola (masking).
+  - **`KeyboardType`:** Properti untuk mengoptimalkan tampilan _keyboard_ virtual.
+  - **`TextInputAction`:** Properti untuk mengubah aksi tombol "Enter" pada _keyboard_.
+  - **`onFieldSubmitted`:** _Callback_ yang dipicu saat aksi input keyboard diselesaikan.
+  - **`autocorrect` / `enableSuggestions`:** Properti untuk mengontrol fitur koreksi otomatis dan saran kata.
+  - **`speech_to_text` / `barcode_scanner`:** Contoh _package_ pihak ketiga untuk integrasi input lanjutan.
+
+- **Hubungan dengan Bagian Lain:**
+
+  - **7.1 Form Widgets & Validation:** _Input formatters_ bekerja secara sinergis dengan `TextFormField` dan `Form` untuk memastikan data yang benar dan _well-formatted_ masuk ke dalam sistem validasi. Validasi akan menjadi lebih mudah jika format data sudah dikelola di tahap _input_.
+  - **Pengalaman Pengguna (UX):** Penerapan _formatter_ dan fitur _input_ lanjutan secara signifikan meningkatkan UX dengan memandu pengguna dan mengurangi kesalahan input.
+
+- **Tips & Best Practices (untuk peserta):**
+
+  - **Gunakan Kombinasi:** Anda dapat menggunakan beberapa `TextInputFormatter` dalam satu daftar. Urutan _formatter_ dalam daftar itu penting karena mereka diterapkan secara berurutan.
+  - **Pertimbangkan _Package_:** Untuk pemformatan kompleks (seperti nomor telepon internasional, kartu kredit), gunakan _package_ `mask_text_input_formatter` karena lebih robust dan mudah dikelola daripada membuat _formatter_ kustom yang sangat kompleks.
+  - **Perhatikan Posisi Kursor:** Saat membuat _custom formatter_, pastikan Anda mengembalikan `TextEditingValue` dengan `selection` yang benar agar kursor tidak melompat-lompat secara tidak terduga.
+  - **Uji dengan Berbagai Input:** Selalu uji _formatter_ Anda dengan berbagai jenis masukan (angka, huruf, simbol, input kosong, menghapus karakter) untuk memastikan perilakunya stabil.
+
+# Selamat!
+
+---
+
+Dengan ini, kita telah menyelesaikan pembahasan mendalam tentang **7.3 Input Formatters & Masks**, yang mencakup berbagai teknik pemformatan input teks dan penanganan input lanjutan. Ini juga menandai berakhirnya **Fase 5: Forms & Input Handling**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
