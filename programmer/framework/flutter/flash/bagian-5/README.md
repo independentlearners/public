@@ -5,6 +5,8 @@
 <details>
   <summary>📃 Struktur daftar materi</summary>
 
+---
+
 - [7. Form Architecture & Validation](#7-form-architecture--validation)
   - [7.1 Form Widgets & Validation](#71-form-widgets--validation)
     - Form dan FormField
@@ -15,10 +17,12 @@
     - Focus management dalam forms
     - Form submission handling
     - Form Validation
-    - 7.2 Advanced Form Management
-    - 7.3 Input Formatters & Masks
+  - [7.2 Advanced Form Management](#72-advanced-form-management)
+  - [7.3 Input Formatters & Masks](#)
 
 </details>
+
+---
 
 ### **7. Form Architecture & Validation**
 
@@ -860,6 +864,443 @@ class DatePickerFormField extends FormField<DateTime> {
 ---
 
 Dengan ini, kita telah membahas secara mendetail tentang **Form Widgets & Validation**, mencakup `Form` dan `FormField`, manajemen _state_, metode `FormState`, implementasi `TextFormField`, pembuatan `Custom FormField`, manajemen _focus_, penanganan pengiriman formulir, dan strategi validasi. Selanjutnya, kita akan berpindah ke **7.2 Advanced Form Management**, yang akan membahas _package_ seperti `Flutter Form Builder` dan `Reactive Forms`.
+
+---
+
+Sekarang, kita akan fokus pada sub-bagian yang merupakan langkah penting untuk memahami bagaimana mengelola formulir yang lebih kompleks dan dinamis dalam aplikasi Flutter.
+
+Dalam bagian ini, kita akan membahas dua pendekatan utama untuk manajemen formulir lanjutan:
+
+### **7.2 Advanced Form Management**
+
+1.  **Flutter Form Builder**
+
+    - **Pengaturan Form Builder**: Memahami cara menginisialisasi dan mengintegrasikan pustaka `flutter_form_builder` ke dalam proyek Anda. Ini akan menyederhanakan proses pembuatan formulir dengan menyediakan _widget_ yang telah dikonfigurasi sebelumnya.
+    - **Form Field Pra-bangun**: Mengenal berbagai jenis _field_ formulir yang sudah disediakan oleh _Form Builder_, seperti _text input_, _checkboxes_, _radio buttons_, dan lain-lain. Ini mempercepat pengembangan karena Anda tidak perlu membangun _widget_ dasar dari awal.
+    - **Validator Form Builder**: Mempelajari cara menerapkan validasi menggunakan validator bawaan `form_builder_validators` atau membuat validator kustom untuk memastikan integritas data masukan.
+    - **Pembuatan Formulir Dinamis**: Menguasai teknik untuk membuat formulir yang dapat berubah secara dinamis berdasarkan masukan pengguna atau kondisi aplikasi. Ini sangat berguna untuk skenario di mana struktur formulir tidak statis.
+    - **Manajemen State Form Builder**: Memahami bagaimana _Form Builder_ mengelola _state_ formulir secara internal dan bagaimana Anda dapat mengakses serta memanipulasinya.
+
+2.  **Reactive Forms**
+    - **Model Form Reaktif**: Mempelajari konsep inti dari _Reactive Forms_, di mana formulir direpresentasikan sebagai model data reaktif. Ini memungkinkan penanganan _state_ formulir yang lebih kuat dan prediktif.
+    - **Form Control dan Form Group**: Memahami bagaimana `FormControl` merepresentasikan _field_ tunggal dan `FormGroup` mengelompokkan `FormControl` menjadi satu unit logis, memungkinkan validasi dan manipulasi kolektif.
+    - **Validator Reaktif**: Menggunakan validator yang dirancang untuk bekerja dengan model formulir reaktif, termasuk validasi sinkron dan asinkron.
+    - **Formulir Dinamis dengan Array**: Menerapkan formulir dinamis menggunakan `FormArray` untuk mengelola daftar _field_ yang dapat ditambahkan atau dihapus secara _runtime_.
+    - **Streaming State Formulir**: Memanfaatkan kemampuan _Reactive Forms_ untuk mengekspos perubahan _state_ formulir sebagai _stream_, memungkinkan Anda bereaksi terhadap perubahan data secara efisien.
+    - **Code Generation untuk Formulir**: Memanfaatkan `reactive_forms_generator` untuk secara otomatis membuat kode formulir berdasarkan definisi model, mengurangi _boilerplate_ dan meningkatkan _type-safety_.
+
+Kedua pendekatan ini menawarkan solusi yang lebih canggih dibandingkan manajemen formulir bawaan Flutter (`Form` dan `FormField`) terutama untuk aplikasi skala besar dengan kebutuhan formulir yang kompleks.
+
+#### **7. Form Architecture & Validation (Lanjutan)**
+
+##### **7.2 Advanced Form Management**
+
+- **Peran:** Meskipun `Form` dan `TextFormField` bawaan Flutter sudah cukup untuk formulir sederhana, aplikasi yang lebih kompleks seringkali membutuhkan solusi yang lebih kuat untuk mengurangi _boilerplate_, mempermudah validasi, dan mengelola formulir dinamis. `Flutter Form Builder` adalah salah satu _package_ populer yang mengatasi tantangan ini.
+
+---
+
+###### **Flutter Form Builder**
+
+- **Gambaran Umum:** `flutter_form_builder` adalah _package_ yang menyediakan serangkaian _widget_ _input field_ yang telah dikonfigurasi sebelumnya (seperti `FormBuilderTextField`, `FormBuilderCheckbox`, dll.) dan alat untuk manajemen formulir secara lebih terstruktur. Ini memungkinkan Anda membangun formulir dengan cepat dan fokus pada logika bisnis daripada detail implementasi _widget_ _input_.
+
+- **1. Form Builder Setup**
+
+  - **Peran:** Mengatur proyek Anda untuk menggunakan `flutter_form_builder`.
+  - **Detail:** Tambahkan `flutter_form_builder` dan `form_builder_validators` (untuk validator siap pakai) ke `pubspec.yaml` Anda.
+  - **`pubspec.yaml`:**
+    ```yaml
+    dependencies:
+      flutter:
+        sdk: flutter
+      flutter_form_builder: ^latest_version # Ganti dengan versi terbaru
+      form_builder_validators: ^latest_version # Ganti dengan versi terbaru
+    ```
+  - Setelah menambahkan, jalankan `flutter pub get` di terminal.
+  - **Struktur Dasar:** `FormBuilder` _widget_ adalah pengganti untuk `Form` _widget_ standar, yang juga memerlukan `GlobalKey<FormBuilderState>`.
+
+  <!-- end list -->
+
+  ```dart
+  import 'package:flutter/material.dart';
+  import 'package:flutter_form_builder/flutter_form_builder.dart';
+  import 'package:form_builder_validators/form_builder_validators.dart'; // Import validator
+
+  class MyFormBuilderPage extends StatefulWidget {
+    const MyFormBuilderPage({super.key});
+
+    @override
+    State<MyFormBuilderPage> createState() => _MyFormBuilderPageState();
+  }
+
+  class _MyFormBuilderPageState extends State<MyFormBuilderPage> {
+    // Deklarasi GlobalKey untuk FormBuilderState
+    final _formKey = GlobalKey<FormBuilderState>();
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Flutter Form Builder Demo')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: FormBuilder(
+            key: _formKey, // Pasangkan kunci ke FormBuilder
+            // autovalidateMode: AutovalidateMode.onUserInteraction, // Opsional: validasi real-time
+            child: Column(
+              children: [
+                // Contoh FormBuilderTextField
+                FormBuilderTextField(
+                  name: 'namaPengguna', // Nama unik untuk field ini
+                  decoration: const InputDecoration(labelText: 'Nama Pengguna'),
+                  validator: FormBuilderValidators.required(), // Validator bawaan
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    // Akses state form dan validasi
+                    if (_formKey.currentState?.saveAndValidate() ?? false) {
+                      // Data valid, akses nilai:
+                      print(_formKey.currentState?.value);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Form Berhasil Dikirim (Form Builder)')),
+                      );
+                    } else {
+                      print('Validasi Form Gagal');
+                      print(_formKey.currentState?.errors); // Lihat error
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Ada Kesalahan Validasi (Form Builder)')),
+                      );
+                    }
+                  },
+                  child: const Text('Submit Form Builder'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+  }
+  ```
+
+- **2. Pre-built Form Fields (Form Field Pra-bangun)**
+
+  - **Peran:** `flutter_form_builder` menyediakan banyak _widget_ _input_ yang siap pakai, yang sudah mengimplementasikan fungsionalitas `FormField` secara internal. Ini mencakup berbagai jenis _input_ yang umum digunakan.
+  - **Detail:** Setiap _widget_ memiliki properti `name` yang unik, yang akan digunakan sebagai kunci dalam peta data saat Anda mengambil nilai formulir.
+  - **Contoh Umum:**
+    - `FormBuilderTextField`: Untuk input teks.
+    - `FormBuilderDropdown`: Untuk pilihan _dropdown_.
+    - `FormBuilderCheckbox`: Untuk kotak centang tunggal.
+    - `FormBuilderRadioGroup`: Untuk grup pilihan radio.
+    - `FormBuilderDateTimePicker`: Untuk memilih tanggal dan/atau waktu.
+    - `FormBuilderSlider`: Untuk _slider_ nilai.
+    - `FormBuilderRangeSlider`: Untuk _slider_ rentang nilai.
+    - `FormBuilderSwitch`: Untuk _toggle switch_.
+    - `FormBuilderRating`: Untuk input rating bintang.
+    - `FormBuilderFilterChip`/`FormBuilderChoiceChip`: Untuk pilihan dalam bentuk _chip_.
+  - **Contoh Kode:**
+
+  <!-- end list -->
+
+  ```dart
+  // ... di dalam FormBuilder child Column
+  FormBuilderTextField(
+    name: 'namaLengkap',
+    decoration: const InputDecoration(labelText: 'Nama Lengkap'),
+    validator: FormBuilderValidators.compose([
+      FormBuilderValidators.required(errorText: 'Nama lengkap harus diisi'),
+      FormBuilderValidators.maxLength(100, errorText: 'Nama terlalu panjang'),
+    ]),
+  ),
+  const SizedBox(height: 16),
+
+  FormBuilderDropdown<String>(
+    name: 'jenisKelamin',
+    decoration: const InputDecoration(
+      labelText: 'Jenis Kelamin',
+      hintText: 'Pilih jenis kelamin',
+      border: OutlineInputBorder(),
+    ),
+    validator: FormBuilderValidators.required(errorText: 'Jenis kelamin harus dipilih'),
+    items: ['Pria', 'Wanita', 'Lainnya']
+        .map((gender) => DropdownMenuItem(
+              value: gender,
+              child: Text(gender),
+            ))
+        .toList(),
+  ),
+  const SizedBox(height: 16),
+
+  FormBuilderDateTimePicker(
+    name: 'tanggalLahir',
+    decoration: const InputDecoration(
+      labelText: 'Tanggal Lahir',
+      border: OutlineInputBorder(),
+      prefixIcon: Icon(Icons.calendar_today),
+    ),
+    inputType: InputType.date, // Hanya tanggal
+    validator: FormBuilderValidators.required(errorText: 'Tanggal lahir harus diisi'),
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+  ),
+  const SizedBox(height: 16),
+
+  FormBuilderCheckbox(
+    name: 'persetujuan',
+    title: const Text('Saya menyetujui syarat & ketentuan'),
+    validator: FormBuilderValidators.requiredTrue(
+      errorText: 'Anda harus menyetujui syarat & ketentuan',
+    ),
+  ),
+  // ...
+  ```
+
+- **3. Form Builder Validators**
+
+  - **Peran:** `form_builder_validators` adalah _package_ pendamping yang menyediakan koleksi validator yang kuat dan mudah digunakan untuk semua jenis _field_ formulir. Ini sangat mengurangi kebutuhan untuk menulis fungsi validator kustom.
+  - **Detail:** Validator ini seringkali dapat digabungkan (menggunakan `FormBuilderValidators.compose()`) untuk menerapkan beberapa aturan validasi ke satu _field_. Setiap validator memiliki parameter `errorText` kustom.
+  - **Contoh Umum Validator:**
+    - `FormBuilderValidators.required()`: Memastikan _field_ tidak kosong.
+    - `FormBuilderValidators.email()`: Memvalidasi format email.
+    - `FormBuilderValidators.numeric()`: Memvalidasi bahwa input adalah angka.
+    - `FormBuilderValidators.minLength(min)`: Panjang minimum.
+    - `FormBuilderValidators.maxLength(max)`: Panjang maksimum.
+    - `FormBuilderValidators.min(value)`: Nilai numerik minimum.
+    - `FormBuilderValidators.max(value)`: Nilai numerik maksimum.
+    - `FormBuilderValidators.url()`: Memvalidasi format URL.
+    - `FormBuilderValidators.match(pattern)`: Memvalidasi menggunakan _regular expression_.
+    - `FormBuilderValidators.compare(otherControlName, operator)`: Validasi lintas _field_ (misalnya, password dan konfirmasi password).
+    - `FormBuilderValidators.compose([])`: Menggabungkan beberapa validator.
+  - **Contoh Kode:**
+
+  <!-- end list -->
+
+  ```dart
+  // Contoh email dengan beberapa validator
+  FormBuilderTextField(
+    name: 'email',
+    decoration: const InputDecoration(labelText: 'Email'),
+    validator: FormBuilderValidators.compose([
+      FormBuilderValidators.required(errorText: 'Email harus diisi'),
+      FormBuilderValidators.email(errorText: 'Format email tidak valid'),
+    ]),
+  ),
+  const SizedBox(height: 16),
+
+  // Contoh password dan konfirmasi password dengan compare validator
+  FormBuilderTextField(
+    name: 'password',
+    decoration: const InputDecoration(labelText: 'Password'),
+    obscureText: true,
+    validator: FormBuilderValidators.compose([
+      FormBuilderValidators.required(errorText: 'Password harus diisi'),
+      FormBuilderValidators.minLength(6, errorText: 'Password minimal 6 karakter'),
+    ]),
+  ),
+  const SizedBox(height: 16),
+
+  FormBuilderTextField(
+    name: 'confirmPassword',
+    decoration: const InputDecoration(labelText: 'Konfirmasi Password'),
+    obscureText: true,
+    validator: (val) {
+      // Akses nilai field lain melalui formKey
+      if (val != _formKey.currentState?.fields['password']?.value) {
+        return 'Password tidak cocok';
+      }
+      return FormBuilderValidators.required(errorText: 'Konfirmasi password harus diisi')(val);
+    },
+    // Alternatif menggunakan FormBuilderValidators.compare (membutuhkan FormBuilder versi lebih baru dan konfigurasi yang tepat)
+    // validator: FormBuilderValidators.compare(
+    //   _formKey.currentState!.fields['password']!.value,
+    //   // Atau gunakan fieldName jika FormBuilderValidators.compare menerima itu
+    //   // FormBuilderValidators.compare('password', operator: FormBuilderComparator.eq),
+    //   errorText: 'Password tidak cocok',
+    // ),
+  ),
+  ```
+
+  - **Catatan tentang `compare` validator:** Implementasi `FormBuilderValidators.compare` dapat bervariasi antar versi. Untuk validasi _cross-field_ yang sederhana, mengakses `_formKey.currentState?.fields['otherFieldName']?.value` di validator _field_ kedua seringkali merupakan cara yang paling langsung.
+
+- **4. Dynamic Form Generation (Pembuatan Formulir Dinamis)**
+
+  - **Peran:** `Flutter Form Builder` sangat memfasilitasi pembuatan formulir yang strukturnya dapat berubah secara _runtime_ (misalnya, menambahkan atau menghapus _field_ berdasarkan pilihan pengguna).
+  - **Detail:** Anda dapat menggunakan struktur data (misalnya, `List<Map<String, dynamic>>`) untuk mendefinisikan _field_ formulir dan kemudian menggunakan `ListView.builder` atau `Column` yang dibuat secara dinamis untuk merender _widget_ `FormBuilder` yang sesuai.
+  - **Contoh Konseptual:**
+
+  <!-- end list -->
+
+  ```dart
+  // Contoh sederhana: Menambah/menghapus FormBuilderTextField
+  List<String> _dynamicFields = ['field1'];
+
+  // ... dalam build method:
+  Column(
+    children: [
+      ..._dynamicFields.map((fieldName) => FormBuilderTextField(
+            name: fieldName,
+            decoration: InputDecoration(labelText: 'Field $fieldName'),
+            validator: FormBuilderValidators.required(),
+          )).toList(),
+      ElevatedButton(
+        onPressed: () {
+          setState(() {
+            _dynamicFields.add('field${_dynamicFields.length + 1}');
+          });
+        },
+        child: const Text('Tambah Field Baru'),
+      ),
+      // ... tombol submit
+    ],
+  );
+  ```
+
+  - Ini adalah salah satu kekuatan terbesar `Form Builder`, memungkinkan Anda membuat UI formulir yang fleksibel untuk skenario seperti formulir survei, konfigurasi produk yang kompleks, atau daftar item yang dapat diedit.
+
+- **5. Form Builder State Management**
+
+  - **Peran:** `FormBuilder` mengelola _state_ internal semua `FormBuilderField` anakannya, dan Anda dapat berinteraksi dengan _state_ ini melalui `_formKey.currentState`.
+
+  - **Detail:**
+
+    - `_formKey.currentState?.value`: Mengembalikan `Map<String, dynamic>` dari semua nilai _field_ yang divalidasi dan disimpan. Kunci dari peta ini adalah properti `name` dari setiap `FormBuilderField`.
+    - `_formKey.currentState?.fields`: Mengembalikan `Map<String, FormBuilderFieldState<FormBuilderField<dynamic>, dynamic>>` yang berisi _state_ individual dari setiap _field_. Ini berguna untuk mengakses _field_ tertentu secara programatis (misalnya, untuk mengubah nilai atau memicu validasi).
+    - `_formKey.currentState?.patchValue(Map<String, dynamic> value)`: Memungkinkan Anda untuk memperbarui nilai satu atau lebih _field_ formulir secara programatis.
+    - `_formKey.currentState?.reset()`: Mengatur ulang semua _field_ ke nilai awal atau ke kosong.
+    - `_formKey.currentState?.validate()`: Memicu validasi tanpa menyimpan nilai.
+    - `_formKey.currentState?.save()`: Memicu `onSaved` pada setiap _field_ tanpa validasi.
+    - `_formKey.currentState?.saveAndValidate()`: Menggabungkan `validate()` dan `save()`, mengembalikan `true` jika valid dan disimpan.
+
+  - **Contoh Kode untuk Manipulasi State:**
+
+  <!-- end list -->
+
+  ```dart
+  // Setelah form di-build, Anda bisa mengakses field:
+  // _formKey.currentState?.fields['namaPengguna']?.value = 'Nama Baru';
+  // _formKey.currentState?.fields['email']?.validate(); // Validasi field spesifik
+
+  // Mengisi formulir dengan data awal (misalnya dari API)
+  @override
+  void initState() {
+    super.initState();
+    // Contoh: Simulasi pengambilan data pengguna
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (_formKey.currentState != null) {
+        _formKey.currentState!.patchValue({
+          'namaLengkap': 'Budi Santoso',
+          'email': 'budi.santoso@example.com',
+          'jenisKelamin': 'Pria',
+          'tanggalLahir': DateTime(1990, 5, 15),
+          'persetujuan': true,
+        });
+        // _formKey.currentState!.validate(); // Opsional: validasi setelah mengisi
+      }
+    });
+  }
+
+  // ... (di dalam build method atau callback)
+  ElevatedButton(
+    onPressed: () {
+      _formKey.currentState?.reset(); // Mengatur ulang semua field
+    },
+    child: const Text('Reset Form'),
+  ),
+  ```
+
+- **Visualisasi Alur `Flutter Form Builder`:**
+
+  ```
+  ┌───────────────────────────┐     ┌───────────────────────────────┐
+  │     Your Widget Tree      │     │   GlobalKey<FormBuilderState> │
+  │ ┌───────────────────────┐ │     │           (_formKey)          │
+  │ │     FormBuilder       │◄──────┼───────────────────────────────┤
+  │ │   (key: _formKey)     │ │     │                               │
+  │ └───────────┬───────────┘ │     └───────────────────────────────┘
+  │             │             │
+  │  (Contains) ▼             │
+  │ ┌───────────────────────┐ │
+  │ │ FormBuilderTextField  │ │
+  │ │ (name: 'username')    │ │
+  │ └───────────────────────┘ │
+  │ ┌───────────────────────┐ │
+  │ │ FormBuilderDropdown   │ │
+  │ │ (name: 'gender')      │ │
+  │ └───────────────────────┘ │
+  │ ┌───────────────────────┐ │
+  │ │      ... others       │ │
+  │ └───────────────────────┘ │
+  └───────────┬───────────────┘
+              │ User Interaction
+              ▼
+  ┌──────────────────────────────────────────────┐
+  │   Submit Button onPressed                    │
+  │  (_formKey.currentState?.saveAndValidate() ) │
+  └───────────┬──────────────────────────────────┘
+              │
+              ▼
+  ┌──────────────────────────────────────┐
+  │  FormBuilderState                    │
+  │ (Internal State Management)          │
+  │ ┌──────────────────────────────────┐ │
+  │ │ 1. Trigger Validators            │ │
+  │ │    (via form_builder_validators) │ │
+  │ └──────────────────────────────────┘ │
+  │ ┌──────────────────────────────────┐ │
+  │ │ 2. Collect Field Values          │ │
+  │ │    (into Map<String, dynamic>)   │ │
+  │ └──────────────────────────────────┘ │
+  └───────────┬──────────────────────────┘
+              │
+              ▼
+  ┌───────────────────────────┐
+  │  Map<String, dynamic>     │
+  │  {'username': 'value',    │
+  │   'gender': 'value', ...} │
+  │ (Ready for processing)    │
+  └───────────────────────────┘
+  ```
+
+  **Penjelasan Visual:**
+  Diagram ini menunjukkan bagaimana `FormBuilder` bertindak sebagai _container_ utama yang mengelola semua `FormBuilderField` anakannya. `GlobalKey<FormBuilderState>` digunakan untuk mengakses _state_ formulir dan memicu operasi seperti validasi dan pengambilan nilai. Setelah validasi berhasil, `FormBuilderState` mengumpulkan semua nilai input ke dalam sebuah peta yang siap untuk diproses lebih lanjut.
+
+- **Terminologi Esensial:**
+
+  - **`flutter_form_builder`:** _Package_ Flutter untuk membangun dan mengelola formulir secara deklaratif dengan _widget_ pra-bangun.
+  - **`FormBuilder`:** _Widget_ utama yang berfungsi sebagai _container_ formulir.
+  - **`GlobalKey<FormBuilderState>`:** Kunci untuk mengakses _state_ formulir yang dikelola oleh `FormBuilder`.
+  - **`FormBuilderField`:** _Base class_ untuk semua _field input_ di `FormBuilder`.
+  - **`name`:** Properti unik yang mengidentifikasi setiap _field_ dalam formulir, digunakan sebagai kunci untuk mengambil nilai.
+  - **`form_builder_validators`:** _Package_ pendamping yang menyediakan koleksi validator siap pakai.
+  - **`FormBuilderValidators.compose()`:** Fungsi untuk menggabungkan beberapa validator.
+  - **`_formKey.currentState?.value`:** Properti yang mengembalikan semua nilai formulir sebagai `Map`.
+  - **`_formKey.currentState?.saveAndValidate()`:** Metode untuk memicu validasi dan menyimpan nilai secara bersamaan.
+  - **`_formKey.currentState?.patchValue()`:** Metode untuk mengisi nilai formulir secara programatis.
+
+- **Hubungan dengan Bagian Lain:**
+
+  - **7.1 Form Widgets & Validation:** `Flutter Form Builder` dibangun di atas konsep `Form` dan `FormField`, tetapi menyederhanakan dan memperluas fungsionalitasnya. Konsep validasi tetap sama, tetapi dengan _tooling_ yang lebih mudah.
+  - **7.3 Input Formatters & Masks:** Anda masih dapat menggunakan `TextInputFormatter` dengan `FormBuilderTextField` untuk format input yang lebih spesifik.
+
+- **Tips & Best Practices (untuk peserta):**
+
+  - **Selalu Gunakan `name` yang Unik:** Pastikan setiap `FormBuilderField` memiliki properti `name` yang unik untuk menghindari konflik dan memastikan pengambilan nilai yang benar.
+  - **Manfaatkan Validator Bawaan:** Gunakan validator dari `form_builder_validators` sebanyak mungkin untuk menghemat waktu dan menjaga konsistensi.
+  - **Pahami `saveAndValidate()`:** Ini adalah metode utama yang akan Anda gunakan saat tombol submit ditekan.
+  - **Pertimbangkan `autovalidateMode`:** Gunakan `AutovalidateMode.onUserInteraction` untuk umpan balik validasi _real-time_ yang lebih baik kepada pengguna.
+
+- **Potensi Kesalahan Umum & Solusi:**
+
+  - **Kesalahan:** `_formKey.currentState` adalah `null`.
+    - **Solusi:** Pastikan `GlobalKey<FormBuilderState>` dipasangkan ke _widget_ `FormBuilder` dan Anda tidak mencoba mengaksesnya sebelum `build` _method_ dijalankan (misalnya, di `initState` tanpa pengecekan `null`). Gunakan `WidgetsBinding.instance.addPostFrameCallback` jika perlu untuk akses setelah _frame_ pertama.
+  - **Kesalahan:** Nilai _field_ tidak muncul di `_formKey.currentState?.value` atau kunci salah.
+    - **Solusi:** Periksa properti `name` dari `FormBuilderField`. Pastikan itu adalah _String_ yang unik dan konsisten.
+  - **Kesalahan:** Validator tidak berfungsi atau tidak menampilkan pesan kesalahan.
+    - **Solusi:** Pastikan Anda telah mengimpor `form_builder_validators.dart` dan menggunakan validator dengan benar. Periksa juga `autovalidateMode` pada `FormBuilder` atau _field_ individual.
+
+---
+
+Kita telah menyelesaikan pembahasan mendetail tentang **Flutter Form Builder**. Ini adalah alat yang sangat kuat untuk membangun formulir yang efisien di Flutter. Selanjutnya, kita akan berpindah ke pendekatan lain untuk manajemen formulir lanjutan: **Reactive Forms**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
