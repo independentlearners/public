@@ -1487,6 +1487,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 [1]: ../dart/kursus/materi/fondation/README.md
 [2]: ../dart/kursus/materi/modul-2/README.md
+[3]: ../dart/kursus/materi/modul-3/README.md
 
 <!-- Module 2: Basic Syntax & Data Types -->
 

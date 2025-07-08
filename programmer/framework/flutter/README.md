@@ -1641,7 +1641,7 @@ Peserta akan mampu:
 
 [dart]: ../../domain-spesifik/mobile/google/dart/README.md
 [prasyarat]: ../../domain-spesifik/mobile/README.md
-[overview]: ../flutter/flash/overview/README.md
+[overview]: ../flutter/overview/README.md
 [0]: ../README.md
 
 <!--FLASH ---------------------------------------------- -->
