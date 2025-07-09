@@ -12,28 +12,28 @@
     - [10.1.1. Material Theme System](#1011-material-theme-system)
     - [10.1.2. Material 3 Dynamic Theming](#1012-material-3-dynamic-theming)
     - [10.1.3. Custom Theme Implementation](#1013-custom-theme-implementation)
-  - **[10.2. Typography & Font Management](#)**
-    - [10.2.1. Font Integration](#)
-    - [10.2.2. Typography Systems](#)
-  - **[10.3. Responsive & Adaptive Design](#)**
-    - [10.3.1. Responsive Design Patterns](#)
-    - [10.3.2. Adaptive Design](#)
-    - [10.3.3. Multi-Screen Support](#)
-- **[11. Animations & Visual Effects](#)**
-  - **[11.1. Basic Animation System](#)**
-    - [11.1.1. Animation Framework](#)
-  - **[11.2. Advanced Animations](#)**
-    - [11.2.1. Hero Animations](#)
-    - [11.2.2. Page Transitions](#)
-    - [11.2.3. Implicit & Explicit Animations](#)
-    - [11.2.4. Physics-Based Animations](#)
-  - **[11.3. External Animation Libraries](#)**
-    - [11.3.1. Lottie Animations](#)
-    - [11.3.2. Rive Animations](#)
-- **[12. Custom Painting & Graphics](#)**
-  - **[12.1. Custom Painter](#)**
-    - [12.1.1. Canvas API](#)
-    - [12.1.2. Advanced Custom Painting](#)
+  - **[10.2. Typography & Font Management](#102-typography--font-management)**
+    - [10.2.1. Font Integration](#1021-font-integration)
+    - [10.2.2. Typography Systems](#1022-typography-systems)
+  - **[10.3. Responsive & Adaptive Design](#103-responsive--adaptive-design)**
+    - [10.3.1. Responsive Design Patterns](#1031-responsive-design-patterns)
+    - [10.3.2. Adaptive Design](#1032-adaptive-design)
+    - [10.3.3. Multi-Screen Support](#1033-multi-screen-support)
+- **[11. Animations & Visual Effects](#11-animations--visual-effects)**
+  - **[11.1. Basic Animation System](#111-basic-animation-system)**
+    - [11.1.1. Animation Framework](#1111-animation-framework)
+  - **[11.2. Advanced Animations](#112-advanced-animations)**
+    - [11.2.1. Hero Animations](#1121-hero-animations)
+    - [11.2.2. Page Transitions](#1122-page-transitions)
+    - [11.2.3. Implicit & Explicit Animations](#1123-implicit--explicit-animations)
+    - [11.2.4. Physics-Based Animations](#1124-physics-based-animations)
+  - **[11.3. External Animation Libraries](#113-external-animation-libraries)**
+    - [11.3.1. Lottie Animations](#1131-lottie-animations)
+    - [11.3.2. Rive Animations](#1132-rive-animations)
+- **[12. Custom Painting & Graphics](#12-custom-painting--graphics)**
+  - **[12.1. Custom Painter](#1211-custom-painter)**
+    - [12.1.1. Canvas API](#1211-custom-painter)
+    - [12.1.2. Advanced Custom Painting](#1122-page-transitions)
     - [12.1.3. SVG Integration](#)
 
 </details>
@@ -926,10 +926,10 @@ class ResponsiveScreen extends StatelessWidget {
 
 ```
 ┌─────────────────────────────┐        ┌──────────────────────────────────────────────┐
-│    Tampilan Layar Sempit    │        │             Tampilan Layar Lebar             │
-│(constraints.maxWidth <= 600)│        │          (constraints.maxWidth > 600)        │
+│    Tampilan Layar Sempit    │        │            Tampilan Layar Lebar              │
+│(constraints.maxWidth <= 600)│        │         (constraints.maxWidth > 600)         │
 ├─────────────────────────────┤        ├──────────────────────────────────────────────┤
-│ AppBar: [Responsive Design] │        │ AppBar: [Responsive Design]                  │
+│ AppBar: [Responsive Design] │        │         AppBar: [Responsive Design]          │
 │ --------------------------- │        │ -------------------------------------------- │
 │                             │        │                                              │
 │    ┌────────────────────┐   │        │  ┌────────────────────┬────────────────────┐ │
@@ -1493,7 +1493,339 @@ class HeroDetailScreen extends StatelessWidget {
 
 ---
 
-Kita telah membahas framework dasar dan Hero Animations.
+Kita telah membahas framework dasar dan Hero Animations. Berikutnya kita akan membangun di atas konsep Animasi Hero dan melihat bagaimana cara mengkustomisasi transisi antar halaman secara lebih umum.
+
+---
+
+##### **11.2.2. Page Transitions**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Secara default, Flutter menyediakan transisi halaman yang sesuai dengan platform (`MaterialPageRoute` untuk Android, `CupertinoPageRoute` untuk iOS). Namun, seringkali kita ingin menciptakan transisi yang unik dan sesuai dengan merek aplikasi kita, seperti _fade_, _scale_, atau _slide_ dari arah yang berbeda. Bagian ini mengajarkan Anda cara membuat animasi transisi halaman kustom menggunakan **`PageRouteBuilder`**. Ini memberi Anda kontrol penuh atas bagaimana satu layar menghilang dan layar berikutnya muncul.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **`PageRouteBuilder` sebagai Kanvas Kosong:** `PageRouteBuilder` adalah kelas `Route` tingkat rendah yang memberi Anda kebebasan penuh. Ia tidak memiliki transisi bawaan sama sekali. Sebaliknya, ia memberikan Anda sebuah _callback_ bernama `transitionsBuilder`.
+- **`transitionsBuilder` sebagai Inti Logika:** Ini adalah fungsi di mana keajaiban terjadi. Fungsi ini dipanggil pada setiap _frame_ selama transisi berlangsung (baik saat masuk maupun keluar). Ia memberikan Anda:
+  - `context`: BuildContext.
+  - `animation`: Objek `Animation<double>` utama yang nilainya berubah dari 0.0 ke 1.0 saat halaman masuk.
+  - `secondaryAnimation`: Animasi lain yang nilainya berubah dari 0.0 ke 1.0 saat halaman **lain** didorong di atas halaman saat ini. Berguna untuk membuat halaman di bawahnya ikut beranimasi.
+  - `child`: Widget dari halaman yang sedang Anda tuju.
+    Tugas Anda di dalam _builder_ ini adalah mengambil `child` dan membungkusnya dengan satu atau lebih _Transition Widget_ (seperti `FadeTransition`, `ScaleTransition`, `SlideTransition`) yang dikendalikan oleh objek `animation`.
+
+**Sintaks Dasar / Contoh Implementasi Inti:**
+Contoh ini membuat sebuah transisi _fade_ (memudar) kustom yang dapat digunakan kembali.
+
+**Langkah 1: Buat Kelas Route Kustom**
+Membuat kelas terpisah seperti ini adalah praktik yang baik untuk menjaga agar kode navigasi tetap bersih.
+
+```dart
+import 'package:flutter/material.dart';
+
+// 1. Buat kelas yang meng-extend PageRouteBuilder
+class FadeRoute extends PageRouteBuilder {
+  final Widget page;
+
+  FadeRoute({required this.page})
+      : super(
+          // Durasi transisi
+          transitionDuration: const Duration(milliseconds: 500),
+          // Widget dari halaman tujuan
+          pageBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) => page,
+          // 2. Definisikan logika transisi di sini
+          transitionsBuilder: (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) {
+            // 3. Gunakan FadeTransition yang dikendalikan oleh 'animation'
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+        );
+}
+```
+
+**Langkah 2: Gunakan Route Kustom saat Navigasi**
+
+```dart
+// Di dalam sebuah widget...
+ElevatedButton(
+  child: const Text('Pergi ke Layar Berikutnya (dengan Fade)'),
+  onPressed: () {
+    Navigator.push(
+      context,
+      // 4. Gunakan kelas route kustom Anda, bukan MaterialPageRoute
+      FadeRoute(page: const SecondScreen()),
+    );
+  },
+)
+
+class SecondScreen extends StatelessWidget {
+  const SecondScreen({super.key});
+  @override
+  Widget build(BuildContext context) { /* ... */ }
+}
+```
+
+### **Representasi Diagram Alur (Custom Page Transition)**
+
+```
+┌──────────────────────────────────────────┐
+│  Navigator.push()                        │
+│  (Aksi Navigasi)                         │
+└─────────────────┬────────────────────────┘
+                  │ (menggunakan)
+┌─────────────────▼────────────────────────┐
+│  FadeRoute(page: SecondScreen())         │ // Kelas Route Kustom Anda
+│  (Implementasi PageRouteBuilder)         │
+└─────────────────┬────────────────────────┘
+                  │ (memanggil)
+┌─────────────────▼────────────────────────────────────────────┐
+│  transitionsBuilder: (..., animation, ..., child) => { ... } │
+│  (Logika Animasi Transisi)                                   │
+└─────────────────┬────────────────────────────────────────────┘
+                  │ (mengembalikan)
+┌─────────────────▼────────────────────────┐
+│  FadeTransition                          │ // Widget Transisi
+│  ┌─────────────────────────────────────┐ │
+│  │ opacity: animation                  │ │ // Properti `opacity` diikat ke nilai `animation` (0.0 -> 1.0)
+│  │ child: child                        │ │ // `child` adalah widget `SecondScreen`
+│  └─────────────────────────────────────┘ │
+└──────────────────────────────────────────┘
+```
+
+---
+
+##### **11.2.3. Implicit & Explicit Animations**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Flutter menyediakan dua pendekatan utama untuk animasi, dan memahami perbedaannya sangat penting untuk memilih alat yang tepat.
+
+- **Implicit Animations (Animasi Implisit):** Anda tidak perlu mengelola `AnimationController`. Anda cukup menggunakan widget `Animated*` (seperti `AnimatedContainer`), mengubah salah satu propertinya (misalnya, `width` atau `color`), dan memanggil `setState()`. Flutter secara otomatis akan menganimasikan transisi dari nilai lama ke nilai baru selama durasi yang ditentukan. Ini **sangat mudah** dan cocok untuk animasi sederhana yang dipicu oleh perubahan state.
+- **Explicit Animations (Animasi Eksplisit):** Anda memiliki kontrol penuh dengan menggunakan `AnimationController`. Anda yang menentukan kapan animasi dimulai, berhenti, atau berulang. Ini **lebih kompleks** tetapi diperlukan untuk animasi yang berkelanjutan, dapat diulang, atau memiliki logika yang rumit. (Ini adalah pendekatan yang kita pelajari di bagian **11.1.1. Animation Framework**).
+
+Peran bagian ini adalah untuk secara resmi memperkenalkan kategori "animasi implisit" sebagai alternatif yang lebih sederhana dan menunjukkan kapan harus menggunakannya.
+
+**Sintaks Dasar / Contoh `AnimatedContainer` (Implisit):**
+
+```dart
+class ImplicitAnimationScreen extends StatefulWidget {
+  const ImplicitAnimationScreen({super.key});
+  @override
+  State<ImplicitAnimationScreen> createState() => _ImplicitAnimationScreenState();
+}
+
+class _ImplicitAnimationScreenState extends State<ImplicitAnimationScreen> {
+  // State yang akan diubah untuk memicu animasi
+  double _width = 100.0;
+  double _height = 100.0;
+  Color _color = Colors.blue;
+  BorderRadius _borderRadius = BorderRadius.circular(8);
+
+  void _triggerAnimation() {
+    setState(() {
+      // Cukup ubah nilai-nilai state
+      _width = _width == 100.0 ? 200.0 : 100.0;
+      _height = _height == 100.0 ? 200.0 : 100.0;
+      _color = _color == Colors.blue ? Colors.red : Colors.blue;
+      _borderRadius = _borderRadius == BorderRadius.circular(8)
+          ? BorderRadius.circular(50)
+          : BorderRadius.circular(8);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Implicit Animation')),
+      body: Center(
+        // 1. Gunakan widget Animated*
+        child: AnimatedContainer(
+          // 2. Tentukan durasi animasi
+          duration: const Duration(seconds: 1),
+          // 3. Tentukan kurva (opsional)
+          curve: Curves.fastOutSlowIn,
+          // 4. Berikan nilai state ke properti
+          width: _width,
+          height: _height,
+          decoration: BoxDecoration(
+            color: _color,
+            borderRadius: _borderRadius,
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _triggerAnimation,
+        child: const Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+```
+
+### **Visualisasi Konseptual (Implicit vs. Explicit)**
+
+```
+┌─────────────────────────────────────────┐  ┌──────────────────────────────────────────┐
+│  IMPLICIT ANIMATION                     │  │  EXPLICIT ANIMATION                      │
+├─────────────────────────────────────────┤  ├──────────────────────────────────────────┤
+│ Filosofi: "Animasi perubahan state"     │  │ Filosofi: "Kontrol penuh atas waktu"     │
+│ Pemicu: `setState()`                    │  │ Pemicu: `controller.forward()` dll.      │
+│ Alat Utama: `AnimatedContainer`, dll.   │  │ Alat Utama: `AnimationController`,`Tween`│
+│ Mudah & Cepat                           │  │ Kompleks & Kuat                          │
+└─────────────────────────────────────────┘  └──────────────────────────────────────────┘
+```
+
+---
+
+##### **11.2.4. Physics-Based Animations**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Animasi berbasis fisika membuat gerakan terasa lebih alami dan nyata karena meniru kekuatan di dunia nyata seperti gravitasi atau pegas (_spring_). Daripada hanya bergerak dari titik A ke B dalam durasi tetap, objek dapat "terlempar", memantul, atau melambat secara realistis. `Draggable` dan `SpringSimulation` adalah contoh implementasi dari konsep ini. Perannya adalah untuk menunjukkan cara membuat animasi yang tidak hanya bergerak, tetapi juga **bereaksi** terhadap interaksi pengguna dengan cara yang terasa memuaskan dan fisikal.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Simulasi, Bukan Durasi:** Anda tidak lagi mendefinisikan `duration`. Sebaliknya, Anda mendefinisikan parameter fisika seperti _damping_ (redaman), _stiffness_ (kekakuan pegas), dan _mass_ (massa). Durasi animasi ditentukan oleh simulasi itu sendiri.
+- **Interaktivitas:** Animasi ini bersinar saat merespons input pengguna, seperti menggeser kartu (`Draggable`) dan melihatnya "terpental" kembali ke posisi semula saat dilepaskan.
+
+---
+
+### **11.3. External Animation Libraries**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Terkadang, animasi yang kita butuhkan sangat kompleks (misalnya, animasi karakter atau ikonografi yang rumit) sehingga membuatnya dari awal di Flutter akan sangat sulit. Di sinilah _library_ eksternal berperan. Mereka memungkinkan kita untuk mengimpor animasi yang dibuat oleh desainer di perangkat lunak khusus. Bagian ini memperkenalkan dua _library_ paling populer: Lottie dan Rive.
+
+##### **11.3.1. Lottie Animations**
+
+- **Deskripsi:** Lottie adalah format file JSON yang diekspor dari **Adobe After Effects**. Paket `lottie` untuk Flutter dapat membaca file JSON ini dan merendernya sebagai animasi vektor yang mulus. Ini adalah jembatan yang luar biasa antara desainer gerak dan developer.
+- **Alur Kerja:**
+  1.  Desainer membuat animasi di After Effects.
+  2.  Animasi diekspor sebagai `animation.json` menggunakan plugin Bodymovin.
+  3.  Developer menambahkan file JSON ke aset Flutter.
+  4.  Developer menggunakan `Lottie.asset('assets/animation.json')` untuk menampilkannya.
+
+##### **11.3.2. Rive Animations**
+
+- **Deskripsi:** Rive adalah platform desain dan runtime animasi interaktif. Berbeda dengan Lottie yang bersifat satu arah (dari After Effects), Rive adalah alat yang dirancang dari awal untuk animasi _real-time_ dan interaktif. Anda dapat membuat **state machines** yang kompleks di dalam editor Rive, lalu mengontrol _state_ tersebut dari kode Flutter.
+- **Alur Kerja:**
+  1.  Desainer/Developer membuat animasi dan _state machine_ di Rive Editor (web).
+  2.  Animasi diekspor sebagai file `.riv`.
+  3.  Developer menambahkan file `.riv` ke aset Flutter.
+  4.  Developer menggunakan `RiveAnimation.asset(...)` dan dapat berinteraksi dengan _state machine_ melalui `SMIInput` untuk memicu perubahan animasi.
+
+### **Representasi Diagram (Alur Kerja Library Animasi)**
+
+```
+  ┌───────────────────────┐       ┌────────────────────────┐
+  │ Adobe After Effects   │       │ Rive Editor            │
+  └──────────┬────────────┘       └──────────┬─────────────┘
+             │ .json (Bodymovin)             │ .riv (Export)
+  ┌──────────▼────────────┐       ┌──────────▼─────────────┐
+  │ Lottie                │       │ Rive                   │
+  │ (Library Flutter)     │       │ (Library Flutter)      │
+  └──────────┬────────────┘       └──────────┬─────────────┘
+             │                               │
+  ┌──────────▼────────────┐       ┌──────────▼──────────────┐
+  │ Animasi Vektor Mulus  │       │ Animasi Interaktif &    │
+  │ (Satu Arah)           │       │ State-driven            │
+  └───────────────────────┘       └─────────────────────────┘
+```
+
+---
+
+### **12. Custom Painting & Graphics**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+Ketika widget-widget standar Flutter tidak cukup untuk merepresentasikan visualisasi yang Anda inginkan (misalnya, membuat grafik, diagram, atau bentuk geometris kustom), Anda perlu turun ke tingkat yang lebih rendah dan "melukis" langsung di kanvas. Bagian ini mengajarkan cara menggunakan `CustomPaint` dan `Canvas` API untuk menggambar apa pun yang bisa Anda bayangkan.
+
+##### **12.1.1. Custom Painter**
+
+**Deskripsi Konkret & Peran dalam Kurikulum:**
+`CustomPaint` adalah sebuah widget yang memberikan Anda sebuah kanvas kosong. Anda menyediakan sebuah objek `CustomPainter` yang berisi logika "melukis" Anda. Di dalam _painter_, Anda mendapatkan akses ke `Canvas` API, yang memungkinkan Anda untuk menggambar bentuk-bentuk primitif seperti garis, lingkaran, persegi panjang, dan path yang kompleks. Ini adalah alat utama untuk visualisasi data dan UI yang benar-benar unik.
+
+**Konsep Kunci & Filosofi Mendalam:**
+
+- **Pemisahan Widget dan Logika Lukis:** `CustomPaint` (widget) bertanggung jawab untuk menempatkan kanvas di _widget tree_. `CustomPainter` (objek logika) berisi instruksi `paint` yang sebenarnya. Pemisahan ini baik untuk performa.
+- **Metode `paint(canvas, size)`:** Ini adalah metode utama di mana semua penggambaran terjadi. Anda mendapatkan objek `canvas` untuk menggambar dan objek `size` yang memberitahu ukuran area yang tersedia.
+- **Metode `shouldRepaint(oldDelegate)`:** Ini adalah metode optimisasi. Ia dipanggil setiap kali `CustomPaint` di-_rebuild_. Anda harus mengembalikan `true` hanya jika ada perubahan yang mengharuskan kanvas digambar ulang.
+
+**Sintaks Dasar / Contoh `CustomPainter`:**
+Contoh ini menggambar sebuah wajah tersenyum sederhana.
+
+```dart
+class SmileyPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // Kuas untuk wajah
+    final paintFace = Paint()..color = Colors.yellow;
+    canvas.drawCircle(center, radius, paintFace);
+
+    // Kuas untuk mata dan mulut
+    final paintFeatures = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    // Mata kiri dan kanan
+    canvas.drawCircle(Offset(center.dx - radius * 0.4, center.dy - radius * 0.4), radius * 0.1, paintFeatures);
+    canvas.drawCircle(Offset(center.dx + radius * 0.4, center.dy - radius * 0.4), radius * 0.1, paintFeatures);
+
+    // Mulut (busur)
+    final smilePath = Path();
+    smilePath.moveTo(center.dx - radius * 0.5, center.dy + radius * 0.2);
+    smilePath.arcToPoint(
+      Offset(center.dx + radius * 0.5, center.dy + radius * 0.2),
+      radius: Radius.circular(radius * 0.6),
+      clockwise: false,
+    );
+    canvas.drawPath(smilePath, paintFeatures);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// Cara menggunakannya di UI
+class CustomPaintScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Custom Paint')),
+      body: Center(
+        child: Container(
+          width: 200,
+          height: 200,
+          child: CustomPaint(
+            painter: SmileyPainter(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
+
+### **Selamat!**
+
+Kita telah menyelesaikan fase ini secara menyeluruh.
+
+Anda telah belajar cara menciptakan identitas visual yang konsisten melalui **sistem tema** Material, termasuk tema dinamis dan ekstensi kustom. Anda menguasai cara mengelola **tipografi** dengan font kustom. Anda kini mampu membangun UI yang **responsif** terhadap berbagai ukuran layar dan **adaptif** terhadap konvensi platform yang berbeda.
+
+Terakhir, kita memasuki dunia **animasi**, dari framework dasar, animasi implisit, hingga transisi halaman yang mengesankan, serta cara menggunakan **CustomPainter** untuk menggambar UI yang sepenuhnya unik.
+
+Anda tidak hanya dapat membangun aplikasi yang fungsional, tetapi juga aplikasi yang indah, dipoles, terasa hidup, dan memberikan pengalaman pengguna yang luar biasa di perangkat apa pun.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
