@@ -253,7 +253,7 @@ Filosofi utama di sini adalah **"Keyboard-Centric Workflow"**. Hampir semua inte
 
 - **Contoh `config` i3/Sway (biasanya di `~/.config/i3/config` atau `~/.config/sway/config`):**
 
-  ```
+  ```yml
   # Perintah untuk membuka terminal
   bindsym $mod+Return exec alacritty
 
@@ -421,28 +421,28 @@ File konfigurasi utama biasanya terletak di `~/.config/i3/config` untuk i3 atau 
 
 - **Definisi Modifier Key:**
 
-  ```
+  ```shell
   set $mod Mod4 # Mod4 adalah tombol Super (Windows Key)
   # set $mod Mod1 # Mod1 adalah tombol Alt
   ```
 
 - **Menjalankan Aplikasi Saat Startup:**
 
-  ```
+  ```shell
   exec --no-startup-id nm-applet # Contoh: menjalankan network manager applet
   exec_always --no-startup-id swayidle -w ... # Untuk Sway: idle management
   ```
 
 - **Mengatur Aplikasi Default untuk Tipe File:**
 
-  ```
+  ```shell
   for_window [class="Alacritty"] focus
   for_window [class="firefox"] move to workspace $ws2
   ```
 
 - **Mode Pengaturan Kustom (seperti `resize` yang sudah dibahas):**
 
-  ```
+  ```yml
   mode "system_actions" {
       bindsym l exec i3lock && systemctl suspend
       bindsym e exec "exec swaymsg exit"
@@ -604,7 +604,7 @@ Kustomisasi adalah inti dari pengalaman _tiling window manager_. Filosofinya ada
 
 - **i3status (untuk i3) - Konfigurasi di `~/.config/i3status/config` atau `~/.i3status.conf`:**
 
-  ```
+  ```yml
   # Contoh config i3status
   general {
       output_format = "i3bar"
@@ -814,7 +814,7 @@ _Scripting_ Bash adalah kekuatan sejati dari lingkungan Linux. Filosofinya adala
 
   **Exec di Sway config:**
 
-  ```
+  ```shell
   exec_always ~/.config/sway/scripts/idle_management.sh
   ```
 
@@ -977,7 +977,7 @@ Lingkungan _tiling window manager_ memungkinkan Anda memilih setiap komponen sis
 
   - **Instalasi Zathura:** `sudo pacman -S zathura zathura-pdf-mupdf`
   - **Keybinding untuk membuka PDF dengan Zathura (di i3/Sway config):**
-    ```
+    ```ini
     for_window [instance="zathura"] floating disable
     bindsym $mod+p exec zathura
     ```
@@ -1058,7 +1058,7 @@ Meskipun Manjaro Sway i3 sudah ringan, selalu ada ruang untuk optimasi. Filosofi
 - **Mengurangi Swappiness (mengurangi penggunaan swap):**
   Edit `/etc/sysctl.d/99-sysctl.conf` (buat jika belum ada):
 
-  ```
+  ```ini
   vm.swappiness = 10 # Nilai lebih rendah berarti OS lebih jarang menggunakan swap
   ```
 
@@ -1221,7 +1221,7 @@ Di tingkat ahli, Anda tidak hanya menggunakan sistem, tetapi juga membentuknya. 
 
 - **Contoh Script Sway Output Hook (di file Sway config):**
 
-  ```
+  ```ini
   # Untuk menjalankan script saat output berubah (misalnya, monitor dicolok)
   bindsym --locked XF86Display exec ~/.config/sway/scripts/monitor_toggle.sh
   # Atau menggunakan event:
