@@ -1,6 +1,6 @@
 > [flash][pro11]
 
-# **[Fase 11: Deployment & Distribution][0]**.
+# **[Fase 11: Deployment & Distribution][0]**
 
 Fase ini akan membekali Anda dengan pengetahuan praktis untuk menerbitkan aplikasi Flutter Anda ke berbagai _platform_ dan mengelolanya di _production_.
 
