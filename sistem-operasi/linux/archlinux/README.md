@@ -1,4 +1,4 @@
-**Dokumentasi Lengkap: Mengelola Bluetooth dengan bluetuith & Optimalisasi Audio di Arch Linux Sway**
+# **Dokumentasi Lengkap: Mengelola Bluetooth dengan bluetuith & Optimalisasi Audio di Arch Linux Sway**
 
 ---
 
