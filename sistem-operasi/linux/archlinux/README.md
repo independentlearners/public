@@ -262,6 +262,6 @@ pactl info | grep "Server Name"
 
 Semua komponen—sistem dasar, daemon Bluetooth, `bluetoothctl`, bluetuith, terminal popup, dan PipeWire—telah diatur agar berjalan otomatis dan terpadu di Sway. Kini kamu dapat mengelola Bluetooth dan audio berkualitas tinggi tanpa ribet di Arch Linux.
 
-Selamat mencoba!
+**Selamat mencoba!**
 
 > ChatGPT
