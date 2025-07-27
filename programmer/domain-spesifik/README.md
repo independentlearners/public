@@ -1,5 +1,9 @@
 <details>
-  <summary>🌐 DSL</summary>
+  <summary>
+    <a href="../domain-spesifik/dsl/nix/README.md">
+  🌐 DSL
+    </a>
+  </summary>
 
 <div style="font-size: 10px;">
     <a href="../konsep/domain/README.md">
@@ -45,7 +49,7 @@
     <summary>
     <a href=
     "../domain-spesifik/embeddeble/README.md"
-    >🧩 Embedded Scripting
+    >🧩 Embedded and Scripting
     </a>
     </summary>
     <div style=
@@ -68,7 +72,7 @@
   <details>
     <summary>
     <a href=
-    "../domain-spesifik/embeddeble/README.md"
+    "../domain-spesifik/ai-ml/README.md"
     >🤖 AI & 🧠 ML
     </a>
     </summary>
@@ -78,10 +82,10 @@
       <ul>
         <li>
         <a href=
-                "../domain-spesifik/embeddeble/lua/README.md">📊 R
+                "../domain-spesifik/ai-ml/R/README.md">📊 R
         </a></li>
             <li><a href=
-                "../domain-spesifik/embeddeble/python/README.md">🐍 Python
+                "../domain-spesifik/ai-ml/python/README.md">🐍 Python
             </a></li>
       </ul>
     </div>
