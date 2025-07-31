@@ -8,7 +8,7 @@
 2. Membedakan Terminal, Konsol, dan Shell
 3. Memahami Filosofi Unix
 4. Navigasi Dasar: `pwd`, `ls`, `cd`
-5. Mendapatkan Bantuan: `man`, `tldr`, `--help`
+5. Mendapatkan Bantuan: `man`, `--help` kadang `-h`
 
 -----
 
@@ -203,7 +203,8 @@ ls file.txt 2>error.log  # redirect stderr (2) ke file
 ### `>`
 
 **Istilah dokumentasi:** *output redirection*
-**Fungsi:** Mengalihkan `stdout` ke file, **menimpa** isinya.
+
+**Fungsi:** Mengalirkan output / `stdout` ke dalam file lalu **menimpa** isinya.
 
 ```bash
 echo "Hello" > output.txt
@@ -212,7 +213,8 @@ echo "Hello" > output.txt
 ### `>>`
 
 **Istilah dokumentasi:** *append output redirection*
-**Fungsi:** Mengalihkan `stdout` ke file, **menambahkan** ke akhir file.
+
+**Fungsi:** Mengalirkan output / `stdout` ke file dan **menambahkan**-nya ke akhir file.
 
 ```bash
 echo "Another line" >> output.txt
@@ -225,7 +227,8 @@ echo "Another line" >> output.txt
 ### `<`
 
 **Istilah dokumentasi:** *input redirection*
-**Fungsi:** Menggunakan isi file sebagai `stdin`.
+
+**Fungsi:** Menggunakan isi file sebagai aliran input / `stdin`.
 
 ```bash
 cat < file.txt
@@ -238,6 +241,7 @@ cat < file.txt
 ### `|`
 
 **Istilah dokumentasi:** *pipe operator*
+
 **Fungsi:** Mengalirkan output dari satu perintah sebagai input (`stdin`) ke perintah lain.
 
 ```bash
@@ -251,6 +255,7 @@ ls | grep "txt"
 ### `2>`
 
 **Istilah dokumentasi:** *stderr redirection*
+
 **Fungsi:** Redirect `stderr` ke file.
 
 ```bash
@@ -262,6 +267,7 @@ ls nonexist 2> error.log
 ### `2>>`
 
 **Istilah dokumentasi:** *append stderr redirection*
+
 **Fungsi:** Tambahkan `stderr` ke file tanpa menimpa.
 
 ---
@@ -269,6 +275,7 @@ ls nonexist 2> error.log
 ### `&>`
 
 **Istilah dokumentasi:** *redirect both stdout and stderr*
+
 **Fungsi:** Mengalihkan `stdout` dan `stderr` ke target yang sama.
 (Sintaks Bash, bukan POSIX-sh)
 
@@ -281,6 +288,7 @@ command &> output.log
 ### `2>&1`
 
 **Istilah dokumentasi:** *file descriptor duplication*
+
 **Fungsi:** Arahkan `stderr (2)` ke lokasi yang sama seperti `stdout (1)`.
 
 ```bash
