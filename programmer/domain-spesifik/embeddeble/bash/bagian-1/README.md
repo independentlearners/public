@@ -174,6 +174,146 @@ Modul ini adalah titik awal. Pemahaman tentang perbedaan antara terminal, shell,
 5. Menggabungkan dan Mengarahkan Stream (`2>&1`)
 6. Perintah Esensial: `cat`, `grep`, `head`, `tail`, `wc`, `sort`, `uniq`
 
+Mari kita pecah jadi bagian-bagian penting dan kita bahas satu per satu dengan penjelasan teknis, contoh, dan istilah yang biasa digunakan dalam dokumentasi Bash.
+
+---
+
+## 1. **Standard Streams (Standar Aliran)**
+
+> **stdin**, **stdout**, **stderr** adalah tiga saluran I/O standar di Unix-like systems.
+
+| Stream   | Deskripsi                          | File Descriptor |
+| -------- | ---------------------------------- | --------------- |
+| `stdin`  | Standar input (biasanya keyboard)  | `0`             |
+| `stdout` | Standar output (biasanya terminal) | `1`             |
+| `stderr` | Standar error (output kesalahan)   | `2`             |
+
+Contoh:
+
+```bash
+echo "Hello"           # ke stdout (1)
+cat file.txt           # baca dari stdin (0) kalau tanpa argumen
+ls file.txt 2>error.log  # redirect stderr (2) ke file
+```
+
+---
+
+## 2. **Output Redirection**
+
+### `>`
+
+**Istilah dokumentasi:** *output redirection*
+**Fungsi:** Mengalihkan `stdout` ke file, **menimpa** isinya.
+
+```bash
+echo "Hello" > output.txt
+```
+
+### `>>`
+
+**Istilah dokumentasi:** *append output redirection*
+**Fungsi:** Mengalihkan `stdout` ke file, **menambahkan** ke akhir file.
+
+```bash
+echo "Another line" >> output.txt
+```
+
+---
+
+## 3. **Input Redirection**
+
+### `<`
+
+**Istilah dokumentasi:** *input redirection*
+**Fungsi:** Menggunakan isi file sebagai `stdin`.
+
+```bash
+cat < file.txt
+```
+
+---
+
+## 4. **Pipes  / Pipa (`|`)**
+
+### `|`
+
+**Istilah dokumentasi:** *pipe operator*
+**Fungsi:** Mengalirkan output dari satu perintah sebagai input (`stdin`) ke perintah lain.
+
+```bash
+ls | grep "txt"
+```
+
+---
+
+## 5. **Penggabungan dan Pengalihan Stream**
+
+### `2>`
+
+**Istilah dokumentasi:** *stderr redirection*
+**Fungsi:** Redirect `stderr` ke file.
+
+```bash
+ls nonexist 2> error.log
+```
+
+---
+
+### `2>>`
+
+**Istilah dokumentasi:** *append stderr redirection*
+**Fungsi:** Tambahkan `stderr` ke file tanpa menimpa.
+
+---
+
+### `&>`
+
+**Istilah dokumentasi:** *redirect both stdout and stderr*
+**Fungsi:** Mengalihkan `stdout` dan `stderr` ke target yang sama.
+(Sintaks Bash, bukan POSIX-sh)
+
+```bash
+command &> output.log
+```
+
+---
+
+### `2>&1`
+
+**Istilah dokumentasi:** *file descriptor duplication*
+**Fungsi:** Arahkan `stderr (2)` ke lokasi yang sama seperti `stdout (1)`.
+
+```bash
+command > out.log 2>&1
+```
+
+**Catatan:** Urutan penting! `2>&1 > out.log` artinya beda.
+
+---
+
+### Kombinasi:
+
+```bash
+command > out.log 2>&1     # stdout dan stderr ke satu file
+command &>> log.txt        # append stdout dan stderr ke file (Bash extension)
+```
+
+---
+
+## 6. **Perintah Esensial**
+
+| Perintah | Fungsi Singkat                                 |
+| -------- | ---------------------------------------------- |
+| `cat`    | Tampilkan isi file                             |
+| `grep`   | Filter teks dengan pola regex                  |
+| `head`   | Tampilkan baris awal                           |
+| `tail`   | Tampilkan baris akhir                          |
+| `wc`     | Hitung baris, kata, byte                       |
+| `sort`   | Urutkan baris                                  |
+| `uniq`   | Hapus duplikat baris (biasanya setelah `sort`) |
+
+---
+
 ### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
 
 Modul ini adalah tentang bagaimana Anda dapat mengendalikan aliran data di lingkungan shell. Anda akan belajar bagaimana menggabungkan perintah-perintah sederhana menjadi alur kerja yang jauh lebih kuat dan otomatis menggunakan konsep *redirection* (pengalihan) dan *pipes* (pipa). Ini adalah keterampilan paling fundamental dalam *shell scripting* karena memungkinkan Anda untuk membuat program saling "berbicara" dan memproses data secara berurutan, layaknya sebuah *assembly line* informasi.
