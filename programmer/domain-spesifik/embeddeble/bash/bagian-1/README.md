@@ -242,7 +242,7 @@ cat < file.txt
 
 **Istilah dokumentasi:** *pipe operator*
 
-**Fungsi:** Mengalirkan output dari satu perintah sebagai input (`stdin`) ke perintah lain.
+**Fungsi:** Mengalirkan output dari satu perintah sebagai input (`stdin`) ke perintah lain. Disini hasilnya akan menampilkan semua file dengan ekstensi .txt di dalam direktori dimana perintah tersebut dijalankan
 
 ```bash
 ls | grep "txt"
