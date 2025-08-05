@@ -39,7 +39,7 @@ Setelah menyelesaikan kurikulum ini, Anda akan dapat:
 
 -----
 
-### **Fase 1: Pemula (Foundation)**
+### **[Fase 1: Pemula (Foundation)][1]**
 
 **Level:** Pemula (Beginner)
 
@@ -131,7 +131,7 @@ Helix dirancang untuk menjaga tangan Anda di atas keyboard utama (home row). Ger
 
 -----
 
-### **Fase 2: Menengah (Intermediate)**
+### **[Fase 2: Menengah (Intermediate)][2]**
 
 **Level:** Menengah (Intermediate)
 
@@ -226,7 +226,7 @@ Helix dirancang untuk menjadi lebih dari sekadar editor teks; ia adalah **code e
 
 -----
 
-### **Fase 3: Mahir (Advanced)**
+### **[Fase 3: Mahir (Advanced)[3]**
 
 **Level:** Mahir (Advanced)
 
@@ -269,7 +269,7 @@ Makro di Helix memungkinkan Anda merekam serangkaian perintah (misalnya, menavig
 
 -----
 
-### **Fase 4: Ahli (Expert/Enterprise)**
+### **[Fase 4: Ahli (Expert/Enterprise)][4]**
 
 **Level:** Ahli (Expert)
 
@@ -358,3 +358,24 @@ Dalam perjalanan belajar Helix, Anda mungkin akan menemui beberapa error. Beriku
 
 **Cara Membaca Error:**
 Pesan error di terminal sering kali sangat spesifik. Perhatikan kata kunci seperti `path`, `syntax error`, `cannot find`, atau `permission denied`. Kata-kata ini adalah petunjuk langsung tentang apa yang salah. Jika Anda tidak yakin, cari pesan error tersebut di GitHub Discussions atau forum komunitas. Kemungkinan besar, seseorang sudah pernah mengalami masalah yang sama.
+
+[0]: ../README.md
+[1]: ../helix/bagian-1/README.md
+[2]: ../helix/bagian-2/README.md
+[3]: ../helix/bagian-3/README.md
+[4]: ../helix/bagian-4/README.md
+[5]: ../
+[6]: ../
+[7]: ../
+[8]: ../
+[9]: ../
+[10]: ../
+[11]: ../
+[12]: ../
+[13]: ../
+[14]: ../
+[15]: ../
+[16]: ../
+[17]: ../
+[18]: ../
+

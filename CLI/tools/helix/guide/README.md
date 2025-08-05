@@ -156,7 +156,7 @@ Bagian ini berfokus pada pintasan yang digunakan untuk memotong, menyalin, dan m
 | `}`           | Pindah ke blok paragraf berikutnya               |
 | `(`           | Pindah ke kalimat sebelumnya                       |
 | `)`           | Pindah ke kalimat berikutnya                       |
-| `|`           | Pindah ke tengah baris                           |
+| `\|`           | Pindah ke tengah baris                           |
 | `g`           | Masuk ke **Mode Goto** untuk navigasi cepat      |
 | `m`           | Tandai posisi kursor (setelahnya bisa `space '` untuk kembali) |
 | `'`           | Kembali ke tanda (mark) yang terakhir ditandai |
@@ -166,7 +166,7 @@ Bagian ini berfokus pada pintasan yang digunakan untuk memotong, menyalin, dan m
 | Shortcut  | Deskripsi                               |
 | --------- | --------------------------------------- |
 | `Ctrl-w`  | Masuk ke **Mode Window** untuk manajemen jendela |
-| `|`       | Bagi jendela saat ini secara vertikal   |
+| `\|`       | Bagi jendela saat ini secara vertikal   |
 | `-`       | Bagi jendela saat ini secara horizontal |
 | `q`       | Tutup jendela aktif                     |
 | `o`       | Fokus pada jendela sebelumnya           |
