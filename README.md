@@ -1,3 +1,5 @@
+# **Home**
+
 ~~Halaman ini belum diurus~~
 
 <details>
@@ -78,26 +80,6 @@
     </div>
   </details>
 
-<!-- # -->
-
-  <!-- <details> -->
-    <!-- <summary><a href="../domain-spesifik/crypto/README.md" -->
-    <!-- >🪙 Crypto -->
-    <!-- </a></summary> -->
-    <!-- <div style= -->
-    <!-- "padding-left: 20px"> -->
-      <!-- <ul> -->
-        <!-- <li> -->
-        <!-- <a href="../domain-spesifik/crypto/solidity/README.md" -->
-        <!-- >Solidity -->
-        <!-- </a> -->
-        <!-- </li> -->
-      <!-- </ul> -->
-    <!-- </div> -->
-  <!-- </details> -->
-
-#
-
   </div>
 <h3 id="satu"></h3>
 </details>
@@ -129,6 +111,6 @@
 
 #### _Hati-hati, semua repository disini di hasilkan oleh berbagai jenis Generate AI, tetap prioritaskan sumber daya dari dokumentasi dan pembelajaran kursus terpercaya serta buku-buku yang terkait di dalamnya. Jika berkenan mari kita bangun dan kita susun semua repository disini untuk mencapai sumber daya yang lebih kuat lagi, kita bisa menggunakan raodmap.sh sebagai petanya sedangkan disini sebagai daftar isi dan contoh dari kode yang sudah di uji coba, hubungi saya jika bersedia_
 
-[**_instagram_**][1]
+<!-- [**_instagram_**][1] -->
 
-[1]: https://www.instagram.com/amirkhalilzain/
+<!-- [1]: https://www.instagram.com/amirkhalilzain/ -->
