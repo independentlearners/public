@@ -58,7 +58,7 @@
   <details>
     <summary><a href=
     "../domain-spesifik/mobile/README.md"
-    >📱 Mobile
+    >CLI (command line interface)
     </a></summary>
     <div style=
     "padding-left: 20px">
@@ -78,23 +78,23 @@
     </div>
   </details>
 
-#
+<!-- # -->
 
-  <details>
-    <summary><a href="../domain-spesifik/crypto/README.md"
-    >🪙 Crypto
-    </a></summary>
-    <div style=
-    "padding-left: 20px">
-      <ul>
-        <li>
-        <a href="../domain-spesifik/crypto/solidity/README.md"
-        >Solidity
-        </a>
-        </li>
-      </ul>
-    </div>
-  </details>
+  <!-- <details> -->
+    <!-- <summary><a href="../domain-spesifik/crypto/README.md" -->
+    <!-- >🪙 Crypto -->
+    <!-- </a></summary> -->
+    <!-- <div style= -->
+    <!-- "padding-left: 20px"> -->
+      <!-- <ul> -->
+        <!-- <li> -->
+        <!-- <a href="../domain-spesifik/crypto/solidity/README.md" -->
+        <!-- >Solidity -->
+        <!-- </a> -->
+        <!-- </li> -->
+      <!-- </ul> -->
+    <!-- </div> -->
+  <!-- </details> -->
 
 #
 
@@ -104,18 +104,18 @@
 
 <details>
   <summary>
-  🎯 Niche
-    </summary>
+  Coder
+  </summary>
     <div style="font-size: 10px;">
- 🚀Bidang
+ 🚀Bidang Kode Dan Pemrograman
 </div>
 
   <div style=
   "padding-left: 20px">
       <ul>
         <li>
-    <a href="../domain-spesifik/embeddeble/lua/nich/plugin/neovim/README.md">
-    📝 Neovim Plugin
+    <a href="../public/programmer/domain-spesifik/README.md">
+    📝 Domain Spesifik
     </a>
         </li>
       </ul>
