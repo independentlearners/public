@@ -1,418 +1,291 @@
-# cp / copy
+# cp (copy)
 
-**Panduan Lengkap Penggunaan Perintah `cp` di Arch Linux (dan Linux Lainnya)**  
-Perintah `cp` (copy) adalah alat inti untuk menyalin file dan direktori di Linux. Berikut penjelasan komprehensif tentang kemampuannya, mulai dari dasar hingga tingkat lanjut:
+Ppanduan lengkap penggunaan `cp` (dan contoh `mv` untuk memindahkan subdirektori) di Arch Linux dengan tampilan struktur direktori sebelum dan sesudah (menggunakan `tree`). Setiap contoh disertai output “Struktur awal” dan “Hasil” dalam format tree.
 
 ---
 
-### **1. Dasar Penggunaan `cp`**
+## 1. Menyalin File
 
-#### a. Menyalin File ke Lokasi Baru
-
-```bash
-cp [file_sumber] [file_tujuan]
-```
-
-Contoh:
+### 1.1. Salin satu file ke file baru
 
 ```bash
 cp dokumen.txt salinan_dokumen.txt
 ```
 
-#### b. Menyalin File ke Direktori Tertentu
-
 ```bash
-cp [file_sumber] [direktori_tujuan]
+# Struktur awal:
+└── dokumen.txt
+
+# Hasil:
+├── dokumen.txt
+└── salinan_dokumen.txt
 ```
 
-Contoh:
+### 1.2. Salin file ke direktori
 
 ```bash
 cp gambar.jpg ~/Gambar/
 ```
 
-#### c. Menyalin Banyak File Sekaligus
+```bash
+# Struktur awal:
+└── gambar.jpg
+
+# Hasil:
+Gambar
+└── gambar.jpg
+```
+
+### 1.3. Salin beberapa file sekaligus
 
 ```bash
-cp file1.txt file2.txt direktori_tujuan/
+cp file1.txt file2.txt folder_tujuan/
+```
+
+```bash
+# Struktur awal:
+├── file1.txt
+└── file2.txt
+
+# Hasil:
+folder_tujuan
+├── file1.txt
+└── file2.txt
 ```
 
 ---
 
-### **2. Menyalin Direktori (Termasuk Subdirektori)**
+## 2. Menyalin Direktori Secara Rekursif
 
-Gunakan opsi **`-r`** (recursive) untuk menyalin direktori:
-
-```bash
-cp -r direktori_sumber/ direktori_tujuan/
-```
-
-Contoh:
+### 2.1. Opsi `-r`
 
 ```bash
 cp -r Musik/ Backup_Musik/
 ```
 
----
-
-### **3. Opsi Preservasi (Atribut File)**
-
-#### a. **`-p`** (Preserve)
-
-Mempertahankan hak akses, kepemilikan, dan timestamp.
-
 ```bash
-cp -p file.txt backup/
-```
+# Struktur awal:
+Musik
+├── lagu1.mp3
+└── playlist
+    └── fav.m3u
 
-#### b. **`-a`** (Archive Mode)
-
-Mode arsip (termasuk `-r`, `-p`, dan atribut lainnya).  
-**Ideal untuk backup**.
-
-```bash
-cp -a direktori_sumber/ direktori_tujuan/
-```
-
-#### c. **`--preserve=`**
-
-Pilih atribut yang ingin dipertahankan (e.g., `mode`, `ownership`, `timestamps`).
-
-```bash
-cp --preserve=ownership file.txt /backup/
+# Hasil:
+├── Musik
+│   ├── lagu1.mp3
+│   └── playlist
+│       └── fav.m3u
+└── Backup_Musik
+    ├── lagu1.mp3
+    └── playlist
+        └── fav.m3u
 ```
 
 ---
 
-### **4. Penanganan Konflik (Overwrite)**
+## 3. Preserve Atribut
 
-#### a. **`-i`** (Interactive)
-
-Konfirmasi sebelum menimpa file.
+### 3.1. `-p` (mode, ownership, timestamps)
 
 ```bash
-cp -i file.txt direktori/
+cp -p skrip.sh backup_skrip/
 ```
 
-#### b. **`-n`** (No Clobber)
-
-Tidak menimpa file yang sudah ada.
-
 ```bash
-cp -n file.txt direktori/
+# Struktur awal:
+└── skrip.sh   (mode=755, owner=cendekiawan)
+
+# Hasil:
+backup_skrip
+└── skrip.sh   (mode=755, owner=cendekiawan)
 ```
 
-#### c. **`-u`** (Update)
-
-Hanya salin jika file sumber lebih baru atau tidak ada di tujuan.
+### 3.2. `-a` (archive = -r + -p + …)
 
 ```bash
-cp -u file.txt direktori/
+cp -a project/ backup_project/
 ```
 
-#### d. **`--backup`**
-
-Buat backup file yang tertimpa (opsi: `--backup=numbered`, `simple`, dll).
-
 ```bash
-cp --backup=numbered file.txt direktori/
+# Struktur awal:
+project
+├── src/
+│   └── main.dart
+└── README.md
+
+# Hasil:
+├── project
+│   ├── src/
+│   │   └── main.dart
+│   └── README.md
+└── backup_project
+    ├── src/
+    │   └── main.dart
+    └── README.md
 ```
 
 ---
 
-### **5. Penanganan Tautan (Links)**
-
-#### a. **`-L`** (Follow Links)
-
-Salin file asli, bukan tautan simbolik.
+## 4. Penanganan Konflik Overwrite
 
 ```bash
-cp -L tautan.txt salinan.txt
+cp -i laporan.pdf /backup/    # -i: tanya sebelum overwrite
+cp -n data.csv /backup/       # -n: no clobber, tidak timpa
+cp -u catatan.txt /backup/    # -u: hanya jika sumber lebih baru
+cp --backup=numbered log.txt /backup/
 ```
 
-#### b. **`-P`** (Preserve Links)
-
-Pertahankan tautan simbolik (default pada beberapa sistem).
-
 ```bash
-cp -P tautan.txt salinan.txt
+# Contoh -i:
+# Struktur awal:
+└── laporan.pdf
+
+# Setelah cp -i ke /backup:
+/backup
+└── laporan.pdf    # (jika jawab 'y')
 ```
 
-#### c. **`--link`**
+---
 
-Buat hard link (jika sumber dan tujuan di filesystem yang sama).
+## 5. Penanganan Tautan (Links)
 
 ```bash
+cp -L link.txt salinan.txt   # Salin target link
+cp -P link.txt salinan.txt   # Pertahankan symlink
 cp --link file.txt hardlink.txt
 ```
 
----
-
-### **6. Advanced Copy**
-
-#### a. **`-t`** (Target Directory)
-
-Tentukan direktori tujuan di awal (berguna untuk `xargs`).
-
 ```bash
-cp -t direktori_tujuan/ file1.txt file2.txt
-```
+# Struktur awal:
+├── file.txt
+└── link.txt -> file.txt
 
-#### b. **`-v`** (Verbose)
-
-Tampilkan proses salin.
-
-```bash
-cp -v file.txt direktori/
-```
-
-#### c. **`--sparse=always`**
-
-Salin file "sparse" (file dengan blok kosong) secara efisien.
-
-```bash
-cp --sparse=always large_file.img backup/
-```
-
-#### d. **`--parents`**
-
-Pertahankan struktur direktori sumber di tujuan.
-
-```bash
-cp --parents src/file.txt backup/  # Hasil: backup/src/file.txt
+# Hasil cp -P:
+├── file.txt
+├── link.txt -> file.txt
+└── salinan.txt -> file.txt
 ```
 
 ---
 
-### **7. Kombinasi dengan Perintah Lain**
+## 6. Opsi Lainnya
 
-#### a. **`find` + `cp`**
+* **`-t`**: target di awal
 
-Salin file yang ditemukan oleh `find`:
+  ```bash
+  cp -t dest/ file1 file2
+  ```
+* **`-v`**: verbose
+
+  ```bash
+  cp -v file.txt dest/
+  ```
+* **`--sparse=always`**: efisien untuk file sparse
+* **`--parents`**: pertahankan struktur sumber
+
+  ```bash
+  cp --parents src/file.txt backup/
+  ```
+
+  ```bash
+  # Hasil:
+  backup
+  └── src
+      └── file.txt
+  ```
+
+---
+
+## 7. Kombinasi Dengan Perintah Lain
+
+### 7.1. `find` + `cp`
 
 ```bash
-find . -name "*.txt" -exec cp -t direktori_tujuan/ {} +
+find . -name "*.txt" -exec cp -t semua_txt/ {} +
 ```
 
-#### b. **`tar` + `ssh`**
-
-Salin direktori antar mesin via SSH:
-
 ```bash
-tar czf - direktori/ | ssh user@remote "tar xzf - -C /path/to/dest"
+# Struktur awal:
+.
+├── a.txt
+└── folder
+    └── b.txt
+
+# Hasil:
+semua_txt
+├── a.txt
+└── b.txt
 ```
 
-#### c. **`rsync`**
-
-Alternatif lebih canggih untuk sinkronisasi file (bukan `cp`, tapi sering digunakan):
+### 7.2. `tar` + `ssh`
 
 ```bash
-rsync -avz direktori/ user@remote:/path/to/dest
+tar czf - folder/ | ssh remote "tar xzf - -C /dest"
 ```
 
 ---
 
-### **8. Skenario Khusus**
+## 8. Contoh `mv` untuk Memindahkan Subdirektori
 
-#### a. Salin File dengan Nama Spesial
+> **Tanpa** memasukkan parent directory, hanya memindahkan isi subfolder.
 
-Gunakan `--` untuk menghentikan parsing opsi:
+### 8.1. Pindahkan `subproject/` ke `~/Projects/`
 
 ```bash
-cp -- -file_aneh.txt backup/
+mv parent/subproject ~/Projects/
 ```
 
-#### b. Salin File ke Root (Butuh `sudo`)
-
 ```bash
-sudo cp file.conf /etc/
+# Struktur awal:
+parent
+├── subproject
+│   └── code.py
+└── other.txt
+
+# Hasil:
+parent
+└── other.txt
+
+Projects
+└── subproject
+    └── code.py
 ```
 
-#### c. Salin Kepemilikan File (Butuh `sudo`)
+### 8.2. Pindahkan semua subfolder dari `Archive/` ke `Old/`
 
 ```bash
-sudo cp -a --preserve=ownership file.txt /backup/
+mv Archive/* Old/
+```
+
+```bash
+# Struktur awal:
+Archive
+├── 2023
+└── 2024
+
+# Hasil:
+Archive   # (kosong)
+Old
+├── 2023
+└── 2024
 ```
 
 ---
 
-### **9. Tips dan Peringatan**
+## 9. Tips dan Best Practices
 
-- **Hati-hati dengan `-r`**: Pastikan direktori tujuan benar sebelum menyalin.
-- **Gunakan `alias` untuk keamanan**:  
-  Tambahkan `alias cp='cp -i'` di `.bashrc` untuk konfirmasi overwrite otomatis.
-- **Tes dengan `-n` atau `--dry-run`** (jika tersedia) sebelum operasi besar.
+* Gunakan alias `alias cp='cp -i'` di `.bashrc`
+* Lakukan dry-run dengan `echo` sebelum operasi massal
+* Backup penting sebelum operasi besar (tar/rsync)
+* Waspada saat gunakan `-r` di target yang salah
 
 ---
 
-### **10. Daftar Lengkap Opsi `cp`**
-
-Lihat semua opsi dengan:
+### 10. Lihat Semua Opsi
 
 ```bash
 cp --help
-```
-
-atau dokumentasi lengkap:
-
-```bash
 man cp
 ```
 
----
-
-### **Contoh Implementasi Kompleks**
-
-#### Backup Harian dengan Timestamp:
-
-```bash
-cp -a --backup=numbered --suffix=$(date +".%Y-%m-%d") direktori/ backup/
-```
-
-#### Salin Hanya File Baru ke Remote Server via SSH:
-
-```bash
-tar cf - . | ssh user@remote "tar xf - -C /backup --checkpoint=1000"
-```
-
-## Eksplorasi
-
-### Membuat Banyak Folder
-
-```bash
-# Membuat folder di direktori saat ini
-mkdir -p {folder1,folder2,"Folder Dengan Spasi",project-{frontend,backend},data_{2020..2023}_{01..12}}
-
-# Membuat folder di path tertentu
-mkdir -p ~/Documents/{laporan,assets/{gambar,video},backup-$(date +%Y%m%d)}
-```
-
-#### Penjelasan dan Fungsi:
-
-1. **`mkdir`**: Perintah dasar untuk membuat direktori
-2. **`-p`**: Opsi untuk:
-   - Membuat parent directory jika belum ada
-   - Tidak menampilkan error jika folder sudah ada
-3. **Kurung kurawal `{}`**: Teknik brace expansion untuk membuat pola
-4. **Contoh pola**:
-   - `{a,b,c}`: Membuat folder a, b, dan c
-   - `"Folder Dengan Spasi"`: Kutip untuk nama dengan spasi
-   - `project-{frontend,backend}`: Nested expansion
-   - `data_{2020..2023}_{01..12}`: Sequence expansion untuk tahun dan bulan
-   - `$(date +%Y%m%d)`: Command substitution untuk tanggal terkini
-
-#### Hasil yang dibuat:
-
-```
-folder1
-folder2
-Folder Dengan Spasi
-project-frontend
-project-backend
-data_2020_01
-data_2020_02
-...
-data_2023_12
-~/Documents/laporan
-~/Documents/assets/gambar
-~/Documents/assets/video
-~/Documents/backup-20240325
-```
-
-### Menyalin Banyak File ke Multiple Folder
-
-```bash
-# Versi dasar dengan loop
-for item in "file1.txt:dirA" "laporan.pdf:dirB" "*.jpg:images"; do
-  file="${item%%:*}"   # Ekstrak bagian sebelum :
-  dir="${item##*:}"    # Ekstrak bagian setelah :
-  cp -v "$file" "$dir"
-done
-
-# Versi advanced dengan array
-declare -A copy_pairs=(
-  ["/path/source/file1.txt"]="/path/target/dir1"
-  ["*.config"]="/etc/"
-  ["/data/*.csv"]="/backup/"
-)
-
-for file in "${!copy_pairs[@]}"; do
-  cp -v --parents "$file" "${copy_pairs[$file]}"
-done
-```
-
-#### Penjelasan dan Fungsi:
-
-1. **`for item in ...`**: Loop untuk memproses setiap pasangan
-2. **Parameter expansion**:
-   - `${item%%:*}`: Hapus semua setelah `:` (mendapatkan nama file)
-   - `${item##*:}`: Hapus semua sebelum `:` (mendapatkan direktori target)
-3. **`cp`**: Perintah copy dengan opsi:
-   - `-v`: Verbose mode (menampilkan proses)
-   - `--parents`: Mempertahankan struktur direktori
-4. **Wildcard**:
-   - `*.jpg`: Semua file JPEG
-   - `*.config`: Semua file berekstensi .config
-5. **Array asosiatif**: Untuk mapping file->direktori yang kompleks
-6. **`declare -A`**: Mendeklarasikan array asosiatif (bash 4+)
-
-#### Contoh operasi yang dilakukan:
-
-1. Salin file1.txt ke dirA
-2. Salin laporan.pdf ke dirB
-3. Salin semua .jpg ke folder images
-4. Salin file config ke /etc dengan struktur path
-5. Backup \*.csv ke /backup
-
-### Best Practices:
-
-1. **Dry run** pertama dengan `echo`:
-   ```bash
-   for item in ...; do
-     echo "Copying $file to $dir"
-   done
-   ```
-2. **Backup** sebelum operasi besar:
-   ```bash
-   tar -czf backup-$(date +%Y%m%d).tgz /path/to/source
-   ```
-3. **Handle error**:
-   ```bash
-   cp -f "$file" "$dir" || echo "Gagal menyalin $file" >&2
-   ```
-4. **Parallel processing** (untuk file besar):
-   ```bash
-   parallel cp {} /target/dir ::: *.log
-   ```
-
-### Alternatif Tools:
-
-1. **`rsync`**: Untuk sinkronisasi kompleks
-   ```bash
-   rsync -avh /source/{file1,file2} /target/
-   ```
-2. **`find` + `xargs`**: Untuk operasi rekursif
-   ```bash
-   find . -name "*.tmp" -print0 | xargs -0 -I{} cp {} /backup
-   ```
-3. **`install`**: Untuk set permission sambil copy
-   ```bash
-   install -m 644 -t /target/dir file1 file2
-   ```
-
-### Penanganan Kasus Khusus:
-
-1. **Nama file dengan spasi**:
-   ```bash
-   cp "file name with spaces.txt" "/target dir/"
-   ```
-2. **File hidden**:
-   ```bash
-   cp .* /backup_hidden
-   ```
-3. **Preserve metadata**:
-   ```bash
-   cp -a /source /target
-   ```
-
-Kedua solusi ini memungkinkan operasi file/folder kompleks dalam satu baris perintah sambil menjaga keamanan dan fleksibilitas. Dan dengan menguasai opsi-opsi di atas, maka bisa memanfaatkan `cp` untuk hampir semua kebutuhan salin-menyalin di Arch Linux, mulai dari operasi sederhana hingga skenario kompleks.
+Dengan ini setiap contoh telah dilengkapi keluaran tree sebelum dan setelah operasi, plus tambahan contoh `mv` untuk memindahkan subdirektori tanpa memasukkan parent. Solusi ini memungkinkan operasi file/folder kompleks dalam satu baris perintah sambil menjaga keamanan dan fleksibilitas. Dan dengan menguasai opsi-opsi di atas, maka bisa memanfaatkan `cp` untuk hampir semua kebutuhan salin-menyalin di Arch Linux, mulai dari operasi sederhana hingga skenario kompleks.

@@ -1,10 +1,10 @@
 ~~Halaman ini belum diurus~~
 
 <details>
-  <summary>🏡 Home</summary>
+  <summary>Tools</summary>
 
 <div style="font-size: 10px;">
-🔖 Daftar Repository
+🔖 Semua Peralatan Termasuk OS
 </div>
 
   <div style=
@@ -13,7 +13,7 @@
     <summary>
     <a href=
     "../domain-spesifik/README.md">
-    📇CLI
+    Linux
     </a>
     </summary>
     <div style=
@@ -21,8 +21,8 @@
       <ul>
             <li>
             <a href=
-    "../domain-spesifik/embedded/C/README.md"
-    >C
+    "../public/sistem-operasi/linux/archlinux/README.md"
+    >Archlinux
             </a>
             </li>
       </ul>
@@ -34,8 +34,8 @@
   <details>
     <summary>
     <a href=
-    "../domain-spesifik/embeddeble/README.md"
-    >🧩 Embeddeble
+    "../public/sistem-operasi/windows/README.md"
+    >Windows
     </a>
     </summary>
     <div style=

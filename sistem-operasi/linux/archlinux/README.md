@@ -265,3 +265,6 @@ Semua komponen—sistem dasar, daemon Bluetooth, `bluetoothctl`, bluetuith, term
 **Selamat mencoba!**
 
 > ChatGPT
+
+**[Beranda][1]**
+[1]: ../../../README.md
