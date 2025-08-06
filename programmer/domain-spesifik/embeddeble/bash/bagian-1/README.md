@@ -619,9 +619,21 @@ Sebelum Bash menjalankan sebuah perintah, ia melakukan serangkaian "ekspansi". I
 
 #### **3.1. Membuat Skrip Bash Pertama (`.sh`):**
 
-Setiap skrip Bash dimulai dengan apa yang disebut **shebang** (`#!`). Ini adalah baris pertama dalam skrip Anda yang memberi tahu sistem operasi *shell* mana yang harus digunakan untuk mengeksekusi skrip tersebut.
+"Shebang" adalah singkatan dari **"hash-bang"** atau **"hash-exclamation"**. Ini adalah baris khusus yang ditempatkan di awal file skrip yang ditulis dalam bahasa pemrograman tertentu. Disini nantinya kita akan menggunakan Bash. Secara spesifik, shebang ditulis sebagai:
 
-**Contoh 1: `halo_dunia.sh`**
+```
+#!/path/to/interpreter
+```
+
+Di mana `/path/to/interpreter` adalah lokasi dari interpreter atau runtime yang digunakan untuk menjalankan skrip tersebut. Contohnya:
+
+```
+#!/usr/bin/env python
+```
+
+Ini menginstruksikan sistem operasi untuk menggunakan interpreter Python yang ditemukan di dalam `$PATH` lingkungan untuk menjalankan skrip. Shebang berguna untuk memastikan skrip dijalankan dengan interpreter yang benar, terutama pada sistem operasi berbasis Unix-like seperti Linux dan macOS. Ini memungkinkan skrip untuk dijalankan secara langsung tanpa harus mengetikkan nama interpreter terlebih dahulu. Jadi, dalam ringkasan, "shebang" adalah baris khusus di awal skrip yang menentukan interpreter mana yang harus digunakan untuk menjalankan skrip tersebut. Maka banyak dari setiap skrip Bash dimulai dengan apa yang disebut **shebang** (`#!`). Yaitu baris pertama dalam sebuah skrip yang memberi tahu sistem operasi *shell* mana yang harus digunakan untuk mengeksekusi skrip tersebut.
+
+**Contoh 1 Dalam Bash: `halo_dunia.sh`**
 
 ```bash
 #!/bin/bash
