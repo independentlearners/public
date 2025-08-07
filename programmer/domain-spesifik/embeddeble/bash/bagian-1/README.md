@@ -1,8 +1,80 @@
 # **[Fase 1: Fondasi – Berinteraksi dengan Shell (Tingkat Pemula)][1]**
 
-**Tujuan Fase:** Membangun kenyamanan di baris perintah, memahami konsep fundamental interaksi dengan shell, dan menulis skrip pertama yang fungsional.
+## 📚 Kamus Simbol Shell Scripting
 
------
+| Simbol          | Nama (EN)            | Nama (ID)                 | Istilah Dokumentasi / Komunitas     | Fungsi Umum                                         |
+| --------------- | -------------------- | ------------------------- | ----------------------------------- | --------------------------------------------------- | 
+| `#`             | hash / comment       | komentar                  | comment                             | Mengabaikan teks di baris tersebut                  |                                           
+| `#!`            | shebang              | shebang                   | shebang line                        | Menentukan interpreter script                       |                                           
+| `$`             | dollar sign          | tanda dolar               | parameter expansion                 | Mengakses variabel / argumen                        |                                           
+| `$(...)`        | command substitution | substitusi perintah       | command substitution                | Menjalankan perintah dalam konteks                  |                                           
+| `` `...` ``     | backtick             | tanda kutip miring        | (deprecated) command substitution   | Menjalankan perintah (gaya lama)                    |                                           
+| `"`             | double quote         | tanda kutip ganda         | double quoting                      | Melindungi string, tapi tetap memungkinkan ekspansi |                                           
+| `'`             | single quote         | tanda kutip tunggal       | single quoting                      | Melindungi string tanpa ekspansi                    |                                           
+| `\`             | backslash            | garis miring terbalik     | escape character                    | Mengabaikan makna khusus simbol setelahnya          |                                           
+| `=`             | equal sign           | tanda sama dengan         | assignment operator                 | Menetapkan nilai ke variabel                        |                                           
+| `-`             | dash / minus         | tanda minus               | option prefix                       | Menandai opsi perintah (seperti `-l`)               |                                           
+| `--`            | double dash          | tanda minus ganda         | long option prefix / end of options | Opsi panjang (`--help`) / mengakhiri argumen opsi   |                                           
+| `*`             | asterisk / wildcard  | tanda bintang / pengganti | glob                                | Mewakili banyak file atau karakter                  |                                           
+| `?`             | question mark        | tanda tanya               | glob                                | Mewakili satu karakter apa pun                      |                                           
+| `[]`            | square brackets      | kurung siku               | character class / test expression   | Untuk pola file atau kondisi `test`                 |                                           
+| `{}`            | curly braces         | kurung kurawal            | brace expansion                     | Ekspansi urutan / grup string                       |                                           
+| `()`            | parentheses          | tanda kurung biasa        | subshell / grouping                 | Menjalankan dalam subshell                          |                                           
+| `:`             | colon                | titik dua                 | null command                        | Perintah kosong, placeholder                        |                                           
+| `.`             | dot                  | titik                     | source command                      | Menjalankan script dalam shell aktif                |                                           
+| `..`            | double dot           | dua titik                 | parent directory                    | Menunjuk ke direktori induk                         |                                           
+| `/`             | slash                | garis miring              | path separator                      | Memisahkan direktori dalam path                     |                                           
+| `~`             | tilde                | tilde / gelombang         | home shortcut                       | Shortcut ke direktori home                          |                                           
+| `>`             | greater than         | lebih dari                | stdout redirection                  | Mengarahkan output ke file (overwrite)              |                                           
+| `>>`            | double greater than  | dua lebih dari            | stdout append redirection           | Menambahkan output ke file                          |                                           
+| `<`             | less than            | kurang dari               | stdin redirection                   | Mengambil input dari file                           |                                           
+| `\|`            | pipe                 | pipa                      | pipeline                            | Mengalirkan output ke perintah berikutnya           |                                               
+| `\|\|`          | double pipe          | pipa ganda                | OR operator                         | Menjalankan perintah kedua jika pertama gagal       |
+| `&&`            | double ampersand     | dan ganda                 | AND operator                        | Menjalankan perintah kedua jika pertama sukses      |                                           
+| `&`             | ampersand            | dan                       | background operator                 | Menjalankan perintah di latar belakang              |                                           
+| `!`             | bang / exclamation   | tanda seru                | logical NOT / history expansion     | Negasi logika, atau akses ke history                |                                           
+| `;`             | semicolon            | titik koma                | command separator                   | Menjalankan beberapa perintah dalam satu baris      |                                           
+| `%`             | percent              | persen                    | job ID                              | Menunjuk ke job dalam job control                   |                                           
+| `^`             | caret                | topi                      | control character                   | Digunakan dalam ekspresi reguler dan keybinding     |                                           
+| `"` `'`         | quotes               | tanda kutip               | quoting                             | Menangani string & ekspansi                         |                                           
+| `chmod +x`      | permission modifier  | pengubah izin             | file mode                           | Menjadikan file bisa dieksekusi                     |                                           
+
+---
+
+## 📦 Bonus: Simbol Khusus untuk `chmod` & `ls -l`
+
+| Simbol | Arti             | Nama Umum             |
+| ------ | ---------------- | --------------------- |
+| `r`    | read             | izin baca             |
+| `w`    | write            | izin tulis            |
+| `rwx`  | permission bits  | hak akses Unix        |
+| `x`    | execute          | izin eksekusi         |
+| `-`    | tidak punya izin | -                     |
+| `d`    | direktori        | file type             |
+| `l`    | symbolic link    | symlink               |
+| `s`    | setuid/setgid    | permission bit khusus |
+| `t`    | sticky bit       | permission bit khusus |
+
+## ⚙️ 2. Redirection & Piping
+| Simbol | Nama                     | Fungsi Umum                        |
+| ------ | ------------------------ | ---------------------------------- |
+| `>`    | redirect stdout          | Arahkan output ke file (overwrite) |
+| `>>`   | append stdout            | Tambahkan output ke akhir file     |
+| `<`    | redirect stdin           | Input dari file ke perintah        |
+| `2>`   | redirect stderr          | Arahkan error ke file              |
+| `&>`   | redirect stdout & stderr | Gabung output & error              |
+| `<<<`  | here-string              | Kirim string sebagai stdin         |
+
+
+| Simbol    | Nama            | Fungsi Umum                                 |
+| --------- | --------------- | ------------------------------------------- |
+| `&&`      | logical AND     | Eksekusi perintah kedua jika pertama sukses |
+| `\|\|`    | logical OR      | Eksekusi perintah kedua jika pertama gagal  |
+| `!`       | negasi          | Membalik kondisi (`! true` → false)         |            
+| `[[` `]]` | double brackets | Conditional test modern (bash/zsh)          |
+| `[` `]`   | single bracket  | Test POSIX-style (lebih terbatas)           |            
+
+---
 
 1. Sejarah Singkat Unix dan Shell
 2. Membedakan Terminal, Konsol, dan Shell
@@ -617,7 +689,7 @@ Sebelum Bash menjalankan sebuah perintah, ia melakukan serangkaian "ekspansi". I
 
 ### **3. Sintaks Dasar / Contoh Implementasi Inti:**
 
-#### **3.1. Membuat Skrip Bash Pertama (`.sh`):**
+#### **3.1. Membuat Skrip Pertama (`.sh`):**
 
 "Shebang" adalah singkatan dari **"hash-bang"** atau **"hash-exclamation"**. Ini adalah baris khusus yang ditempatkan di awal file skrip yang ditulis dalam bahasa pemrograman tertentu. Disini nantinya kita akan menggunakan Bash. Secara spesifik, shebang ditulis sebagai:
 
@@ -632,6 +704,30 @@ Di mana `/path/to/interpreter` adalah lokasi dari interpreter atau runtime yang 
 ```
 
 Ini menginstruksikan sistem operasi untuk menggunakan interpreter Python yang ditemukan di dalam `$PATH` lingkungan untuk menjalankan skrip. Shebang berguna untuk memastikan skrip dijalankan dengan interpreter yang benar, terutama pada sistem operasi berbasis Unix-like seperti Linux dan macOS. Ini memungkinkan skrip untuk dijalankan secara langsung tanpa harus mengetikkan nama interpreter terlebih dahulu. Jadi, dalam ringkasan, "shebang" adalah baris khusus di awal skrip yang menentukan interpreter mana yang harus digunakan untuk menjalankan skrip tersebut. Maka banyak dari setiap skrip Bash dimulai dengan apa yang disebut **shebang** (`#!`). Yaitu baris pertama dalam sebuah skrip yang memberi tahu sistem operasi *shell* mana yang harus digunakan untuk mengeksekusi skrip tersebut.
+
+---
+
+#### 🐚 **Shebang & portability (#!/bin/bash vs #!/usr/bin/env bash vs lainnya)**
+
+| Shebang               | Artinya                          | Portabel?                                                        |
+| --------------------- | -------------------------------- | ---------------------------------------------------------------- |
+| `#!/bin/bash`         | langsung menggunakan `/bin/bash` | Kurang portabel (tidak semua sistem punya `bash` di `/bin/bash`) |
+| `#!/usr/bin/env bash` | mencari `bash` dari `PATH` aktif | Lebih portabel                                                   |
+| `#!/usr/bin/env sh`   | memakai POSIX shell (`sh`)       | Paling portabel, tapi fitur bash/zsh *tidak boleh dipakai*       |
+
+⚠️ **Kalau anda menggunakan `zsh` sebagai *interactive shell***, *script tetap bisa ditulis untuk `bash` atau `sh`*, selama shebang-nya mengarah ke interpreter yang anda mau.
+
+➡️ *Jika ingin script **jalan di *semua shell***, tulislah script ***POSIX-compliant*** dan gunakan shebang:*
+
+```bash
+#!/usr/bin/env sh
+```
+
+Namun **kalau anda memakai fitur khas `bash` (array, `[[ ]]`, dll)** maka ***wajib** gunakan shebang-nya bash*, contoh:
+
+```bash
+#!/usr/bin/env bash
+```
 
 **Contoh 1 Dalam Bash: `halo_dunia.sh`**
 
