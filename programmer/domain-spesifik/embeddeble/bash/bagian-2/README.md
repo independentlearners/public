@@ -262,6 +262,59 @@ fi
 
 * **Penjelasan `[[ ! -d "log_files" ]]`:** Tanda seru `!` membalikkan hasil evaluasi. Jadi, `! -d "log_files"` berarti "jika TIDAK direktori log\_files ada".
 
+---
+
+### **Tambahan `else-if` dan Struktur Dasar**
+
+```bash
+if KONDISI; then
+    # kode dijalankan jika kondisi BENAR
+elif KONDISI_LAIN; then
+    # kode dijalankan jika kondisi pertama SALAH dan kondisi ini BENAR
+else
+    # kode dijalankan jika semua kondisi SALAH
+fi
+```
+
+---
+
+## **Poin Penting**
+
+1. **`if`** memulai blok pemeriksaan kondisi.
+2. **`then`** menandai awal kode yang dijalankan jika kondisi bernilai *true* (exit status 0).
+3. **`elif`** (`else if`) menambahkan percabangan baru, dicek hanya jika kondisi sebelumnya *false*.
+4. **`else`** dijalankan hanya jika semua kondisi *false*.
+5. **`fi`** menutup blok `if` — dibaca sebagai `if` terbalik.
+
+---
+
+## **Contoh Singkat**
+
+```bash
+#!/bin/bash
+
+NAMA="Budi"
+
+if [[ "$NAMA" == "Andi" ]]; then
+    echo "Halo Andi!"
+elif [[ "$NAMA" == "Budi" ]]; then
+    echo "Hai Budi!"
+else
+    echo "Saya tidak kenal kamu."
+fi
+```
+
+---
+
+## **Tips Praktis**
+
+* **Jangan lupa untuk selalu beri spasi** di dalam `[ ]` atau `[[ ]]`.
+* Gunakan `[[ ... ]]` untuk skrip Bash modern karena lebih aman dan fleksibel.
+* Kutip variabel (`"$VAR"`) untuk menghindari masalah jika variabel kosong atau mengandung spasi.
+* Ingat bahwa Bash menganggap **exit status 0** sebagai *true*.
+
+---
+
 #### **3.6. Struktur `case ... esac` untuk Pencocokan Pola:**
 
 Struktur `case` sangat berguna ketika Anda perlu membandingkan satu variabel atau ekspresi dengan beberapa pola yang berbeda. Ini adalah alternatif yang lebih bersih dan seringkali lebih efisien daripada serangkaian `if/elif/else` yang panjang.
