@@ -106,7 +106,7 @@ Ini adalah dua cara utama untuk mengevaluasi ekspresi kondisional dalam Bash.
 
   * `[` sebenarnya adalah *alias* untuk perintah `test`.
   * Ini adalah perintah eksternal yang mengevaluasi argumennya dan mengembalikan *exit status*.
-  * **Keterbatasan:** Memerlukan kutipan yang hati-hati untuk variabel dan tidak mendukung *globbing* atau *regular expressions* tingkat lanjut secara langsung.
+  * **Keterbatasan:** Memerlukan kutipan yang hati-hati untuk variabel dan tidak mendukung *[globbing][3]* atau *regular expressions* tingkat lanjut secara langsung.
 
     <!-- end list -->
 
@@ -134,7 +134,7 @@ Ini adalah dua cara utama untuk mengevaluasi ekspresi kondisional dalam Bash.
     * Mendukung *pattern matching* (globbing) dengan operator `==` dan `!=` tanpa perlu `grep` atau `case`.
     * Mendukung *regular expressions* dengan operator `=~`.
     * Mendukung operator boolean `&&` dan `||` secara langsung di dalamnya (lihat bagian "Menggabungkan Kondisi").
-    * Tidak rentan terhadap *word splitting* atau *pathname expansion* yang tidak diinginkan.
+    * Tidak rentan terhadap *[word splitting][4]* atau *pathname expansion* yang tidak diinginkan.
 
     <!-- end list -->
 
@@ -229,7 +229,7 @@ Ini adalah dua cara utama untuk mengevaluasi ekspresi kondisional dalam Bash.
 
 Anda dapat menggabungkan beberapa kondisi menggunakan operator boolean.
 
-* **Operator `&&` (AND):** Kondisi keseluruhan benar hanya jika **kedua** sisi `&&` benar (exit status 0). Jika sisi kiri gagal, sisi kanan tidak dievaluasi (short-circuiting).
+* **Operator `&&` (AND):** Kondisi keseluruhan benar hanya jika **kedua** sisi `&&` benar (exit status 0). Jika sisi kiri gagal, sisi kanan tidak dievaluasi [(short-circuiting)][2].
 * **Operator `||` (OR):** Kondisi keseluruhan benar jika **salah satu** sisi `||` benar (exit status 0). Jika sisi kiri berhasil, sisi kanan tidak dievaluasi (short-circuiting).
 
 <!-- end list -->
@@ -1172,3 +1172,6 @@ Fungsi adalah puncak dari fondasi yang dibangun di Fase 1 dan modul sebelumnya d
 
 <!----------------------------------------------------->
 [1]:../README.md
+[2]:../bagian-2/short-circuiting/README.md
+[3]:../bagian-2/globbing/README.md
+[4]:../bagian-2/word-splitting/README.md
