@@ -226,6 +226,8 @@
 
 - ##### [📖 Kamus](../kamus/README.md)
 
+- ##### [🏠 Home](../../README.md)
+
 <!-- <details>
   <summary>ℹ️ Tentang</summary>
 > _Ingat satu hal bahwa semua konten disini adalah hasil buatan AI_
