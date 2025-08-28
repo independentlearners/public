@@ -253,6 +253,7 @@
               * Gunakan `Page Up` / `Page Down` untuk menggulir halaman.
               * Tekan `q` untuk keluar dari halaman manual.
               * Tekan `/` untuk mencari kata kunci di dalam manual.
+              * Untuk penggunaan `man` kita juga bisa dengan cara `man man`.  
 
       * **Membaca Halaman Manual:** Halaman manual dibagi menjadi beberapa bagian utama:
 
