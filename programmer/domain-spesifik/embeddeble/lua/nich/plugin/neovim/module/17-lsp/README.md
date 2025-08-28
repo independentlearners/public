@@ -599,4 +599,4 @@ Kita telah membahas integrasi dengan tiga fitur Neovim yang sangat kuat: LSP, Tr
 [4]: ../18-testing/README.md
 [3]: ../16-floating-windows/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#17-file-system-operations
+[1]: ../../README.md

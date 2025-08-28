@@ -1,4 +1,4 @@
-# **[9\. Coroutines - Dasar Konkurensi][1]**
+# **[9. Coroutines - Dasar Konkurensi][1]**
 
 Bagian ini akan memperkenalkan Anda pada konsep coroutine di Lua, cara membuat dan menggunakannya, serta kasus penggunaannya yang relevan dalam pengembangan plugin Neovim, terutama untuk operasi non-blocking. Coroutine adalah fitur Lua yang memungkinkan penulisan kode untuk tugas-tugas yang dapat berjalan secara bersamaan (concurrent) melalui model _cooperative multitasking_.
 
@@ -299,7 +299,7 @@ Memahami coroutine membuka pintu untuk menulis plugin Neovim yang lebih responsi
 > - **[Domain Spesifik][5]**
 
 [5]: ../../../../../../../README.md
-[1]: ../../README.md/#9-advanced-lua-concepts
+[1]: ../../README.md
 [2]: ../../../../../README.md
 [3]: ../../module/8-error-handling-dan-debugging/README.md
 [4]: ../../module/10-metatables/README.md

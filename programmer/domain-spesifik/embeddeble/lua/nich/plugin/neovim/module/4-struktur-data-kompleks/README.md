@@ -1,4 +1,4 @@
-# **[4\. Struktur Data Kompleks][1]**
+# **[4. Struktur Data Kompleks][1]**
 
 Lua hanya memiliki satu mekanisme untuk membuat struktur data kompleks, yaitu `table`. Fleksibilitasnya memungkinkan `table` untuk digunakan sebagai array, dictionary (hash map), objek, dan berbagai struktur data lainnya.
 
@@ -381,7 +381,7 @@ Tabel adalah struktur data yang sangat fundamental dan serbaguna di Lua. Penguas
 > - **[Domain Spesifik][5]**
 
 [5]: ../../../../../../../README.md
-[1]: ../../README.md/#4-struktur-data-kompleks
+[1]: ../../README.md
 [2]: ../../../../../README.md
 [3]: ../3-operator-kontrolFlow/README.md
 [4]: ../5-function/README.md

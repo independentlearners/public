@@ -1,4 +1,4 @@
-# **[12\. Optimasi Performa dan Best Practices (Praktik Terbaik)][1]**
+# **[12. Optimasi Performa dan Best Practices (Praktik Terbaik)][1]**
 
 Bagian ini akan membahas manajemen memori di Lua, teknik dasar untuk profiling performa, dan serangkaian praktik terbaik yang dapat membantu Anda menulis kode Lua yang lebih cepat dan lebih mudah dipelihara untuk plugin Neovim. Optimasi Performa dan Best Practices. Menulis kode Lua yang efisien dan mengikuti praktik terbaik sangat penting, terutama dalam lingkungan seperti Neovim di mana responsivitas adalah kunci untuk pengalaman pengguna yang baik.
 
@@ -405,4 +405,4 @@ Dengan menerapkan praktik terbaik ini dan memahami bagaimana Lua mengelola memor
 [4]: ../13-unit-testing-dengan-busted/README.md
 [3]: ../11-plugin-structure-standards/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#12-performance-dan-optimization
+[1]: ../../README.md

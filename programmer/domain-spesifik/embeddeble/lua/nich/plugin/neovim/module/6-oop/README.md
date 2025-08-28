@@ -1,4 +1,4 @@
-# **[6\. Object-Oriented Programming (OOP) di Lua][1]**
+# **[6. Object-Oriented Programming (OOP) di Lua][1]**
 
 Bagian ini akan menjelaskan bagaimana tabel dapat digunakan untuk merepresentasikan objek, dan bagaimana metatable memungkinkan implementasi pola OOP seperti pewarisan (inheritance) dan enkapsulasi. Sebelum melanjutkan perlu kita ketahui terlebih dahulu bahwa pada dasarnya Lua tidak memiliki konsep kelas (class) bawaan seperti bahasa OOP lainnya (misalnya Java atau C++). Namun, OOP disni dapat diimplementasikan di Lua menggunakan tabel dan fitur canggihnya yang disebut metatable. Pendekatan ini biasanya bersifat prototype-based.
 
@@ -432,4 +432,4 @@ Pola OOP di Lua, meskipun tidak memiliki sintaks kelas bawaan, sangat fleksibel 
 [4]: ../../module/7-modules-dan-manajemenPaket/README.md
 [3]: ../../module/5-function/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#6-object-oriented-programming-oop-di-lua
+[1]: ../../README.md

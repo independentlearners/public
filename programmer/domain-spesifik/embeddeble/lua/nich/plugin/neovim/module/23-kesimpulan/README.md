@@ -63,4 +63,4 @@ Anda kini memiliki bekal pengetahuan yang komprehensif, mulai dari sintaks dasar
 [4]: ../../../../../../../README.md
 [3]: ../../module/22-tips/README.md
 [2]: ../../../../../README.md
-[1]: ../../../neovim/README.md/#kesimpulan
+[1]: ../../../neovim/README.md

@@ -1,4 +1,4 @@
-# **[11\. Interaksi dengan Sistem File dan OS][1]**
+# **[11. Interaksi dengan Sistem File dan OS][1]**
 
 Bagian ini akan membahas bagaimana Lua dapat berinteraksi dengan sistem file untuk operasi baca/tulis dan direktori, serta cara menjalankan perintah sistem operasi dan mengakses variabel lingkungan. Lebih lanjutnya bahwa bagian ini adalah interaksi dengan Sistem File dan OS. Kemampuan untuk membaca dan menulis file, serta menjalankan perintah sistem operasi, adalah fungsionalitas penting untuk banyak plugin, misalnya untuk membaca file konfigurasi, menyimpan data, atau berinteraksi dengan alat baris perintah (command-line tools).
 
@@ -556,4 +556,4 @@ Interaksi dengan sistem file dan OS adalah kemampuan dasar yang penting. Namun, 
 [4]: ../12-lua-performance-best-practices/README.md
 [3]: ../10-metatables/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#11-plugin-architecture-dan-design-patterns
+[1]: ../../README.md

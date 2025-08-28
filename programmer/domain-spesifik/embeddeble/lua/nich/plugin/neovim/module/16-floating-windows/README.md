@@ -538,4 +538,4 @@ Kita telah menyelesaikan Bagian 16. Kita akan melanjutkan dengan integrasi denga
 [4]: ../17-lsp/README.md
 [3]: ../15-ui/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#16-text-manipulation-dan-parsing
+[1]: ../../README.md

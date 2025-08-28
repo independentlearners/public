@@ -1,4 +1,4 @@
-# **[8\. Error Handling dan Debugging (Penanganan Kesalahan dan Debugging)][1]**
+# **[8. Error Handling dan Debugging (Penanganan Kesalahan dan Debugging)][1]**
 
 Bagian ini akan membahas mekanisme penanganan kesalahan di Lua, cara memunculkan dan menangkap kesalahan, serta beberapa alat dasar untuk debugging kode Lua Anda. Error Handling dan Debugging. Kemampuan untuk menangani kesalahan secara efektif dan melakukan debug adalah keterampilan penting untuk membangun perangkat lunak yang andal dan stabil, termasuk plugin Neovim.
 
@@ -414,7 +414,7 @@ Pustaka `debug` bisa sangat membantu, tetapi seringkali untuk debugging plugin N
 > - **[Domain Spesifik][5]**
 
 [5]: ../../../../../../../README.md
-[1]: ../../README.md/#8-error-handling-dan-debugging
+[1]: ../../README.md
 [2]: ../../../../../README.md
 [3]: ../../module/7-modules-dan-manajemenPaket/README.md
 [4]: ../../module/9-coroutines-konkurensi/README.md

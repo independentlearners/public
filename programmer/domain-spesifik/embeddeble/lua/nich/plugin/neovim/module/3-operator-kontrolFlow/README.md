@@ -1,4 +1,4 @@
-# **[3\. Operator dan Kontrol Flow][3]**
+# **[3. Operator dan Kontrol Flow][3]**
 
 Operator digunakan untuk melakukan operasi pada variabel dan nilai, sedangkan struktur kontrol alur (kontrol flow) digunakan untuk mengatur urutan eksekusi pernyataan dalam program berdasarkan kondisi atau iterasi tertentu.
 
@@ -450,7 +450,7 @@ Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yan
 
 [1]: ../4-struktur-data-kompleks/README.md
 [2]: ../2-variable/README.md
-[3]: ../../README.md/#3-operator-dan-kontrol-flow
+[3]: ../../README.md
 [4]: ../../../../../README.md
 [5]: ../../../../../dasar/operator/README.md
 [6]: ../../../../../../../README.md

@@ -1,4 +1,4 @@
-# **[10\. Metatables - Kustomisasi Perilaku Tabel][1]**
+# **[10. Metatables - Kustomisasi Perilaku Tabel][1]**
 
 Seperti yang telah disinggung sebelumnya (di Bagian 6.2 tentang OOP), metatable adalah tabel Lua biasa yang dapat dikaitkan dengan tabel lain untuk mengubah perilakunya saat operasi tertentu dilakukan padanya. Ini memungkinkan tabel berperilaku lebih dari sekadar kumpulan kunci-nilai sederhana. Jadi ini adalah salah satu fitur paling kuat di Lua, yang memungkinkan Anda untuk mengubah dan memperluas perilaku standar tabel. Pemahaman mendalam tentang metatable sangat penting untuk pemrograman Lua tingkat lanjut dan beberapa pola desain OOP.
 
@@ -545,7 +545,7 @@ Metatable adalah alat yang sangat ekspresif di Lua. Dengan memahaminya, Anda dap
 > - **[Domain Spesifik][5]**
 
 [5]: ../../../../../../../README.md
-[1]: ../../README.md/#10-neovim-integration-fundamentals
+[1]: ../../README.md
 [2]: ../../../../../README.md
 [3]: ../../module/9-coroutines-konkurensi/README.md
 [4]: ../../module/11-plugin-structure-standards/README.md

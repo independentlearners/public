@@ -245,4 +245,4 @@ Dengan menstrukturkan plugin Anda dengan rapi, menyediakan entry point `setup()`
 [4]: ../20-rilis/README.md
 [3]: ../18-testing/README.md
 [2]: ../../../../../README.md
-[1]: ../../../neovim/README.md/#19-user-interface-components
+[1]: ../../../neovim/README.md

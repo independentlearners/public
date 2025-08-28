@@ -247,4 +247,4 @@ Menerapkan tips dan praktik terbaik ini akan membantu Anda bertransformasi dari 
 [4]: ../23-kesimpulan/README.md
 [3]: ../21-bastpractice/READE.md
 [2]: ../../../../../README.md
-[1]: ../../../neovim/README.md/#22-best-practices-summary
+[1]: ../../../neovim/README.md

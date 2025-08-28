@@ -335,5 +335,5 @@ Pemahaman yang baik tentang tipe data dan variabel, khususnya perbedaan antara v
 
 [5]: ../../../../../../../README.md
 [4]: ../../../../../README.md
-[2]: ../../README.md/#2-tipe-data-dan-variabel
+[2]: ../../README.md
 [3]: ../../../../../materi/dasar/tipe-data/number/README.md

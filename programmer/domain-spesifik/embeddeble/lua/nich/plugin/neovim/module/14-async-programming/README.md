@@ -297,4 +297,4 @@ Penanganan event melalui autocommand adalah mekanisme yang sangat kuat di Neovim
 [4]: ../15-ui/README.md
 [3]: ../13-unit-testing-dengan-busted/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#14-advanced-plugin-development-patterns
+[1]: ../../README.md

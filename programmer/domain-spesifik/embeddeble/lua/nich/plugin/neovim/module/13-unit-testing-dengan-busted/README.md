@@ -478,4 +478,4 @@ Pemahaman tentang kedua antarmuka ini dan kapan menggunakan masing-masing akan m
 [4]: ../14-async-programming/README.md
 [3]: ../12-lua-performance-best-practices/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#13-testing-dan-quality-assurance
+[1]: ../../README.md

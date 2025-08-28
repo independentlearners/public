@@ -310,4 +310,4 @@ Menerapkan praktik-praktik ini akan sangat membantu dalam menciptakan dan memeli
 [4]: ../../module/22-tips/README.md
 [3]: ../20-rilis/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#21-deployment-dan-distribution
+[1]: ../../README.md

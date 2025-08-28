@@ -1,4 +1,4 @@
-# **[7\. Modules dan Package Management (Modul dan Manajemen Paket)][1]**
+# **[7. Modules dan Package Management (Modul dan Manajemen Paket)][1]**
 
 Seiring dengan bertambahnya kompleksitas program, penting untuk memecah kode menjadi unit-unit yang lebih kecil dan terkelola. Lua menyediakan sistem modul sederhana namun kuat untuk tujuan ini. Modules dan Package Management. Ini adalah aspek penting dalam pengembangan perangkat lunak yang lebih besar, termasuk plugin Neovim, karena membantu mengorganisir kode menjadi bagian-bagian yang logis dan dapat digunakan kembali.
 
@@ -268,7 +268,7 @@ Sistem modul Lua, meskipun sederhana, sangat efektif untuk membangun aplikasi ya
 > - **[Domain Spesifik][5]**
 
 [5]: ../../../../../../../README.md
-[1]: ../../README.md/#7-modules-dan-package-management
+[1]: ../../README.md
 [2]: ../../../../../README.md
 [3]: ../../module/6-oop/README.md
 [4]: ../../module/8-error-handling-dan-debugging/README.md

@@ -1,4 +1,4 @@
-# **[5\. Functions - Konsep Mendalam][1]**
+# **[5. Functions - Konsep Mendalam][1]**
 
 Bagian ini akan membahas secara mendalam tentang definisi fungsi, cara pemanggilan, fitur-fitur canggih seperti nilai kembali ganda, argumen variabel (varargs), closure, serta konsep fungsi sebagai _first-class citizen_ di Lua.
 
@@ -398,4 +398,4 @@ Pemahaman yang solid tentang fungsi, termasuk fitur-fitur canggihnya dan sifatny
 [4]: ../../module/6-oop/README.md
 [3]: ../../module/4-struktur-data-kompleks/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#5-functions---konsep-mendalam
+[1]: ../../README.md

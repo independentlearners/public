@@ -287,4 +287,4 @@ Pada bagian berikutnya kita akan membahas tentang praktik terbaik umum dan pemel
 [4]: ../21-bastpractice/README.md
 [3]: ../19-struktur/README.md
 [2]: ../../../../../README.md
-[1]: ../../../neovim/README.md/#20-plugin-integration-examples
+[1]: ../../../neovim/README.md

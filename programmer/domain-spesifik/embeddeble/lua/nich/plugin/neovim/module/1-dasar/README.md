@@ -121,7 +121,7 @@ Dengan memahami konsep dasar ini, Anda telah memiliki landasan awal untuk mempel
 > - **[Kurikulum][3]**
 > - **[Domain Spesifik][5]**
 
-[1]: ../../README.md/#1-fondasi-dasar-lua
+[1]: ../../README.md
 [2]: ../../../../../materi/dasar/komentar/README.md
 [3]: ../../../../../README.md
 [5]: ../../../../../../../README.md

@@ -1,4 +1,4 @@
-# **[15\. User Interface (UI) - Elemen Dasar][1]**
+# **[15. User Interface (UI) - Elemen Dasar][1]**
 
 Bagian ini akan membahas cara-cara dasar plugin Lua Anda dapat berkomunikasi dengan pengguna, seperti menampilkan pesan, meminta input, dan menyajikan pilihan sederhana. Neovim menyediakan beberapa mekanisme untuk ini, dari fungsi Lua standar hingga API UI yang lebih modern dan dapat diperluas.
 
@@ -455,4 +455,4 @@ Menggunakan elemen UI dasar ini memungkinkan plugin Anda untuk berinteraksi deng
 [4]: ../16-floating-windows/README.md
 [3]: ../14-async-programming/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#15-buffer-dan-window-management
+[1]: ../../README.md
