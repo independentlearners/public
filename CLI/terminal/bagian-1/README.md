@@ -322,8 +322,8 @@ Anda telah menyelesaikan fondasi kurikulum. Dengan tiga modul ini, Anda sekarang
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[domain]: ../../../programmer/domain-spesifik/README.md
+[kurikulum]: ../README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->

@@ -250,6 +250,16 @@ Fase ini adalah tentang menjadi seorang master. Anda akan menjelajahi konsep-kon
 
 -----
 
+Kurikulum ini mencakup empat fase utama:
+1.  **Foundation (Pemula):** Membangun pemahaman dasar tentang terminal, navigasi sistem file, dan cara mencari bantuan.
+2.  **Intermediate (Menengah):** Menguasai manajemen file, proses, dan konsep inti seperti *piping* dan *redirection*.
+3.  **Advanced (Mahir):** Belajar *shell scripting*, termasuk logika kondisional, perulangan, dan fungsi untuk otomasi.
+4.  **Expert/Enterprise (Ahli):** Mengintegrasikan terminal dengan teknologi profesional seperti Git, SSH, dan Docker.
+
+Setiap modul dan sub-bagian telah dijelaskan secara mendalam, termasuk konsep filosofis, contoh implementasi, terminologi kunci, praktik terbaik, dan potensi kesalahan umum.
+
+Dengan menyelesaikan seluruh kurikulum ini, Anda telah memperoleh fondasi yang kuat untuk menjadi seorang ahli dalam penggunaan CLI dan siap untuk menghadapi tantangan teknis yang lebih kompleks.
+
 ### **Sumber Daya Komunitas & Sertifikasi**
 
 #### **Sumber Daya Komunitas:**

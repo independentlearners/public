@@ -216,8 +216,8 @@ Anda telah berhasil menguasai konsep yang membedakan pengguna CLI dari pengguna 
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../programmer/domain-spesifik/README.md
+[kurikulum]: ../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 
