@@ -1,6 +1,6 @@
 # [Kurikulum Lengkap: Menguasai Chunk dalam Lua][0]
 
-## Bagian I: Fondasi Chunk (Foundation)
+## [Bagian I: Fondasi Chunk (Foundation)][1]
 
 ### 1. Konsep Dasar Chunk
 
@@ -41,7 +41,7 @@
   - Function chunks (nested)
   - Module chunks (require system)
 
-## Bagian II: Kompilasi dan Bytecode (Compilation)
+## [Bagian II: Kompilasi dan Bytecode (Compilation)][2]
 
 ### 3. Proses Kompilasi Chunk
 
@@ -101,7 +101,7 @@
   - Preprocessing dan macro systems
   - Integration dengan build systems
 
-## Bagian III: Loading dan Execution (Runtime)
+## [Bagian III: Loading dan Execution (Runtime)][3]
 
 ### 6. Chunk Loading Mechanisms
 
@@ -162,7 +162,7 @@
   - FFI integration considerations
   - Performance characteristics
 
-## Bagian IV: Advanced Chunk Techniques
+## [Bagian IV: Advanced Chunk Techniques][4]
 
 ### 9. Sandboxing dan Security
 
@@ -222,7 +222,7 @@
   - Parser generators
   - Code transformation pipelines
 
-## Bagian V: Integration dan Interoperability
+## [Bagian V: Integration dan Interoperability][5]
 
 ### 12. C/C++ API Integration
 
@@ -281,7 +281,7 @@
   - API gateway integration
   - Service discovery
 
-## Bagian VI: Performance dan Optimization
+## [Bagian VI: Performance dan Optimization][6]
 
 ### 15. Profiling dan Benchmarking
 
@@ -340,7 +340,7 @@
   - Error rate monitoring
   - Resource utilization tracking
 
-## Bagian VII: Real-world Applications
+## [Bagian VII: Real-world Applications][7]
 
 ### 18. Game Development
 
@@ -418,7 +418,7 @@
   - Permission systems
   - Code signing
 
-## Bagian VIII: Advanced Topics dan Research
+## [Bagian VIII: Advanced Topics dan Research][8]
 
 ### 22. Experimental Features
 
@@ -497,7 +497,7 @@
   - Error aggregation
   - Alert systems
 
-## Bagian IX: Ecosystem dan Community
+## [Bagian IX: Ecosystem dan Community][9]
 
 ### 26. Tool Ecosystem
 
@@ -556,7 +556,7 @@
   - API stability considerations
   - Deprecation strategies
 
-## Bagian X: Troubleshooting dan Problem Solving
+## [Bagian X: Troubleshooting dan Problem Solving][10]
 
 ### 29. Common Issues dan Solutions
 
@@ -690,21 +690,13 @@ Kurikulum ini telah melebihi dokumentasi resmi dalam cakupan dan kedalaman, deng
 <!--------------------------------------------------- -->
 
 [0]: ../../README.md/#
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../chunk/bagian-1/README.md
+[2]: ../chunk/bagian-2/README.md
+[3]: ../chunk/bagian-3/README.md
+[4]: ../chunk/bagian-4/README.md
+[5]: ../chunk/bagian-5/README.md
+[6]: ../chunk/bagian-6/README.md
+[7]: ../chunk/bagian-7/README.md
+[8]: ../chunk/bagian-8/README.md
+[9]: ../chunk/bagian-9/README.md
+[10]: ../chunk/bagian-9/README.md
