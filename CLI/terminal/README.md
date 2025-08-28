@@ -26,7 +26,7 @@ Setelah menyelesaikan kurikulum ini, Anda akan mampu:
 
 -----
 
-### **[Fase I: Foundation (Pemula)**][1]
+### **[Fase I: Foundation (Pemula)][1]**
 
 **Estimasi Waktu:** 20-30 Jam
 **Level:** Pemula
@@ -83,7 +83,7 @@ Fase ini adalah fondasi yang kokoh. Tujuannya adalah membuat Anda merasa nyaman 
 
 -----
 
-### **[Fase II: Intermediate (Menengah)**][2]
+### **[Fase II: Intermediate (Menengah)][2]**
 
 **Estimasi Waktu:** 40-50 Jam
 **Level:** Menengah
@@ -146,7 +146,7 @@ Fase ini membangun kemampuan Anda dengan memperkenalkan konsep-konsep kunci yang
 
 -----
 
-### **[Fase III: Advanced (Mahir)**][3]
+### **[Fase III: Advanced (Mahir)][3]**
 
 **Estimasi Waktu:** 60-80 Jam
 **Level:** Mahir
@@ -217,7 +217,7 @@ Anda sekarang berada di jalur untuk menjadi seorang ahli. Fase ini berfokus pada
 
 -----
 
-### **[Fase IV: Expert/Enterprise (Ahli/Profesional)**][4]
+### **[Fase IV: Expert/Enterprise (Ahli/Profesional)][4]**
 
 **Estimasi Waktu:** 80-100+ Jam
 **Level:** Ahli
@@ -270,7 +270,7 @@ Meskipun tidak ada "Sertifikasi Terminal Shell" formal, penguasaan terminal adal
 Sertifikasi ini tidak secara eksklusif tentang terminal, tetapi Anda tidak akan bisa lulus tanpa penguasaan CLI yang mendalam. Penguasaan Anda terhadap kurikulum ini akan menempatkan Anda pada jalur yang tepat untuk meraihnya.
 
 [0]: ../
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
+[1]: ../terminal/bagian-1/README.md
+[2]: ../terminal/bagian-2/README.md
+[3]: ../terminal/bagian-3/README.md
+[4]: ../terminal/bagian-4/README.md
