@@ -279,8 +279,8 @@ Meskipun tidak ada "Sertifikasi Terminal Shell" formal, penguasaan terminal adal
 
 Sertifikasi ini tidak secara eksklusif tentang terminal, tetapi Anda tidak akan bisa lulus tanpa penguasaan CLI yang mendalam. Penguasaan Anda terhadap kurikulum ini akan menempatkan Anda pada jalur yang tepat untuk meraihnya.
 
-[0]: ../
 [1]: ../terminal/bagian-1/README.md
 [2]: ../terminal/bagian-2/README.md
 [3]: ../terminal/bagian-3/README.md
 [4]: ../terminal/bagian-4/README.md
+[0]: ../../programmer/domain-spesifik/README.md

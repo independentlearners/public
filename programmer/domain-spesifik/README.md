@@ -155,6 +155,43 @@
  </div>
 </details
 
+#
+
+<details>
+  <summary>
+    <a href="../domain-spesifik/dsl/nix/README.md">
+   ⌨ CLI
+    </a>
+  </summary>
+<div style="font-size: 10px;">
+    <a href="../../CLI/terminal/RADME.md">
+📍Command Line Interface
+</div>
+   <div style=
+    "padding-left: 20px">
+      <ul>
+            <li>
+            <a href=
+    "../../CLI/terminal/README.md"
+    > 🚀 Linux Consol (Mendukung Termux) 
+            </a>
+            </li>
+     </div> 
+      <div style=
+    "padding-left: 20px">
+      <ul>
+            <li>
+            <a href=
+    "../domain-spesifik/system/C/README.md"
+    > 🚀 Windows PowerShell 
+            </a>
+            </li>
+        </ul>
+    </div>
+  </details>
+
+#
+
 <details>
   <summary>
   🎯 Niche
@@ -180,8 +217,7 @@
     </a>
         </li>
       </ul>
-   </summary>
-
+   
 <h3 id="batas"></h3>
 
 </details>
@@ -190,10 +226,10 @@
 
 - ##### [📖 Kamus](../kamus/README.md)
 
-> _Ingat satu hal bahwa semua konten disini adalah hasil buatan AI_
-
 <!-- <details>
   <summary>ℹ️ Tentang</summary>
+> _Ingat satu hal bahwa semua konten disini adalah hasil buatan AI_
+
 
 **[Ke Atas](#)**
 

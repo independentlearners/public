@@ -1,3 +1,5 @@
+> **[Belajar CLI/Terminal Baris Perintah][0]**
+
 # **Kurikulum Komprehensif: Menguasai Shell Scripting (Bash)**
 
 Kurikulum ini adalah peta jalan untuk menguasai seni otomasi di lingkungan berbasis Unix/Linux. Shell scripting bukan hanya tentang menulis kode, tetapi tentang memahami dan memanfaatkan kekuatan baris perintah secara maksimal.
@@ -647,7 +649,7 @@ Kurikulum ini adalah fondasi yang sangat kokoh. Penambahan yang saya rekomendasi
 - **[Domain Spesifik][domain-spesifik]**
 
 [domain-spesifik]: ../../README.md
-
+[0]:../../../../CLI/terminal/README.md
 [1]:../bash/bagian-1/README.md
 [2]:../bash/bagian-2/README.md
 [3]:../bash/bagian-3/README.md
