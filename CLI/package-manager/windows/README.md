@@ -10,6 +10,7 @@ Berikut adalah beberapa tool lain yang menyediakan tempat download seperti Choco
 
 Item di Chocolatey bisa gratis atau berbayar, tergantung pada aplikasi yang diinstal. Banyak aplikasi yang tersedia secara gratis, tetapi ada juga aplikasi berbayar yang dapat diinstal melalui Chocolatey.
 
-: [Reddit](https://www.reddit.com/r/chocolatey/comments/nzqgt1/winget_vs_choco/)
-: [Reddit](https://www.reddit.com/r/Windows10/comments/19aqmmc/scoop_choco_or_winget/)
-: [Eka Wirya](https://ekawirya.com/cari-install-dan-update-aplikasi-di-windows-dengan-mudah-menggunakan-chocolatey/)
+[Reddit](https://www.reddit.com/r/chocolatey/comments/nzqgt1/winget_vs_choco/)
+[Reddit](https://www.reddit.com/r/Windows10/comments/19aqmmc/scoop_choco_or_winget/)
+[Eka Wirya](https://ekawirya.com/cari-install-dan-update-aplikasi-di-windows-dengan-mudah-menggunakan-chocolatey/)
+[Home](../../README.md)

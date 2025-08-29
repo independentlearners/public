@@ -1,5 +1,3 @@
-
-
 # Dalam Dunia Pemrograman
 
 Konsistensi dalam pemrograman sangat penting. Konsistensi membantu memastikan bahwa kode lebih mudah dipahami, didokumentasikan, dan diperawat oleh berbagai orang. Ini juga membantu dalam mengurangi kesalahan dan memudahkan integrasi dengan sistem lain.
@@ -72,6 +70,6 @@ Semua aspek ini bersama-sama membantu bukan hanya dalam menciptakan pengalaman p
 💡 **Pesan penyemangat:**
 Jangan takut dengan perjalanan panjang: nikmati tiap lapisan, dokumentasikan progress, dan jangan ragu “break things to learn things.” Selamat berjuang jadi _polyglot_ sejati di dunia pemrograman!
 
-> #### [Domain Spesifik][domain-spesifik]
+> #### [Home][domain-spesifik]
 
 [domain-spesifik]: ../programmer/domain-spesifik/README.md

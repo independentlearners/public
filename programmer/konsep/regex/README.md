@@ -189,7 +189,7 @@ Regular expressions adalah alat powerful untuk pencocokan pola dalam teks. Meski
 
 ---
 
-**[Domain][1]**
+**[Home][1]**
 **[Kamus][1]**
 
 [1]: ../../domain-spesifik/README.md

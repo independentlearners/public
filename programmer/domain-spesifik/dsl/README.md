@@ -83,6 +83,6 @@ Secara umum, kalau kamu ingin konsistensi penuh dan manajemen konfigurasi sistem
 
 ---
 
-- **[Domain Spesifik][domain-spesifik]**
+- **[Home][domain-spesifik]**
 
 [domain-spesifik]: ../../README.md

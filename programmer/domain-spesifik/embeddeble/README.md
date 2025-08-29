@@ -663,6 +663,6 @@ Beberapa bahasa bisa keduanya:
 
 #
 
-> #### [Domain Spesifik][domain-spesifik]
+> #### [Home][domain-spesifik]
 
 [domain-spesifik]: ../../domain-spesifik/README.md

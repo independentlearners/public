@@ -1342,6 +1342,6 @@ Setiap bahasa memiliki tempat dan kegunaan spesifik dalam embedded systems. Pema
 
 #
 
-> #### [Domain Spesifik][domain-spesifik]
+> #### [Home][domain-spesifik]
 
 [domain-spesifik]: ../README.md

@@ -880,6 +880,6 @@ _Kurikulum ini dirancang untuk menciptakan generasi baru blockchain developers y
 
 Kurikulum ini sekarang menjadi **standar emas** untuk pembelajaran Solidity dan blockchain development yang akan menghasilkan professional tingkat dunia dengan kemampuan technical excellence, business acumen, dan leadership skills yang dibutuhkan industri blockchain masa depan.
 
-> #### [Domain Spesifik][domain-spesifik]
+> #### [Kembali][domain-spesifik]
 
 [domain-spesifik]: ../../README.md

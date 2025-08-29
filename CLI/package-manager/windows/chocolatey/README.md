@@ -179,3 +179,5 @@ Menguasai Chocolatey akan sangat meningkatkan efisiensi kerjamu di lingkungan Wi
 - **Tetap Up-to-date dengan Mudah:** Pastikan semua alatmu selalu dalam versi terbaru dengan perintah update sederhana.
 
 > **Microsoft Copilot**
+
+[Home](../../../README.md)

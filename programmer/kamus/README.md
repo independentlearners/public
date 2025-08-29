@@ -1,5 +1,7 @@
 **[Ke Bawah](#satu)**
 
+**[Home](../README.md)**
+
 # Kamus Sebagian Istilah Dalam Bahasa Pemrograman
 
 ## A. Istilah Umum Pemrograman
@@ -4972,7 +4974,7 @@ Mengoptimalkan kode dengan mengurangi kebutuhan variabel baru
 
 <h3 id="satu"></h3>
 
-**[Domain][1]**
+**[Home][1]**
 
 [1]: ../domain-spesifik/README.md
 [dsl]: ../konsep/domain/README.md

@@ -496,6 +496,6 @@ Setelah menyelesaikan kurikulum ini, Anda akan mampu:
 
 ---
 
-- **[Domain Spesifik][domain-spesifik]**
+- **[Home][domain-spesifik]**
 
 [domain-spesifik]: ../../README.md

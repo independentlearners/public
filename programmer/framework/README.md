@@ -97,7 +97,7 @@ Secara ringkas, pertimbangkan kebutuhan teknis proyek, keahlian tim, dukungan ek
 <h3 id="satu"></h3>
 
 > - **[Ke Atas](#)**
-> - **[Domain][1]**
+> - **[Home][1]**
 
 
 [1]: ../domain-spesifik/README.md

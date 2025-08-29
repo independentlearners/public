@@ -1,32 +1,32 @@
-# **Selamat Datang di Repositori Pengetahuan Saya**
+# 📖 My Knowledge Repository
 
-> Repositori ini adalah kumpulan catatan, kursus, dan dokumentasi pribadi yang disusun secara sistematis. Gunakan menu navigasi di bawah ini untuk menjelajahi setiap topik.
+> This repository is a systematic collection of my personal notes, courses, and documentation. Use the navigation menu below to explore each topic.
 
 ---
 
-### 🗺️ **Menu Navigasi Utama**
+### 🗺️ **Main Navigation Menu**
 
 <details>
   <summary>
     <strong>⌨️ CLI (Command-Line Interface)</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Semua tentang antarmuka baris perintah.</i></div>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Everything about the command-line interface.</i></div>
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
-- [cite_start]**[Perintah Dasar (Linux)](CLI/perintah/README.md)** [cite: 2]
-- [cite_start]**[Package Manager](CLI/package-manager/README.md)** [cite: 1]
-  - [cite_start][Linux](CLI/package-manager/linux/README.md) [cite: 1]
-  - [cite_start][Windows (Chocolatey, Winget)](CLI/package-manager/windows/README.md) [cite: 1]
-- [cite_start]**[Terminal & Shell](CLI/terminal/README.md)** [cite: 3]
-  - [cite_start][Shell Terminal](CLI/terminal/shell-terminal/README.md) [cite: 3]
-  - [cite_start][Kitty Terminal](CLI/terminal/kitty/README.md) [cite: 3]
-- **[Tools CLI Populer](CLI/tools/README.md)**
-  - [cite_start][Git (Lengkap)](CLI/tools/git/README.md) [cite: 4]
-  - [cite_start][Helix Editor](CLI/tools/helix/README.md) [cite: 4, 5]
-  - [cite_start][Neovim](CLI/tools/neovim/README.md) [cite: 5]
-  - [cite_start][Nano](CLI/tools/nano/README.md) [cite: 5]
-  - [cite_start][Lainnya (Pandoc, yt-dlp, dll)](CLI/tools/README.md) [cite: 5, 6]
-- [cite_start]**[Windows PowerShell](CLI/windows/powershell/README.md)** [cite: 6]
+- **[🖥️ Basic Commands (Linux)](CLI/perintah/README.md)**
+- **[📦 Package Manager](CLI/package-manager/README.md)**
+  - **[🐧 Linux](CLI/package-manager/linux/README.md)**
+  - **[🪟 Windows (Chocolatey, Winget)](CLI/package-manager/windows/README.md)**
+- **[💻 Terminal & Shell](CLI/terminal/README.md)**
+  - **[📜 Shell Terminal](CLI/terminal/shell-terminal/README.md)**
+  - **[🐱 Kitty Terminal](CLI/terminal/kitty/README.md)**
+- **[🛠️ Popular CLI Tools](CLI/tools/README.md)**
+  - **[🔄 Git (Complete)](CLI/tools/git/README.md)**
+  - **[⬢ Helix Editor](CLI/tools/helix/README.md)**
+  - **[✨ Neovim](CLI/tools/neovim/README.md)**
+  - **[✏️ Nano](CLI/tools/nano/README.md)**
+  - **[➕ Others (Pandoc, yt-dlp, etc.)](CLI/tools/README.md)**
+- **[🚀 Windows PowerShell](CLI/windows/powershell/README.md)**
 
   </div>
 </details>
@@ -35,12 +35,12 @@
 
 <details open>
   <summary>
-    <strong>🚀 Hub Programmer</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Klik di sini untuk masuk ke pusat pemrograman.</i></div>
+    <strong>👨‍💻 Programmer Hub</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Click here to enter the programming center.</i></div>
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
-- [cite_start]**[➡️ Masuk ke Hub Programmer](programmer/README.md)** [cite: 9]
+- **[➡️ Go to Programmer Hub](programmer/README.md)**
 
   </div>
 </details>
@@ -49,14 +49,14 @@
 
 <details>
   <summary>
-    <strong>💻 Sistem Operasi</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Catatan seputar sistem operasi.</i></div>
+    <strong>⚙️ Operating Systems</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Notes about operating systems.</i></div>
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
-- [cite_start]**[Linux](sistem-operasi/linux/README.md)** [cite: 95]
-  - [cite_start][Arch Linux & Manjaro](sistem-operasi/linux/archlinux/README.md) [cite: 95]
-- [cite_start]**[Windows](sistem-operasi/windows/README.md)** [cite: 97]
+- **[🐧 Linux](sistem-operasi/linux/README.md)**
+  - **[⚫ Arch Linux & Manjaro](sistem-operasi/linux/archlinux/README.md)**
+- **[🪟 Windows](sistem-operasi/windows/README.md)**
 
   </div>
 </details>
@@ -65,16 +65,16 @@
 
 <details>
   <summary>
-    <strong>🛠️ Software & Tools Lain</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Aplikasi, ekstensi, dan pengaturan.</i></div>
+    <strong>🔧 Other Software & Tools</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Applications, extensions, and settings.</i></div>
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
-- **[Software](software/README.md)**
-  - [cite_start][Browser Extension (Vimium-C)](software/browser/extention/vimium-c/README.md) [cite: 97]
-- **[Pengaturan](pengaturan/README.md)**
-  - [Visual Studio Code](pengaturan/vsc/README.md)
-- [cite_start]**[Markdown](markdown/README.md)** [cite: 9]
+- **[💻 Software](software/README.md)**
+  - **[🌐 Browser Extension (Vimium-C)](software/browser/extention/vimium-c/README.md)**
+- **[⚙️ Settings](pengaturan/README.md)**
+  - **[🖌️ Visual Studio Code](pengaturan/vsc/README.md)**
+- **[📝 Markdown](markdown/README.md)**
 
   </div>
 </details>
@@ -83,19 +83,19 @@
 
 <details>
   <summary>
-    <strong>📚 Kamus & Referensi</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Kamus, matematika, dan bacaan pribadi.</i></div>
+    <strong>📚 Dictionary & References</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Dictionaries, mathematics, and personal readings.</i></div>
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
-- [cite_start]**[Kamus Bahasa](kamus/bahasa/README.md)** [cite: 8]
-  - [cite_start][Arab](kamus/bahasa/Arab/README.md) [cite: 8]
-  - [cite_start][Indonesia](kamus/bahasa/Indonesia/README.md) [cite: 8]
-  - [cite_start][Inggris](kamus/bahasa/Inggris/README.md) [cite: 8, 9]
-- [cite_start]**[Matematik](matematik/README.md)** [cite: 9]
-- [cite_start]**[Bacaan Saya](saya/README.md)** [cite: 95]
-  - [cite_start][Kitab Ta'lim Muta'allim](saya/book/talim_mutaallim/README.md) [cite: 95]
-  - [cite_start][Kitab Lubabul Hadits](saya/book/lubabul_hadits/README.md) [cite: 95]
+- **[📖 Language Dictionary](kamus/bahasa/README.md)**
+  - **[🕌 Arabic](kamus/bahasa/Arab/README.md)**
+  - **[🇮🇩 Indonesian](kamus/bahasa/Indonesia/README.md)**
+  - **[🇬🇧 English](kamus/bahasa/Inggris/README.md)**
+- **[➕ Mathematics](matematik/README.md)**
+- **[🧠 My Readings](saya/README.md)**
+  - **[📜 Kitab Ta'lim Muta'allim](saya/book/talim_mutaallim/README.md)**
+  - **[📜 Kitab Lubabul Hadits](saya/book/lubabul_hadits/README.md)**
 
   </div>
 </details>

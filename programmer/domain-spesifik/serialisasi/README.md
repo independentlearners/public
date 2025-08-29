@@ -411,3 +411,5 @@ Struktur kurikulum ini logis dan berurutan, dimulai dari yang paling sederhana (
 3.  **Visualisasi:** Tambahkan rekomendasi visualisasi untuk menjelaskan konsep-konsep abstrak, seperti diagram alur serialisasi-deserialisasi dan ilustrasi struktur file Parquet (kolumnar vs. baris) untuk mempermudah pemahaman.
 
 Dengan mengikuti kurikulum ini, Anda tidak hanya akan menguasai sintaks setiap format, tetapi juga memahami alasan di baliknya, kekuatan dan kelemahannya, serta cara menggunakannya secara efektif dalam berbagai arsitektur teknologi modern.
+
+[Home](../../README.md)

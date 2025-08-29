@@ -437,6 +437,6 @@ Kurikulum ini dirancang sebagai panduan definitif untuk analisis data, dari peng
 
 ---
 
-- **[Domain Spesifik][domain-spesifik]**
+- **[Kembali][domain-spesifik]**
 
 [domain-spesifik]: ../../README.md

@@ -253,7 +253,7 @@ Tempat untuk bertanya, belajar lebih lanjut, dan menemukan pustaka siap pakai.
 
 > - **[Ke Atas](#)**
 > - **[Kurikulum][kurikulum]**
-> - **[Domain Spesifik][domain]**
+> - **[Home][domain]**
 > - **[Tugas][tugas]**
 
 [domain]: ../../domain-spesifik/README.md

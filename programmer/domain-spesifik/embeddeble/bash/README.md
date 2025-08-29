@@ -646,7 +646,7 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 
 Kurikulum ini adalah fondasi yang sangat kokoh. Penambahan yang saya rekomendasikan bersifat melengkapi dan mendalamkan, bukan korektif terhadap kesalahan fundamental. Kita dapat melanjutkan dengan pendalaman setiap bagian.
 
-- **[Domain Spesifik][domain-spesifik]**
+- **[Home][domain-spesifik]**
 
 [domain-spesifik]: ../../README.md
 [0]:../../../../CLI/terminal/README.md

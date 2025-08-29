@@ -1,3 +1,5 @@
+[Kembali Ke Home](../README.md)
+
 # Penjelasan Konsep Dalam Dunia Programming
 
 Kumpulan konsep dalam pemrograman yang mencakup istilah‑istilah. Daftar ini dikhususkan pada prinsip, paradigma, dan prinsip desain yang mendasari pengembangan perangkat lunak modern:

@@ -81,6 +81,6 @@ Dalam konteks **pemrograman dan teknologi**, **domain spesifik** tersebut memang
 ---
 
 > - **[Ke Atas](#)**
-> - **[Domain][1]**
+> - **[Home][1]**
 
 [1]: ../../domain-spesifik/README.md
