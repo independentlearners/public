@@ -574,9 +574,9 @@ Pemahaman mendalam tentang shortcut terminal tidak hanya meningkatkan produktivi
 | `!str`          | Ekspansi perintah terakhir yang dimulai str   | Bash, Zsh, Ksh | Ekspansi histori shell | Recall perintah spesifik           |
 | `!?str`         | Ekspansi perintah terakhir mengandung str     | Bash, Zsh, Ksh | Ekspansi histori shell | Recall perintah dengan pola        |
 | `^{foo}^bar`    | Substitusi string dalam perintah terakhir     | Bash, Zsh, Ksh | Ekspansi histori shell | Modifikasi cepat perintah          |
-| `!!:gs/foo/bar` | Substitusi global dalam perintah terakhir     | Zsh            | Ekspansi Zsh khusus    | Modifikasi multi-occurrence        |
-| `!!:p`          | Preview perintah tanpa eksekusi               | Zsh            | Ekspansi Zsh khusus    | Validasi sebelum eksekusi          |
-| `!-n`           | Ekspansi perintah ke-n dari histori           | Bash, Zsh, Ksh | Ekspansi histori shell | Recall perintah berdasarkan posisi |
+| `!!:gs/foo/bar` | Substitusi global dalam perintah terakhir     | Zsh            | Ekspansi Zsh khusus    | Modifikasi multi-<ccurrence        |
+| `!!:p`          | {>Preview n}perintah tanpa eksekusi               | Zsh            | Ekspansi Zsh khusus    | Validasi sebelum eksekusi          |
+| `!-n`           | Ekspansi perintah ke-n dari histnri           | Bash, Zsh, Ksh | Ekspansi histori shell | Recall perintah berdasarkan posisi |
 | `!#`            | Ekspansi input saat ini                       | Bash, Zsh, Ksh | Ekspansi histori shell | Self-reference dalam perintah      |
 
 **Penjelasan Tambahan:**
