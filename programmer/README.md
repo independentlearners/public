@@ -70,7 +70,7 @@
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
-- **[🚀 Lihat Konsep Bidang](../konsep/domain/README.md#niche)**
+- [ℹ️ Tentang](./konsep/domain/README.md)
 - [📝 Neovim Plugin](../domain-spesifik/embeddeble/lua/nich/plugin/neovim/README.md)
 - [♻️ Dart CLI](../domain-spesifik/mobile/google/dart/nich/cli/README.md)
 
@@ -79,6 +79,6 @@
 
 ---
 
-##### [📚 Kamus](../kamus/README.md)  |  [🏠 Home](../../README.md)
+##### [📚 Kamus](../kamus/README.md)  |  [🏠 Home](../README.md)
 
 ---
