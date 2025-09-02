@@ -54,6 +54,7 @@
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
+- **[ℹ️ Tentang](sistem-operasi/README.md)**
 - **[🐧 Linux](sistem-operasi/linux/README.md)**
   - **[⚫ Arch Linux & Manjaro](sistem-operasi/linux/archlinux/README.md)**
 - **[🪟 Windows](sistem-operasi/windows/README.md)**
