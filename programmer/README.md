@@ -71,8 +71,8 @@
   <div style="padding-left: 25px; margin-top: 8px;">
 
 - [ℹ️ Tentang](./konsep/domain/README.md)
-- [📝 Neovim Plugin](../domain-spesifik/embeddeble/lua/nich/plugin/neovim/README.md)
-- [♻️ Dart CLI](../domain-spesifik/mobile/google/dart/nich/cli/README.md)
+- [📝 Neovim Plugin](./domain-spesifik/embeddeble/lua/nich/plugin/neovim/README.md)
+- [♻️ Dart CLI](./domain-spesifik/mobile/google/dart/nich/cli/README.md)
 
   </div>
 </details>
