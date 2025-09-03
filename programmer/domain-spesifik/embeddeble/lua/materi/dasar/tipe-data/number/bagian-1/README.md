@@ -210,17 +210,17 @@ Ini adalah dasar-dasar yang harus Anda kuasai. Ini adalah blok bangunan dari sem
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../README.md
+[home]: ../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->
 
-[0]: ../README.md#-level-1-fundamental-numbers
+[0]: ../README.md
 [1]: ../bagian-2/README.md
-[2]: ../bagian-2/README.md#level-25-comprehensive-math-library-functions
+[2]: ../bagian-2/README.md
 [3]: ../bagian-3/README.md
-[4]: ../bagian-3/README.md#level-35-error-handling--edge-cases
+[4]: ../bagian-3/README.md
 [5]: ../bagian-4/README.md
 [6]: ../bagian-5/README.md
 [7]: ../

@@ -683,13 +683,13 @@ _Kurikulum ini dirancang untuk memberikan pemahaman mendalam tentang Numbers & M
 > - **[Kurikulum][kurikulum]**
 > - **[Domain Spesifik][domain]**
 
-[domain]: ../../../../../../README.md
+[home]: ../../../../../../README.md
 [kurikulum]: ../../../README.md
 [sebelumnya]: ../../repl/README.md
 [selanjutnya]: ../../variabel/README.md
 
 <!--------------------------------------------------- -->
 
-[0]: ../../../README.md/#
-[1]: ../number/bagian-1/README.md/#
-[2]: ../number/bagian-2/README.md/#
+[0]: ../../../README.md
+[1]: ../number/bagian-1/README.md
+[2]: ../number/bagian-2/README.md
