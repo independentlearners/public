@@ -13,14 +13,15 @@ Selamat datang di panduan komprehensif untuk menguasai representasi angka, opera
 - [LEVEL 3.5: ERROR HANDLING & EDGE CASES][4]
 - [LEVEL 4: RANDOM NUMBERS & PROBABILITY][5]
 - [LEVEL 5: NUMBER MANIPULATION & FORMATTING][6]
-- [LEVEL 6: BIT OPERATIONS][7]
-- [LEVEL 6.5: MATHEMATICAL METAMETHODS][8]
-- [LEVEL 7: ADVANCED MATHEMATICAL CONCEPTS][9]
-- [LEVEL 8: PERFORMANCE & OPTIMIZATION][10]
-- [LEVEL 8.5: DEBUGGING & PROFILING MATHEMATICAL CODE][11]
-- [LEVEL 9: PRACTICAL APPLICATIONS][12]
-- [LEVEL 10: EXTERNAL LIBRARIES & TOOLS][13]
-- [Referensi Tambahan][14]
+   > Untuk level berikutnya diakses melalui link **Selanjutnya** di bagian bawah akhir halaman 
+- LEVEL 6: BIT OPERATIONS
+- LEVEL 6.5: MATHEMATICAL METAMETHODS
+- LEVEL 7: ADVANCED MATHEMATICAL CONCEPTS
+- LEVEL 8: PERFORMANCE & OPTIMIZATION
+- LEVEL 8.5: DEBUGGING & PROFILING MATHEMATICAL CODE
+- LEVEL 9: PRACTICAL APPLICATIONS
+- LEVEL 10: EXTERNAL LIBRARIES & TOOLS
+- Referensi Tambahan
 
 ---
 
@@ -208,9 +209,9 @@ Ini adalah dasar-dasar yang harus Anda kuasai. Ini adalah blok bangunan dari sem
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Kurikulum][kurikulum]**
-> - **[Domain Spesifik][domain]**
+> - **[Home][home]**
 
-[home]: ../../../../README.md
+[home]: ../../../../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
 
@@ -223,15 +224,4 @@ Ini adalah dasar-dasar yang harus Anda kuasai. Ini adalah blok bangunan dari sem
 [4]: ../bagian-3/README.md
 [5]: ../bagian-4/README.md
 [6]: ../bagian-5/README.md
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+
