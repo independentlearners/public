@@ -128,3 +128,292 @@ Pengertian dan Jenis-Jenis Sistem Operasi, Lengkap!
 5
 
 [ref1]: Aspose.Words.d9f7c8fc-ed0c-4084-81a6-5ccd7256b4fe.056.png
+
+**Visualisasi diagram alur eksekusi yang merepresentasikan alur konrol semakin ke dalam (semakin dekat ke hardware).**
+
+> Catatan: ini adalah **metafora kedalaman jalur interaksi CLI**, bukan “kotak di dalam fisik kotak lain”.
+
+### Linux / Unix-like
+
+```
+┌───────────────────────────────────────────────────────────┐
+│ Pengguna (User)                                           │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │ Terminal Emulator (mis. GNOME Terminal, Alacritty)   │ │
+│  │  ┌─────────────────────────────────────────────────┐ │ │
+│  │  │ Shell / CLI (bash, zsh, fish)                   │ │ │
+│  │  │  ┌────────────────────────────────────────────┐ │ │ │
+│  │  │  │ Kernel: Linux                              │ │ │ │
+│  │  │  │  ┌───────────────────────────────────────┐ │ │ │ │
+│  │  │  │  │ Perangkat Keras (Hardware)            │ │ │ │ │
+│  │  │  │  └───────────────────────────────────────┘ │ │ │ │
+│  │  │  └────────────────────────────────────────────┘ │ │ │
+│  │  └─────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────────────┘
+```
+
+### Windows (NT)
+
+```
+┌───────────────────────────────────────────────────────────┐
+│ Pengguna (User)                                           │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │ Terminal (Windows Terminal)                          │ │
+│  │  ┌─────────────────────────────────────────────────┐ │ │
+│  │  │ Shell / CLI (PowerShell, Cmd)                   │ │ │
+│  │  │  ┌────────────────────────────────────────────┐ │ │ │
+│  │  │  │ Kernel: Windows NT                         │ │ │ │
+│  │  │  │  ┌───────────────────────────────────────┐ │ │ │ │
+│  │  │  │  │ Perangkat Keras (Hardware)            │ │ │ │ │
+│  │  │  │  └───────────────────────────────────────┘ │ │ │ │
+│  │  │  └────────────────────────────────────────────┘ │ │ │
+│  │  └─────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────────────┘
+```
+
+### macOS (Darwin)
+
+```
+┌───────────────────────────────────────────────────────────┐
+│ Pengguna (User)                                           │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │ Terminal (Terminal.app / iTerm2)                     │ │
+│  │  ┌─────────────────────────────────────────────────┐ │ │
+│  │  │ Shell / CLI (zsh [default], bash, fish)         │ │ │
+│  │  │  ┌────────────────────────────────────────────┐ │ │ │
+│  │  │  │ Kernel: XNU (Mach + BSD + IOKit)           │ │ │ │
+│  │  │  │  ┌───────────────────────────────────────┐ │ │ │ │
+│  │  │  │  │ Perangkat Keras (Hardware)            │ │ │ │ │
+│  │  │  │  └───────────────────────────────────────┘ │ │ │ │
+│  │  │  └────────────────────────────────────────────┘ │ │ │
+│  │  └─────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────────────┘
+```
+
+Catatan tambahan: jalur **GUI shell** (mis. Windows Explorer, Finder) berada di lintasan berbeda, tetapi pada akhirnya tetap berujung ke kernel dan hardware melalui API/driver.
+
+---
+
+## Identitas komponen & prasyarat jika ingin memodifikasi
+
+**Terminal Emulator**
+
+* **Identitas & bahasa:** Aplikasi pengguna yang mensimulasikan terminal dan menyalurkan input/output ke *pseudo-terminal* (PTY/ConPTY). Contoh implementasi:
+  • Linux: GNOME Terminal berbasis VTE (C); Alacritty (Rust).
+  • Windows: Windows Terminal (proyek OSS Microsoft, C++/C#, WinUI).
+  • macOS: iTerm2 (utama Objective-C + Swift); Terminal.app (proprietary, umumnya Objective-C). ([GitHub][1], [Wikipedia][2])
+* **Prasyarat modifikasi:**
+  • Pahami **VT/ANSI escape sequences** dan **PTY/ConPTY**.
+  • Kuasai C/C++/Rust atau Objective-C/Swift sesuai proyek, konsep rendering teks, dan event loop GUI. Untuk Windows, pelajari **ConPTY** & Win32 Console APIs. ([GitHub][1], [Microsoft Learn][3])
+
+**Shell / CLI**
+
+* **Identitas & bahasa:** *Command language interpreter.*
+  • bash (C), zsh (C), fish (C++ pada rilis stabil saat ini), PowerShell (C# di atas .NET). ([GitHub][4], [Wikipedia][5])
+* **Prasyarat modifikasi:**
+  • Untuk **konfigurasi/skrip**: kuasai bahasa shell (POSIX sh/bash, zsh scripting, fish scripts) atau **PowerShell** (C#/.NET cmdlet).
+  • Untuk **pengembangan inti**: C/C++ (bash/zsh/fish) atau C# (.NET runtime & hosting untuk PowerShell). ([GitHub][4], [Wikipedia][6])
+
+**Kernel**
+
+* **Identitas & bahasa:** Lapisan inti OS yang mengelola memori, proses, I/O, dan driver.
+  • **Linux**: mayoritas C + sebagian *assembly*; *toolchain* GCC/Clang. ([Wikipedia][7])
+  • **Windows NT**: arsitektur *user mode*/*kernel mode*; pengembangan melalui WDK/driver model, bukan modifikasi kernel sumber tertutup. ([Microsoft Learn][8])
+  • **macOS XNU**: hibrida Mach + BSD + IOKit (C/C++); kode sumber Darwin tersedia (bagian kernel terbuka). ([kernel.org][9])
+* **Prasyarat modifikasi/ekstensi:**
+  • **Linux**: C tingkat lanjut, konsep OS (sinkronisasi, memori, scheduler), *cross-compile*, *out-of-tree modules*, dan *kernel debugging* (ftrace, perf, kgdb). ([Wikipedia][7])
+  • **Windows**: tulis **driver** via WDK (C/C++), pahami KMDF/UMDF, debugging dengan WinDbg; modifikasi kernel tidak tersedia. ([Microsoft Learn][8])
+  • **macOS**: kontribusi ke XNU/IOKit (C/C++). Untuk distribusi ekstensi modern gunakan **System Extensions/DriverKit** (user-space) sesuai kebijakan Apple. ([kernel.org][9])
+
+[1]: https://github.com/PowerShell/PowerShell?utm_source=chatgpt.com "PowerShell for every system! - GitHub"
+[2]: https://en.wikipedia.org/wiki/Terminal_%28macOS%29?utm_source=chatgpt.com "Terminal (macOS)"
+[3]: https://learn.microsoft.com/en-us/windows/terminal/samples?utm_source=chatgpt.com "Windows Terminal sample code | Microsoft Learn"
+[4]: https://github.com/microsoft/terminal?utm_source=chatgpt.com "The new Windows Terminal and the original Windows console host ..."
+[5]: https://en.wikipedia.org/wiki/Z_shell?utm_source=chatgpt.com "Z shell"
+[6]: https://en.wikipedia.org/wiki/Terminal_emulator?utm_source=chatgpt.com "Terminal emulator"
+[7]: https://en.wikipedia.org/wiki/Linux_kernel?utm_source=chatgpt.com "Linux kernel - Wikipedia"
+[8]: https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/?utm_source=chatgpt.com "Kernel-Mode Driver Architecture Design Guide - Windows drivers"
+[9]: https://www.kernel.org/doc/html/v4.10/process/coding-style.html?utm_source=chatgpt.com "Linux kernel coding style"
+
+---
+
+## Diagram Kotak Bersarang: Sistem Komputer + Jaringan Khusus Linux
+
+```
++---------------------------------------------------------------+
+|                        USER / APLIKASI                        |
+|---------------------------------------------------------------|
+|   - CLI (bash, zsh, fish, nvim, htop)                         |
+|   - GUI (GNOME, KDE, Sway, Xfce)                              |
+|   - Browser, editor, tools jaringan (curl, ssh, scp)          |
+|   - TUI (nmtui, iwctl, htop, dll.)                            |
+|                                                               |
+|   => Inilah lapisan kontrol user                              |
++---------------------------------------------------------------+
+                            │
+                            ▼
++---------------------------------------------------------------+
+|                  SISTEM OPERASI (USERLAND)                    |
+|---------------------------------------------------------------|
+|   GNU/Utilities:                                              |
+|     - systemd, coreutils, iproute2, NetworkManager, dll.      |
+|                                                               |
+|   Pustaka (Libraries):                                        |
+|     - libc (glibc, musl, uClibc), libm, libssl, libX11, dll.  |
+|     - API untuk aplikasi agar bisa memanggil fungsi OS        |
+|                                                               |
+|   Jaringan (Userland Daemon):                                 |
+|     - iwd, wpa_supplicant, systemd-networkd                   |
+|     - sshd, httpd, dhcpcd, dnsmasq                            |
+|                                                               |
+|   => Di sini software berinteraksi dengan kernel via syscall  |
++---------------------------------------------------------------+
+                            │
+                            ▼
++---------------------------------------------------------------+
+|                      KERNEL (CORE OS)                         |
+|---------------------------------------------------------------|
+|   - Manajemen Proses (scheduler)                              |
+|   - Manajemen Memori (paging, virtual memory)                 |
+|   - Sistem File (ext4, btrfs, NTFS driver)                    |
+|   - Networking Stack (TCP/IP, UDP, routing, firewall)         |
+|   - Modul Driver (Wi-Fi driver, GPU driver, disk driver)      |
+|                                                               |
+|   => Kernel adalah inti OS, menghubungkan software ↔ hardware |
++---------------------------------------------------------------+
+                            │
+                            ▼
++---------------------------------------------------------------+
+|                FIRMWARE & MICROCODE (LOW LEVEL)               |
+|---------------------------------------------------------------|
+|   - BIOS/UEFI (boot firmware di motherboard)                  |
+|   - Firmware NIC (Wi-Fi, Ethernet, Bluetooth)                 |
+|   - GPU firmware (shader microcode, blob NVIDIA/AMD)          |
+|   - CPU microcode (patch bawaan vendor, Intel/AMD)            |
+|                                                               |
+|   => Firmware = kode kecil di chip yang memberi instruksi     |
+|      dasar agar hardware bisa dikontrol oleh driver kernel.   |
++---------------------------------------------------------------+
+                            │
+                            ▼
++---------------------------------------------------------------+
+|                        HARDWARE FISIK                         |
+|---------------------------------------------------------------|
+|   - CPU, GPU, RAM, Storage                                    |
+|   - Perangkat I/O (keyboard, mouse, monitor, disk, USB)       |
+|   - NIC (Network Interface Card), Antena, Radio               |
+|   - Motherboard, Bus, Chipset                                 |
++---------------------------------------------------------------+
+```
+
+---
+
+### Rincian hubungan antar bagian:
+
+1. **User/Aplikasi**
+
+   * Anda sebagai pengguna berinteraksi lewat CLI, GUI, atau aplikasi.
+   * Semua input/output melewati *userland* OS.
+
+2. **Sistem Operasi (Userland)**
+
+   * GNU utilities (coreutils, systemd, dll.) mengelola hal dasar.
+   * **Libraries** (`libc`, `libm`, `libssl`) jadi jembatan agar aplikasi bisa memanggil fungsi kernel tanpa menulis syscall manual.
+   * Daemon jaringan (`iwd`, `sshd`, `dhcpcd`) mengatur komunikasi lewat API ke kernel networking stack.
+
+3. **Kernel**
+
+   * Bertugas mengeksekusi syscall dari userland.
+   * Memiliki **driver** yang bicara langsung dengan hardware.
+   * Menyediakan **networking stack** (implementasi TCP/IP, routing, firewall).
+
+4. **Firmware/Microcode**
+
+   * Berada di perangkat (chip).
+   * Memberi “instruksi dasar” agar hardware bisa digunakan oleh driver.
+   * Contoh: firmware Wi-Fi mengurus autentikasi radio, lalu kernel driver mengontrolnya.
+
+5. **Hardware**
+
+   * Lapisan paling bawah, perangkat fisik.
+   * Semua aksi nyata terjadi di sini (CPU eksekusi instruksi, NIC mengirim paket, GPU menggambar layar).
+
+---
+
+Dengan susunan ini:
+
+* **Firmware** duduk di bawah kernel, tapi bukan bagian OS; ia bawaan hardware.
+* **Libraries** berada di atas kernel (userland).
+* **Lapisan jaringan** terbagi dua:
+
+  * Daemon jaringan di userland (iwd, sshd, dll.)
+  * Networking stack di kernel (TCP/IP, routing, netfilter).
+
+---
+
+## Alur Interaksi Horizontal
+
+```
+[USER] 
+   │  (mengetik perintah / klik GUI)
+   ▼
+[APLIKASI / SHELL / GUI] 
+   │  (browser, bash, ssh, nmtui, dll.)
+   ▼
+[LIBRARIES] 
+   │  (libc, libm, libssl, libX11, dll.)
+   ▼
+[USERLAND DAEMON] 
+   │  (iwd, NetworkManager, sshd, dhcpcd)
+   ▼
+[KERNEL] 
+   │  - Syscall handler
+   │  - Process scheduler
+   │  - Memory manager
+   │  - Networking stack (TCP/IP, firewall, routing)
+   │  - Driver modules
+   ▼
+[FIRMWARE] 
+   │  - BIOS/UEFI (boot)
+   │  - NIC firmware (radio, Wi-Fi, Ethernet)
+   │  - GPU microcode
+   │  - CPU microcode
+   ▼
+[HARDWARE] 
+   │  - CPU, GPU, RAM, Storage
+   │  - NIC (network card), antena, kabel
+   │  - Monitor, keyboard, mouse
+   ▼
+[NETWORK / REMOTE SYSTEM] 
+   │  - Router, Switch, Access Point
+   │  - Server lain, Internet
+   ▼
+[RESPON BALIK KE USER] (alur balik ke atas)
+```
+
+---
+
+### Penjelasan ringkas
+
+* **User → Aplikasi**: Anda berinteraksi dengan shell, browser, GUI.
+* **Aplikasi → Libraries**: aplikasi memanggil fungsi pustaka (`printf`, `socket`, `open`).
+* **Libraries → Daemon userland**: daemon seperti `iwd` menjalankan logika khusus (misalnya otentikasi Wi-Fi).
+* **Daemon/Userland → Kernel**: permintaan masuk ke kernel via syscall.
+* **Kernel → Firmware**: kernel driver menginstruksikan firmware perangkat agar melakukan aksi spesifik (misalnya NIC menyiarkan sinyal).
+* **Firmware → Hardware**: firmware bicara langsung dengan perangkat fisik.
+* **Hardware → Network**: data akhirnya keluar lewat jaringan, diteruskan ke perangkat atau server lain.
+* **Network → User**: hasil akhirnya dikembalikan ke user (misalnya halaman web tampil di browser).
+
+---
+
+Dengan model ini, kita bisa melihat bahwa:
+
+* **Firmware** berada di antara **kernel driver** dan **hardware**.
+* **Libraries** berada di antara **aplikasi user** dan **syscall kernel**.
+* **Lapisan jaringan** tersebar: sebagian di userland (daemon), sebagian di kernel (TCP/IP stack), sebagian di hardware (NIC + firmware).
+
+---
+
