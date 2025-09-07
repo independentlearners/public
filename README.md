@@ -55,6 +55,7 @@
   <div style="padding-left: 25px; margin-top: 8px;">
 
 - **[ℹ️ Tentang](sistem-operasi/README.md)**
+- **[🔂 Bootloader](sistem-operasi/booting/README.md)**
 - **[🐧 Linux](sistem-operasi/linux/README.md)**
   - **[⚫ Arch Linux & Manjaro](sistem-operasi/linux/archlinux/README.md)**
 - **[🪟 Windows](sistem-operasi/windows/README.md)**
@@ -95,11 +96,11 @@
   - **[🇬🇧 English](kamus/bahasa/Inggris/README.md)**
 - **[➕ Mathematics](matematik/README.md)**
 - **[🧠 My Readings](saya/README.md)**
+
   - **[📜 Kitab Ta'lim Muta'allim](saya/book/talim_mutaallim/README.md)**
   - **[📜 Kitab Lubabul Hadits](saya/book/lubabul_hadits/README.md)**
 
-  </div>
-</details>
+    </div>
+  </details>
 
 > **By MasBro | [s.id/gocoding](https://s.id/gocoding)**
-
