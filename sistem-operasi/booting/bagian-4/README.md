@@ -1,4 +1,4 @@
-## **Fase 4: Ahli (Expert/Enterprise)**
+## **[Fase 4: Ahli (Expert/Enterprise)][0]**
 
 Sekarang kita akan mendalami **Fase 4: Ahli (Expert/Enterprise)**, yang berfokus pada **_Boot_ _Recovery_ dan _Troubleshooting_**. Ini adalah puncak dari perjalanan Anda, di mana Anda akan menguasai seni memecahkan masalah saat sistem gagal _boot_. Setelah menyelesaikan pendalaman modul ini, Anda akan memiliki peta jalan yang lengkap untuk menjadi seorang ahli yang profesional dalam dunia _bootloader_ dan _firmware_.
 

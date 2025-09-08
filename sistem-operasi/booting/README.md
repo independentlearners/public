@@ -178,4 +178,4 @@ Kurikulum ini dirancang untuk memberikan pemahaman _bottom-up_ yang solid, memun
 [1]: ./bagian-1/README.md
 [2]: ./bagian-2/README.md
 [3]: ./bagian-3/README.md
-[4]: ./bagian-1/README.md
+[4]: ./bagian-4/README.md
