@@ -57,8 +57,8 @@
 - **[ℹ️ Tentang](sistem-operasi/README.md)**
 - **[🔂 Bootloader](sistem-operasi/booting/README.md)**
 - **[🐧 Linux](sistem-operasi/linux/README.md)**
-  - **[⚫ Arch Linux & Manjaro](sistem-operasi/linux/archlinux/README.md)**
-  - **[⚡ Instalasi Arch Linux](sistem-operasi/linux/archlinux/instalasi/README.md)**
+  - **[📁 Filesystem Arch Linux](sistem-operasi/linux/archlinux/README.md)**
+  - **[🗜 Instalasi Arch Linux](sistem-operasi/linux/archlinux/instalasi/README.md)**
 
 - **[🪟 Windows](sistem-operasi/windows/README.md)**
 
