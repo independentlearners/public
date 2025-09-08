@@ -1,9 +1,7 @@
-# **Helix**
+# **[Kurikulum Pembelajaran Helix Editor CLI][0]**
 Kurikulum pembelajaran yang komprehensif dan mendalam untuk topik **Helix Editor**, sebuah editor teks berbasis terminal. Kurikulum ini dirancang untuk membawa Anda dari tingkat pemula (foundation) hingga ahli (expert/enterprise) dengan pendekatan yang logis dan berurutan.
 
 -----
-
-## Kurikulum Pembelajaran: Helix Editor
 
 **Target Pembelajar:** Individu yang ingin menguasai editor teks modern berbasis terminal. Cocok untuk pengembang perangkat lunak, administrator sistem, penulis, atau siapa pun yang bekerja dengan teks dan kode. Kurikulum ini dirancang agar dapat dipahami bahkan oleh mereka yang tidak memiliki latar belakang pemrograman, namun memiliki keinginan kuat untuk belajar.
 
@@ -359,7 +357,7 @@ Dalam perjalanan belajar Helix, Anda mungkin akan menemui beberapa error. Beriku
 **Cara Membaca Error:**
 Pesan error di terminal sering kali sangat spesifik. Perhatikan kata kunci seperti `path`, `syntax error`, `cannot find`, atau `permission denied`. Kata-kata ini adalah petunjuk langsung tentang apa yang salah. Jika Anda tidak yakin, cari pesan error tersebut di GitHub Discussions atau forum komunitas. Kemungkinan besar, seseorang sudah pernah mengalami masalah yang sama.
 
-[0]: ../README.md
+[0]: ./../../../README.md
 [1]: ../helix/bagian-1/README.md
 [2]: ../helix/bagian-2/README.md
 [3]: ../helix/bagian-3/README.md
