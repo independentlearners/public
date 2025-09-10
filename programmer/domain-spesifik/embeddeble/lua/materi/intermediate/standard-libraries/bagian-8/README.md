@@ -683,10 +683,9 @@ stack traceback:
 
 ---
 
-
-<<!--
+<!--
 Apakah Anda ingin saya **kembangkan mini-project ini lebih jauh** (misalnya logger dengan **notifikasi ke console + simpan ke file**), atau kita **lanjut ke Modul 9: Metatable & Metamethods**?
--->>
+-->
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
