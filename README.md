@@ -56,7 +56,7 @@
 
 - **[ℹ️ Tentang](sistem-operasi/README.md)**
 - **[🔂 Bootloader](sistem-operasi/booting/README.md)**
-- **[🐧 Linux]([sistem-operasi/linux/index.html](https://independentlearners.github.io/public/sistem-operasi/linux/))**
+- **[🐧 Linux](https://independentlearners.github.io/public/sistem-operasi/linux/)**
   - **[📁 Filesystem Arch Linux](sistem-operasi/linux/archlinux/README.md)**
   - **[🗜 Instalasi Arch Linux](sistem-operasi/linux/archlinux/instalasi/README.md)**
 
