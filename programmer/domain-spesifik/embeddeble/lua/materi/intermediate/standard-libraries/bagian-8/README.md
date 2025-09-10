@@ -277,9 +277,9 @@ secret_func()
 
 ---
 
-<<!--
+<!--
 Apakah Anda ingin saya **buat mini-project berbasis debug** (contoh: logger stack trace otomatis untuk semua error), atau kita **langsung lanjut ke Modul 9: Metatable & Metamethods**?
--->>
+-->
 
 Kita buat **Mini-Project berbasis Debug Library**: *Error Logger dengan Stack Trace Otomatis*.
 Proyek ini memperlihatkan bagaimana debug library bisa dipakai untuk **menangkap error**, **menyimpan stack trace**, dan **membuat laporan log** yang berguna untuk debugging.
