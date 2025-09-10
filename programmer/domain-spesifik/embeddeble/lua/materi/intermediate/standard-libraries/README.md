@@ -1,6 +1,6 @@
 # **[Kurikulum Lengkap Standard Libraries Lua][0]**
 
-## Modul 1: Dasar-Dasar Standard Library Lua
+## [Modul 1: Dasar-Dasar Standard Library Lua][1]
 
 ### 1.1 Pengenalan Umum Standard Library
 
@@ -18,7 +18,7 @@
 - Referensi: [Lua Global Environment](https://www.lua.org/manual/5.4/manual.html#6.1)
 - Tutorial: [Lua-users Global Environment](http://lua-users.org/wiki/GlobalsAccess)
 
-## Modul 2: String Library (string)
+## [Modul 2: String Library (string)][2]
 
 ### 2.1 String Manipulation Fundamentals
 
@@ -45,7 +45,7 @@
 - Referensi: [String Format Specification](https://www.lua.org/manual/5.4/manual.html#pdf-string.format)
 - Resource: [Lua String Recipes](http://lua-users.org/wiki/StringRecipes)
 
-## Modul 3: Table Library (table)
+## [Modul 3: Table Library (table)][3]
 
 ### 3.1 Table Manipulation Basics
 
@@ -72,7 +72,7 @@
 - Referensi: [Table Best Practices](http://lua-users.org/wiki/TablesTutorial)
 - Resource: [Table Cookbook](http://lua-users.org/wiki/TableCookbook)
 
-## Modul 4: Mathematical Library (math)
+## [Modul 4: Mathematical Library (math)][4]
 
 ### 4.1 Basic Mathematical Functions
 
@@ -99,7 +99,7 @@
 - Referensi: [Random Functions](https://www.lua.org/manual/5.4/manual.html#pdf-math.random)
 - Advanced: [Random Number Recipes](http://lua-users.org/wiki/MathRecipes)
 
-## Modul 5: Input/Output Library (io)
+## [Modul 5: Input/Output Library (io)][5]
 
 ### 5.1 File I/O Fundamentals
 
@@ -127,7 +127,7 @@
 - Referensi: [Advanced I/O](http://lua-users.org/wiki/FilesAndIo)
 - Resource: [I/O Best Practices](http://lua-users.org/wiki/IoBestPractices)
 
-## Modul 6: Operating System Library (os)
+## [Modul 6: Operating System Library (os)][6]
 
 ### 6.1 System Information dan Environment
 
@@ -154,7 +154,7 @@
 - Referensi: [Process Management](https://www.lua.org/manual/5.4/manual.html#pdf-os.execute)
 - Advanced: [System Programming](http://lua-users.org/wiki/SystemProgramming)
 
-## Modul 7: Package Library (package/require)
+## [Modul 7: Package Library (package/require)][7]
 
 ### 7.1 Module System Fundamentals
 
@@ -181,7 +181,7 @@
 - Referensi: [Advanced Modules](http://lua-users.org/wiki/LuaModules)
 - Best practices: [Module Best Practices](http://lua-users.org/wiki/ModuleBestPractices)
 
-## Modul 8: Coroutine Library (coroutine)
+## [Modul 8: Coroutine Library (coroutine)][8]
 
 ### 8.1 Coroutine Basics
 
@@ -209,7 +209,7 @@
 - Referensi: [Coroutine Applications](http://lua-users.org/wiki/CoroutineApplications)
 - Advanced: [Coroutine Recipes](http://lua-users.org/wiki/CoroutineRecipes)
 
-## Modul 9: Debug Library (debug)
+## [Modul 9: Debug Library (debug)][9]
 
 ### 9.1 Debug Information Access
 
@@ -237,7 +237,7 @@
 - Referensi: [Debug Hooks](https://www.lua.org/manual/5.4/manual.html#pdf-debug.sethook)
 - Advanced: [Profiling Tools](http://lua-users.org/wiki/ProfilingLuaCode)
 
-## Modul 10: UTF-8 Library (utf8) - Lua 5.3+
+## [Modul 10: UTF-8 Library (utf8) - Lua 5.3+][10]
 
 ### 10.1 UTF-8 Fundamentals
 
@@ -264,7 +264,7 @@
 - Referensi: [Unicode Support](http://lua-users.org/wiki/UnicodeSupport)
 - Advanced: [I18n Techniques](http://lua-users.org/wiki/InternationalizationSupport)
 
-## Modul 11: Metatable dan Metamethods
+## [Modul 11: Metatable dan Metamethods][11]
 
 ### 11.1 Metatable Fundamentals
 
@@ -291,7 +291,7 @@
 - Referensi: [Advanced Metamethods](http://lua-users.org/wiki/AdvancedMetamethods)
 - Patterns: [OOP with Metamethods](http://lua-users.org/wiki/ObjectOrientedProgramming)
 
-## Modul 12: Garbage Collection dan Memory Management
+## [Modul 12: Garbage Collection dan Memory Management][12]
 
 ### 12.1 Garbage Collection Fundamentals
 
@@ -329,7 +329,7 @@
 - Guide: [Optimization Guide](http://lua-users.org/wiki/OptimisationTips)
 - Advanced: [Custom Allocators](http://lua-users.org/wiki/AdvancedMemoryManagement)
 
-## Modul 13: Error Handling dan Exception Management
+## [Modul 13: Error Handling dan Exception Management][13]
 
 ### 13.1 Error Handling Fundamentals
 
@@ -356,7 +356,7 @@
 - Referensi: [Robust Programming](http://lua-users.org/wiki/RobustProgramming)
 - Best practices: [Coding Standards](http://lua-users.org/wiki/LuaStyleGuide)
 
-## Modul 14: Integration dan Interoperability
+## [Modul 14: Integration dan Interoperability][14]
 
 ### 14.1 C API Integration
 
@@ -385,110 +385,7 @@
 - Referensi: [Embedding Lua](http://lua-users.org/wiki/EmbeddingLua)
 - Guide: [Integration Patterns](http://lua-users.org/wiki/IntegrationPatterns)
 
-## Modul 16: Lua Version Differences dan Compatibility
-
-### 16.1 Version Evolution dan Breaking Changes
-
-- Lua 5.1 → 5.2 breaking changes (\_G, module system, etc.)
-- Lua 5.2 → 5.3 integer handling dan bit operations
-- Lua 5.3 → 5.4 to-be-closed variables dan new GC modes
-- Compatibility layer implementation
-- Migration strategies untuk legacy code
-- Referensi: [Lua Version History](https://www.lua.org/versions.html)
-- Migration: [5.1 to 5.2](http://lua-users.org/wiki/LuaFiveTwo)
-- Guide: [Version Compatibility](http://lua-users.org/wiki/VersionCompatibility)
-
-### 16.2 Feature Matrix Across Versions
-
-- Standard library differences per version
-- New functions dan deprecated features
-- Performance improvements tracking
-- Bug fixes dan behavior changes
-- Cross-version testing strategies
-- Referensi: [Feature Comparison](http://lua-users.org/wiki/LuaVersionComparison)
-- Tools: [Compatibility Testing](http://lua-users.org/wiki/CompatibilityTesting)
-
-### 16.3 LuaJIT dan Alternative Implementations
-
-- LuaJIT compatibility dan extensions
-- FFI library dalam LuaJIT
-- Performance characteristics comparison
-- Other implementations (Ravi, Pallene, etc.)
-- Implementation-specific optimizations
-- Referensi: [LuaJIT Documentation](https://luajit.org/luajit.html)
-- Comparison: [Implementation Differences](http://lua-users.org/wiki/LuaImplementations)
-
-## Modul 17: Extended Standard Library Patterns
-
-### 17.1 Iterator Patterns dan Generators
-
-- Generic for loop implementation
-- Stateless vs stateful iterators
-- Custom iterator creation patterns
-- Generator functions dengan coroutines
-- Lazy evaluation techniques
-- Performance considerations untuk iterators
-- Referensi: [Iterator Tutorial](http://lua-users.org/wiki/IteratorsTutorial)
-- Patterns: [Iterator Patterns](http://lua-users.org/wiki/IteratorPatterns)
-- Advanced: [Generator Functions](http://lua-users.org/wiki/GeneratorFunction)
-
-### 17.2 Functional Programming Constructs
-
-- Higher-order functions implementation
-- Map, filter, reduce patterns
-- Partial application dan currying
-- Function composition techniques
-- Immutable data structure patterns
-- Monadic patterns dalam Lua
-- Referensi: [Functional Programming](http://lua-users.org/wiki/FunctionalProgramming)
-- Library: [Functional Libraries](http://lua-users.org/wiki/FunctionalLibrary)
-
-### 17.3 Design Pattern Implementation
-
-- Singleton pattern dengan metatables
-- Observer pattern implementation
-- Factory patterns
-- Proxy dan decorator patterns
-- State machine patterns
-- Command pattern dengan functions
-- Referensi: [Design Patterns](http://lua-users.org/wiki/DesignPatterns)
-- Examples: [Pattern Examples](http://lua-users.org/wiki/PatternExamples)
-
-## Modul 18: Extended Libraries dan Ecosystem
-
-### 18.1 LuaRocks dan Package Management
-
-- LuaRocks installation dan configuration
-- Rock creation dan publishing
-- Dependency management strategies
-- Version pinning dan conflict resolution
-- Private rock repositories
-- Build systems integration
-- Referensi: [LuaRocks Documentation](https://luarocks.org/en/documentation)
-- Guide: [Package Development](http://lua-users.org/wiki/PackageDevelopment)
-
-### 18.2 Popular Third-Party Libraries
-
-- Penlight (Python-like utilities)
-- LuaSocket (networking)
-- LuaFileSystem (file operations)
-- LPeg (parsing expression grammars)
-- Lua-cjson (JSON processing)
-- Integration patterns untuk third-party libraries
-- Referensi: [Popular Libraries](http://lua-users.org/wiki/LibrariesAndBindings)
-- Ecosystem: [Lua Ecosystem](http://lua-users.org/wiki/LuaEcosystem)
-
-### 18.3 Domain-Specific Applications
-
-- Web development (OpenResty, Lapis)
-- Game development (Love2D, World of Warcraft)
-- Embedded systems (NodeMCU, Wireshark)
-- Configuration scripting (nginx, Redis)
-- Scientific computing applications
-- Referensi: [Application Domains](http://lua-users.org/wiki/LuaUses)
-- Case studies: [Real-world Usage](http://lua-users.org/wiki/LuaIndustryUse)
-
-## Modul 15: Advanced Topics dan Best Practices
+## [Modul 15: Advanced Topics dan Best Practices][15]
 
 ### 15.1 Performance Optimization dan Profiling
 
@@ -526,6 +423,109 @@
 - Referensi: [Testing Framework](http://lua-users.org/wiki/UnitTesting)
 - Tools: [Development Tools](http://lua-users.org/wiki/DevelopmentTools)
 - Documentation: [LDoc Guide](http://lua-users.org/wiki/LuaDoc)
+
+## [Modul 16: Lua Version Differences dan Compatibility][16]
+
+### 16.1 Version Evolution dan Breaking Changes
+
+- Lua 5.1 → 5.2 breaking changes (\_G, module system, etc.)
+- Lua 5.2 → 5.3 integer handling dan bit operations
+- Lua 5.3 → 5.4 to-be-closed variables dan new GC modes
+- Compatibility layer implementation
+- Migration strategies untuk legacy code
+- Referensi: [Lua Version History](https://www.lua.org/versions.html)
+- Migration: [5.1 to 5.2](http://lua-users.org/wiki/LuaFiveTwo)
+- Guide: [Version Compatibility](http://lua-users.org/wiki/VersionCompatibility)
+
+### 16.2 Feature Matrix Across Versions
+
+- Standard library differences per version
+- New functions dan deprecated features
+- Performance improvements tracking
+- Bug fixes dan behavior changes
+- Cross-version testing strategies
+- Referensi: [Feature Comparison](http://lua-users.org/wiki/LuaVersionComparison)
+- Tools: [Compatibility Testing](http://lua-users.org/wiki/CompatibilityTesting)
+
+### 16.3 LuaJIT dan Alternative Implementations
+
+- LuaJIT compatibility dan extensions
+- FFI library dalam LuaJIT
+- Performance characteristics comparison
+- Other implementations (Ravi, Pallene, etc.)
+- Implementation-specific optimizations
+- Referensi: [LuaJIT Documentation](https://luajit.org/luajit.html)
+- Comparison: [Implementation Differences](http://lua-users.org/wiki/LuaImplementations)
+
+## [Modul 17: Extended Standard Library Patterns][17]
+
+### 17.1 Iterator Patterns dan Generators
+
+- Generic for loop implementation
+- Stateless vs stateful iterators
+- Custom iterator creation patterns
+- Generator functions dengan coroutines
+- Lazy evaluation techniques
+- Performance considerations untuk iterators
+- Referensi: [Iterator Tutorial](http://lua-users.org/wiki/IteratorsTutorial)
+- Patterns: [Iterator Patterns](http://lua-users.org/wiki/IteratorPatterns)
+- Advanced: [Generator Functions](http://lua-users.org/wiki/GeneratorFunction)
+
+### 17.2 Functional Programming Constructs
+
+- Higher-order functions implementation
+- Map, filter, reduce patterns
+- Partial application dan currying
+- Function composition techniques
+- Immutable data structure patterns
+- Monadic patterns dalam Lua
+- Referensi: [Functional Programming](http://lua-users.org/wiki/FunctionalProgramming)
+- Library: [Functional Libraries](http://lua-users.org/wiki/FunctionalLibrary)
+
+### 17.3 Design Pattern Implementation
+
+- Singleton pattern dengan metatables
+- Observer pattern implementation
+- Factory patterns
+- Proxy dan decorator patterns
+- State machine patterns
+- Command pattern dengan functions
+- Referensi: [Design Patterns](http://lua-users.org/wiki/DesignPatterns)
+- Examples: [Pattern Examples](http://lua-users.org/wiki/PatternExamples)
+
+## [Modul 18: Extended Libraries dan Ecosystem][18]
+
+### 18.1 LuaRocks dan Package Management
+
+- LuaRocks installation dan configuration
+- Rock creation dan publishing
+- Dependency management strategies
+- Version pinning dan conflict resolution
+- Private rock repositories
+- Build systems integration
+- Referensi: [LuaRocks Documentation](https://luarocks.org/en/documentation)
+- Guide: [Package Development](http://lua-users.org/wiki/PackageDevelopment)
+
+### 18.2 Popular Third-Party Libraries
+
+- Penlight (Python-like utilities)
+- LuaSocket (networking)
+- LuaFileSystem (file operations)
+- LPeg (parsing expression grammars)
+- Lua-cjson (JSON processing)
+- Integration patterns untuk third-party libraries
+- Referensi: [Popular Libraries](http://lua-users.org/wiki/LibrariesAndBindings)
+- Ecosystem: [Lua Ecosystem](http://lua-users.org/wiki/LuaEcosystem)
+
+### 18.3 Domain-Specific Applications
+
+- Web development (OpenResty, Lapis)
+- Game development (Love2D, World of Warcraft)
+- Embedded systems (NodeMCU, Wireshark)
+- Configuration scripting (nginx, Redis)
+- Scientific computing applications
+- Referensi: [Application Domains](http://lua-users.org/wiki/LuaUses)
+- Case studies: [Real-world Usage](http://lua-users.org/wiki/LuaIndustryUse)
 
 ## Referensi Utama dan Sumber Belajar
 
@@ -598,21 +598,21 @@ Kurikulum ini sekarang **sangat komprehensif** dan mencakup tidak hanya standard
 <!-- ------------------------------------------------- -->
 
 [0]: ../../README.md
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ./bagian-1/README.md
+[2]: ./bagian-2/README.md
+[3]: ./bagian-3/README.md
+[4]: ./bagian-4/README.md
+[5]: ./bagian-5/README.md
+[6]: ./bagian-6/README.md
+[7]: ./bagian-7/README.md
+[8]: ./bagian-8/README.md
+[9]: ./bagian-9/README.md
+[10]: ./bagian-10/README.md
+[11]: ./bagian-11/README.md
+[12]: ./bagian-12/README.md
+[13]: ./bagian-13/README.md
+[14]: ./bagian-14/README.md
+[15]: ./bagian-15/README.md
+[16]: ./bagian-16/README.md
+[17]: ./bagian-17/README.md
+[18]: ./bagian-18/README.md

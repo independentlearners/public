@@ -1,3 +1,8 @@
+<details>
+  <summary>📃 Daftar Isi</summary>
+
+</details>
+
 #
 
 <!-- > - **[Selanjutnya][selanjutnya]** -->
@@ -5,7 +10,7 @@
 > - **[Ke Atas](#)**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
-> - **[Domain Spesifik][domain]**
+> - **[Home][domain]**
 
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../../README.md
