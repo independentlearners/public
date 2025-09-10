@@ -24,8 +24,6 @@ Kurikulum baru ini akan mengisi celah antara **"tahu apa itu _bootloader_"** dan
 * Modul 7: Instalasi dengan Enkripsi Penuh LUKS dan LVM.
 * Modul 8: _Dual-Boot_ dengan Sistem Operasi Lain (Windows/macOS).
 * Modul 9: _Troubleshooting_ Instalasi yang Gagal.
-
-**[Fase 4: Pasca-Instalasi & Menuju Tingkat Ahli][4]**
 * Modul 10: Membangun Lingkungan Sway WM dari Nol.
 * Modul 11: Menggunakan dan Memahami `archinstall`.
 
