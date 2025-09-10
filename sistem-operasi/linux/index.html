@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Lengkap OS Linux</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: Laman ini dirancang sebagai aplikasi satu halaman (SPA) dengan alur naratif dari atas ke bawah. Struktur ini dipilih untuk memandu pelajar dari konsep paling dasar (pengenalan) ke topik yang lebih kompleks (perbandingan, pro-kontra) secara bertahap dan logis. Navigasi atas memungkinkan akses cepat ke setiap bagian tematik. Interaktivitas seperti bagan yang dapat diklik dan kartu informasi bertujuan untuk membuat proses belajar menjadi aktif dan menarik, bukan pasif. Tujuannya adalah untuk memecah informasi kompleks menjadi bagian-bagian yang mudah dicerna dalam satu alur yang koheren. -->
+    <!-- Visualization & Content Choices: 
+    1. Arsitektur Linux: Report Info -> Arsitektur dasar OS (Hardware, Kernel, Shell, Aplikasi). Goal -> Menginformasikan & Mengorganisir. Viz/Presentation -> Diagram lapisan sederhana dibuat dengan HTML/CSS. Interaction -> Efek hover pada setiap lapisan untuk menampilkan deskripsi singkat. Justification -> Visualisasi ini secara efektif menyederhanakan konsep arsitektur yang abstrak, membuatnya lebih mudah dipahami daripada teks murni. Library/Method -> HTML + Tailwind CSS.
+    2. Popularitas Distro: Report Info -> Berbagai macam distribusi Linux dan popularitasnya. Goal -> Membandingkan & Menginformasikan. Viz/Presentation -> Bagan batang horizontal menggunakan Chart.js. Interaction -> Tooltip saat hover untuk detail tambahan tentang setiap distro. Justification -> Bagan memberikan gambaran cepat mengenai lanskap distro yang ramai, jauh lebih efektif daripada daftar teks. Library/Method -> Chart.js (Canvas).
+    3. Perbandingan OS: Report Info -> Perbedaan Linux, Windows, macOS. Goal -> Membandingkan. Viz/Presentation -> Bagan batang berkelompok (grouped bar chart) untuk membandingkan fitur-fitur utama (Biaya, Kustomisasi, Keamanan). Interaction -> Mengklik kategori pada bagan akan menampilkan teks penjelasan yang relevan di bawahnya. Justification -> Mendorong eksplorasi aktif dan menyajikan perbandingan multi-faset secara visual dan ringkas. Library/Method -> Chart.js (Canvas) + Vanilla JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #D97706; /* amber-600 */
+        }
+        .active-section {
+            color: #D97706;
+            font-weight: 700;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #F3F4F6;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-primary {
+            background-color: #F59E0B; /* amber-500 */
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #D97706; /* amber-600 */
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-amber-600">
+                🐧 Panduan Linux
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#pengenalan" class="nav-link">Pengenalan</a>
+                <a href="#konsep" class="nav-link">Konsep Inti</a>
+                <a href="#perbandingan" class="nav-link">Perbandingan</a>
+                <a href="#pengguna" class="nav-link">Untuk Siapa?</a>
+                <a href="#pro-kontra" class="nav-link">Pro & Kontra</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-2">
+            <a href="#pengenalan" class="block nav-link">Pengenalan</a>
+            <a href="#konsep" class="block nav-link">Konsep Inti</a>
+            <a href="#perbandingan" class="block nav-link">Perbandingan</a>
+            <a href="#pengguna" class="block nav-link">Untuk Siapa?</a>
+            <a href="#pro-kontra" class="block nav-link">Pro & Kontra</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="pengenalan" class="text-center min-h-[80vh] flex flex-col justify-center items-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4 text-gray-800">Selamat Datang di Dunia Linux</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto mb-8 text-gray-600">Sebuah perjalanan untuk memahami sistem operasi yang tangguh, gratis, dan open-source yang menggerakkan sebagian besar dunia digital.</p>
+            <div class="w-full max-w-4xl p-8">
+                <h3 class="text-2xl font-bold mb-6 text-gray-700">Arsitektur Sederhana Linux</h3>
+                <div class="space-y-2 text-center">
+                    <div class="bg-amber-100 p-4 rounded-lg shadow-sm">
+                        <p class="font-bold text-lg text-amber-800">Aplikasi Pengguna (Browser, Office)</p>
+                    </div>
+                    <div class="text-2xl font-thin text-gray-400">↓</div>
+                    <div class="bg-sky-100 p-4 rounded-lg shadow-sm">
+                        <p class="font-bold text-lg text-sky-800">Shell / Lingkungan Desktop</p>
+                    </div>
+                    <div class="text-2xl font-thin text-gray-400">↓</div>
+                    <div class="bg-emerald-100 p-4 rounded-lg shadow-sm">
+                        <p class="font-bold text-lg text-emerald-800">Kernel Linux (Inti Sistem Operasi)</p>
+                    </div>
+                    <div class="text-2xl font-thin text-gray-400">↓</div>
+                    <div class="bg-slate-200 p-4 rounded-lg shadow-sm">
+                        <p class="font-bold text-lg text-slate-800">Perangkat Keras (CPU, RAM, Disk)</p>
+                    </div>
+                </div>
+                <p class="mt-6 text-gray-600 italic">Kernel adalah jembatan utama antara perangkat lunak dan perangkat keras, mengatur semua sumber daya sistem.</p>
+            </div>
+        </section>
+
+        <section id="konsep" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Konsep Inti Linux</h2>
+                <p class="text-lg mt-2 max-w-2xl mx-auto text-gray-600">Beberapa ide fundamental yang membuat Linux unik dan sangat fleksibel.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-2 text-amber-600">Open Source</h3>
+                    <p>Siapa saja dapat melihat, memodifikasi, dan mendistribusikan kode sumbernya. Ini mendorong kolaborasi global, transparansi, dan inovasi yang cepat. Anda tidak hanya menggunakan produk, tetapi juga menjadi bagian dari komunitas.</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-2 text-amber-600">Kernel</h3>
+                    <p>Inti dari sistem operasi. Kernel Linux, yang dibuat oleh Linus Torvalds, adalah komponen pusat yang mengelola perangkat keras, memori, dan proses. Semua 'rasa' Linux yang berbeda dibangun di atas kernel yang sama.</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-2 text-amber-600">Distribusi (Distro)</h3>
+                    <p>Sistem operasi Linux yang lengkap, terdiri dari kernel Linux, perangkat lunak sistem, dan antarmuka pengguna. Ada ratusan distro, seperti Ubuntu, Mint, dan Fedora, masing-masing dengan filosofi dan target pengguna yang berbeda.</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-2 text-amber-600">Desktop Environment (DE)</h3>
+                    <p>Kumpulan komponen yang menyediakan antarmuka pengguna grafis (GUI). Tidak seperti Windows atau macOS, di Linux Anda bisa memilih DE Anda, seperti GNOME (modern), KDE Plasma (kustomisasi tinggi), atau XFCE (ringan).</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-2 text-amber-600">Command-Line (CLI)</h3>
+                    <p>Antarmuka berbasis teks yang sangat kuat untuk berinteraksi dengan sistem. Meskipun menakutkan bagi pemula, CLI menawarkan kontrol, otomatisasi, dan efisiensi yang tak tertandingi untuk tugas-tugas kompleks.</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold mb-2 text-amber-600">Sistem Berkas Hirarkis</h3>
+                    <p>Semua file dan folder berada di bawah satu direktori root ("/"). Tidak ada drive C: atau D:. Struktur yang logis ini menyatukan semua perangkat penyimpanan dan komponen sistem menjadi satu pohon direktori yang terorganisir.</p>
+                </div>
+            </div>
+             <div class="mt-16">
+                <h3 class="text-2xl font-bold text-center mb-6 text-gray-700">Popularitas Beberapa Distro Linux</h3>
+                <div class="chart-container">
+                    <canvas id="distroChart"></canvas>
+                </div>
+                 <p class="text-center text-sm text-gray-500 mt-4">Data berdasarkan peringkat popularitas umum dan penggunaan. Angka bersifat ilustratif.</p>
+            </div>
+        </section>
+
+        <section id="perbandingan" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Linux vs OS Lainnya</h2>
+                <p class="text-lg mt-2 max-w-2xl mx-auto text-gray-600">Bagaimana posisi Linux jika dibandingkan dengan Windows dan macOS? Klik pada kategori di bagan untuk melihat detailnya.</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="osComparisonChart"></canvas>
+            </div>
+            <div id="comparison-details" class="mt-8 max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md border border-gray-200">
+                <h3 id="details-title" class="text-xl font-bold mb-2 text-amber-600">Pilih Kategori</h3>
+                <p id="details-text" class="text-gray-700">Klik pada salah satu kategori di bagan di atas (Biaya, Kustomisasi, Keamanan, atau Keterbukaan) untuk melihat penjelasan mendalam di sini.</p>
+            </div>
+        </section>
+
+        <section id="pengguna" class="py-16 bg-white rounded-2xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Siapa yang Seharusnya Menggunakan Linux?</h2>
+                <p class="text-lg mt-2 max-w-2xl mx-auto text-gray-600">Linux sangat serbaguna dan dapat digunakan oleh siapa saja, tetapi sangat unggul untuk beberapa kelompok pengguna ini.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center p-6 border border-gray-200 rounded-lg">
+                    <div class="text-5xl mb-4">💻</div>
+                    <h3 class="text-xl font-bold mb-2">Developer & Programmer</h3>
+                    <p class="text-gray-600">Dengan akses mudah ke terminal, package manager, dan alat pengembangan yang kuat, Linux adalah surga bagi para pengembang perangkat lunak dan web.</p>
+                </div>
+                <div class="text-center p-6 border border-gray-200 rounded-lg">
+                    <div class="text-5xl mb-4">🔬</div>
+                    <h3 class="text-xl font-bold mb-2">Ilmuwan & Akademisi</h3>
+                    <p class="text-gray-600">Banyak perangkat lunak ilmiah dan komputasi performa tinggi (HPC) berjalan secara native dan optimal di lingkungan Linux.</p>
+                </div>
+                <div class="text-center p-6 border border-gray-200 rounded-lg">
+                    <div class="text-5xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-bold mb-2">Pengguna Perangkat Keras Lama</h3>
+                    <p class="text-gray-600">Distro Linux yang ringan dapat 'menghidupkan kembali' komputer lama yang sudah tidak mampu menjalankan Windows atau macOS modern.</p>
+                </div>
+                <div class="text-center p-6 border border-gray-200 rounded-lg">
+                    <div class="text-5xl mb-4">🛡️</div>
+                    <h3 class="text-xl font-bold mb-2">Pecinta Privasi & Kustomisasi</h3>
+                    <p class="text-gray-600">Bagi mereka yang menginginkan kontrol penuh atas sistem, privasi data, dan kemampuan untuk mengubah setiap aspek OS, Linux adalah pilihan yang tepat.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pro-kontra" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Kelebihan dan Kekurangan</h2>
+                <p class="text-lg mt-2 max-w-2xl mx-auto text-gray-600">Setiap sistem operasi memiliki kekuatan dan kelemahannya. Berikut adalah pandangan yang seimbang tentang Linux.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-green-600 mb-4 border-b-2 border-green-200 pb-2">✅ Kelebihan</h3>
+                    <ul class="space-y-4">
+                        <li class="p-4 bg-green-50 rounded-lg"><strong>Gratis & Open Source:</strong> Tidak ada biaya lisensi. Kode sumber terbuka untuk transparansi dan audit keamanan.</li>
+                        <li class="p-4 bg-green-50 rounded-lg"><strong>Keamanan Tinggi:</strong> Arsitektur berbasis izin (permissions) membuatnya lebih tahan terhadap virus dan malware.</li>
+                        <li class="p-4 bg-green-50 rounded-lg"><strong>Stabilitas & Keandalan:</strong> Dikenal sangat stabil, seringkali dapat berjalan berbulan-bulan tanpa perlu reboot. Inilah sebabnya Linux mendominasi pasar server.</li>
+                        <li class="p-4 bg-green-50 rounded-lg"><strong>Fleksibilitas & Kustomisasi:</strong> Anda dapat mengubah hampir semua hal, dari tampilan hingga cara kerja sistem.</li>
+                        <li class="p-4 bg-green-50 rounded-lg"><strong>Performa:</strong> Cenderung lebih cepat dan efisien dalam penggunaan sumber daya, terutama pada perangkat keras yang lebih tua atau terbatas.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-red-600 mb-4 border-b-2 border-red-200 pb-2">❌ Kekurangan</h3>
+                    <ul class="space-y-4">
+                        <li class="p-4 bg-red-50 rounded-lg"><strong>Kurva Belajar:</strong> Bagi pengguna yang terbiasa dengan Windows/macOS, mungkin memerlukan waktu untuk beradaptasi, terutama dengan command-line.</li>
+                        <li class="p-4 bg-red-50 rounded-lg"><strong>Ketersediaan Perangkat Lunak:</strong> Meskipun banyak alternatif open-source yang hebat, beberapa software komersial (mis. Adobe Creative Suite, beberapa game AAA) tidak tersedia secara native.</li>
+                        <li class="p-4 bg-red-50 rounded-lg"><strong>Dukungan Perangkat Keras:</strong> Walaupun sudah jauh lebih baik, terkadang perangkat keras terbaru atau yang sangat spesifik mungkin tidak memiliki driver yang sempurna.</li>
+                        <li class="p-4 bg-red-50 rounded-lg"><strong>Fragmentasi:</strong> Banyaknya pilihan distro bisa membingungkan bagi pemula untuk memutuskan dari mana harus memulai.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section class="text-center py-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Siap untuk Mencoba?</h2>
+            <p class="text-lg max-w-3xl mx-auto mb-8 text-gray-600">
+                Linux adalah ekosistem yang luas dan bermanfaat. Jangan takut untuk bereksperimen! Anda bahkan bisa mencobanya tanpa menginstal, menggunakan fitur "Live USB". Selamat menjelajah!
+            </p>
+            <a href="https://ubuntu.com/download/desktop" target="_blank" class="btn btn-primary">Unduh Ubuntu (Populer untuk Pemula)</a>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-6">
+        <p>&copy; 2024 Panduan Interaktif Linux. Dibuat untuk tujuan edukasi.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active-section');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active-section');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            const distroCtx = document.getElementById('distroChart').getContext('2d');
+            const distroChart = new Chart(distroCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ubuntu', 'Linux Mint', 'Debian', 'Fedora', 'Arch Linux', 'Manjaro'],
+                    datasets: [{
+                        label: 'Popularitas Relatif',
+                        data: [90, 85, 75, 70, 65, 80],
+                        backgroundColor: [
+                            'rgba(234, 88, 12, 0.7)',
+                            'rgba(74, 222, 128, 0.7)',
+                            'rgba(217, 70, 239, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(29, 78, 216, 0.7)',
+                            'rgba(5, 150, 105, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(234, 88, 12, 1)',
+                            'rgba(74, 222, 128, 1)',
+                            'rgba(217, 70, 239, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(29, 78, 216, 1)',
+                            'rgba(5, 150, 105, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x + ' Poin';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Poin Popularitas (Ilustratif)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const osComparisonCtx = document.getElementById('osComparisonChart').getContext('2d');
+            const comparisonData = {
+                labels: ['Biaya', 'Kustomisasi', 'Keamanan', 'Keterbukaan'],
+                datasets: [
+                    {
+                        label: 'Linux',
+                        data: [10, 9, 9, 10],
+                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                        borderColor: 'rgba(245, 158, 11, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Windows',
+                        data: [4, 5, 6, 2],
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'macOS',
+                        data: [3, 4, 8, 1],
+                        backgroundColor: 'rgba(156, 163, 175, 0.8)',
+                        borderColor: 'rgba(156, 163, 175, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            };
+            const osComparisonChart = new Chart(osComparisonCtx, {
+                type: 'bar',
+                data: comparisonData,
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'Peringkat Relatif (1-10)'
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const category = comparisonData.labels[index];
+                            updateDetails(category);
+                        }
+                    },
+                    onHover: (event, chartElement) => {
+                        event.native.target.style.cursor = chartElement[0] ? 'pointer' : 'default';
+                    }
+                }
+            });
+
+            const detailsTitle = document.getElementById('details-title');
+            const detailsText = document.getElementById('details-text');
+            const detailsContent = {
+                'Biaya': {
+                    title: 'Perbandingan Biaya',
+                    text: 'Linux umumnya gratis, baik untuk OS maupun sebagian besar perangkat lunaknya. Windows memerlukan pembelian lisensi. macOS "gratis" dengan pembelian perangkat keras Apple yang premium. Keunggulan biaya Linux sangat signifikan.'
+                },
+                'Kustomisasi': {
+                    title: 'Perbandingan Kustomisasi',
+                    text: 'Linux adalah juara kustomisasi. Anda dapat mengubah hampir semua aspek, dari kernel hingga ikon. Windows menawarkan kustomisasi terbatas. macOS memiliki lingkungan yang sangat terkontrol dengan sedikit ruang untuk modifikasi mendalam.'
+                },
+                'Keamanan': {
+                    title: 'Perbandingan Keamanan',
+                    text: 'Karena pangsa pasarnya yang kecil di desktop dan arsitektur berbasis izin, Linux secara inheren lebih aman dari malware. macOS, berbasis UNIX, juga sangat aman. Windows adalah target paling umum dan memerlukan antivirus yang kuat.'
+                },
+                'Keterbukaan': {
+                    title: 'Perbandingan Keterbukaan (Open Source)',
+                    text: 'Linux sepenuhnya open-source, memberikan transparansi dan kontrol penuh. macOS dan Windows adalah sistem proprietary (sumber tertutup), artinya kode internalnya tidak dapat diakses atau dimodifikasi oleh publik.'
+                }
+            };
+
+            function updateDetails(category) {
+                if (detailsContent[category]) {
+                    detailsTitle.textContent = detailsContent[category].title;
+                    detailsText.textContent = detailsContent[category].text;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
