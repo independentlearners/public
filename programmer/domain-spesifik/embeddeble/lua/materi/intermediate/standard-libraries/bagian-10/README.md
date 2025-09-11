@@ -684,7 +684,325 @@ lua main.lua
 
 ---
 
+Kita lanjutkan ke **pengembangan modul `vector3d` di C API** dengan menambahkan dua fitur baru:
+
+1. **Cross Product (`v1:cross(v2)`)** → menghasilkan vektor tegak lurus dari dua vektor.
+2. **Index Access (`v.x`, `v.y`, `v.z`)** → agar properti bisa diakses langsung dari Lua seperti pada versi Lua murni.
+
+Seperti sebelumnya, kita akan menuliskan kode lengkap, lalu membedah baris demi baris agar setiap detail jelas.
+
+---
+
+# 📂 Kode Lengkap `vector3d.c` (dengan cross & indexing)
+
+```c
+// vector3d.c
+#include <math.h>
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+
+#define VEC3_MT "Vector3D"
+
+typedef struct {
+  double x, y, z;
+} Vector3D;
+
+static Vector3D *checkVector3D(lua_State *L, int idx) {
+  return (Vector3D *) luaL_checkudata(L, idx, VEC3_MT);
+}
+
+// Constructor
+static int vector_new(lua_State *L) {
+  double x = luaL_optnumber(L, 1, 0.0);
+  double y = luaL_optnumber(L, 2, 0.0);
+  double z = luaL_optnumber(L, 3, 0.0);
+
+  Vector3D *v = (Vector3D *) lua_newuserdata(L, sizeof(Vector3D));
+  v->x = x; v->y = y; v->z = z;
+
+  luaL_getmetatable(L, VEC3_MT);
+  lua_setmetatable(L, -2);
+  return 1;
+}
+
+// __tostring
+static int vector_tostring(lua_State *L) {
+  Vector3D *v = checkVector3D(L, 1);
+  lua_pushfstring(L, "(%g, %g, %g)", v->x, v->y, v->z);
+  return 1;
+}
+
+// __add
+static int vector_add(lua_State *L) {
+  Vector3D *a = checkVector3D(L, 1);
+  Vector3D *b = checkVector3D(L, 2);
+  Vector3D *r = (Vector3D *) lua_newuserdata(L, sizeof(Vector3D));
+  r->x = a->x + b->x; r->y = a->y + b->y; r->z = a->z + b->z;
+  luaL_getmetatable(L, VEC3_MT);
+  lua_setmetatable(L, -2);
+  return 1;
+}
+
+// __sub
+static int vector_sub(lua_State *L) {
+  Vector3D *a = checkVector3D(L, 1);
+  Vector3D *b = checkVector3D(L, 2);
+  Vector3D *r = (Vector3D *) lua_newuserdata(L, sizeof(Vector3D));
+  r->x = a->x - b->x; r->y = a->y - b->y; r->z = a->z - b->z;
+  luaL_getmetatable(L, VEC3_MT);
+  lua_setmetatable(L, -2);
+  return 1;
+}
+
+// __mul (dot product / scalar multiplication)
+static int vector_mul(lua_State *L) {
+  if (lua_isnumber(L, 1) && luaL_testudata(L, 2, VEC3_MT)) {
+    double s = lua_tonumber(L, 1);
+    Vector3D *b = checkVector3D(L, 2);
+    Vector3D *r = (Vector3D *) lua_newuserdata(L, sizeof(Vector3D));
+    r->x = s * b->x; r->y = s * b->y; r->z = s * b->z;
+    luaL_getmetatable(L, VEC3_MT); lua_setmetatable(L, -2);
+    return 1;
+  } else if (lua_isnumber(L, 2) && luaL_testudata(L, 1, VEC3_MT)) {
+    Vector3D *a = checkVector3D(L, 1);
+    double s = lua_tonumber(L, 2);
+    Vector3D *r = (Vector3D *) lua_newuserdata(L, sizeof(Vector3D));
+    r->x = a->x * s; r->y = a->y * s; r->z = a->z * s;
+    luaL_getmetatable(L, VEC3_MT); lua_setmetatable(L, -2);
+    return 1;
+  } else {
+    Vector3D *a = checkVector3D(L, 1);
+    Vector3D *b = checkVector3D(L, 2);
+    lua_pushnumber(L, a->x * b->x + a->y * b->y + a->z * b->z);
+    return 1;
+  }
+}
+
+// __eq
+static int vector_eq(lua_State *L) {
+  Vector3D *a = checkVector3D(L, 1);
+  Vector3D *b = checkVector3D(L, 2);
+  lua_pushboolean(L, (a->x == b->x) && (a->y == b->y) && (a->z == b->z));
+  return 1;
+}
+
+// __index (akses field x,y,z atau method)
+static int vector_index(lua_State *L) {
+  Vector3D *v = checkVector3D(L, 1);
+  const char *key = luaL_checkstring(L, 2);
+  if (strcmp(key, "x") == 0) {
+    lua_pushnumber(L, v->x);
+    return 1;
+  } else if (strcmp(key, "y") == 0) {
+    lua_pushnumber(L, v->y);
+    return 1;
+  } else if (strcmp(key, "z") == 0) {
+    lua_pushnumber(L, v->z);
+    return 1;
+  }
+  // fallback ke metatable (method)
+  luaL_getmetatable(L, VEC3_MT);
+  lua_pushstring(L, key);
+  lua_rawget(L, -2);
+  return 1;
+}
+
+// Method: magnitude
+static int vector_magnitude(lua_State *L) {
+  Vector3D *v = checkVector3D(L, 1);
+  lua_pushnumber(L, sqrt(v->x*v->x + v->y*v->y + v->z*v->z));
+  return 1;
+}
+
+// Method: normalize
+static int vector_normalize(lua_State *L) {
+  Vector3D *v = checkVector3D(L, 1);
+  double mag = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
+  Vector3D *r = (Vector3D *) lua_newuserdata(L, sizeof(Vector3D));
+  if (mag == 0) {
+    r->x = r->y = r->z = 0;
+  } else {
+    r->x = v->x / mag; r->y = v->y / mag; r->z = v->z / mag;
+  }
+  luaL_getmetatable(L, VEC3_MT);
+  lua_setmetatable(L, -2);
+  return 1;
+}
+
+// Method: cross product
+static int vector_cross(lua_State *L) {
+  Vector3D *a = checkVector3D(L, 1);
+  Vector3D *b = checkVector3D(L, 2);
+  Vector3D *r = (Vector3D *) lua_newuserdata(L, sizeof(Vector3D));
+  r->x = a->y*b->z - a->z*b->y;
+  r->y = a->z*b->x - a->x*b->z;
+  r->z = a->x*b->y - a->y*b->x;
+  luaL_getmetatable(L, VEC3_MT);
+  lua_setmetatable(L, -2);
+  return 1;
+}
+
+// Register methods
+static const luaL_Reg vector_methods[] = {
+  {"magnitude", vector_magnitude},
+  {"normalize", vector_normalize},
+  {"cross", vector_cross},
+  {NULL, NULL}
+};
+
+// Register metamethods
+static const luaL_Reg vector_metamethods[] = {
+  {"__tostring", vector_tostring},
+  {"__add", vector_add},
+  {"__sub", vector_sub},
+  {"__mul", vector_mul},
+  {"__eq", vector_eq},
+  {"__index", vector_index},
+  {NULL, NULL}
+};
+
+// Modul
+static const luaL_Reg vectorlib[] = {
+  {"new", vector_new},
+  {NULL, NULL}
+};
+
+int luaopen_vector3d(lua_State *L) {
+  luaL_newmetatable(L, VEC3_MT);
+  luaL_setfuncs(L, vector_metamethods, 0);
+  luaL_setfuncs(L, vector_methods, 0);
+  luaL_newlib(L, vectorlib);
+  return 1;
+}
+```
+
+---
+
+# 📂 Contoh Pemakaian di Lua (`main.lua`)
+
+```lua
+local Vec3 = require("vector3d")
+
+local v1 = Vec3.new(1, 0, 0)
+local v2 = Vec3.new(0, 1, 0)
+
+print("v1 =", v1)   -- (1,0,0)
+print("v2 =", v2)   -- (0,1,0)
+
+print("Akses field langsung:", v1.x, v1.y, v1.z)  -- 1,0,0
+
+print("Cross product v1 x v2 =", v1:cross(v2))    -- (0,0,1)
+
+print("Magnitude v1 =", v1:magnitude())           -- 1
+print("Normalized v2 =", v2:normalize())          -- (0,1,0)
+```
+
+---
+
+# 🔎 Bedah Fitur Baru
+
+### 1. **`__index` untuk akses properti**
+
+```c
+static int vector_index(lua_State *L) {
+  Vector3D *v = checkVector3D(L, 1);
+  const char *key = luaL_checkstring(L, 2);
+  if (strcmp(key, "x") == 0) { lua_pushnumber(L, v->x); return 1; }
+  else if (strcmp(key, "y") == 0) { lua_pushnumber(L, v->y); return 1; }
+  else if (strcmp(key, "z") == 0) { lua_pushnumber(L, v->z); return 1; }
+  // fallback ke metatable (untuk method)
+  luaL_getmetatable(L, VEC3_MT);
+  lua_pushstring(L, key);
+  lua_rawget(L, -2);
+  return 1;
+}
+```
+
+* Dipanggil saat Lua mengakses `v1.x`, `v1.y`, `v1.z`, atau `v1:magnitude`.
+* Jika key `"x","y","z"`, balikan nilai angka.
+* Jika key lain, ambil dari metatable (yang berisi method).
+* **Efek**: Anda bisa memakai `v1.x` layaknya field normal, serta tetap bisa `v1:magnitude()`.
+
+---
+
+### 2. **Cross product**
+
+```c
+r->x = a->y*b->z - a->z*b->y;
+r->y = a->z*b->x - a->x*b->z;
+r->z = a->x*b->y - a->y*b->x;
+```
+
+* Rumus standar cross product di 3D.
+* Menghasilkan vektor baru tegak lurus terhadap kedua operand.
+* Contoh: `(1,0,0) × (0,1,0) = (0,0,1)`.
+
+---
+
+# 📊 Visualisasi
+
+```
+Vector3D (userdata)
+ ├── Fields: x,y,z  (akses lewat __index)
+ ├── Metamethods: __add, __sub, __mul, __eq, __tostring
+ ├── Methods: magnitude, normalize, cross
+ └── Constructor: Vector3D.new(x,y,z)
+```
+
+---
+
+# 🔑 Inti Pemahaman
+
+* **`__index` metamethod** memungkinkan kombinasi field langsung (`v.x`) dan method (`v:magnitude()`) dalam satu userdata.
+* **Cross product** menambah kekuatan modul vektor untuk aplikasi fisika, grafik, AI, dan game engine.
+* Pola `lua_newuserdata` + `luaL_getmetatable` + `lua_setmetatable` selalu dipakai untuk membuat objek baru.
+
+---
+
 <!--
+Kurikulum yang Anda berikan sebelumnya masih menjadi **benang merah** utama. Jadi semua pengembangan proyek (seperti logger error, vector3D di Lua murni, lalu vector3D via C API) sebenarnya adalah **implementasi mini-project** untuk setiap fase/modul di kurikulum itu.
+
+Mari saya hubungkan kembali posisi kita:
+-->
+
+## 📌 Posisi materi kita sekarang di Kurikulum
+
+1. **Fase Dasar** → sudah kita bahas (variabel, kontrol alur, fungsi, dsb.).
+2. **Fase Menengah** → meliputi tabel, metatable, error handling → sudah Anda jalani dengan mini-project logger error.
+3. **Fase Lanjut**:
+
+   * **Modul 8**: Error Handling & Debugging → ✔ sudah (logger error).
+   * **Modul 9**: Metatable & Metamethods → ✔ sudah (Vector3D di Lua murni).
+   * **Modul 10**: C API → ✔ sedang kita kerjakan (Vector3D dalam C).
+   * **Modul 11**: LuaJIT → ✖ belum masuk.
+   * **Modul 12**: Coroutines → ✖ belum.
+   * **Modul 13**: Interoperabilitas (misalnya integrasi dengan C++, Python, dsb.) → ✖ belum.
+
+---
+
+## 📌 Hubungan antar Modul
+
+* **Logger Error (Modul 8)** → pondasi pemahaman bagaimana Lua menangani error & stack trace. Penting sebelum masuk ke integrasi C API, karena error dalam binding bisa lebih kompleks.
+* **Vector3D di Lua (Modul 9)** → latihan OOP dengan metatable/metamethods. Sangat penting karena konsepnya sama yang kemudian dipindahkan ke C API.
+* **Vector3D di C (Modul 10)** → versi yang lebih rendah-level, untuk mengerti bagaimana Lua dan C bertukar data melalui stack. Ini membuka jalan ke Modul 11 (LuaJIT FFI) di mana binding bisa jauh lebih efisien.
+
+---
+
+<!--
+## 📌 Apa yang Bisa Kita Lakukan Berikutnya
+
+1. **Selesaikan Modul 10** → kita sudah punya Vector3D di C API, bahkan sudah mulai menambah fitur (cross product, indexing). Bisa kita lanjutkan dengan menambahkan `__len` (`#v` → magnitude), atau array-like indexing (`v[1], v[2], v[3]`).
+2. **Masuk ke Modul 11 (LuaJIT)** → belajar bagaimana memanggil fungsi C langsung dari Lua tanpa menulis binding manual seperti di Modul 10.
+3. **Menyusun dokumentasi komparatif** → membandingkan implementasi Vector3D di Lua murni vs C API vs LuaJIT FFI, agar terlihat jelas kelebihan dan kekurangan masing-masing pendekatan.
+
+---
+
+Apakah Anda ingin saya **selesaikan dulu Modul 10 dengan tambahan `__len` dan indexing array-like**, atau langsung **melompat ke Modul 11 (LuaJIT FFI)** sesuai alur kurikulum?
+
+Apakah Anda ingin saya **tambahkan operator `__len` (`#v` = magnitude)** serta `__index` dengan dukungan akses via angka (`v[1], v[2], v[3]`) seperti array, supaya makin lengkap?
+
+
 ## 9) Jika Anda ingin saya lakukan selanjutnya (opsional pilihan praktis)
 
 * Saya dapat menyediakan **Makefile** siap pakai untuk Arch Linux / Linux umum.
