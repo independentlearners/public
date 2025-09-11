@@ -1,12 +1,13 @@
-Gas — kita langsung ke **Modul 16: Concurrency & Asynchronous I/O (Coroutines, libuv/luv)**.
-Saya akan berikan dua **mini-project** lengkap — masing-masing disertai **pembahasan baris-per-baris** untuk setiap kode, sesuai permintaan Anda. Nada tetap profesional dan menyemangati.
+# **[Modul 16: Concurrency & Asynchronous I/O (Coroutines, libuv/luv)][0]**
+
+Modul ini dilengkapi dua **mini-project** lengkap — masing-masing disertai **pembahasan baris-per-baris** untuk setiap kode, sesuai permintaan Anda. Nada tetap profesional dan menyemangati.
 
 Ringkasnya, Modul 16 mencakup:
 
 1. **Coroutine murni (Lua)** — pola producer/consumer pipeline (sinkron cooperatif).
 2. **Asynchronous I/O dengan `luv` (libuv binding untuk Lua)** — contoh TCP echo server non-blocking.
 
-Setiap script saya jelaskan seluruh barisnya: fungsi, maksud, efek pada memori/flow, dan catatan praktis. Mari mulai.
+Setiap script dijelaskan seluruh barisnya: fungsi, maksud, efek pada memori/flow, dan catatan praktis. Mari mulai.
 
 ---
 
@@ -906,11 +907,12 @@ luv.run()
 
 ---
 
+<!--
 ### Status — A selesai
-
 Saya telah membuat modul helper `luv_async.lua`, contoh server `async_echo.lua`, dan membedah setiap bagian kode secara mendalam sesuai permintaan Anda.
 
 Apakah saya harus **lanjut ke B** sekarang (Modul 17: *testing & CI untuk proyek Lua*, lengkap dengan contoh test unit, runner, dan pipeline CI sederhana), atau Anda mau saya periksa / jalankan hal-hal kecil di A dulu? Jika siap, saya akan langsung lanjut ke **B**.
+-->
 
 > - **[Ke Atas](#)**
 > - **[Sebelumnya][sebelumnya]**
