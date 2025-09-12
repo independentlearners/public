@@ -708,4 +708,4 @@ Kurikulum menyarankan latihan untuk memperkuat pemahaman konsep-konsep ini.
 [4]: ../../../../README.md
 [3]: ../3-scope-lifetime/README.md
 [2]: ../5-specialized-variable-usage/README.md
-[1]: ../../README.md/#21-assignment-patterns
+[1]: ../../README.md

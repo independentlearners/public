@@ -872,7 +872,7 @@ Kurikulum menyarankan latihan eksplorasi tipe, tes konversi, dan penanganan erro
 [4]: ../../../../../../README.md
 [3]: ../../../../README.md
 [2]: ../2-assignment-patterns/README.md
-[1]: ../../README.md/#11-pengenalan-variabel-di-lua
+[1]: ../../README.md
 [utf-8]: ../../../../../../../../kamus/README.md "klik untuk melihat kamus dan cari kata tersebut"
 
 <!------------------------------------>

@@ -757,5 +757,5 @@ Ini menandai akhir dari "Kurikulum Lengkap Variabel di Lua". Anda sekarang telah
 [4]: ../../../../README.md
 [3]: ../4-advanced-variable-concepts/README.md
 [2]: ../../../../../README.md
-[1]: ../../README.md/#51-variable-dalam-closures
+[1]: ../../README.md
 [selanjutnya]: ../../../kontrol-flow/materi/README.md

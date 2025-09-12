@@ -495,7 +495,7 @@ Kurikulum ini memberikan fondasi yang kuat untuk memahami dan menguasai pengguna
 > - **[Kurikulum][1]**
 > - **[Selanjutnya][6]**
 > - **[Sebelumnya][7]**
-> - **[Domain Spesifik][domain]**
+> - **[Home][domain]**
 
 [1]: ../../../README.md
 [modul-1]: ../variabel/modul/1-fondasi-variabel/README.md

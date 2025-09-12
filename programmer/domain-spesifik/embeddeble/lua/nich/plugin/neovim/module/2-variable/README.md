@@ -1,4 +1,4 @@
-# **[2\. Tipe Data dan Variabel][2]**
+# **[2. Tipe Data dan Variabel][2]**
 
 Memahami tipe data dan cara kerja variabel adalah fundamental dalam mempelajari bahasa pemrograman apa pun, termasuk Lua. Lua memiliki sistem tipe data yang dinamis dan beberapa tipe data primitif yang akan kita bahas.
 
@@ -327,13 +327,16 @@ print(_G.global_var) -- Output: Saya adalah variabel global
 
 Pemahaman yang baik tentang tipe data dan variabel, khususnya perbedaan antara variabel lokal dan global serta bagaimana scope bekerja, adalah kunci untuk menulis kode Lua yang bersih, efisien, dan mudah dikelola, terutama dalam konteks pengembangan plugin Neovim yang kompleks.
 
+Materi ini sudah cukup untuk kebutuhan Plugin-Nvim. Jika ingin mempelajari lebih lanjut seputar Vaiabel di Lua, klik [Disini][6]
+
 > - **[Ke Atas](#2-tipe-data-dan-variabel)**
 > - **[Selanjutnya](../3-operator-kontrolFlow/README.md)**
 > - **[Sebelumnya](../1-dasar/README.md)**
 > - **[Kurikulum][4]**
-> - **[Domain Spesifik][5]**
+> - **[Home][5]**
 
 [5]: ../../../../../../../README.md
 [4]: ../../../../../README.md
 [2]: ../../README.md
 [3]: ../../../../../materi/dasar/tipe-data/number/README.md
+[6]: ../../../../../materi/dasar/variabel/README.md 
