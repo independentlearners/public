@@ -92,7 +92,7 @@ local name = "John"
 local message = string.format("Hello, %s!", name)
 ```
 
-### [2.2 Variabel dan Scope][variabel]
+### 2.2 Variabel dan Scope
 
 #### Local vs Global Variables
 
@@ -112,6 +112,8 @@ end
 ```
 
 **Best Practice**: Selalu gunakan `local` untuk variabel dalam plugin development untuk menghindari namespace pollution.
+
+Masuk ke [Kurikulum][variabel] jika terterik untuk mempelajari lebih lanjut
 
 ## **[3. Operator dan Kontrol Flow][3]**
 
@@ -2313,7 +2315,7 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 
 > - **[Ke Atas](#)**
 > - **[Kurikulum](../../../README.md)**
-> - **[Domain Spesifik][domain-spesifik]**
+> - **[Home][domain-spesifik]**
 
 [1]: ../neovim/module/1-dasar/README.md
 [2]: ../neovim/module/2-variable/README.md
