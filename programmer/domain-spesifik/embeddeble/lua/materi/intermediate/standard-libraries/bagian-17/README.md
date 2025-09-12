@@ -1730,10 +1730,11 @@ Asumsi: Anda berada di root proyek, file Makefile tersimpan.
 
 ---
 
-<!--
 ## 6) Rekomendasi lanjut (opsional)
 
 * Untuk proyek yang akan dipublikasikan atau dikembangkan lintas-platform, gunakan **CMake** atau **Meson**. Keduanya memudahkan pembuatan `.dll/.so/.dylib` dan integrasi dengan CI.
+
+<!--
 * Jika Anda ingin, saya bisa:
 
   * (A) Buatkan **CMakeLists.txt** yang setara (lebih portable).
@@ -1741,6 +1742,2182 @@ Asumsi: Anda berada di root proyek, file Makefile tersimpan.
   * (C) Ekspor semua file sumber `.c/.h/.lua` yang kita buat sebelumnya sebagai paket ZIP atau blok kode siap `copy/paste`.
 
 Pilih opsi lanjutan yang Anda inginkan (A / B / C), atau saya lanjut dan langsung buatkan dua di antaranya (mis. buat CMake + CI) — saya akan kerjakan dan **membedah setiap baris** seperti Anda minta.
+-->
+Kita akan mengerjakan **A: buat CMakeLists.txt** yang portable dan komprehensif untuk proyek ini, lalu saya bedah keseluruhan file tersebut sehingga Anda memahami setiap baris dan implikasinya.
+
+<!--
+* Jika Anda ingin, saya bisa:
+Setelah Anda konfirmasi, kita lanjut ke **B** dan **C** sesuai urutan yang Anda minta.
+-->
+
+Kita akan mengerjakan **A: buat CMakeLists.txt** yang portable dan komprehensif untuk proyek ini, lalu saya bedah keseluruhan file tersebut sehingga Anda memahami setiap baris dan implikasinya.
+Di bawah ini:
+
+1. File **CMakeLists.txt** dibawah ini cukup lengkap (komentar di dalam file ringkas tetapi cukup) — cocok untuk proyek yang berisi beberapa shared libraries C (libmath, libstrutils, libarray, libperson, libsort, libfib) dan target helper untuk menjalankan test (`busted`) jika tersedia.
+2. Selanjutnya kita akan menjelaskan **baris-per-baris dan blok-per-blok** seluruh CMakeLists — tujuan, efek, rekomendasi penyesuaian, dan catatan platform (Linux/macOS/Windows).
+3. Pada bagian akhir kita akan menyertakan **cara menjalankan** build & test, serta referensi dokumentasi resmi (sumber) untuk poin-poin penting.
+
+---
+
+## 1) File: `CMakeLists.txt`
+
+Simpan file ini di root proyek Anda.
+
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(lua_ffibindings
+  VERSION 0.1
+  DESCRIPTION "Build helpers for LuaJIT/FFI example libraries"
+  LANGUAGES C)
+
+# --- Basic policy / flags ---------------------------------------------------
+# Set C standard
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# Enable position independent code globally (shared libs normally need this).
+# Note: SHARED targets normally default to PIC, but set globally for consistency.
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# Allow user to override build directories and options
+set(SRC_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Source directory containing .c/.h files")
+set(BUILD_DIR "${CMAKE_BINARY_DIR}" CACHE PATH "Build directory")
+set(LIB_OUTPUT_DIR "${BUILD_DIR}/lib" CACHE PATH "Directory for generated shared libraries")
+
+# Create list of C libraries to build (names correspond to source files: libname.c)
+# Edit this list to match actual .c files in your repo.
+set(TARGET_LIBS
+  libmath
+  libstrutils
+  libarray
+  libperson
+  libsort
+  libfib
+)
+
+# Optionally build only subset
+option(BUILD_ALL_LIBS "Build all example C shared libraries" ON)
+
+# --- Find optional external dependencies via pkg-config / find_package -------
+# Use PkgConfig to find system libraries (libuv, luajit) if available
+find_package(PkgConfig QUIET)
+if(PkgConfig_FOUND)
+  # Try to find luajit (optional)
+  pkg_check_modules(LUAJIT_PKG QUIET luajit)
+  # Try to find libuv (optional)
+  pkg_check_modules(LIBUV_PKG QUIET libuv)
+endif()
+
+# Try to find OpenSSL (crypto) (optional; used by OpenSSL binding examples)
+find_package(OpenSSL QUIET COMPONENTS Crypto)
+
+# --- Prepare output directory ------------------------------------------------
+file(MAKE_DIRECTORY "${LIB_OUTPUT_DIR}")
+
+# Helper macro: define a shared library from a single C source file
+# Usage: add_example_shared(libname)
+macro(add_example_shared NAME)
+  # Source assumed to be ${SRC_DIR}/${NAME}.c
+  set(src "${SRC_DIR}/${NAME}.c")
+  if (NOT EXISTS "${src}")
+    message(WARNING "Source file ${src} not found; skipping target ${NAME}")
+    return()
+  endif()
+
+  add_library(${NAME} SHARED "${src}")
+
+  # Set output directory for the shared object
+  set_target_properties(${NAME} PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${LIB_OUTPUT_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY "${LIB_OUTPUT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY "${LIB_OUTPUT_DIR}"
+  )
+
+  # On Windows, export all symbols automatically if necessary
+  if(WIN32)
+    # Some toolchains may require explicit export; this helps by generating a .def file.
+    set_target_properties(${NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+  endif()
+
+  # Add include dir to help projects that include the headers from src root
+  target_include_directories(${NAME} PRIVATE "${SRC_DIR}")
+
+  # Add some compile warnings by default (user can override CFLAGS)
+  target_compile_options(${NAME} PRIVATE
+    $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
+    $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic>
+    $<$<C_COMPILER_ID:MSVC>:/W3>
+  )
+
+  # Link math library on UNIX when symbols like sqrt are used (safe to link conditionally)
+  if(UNIX)
+    target_link_libraries(${NAME} PRIVATE m)
+  endif()
+endmacro()
+
+# --- Create targets ----------------------------------------------------------
+if(BUILD_ALL_LIBS)
+  foreach(lib IN LISTS TARGET_LIBS)
+    add_example_shared(${lib})
+    list(APPEND GENERATED_LIB_TARGETS ${lib})
+  endforeach()
+endif()
+
+# --- Optional: add custom rules for special libraries if they need extra flags
+# Example: if libperson or libmath needed special defines or extra sources, add here.
+# (Uncomment / edit if required)
+# add_library(libperson SHARED libperson.c)
+# target_link_libraries(libperson PRIVATE m)
+
+# --- Add custom target to run unit tests (busted) if busted present -----------
+find_program(BUSTED_EXECUTABLE busted)
+if(BUSTED_EXECUTABLE)
+  add_custom_target(run-tests
+    COMMAND ${CMAKE_COMMAND} -E echo "Running busted tests..."
+    COMMAND ${BUSTED_EXECUTABLE} -v
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Run busted test suite")
+else()
+  add_custom_target(run-tests
+    COMMAND ${CMAKE_COMMAND} -E echo "busted not found; install busted (luarocks install busted) to enable run-tests"
+    COMMENT "run-tests (busted not found)")
+endif()
+
+# --- Provide helpful status summary -----------------------------------------
+message(STATUS "Project: ${PROJECT_NAME}")
+message(STATUS "Source dir: ${SRC_DIR}")
+message(STATUS "Build dir: ${BUILD_DIR}")
+message(STATUS "Libraries output: ${LIB_OUTPUT_DIR}")
+if(PkgConfig_FOUND)
+  if(LUAJIT_PKG_FOUND)
+    message(STATUS "Found LuaJIT via pkg-config: includes=${LUAJIT_PKG_INCLUDEDIR}")
+  else()
+    message(STATUS "LuaJIT (pkg-config) not found; binding code may require manual setup")
+  endif()
+  if(LIBUV_PKG_FOUND)
+    message(STATUS "Found libuv via pkg-config: libs=${LIBUV_PKG_LIBRARIES}")
+  endif()
+endif()
+if(OpenSSL_FOUND)
+  message(STATUS "Found OpenSSL: ${OPENSSL_VERSION}")
+endif()
+
+# --- Install rules (optional) ------------------------------------------------
+# Install shared libraries to lib dir if user wants 'make install'
+install(DIRECTORY ${LIB_OUTPUT_DIR} DESTINATION . OPTIONAL)
+```
+
+---
+
+## 2) Penjelasan menyeluruh — blok demi blok dan baris-per-baris penting
+
+Saya jelaskan per-bagian agar Anda memahami maksud, efek build, dan titik-titik yang perlu disesuaikan.
+
+### Header & minimum CMake
+
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(lua_ffibindings
+  VERSION 0.1
+  DESCRIPTION "Build helpers for LuaJIT/FFI example libraries"
+  LANGUAGES C)
+```
+
+* `cmake_minimum_required`: menetapkan versi CMake minimal; 3.16 adalah pilihan aman untuk fitur modern (pkg\_check\_modules & target properties). Dokumen `add_library` dan modul CMake relevan ada di dokumentasi resmi. ([cmake.org][1])
+* `project(...)` menentukan nama proyek, versi, dan bahasa (C).
+
+### Standard C & PIC
+
+```cmake
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+```
+
+* `CMAKE_C_STANDARD`: menetapkan C11; memudahkan portabilitas.
+* `CMAKE_POSITION_INDEPENDENT_CODE ON`: memastikan kompiler menghasilkan code position-independent (PIC). Shared library biasanya memerlukan PIC; meskipun SHARED library secara default biasanya PIC, kita set global agar target lain konsisten. Lihat dokumentasi properti POSITION\_INDEPENDENT\_CODE. ([cmake.org][2])
+
+### Direktori & daftar library
+
+```cmake
+set(SRC_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH ...)
+set(BUILD_DIR "${CMAKE_BINARY_DIR}" CACHE PATH ...)
+set(LIB_OUTPUT_DIR "${BUILD_DIR}/lib" CACHE PATH ...)
+set(TARGET_LIBS libmath libstrutils libarray libperson libsort libfib)
+option(BUILD_ALL_LIBS "Build all example C shared libraries" ON)
+```
+
+* Variabel ini membuat konfigurasi fleksibel: Anda bisa override pada saat `cmake` (mis. `cmake -DSRC_DIR=./csrc ..`).
+* `TARGET_LIBS` berisi nama-nama library yang akan dicari sebagai `libname.c`. Jika Anda meletakkan sumber di subfolder, ubah `SRC_DIR` atau ubah macro `add_example_shared` (lihat bawah).
+
+### Find external deps via pkg-config & OpenSSL
+
+```cmake
+find_package(PkgConfig QUIET)
+if(PkgConfig_FOUND)
+  pkg_check_modules(LUAJIT_PKG QUIET luajit)
+  pkg_check_modules(LIBUV_PKG QUIET libuv)
+endif()
+find_package(OpenSSL QUIET COMPONENTS Crypto)
+```
+
+* Kita mencoba menemukan `pkg-config` (FindPkgConfig) dan melalui itu memeriksa apakah `luajit` & `libuv` terdaftar di pkg-config. `FindPkgConfig` menyediakan `pkg_check_modules()` sebagaimana dokumentasinya. ([cmake.org][3])
+* `find_package(OpenSSL ...)` mencari OpenSSL/crypto jika ingin membangun binding terkait cryptography (opsional). `FindOpenSSL` module disediakan CMake. ([cmake.org][4])
+
+> Catatan: `pkg_check_modules` akan bekerja bila distro memasang file `.pc` untuk `luajit` atau `libuv`. Di beberapa distro nama package `.pc` bisa berbeda (mis. `luajit` vs `luajit-2.1`) — jika Anda menemukan "not found", periksa `pkg-config --list-all` di sistem Anda.
+
+### Membuat direktori output
+
+```cmake
+file(MAKE_DIRECTORY "${LIB_OUTPUT_DIR}")
+```
+
+* Pastikan folder `build/lib` ada agar target output bisa ditulis.
+
+### Macro `add_example_shared`
+
+Kita buat macro untuk aturan pengerjaan target lib yang seragam.
+
+```cmake
+macro(add_example_shared NAME)
+  set(src "${SRC_DIR}/${NAME}.c")
+  if (NOT EXISTS "${src}")
+    message(WARNING "Source file ${src} not found; skipping target ${NAME}")
+    return()
+  endif()
+
+  add_library(${NAME} SHARED "${src}")
+
+  set_target_properties(${NAME} PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${LIB_OUTPUT_DIR}"
+    LIBRARY_OUTPUT_DIRECTORY "${LIB_OUTPUT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY "${LIB_OUTPUT_DIR}"
+  )
+
+  if(WIN32)
+    set_target_properties(${NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+  endif()
+  target_include_directories(${NAME} PRIVATE "${SRC_DIR}")
+  target_compile_options(${NAME} PRIVATE
+    $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Wpedantic>
+    $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Wpedantic>
+    $<$<C_COMPILER_ID:MSVC>:/W3>
+  )
+  if(UNIX)
+    target_link_libraries(${NAME} PRIVATE m)
+  endif()
+endmacro()
+```
+
+Penjelasan kunci:
+
+* `add_library(NAME SHARED src)`: buat shared library (dynamic). `add_library` adalah mekanisme CMake standar untuk membuat library (SHARED/STATIC/MODULE). Jika target SHARED dibuat, CMake akan menghasilkan `.so` (Linux), `.dylib` (macOS) atau `.dll` + import lib (Windows) sesuai platform. Dokumentasi `add_library`. ([cmake.org][1])
+* `set_target_properties(... LIBRARY_OUTPUT_DIRECTORY ...)`: arahkan hasil kompilasi ke `build/lib`.
+* `WINDOWS_EXPORT_ALL_SYMBOLS`: di Windows, agar semua simbol diekspor (mencegah perlu `__declspec(dllexport)` di semua fungsi) Anda dapat men-set properti ini — berguna untuk library C yang tidak mengekspor simbol secara eksplisit. Dokumentasi properti ini. ([cmake.org][5])
+* `target_include_directories`: agar header (`.h`) yang berada di `SRC_DIR` dapat di-include oleh konsumen target jika perlu.
+* `target_compile_options` menggunakan *generator expressions* untuk menambah flags kompilator spesifik. Ini bagus untuk memastikan peringatan diaktifkan saat compile.
+* `target_link_libraries(... PRIVATE m)`: tautkan math lib pada UNIX jika fungsi math digunakan (contoh `sqrt`/`hypot`); di Windows tidak diperlukan. Ini conditional membantu portabilitas.
+
+### Men-generate targets
+
+```cmake
+if(BUILD_ALL_LIBS)
+  foreach(lib IN LISTS TARGET_LIBS)
+    add_example_shared(${lib})
+    list(APPEND GENERATED_LIB_TARGETS ${lib})
+  endforeach()
+endif()
+```
+
+* Loop membuat target per library. Jika ada file sumber yang hilang, macro akan mem-print warning dan melewati target tersebut.
+
+### Target run-tests (custom)
+
+```cmake
+find_program(BUSTED_EXECUTABLE busted)
+if(BUSTED_EXECUTABLE)
+  add_custom_target(run-tests
+    COMMAND ${CMAKE_COMMAND} -E echo "Running busted tests..."
+    COMMAND ${BUSTED_EXECUTABLE} -v
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Run busted test suite")
+else()
+  add_custom_target(run-tests
+    COMMAND ${CMAKE_COMMAND} -E echo "busted not found; install busted (luarocks install busted) to enable run-tests"
+    COMMENT "run-tests (busted not found)")
+endif()
+```
+
+* `find_program` mencari executable `busted` pada PATH. Jika ditemukan, `add_custom_target(run-tests ...)` memungkinkan Anda menjalankan `cmake --build . --target run-tests` untuk menjalankan test suite dari build system (berguna di CI). `add_custom_target` adalah cara standar membuat target tanpa artefak file (dokumen `add_custom_target`). ([cmake.org][6])
+
+### Status messages & install
+
+```cmake
+message(STATUS "Project: ${PROJECT_NAME}")
+...
+install(DIRECTORY ${LIB_OUTPUT_DIR} DESTINATION . OPTIONAL)
+```
+
+* Menampilkan pesan status saat konfigurasi.
+* `install()` di sini sederhana; Anda bisa memperluasnya untuk `install(TARGETS ...)` jika ingin packaging.
+
+---
+
+## 3) Bagaimana cara menggunakan CMakeLists ini (langkah praktis)
+
+Asumsi: `CMakeLists.txt` berada di root proyek, dan file sumber `.c` (mis. `libmath.c`, `libstrutils.c` dll) juga berada di `SRC_DIR` (default .).
+
+1. Buat direktori build dan jalankan konfigurasi:
+
+   ```bash
+   mkdir -p build
+   cmake -S . -B build
+   ```
+
+   * `-S .` sumber root; `-B build` tempat konfigurasi & artefak.
+
+2. Bangun semua library:
+
+   ```bash
+   cmake --build build --parallel
+   ```
+
+   * Ini memanggil `make` atau `ninja` sesuai generator yang dipilih.
+
+3. Jalankan unit tests (jika `busted` terpasang):
+
+   ```bash
+   cmake --build build --target run-tests
+   ```
+
+   * Ini menjalankan custom target `run-tests` yang memanggil `busted -v`.
+
+4. Jika Anda ingin hanya membangun satu library:
+
+   ```bash
+   cmake --build build --target libmath
+   ```
+
+   (nama target sama dengan nama library `libmath`).
+
+5. Jika menggunakan GUI atau IDE (CLion, VSCode CMake Tools), arahkan ke folder `build` sebagai working directory.
+
+---
+
+## 4) Catatan platform & penyesuaian
+
+* **macOS**: CMake memilih ekstensi `.dylib` atau `.so` sesuai platform. Anda tidak perlu mengganti `.so` manual. Jika perlu, gunakan `CMAKE_SHARED_LIBRARY_SUFFIX` atau set `-dynamiclib` etc — CMake menangani ini.
+* **Windows**: membangun `.dll` berbeda: Anda sering memerlukan `__declspec(dllexport)` pada fungsi yang diekspor. CMake property `WINDOWS_EXPORT_ALL_SYMBOLS` membantu membuat `.def` otomatis agar fungsi diekspor tanpa menambahkan `__declspec`. Namun untuk kontrol ekspor yang aman dan portable, sebaiknya definisikan makro ekspor di kode sumber jika Anda targetkan Windows. Referensi properti Windows export. ([cmake.org][5])
+* **Dependencies (libuv, openssl, luajit)**:
+
+  * Jika Anda mempunyai binding yang mengimpor `libuv` atau `OpenSSL` pada waktu kompilasi (mis. membuat small helper C yang link ke libuv), gunakan `pkg_check_modules` dan `target_link_libraries(... PUBLIC ${LIBUV_PKG_LIBRARIES})` serta `target_include_directories(... PUBLIC ${LIBUV_PKG_INCLUDEDIR})`. Dokumentasi `FindPkgConfig` dan `FindOpenSSL` relevan. ([cmake.org][3])
+
+---
+
+## 5) Referensi / Sumber (dikutip)
+
+Di bawah adalah dokumentasi resmi / referensi yang saya gunakan dan yang sebaiknya Anda rujuk saat mengembangkan CMake lebih lanjut:
+
+* `add_library` (CMake official docs). ([cmake.org][1])
+* `FindPkgConfig` / `pkg_check_modules` (CMake module docs). ([cmake.org][3])
+* `FindOpenSSL` (CMake module docs for OpenSSL). ([cmake.org][4])
+* `PROPERTY POSITION_INDEPENDENT_CODE` (CMake target property docs). ([cmake.org][2])
+* `add_custom_target` (CMake docs — custom build / test targets). ([cmake.org][6])
+
+(Saya menaruh referensi ini karena bagian-bagian ini adalah fondasi pembuatan shared libraries dan integrasi dependency di CMake).
+
+---
+
+## 6) Rekomendasi & best-practices singkat
+
+* Jika proyek tumbuh, pertimbangkan memindahkan semua kode C ke `csrc/` (SRC\_DIR) dan header ke `include/`. Kemudian gunakan `target_include_directories(${NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)`.
+* Untuk multiplatform (Windows), pertimbangkan menambahkan `__declspec(dllexport)` macros di file `.h` atau gunakan CMake property `WINDOWS_EXPORT_ALL_SYMBOLS` hanya sebagai fallback.
+* Untuk paket distribusi & reproducible build, gunakan `CMakePresets.json` atau `conan`/`vcpkg` untuk manajemen dependency native.
+* Untuk CI: di workflow CI (GitHub Actions) jalankan `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release` lalu `cmake --build build --parallel` dan `cmake --build build --target run-tests`.
+
+---
+
+<!--
+## 7) Selesai — konfirmasi A
+
+Saya sudah menyiapkan `CMakeLists.txt` lengkap bersama penjelasan mendetail setiap bagian penting, rekomendasi penyesuaian, cara menjalankan, dan referensi dokumen resmi untuk fitur-fitur yang paling penting (`add_library`, `FindPkgConfig`, `FindOpenSSL`, `POSITION_INDEPENDENT_CODE`, `add_custom_target`).
+
+Jika Anda ingin, saya bisa:
+
+* (a) **Commit** file ini ke struktur proyek yang Anda miliki (saya tidak dapat menulis langsung ke filesystem Anda — Anda harus menyalin file ke repo); atau
+* (b) **Sesuaikan** CMakeLists agar sesuai struktur sumber Anda (misal: jika semua `.c` di `csrc/`, atau jika beberapa library memerlukan flags/link khusus seperti `-lcrypto`), saya akan ubah file dan jelaskan perubahan; atau
+* (c) Lanjut ke **B** (GitHub Actions CI) — saya akan buat workflow yang mem-build native libs via CMake lalu jalankan `busted` di runner.
+
+Beritahu pilihan Anda (lanjut ke **B** sekarang atau minta penyesuaian CMakeLists) — saya akan langsung kerjakan langkah selanjutnya.
+-->
+[1]: https://cmake.org/cmake/help/latest/command/add_library.html?utm_source=chatgpt.com "add_library — CMake 4.1.1 Documentation"
+[2]: https://cmake.org/cmake/help/latest/prop_tgt/POSITION_INDEPENDENT_CODE.html?utm_source=chatgpt.com "POSITION_INDEPENDENT_CO..."
+[3]: https://cmake.org/cmake/help/latest/module/FindPkgConfig.html?utm_source=chatgpt.com "FindPkgConfig — CMake 4.1.1 Documentation"
+[4]: https://cmake.org/cmake/help/latest/module/FindOpenSSL.html?utm_source=chatgpt.com "FindOpenSSL — CMake 4.1.1 Documentation"
+[5]: https://cmake.org/cmake/help/latest/prop_tgt/WINDOWS_EXPORT_ALL_SYMBOLS.html?utm_source=chatgpt.com "WINDOWS_EXPORT_ALL_SYM..."
+[6]: https://cmake.org/cmake/help/latest/command/add_custom_target.html?utm_source=chatgpt.com "add_custom_target — CMake 4.1.1 Documentation"
+
+Berikutnya kita akan masuk ke **B: GitHub Actions CI**.
+Target: workflow YAML di `.github/workflows/ci.yml` yang:
+
+1. **Setup environment**: install LuaJIT, luarocks, CMake, compiler.
+2. **Build** semua library C dengan `CMakeLists.txt` yang sudah kita buat.
+3. **Install dependency Lua** (luv, busted).
+4. **Run tests** dengan target `run-tests` (custom CMake) atau langsung `busted`.
+
+Setelah file YAML, saya akan **membedah baris demi baris** isi workflow supaya jelas fungsi setiap bagian.
+
+---
+
+## 1) File: `.github/workflows/ci.yml`
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # --- Step 1: checkout source ---
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # --- Step 2: install dependencies ---
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake pkg-config \
+          libssl-dev libuv1-dev luajit luarocks
+
+    # --- Step 3: install Lua dependencies via luarocks ---
+    - name: Install LuaRocks packages
+      run: |
+        sudo luarocks install luv
+        sudo luarocks install busted
+
+    # --- Step 4: configure project with CMake ---
+    - name: Configure with CMake
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+    # --- Step 5: build libraries ---
+    - name: Build shared libraries
+      run: cmake --build build --parallel
+
+    # --- Step 6: run tests (custom target run-tests) ---
+    - name: Run tests
+      run: cmake --build build --target run-tests
+```
+
+---
+
+## 2) Bedah isi workflow — baris demi baris
+
+### Header
+
+```yaml
+name: CI
+```
+
+* Nama workflow yang akan tampil di tab *Actions* di GitHub.
+
+```yaml
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+```
+
+* Workflow berjalan setiap kali ada *push* ke branch `main`, atau ada *pull request* ke `main`.
+* Bisa ditambah branch lain sesuai kebutuhan.
+
+### Job utama
+
+```yaml
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+```
+
+* Mendefinisikan satu job bernama `build-and-test`.
+* Runner `ubuntu-latest` sudah punya GCC, clang, make, dsb — cocok untuk build C dan menjalankan LuaJIT.
+
+### Step 1: Checkout
+
+```yaml
+- name: Checkout repository
+  uses: actions/checkout@v3
+```
+
+* Menggunakan action resmi GitHub untuk men-clone kode repository ke runner.
+
+### Step 2: Install dependencies
+
+```yaml
+- name: Install system dependencies
+  run: |
+    sudo apt-get update
+    sudo apt-get install -y build-essential cmake pkg-config \
+      libssl-dev libuv1-dev luajit luarocks
+```
+
+* Menginstal alat dasar build:
+
+  * `build-essential`: gcc/g++/make.
+  * `cmake`: build system.
+  * `pkg-config`: membantu deteksi library.
+  * `libssl-dev`, `libuv1-dev`: headers untuk OpenSSL dan libuv.
+  * `luajit`, `luarocks`: runtime dan package manager LuaJIT.
+
+### Step 3: Install Lua packages
+
+```yaml
+- name: Install LuaRocks packages
+  run: |
+    sudo luarocks install luv
+    sudo luarocks install busted
+```
+
+* Memasang package Lua yang diperlukan:
+
+  * `luv`: binding Lua untuk libuv (async I/O).
+  * `busted`: framework unit testing Lua.
+
+### Step 4: Configure CMake
+
+```yaml
+- name: Configure with CMake
+  run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+```
+
+* Konfigurasi project dengan CMake.
+* `-S .` → sumber kode di root repo.
+* `-B build` → hasil konfigurasi di folder `build`.
+* `-DCMAKE_BUILD_TYPE=Release` → optimisasi release.
+
+### Step 5: Build
+
+```yaml
+- name: Build shared libraries
+  run: cmake --build build --parallel
+```
+
+* Menjalankan build untuk semua target yang didefinisikan (shared libs: libmath.so, dll).
+* `--parallel` memanfaatkan banyak core CPU di runner.
+
+### Step 6: Run tests
+
+```yaml
+- name: Run tests
+  run: cmake --build build --target run-tests
+```
+
+* Menjalankan target `run-tests` yang sudah kita definisikan di `CMakeLists.txt`.
+* Jika `busted` ada → akan jalan `busted -v` dan melaporkan hasil test.
+* Jika `busted` tidak ada → hanya print pesan peringatan.
+
+---
+
+## 3) Cara kerja CI ini
+
+* Begitu Anda push code ke branch `main`, workflow ini akan:
+
+  1. Build semua library C (`.so`) dengan CMake.
+  2. Install dependencies Lua.
+  3. Jalankan seluruh test di folder `spec/`.
+* Jika test gagal → job `Run tests` gagal → GitHub menandai commit PR sebagai "red".
+* Jika semua sukses → commit PR hijau.
+
+---
+
+## 4) Sumber Referensi
+
+* Dokumentasi GitHub Actions (workflow syntax): [GitHub Docs](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
+* Action `checkout`: [actions/checkout@v3](https://github.com/actions/checkout)
+* Dokumentasi `cmake --build`: [CMake Build Tool Mode](https://cmake.org/cmake/help/latest/manual/cmake.1.html#build-tool-mode)
+* Dokumentasi Luarocks: [Luarocks](https://luarocks.org/)
+* Dokumentasi Busted: [Olivine-Labs/busted](https://olivinelabs.com/busted/)
+* Dokumentasi libuv: [libuv docs](https://libuv.org/)
+
+---
+
+## 5) Selesai B
+
+Dengan ini, pipeline **CI** sudah siap:
+
+* portable,
+* membangun library C dengan **CMake**,
+* menjalankan test Lua dengan **busted**.
+
+<!--
+Jika sudah jelas, kita bisa lanjut ke **C: paketkan semua file sumber (C & Lua) ke satu blok kode siap copy-paste**.
+Apakah saya lanjut langsung ke **C** sekarang?
+-->
+
+Berikut ini kita akan masuk ke **C: Paketkan semua file sumber (C & Lua)**.
+Tujuan: Anda bisa langsung copy–paste ke dalam folder proyek, simpan dengan nama sesuai, lalu build & jalankan.
+
+Kita tidak akan hanya melempar file, tetapi **membedah isi tiap file** sehingga Anda tahu: fungsi apa di dalamnya, bagaimana dipakai, dan apa yang bisa diubah. File dibagi menurut kategori:
+
+---
+
+# 📂 Struktur Proyek
+
+```
+.
+├── CMakeLists.txt
+├── csrc/
+│   ├── libmath.c
+│   ├── libmath.h
+│   ├── libstrutils.c
+│   ├── libstrutils.h
+│   ├── libarray.c
+│   ├── libarray.h
+│   ├── libperson.c
+│   ├── libperson.h
+│   ├── libsort.c
+│   ├── libsort.h
+│   ├── libfib.c
+│   └── libfib.h
+├── lua/
+│   ├── math_bind.lua
+│   ├── strutils_bind.lua
+│   ├── array_bind.lua
+│   ├── person_bind.lua
+│   ├── sort_bind.lua
+│   ├── fib_bind.lua
+│   ├── vector3d_ffi.lua
+│   ├── particle_sim_ffi.lua
+│   ├── ffi_c_example.lua
+│   ├── ffi_libm.lua
+│   ├── main.lua
+│   ├── sdl2_bind.lua
+│   ├── sdl2_demo.lua
+│   ├── openssl_bind.lua
+│   ├── openssl_demo.lua
+│   ├── openssl_aes.lua
+│   ├── aes_demo.lua
+│   ├── co_pipeline.lua
+│   ├── luv_async.lua
+│   ├── async_echo.lua
+│   └── pipeline_server.lua
+└── spec/
+    ├── luv_async_spec.lua
+    └── pipeline_server_spec.lua
+```
+
+---
+
+# 📂 csrc (Library C)
+
+## 1) libmath.c / libmath.h
+
+```c
+// libmath.h
+#ifndef LIBMATH_H
+#define LIBMATH_H
+double add(double a, double b);
+double sub(double a, double b);
+double mul(double a, double b);
+double divide(double a, double b);
+double hypotenuse(double x, double y);
+#endif
+```
+
+```c
+// libmath.c
+#include "libmath.h"
+#include <math.h>
+double add(double a, double b) { return a + b; }
+double sub(double a, double b) { return a - b; }
+double mul(double a, double b) { return a * b; }
+double divide(double a, double b) { return b != 0 ? a / b : 0; }
+double hypotenuse(double x, double y) { return sqrt(x*x + y*y); }
+```
+
+**Bedah:**
+
+* Fungsi sederhana aritmetika + `hypotenuse` pakai `sqrt`.
+* Return `0` jika divide by zero → *safety*.
+
+---
+
+## 2) libstrutils.c / libstrutils.h
+
+```c
+// libstrutils.h
+#ifndef LIBSTRUTILS_H
+#define LIBSTRUTILS_H
+char* to_upper(const char* s);
+char* to_lower(const char* s);
+char* reverse(const char* s);
+char* concat(const char* a, const char* b);
+void free_str(char* s);
+#endif
+```
+
+```c
+// libstrutils.c
+#include "libstrutils.h"
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+static char* dup_str(const char* s) {
+    size_t len = strlen(s);
+    char* out = malloc(len+1);
+    strcpy(out, s);
+    return out;
+}
+
+char* to_upper(const char* s) {
+    char* out = dup_str(s);
+    for (size_t i=0; out[i]; i++) out[i] = toupper(out[i]);
+    return out;
+}
+
+char* to_lower(const char* s) {
+    char* out = dup_str(s);
+    for (size_t i=0; out[i]; i++) out[i] = tolower(out[i]);
+    return out;
+}
+
+char* reverse(const char* s) {
+    size_t len = strlen(s);
+    char* out = malloc(len+1);
+    for (size_t i=0; i<len; i++) out[i] = s[len-1-i];
+    out[len] = '\0';
+    return out;
+}
+
+char* concat(const char* a, const char* b) {
+    size_t la = strlen(a), lb = strlen(b);
+    char* out = malloc(la+lb+1);
+    strcpy(out, a);
+    strcat(out, b);
+    return out;
+}
+
+void free_str(char* s) { free(s); }
+```
+
+**Bedah:**
+
+* Semua fungsi return `malloc` string → harus di-`free` via `free_str`.
+* Implementasi `reverse` manual.
+* `concat` → join dua string.
+
+---
+
+## 3) libarray.c / libarray.h
+
+```c
+// libarray.h
+#ifndef LIBARRAY_H
+#define LIBARRAY_H
+typedef struct {
+    int* data;
+    int size;
+    int capacity;
+} DynArray;
+
+DynArray* da_new(int capacity);
+void da_free(DynArray* arr);
+void da_push(DynArray* arr, int value);
+int da_get(DynArray* arr, int index);
+int da_size(DynArray* arr);
+#endif
+```
+
+```c
+// libarray.c
+#include "libarray.h"
+#include <stdlib.h>
+
+DynArray* da_new(int capacity) {
+    DynArray* arr = malloc(sizeof(DynArray));
+    arr->data = malloc(sizeof(int)*capacity);
+    arr->size = 0;
+    arr->capacity = capacity;
+    return arr;
+}
+
+void da_free(DynArray* arr) {
+    free(arr->data);
+    free(arr);
+}
+
+void da_push(DynArray* arr, int value) {
+    if (arr->size >= arr->capacity) return; // no resize for simplicity
+    arr->data[arr->size++] = value;
+}
+
+int da_get(DynArray* arr, int index) {
+    if (index < 0 || index >= arr->size) return 0;
+    return arr->data[index];
+}
+
+int da_size(DynArray* arr) {
+    return arr->size;
+}
+```
+
+**Bedah:**
+
+* Array dinamis sederhana tapi tanpa resize.
+* Menjaga safety dengan return 0 jika out-of-range.
+
+---
+
+## 4) libperson.c / libperson.h
+
+```c
+// libperson.h
+#ifndef LIBPERSON_H
+#define LIBPERSON_H
+typedef struct {
+    char* name;
+    int age;
+} Person;
+
+Person* person_new(const char* name, int age);
+void person_free(Person* p);
+const char* person_get_name(Person* p);
+int person_get_age(Person* p);
+void person_set_name(Person* p, const char* name);
+void person_set_age(Person* p, int age);
+#endif
+```
+
+```c
+// libperson.c
+#include "libperson.h"
+#include <stdlib.h>
+#include <string.h>
+
+static char* dup_str(const char* s) {
+    size_t len = strlen(s);
+    char* out = malloc(len+1);
+    strcpy(out, s);
+    return out;
+}
+
+Person* person_new(const char* name, int age) {
+    Person* p = malloc(sizeof(Person));
+    p->name = dup_str(name);
+    p->age = age;
+    return p;
+}
+
+void person_free(Person* p) {
+    free(p->name);
+    free(p);
+}
+
+const char* person_get_name(Person* p) { return p->name; }
+int person_get_age(Person* p) { return p->age; }
+
+void person_set_name(Person* p, const char* name) {
+    free(p->name);
+    p->name = dup_str(name);
+}
+
+void person_set_age(Person* p, int age) { p->age = age; }
+```
+
+**Bedah:**
+
+* Simulasi struct dengan pointer string.
+* Harus `person_free` untuk mencegah leak.
+
+---
+
+## 5) libsort.c / libsort.h
+
+```c
+// libsort.h
+#ifndef LIBSORT_H
+#define LIBSORT_H
+#include <stddef.h>
+void sort_ints(int* arr, size_t n);
+#endif
+```
+
+```c
+// libsort.c
+#include "libsort.h"
+#include <stdlib.h>
+
+static int cmp_int(const void* a, const void* b) {
+    int ia = *(const int*)a;
+    int ib = *(const int*)b;
+    return (ia > ib) - (ia < ib);
+}
+
+void sort_ints(int* arr, size_t n) {
+    qsort(arr, n, sizeof(int), cmp_int);
+}
+```
+
+**Bedah:**
+
+* Membungkus fungsi `qsort` bawaan C untuk array int.
+
+---
+
+## 6) libfib.c / libfib.h
+
+```c
+// libfib.h
+#ifndef LIBFIB_H
+#define LIBFIB_H
+int fib_c(int n);
+#endif
+```
+
+```c
+// libfib.c
+#include "libfib.h"
+int fib_c(int n) {
+    if (n <= 1) return n;
+    return fib_c(n-1) + fib_c(n-2);
+}
+```
+
+**Bedah:**
+
+* Implementasi rekursif fibonacci — cocok untuk benchmarking.
+
+---
+
+👉 Semua file `.c` di atas akan dibangun jadi `.so` oleh **CMakeLists.txt** atau `make`.
+
+---
+
+<!--
+Apakah Anda ingin saya lanjutkan dengan **paket file Lua (lua/)** yang membungkus semua library ini + demo (dan saya bedah tiap file Lua), atau Anda mau saya berhenti dulu di file C ini lalu baru lanjut ke file Lua setelah Anda konfirmasi?
+-->
+
+Kita lanjutkan ke **paket file Lua (`lua/`)**.
+Semua file ini adalah “binding” dengan FFI atau demo yang memanggil library C. kita akan bedah **satu demi satu**.
+
+---
+
+# 📂 lua (Binding + Demo)
+
+## 1) math\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+double add(double a, double b);
+double sub(double a, double b);
+double mul(double a, double b);
+double divide(double a, double b);
+double hypotenuse(double x, double y);
+]]
+
+local lib = ffi.load("./build/libmath.so")
+
+local M = {}
+M.add = lib.add
+M.sub = lib.sub
+M.mul = lib.mul
+M.divide = lib.divide
+M.hypotenuse = lib.hypotenuse
+return M
+```
+
+**Bedah:**
+
+* `ffi.cdef` mendefinisikan fungsi C yang tersedia di library.
+* `ffi.load("./build/libmath.so")` memuat shared library hasil compile.
+* `M` adalah tabel Lua berisi fungsi yang langsung menunjuk ke C.
+* Dengan ini, di Lua: `local mathlib = require "math_bind"` → bisa pakai `mathlib.add(3,4)`.
+
+---
+
+## 2) strutils\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+char* to_upper(const char* s);
+char* to_lower(const char* s);
+char* reverse(const char* s);
+char* concat(const char* a, const char* b);
+void free_str(char* s);
+]]
+
+local lib = ffi.load("./build/libstrutils.so")
+
+local M = {}
+
+local function wrap_str(cfunc)
+  return function(...)
+    local cstr = cfunc(...)
+    local lua_str = ffi.string(cstr)
+    lib.free_str(cstr)
+    return lua_str
+  end
+end
+
+M.to_upper = wrap_str(lib.to_upper)
+M.to_lower = wrap_str(lib.to_lower)
+M.reverse = wrap_str(lib.reverse)
+M.concat = wrap_str(lib.concat)
+
+return M
+```
+
+**Bedah:**
+
+* Fungsi C return pointer ke `malloc` string → perlu `free`.
+* `wrap_str` membungkus: convert ke Lua string, lalu `free`.
+* Semua fungsi hasil binding jadi aman di Lua.
+
+---
+
+## 3) array\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct {
+    int* data;
+    int size;
+    int capacity;
+} DynArray;
+
+DynArray* da_new(int capacity);
+void da_free(DynArray* arr);
+void da_push(DynArray* arr, int value);
+int da_get(DynArray* arr, int index);
+int da_size(DynArray* arr);
+]]
+
+local lib = ffi.load("./build/libarray.so")
+
+local M = {}
+
+M.new = function(capacity)
+  local arr = lib.da_new(capacity)
+  ffi.gc(arr, lib.da_free)
+  return arr
+end
+
+M.push = lib.da_push
+M.get = lib.da_get
+M.size = lib.da_size
+
+return M
+```
+
+**Bedah:**
+
+* `ffi.gc(arr, lib.da_free)` → otomatis free ketika arr di-GC oleh Lua.
+* `M.new` buat array baru.
+* Fungsi C langsung dipakai untuk push/get/size.
+
+---
+
+## 4) person\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct {
+    char* name;
+    int age;
+} Person;
+
+Person* person_new(const char* name, int age);
+void person_free(Person* p);
+const char* person_get_name(Person* p);
+int person_get_age(Person* p);
+void person_set_name(Person* p, const char* name);
+void person_set_age(Person* p, int age);
+]]
+
+local lib = ffi.load("./build/libperson.so")
+
+local M = {}
+
+M.new = function(name, age)
+  local p = lib.person_new(name, age)
+  ffi.gc(p, lib.person_free)
+  return p
+end
+
+M.get_name = function(p) return ffi.string(lib.person_get_name(p)) end
+M.get_age = lib.person_get_age
+M.set_name = lib.person_set_name
+M.set_age = lib.person_set_age
+
+return M
+```
+
+**Bedah:**
+
+* Struct `Person` diakses via pointer.
+* Getter untuk `name` harus dikonversi ke string Lua (`ffi.string`).
+* `ffi.gc` menjamin `person_free` otomatis dipanggil.
+
+---
+
+## 5) sort\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+void sort_ints(int* arr, size_t n);
+]]
+
+local lib = ffi.load("./build/libsort.so")
+
+local M = {}
+
+function M.sort(tbl)
+  local n = #tbl
+  local c_arr = ffi.new("int[?]", n, tbl)
+  lib.sort_ints(c_arr, n)
+  local out = {}
+  for i=0,n-1 do table.insert(out, c_arr[i]) end
+  return out
+end
+
+return M
+```
+
+**Bedah:**
+
+* Membuat array C (`ffi.new("int[?]", n, tbl)`) dengan isi dari tabel Lua.
+* Panggil `lib.sort_ints` (C qsort).
+* Copy kembali hasil ke tabel Lua.
+
+---
+
+## 6) fib\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+int fib_c(int n);
+]]
+
+local lib = ffi.load("./build/libfib.so")
+
+local M = {}
+M.fib_c = lib.fib_c
+return M
+```
+
+**Bedah:**
+
+* Binding langsung ke `fib_c` dari C.
+* Bisa dipakai untuk benchmarking vs Lua murni.
+
+---
+
+## 7) vector3d\_ffi.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct { double x,y,z; } Vector3D;
+Vector3D* vec3_new(double x, double y, double z);
+void vec3_free(Vector3D* v);
+void vec3_add(Vector3D* a, Vector3D* b, Vector3D* out);
+]]
+
+-- Implementasi di C diasumsikan ada di libvector.so
+local lib = ffi.load("./build/libvector.so")
+
+local M = {}
+
+M.new = function(x,y,z)
+  local v = lib.vec3_new(x,y,z)
+  ffi.gc(v, lib.vec3_free)
+  return v
+end
+
+M.add = function(a,b)
+  local out = lib.vec3_new(0,0,0)
+  ffi.gc(out, lib.vec3_free)
+  lib.vec3_add(a,b,out)
+  return out
+end
+
+return M
+```
+
+**Bedah:**
+
+* Contoh binding untuk struct vektor 3D.
+* `vec3_add` menulis hasil ke `out`.
+
+---
+
+## 8) particle\_sim\_ffi.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct { double x,y,vx,vy; } Particle;
+Particle* particle_new(double x,double y,double vx,double vy);
+void particle_free(Particle* p);
+void particle_step(Particle* p, double dt);
+]]
+
+local lib = ffi.load("./build/libparticle.so")
+
+local M = {}
+
+M.new = function(x,y,vx,vy)
+  local p = lib.particle_new(x,y,vx,vy)
+  ffi.gc(p, lib.particle_free)
+  return p
+end
+
+M.step = lib.particle_step
+
+return M
+```
+
+**Bedah:**
+
+* Simulasi fisika sederhana: update posisi partikel.
+
+---
+
+## 9) ffi\_c\_example.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+int printf(const char* fmt, ...);
+]]
+
+ffi.C.printf("Hello %s! Number: %d\n", "LuaJIT", 42)
+```
+
+**Bedah:**
+
+* Contoh memanggil fungsi C standard library langsung (`printf`).
+
+---
+
+## 10) ffi\_libm.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+double cos(double x);
+double sin(double x);
+]]
+
+print("cos(0) =", ffi.C.cos(0))
+print("sin(0) =", ffi.C.sin(0))
+```
+
+**Bedah:**
+
+* Memanggil fungsi `sin`, `cos` dari `libm` (C math library).
+
+---
+
+## 11) main.lua
+
+```lua
+local mathlib = require("math_bind")
+print("3 + 4 =", mathlib.add(3,4))
+
+local str = require("strutils_bind")
+print("upper:", str.to_upper("hello"))
+
+local arr = require("array_bind")
+local a = arr.new(5)
+arr.push(a, 10)
+arr.push(a, 20)
+print("size:", arr.size(a), "first:", arr.get(a,0))
+
+local person = require("person_bind")
+local p = person.new("Alice", 30)
+print("Person:", person.get_name(p), person.get_age(p))
+```
+
+**Bedah:**
+
+* Demo penggunaan semua binding: math, string, array, person.
+
+---
+
+## 12) sdl2\_bind.lua + sdl2\_demo.lua
+
+*(contoh binding grafis, konsepnya sama: `ffi.cdef`, `ffi.load`, lalu demo window SDL2)*
+
+---
+
+## 13) openssl\_bind.lua / openssl\_demo.lua / openssl\_aes.lua / aes\_demo.lua
+
+*(binding OpenSSL untuk hashing + AES, sudah kita bedah sebelumnya, sama prinsipnya)*
+
+---
+
+## 14) co\_pipeline.lua
+
+```lua
+-- contoh pipeline producer–consumer pakai coroutine
+local function producer()
+  return coroutine.create(function()
+    for i=1,5 do
+      coroutine.yield(i)
+    end
+  end)
+end
+
+local function consumer(prod)
+  while true do
+    local ok, val = coroutine.resume(prod)
+    if not ok or val == nil then break end
+    print("consumed:", val)
+  end
+end
+
+consumer(producer())
+```
+
+**Bedah:**
+
+* Producer yield angka 1–5.
+* Consumer resume sampai habis.
+
+---
+
+## 15) luv\_async.lua
+
+```lua
+local uv = require("luv")
+
+uv.new_timer():start(1000, 1000, function()
+  print("tick", os.time())
+end)
+
+uv.run()
+```
+
+**Bedah:**
+
+* Timer 1 detik interval.
+* `uv.run()` → event loop libuv.
+
+---
+
+## 16) async\_echo.lua
+
+```lua
+local uv = require("luv")
+
+local server = uv.new_tcp()
+server:bind("127.0.0.1", 7000)
+server:listen(128, function(err)
+  local client = uv.new_tcp()
+  server:accept(client)
+  client:read_start(function(err, data)
+    if data then
+      client:write(data) -- echo
+    else
+      client:close()
+    end
+  end)
+end)
+
+print("Server listening at 7000")
+uv.run()
+```
+
+**Bedah:**
+
+* TCP server: setiap koneksi echo balik pesan.
+
+---
+
+## 17) pipeline\_server.lua
+
+```lua
+local uv = require("luv")
+
+local server = uv.new_tcp()
+server:bind("127.0.0.1", 7001)
+server:listen(128, function(err)
+  local client = uv.new_tcp()
+  server:accept(client)
+  client:read_start(function(err, data)
+    if data then
+      local num = tonumber(data)
+      local result = num * num
+      client:write(tostring(result).."\n")
+    else
+      client:close()
+    end
+  end)
+end)
+
+print("Pipeline server on 7001")
+uv.run()
+```
+
+**Bedah:**
+
+* Server menerima angka → mengembalikan kuadrat.
+* Representasi pipeline sederhana.
+
+---
+
+## 18) spec/ (busted tests)
+
+```lua
+-- luv_async_spec.lua
+local uv = require("luv")
+describe("timer", function()
+  it("should tick at least once", function()
+    local count = 0
+    local t = uv.new_timer()
+    t:start(10, 0, function()
+      count = count + 1
+      t:stop()
+    end)
+    uv.run()
+    assert.is_true(count > 0)
+  end)
+end)
+```
+
+**Bedah:**
+
+* Unit test: memastikan timer libuv jalan.
+
+---
+
+👉 Semua file di atas sudah kita paketkan.
+Setelah ini, tinggal run:
+
+```bash
+cmake -S . -B build
+cmake --build build
+busted -v
+```
+
+---
+
+<!--
+Apakah Anda mau saya lanjutkan dengan **bedah CMakeLists.txt** terakhir (supaya jelas bagaimana semua file `.c` dibangun jadi `.so` dan dihubungkan dengan Lua), sebelum kita masuk ke modul berikutnya?
+
+-->
+
+Kita lanjutkan ke **paket file Lua (`lua/`)**.
+Semua file ini adalah “binding” dengan FFI atau demo yang memanggil library C. kita akan bedah **satu demi satu**.
+
+---
+
+# 📂 lua (Binding + Demo)
+
+## 1) math\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+double add(double a, double b);
+double sub(double a, double b);
+double mul(double a, double b);
+double divide(double a, double b);
+double hypotenuse(double x, double y);
+]]
+
+local lib = ffi.load("./build/libmath.so")
+
+local M = {}
+M.add = lib.add
+M.sub = lib.sub
+M.mul = lib.mul
+M.divide = lib.divide
+M.hypotenuse = lib.hypotenuse
+return M
+```
+
+**Bedah:**
+
+* `ffi.cdef` mendefinisikan fungsi C yang tersedia di library.
+* `ffi.load("./build/libmath.so")` memuat shared library hasil compile.
+* `M` adalah tabel Lua berisi fungsi yang langsung menunjuk ke C.
+* Dengan ini, di Lua: `local mathlib = require "math_bind"` → bisa pakai `mathlib.add(3,4)`.
+
+---
+
+## 2) strutils\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+char* to_upper(const char* s);
+char* to_lower(const char* s);
+char* reverse(const char* s);
+char* concat(const char* a, const char* b);
+void free_str(char* s);
+]]
+
+local lib = ffi.load("./build/libstrutils.so")
+
+local M = {}
+
+local function wrap_str(cfunc)
+  return function(...)
+    local cstr = cfunc(...)
+    local lua_str = ffi.string(cstr)
+    lib.free_str(cstr)
+    return lua_str
+  end
+end
+
+M.to_upper = wrap_str(lib.to_upper)
+M.to_lower = wrap_str(lib.to_lower)
+M.reverse = wrap_str(lib.reverse)
+M.concat = wrap_str(lib.concat)
+
+return M
+```
+
+**Bedah:**
+
+* Fungsi C return pointer ke `malloc` string → perlu `free`.
+* `wrap_str` membungkus: convert ke Lua string, lalu `free`.
+* Semua fungsi hasil binding jadi aman di Lua.
+
+---
+
+## 3) array\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct {
+    int* data;
+    int size;
+    int capacity;
+} DynArray;
+
+DynArray* da_new(int capacity);
+void da_free(DynArray* arr);
+void da_push(DynArray* arr, int value);
+int da_get(DynArray* arr, int index);
+int da_size(DynArray* arr);
+]]
+
+local lib = ffi.load("./build/libarray.so")
+
+local M = {}
+
+M.new = function(capacity)
+  local arr = lib.da_new(capacity)
+  ffi.gc(arr, lib.da_free)
+  return arr
+end
+
+M.push = lib.da_push
+M.get = lib.da_get
+M.size = lib.da_size
+
+return M
+```
+
+**Bedah:**
+
+* `ffi.gc(arr, lib.da_free)` → otomatis free ketika arr di-GC oleh Lua.
+* `M.new` buat array baru.
+* Fungsi C langsung dipakai untuk push/get/size.
+
+---
+
+## 4) person\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct {
+    char* name;
+    int age;
+} Person;
+
+Person* person_new(const char* name, int age);
+void person_free(Person* p);
+const char* person_get_name(Person* p);
+int person_get_age(Person* p);
+void person_set_name(Person* p, const char* name);
+void person_set_age(Person* p, int age);
+]]
+
+local lib = ffi.load("./build/libperson.so")
+
+local M = {}
+
+M.new = function(name, age)
+  local p = lib.person_new(name, age)
+  ffi.gc(p, lib.person_free)
+  return p
+end
+
+M.get_name = function(p) return ffi.string(lib.person_get_name(p)) end
+M.get_age = lib.person_get_age
+M.set_name = lib.person_set_name
+M.set_age = lib.person_set_age
+
+return M
+```
+
+**Bedah:**
+
+* Struct `Person` diakses via pointer.
+* Getter untuk `name` harus dikonversi ke string Lua (`ffi.string`).
+* `ffi.gc` menjamin `person_free` otomatis dipanggil.
+
+---
+
+## 5) sort\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+void sort_ints(int* arr, size_t n);
+]]
+
+local lib = ffi.load("./build/libsort.so")
+
+local M = {}
+
+function M.sort(tbl)
+  local n = #tbl
+  local c_arr = ffi.new("int[?]", n, tbl)
+  lib.sort_ints(c_arr, n)
+  local out = {}
+  for i=0,n-1 do table.insert(out, c_arr[i]) end
+  return out
+end
+
+return M
+```
+
+**Bedah:**
+
+* Membuat array C (`ffi.new("int[?]", n, tbl)`) dengan isi dari tabel Lua.
+* Panggil `lib.sort_ints` (C qsort).
+* Copy kembali hasil ke tabel Lua.
+
+---
+
+## 6) fib\_bind.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+int fib_c(int n);
+]]
+
+local lib = ffi.load("./build/libfib.so")
+
+local M = {}
+M.fib_c = lib.fib_c
+return M
+```
+
+**Bedah:**
+
+* Binding langsung ke `fib_c` dari C.
+* Bisa dipakai untuk benchmarking vs Lua murni.
+
+---
+
+## 7) vector3d\_ffi.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct { double x,y,z; } Vector3D;
+Vector3D* vec3_new(double x, double y, double z);
+void vec3_free(Vector3D* v);
+void vec3_add(Vector3D* a, Vector3D* b, Vector3D* out);
+]]
+
+-- Implementasi di C diasumsikan ada di libvector.so
+local lib = ffi.load("./build/libvector.so")
+
+local M = {}
+
+M.new = function(x,y,z)
+  local v = lib.vec3_new(x,y,z)
+  ffi.gc(v, lib.vec3_free)
+  return v
+end
+
+M.add = function(a,b)
+  local out = lib.vec3_new(0,0,0)
+  ffi.gc(out, lib.vec3_free)
+  lib.vec3_add(a,b,out)
+  return out
+end
+
+return M
+```
+
+**Bedah:**
+
+* Contoh binding untuk struct vektor 3D.
+* `vec3_add` menulis hasil ke `out`.
+
+---
+
+## 8) particle\_sim\_ffi.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+typedef struct { double x,y,vx,vy; } Particle;
+Particle* particle_new(double x,double y,double vx,double vy);
+void particle_free(Particle* p);
+void particle_step(Particle* p, double dt);
+]]
+
+local lib = ffi.load("./build/libparticle.so")
+
+local M = {}
+
+M.new = function(x,y,vx,vy)
+  local p = lib.particle_new(x,y,vx,vy)
+  ffi.gc(p, lib.particle_free)
+  return p
+end
+
+M.step = lib.particle_step
+
+return M
+```
+
+**Bedah:**
+
+* Simulasi fisika sederhana: update posisi partikel.
+
+---
+
+## 9) ffi\_c\_example.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+int printf(const char* fmt, ...);
+]]
+
+ffi.C.printf("Hello %s! Number: %d\n", "LuaJIT", 42)
+```
+
+**Bedah:**
+
+* Contoh memanggil fungsi C standard library langsung (`printf`).
+
+---
+
+## 10) ffi\_libm.lua
+
+```lua
+local ffi = require("ffi")
+
+ffi.cdef[[
+double cos(double x);
+double sin(double x);
+]]
+
+print("cos(0) =", ffi.C.cos(0))
+print("sin(0) =", ffi.C.sin(0))
+```
+
+**Bedah:**
+
+* Memanggil fungsi `sin`, `cos` dari `libm` (C math library).
+
+---
+
+## 11) main.lua
+
+```lua
+local mathlib = require("math_bind")
+print("3 + 4 =", mathlib.add(3,4))
+
+local str = require("strutils_bind")
+print("upper:", str.to_upper("hello"))
+
+local arr = require("array_bind")
+local a = arr.new(5)
+arr.push(a, 10)
+arr.push(a, 20)
+print("size:", arr.size(a), "first:", arr.get(a,0))
+
+local person = require("person_bind")
+local p = person.new("Alice", 30)
+print("Person:", person.get_name(p), person.get_age(p))
+```
+
+**Bedah:**
+
+* Demo penggunaan semua binding: math, string, array, person.
+
+---
+
+## 12) sdl2\_bind.lua + sdl2\_demo.lua
+
+*(contoh binding grafis, konsepnya sama: `ffi.cdef`, `ffi.load`, lalu demo window SDL2)*
+
+---
+
+## 13) openssl\_bind.lua / openssl\_demo.lua / openssl\_aes.lua / aes\_demo.lua
+
+*(binding OpenSSL untuk hashing + AES, sudah kita bedah sebelumnya, sama prinsipnya)*
+
+---
+
+## 14) co\_pipeline.lua
+
+```lua
+-- contoh pipeline producer–consumer pakai coroutine
+local function producer()
+  return coroutine.create(function()
+    for i=1,5 do
+      coroutine.yield(i)
+    end
+  end)
+end
+
+local function consumer(prod)
+  while true do
+    local ok, val = coroutine.resume(prod)
+    if not ok or val == nil then break end
+    print("consumed:", val)
+  end
+end
+
+consumer(producer())
+```
+
+**Bedah:**
+
+* Producer yield angka 1–5.
+* Consumer resume sampai habis.
+
+---
+
+## 15) luv\_async.lua
+
+```lua
+local uv = require("luv")
+
+uv.new_timer():start(1000, 1000, function()
+  print("tick", os.time())
+end)
+
+uv.run()
+```
+
+**Bedah:**
+
+* Timer 1 detik interval.
+* `uv.run()` → event loop libuv.
+
+---
+
+## 16) async\_echo.lua
+
+```lua
+local uv = require("luv")
+
+local server = uv.new_tcp()
+server:bind("127.0.0.1", 7000)
+server:listen(128, function(err)
+  local client = uv.new_tcp()
+  server:accept(client)
+  client:read_start(function(err, data)
+    if data then
+      client:write(data) -- echo
+    else
+      client:close()
+    end
+  end)
+end)
+
+print("Server listening at 7000")
+uv.run()
+```
+
+**Bedah:**
+
+* TCP server: setiap koneksi echo balik pesan.
+
+---
+
+## 17) pipeline\_server.lua
+
+```lua
+local uv = require("luv")
+
+local server = uv.new_tcp()
+server:bind("127.0.0.1", 7001)
+server:listen(128, function(err)
+  local client = uv.new_tcp()
+  server:accept(client)
+  client:read_start(function(err, data)
+    if data then
+      local num = tonumber(data)
+      local result = num * num
+      client:write(tostring(result).."\n")
+    else
+      client:close()
+    end
+  end)
+end)
+
+print("Pipeline server on 7001")
+uv.run()
+```
+
+**Bedah:**
+
+* Server menerima angka → mengembalikan kuadrat.
+* Representasi pipeline sederhana.
+
+---
+
+## 18) spec/ (busted tests)
+
+```lua
+-- luv_async_spec.lua
+local uv = require("luv")
+describe("timer", function()
+  it("should tick at least once", function()
+    local count = 0
+    local t = uv.new_timer()
+    t:start(10, 0, function()
+      count = count + 1
+      t:stop()
+    end)
+    uv.run()
+    assert.is_true(count > 0)
+  end)
+end)
+```
+
+**Bedah:**
+
+* Unit test: memastikan timer libuv jalan.
+
+---
+
+👉 Semua file di atas sudah kita paketkan.
+Setelah ini, tinggal run:
+
+```bash
+cmake -S . -B build
+cmake --build build
+busted -v
+```
+
+---
+
+Apakah Anda mau saya lanjutkan dengan **bedah CMakeLists.txt** terakhir (supaya jelas bagaimana semua file `.c` dibangun jadi `.so` dan dihubungkan dengan Lua), sebelum kita masuk ke modul berikutnya?
+
+
+Ya, tepat. Supaya paket ini betul-betul bisa jalan dari **kode C → .so → Lua → test**, kita perlu membedah juga file terakhir yaitu **`CMakeLists.txt`**.
+
+---
+
+## 📄 Isi `CMakeLists.txt`
+
+```cmake
+cmake_minimum_required(VERSION 3.10)
+project(lua_ffi_proj C)
+
+set(CMAKE_C_STANDARD 99)
+
+# Folder output .so
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# Tambah semua library C
+add_library(math SHARED csrc/libmath.c)
+add_library(strutils SHARED csrc/libstrutils.c)
+add_library(array SHARED csrc/libarray.c)
+add_library(person SHARED csrc/libperson.c)
+add_library(sort SHARED csrc/libsort.c)
+add_library(fib SHARED csrc/libfib.c)
+
+# Untuk library yang butuh libm
+target_link_libraries(math m)
+target_link_libraries(sort m)
+
+# Optional library tambahan (vector, particle, openssl, dll.)
+# add_library(vector SHARED csrc/libvector.c)
+# add_library(particle SHARED csrc/libparticle.c)
+
+# Custom target: jalankan test dengan busted
+find_program(BUSTED_EXECUTABLE busted)
+if(BUSTED_EXECUTABLE)
+  add_custom_target(run-tests
+    COMMAND ${BUSTED_EXECUTABLE} -v
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+else()
+  message(WARNING "busted not found, tests won't run")
+endif()
+```
+
+---
+
+## 🔎 Bedah baris per baris
+
+### Header proyek
+
+```cmake
+cmake_minimum_required(VERSION 3.10)
+project(lua_ffi_proj C)
+set(CMAKE_C_STANDARD 99)
+```
+
+* Butuh CMake ≥ 3.10.
+* Proyek bernama `lua_ffi_proj`, bahasa `C`.
+* Standard C99 (agar fungsi `for (int i=0;...)` valid).
+
+### Output library
+
+```cmake
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+```
+
+* Semua `.so` hasil build disimpan langsung di folder `build/`.
+* Lua FFI akan `ffi.load("./build/libmath.so")`.
+
+### Definisi library
+
+```cmake
+add_library(math SHARED csrc/libmath.c)
+add_library(strutils SHARED csrc/libstrutils.c)
+add_library(array SHARED csrc/libarray.c)
+add_library(person SHARED csrc/libperson.c)
+add_library(sort SHARED csrc/libsort.c)
+add_library(fib SHARED csrc/libfib.c)
+```
+
+* Setiap file `.c` dibangun jadi `.so` terpisah.
+* Misal: `libmath.so`, `libarray.so`, dll.
+
+### Linking library sistem
+
+```cmake
+target_link_libraries(math m)
+target_link_libraries(sort m)
+```
+
+* `-lm` (libm) dibutuhkan untuk fungsi `sqrt`, `qsort`.
+
+### Library opsional
+
+```cmake
+# add_library(vector SHARED csrc/libvector.c)
+# add_library(particle SHARED csrc/libparticle.c)
+```
+
+* Jika ingin mengaktifkan modul tambahan → uncomment.
+
+### Target testing
+
+```cmake
+find_program(BUSTED_EXECUTABLE busted)
+if(BUSTED_EXECUTABLE)
+  add_custom_target(run-tests
+    COMMAND ${BUSTED_EXECUTABLE} -v
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+else()
+  message(WARNING "busted not found, tests won't run")
+endif()
+```
+
+* Cari program `busted` di PATH.
+* Jika ada → buat target `run-tests`.
+
+  * Perintah: `busted -v` (verbose).
+* Jika tidak ada → warning saja.
+
+---
+
+## 🚀 Cara pakai
+
+```bash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+cmake --build build --target run-tests   # untuk menjalankan test
+```
+
+---
+
+Dengan ini, **seluruh rantai kurikulum Modul 1–17** sudah lengkap:
+
+* Library C dibuat dengan **CMake**.
+* Binding FFI di Lua.
+* Demo Lua.
+* Testing otomatis (busted).
+* CI pipeline (GitHub Actions).
+
+---
+
+<!--
+Apakah Anda ingin saya rangkum seluruh hasil ini sebagai **“Laporan Progres Modul 1–17”** sebelum kita benar-benar melompat ke **Modul 18**?
+-->
+
+# Selamat 🚀
+
+Sekarang kita sudah punya satu paket lengkap yang bisa:
+
+* **Membangun library C** (math, string, array, person, sort, fib).
+* **Binding Lua dengan FFI** (tiap library punya `*_bind.lua`).
+* **Demo pemanggilan nyata** di `main.lua` dan project mini lainnya.
+* **Testing otomatis** dengan `busted`.
+* **CI pipeline** yang otomatis jalan di GitHub Actions.
+
+Itu semua menutup kurikulum sampai **Modul 17**. Artinya, fondasi C ↔ Lua, testing, dan integrasi sudah solid.
+<!--
+Langkah berikutnya secara kurikulum adalah masuk ke **Modul 18** (publikasi / distribusi proyek, misalnya lewat LuaRocks atau integrasi ke Neovim plugin).
+
+Mau saya buatkan dulu **laporan progres Modul 1–17** dalam format ringkasan resmi (fase demi fase, highlight, dan hasil), atau langsung mulai garap **Modul 18** dengan mini-proyek distribusi library?
 -->
 > - **[Ke Atas](#)**
 > - **[Sebelumnya][sebelumnya]**
