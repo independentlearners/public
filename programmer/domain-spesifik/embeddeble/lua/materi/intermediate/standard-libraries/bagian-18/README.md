@@ -938,6 +938,290 @@ nnoremap <leader>h :lua print("Hypotenuse:", require("mymath").hypotenuse(3,4))<
 Apakah mau kita lanjut dengan **mini-proyek penuh (plugin mymath-nvim lengkap)** yang bisa langsung di-clone dan dipakai, lalu saya bedah file `init.lua` dan `mymath.vim` baris demi baris seperti biasa?
 -->
 
+Berikutnya kita akan mengerjakan **C: Mini Proyek Penuh — Plugin `mymath-nvim`**.
+Tujuan: membuat plugin Neovim yang bisa dipasang langsung, lalu **membedah setiap baris kode** agar jelas fungsinya.
+
+---
+
+# 📂 Struktur Direktori Plugin
+
+```
+mymath-nvim/
+├── lua/
+│   └── mymath/
+│       └── init.lua       # modul utama plugin
+├── plugin/
+│   └── mymath.vim         # command & keymap
+├── README.md
+└── LICENSE
+```
+
+---
+
+# 📄 Isi File
+
+## 1) `lua/mymath/init.lua`
+
+```lua
+-- init.lua
+-- Modul utama plugin mymath-nvim
+
+-- Import binding FFI dari Modul 18 (mymath)
+local ffi = require("ffi")
+
+ffi.cdef[[
+double add(double a, double b);
+double sub(double a, double b);
+double mul(double a, double b);
+double divide(double a, double b);
+double hypotenuse(double x, double y);
+]]
+
+-- Muat library C (.so) yang dihasilkan CMake
+local lib = ffi.load("libmath")
+
+-- Bungkus dalam tabel Lua
+local M = {}
+
+function M.add(a, b)
+  return lib.add(a, b)
+end
+
+function M.sub(a, b)
+  return lib.sub(a, b)
+end
+
+function M.mul(a, b)
+  return lib.mul(a, b)
+end
+
+function M.divide(a, b)
+  return lib.divide(a, b)
+end
+
+function M.hypotenuse(x, y)
+  return lib.hypotenuse(x, y)
+end
+
+return M
+```
+
+---
+
+### 🔎 Bedah Kode `init.lua`
+
+1. `local ffi = require("ffi")` → ambil modul FFI bawaan LuaJIT.
+2. `ffi.cdef[[ ... ]]` → definisi fungsi-fungsi C yang tersedia di `libmath.so`.
+3. `ffi.load("libmath")` → load shared library hasil compile (misalnya `libmath.so`).
+4. Tabel `M` → API publik plugin.
+5. Fungsi `M.add`, `M.sub`, dll → wrapper sederhana agar bisa dipanggil dari Neovim.
+6. `return M` → modul bisa diakses dengan `require("mymath")`.
+
+---
+
+## 2) `plugin/mymath.vim`
+
+```vim
+" mymath.vim
+" File ini dieksekusi otomatis saat Neovim load plugin
+
+" Definisikan command :MyAdd
+command! -nargs=+ MyAdd lua print("Result:", require("mymath").add(<f-args>))
+
+" Definisikan keybinding untuk menghitung hypotenuse 3,4
+nnoremap <leader>h :lua print("Hypotenuse:", require("mymath").hypotenuse(3,4))<CR>
+```
+
+---
+
+### 🔎 Bedah Kode `mymath.vim`
+
+1. `command! -nargs=+ MyAdd ...`
+
+   * Buat command baru `:MyAdd`.
+   * `-nargs=+` artinya butuh satu atau lebih argumen.
+   * `<f-args>` otomatis jadi argumen yang diketik user.
+   * Panggil fungsi `require("mymath").add`.
+
+   📌 Contoh:
+
+   ```
+   :MyAdd 5 6
+   ```
+
+   Output di command line Neovim:
+
+   ```
+   Result: 11
+   ```
+
+2. `nnoremap <leader>h ...`
+
+   * Bind keymap di mode normal.
+   * `<leader>h` (misalnya `\h` kalau leader default = `\`).
+   * Menjalankan fungsi `mymath.hypotenuse(3,4)`.
+   * Print hasil → `Hypotenuse: 5.0`.
+
+---
+
+## 3) `README.md`
+
+````markdown
+# mymath-nvim
+
+Plugin Neovim sederhana untuk binding C library `libmath`.
+
+## Instalasi
+
+Clone ke packpath Neovim:
+```bash
+git clone https://github.com/username/mymath-nvim \
+  ~/.local/share/nvim/site/pack/mymath/start/mymath-nvim
+````
+
+## Penggunaan
+
+* Jalankan perintah:
+
+```
+:MyAdd 3 4
+```
+
+Output: `Result: 7`
+
+* Tekan `<leader>h` untuk menghitung hypotenuse 3,4.
+
+````
+
+---
+
+# 🚀 Testing Plugin
+
+1. Pastikan `libmath.so` sudah ada di `LD_LIBRARY_PATH` atau `./`.  
+2. Jalankan Neovim:
+   ```bash
+   nvim
+````
+
+3. Coba:
+
+   ```
+   :MyAdd 10 15
+   ```
+
+   Output → `Result: 25`.
+4. Tekan `<leader>h` → `Hypotenuse: 5.0`.
+
+---
+
+# 📚 Referensi Resmi
+
+* [Neovim Lua Guide](https://neovim.io/doc/user/lua.html)
+* [Neovim runtimepath](https://neovim.io/doc/user/options.html#'runtimepath')
+* [Neovim \:command](https://neovim.io/doc/user/map.html#command)
+* [Neovim keymap](https://neovim.io/doc/user/map.html)
+
+---
+
+Dengan ini, kita sekarang punya **plugin Neovim pertama berbasis FFI**:
+
+* `init.lua` sebagai binding API.
+* `mymath.vim` sebagai antarmuka command & keymap.
+* Bisa langsung dipakai di Neovim dengan `:MyAdd` atau `<leader>h`.
+
+<!--
+👉 Apakah mau kita lanjutkan memperkaya plugin ini (misalnya menambahkan **fungsi array / string** dari binding lain ke dalam Neovim command), atau kita cukupkan dulu sebagai **plugin minimal** sebelum melangkah ke pengembangan plugin yang lebih kompleks?
+
+Mantap 🚀, berarti plugin **`mymath-nvim`** sudah beres jadi contoh **plugin minimal Neovim dengan binding FFI ke C library**.
+-->
+
+## Ringkasannya:
+
+* **Modul 18** → kita belajar distribusi/publikasi via LuaRocks (varian builtin & cmake).
+* **Modul 19** → kita jadikan library hasil binding tadi jadi **plugin Neovim nyata**:
+
+  * `lua/mymath/init.lua` → API binding.
+  * `plugin/mymath.vim` → command `:MyAdd` & keymap `<leader>h`.
+  * Bisa langsung dipakai user Neovim.
+
+Jadi sekarang kita sudah **menutup loop penuh**: dari **C → Lua binding → distribusi → plugin Neovim**.
+
+Langkah berikut mari kita masuk ke **Modul 20: Pengembangan Plugin Lanjutan Neovim** — misalnya:
+
+* Integrasi **UI (floating window, statusline, dll.)**.
+* Memakai **asynchronous job control** dengan `luv` atau `vim.loop`.
+* Membuat plugin **multi-file** yang lebih kompleks (misalnya code runner kecil atau file explorer).
+
+<!--
+Apakah Anda ingin saya langsung gass ke **Modul 20** dengan mini-proyek plugin lanjutan, atau kita rangkum dulu progres **Modul 18–19** sebagai laporan sebelum naik level?
+
+Baik, mari kita **rangkum progres Modul 18–19** dulu sebelum naik ke Modul 20 supaya jalurnya jelas.
+
+-->
+
+---
+
+# 📊 Ringkasan Progres Modul 18–19
+
+## ✅ Modul 18 — Distribusi & Publikasi
+
+* **Tujuan**: Membuat library C + binding Lua siap dipasang oleh orang lain.
+* **Hasil:**
+
+  1. **Varian Builtin** (`type = "builtin"`) → mudah, cepat, tapi `.so` harus di-compile manual.
+  2. **Varian CMake** (`type = "cmake"`) → saat `luarocks install mymath`, `.so` otomatis dibangun → langsung siap dipakai.
+* **Praktik Nyata:**
+
+  * Install dengan `luarocks make rockspec/mymath-1.0-2.rockspec`.
+  * Jalankan:
+
+    ```bash
+    lua -e 'local m=require("mymath"); print(m.hypotenuse(3,4))'
+    ```
+
+    Output → `5.0`.
+* **Makna dalam kurikulum**: sekarang library bisa dibagikan & dipakai komunitas.
+
+---
+
+## ✅ Modul 19 — Integrasi Neovim Plugin
+
+* **Tujuan**: Membawa library hasil binding menjadi plugin nyata di Neovim.
+* **Struktur Plugin:**
+
+  ```
+  mymath-nvim/
+  ├── lua/mymath/init.lua    # binding API
+  ├── plugin/mymath.vim      # command & keymap
+  ```
+* **Fitur Plugin:**
+
+  1. Command `:MyAdd 3 4` → output `Result: 7`.
+  2. Keymap `<leader>h` → output `Hypotenuse: 5.0`.
+* **Makna dalam kurikulum**: dari teori & distribusi ke aplikasi nyata di editor populer (Neovim).
+* **Landasan untuk Modul 20**: siap masuk ke plugin lanjutan (UI, async, multi-file).
+
+---
+
+# 📚 Referensi Penting
+
+* [LuaRocks Build Types](https://github.com/luarocks/luarocks/wiki/Build-types)
+* [Neovim Lua Guide](https://neovim.io/doc/user/lua.html)
+* [Neovim \:command](https://neovim.io/doc/user/map.html#command)
+* [Neovim Keymap](https://neovim.io/doc/user/map.html)
+
+---
+
+📌 **Kesimpulan**:
+
+* Kita sudah berhasil menyelesaikan siklus **C → Lua binding → Distribusi (LuaRocks) → Plugin Neovim**.
+* Progres ini menandai bahwa **Modul 18–19 tuntas** dan jalur sudah siap masuk ke **Modul 20: Plugin Lanjutan Neovim**.
+
+---
+
+<!--Apakah mau saya langsung mulai **Modul 20** dengan membuat mini-proyek plugin Neovim yang lebih kompleks (misalnya “calculator panel” dengan floating window & async job), atau kita buat dulu **peta roadmap Modul 20** agar jelas cakupan apa saja yang akan kita kerjakan?
+-->
+
 > - **[Ke Atas](#)**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
