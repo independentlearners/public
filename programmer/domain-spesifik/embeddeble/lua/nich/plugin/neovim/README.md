@@ -63,7 +63,9 @@ local is_false = false
 -- Truthy values: semua selain false dan nil (termasuk 0 dan "")
 ```
 
-#### [Number][number1]
+Jika tertarik untuk mempelajari number secara mendalam, kunjungi berikut **[Number][number1]**
+
+-----
 
 Lua hanya memiliki satu tipe numerik yang merepresentasikan floating-point numbers.
 
@@ -74,7 +76,7 @@ local scientific = 1.23e-4  -- Scientific notation
 local hex = 0xFF  -- Hexadecimal (255)
 ```
 
-#### [String][string1]
+Dengan masuk pada materi bagian 2 sudah cukup untuk sekedar memahami pola string di Lua, jika anda tertarik untuk membedah secara mendalam, klik berikut **[String,][string1]** atau jika hanya ingin masuk pada panduan singkat, anda bisa kunjungi berikut [disini.][panduan-string]
 
 ```lua
 local single_quote = 'Hello World'
@@ -2347,3 +2349,6 @@ Anda akan memiliki kemampuan untuk membuat plugin Neovim yang tidak hanya memenu
 [string1]: ../../../materi/dasar/string/README.md
 [number1]: ../../../materi/dasar/tipe-data/number/README.md
 [variabel]: ../../../materi/dasar/variabel/README.md
+[panduan-string]: ../../../materi/dasar/string/reference-guide/README.md
+
+<!-- file/public/programmer/domain-spesifik/embeddeble/lua/materi/dasar/string/reference-guide/README.md#empat -->
