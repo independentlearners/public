@@ -59,9 +59,18 @@ print("e % f =", e % f)   -- Output: 0.5 (10.5 = 5 * 2.0 + 0.5)
 
 ### 3.2 Operator Relasional
 
-Operator relasional digunakan untuk membandingkan dua nilai. Hasil dari operasi relasional selalu berupa nilai boolean (`true` atau `false`).
+Operator relasional digunakan untuk membandingkan dua nilai. Hasil dari operasi relasional selalu berupa nilai boolean (`true` atau `false`). Operator-operator ini meliputi:
 
-- **Deskripsi:** Operator-operator ini meliputi kesetaraan (`==`), ketidaksetaraan (`~=`), lebih besar dari (`>`), lebih kecil dari (`<`), lebih besar dari atau sama dengan (`>=`), dan lebih kecil dari atau sama dengan (`<=`). Perhatikan bahwa operator "tidak sama dengan" di Lua adalah `~=` (bukan `!=` seperti di banyak bahasa lain). Operator relasional dapat digunakan untuk membandingkan angka dan string. Perbandingan string dilakukan secara leksikografis (sesuai urutan alfabet). Untuk tipe data tabel, fungsi, dan _userdata_, operator `==` memeriksa kesetaraan referensi (apakah keduanya merujuk ke objek yang sama di memori), bukan kesetaraan struktural (apakah isinya sama).
+  - Kesetaraan (`==`), 
+  - Ketidaksetaraan (`~=`),
+  - Lebih besar dari (`>`),
+  - Lebih kecil dari (`<`),
+  - Lebih besar dari atau sama dengan (`>=`),
+  - Lebih kecil dari atau sama dengan (`<=`).
+
+### Penting!
+
+Perhatikan bahwa operator "tidak sama dengan" di Lua adalah `~=` (bukan `!=` seperti di banyak bahasa lain). Operator relasional dapat digunakan untuk membandingkan angka dan string. Perbandingan string dilakukan secara leksikografis (sesuai urutan alfabet). Untuk tipe data tabel, fungsi, dan _userdata_, operator `==` memeriksa kesetaraan referensi (apakah keduanya merujuk ke objek yang sama di memori), bukan kesetaraan struktural (apakah isinya sama).
 - **Implementasi dalam Neovim:** Sangat fundamental untuk logika kondisional, misalnya, memeriksa apakah nilai konfigurasi sama dengan nilai tertentu, apakah nomor baris saat ini lebih besar dari batas, atau apakah tipe file adalah "lua".
 - **Sumber Dokumentasi Lua:**
   - Lua 5.1 Reference Manual (Relational Operators): [https://www.lua.org/manual/5.1/manual.html\#2.5.2](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.5.2)
@@ -118,7 +127,7 @@ Operator logika digunakan untuk menggabungkan atau memodifikasi ekspresi boolean
   - Operator `and` dan `or` menggunakan _short-circuit evaluation_: operand kedua hanya dievaluasi jika diperlukan.
   - Idiom umum `result = condition and value_if_true or value_if_false` digunakan sebagai alternatif untuk ekspresi kondisional ternary. Namun, ini memiliki kelemahan: jika `value_if_true` kebetulan adalah `false` atau `nil`, maka `value_if_false` akan selalu dikembalikan, yang mungkin bukan perilaku yang diinginkan. Konstruksi ini bekerja dengan asumsi bahwa `value_if_true` selalu merupakan nilai _truthy_.
 - **Terminologi:**
-  - **Short-circuit evaluation:** Proses di mana operand kedua dari operator logika (`and`, `or`) hanya dievaluasi jika hasil keseluruhan ekspresi belum dapat ditentukan dari operand pertama.
+  - **Short-circuit evaluation:** Proses di mana operand kedua dari operator logika (`and`, `or`) hanya dievaluasi jika hasil keseluruhan ekspresi belum dapat ditentukan dari operand pertama. Untuk istilah Operator dan Operand klik [disini][8]
 - **Implementasi dalam Neovim:** Digunakan untuk membangun kondisi yang kompleks, misalnya, "jika plugin A aktif _dan_ tipe file adalah X, maka lakukan Y", atau "jika konfigurasi Z ada _atau_ ada nilai default, gunakan itu".
 - **Sumber Dokumentasi Lua:**
   - Lua 5.1 Reference Manual (Logical Operators): [https://www.lua.org/manual/5.1/manual.html\#2.5.3](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.5.3)
@@ -455,3 +464,4 @@ Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yan
 [5]: ../../../../../materi/dasar/operator/README.md
 [6]: ../../../../../../../README.md
 [7]: ../3-operator-kontrolFlow/praktik/README.md
+[8]: ../3-operator-kontrolFlow/operand/README.md
