@@ -439,7 +439,7 @@ end
 
 ---
 
-Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yang diperlukan untuk membangun logika yang kompleks dan dinamis dalam plugin Neovim Anda.
+Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yang diperlukan untuk membangun logika yang kompleks dan dinamis dalam plugin Neovim Anda. Sebelum melanjutkan, jika anda tertarik untuk melatih hasil materi sejak halaman pondasi awal hingga bagian ini, kunjungi berikut untuk [masuk ke halaman Prakti][7] 
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][1]**
@@ -454,3 +454,4 @@ Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yan
 [4]: ../../../../../README.md
 [5]: ../../../../../dasar/operator/README.md
 [6]: ../../../../../../../README.md
+[7]: ../3-operator-kontrolFlow/praktik/README.md
