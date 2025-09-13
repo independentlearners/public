@@ -1,7 +1,5 @@
 # **Proyek Mini 1 – Kalkulator Interaktif di Terminal**
 
----
-
 ## 1. Tujuan Proyek
 
 Proyek ini melatih pemahaman materi dari **Fondasi Dasar Lua**, **Tipe Data dan Variabel**, **Operator dan Kontrol Flow**, ditambah pengenalan kecil tentang **Input/Output**.
