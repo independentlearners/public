@@ -37,12 +37,14 @@ print("e / f =", e / f)   -- Output: 5.25
 print("e % f =", e % f)   -- Output: 0.5 (10.5 = 5 * 2.0 + 0.5)
 ```
 
+<!--
 **Cara Menjalankan Kode:**
 
 1.  Simpan kode di atas dalam sebuah file, misalnya `operator_aritmatika.lua`.
 2.  Buka terminal atau command prompt.
 3.  Jalankan menggunakan interpreter Lua dengan perintah: `lua operator_aritmatika.lua`.
 4.  Di Neovim, Anda dapat mengeksekusi potongan kode atau file melalui perintah `:lua ...` atau `:luafile ...`.
+-->
 
 **Penjelasan Kode:**
 
@@ -102,8 +104,6 @@ local var
 print("var == nil adalah", var == nil) -- Output: true (var belum diinisialisasi)
 ```
 
-**Cara Menjalankan Kode:** Sama seperti contoh sebelumnya.
-
 **Penjelasan Kode:**
 
 - Setiap baris `print` mengevaluasi ekspresi relasional dan mencetak hasilnya (`true` atau `false`).
@@ -129,6 +129,39 @@ Operator logika digunakan untuk menggabungkan atau memodifikasi ekspresi boolean
 - **Terminologi:**
   - **Short-circuit evaluation:** Proses di mana operand kedua dari operator logika (`and`, `or`) hanya dievaluasi jika hasil keseluruhan ekspresi belum dapat ditentukan dari operand pertama. Untuk istilah Operator dan Operand klik [disini][8]
 - **Implementasi dalam Neovim:** Digunakan untuk membangun kondisi yang kompleks, misalnya, "jika plugin A aktif _dan_ tipe file adalah X, maka lakukan Y", atau "jika konfigurasi Z ada _atau_ ada nilai default, gunakan itu".
+
+-----
+
+### Inti dari logika boolean di Lua itu berputar di **truthy** dan **falsy**.
+
+* Semua nilai akan diperlakukan sebagai boolean saat masuk ke `if`, `and`, `or`, dan `not`.
+* Yang paling utama adalah: **hanya `false` dan `nil` yang falsy**.
+* Selain itu semuanya dianggap **truthy** — bahkan nilai yang secara kasat mata "kosong" seperti `0` atau `""`.
+
+Karenanya bisa di katakan bahwa *boolean di Lua = apakah nilai ini truthy atau falsy?*
+
+Contoh kecil untuk memperjelas:
+
+```lua
+if 0 then
+  print("0 dianggap truthy di Lua")
+end
+
+if "" then
+  print("String kosong juga truthy")
+end
+
+if nil then
+  print("Ini tidak akan pernah tercetak, karena nil falsy")
+end
+```
+
+Jadi patokan utama adalah **truthy**.
+`and` dan `or` bekerja dengan aturan tersebut
+
+* `and` butuh dua-duanya truthy, kalau tidak ia berhenti di yang falsy.
+* `or` cukup salah satunya truthy, ia berhenti di situ.
+
 - **Sumber Dokumentasi Lua:**
   - Lua 5.1 Reference Manual (Logical Operators): [https://www.lua.org/manual/5.1/manual.html\#2.5.3](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.5.3)
   - Programming in Lua, 1st ed. (Logical Operators): [https://www.lua.org/pil/3.3.html](https://www.lua.org/pil/3.3.html)
@@ -188,8 +221,6 @@ end
 print("Tricky result (aman):", tricky_result)
 ```
 
-**Cara Menjalankan Kode:** Sama seperti contoh sebelumnya.
-
 **Penjelasan Kode:**
 
 - Baris-baris awal mendemonstrasikan hasil dasar dari operator `and`, `or`, dan `not` dengan nilai `true` dan `false`.
@@ -201,6 +232,67 @@ print("Tricky result (aman):", tricky_result)
   - Jika `condition` adalah `true`, `condition and value_if_true` mengevaluasi ke `value_if_true`. Kemudian `value_if_true or value_if_false` akan mengevaluasi ke `value_if_true` (dengan asumsi `value_if_true` bukan `false` atau `nil`).
   - Jika `condition` adalah `false`, `condition and value_if_true` mengevaluasi ke `condition` (yaitu `false`). Kemudian `false or value_if_false` akan mengevaluasi ke `value_if_false`.
 - Bagian "Caveat" menunjukkan batasan idiom ternary ini: jika `value_if_true` itu sendiri adalah `false` (atau `nil`), maka bagian `or value_if_false` akan dievaluasi, menghasilkan `value_if_false` bahkan ketika `condition` adalah `true`. Struktur `if-then-else` lebih aman dan jelas dalam kasus seperti itu.
+
+-----
+
+### Penegasan!
+
+* **`and`**: hasilnya hanya bisa truthy **jika semua operand truthy**. Jadi sekali ada falsy → hasilnya falsy.
+* **`or`**: hasilnya hanya bisa falsy **jika semua operand falsy**. Jadi sekali ada truthy → hasilnya truthy.
+
+Dengan kata lain:
+
+* `and` cocok dipakai ketika anda ingin memastikan **semua kondisi harus benar**.
+* `or` cocok dipakai kalau anda ingin cukup **satu kondisi benar saja sudah cukup**.
+
+| A     | B     | A and B | A or B |
+| ----- | ----- | ------- | ------ |
+| true  | true  | true    | true   |
+| true  | false | false   | true   |
+| false | true  | false   | true   |
+| false | false | false   | false  |
+
+Kalau **not** `false` berarti `true`
+Kalau **not** `true` berarti `false`
+
+```lua
+print(not nil)     -- true   (karena nil itu falsy)
+print(not 0)       -- false  (karena 0 itu truthy di Lua!)
+print(not "")      -- false  (string kosong juga truthy)
+print(not "Lua")   -- false  (string non-kosong jelas truthy)
+```
+
+Jadi **and** dan **or** untuk menghubungkan kondisi, sedangkan **not** untuk membalikan kondisi.
+
+-----
+
+#### Tantangan!
+
+```lua
+local x = 10
+local o = 20
+
+-- apa outputnya?
+print(x or o)   -- ?
+print(x and o)  -- ?
+```
+
+Coba jawab dalam hati untuk menguji tingkat pemahaman sebelum membuka jawabannya
+
+<details>
+  <summary>Jawaban</summary>
+
+### Jadi
+
+* `x or o` → karena `x = 10` (truthy), hasilnya **10**. Lua tidak perlu melihat `o`.
+* `x and o` → karena `x = 10` (truthy), Lua mengambil operand kedua, jadi hasilnya **20**.
+
+🔑 Intinya:
+
+* **`or` “lebih memilih” nilai pertama kalau dia truthy.**
+* **`and` “lebih memilih” nilai kedua kalau nilai pertama truthy.**
+
+</details>
 
 ---
 
@@ -243,8 +335,6 @@ else
 end
 ```
 
-**Cara Menjalankan Kode:** Sama seperti contoh sebelumnya.
-
 **Penjelasan Kode:**
 
 - `local score = 85`: Inisialisasi variabel `score`.
@@ -282,8 +372,6 @@ while countdown > 0 do
 end
 print("Blast off!")
 ```
-
-**Cara Menjalankan Kode:** Sama seperti contoh sebelumnya.
 
 **Penjelasan Kode:**
 
@@ -331,8 +419,6 @@ repeat
 until input == "stop"
 print("Loop repeat-until selesai.")
 ```
-
-**Cara Menjalankan Kode:** Sama seperti contoh sebelumnya. Untuk contoh input interaktif, Anda bisa menghapus komentar pada bagian `io.write` dan `io.read` jika menjalankan di terminal Lua standar (mungkin tidak berfungsi seperti yang diharapkan langsung di `:lua` Neovim tanpa penanganan input khusus).
 
 **Penjelasan Kode:**
 
@@ -430,8 +516,6 @@ for idx, val in ipairs(mixed_table) do
     print(idx, val) -- Hanya akan mencetak "a" dan "b"
 end
 ```
-
-**Cara Menjalankan Kode:** Sama seperti contoh sebelumnya.
 
 **Penjelasan Kode:**
 
