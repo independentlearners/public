@@ -452,6 +452,6 @@ Dengan penguasaan operator dan struktur kontrol alur ini, Anda memiliki alat yan
 [2]: ../2-variable/README.md
 [3]: ../../README.md
 [4]: ../../../../../README.md
-[5]: ../../../../../dasar/operator/README.md
+[5]: ../../../../../materi/dasar/operator/README.md
 [6]: ../../../../../../../README.md
 [7]: ../3-operator-kontrolFlow/praktik/README.md
