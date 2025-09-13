@@ -162,9 +162,16 @@ Dengan pola ini, proyek mini menjadi pondasi untuk latihan yang lebih kompleks d
 
 <!--
 Dengan susunan ini, pelajar sudah punya pegangan jelas: **kenapa setiap baris dipakai, bagaimana alurnya, dan apa yang bisa dieksperimenkan**.
--->
 ---
 
 
 Apakah kamu mau saya buatkan juga **template halaman proyek mini** (semacam kerangka standar) supaya konsisten untuk proyek mini berikutnya?
+
+-->
+
+## Navigasi
+
+* **[Ke Atas](#)**
+* **[Kembali](../README.md)**
+* **[Kurikulum](../../../../../README.md)**
 
