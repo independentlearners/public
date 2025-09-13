@@ -63,7 +63,7 @@ local is_false = false
 -- Truthy values: semua selain false dan nil (termasuk 0 dan "")
 ```
 
-Jika tertarik untuk mempelajari number secara mendalam, kunjungi berikut **[Number][number1]**
+> Jika tertarik untuk mempelajari number secara mendalam, kunjungi berikut **[Number][number1]**
 
 -----
 
@@ -76,7 +76,7 @@ local scientific = 1.23e-4  -- Scientific notation
 local hex = 0xFF  -- Hexadecimal (255)
 ```
 
-Dengan masuk pada materi bagian 2 sudah cukup untuk sekedar memahami pola string di Lua, jika anda tertarik untuk membedah secara mendalam, klik berikut **[String,][string1]** atau jika hanya ingin masuk pada panduan singkat, anda bisa kunjungi berikut [disini.][panduan-string]
+> Dengan masuk pada materi bagian 2 sudah cukup untuk sekedar memahami pola string di Lua, jika anda tertarik untuk membedah secara mendalam, klik berikut **[String,][string1]** atau jika hanya ingin masuk pada panduan singkat, anda bisa kunjungi berikut [disini.][panduan-string]
 
 ```lua
 local single_quote = 'Hello World'
