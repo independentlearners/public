@@ -61,8 +61,7 @@
   - **[🗜 Instalasi Arch Linux](sistem-operasi/linux/archlinux/instalasi/README.md)**
 
 - **[🪟 Windows](sistem-operasi/windows/README.md)**
-
-  </div>
+- **[💻 Others](sistem-operasi/others/README.md)**  </div>
 </details>
 
 ---
