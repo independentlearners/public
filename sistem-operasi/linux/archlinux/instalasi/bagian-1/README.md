@@ -26,7 +26,12 @@
 
 ### **Deskripsi Konkret: Memulai di Arch Live**
 
-Selamat datang di lingkungan **Arch Live**\! Ini adalah sistem operasi minimalis yang dimuat ke dalam memori komputer Anda langsung dari media instalasi (USB atau CD). Tujuannya adalah untuk menyediakan lingkungan kerja yang stabil dan fungsional agar Anda dapat menginstal sistem operasi utama Anda ke dalam *hard disk*.
+Selamat datang di lingkungan **Arch Live**! Ini adalah sistem operasi minimalis yang dimuat ke dalam memori komputer Anda langsung dari media instalasi (USB atau CD). Tujuannya adalah untuk menyediakan lingkungan kerja yang stabil dan fungsional dengan kelebihan:
+
+- **Tanpa Blootware**
+- **Minimalis**
+- **Cepat dan Handa**
+- **Rolling-R**
 
 Saat Anda berhasil *boot* dari USB Arch Linux, Anda akan langsung disuguhkan dengan *shell* Zsh. Tidak ada GUI, tidak ada *desktop environment*. Ini adalah murni CLI. Anda secara otomatis masuk sebagai ***root user***, yang berarti Anda memiliki hak akses penuh untuk melakukan apa pun pada sistem.
 
