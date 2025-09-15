@@ -296,17 +296,11 @@ Coba jawab dalam hati untuk menguji tingkat pemahaman sebelum membuka jawabannya
 
 ---
 
-### 3.4 Kontrol Flow Structures (Struktur Kontrol Alur)
+# 3.4 Kontrol Flow Structures (Struktur Kontrol Alur)
 
 Struktur kontrol alur memungkinkan Anda untuk mengubah urutan eksekusi pernyataan, memungkinkan program membuat keputusan atau mengulang tugas.
 
-#### If-Then-Else
-
-- **Deskripsi:** Struktur `if` digunakan untuk mengeksekusi blok kode secara kondisional. Jika kondisi dalam `if` bernilai _truthy_, blok `then` dieksekusi. Anda dapat menambahkan satu atau lebih kondisi `elseif` dan blok `else` opsional yang akan dieksekusi jika tidak ada kondisi sebelumnya yang terpenuhi. Setiap struktur `if` harus diakhiri dengan `end`.
-- **Implementasi dalam Neovim:** Pengambilan keputusan dasar, seperti mengaktifkan fitur berdasarkan konfigurasi, menjalankan perintah berbeda berdasarkan mode editor, atau menangani input pengguna.
-- **Sumber Dokumentasi Lua:**
-  - Lua 5.1 Reference Manual (If statement): [https://www.lua.org/manual/5.1/manual.html\#2.4.4](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.4)
-  - Programming in Lua, 1st ed. (If Then Else): [https://www.lua.org/pil/4.3.1.html](https://www.lua.org/pil/4.3.1.html)
+## If-Then-Else
 
 **Contoh Kode:**
 
@@ -342,13 +336,13 @@ end
 - `elseif score >= 80 then ...`: Kondisi kedua (`85 >= 80`) adalah `true`. Blok `print("Good")` dieksekusi, dan sisa `elseif` atau `else` diabaikan.
 - Contoh kedua dengan `temperature` dan `is_raining` menunjukkan penggunaan operator logika `and` dan `not` dalam kondisi `if`.
 
-#### While Loop
-
-- **Deskripsi:** Loop `while` mengeksekusi blok kode berulang kali selama kondisi yang diberikan bernilai _truthy_. Kondisi diperiksa _sebelum_ setiap iterasi. Jika kondisi awalnya `false`, blok kode tidak akan pernah dieksekusi.
-- **Implementasi dalam Neovim:** Berguna untuk tugas yang perlu diulang selama kondisi tertentu terpenuhi, misalnya, memproses item dalam antrian hingga antrian kosong, atau menunggu suatu event.
+- **Deskripsi:** Struktur `if` digunakan untuk mengeksekusi blok kode secara kondisional. Jika kondisi dalam `if` bernilai _truthy_, blok `then` dieksekusi. Anda dapat menambahkan satu atau lebih kondisi `elseif` dan blok `else` opsional yang akan dieksekusi jika tidak ada kondisi sebelumnya yang terpenuhi. Setiap struktur `if` harus diakhiri dengan `end`.
+- **Implementasi dalam Neovim:** Pengambilan keputusan dasar, seperti mengaktifkan fitur berdasarkan konfigurasi, menjalankan perintah berbeda berdasarkan mode editor, atau menangani input pengguna.
 - **Sumber Dokumentasi Lua:**
-  - Lua 5.1 Reference Manual (While statement): [https://www.lua.org/manual/5.1/manual.html\#2.4.5](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.5)
-  - Programming in Lua, 1st ed. (While): [https://www.lua.org/pil/4.3.2.html](https://www.lua.org/pil/4.3.2.html)
+  - Lua 5.1 Reference Manual (If statement): [https://www.lua.org/manual/5.1/manual.html\#2.4.4](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.4)
+  - Programming in Lua, 1st ed. (If Then Else): [https://www.lua.org/pil/4.3.1.html](https://www.lua.org/pil/4.3.1.html)
+
+## While Loop
 
 **Contoh Kode:**
 
@@ -381,17 +375,13 @@ print("Blast off!")
 - `i = i + 1`: Menaikkan nilai `i`. Jika ini tidak dilakukan, loop akan menjadi tak terbatas (infinite loop) karena kondisi `i <= 5` akan selalu `true`.
 - Contoh `countdown` serupa, tetapi menghitung mundur.
 
-#### Repeat-Until Loop
-
-- **Deskripsi:** Loop `repeat ... until` mirip dengan loop `while`, tetapi dengan dua perbedaan utama:
-  1.  Blok kode dieksekusi _setidaknya satu kali_ sebelum kondisi diperiksa.
-  2.  Loop berlanjut selama kondisi bernilai _falsy_ dan berhenti ketika kondisi menjadi _truthy_. (Berlawanan dengan `while` yang berlanjut selama kondisi _truthy_).
-  <!-- end list -->
-  - Variabel lokal yang dideklarasikan di dalam blok `repeat...until` memiliki scope yang mencakup kondisi `until`.
-- **Implementasi dalam Neovim:** Berguna ketika suatu aksi perlu dilakukan setidaknya sekali dan kemudian diulang berdasarkan hasil aksi tersebut, misalnya, meminta input pengguna hingga input valid diberikan.
+- **Deskripsi:** Loop `while` mengeksekusi blok kode berulang kali selama kondisi yang diberikan bernilai _truthy_. Kondisi diperiksa _sebelum_ setiap iterasi. Jika kondisi awalnya `false`, blok kode tidak akan pernah dieksekusi.
+- **Implementasi dalam Neovim:** Berguna untuk tugas yang perlu diulang selama kondisi tertentu terpenuhi, misalnya, memproses item dalam antrian hingga antrian kosong, atau menunggu suatu event.
 - **Sumber Dokumentasi Lua:**
-  - Lua 5.1 Reference Manual (Repeat statement): [https://www.lua.org/manual/5.1/manual.html\#2.4.5](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.5)
-  - Programming in Lua, 1st ed. (Repeat): [https://www.lua.org/pil/4.3.2.html](https://www.lua.org/pil/4.3.2.html)
+  - Lua 5.1 Reference Manual (While statement): [https://www.lua.org/manual/5.1/manual.html\#2.4.5](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.5)
+  - Programming in Lua, 1st ed. (While): [https://www.lua.org/pil/4.3.2.html](https://www.lua.org/pil/4.3.2.html)
+
+## Repeat-Until Loop
 
 **Contoh Kode:**
 
@@ -429,37 +419,20 @@ print("Loop repeat-until selesai.")
   - Iterasi 5: `j=5`. `print` dijalankan. `j` menjadi `6`. `6 > 5` adalah `true`. Loop berhenti.
 - Contoh `input` menunjukkan bagaimana loop ini dapat digunakan untuk mengulang hingga kondisi tertentu (input pengguna adalah "stop") terpenuhi.
 
-#### For Loop
+- **Deskripsi:** Loop `repeat ... until` mirip dengan loop `while`, tetapi dengan dua perbedaan utama:
+  1.  Blok kode dieksekusi _setidaknya satu kali_ sebelum kondisi diperiksa.
+  2.  Loop berlanjut selama kondisi bernilai _falsy_ dan berhenti ketika kondisi menjadi _truthy_. (Berlawanan dengan `while` yang berlanjut selama kondisi _truthy_).
+  <!-- end list -->
+  - Variabel lokal yang dideklarasikan di dalam blok `repeat...until` memiliki scope yang mencakup kondisi `until`.
+- **Implementasi dalam Neovim:** Berguna ketika suatu aksi perlu dilakukan setidaknya sekali dan kemudian diulang berdasarkan hasil aksi tersebut, misalnya, meminta input pengguna hingga input valid diberikan.
+- **Sumber Dokumentasi Lua:**
+  - Lua 5.1 Reference Manual (Repeat statement): [https://www.lua.org/manual/5.1/manual.html\#2.4.5](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.5)
+  - Programming in Lua, 1st ed. (Repeat): [https://www.lua.org/pil/4.3.2.html](https://www.lua.org/pil/4.3.2.html)
+
+
+## For Loop
 
 Lua memiliki dua jenis loop `for`: numerik dan generik.
-
-1.  **Numeric For Loop (Loop For Numerik):**
-
-    - **Deskripsi:** Digunakan untuk mengulang blok kode sejumlah tertentu kali. Loop ini menggunakan variabel kontrol yang secara otomatis diinisialisasi dan diinkrementasi (atau didekrementasi).
-    - **Sintaks:** `for variabel = awal, akhir, langkah do ... end`
-      - `variabel`: Variabel kontrol loop (bersifat lokal untuk loop). Nilainya tidak boleh diubah secara manual di dalam loop.
-      - `awal`: Nilai awal variabel kontrol.
-      - `akhir`: Batas akhir variabel kontrol. Loop berlanjut selama variabel belum melewati batas ini (tergantung `langkah`).
-      - `langkah` (opsional): Nilai penambahan/pengurangan untuk variabel kontrol setiap iterasi. Defaultnya adalah `1`.
-    - **Implementasi dalam Neovim:** Iterasi melalui rentang angka, misalnya, memproses baris dari nomor X hingga Y dalam buffer.
-    - **Sumber Dokumentasi Lua:**
-      - Lua 5.1 Reference Manual (Numeric For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
-      - Programming in Lua, 1st ed. (Numeric for): [https://www.lua.org/pil/4.3.4.html](https://www.lua.org/pil/4.3.4.html)
-
-2.  **Generic For Loop (Loop For Generik):**
-
-    - **Deskripsi:** Digunakan untuk melakukan iterasi atas koleksi nilai, seperti elemen dalam tabel. Loop ini bekerja dengan fungsi _iterator_. Fungsi iterator dipanggil pada setiap iterasi untuk menghasilkan nilai berikutnya dari koleksi.
-    - **Sintaks:** `for var_1, ..., var_n in explist do ... end`
-      - `explist` dievaluasi sekali. Hasilnya harus berupa tiga nilai: fungsi iterator, _state_ (keadaan), dan nilai awal untuk variabel kontrol pertama.
-      - Lua menyediakan beberapa fungsi iterator bawaan, yang paling umum adalah:
-        - `ipairs(t)`: Untuk iterasi atas elemen array dalam tabel `t` (indeks numerik berurutan mulai dari 1). Berhenti pada indeks `nil` pertama. Mengembalikan indeks dan nilai.
-        - `pairs(t)`: Untuk iterasi atas semua elemen (pasangan kunci-nilai) dalam tabel `t`, termasuk bagian array dan bagian _hash_. Urutan iterasi tidak ditentukan untuk bagian _hash_. Mengembalikan kunci dan nilai.
-    - **Implementasi dalam Neovim:** Sangat umum digunakan untuk mengiterasi item konfigurasi dalam tabel, hasil dari fungsi API Neovim (yang sering mengembalikan tabel), baris-baris dalam buffer, daftar plugin, dll.
-    - **Sumber Dokumentasi Lua:**
-      - Lua 5.1 Reference Manual (Generic For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
-      - Lua 5.1 Reference Manual (`ipairs`, `pairs`): [https://www.lua.org/manual/5.1/manual.html\#5.1](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%235.1)
-      - Programming in Lua, 1st ed. (Generic for): [https://www.lua.org/pil/4.3.5.html](https://www.lua.org/pil/4.3.5.html)
-      - Programming in Lua, 1st ed. (Iterators and Generic for): [https://www.lua.org/pil/7.html](https://www.lua.org/pil/7.html)
 
 **Contoh Kode:**
 
@@ -529,6 +502,34 @@ end
   - `local person_data = {name = "John Doe", ...}`: Sebuah tabel yang berperan seperti dictionary atau map.
   - `for key, value in pairs(person_data) do ... end`: `pairs(person_data)` adalah iterator yang mengembalikan pasangan kunci dan nilai untuk semua entri dalam tabel `person_data`. Urutan iterasi untuk `pairs` tidak dijamin untuk bagian non-array.
   - `local mixed_table = {"a", "b", nil, "d"}`: `ipairs` akan berhenti ketika menemukan elemen `nil` pertama dalam urutan numerik. Jadi, ia hanya akan mengiterasi "a" dan "b".
+
+1.  **Numeric For Loop (Loop For Numerik):**
+
+    - **Deskripsi:** Digunakan untuk mengulang blok kode sejumlah tertentu kali. Loop ini menggunakan variabel kontrol yang secara otomatis diinisialisasi dan diinkrementasi (atau didekrementasi).
+    - **Sintaks:** `for variabel = awal, akhir, langkah do ... end`
+      - `variabel`: Variabel kontrol loop (bersifat lokal untuk loop). Nilainya tidak boleh diubah secara manual di dalam loop.
+      - `awal`: Nilai awal variabel kontrol.
+      - `akhir`: Batas akhir variabel kontrol. Loop berlanjut selama variabel belum melewati batas ini (tergantung `langkah`).
+      - `langkah` (opsional): Nilai penambahan/pengurangan untuk variabel kontrol setiap iterasi. Defaultnya adalah `1`.
+    - **Implementasi dalam Neovim:** Iterasi melalui rentang angka, misalnya, memproses baris dari nomor X hingga Y dalam buffer.
+    - **Sumber Dokumentasi Lua:**
+      - Lua 5.1 Reference Manual (Numeric For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
+      - Programming in Lua, 1st ed. (Numeric for): [https://www.lua.org/pil/4.3.4.html](https://www.lua.org/pil/4.3.4.html)
+
+2.  **Generic For Loop (Loop For Generik):**
+
+    - **Deskripsi:** Digunakan untuk melakukan iterasi atas koleksi nilai, seperti elemen dalam tabel. Loop ini bekerja dengan fungsi _iterator_. Fungsi iterator dipanggil pada setiap iterasi untuk menghasilkan nilai berikutnya dari koleksi.
+    - **Sintaks:** `for var_1, ..., var_n in explist do ... end`
+      - `explist` dievaluasi sekali. Hasilnya harus berupa tiga nilai: fungsi iterator, _state_ (keadaan), dan nilai awal untuk variabel kontrol pertama.
+      - Lua menyediakan beberapa fungsi iterator bawaan, yang paling umum adalah:
+        - `ipairs(t)`: Untuk iterasi atas elemen array dalam tabel `t` (indeks numerik berurutan mulai dari 1). Berhenti pada indeks `nil` pertama. Mengembalikan indeks dan nilai.
+        - `pairs(t)`: Untuk iterasi atas semua elemen (pasangan kunci-nilai) dalam tabel `t`, termasuk bagian array dan bagian _hash_. Urutan iterasi tidak ditentukan untuk bagian _hash_. Mengembalikan kunci dan nilai.
+    - **Implementasi dalam Neovim:** Sangat umum digunakan untuk mengiterasi item konfigurasi dalam tabel, hasil dari fungsi API Neovim (yang sering mengembalikan tabel), baris-baris dalam buffer, daftar plugin, dll.
+    - **Sumber Dokumentasi Lua:**
+      - Lua 5.1 Reference Manual (Generic For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
+      - Lua 5.1 Reference Manual (`ipairs`, `pairs`): [https://www.lua.org/manual/5.1/manual.html\#5.1](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%235.1)
+      - Programming in Lua, 1st ed. (Generic for): [https://www.lua.org/pil/4.3.5.html](https://www.lua.org/pil/4.3.5.html)
+      - Programming in Lua, 1st ed. (Iterators and Generic for): [https://www.lua.org/pil/7.html](https://www.lua.org/pil/7.html)
 
 ---
 
