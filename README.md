@@ -68,7 +68,7 @@
 
   - **[🐧 Linux](https://independentlearners.github.io/public/sistem-operasi/linux/)**
 
-      - [Distribusi & Kernel](https://www.google.com/search?q=)
+      - [Distribusi & Kernel](./sistem-operasi/linux/distro-dan-kernel/README.md)
       - [Manajemen File & Sistem](https://www.google.com/search?q=)
       - [Konfigurasi Shell & CLI](https://www.google.com/search?q=)
 
