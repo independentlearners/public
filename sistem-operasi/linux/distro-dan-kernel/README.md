@@ -191,8 +191,11 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 - **Ubuntu:** Berbasis Debian, Ubuntu menawarkan sistem modern dan ramah pengguna untuk desktop, server, dan IoT.
 
 **Deskripsi & Filosofi:** distro desktop/server populer yang menekankan kemudahan penggunaan, dukungan enterprise (Canonical), serta integrasi cloud/IoT. Cocok untuk pemula dan pengguna yang ingin “langsung pakai”.
+
 **Identitas teknis:** base: *Debian*-based; package manager: `apt` (dpkg backend); init: `systemd`; komponen inti & kernel: Linux (C), userland GNU (C), tooling distro banyak berbentuk Python/Shell.
+
 **Untuk mengembangkan / memodifikasi:** pengetahuan `Debian packaging` (deb, dpkg, lintian), Python/Shell untuk tooling, git, PPA/Launchpad jika ingin kontribusi; kemampuan debugging kernel/C jika berencana patch kernel.
+
 **Komunitas & sumber:** Ubuntu official, Ubuntu Community/Forums, subreddit r/Ubuntu. ([Ubuntu][1])
 
 ---
@@ -202,8 +205,11 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 - **Debian:** Dikenal karena stabilitasnya yang luar biasa dan basis paket yang sangat besar. Debian sering digunakan sebagai fondasi untuk distro lain, termasuk Ubuntu.
 
 **Deskripsi & Filosofi:** “The Universal Operating System” — menekankan stabilitas, kebebasan perangkat lunak, dan kebijakan packaging yang ketat. Basis banyak distro turunannya.
+
 **Identitas teknis:** base: independen; package manager: `apt`/`dpkg`; init: `systemd` (sebagian pengguna juga menjalankan alternatif); bahasa inti: C untuk kernel & coreutils, scripting Shell/Python untuk tooling.
+
 **Untuk mengembangkan / memodifikasi:** pahami kebijakan Debian, pembuatan paket `.deb`, buildd infrastructure, dan proses maintainer (mentoring lewat BTS & mailing list).
+
 **Komunitas & sumber:** Debian Project, Debian Wiki, Debian User Forums. ([Debian][2])
 
 ---
@@ -213,8 +219,11 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 - **Fedora:** Versi komunitas dari RHEL, yang berfungsi sebagai platform pengujian untuk teknologi baru sebelum dimasukkan ke RHEL.
 
 **Deskripsi & Filosofi:** platform inovasi upstream (sponsor: Red Hat). Cepat mengadopsi teknologi baru — ideal untuk developer dan penguji fitur terbaru.
+
 **Identitas teknis:** base: independen upstream; package manager: `dnf` (RPM); init: `systemd`; bahasa tooling: Python, C, Shell.
+
 **Untuk mengembangkan / memodifikasi:** pembuatan paket RPM, `copr`/Fedora Build System, Fedora Packaging Guidelines, serta familiarity dengan SELinux/containers bila berkontribusi di area keamanan.
+
 **Komunitas & sumber:** Fedora Project, Fedora Forum. ([fedoraproject.org][3])
 
 ---
@@ -224,8 +233,11 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 - **Red Hat Enterprise Linux (RHEL):** Distro komersial yang dominan di lingkungan enterprise dan server.
 
 **Deskripsi & Filosofi:** distribusi komersial untuk enterprise—stabilitas, dukungan jangka panjang, sertifikasi. Ditujukan untuk beban kerja produksi dan cloud hybrid.
+
 **Identitas teknis:** base: upstream enterprise (sponsor: Red Hat); package manager: RPM (`dnf`/`yum`); init: `systemd`; bahasa: C, Python, bash di tooling enterprise.
+
 **Untuk mengembangkan / memodifikasi:** sertifikasi RHEL, penggunaan RHEL Developer subscriptions, pemahaman kebijakan keamanan enterprise (STIG/SCAP), tooling container/Ansible.
+
 **Komunitas & sumber:** Red Hat product pages & developer program. ([Red Hat Customer Portal][5])
 
 ---
@@ -233,7 +245,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟢 [CentOS Stream](https://www.centos.org/centos-stream/) ([centos.org][6])
 
 **Deskripsi & Filosofi:** “midstream” antara Fedora dan RHEL; aliran pembaruan yang turut menjadi dasar pengembangan RHEL. Cocok bagi yang ingin mengikuti pengembangan enterprise sebelum rilis RHEL.
+
 **Identitas teknis:** base: RHEL-alike; package manager: RPM (`dnf`); init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** memahami model midstream contribution, workflow git/patch ke CentOS SIGs, dan kompatibilitas binari dengan RHEL. ([centos.org][6])
 
 ---
@@ -241,7 +255,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟫 [AlmaLinux](https://almalinux.org/) ([AlmaLinux OS][7])
 
 **Deskripsi & Filosofi:** fork komunitas yang bertujuan kompatibilitas binari penuh dengan RHEL — alternatif CentOS klasik untuk produksi bebas biaya lisensi.
+
 **Identitas teknis:** base: RHEL source; package manager: RPM (`dnf`); init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** packaging RPM, migrasi dari CentOS/RHEL, kontribusi ke repos AlmaLinux infra. ([AlmaLinux OS][7])
 
 ---
@@ -249,7 +265,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🪨 [Rocky Linux](https://rockylinux.org/) ([rockylinux.org][8])
 
 **Deskripsi & Filosofi:** komunitas-driven enterprise OS, dibuat untuk menggantikan CentOS Linux sebagai downstream RHEL-compatible distribution.
+
 **Identitas teknis:** base: RHEL source; package manager: RPM; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** kontribusi pada repos, testing kompatibilitas, tooling migrasi. ([rockylinux.org][8])
 
 ---
@@ -259,7 +277,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 - **Arch Linux:** Menggunakan model rilis bergulir (rolling release), di mana sistem selalu diperbarui dengan versi paket terbaru.
 
 **Deskripsi & Filosofi:** KISS — minimal, pengguna membangun sistemnya sendiri (distro untuk power users). Rolling release, AUR sebagai sumber paket komunitas.
+
 **Identitas teknis:** base: independen; package manager: `pacman`; init: `systemd`; bahasa tooling: Bash, Python, C for core tools.
+
 **Untuk mengembangkan / memodifikasi:** pembuatan PKGBUILD, memahami makepkg, kontribusi AUR, dan kemampuan debugging low-level. ([archlinux.org][9])
 
 ---
@@ -267,7 +287,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟠 [Manjaro](https://manjaro.org/) ([manjaro.org][10])
 
 **Deskripsi & Filosofi:** berbasis Arch tetapi lebih ramah pengguna — menyediakan installer grafis, kernel management, dan repos teruji agar lebih stabil untuk desktop.
+
 **Identitas teknis:** base: Arch-based; package manager: `pacman`; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** pembuatan paket Arch/Manjaro, testing kernel, kontribusi ke repos teruji dan tooling GUI. ([manjaro.org][10])
 
 ---
@@ -275,7 +297,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟢 [Linux Mint](https://linuxmint.com/) ([linuxmint.com][11])
 
 **Deskripsi & Filosofi:** fokus pada kenyamanan desktop, out-of-the-box usability; berbasis Ubuntu (atau Debian edisi LMDE). Cocok migrasi dari Windows.
+
 **Identitas teknis:** base: Ubuntu/Debian; package manager: `apt`; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** pengemasan `.deb`, pengembangan aplikasi XApp (Python/Vala), theming dan UX. ([linuxmint.com][11])
 
 ---
@@ -283,7 +307,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟪 [Pop!\_OS](https://system76.com/pop/) ([system76.com][12])
 
 **Deskripsi & Filosofi:** dibuat oleh System76 untuk pengembang dan pengguna power — fokus pada workflow, optimasi GPU (NVIDIA/AMD) dan COSMIC desktop.
+
 **Identitas teknis:** base: Ubuntu; package manager: `apt`; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** kontributor pada COSMIC (GNOME fork), packaging Ubuntu, pemahaman drivers GPU stack. ([system76.com][13])
 
 ---
@@ -291,7 +317,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## ⚪ [elementary OS](https://elementary.io/) ([elementary.io][14])
 
 **Deskripsi & Filosofi:** fokus pada desain, kesederhanaan, dan pengalaman mirip macOS; user-friendly untuk pengguna nonteknis.
+
 **Identitas teknis:** base: Ubuntu LTS; package manager: `apt` + Flatpak; DE: Pantheon (Vala/GTK).
+
 **Untuk mengembangkan / memodifikasi:** Vala/GTK knowledge, pembuatan aplikasi AppCenter, design guidelines, packaging. ([elementary.io][14])
 
 ---
@@ -299,7 +327,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟩 [openSUSE (Leap / Tumbleweed)](https://www.opensuse.org/) ([opensuse.org][15])
 
 **Deskripsi & Filosofi:** dua pendekatan: Leap (stabil, enterprise-like) dan Tumbleweed (rolling). Dikenal dengan YaST sebagai alat konfigurasi kuat.
+
 **Identitas teknis:** base: independen (SUSE); package manager: `zypper` (RPM); init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** penggunaan Open Build Service (OBS), pembuatan RPM, YaST modules, dan kontribusi ke repos. ([opensuse.org][15])
 
 ---
@@ -307,7 +337,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🔵 [Solus](https://getsol.us/) ([Solus][16])
 
 **Deskripsi & Filosofi:** independen, fokus desktop terpadu dengan curated rolling updates — pengalaman konsisten untuk pengguna desktop.
+
 **Identitas teknis:** base: independen; package manager: `eopkg`; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** memahami eopkg/packaging, Budgie/desktop integration, dan repos curated. ([Solus][16])
 
 ---
@@ -315,7 +347,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟦 [deepin](https://www.deepin.org/en/) ([deepin.org][17])
 
 **Deskripsi & Filosofi:** desktop yang estetis dan ramah pengguna (banyak aplikasi bawaan), fokus UX visual.
+
 **Identitas teknis:** base: Debian/independen kombinasi; package manager: `apt`/deb; DE/tampilan berbasis Qt/C++.
+
 **Untuk mengembangkan / memodifikasi:** Qt/C++ untuk aplikasi native, packaging Debian, kontribusi ke Deepin App Store. ([deepin.org][17])
 
 ---
@@ -323,7 +357,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## ⚫ [Zorin OS](https://zorin.com/os/) ([Zorin][18])
 
 **Deskripsi & Filosofi:** didesain untuk menggantikan Windows/macOS — friendly bagi migrasi pengguna nonteknis, menawarkan edisi Pro berbayar.
+
 **Identitas teknis:** base: Ubuntu; package manager: `apt`; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** theming desktop, packaging Ubuntu, dan optimasi UX. ([Zorin][18])
 
 ---
@@ -331,7 +367,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🪶 [Kali Linux](https://www.kali.org/) ([Kali Linux][19])
 
 **Deskripsi & Filosofi:** distribusi khusus keamanan / penetration testing; berisi koleksi alat pentest & forensic. Ditujukan untuk profesional keamanan dan peneliti.
+
 **Identitas teknis:** base: Debian; package manager: `apt`; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** pemahaman alat-alat pentest (metasploit, nmap, dll.), packaging Debian, dan kebijakan keamanan/forensik. ([Kali Linux][19])
 
 ---
@@ -339,7 +377,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟨 [Parrot OS](https://parrotsec.org/) ([parrotsec.org][20])
 
 **Deskripsi & Filosofi:** fokus pada keamanan, privasi, dan development toolkit — alternatif Kali dengan beberapa perbedaan filosofi (privasi/forensics).
+
 **Identitas teknis:** base: Debian; package manager: `apt`; init: `systemd`.
+
 **Untuk mengembangkan / memodifikasi:** familiar dengan toolset security, packaging Debian, dan manajemen repos alat. ([parrotsec.org][20])
 
 ---
@@ -347,7 +387,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## ⚙️ [Gentoo](https://www.gentoo.org/) ([Wikipedia][21])
 
 **Deskripsi & Filosofi:** source-based distro; portage system (emerge) memungkinkan optimasi compile-time — cocok bagi yang ingin kontrol maksimal pada build flags.
+
 **Identitas teknis:** base: independen; package manager: Portage (`emerge`); init: `systemd` atau OpenRC (opsional); bahasa tooling: Python, Bash, C.
+
 **Untuk mengembangkan / memodifikasi:** kemampuan build dari sumber (C/C++), memahami USE flags, ebuild writing, dan maintenance toolchain. ([Wikipedia][21])
 
 ---
@@ -355,7 +397,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🧭 [Slackware](https://www.slackware.com/) ([slackware.com][22])
 
 **Deskripsi & Filosofi:** salah satu distro tertua; mendekati pengalaman UNIX tradisional — minim otomatisasi, cocok untuk belajar konsep mendasar Linux.
+
 **Identitas teknis:** base: independen; package manager: `pkgtool`/`slackpkg`; init: SysV-like init scripts (tradisional).
+
 **Untuk mengembangkan / memodifikasi:** familiar dengan build from source, manajemen paket Slackware, dan pemahaman konsep UNIX klasik. ([slackware.com][22])
 
 ---
@@ -363,7 +407,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🗻 [Alpine Linux](https://www.alpinelinux.org/) ([alpinelinux.org][23])
 
 **Deskripsi & Filosofi:** sangat ringan, keamanan-oriented, memakai `musl` libc dan BusyBox — sering dipakai image container minimal.
+
 **Identitas teknis:** base: independen; package manager: `apk`; init: `OpenRC`; userland: BusyBox; bahasa core: C.
+
 **Untuk mengembangkan / memodifikasi:** pemahaman musl/glibc differences, OpenRC, pembuatan paket APK, dan cross-compile untuk embedded. ([alpinelinux.org][23])
 
 ---
@@ -371,7 +417,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## ⚫ [Void Linux](https://voidlinux.org/) ([Void Linux][24])
 
 **Deskripsi & Filosofi:** independen, syarikat komunitas, menggunakan XBPS package manager dan `runit` sebagai init — minimal & unik.
+
 **Identitas teknis:** base: independen; package manager: `xbps`; init: `runit`; bahasa tooling: C, Shell, Python.
+
 **Untuk mengembangkan / memodifikasi:** belajar XBPS, sistem build `xbps-src`, serta kontribusi paket binary/source. ([Void Linux][24])
 
 ---
@@ -379,7 +427,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## ❄️ [NixOS](https://nixos.org/) ([nixos.org][25])
 
 **Deskripsi & Filosofi:** konfigurasi deklaratif & reproducible melalui Nix—ideal untuk infrastruktur yang butuh reproducibility dan atomic rollbacks.
+
 **Identitas teknis:** base: independen (Nix package manager); package manager: `nix`; init: `systemd` (umumnya); bahasa konfigurasi: *Nix expression language*.
+
 **Untuk mengembangkan / memodifikasi:** pelajari Nix language, menulis paket `nixpkgs`, dan menggubah module konfigurasi. ([nixos.org][25])
 
 ---
@@ -387,7 +437,9 @@ Terdapat ratusan distribusi Linux yang melayani berbagai kebutuhan. Beberapa con
 ## 🟫 [Tails (The Amnesic Incognito Live System)](https://tails.boum.org/) ([tails.boum.org][26])
 
 **Deskripsi & Filosofi:** live-system fokus privasi & anonimity (Tor-based), digunakan untuk komunikasi aman tanpa meninggalkan jejak.
+
 **Identitas teknis:** base: Debian live; package manager: tidak untuk instalasi persist; fokus pada Tor, etika privasi.
+
 **Untuk mengembangkan / memodifikasi:** pemahaman Tor, keamanan operational, live-build infrastructure Debian. ([tails.boum.org][26])
 
 ---
@@ -400,31 +452,31 @@ Penjelasan: skor 1 (sangat mudah untuk pemula; instal & pakai) → 10 (sangat te
 
 ## 📚 Daftar Distro — Terurut (Mudah → Sulit)
 
-| Distro                                                                             | Deskripsi singkat                                                                     |                                                                           Tingkat Kesulitan | Kategori                                                                                   |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------ |
-| 🟣 [Ubuntu](https://ubuntu.com/)                                                   | Distro ramah-pemula, fokus kemudahan penggunaan desktop/server.                       | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| 🟢 [Linux Mint](https://linuxmint.com/)                                            | Fokus kenyamanan desktop; ideal bagi pengguna migrasi dari Windows.                   | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| ⚪ [Zorin OS](https://zorin.com/os/)                                               | Dirancang untuk kemudahan migrasi pengguna non-teknis.                                | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| 🟡 [elementary OS](https://elementary.io/)                                         | Estetika desain tinggi; pengalaman desktop sederhana & konsisten.                     | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| 🔵 [Pop!\_OS](https://system76.com/pop)                                            | Optimal untuk developer & pengguna GPU; UX fokus produktivitas.                       |       ![Difficulty](https://img.shields.io/badge/difficulty-3%2F10-green?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| 🟠 [Manjaro](https://manjaro.org/)                                                 | Berbasis Arch, lebih ramah-pemula; repos teruji & installer grafis.                   |       ![Difficulty](https://img.shields.io/badge/difficulty-3%2F10-green?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| 🔴 [Fedora](https://getfedora.org/)                                                | Platform inovasi upstream; cocok developer/testing fitur terbaru.                     |      ![Difficulty](https://img.shields.io/badge/difficulty-4%2F10-yellow?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop%2FServer-blue?style=flat-square) |
-| 🟦 [openSUSE (Leap/Tumbleweed)](https://www.opensuse.org/)                         | Leap: stabil; Tumbleweed: rolling. YaST alat konfigurasi kuat.                        |      ![Difficulty](https://img.shields.io/badge/difficulty-4%2F10-yellow?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop%2FServer-blue?style=flat-square) |
-| 🌸 [Deepin](https://www.deepin.org/)                                               | Desktop estetis; orientasi UX visual dan aplikasi bawaan.                             |      ![Difficulty](https://img.shields.io/badge/difficulty-4%2F10-yellow?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| 🟪 [Solus](https://getsol.us/)                                                     | Curated rolling untuk desktop; pengalaman konsisten.                                  |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          |
-| 🔶 [CentOS Stream](https://www.centos.org/centos-stream/)                          | Midstream antara Fedora & RHEL — mengikuti pengembangan enterprise.                   |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Server-purple?style=flat-square)         |
-| 🟤 [AlmaLinux](https://almalinux.org/)                                             | Kompatibel binari RHEL; alternatif CentOS klasik.                                     |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Server-purple?style=flat-square)         |
-| 🪨 [Rocky Linux](https://rockylinux.org/)                                          | Komunitas-driven RHEL-compatible untuk produksi bebas lisensi.                        |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Server-purple?style=flat-square)         |
-| 🟫 [RHEL](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux) | Enterprise-grade dengan dukungan jangka panjang dan sertifikasi.                      |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Enterprise-purple?style=flat-square)     |
-| 🛡️ [Kali Linux](https://www.kali.org/)                                             | Distro khusus pentest/forensics — koleksi toolkit keamanan.                           |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Security-black?style=flat-square)        |
-| 🕵️ [Parrot OS](https://parrotsec.org/)                                             | Fokus privasi & forensik; alternatif Kali.                                            |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Security-black?style=flat-square)        |
-| 🕵️ [Tails](https://tails.boum.org/)                                                | Live-system fokus privasi & anonimity (Tor) tanpa meninggalkan jejak.                 |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Privacy-black?style=flat-square)         |
-| ⚫ [Arch Linux](https://archlinux.org/)                                            | Filosofi KISS, rolling release; untuk pengguna mahir yang menginginkan kontrol penuh. |         ![Difficulty](https://img.shields.io/badge/difficulty-7%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Power--User-red?style=flat-square)       |
-| ❄️ [Alpine Linux](https://alpinelinux.org/)                                        | Ringan & aman; musl libc + BusyBox, populer sebagai base container.                   |         ![Difficulty](https://img.shields.io/badge/difficulty-7%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Minimal-lightgrey?style=flat-square)     |
-| ⚫ [Void Linux](https://voidlinux.org/)                                            | Independen, XBPS package manager, runit init — minimal & unik.                        |         ![Difficulty](https://img.shields.io/badge/difficulty-7%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Minimal-lightgrey?style=flat-square)     |
-| 🧭 [Slackware](https://www.slackware.com/)                                         | Pendekatan UNIX-tradisional, sedikit otomatisasi; bagus untuk pembelajaran dasar.     |         ![Difficulty](https://img.shields.io/badge/difficulty-8%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Classic-red?style=flat-square)           |
-| 🧩 [NixOS](https://nixos.org/)                                                     | Konfigurasi deklaratif & reproducible via Nix — cocok infra yang butuh reproduksi.    |     ![Difficulty](https://img.shields.io/badge/difficulty-8%2F10-darkred?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Declarative-cyan?style=flat-square)      |
-| ⚙️ [Gentoo](https://www.gentoo.org/)                                               | Source-based dengan Portage — kontrol penuh pada compile-time flags.                  |     ![Difficulty](https://img.shields.io/badge/difficulty-9%2F10-darkred?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Source--Based-darkred?style=flat-square) |
+| Distro                                                                             | Deskripsi singkat                                                                     |                                                                           Tingkat Kesulitan | Kategori                                                                                   |Indikator Visual |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------ |-----------------|
+| 🟣 [Ubuntu](https://ubuntu.com/)                                                   | Distro ramah-pemula, fokus kemudahan penggunaan desktop/server.                       | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | ██░░░░░░░░ (2)  |
+| 🟢 [Linux Mint](https://linuxmint.com/)                                            | Fokus kenyamanan desktop; ideal bagi pengguna migrasi dari Windows.                   | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | ██░░░░░░░░ (2)  |
+| ⚪ [Zorin OS](https://zorin.com/os/)                                               | Dirancang untuk kemudahan migrasi pengguna non-teknis.                                | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | ██░░░░░░░░ (2)  |
+| 🟡 [elementary OS](https://elementary.io/)                                         | Estetika desain tinggi; pengalaman desktop sederhana & konsisten.                     | ![Difficulty](https://img.shields.io/badge/difficulty-2%2F10-brightgreen?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | ██░░░░░░░░ (2)  |
+| 🔵 [Pop!\_OS](https://system76.com/pop)                                            | Optimal untuk developer & pengguna GPU; UX fokus produktivitas.                       |       ![Difficulty](https://img.shields.io/badge/difficulty-3%2F10-green?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | ███░░░░░░░ (3)  |
+| 🟠 [Manjaro](https://manjaro.org/)                                                 | Berbasis Arch, lebih ramah-pemula; repos teruji & installer grafis.                   |       ![Difficulty](https://img.shields.io/badge/difficulty-3%2F10-green?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | ███░░░░░░░ (3)  |
+| 🔴 [Fedora](https://getfedora.org/)                                                | Platform inovasi upstream; cocok developer/testing fitur terbaru.                     |      ![Difficulty](https://img.shields.io/badge/difficulty-4%2F10-yellow?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop%2FServer-blue?style=flat-square) | ████░░░░░░ (4)  |
+| 🟦 [openSUSE (Leap/Tumbleweed)](https://www.opensuse.org/)                         | Leap: stabil; Tumbleweed: rolling. YaST alat konfigurasi kuat.                        |      ![Difficulty](https://img.shields.io/badge/difficulty-4%2F10-yellow?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop%2FServer-blue?style=flat-square) | ████░░░░░░ (4)  |
+| 🌸 [Deepin](https://www.deepin.org/)                                               | Desktop estetis; orientasi UX visual dan aplikasi bawaan.                             |      ![Difficulty](https://img.shields.io/badge/difficulty-4%2F10-yellow?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | ████░░░░░░ (4)  |
+| 🟪 [Solus](https://getsol.us/)                                                     | Curated rolling untuk desktop; pengalaman konsisten.                                  |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Desktop-blue?style=flat-square)          | █████░░░░░ (5)  | 
+| 🔶 [CentOS Stream](https://www.centos.org/centos-stream/)                          | Midstream antara Fedora & RHEL — mengikuti pengembangan enterprise.                   |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Server-purple?style=flat-square)         | █████░░░░░ (5)  |
+| 🟤 [AlmaLinux](https://almalinux.org/)                                             | Kompatibel binari RHEL; alternatif CentOS klasik.                                     |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Server-purple?style=flat-square)         | █████░░░░░ (5)  |
+| 🪨 [Rocky Linux](https://rockylinux.org/)                                          | Komunitas-driven RHEL-compatible untuk produksi bebas lisensi.                        |      ![Difficulty](https://img.shields.io/badge/difficulty-5%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Server-purple?style=flat-square)         | █████░░░░░ (5)  |
+| 🟫 [RHEL](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux) | Enterprise-grade dengan dukungan jangka panjang dan sertifikasi.                      |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Enterprise-purple?style=flat-square)     | ██████░░░░ (6)  |
+| 🛡️ [Kali Linux](https://www.kali.org/)                                             | Distro khusus pentest/forensics — koleksi toolkit keamanan.                           |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Security-black?style=flat-square)        | ██████░░░░ (6)  |
+| 🕵️ [Parrot OS](https://parrotsec.org/)                                             | Fokus privasi & forensik; alternatif Kali.                                            |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Security-black?style=flat-square)        | ██████░░░░ (6)  |
+| 🕵️ [Tails](https://tails.boum.org/)                                                | Live-system fokus privasi & anonimity (Tor) tanpa meninggalkan jejak.                 |      ![Difficulty](https://img.shields.io/badge/difficulty-6%2F10-orange?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Privacy-black?style=flat-square)         | ██████░░░░ (6)  |
+| ⚫ [Arch Linux](https://archlinux.org/)                                            | Filosofi KISS, rolling release; untuk pengguna mahir yang menginginkan kontrol penuh. |         ![Difficulty](https://img.shields.io/badge/difficulty-7%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Power--User-red?style=flat-square)       | ███████░░░ (7)  |
+| ❄️ [Alpine Linux](https://alpinelinux.org/)                                        | Ringan & aman; musl libc + BusyBox, populer sebagai base container.                   |         ![Difficulty](https://img.shields.io/badge/difficulty-7%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Minimal-lightgrey?style=flat-square)     | ███████░░░ (7)  |
+| ⚫ [Void Linux](https://voidlinux.org/)                                            | Independen, XBPS package manager, runit init — minimal & unik.                        |         ![Difficulty](https://img.shields.io/badge/difficulty-7%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Minimal-lightgrey?style=flat-square)     | ███████░░░ (7)  |
+| 🧭 [Slackware](https://www.slackware.com/)                                         | Pendekatan UNIX-tradisional, sedikit otomatisasi; bagus untuk pembelajaran dasar.     |         ![Difficulty](https://img.shields.io/badge/difficulty-8%2F10-red?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Classic-red?style=flat-square)           | ████████░░ (8)  |
+| 🧩 [NixOS](https://nixos.org/)                                                     | Konfigurasi deklaratif & reproducible via Nix — cocok infra yang butuh reproduksi.    |     ![Difficulty](https://img.shields.io/badge/difficulty-8%2F10-darkred?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Declarative-cyan?style=flat-square)      | ████████░░ (8)  |
+| ⚙️ [Gentoo](https://www.gentoo.org/)                                               | Source-based dengan Portage — kontrol penuh pada compile-time flags.                  |     ![Difficulty](https://img.shields.io/badge/difficulty-9%2F10-darkred?style=flat-square) | ![Category](https://img.shields.io/badge/Category-Source--Based-darkred?style=flat-square) | █████████░ (9)  |
 
 ---
 
