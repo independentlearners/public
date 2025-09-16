@@ -121,12 +121,13 @@
 
 </details>
 
-##### [📁 Daftar Lengkap](https://www.google.com/search?q=) | [🏠 Home](https://www.google.com/search?q=)
+
+##### [📁 Daftar Lengkap](sistem-operasi/others/README.md) | [⮝ Archlinux ](./sistem-operasi/linux/README.md)
 
   - **[📁 Filesystem Arch Linux](sistem-operasi/linux/archlinux/README.md)**
   - **[🗜 Instalasi Arch Linux](sistem-operasi/linux/archlinux/instalasi/README.md)**
-
-- **[💻 Others](sistem-operasi/others/README.md)**  </div>
+<!-- **[💻 Others]()**-->
+ </div>
 </details>
 
 ---
