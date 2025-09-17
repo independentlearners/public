@@ -302,7 +302,7 @@ Struktur kontrol alur memungkinkan Anda untuk mengubah urutan eksekusi pernyataa
 
 ## If-Then-Else
 
-**Contoh Kode:**
+**Contoh Dan Penjelasan Kode:**
 
 ```lua
 local score = 85
@@ -316,7 +316,13 @@ elseif score >= 70 then
 else
     print("Poor")
 end
+```
 
+- `local score = 85`: Inisialisasi variabel `score`.
+- `if score >= 90 then ...`: Kondisi pertama (`85 >= 90`) adalah `false`.
+- `elseif score >= 80 then ...`: Kondisi kedua (`85 >= 80`) adalah `true`. Blok `print("Good")` dieksekusi, dan sisa `elseif` atau `else` diabaikan.
+
+```lua
 local temperature = 30
 local is_raining = false
 
@@ -329,12 +335,9 @@ else
 end
 ```
 
-**Penjelasan Kode:**
+****
 
-- `local score = 85`: Inisialisasi variabel `score`.
-- `if score >= 90 then ...`: Kondisi pertama (`85 >= 90`) adalah `false`.
-- `elseif score >= 80 then ...`: Kondisi kedua (`85 >= 80`) adalah `true`. Blok `print("Good")` dieksekusi, dan sisa `elseif` atau `else` diabaikan.
-- Contoh kedua dengan `temperature` dan `is_raining` menunjukkan penggunaan operator logika `and` dan `not` dalam kondisi `if`.
+- Dengan `temperature` dan `is_raining` menunjukkan penggunaan operator logika `and` dan `not` dalam kondisi `if`.
 
 - **Deskripsi:** Struktur `if` digunakan untuk mengeksekusi blok kode secara kondisional. Jika kondisi dalam `if` bernilai _truthy_, blok `then` dieksekusi. Anda dapat menambahkan satu atau lebih kondisi `elseif` dan blok `else` opsional yang akan dieksekusi jika tidak ada kondisi sebelumnya yang terpenuhi. Setiap struktur `if` harus diakhiri dengan `end`.
 - **Implementasi dalam Neovim:** Pengambilan keputusan dasar, seperti mengaktifkan fitur berdasarkan konfigurasi, menjalankan perintah berbeda berdasarkan mode editor, atau menangani input pengguna.
@@ -344,7 +347,7 @@ end
 
 ## While Loop
 
-**Contoh Kode:**
+**Contoh Dan Penjelasan Kode:**
 
 ```lua
 local i = 1
@@ -358,7 +361,14 @@ end
 -- Iterasi while: 3
 -- Iterasi while: 4
 -- Iterasi while: 5
+```
 
+- `local i = 1`: Inisialisasi variabel counter `i`.
+- `while i <= 5 do ... end`: Loop akan berlanjut selama `i` kurang dari atau sama dengan `5`.
+- `print("Iterasi while:", i)`: Mencetak nilai `i` saat ini.
+- `i = i + 1`: Menaikkan nilai `i`. Jika ini tidak dilakukan, loop akan menjadi tak terbatas (infinite loop) karena kondisi `i <= 5` akan selalu `true`.
+
+```lua
 local countdown = 3
 while countdown > 0 do
     print("Countdown:", countdown)
@@ -367,12 +377,6 @@ end
 print("Blast off!")
 ```
 
-**Penjelasan Kode:**
-
-- `local i = 1`: Inisialisasi variabel counter `i`.
-- `while i <= 5 do ... end`: Loop akan berlanjut selama `i` kurang dari atau sama dengan `5`.
-- `print("Iterasi while:", i)`: Mencetak nilai `i` saat ini.
-- `i = i + 1`: Menaikkan nilai `i`. Jika ini tidak dilakukan, loop akan menjadi tak terbatas (infinite loop) karena kondisi `i <= 5` akan selalu `true`.
 - Contoh `countdown` serupa, tetapi menghitung mundur.
 
 - **Deskripsi:** Loop `while` mengeksekusi blok kode berulang kali selama kondisi yang diberikan bernilai _truthy_. Kondisi diperiksa _sebelum_ setiap iterasi. Jika kondisi awalnya `false`, blok kode tidak akan pernah dieksekusi.
@@ -383,7 +387,7 @@ print("Blast off!")
 
 ## Repeat-Until Loop
 
-**Contoh Kode:**
+**Contoh Dan Penjelasan Kode:**
 
 ```lua
 local j = 1
@@ -397,7 +401,14 @@ until j > 5
 -- Iterasi repeat-until: 3
 -- Iterasi repeat-until: 4
 -- Iterasi repeat-until: 5
+```
 
+- `local j = 1`: Inisialisasi variabel `j`.
+- `repeat ... until j > 5`: Blok kode di dalam `repeat` dieksekusi. Kemudian kondisi `j > 5` diperiksa.
+  - Iterasi 1: `j=1`. `print` dijalankan. `j` menjadi `2`. `2 > 5` adalah `false`. Loop berlanjut.
+  - Iterasi 5: `j=5`. `print` dijalankan. `j` menjadi `6`. `6 > 5` adalah `true`. Loop berhenti.
+
+```lua
 local input
 repeat
     -- Dalam implementasi nyata, Anda akan meminta input di sini
@@ -410,13 +421,6 @@ until input == "stop"
 print("Loop repeat-until selesai.")
 ```
 
-**Penjelasan Kode:**
-
-- `local j = 1`: Inisialisasi variabel `j`.
-- `repeat ... until j > 5`: Blok kode di dalam `repeat` dieksekusi. Kemudian kondisi `j > 5` diperiksa.
-  - Iterasi 1: `j=1`. `print` dijalankan. `j` menjadi `2`. `2 > 5` adalah `false`. Loop berlanjut.
-  - ...
-  - Iterasi 5: `j=5`. `print` dijalankan. `j` menjadi `6`. `6 > 5` adalah `true`. Loop berhenti.
 - Contoh `input` menunjukkan bagaimana loop ini dapat digunakan untuk mengulang hingga kondisi tertentu (input pengguna adalah "stop") terpenuhi.
 
 - **Deskripsi:** Loop `repeat ... until` mirip dengan loop `while`, tetapi dengan dua perbedaan utama:
@@ -434,28 +438,38 @@ print("Loop repeat-until selesai.")
 
 Lua memiliki dua jenis loop `for`: numerik dan generik.
 
-**Contoh Kode:**
+**Contoh Dan Penjelasan Kode:**
+
+- **Numeric For Loop:**
 
 ```lua
--- Numeric for loop
 print("--- Numeric For Loop ---")
 -- Dari 1 sampai 5, langkah default 1
 for i = 1, 5 do
     print("Numeric i:", i)
 end
 -- Output: 1, 2, 3, 4, 5
+```
 
+  - `for i = 1, 5 do ... end`: Variabel `i` akan mengambil nilai dari 1 hingga 5 (inklusif), dengan langkah 1 (default).
+
+```lua
 -- Dari 10 sampai 1, langkah -2
 for k = 10, 1, -2 do
     print("Numeric k:", k)
 end
 -- Output: 10, 8, 6, 4, 2
-
 -- Variabel loop adalah lokal
 -- print(i) -- Error, i tidak terlihat di sini jika di luar blok for
+```
 
+  - `for k = 10, 1, -2 do ... end`: Variabel `k` akan mulai dari 10, dan setiap iterasi nilainya dikurangi 2, hingga mencapai atau melewati 1.
+  -  Jadi, nilainya akan menjadi 10, 8, 6, 4, 2.
+  - Variabel kontrol (`i`, `k`) bersifat lokal untuk blok loop `for`.
 
--- Generic for loop
+- **Generic For Loop:**
+
+```lua
 print("--- Generic For Loop ---")
 local fruits = {"apple", "banana", "orange", "grape"}
 
@@ -469,7 +483,12 @@ end
 -- Index: 2 Fruit: banana
 -- Index: 3 Fruit: orange
 -- Index: 4 Fruit: grape
+```
 
+  - `local fruits = {"apple", "banana", "orange", "grape"}`: Sebuah tabel yang berperan sebagai array.
+  - `for index, fruit_name in ipairs(fruits) do ... end`: `ipairs(fruits)` adalah iterator yang mengembalikan indeks numerik dan nilai yang sesuai untuk setiap elemen dalam bagian array dari tabel `fruits`.
+  
+```lua
 local person_data = {name = "John Doe", age = 30, city = "Jakarta"}
 
 -- Menggunakan pairs (untuk semua key-value pairs dalam tabel)
@@ -481,7 +500,12 @@ end
 -- Key: name Value: John Doe
 -- Key: age Value: 30
 -- Key: city Value: Jakarta
+```
 
+  - `local person_data = {name = "John Doe", ...}`: Sebuah tabel yang berperan seperti dictionary atau map.
+  - `for key, value in pairs(person_data) do ... end`: `pairs(person_data)` adalah iterator yang mengembalikan pasangan kunci dan nilai untuk semua entri dalam tabel `person_data`. Urutan iterasi untuk `pairs` tidak dijamin untuk bagian non-array.
+
+```lua
 -- Contoh ipairs berhenti pada nil
 local mixed_table = {"a", "b", nil, "d"}
 print("ipairs dengan nil di tengah:")
@@ -490,17 +514,6 @@ for idx, val in ipairs(mixed_table) do
 end
 ```
 
-**Penjelasan Kode:**
-
-- **Numeric For Loop:**
-  - `for i = 1, 5 do ... end`: Variabel `i` akan mengambil nilai dari 1 hingga 5 (inklusif), dengan langkah 1 (default).
-  - `for k = 10, 1, -2 do ... end`: Variabel `k` akan mulai dari 10, dan setiap iterasi nilainya dikurangi 2, hingga mencapai atau melewati 1. Jadi, nilainya akan menjadi 10, 8, 6, 4, 2.
-  - Variabel kontrol (`i`, `k`) bersifat lokal untuk blok loop `for`.
-- **Generic For Loop:**
-  - `local fruits = {"apple", "banana", "orange", "grape"}`: Sebuah tabel yang berperan sebagai array.
-  - `for index, fruit_name in ipairs(fruits) do ... end`: `ipairs(fruits)` adalah iterator yang mengembalikan indeks numerik dan nilai yang sesuai untuk setiap elemen dalam bagian array dari tabel `fruits`.
-  - `local person_data = {name = "John Doe", ...}`: Sebuah tabel yang berperan seperti dictionary atau map.
-  - `for key, value in pairs(person_data) do ... end`: `pairs(person_data)` adalah iterator yang mengembalikan pasangan kunci dan nilai untuk semua entri dalam tabel `person_data`. Urutan iterasi untuk `pairs` tidak dijamin untuk bagian non-array.
   - `local mixed_table = {"a", "b", nil, "d"}`: `ipairs` akan berhenti ketika menemukan elemen `nil` pertama dalam urutan numerik. Jadi, ia hanya akan mengiterasi "a" dan "b".
 
 1.  **Numeric For Loop (Loop For Numerik):**
