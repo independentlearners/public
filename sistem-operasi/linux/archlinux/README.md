@@ -27,7 +27,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🧰 [2. Manajemen Paket & Ekosistem AUR](/wiki/Arch_User_Repository)
+## 🧰 [2. Manajemen Paket & Ekosistem AUR][2]
 
 * **Pacman (C)** — paket biner .pkg.tar.zst; `pacman -Syu`, repo sync, signing. Untuk memodifikasi: pelajari meson/ninja build, PKGBUILD (Bash), dan repos mirror. ([pacman.archlinux.page][2])
 * **AUR + helper** — konsep: build from PKGBUILD; contoh helper populer: `yay` (ditulis Go) dan `paru` (ditulis Rust). Gunakan helper hanya setelah memahami risiko upgrade parsial. ([GitHub][4])
@@ -37,7 +37,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## ⚙️ [3. Kernel, Modul, dan Initramfs](/wiki/Kernel)
+## ⚙️ [3. Kernel, Modul, dan Initramfs][3]
 
 * **Kernel:** membangun kernel custom (config, make, tools), menambahkan patch, menulis modul kernel (C). ([Wikipedia][1])
 * **Modul:** `modprobe`, `lsmod`, `depmod`; menulis modul kernel memerlukan toolchain (gcc, make), headers, dan peralatan debugging (dmesg, kgdb).
@@ -47,7 +47,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🛎️ [4. systemd & Manajemen Layanan](/wiki/Systemd)
+## 🛎️ [4. systemd & Manajemen Layanan][4]
 
 * Pelajari `systemctl`, unit files (service, timer, socket), dependency graph, masking/enabling.
 * Logging: `journalctl` (journald), konfigurasi retention/ratelimit.
@@ -67,7 +67,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🔐 [6. Keamanan & Hardening](/wiki/Security)
+## 🔐 [6. Keamanan & Hardening][6]
 
 * Pengguna & hak akses: `sudo`, polkit rule.
 * Kernel hardening: grsecurity (historis), sysctl tuning, seccomp, AppArmor/SELinux (opsional).
@@ -78,7 +78,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🌐 [7. Jaringan & Layanan Jaringan](/wiki/Network_configuration)
+## 🌐 [7. Jaringan & Layanan Jaringan][7]
 
 * Tools: NetworkManager, systemd-networkd, `iwctl` (iwd), `nmcli`.
 * Server services: SSH, web server, reverse proxy, DNS (systemd-resolved vs resolvconf).
@@ -88,7 +88,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🐳 [8. Virtualisasi & Containerization](/wiki/Virtualization)
+## 🐳 [8. Virtualisasi & Containerization][8]
 
 * Pilihan: KVM/QEMU, libvirt, Docker, Podman.
 * Building reproducible dev env: containers, system images, chroots with `arch-chroot` & build chroots for packages.
@@ -97,7 +97,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🧾 [9. Logging, Monitoring & Observability](/wiki/System_monitoring)
+## 🧾 [9. Logging, Monitoring & Observability][9]
 
 * Tools: `journalctl`, `top/htop`, `iotop`, `perf`, `sar`, `prometheus` + `node_exporter`.
 * Collection: logging forwarding, persistent journal, logrotate.
@@ -106,7 +106,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🧩 [10. Troubleshooting & Recovery](/wiki/System_maintenance)
+## 🧩 [10. Troubleshooting & Recovery][10]
 
 * Emergency: `journalctl -b -1`, `systemctl --failed`, `mkinitcpio` rebuild, chroot recovery via live ISO.
 * Kernel oops / panics: read dmesg, `kdump` optional.
@@ -116,7 +116,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🎨 [11. Kustomisasi Desktop, WM & Dotfiles](/wiki/Dotfiles)
+## 🎨 [11. Kustomisasi Desktop, WM & Dotfiles][11]
 
 **Tujuan:** membuat lingkungan personal yang konsisten, reproducible, portable (dotfiles repo).
 
@@ -149,7 +149,7 @@ Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **sete
 
 ---
 
-## 🧪 \[12. Workflow Dotfiles — Contoh Bootstrapping Minimal]
+## 🧪 [12. Workflow Dotfiles — Contoh Bootstrapping Minimal][12]
 
 **Contoh pendek (bare repo):**
 
@@ -172,7 +172,7 @@ stow alacritty sway nvim
 
 ---
 
-## 🚦 \[13. Roadmap Pembelajaran — Level & Capabilities]
+## 🚦 [13. Roadmap Pembelajaran — Level & Capabilities][13]
 
 Berikut milestone yang membuat progres terukur dari *pasca-instalasi* → *mahir* → *pembuat dotfiles/kustom*.
 
@@ -198,7 +198,7 @@ Berikut milestone yang membuat progres terukur dari *pasca-instalasi* → *mahir
 
 ---
 
-## 📚 \[14. Referensi Inti & Sumber Cepat]
+## 📚 [14. Referensi Inti & Sumber Cepat][14]
 
 * Pacman (detail & tips). ([pacman.archlinux.page][2])
 * Mkinitcpio (initramfs). ([ArchWiki][3])
@@ -382,8 +382,17 @@ arch-chroot /mnt
 
 [0]: ../../README.md     
 [1]: ./../archlinux/arsitektur-sistem/README.md
-[2]: ./bagian-2/README.md
-[3]: ./bagian-3/README.md
+[2]: ./
+[3]: ./
 [4]: ./
-[5]:./filesystem/README.md
+[5]: ./filesystem/README.md
+[6]: ./
+[7]: ./
+[8]: ./
+[9]: ./
+[10]: ./
+[11]: ./
+[12]: ./
+[13]: ./
+[14]: ./
 [install]: ../../linux/archlinux/instalasi/README.md

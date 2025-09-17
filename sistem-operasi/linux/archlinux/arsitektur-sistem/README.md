@@ -1,4 +1,6 @@
-# Analisis Komprehensif Arsitektur Sistem dan Komponen Inti Arch Linux
+> Analisis Komprehensif 
+
+# Arsitektur Sistem dan Komponen Inti Arch Linux
 
 Abstrak Laporan ini mengkaji secara mendalam arsitektur dan komponen inti dari distribusi Arch Linux, dengan fokus pada filosofi desain, mekanisme kerja tingkat rendah, dan ekosistem perangkat lunaknya. Penelitian ini menguraikan bagaimana prinsip-prinsip inti seperti KISS (Keep It Simple, Stupid) dan sentrisitas pengguna termanifestasi dalam setiap aspek sistem, mulai dari proses booting yang transparan hingga manajemen paket yang modular.
 

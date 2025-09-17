@@ -1,6 +1,6 @@
 # Distribusi & Kernel
 
-# Arsitektur Kernel dan Ekosistem Distribusi Linux
+**Arsitektur Kernel dan Ekosistem Distribusi Linux**
 
 Kernel, sebagai inti dari sebuah sistem operasi, memegang peran fundamental sebagai jembatan yang tak terlihat antara perangkat keras fisik dan perangkat lunak aplikasi. Laporan ini menguraikan secara mendalam konsep kernel dan hubungannya dengan ekosistem distribusi Linux. Fokus utama diletakkan pada arsitektur monolitik modern dari Kernel Linux, yang meskipun tergolong tradisional, telah berevolusi menjadi model modular dan sangat adaptif. Analisis terperinci mencakup mekanisme internal kernel, seperti manajemen memori melalui virtual addressing dan paging, serta penjadwalan proses yang adil (Completely Fair Scheduler atau CFS). Selain itu, laporan ini mengidentifikasi tren pengembangan terkini, termasuk adopsi bahasa pemrograman Rust untuk meningkatkan keamanan memori dan penggunaan teknologi Extended Berkeley Packet Filter (eBPF) untuk meningkatkan observability dan programmability kernel tanpa mengorbankan stabilitas. Perbandingan dengan sistem operasi alternatif, seperti Windows dan macOS, juga disajikan untuk menempatkan Linux dalam lanskap komputasi yang lebih luas. Secara keseluruhan, laporan ini menunjukkan bahwa adaptabilitas dan sifat open source Kernel Linux telah menjadikannya fondasi yang tangguh dan terus berkembang bagi infrastruktur digital global.
 
