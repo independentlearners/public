@@ -440,7 +440,18 @@ Lua memiliki dua jenis loop `for`: numerik dan generik.
 
 **Contoh Dan Penjelasan Kode:**
 
-- **Numeric For Loop:**
+1.  **Numeric For Loop (Loop For Numerik):**
+
+    - **Deskripsi:** Digunakan untuk mengulang blok kode sejumlah tertentu kali. Loop ini menggunakan variabel kontrol yang secara otomatis diinisialisasi dan diinkrementasi (atau didekrementasi).
+    - **Sintaks:** `for variabel = awal, akhir, langkah do ... end`
+      - `variabel`: Variabel kontrol loop (bersifat lokal untuk loop). Nilainya tidak boleh diubah secara manual di dalam loop.
+      - `awal`: Nilai awal variabel kontrol.
+      - `akhir`: Batas akhir variabel kontrol. Loop berlanjut selama variabel belum melewati batas ini (tergantung `langkah`).
+      - `langkah` (opsional): Nilai penambahan/pengurangan untuk variabel kontrol setiap iterasi. Defaultnya adalah `1`.
+    - **Implementasi dalam Neovim:** Iterasi melalui rentang angka, misalnya, memproses baris dari nomor X hingga Y dalam buffer.
+    - **Sumber Dokumentasi Lua:**
+      - Lua 5.1 Reference Manual (Numeric For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
+      - Programming in Lua, 1st ed. (Numeric for): [https://www.lua.org/pil/4.3.4.html](https://www.lua.org/pil/4.3.4.html)
 
 ```lua
 print("--- Numeric For Loop ---")
@@ -467,7 +478,22 @@ end
   -  Jadi, nilainya akan menjadi 10, 8, 6, 4, 2.
   - Variabel kontrol (`i`, `k`) bersifat lokal untuk blok loop `for`.
 
-- **Generic For Loop:**
+-----
+
+2.  **Generic For Loop (Loop For Generik):**
+
+    - **Deskripsi:** Digunakan untuk melakukan iterasi atas koleksi nilai, seperti elemen dalam tabel. Loop ini bekerja dengan fungsi _iterator_. Fungsi iterator dipanggil pada setiap iterasi untuk menghasilkan nilai berikutnya dari koleksi.
+    - **Sintaks:** `for var_1, ..., var_n in explist do ... end`
+      - `explist` dievaluasi sekali. Hasilnya harus berupa tiga nilai: fungsi iterator, _state_ (keadaan), dan nilai awal untuk variabel kontrol pertama.
+      - Lua menyediakan beberapa fungsi iterator bawaan, yang paling umum adalah:
+        - `ipairs(t)`: Untuk iterasi atas elemen array dalam tabel `t` (indeks numerik berurutan mulai dari 1). Berhenti pada indeks `nil` pertama. Mengembalikan indeks dan nilai.
+        - `pairs(t)`: Untuk iterasi atas semua elemen (pasangan kunci-nilai) dalam tabel `t`, termasuk bagian array dan bagian _hash_. Urutan iterasi tidak ditentukan untuk bagian _hash_. Mengembalikan kunci dan nilai.
+    - **Implementasi dalam Neovim:** Sangat umum digunakan untuk mengiterasi item konfigurasi dalam tabel, hasil dari fungsi API Neovim (yang sering mengembalikan tabel), baris-baris dalam buffer, daftar plugin, dll.
+    - **Sumber Dokumentasi Lua:**
+      - Lua 5.1 Reference Manual (Generic For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
+      - Lua 5.1 Reference Manual (`ipairs`, `pairs`): [https://www.lua.org/manual/5.1/manual.html\#5.1](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%235.1)
+      - Programming in Lua, 1st ed. (Generic for): [https://www.lua.org/pil/4.3.5.html](https://www.lua.org/pil/4.3.5.html)
+      - Programming in Lua, 1st ed. (Iterators and Generic for): [https://www.lua.org/pil/7.html](https://www.lua.org/pil/7.html)
 
 ```lua
 print("--- Generic For Loop ---")
@@ -505,6 +531,8 @@ end
   - `local person_data = {name = "John Doe", ...}`: Sebuah tabel yang berperan seperti dictionary atau map.
   - `for key, value in pairs(person_data) do ... end`: `pairs(person_data)` adalah iterator yang mengembalikan pasangan kunci dan nilai untuk semua entri dalam tabel `person_data`. Urutan iterasi untuk `pairs` tidak dijamin untuk bagian non-array.
 
+-----
+
 ### Conceptual Breakdown: `ipairs` and `nil`
 
   - `local mixed_table = {"a", "b", nil, "d"}`: `ipairs` akan berhenti ketika menemukan elemen `nil` pertama dalam urutan numerik. Jadi, ia hanya akan mengiterasi "a" dan "b".
@@ -528,7 +556,7 @@ Perbedaan fundamental ini sangat penting dalam pengembangan perangkat lunak, ter
 
 ### In-Depth Code Analysis
 
-Mari kita bedah setiap baris dari contoh kode yang Anda berikan:
+Mari kita bedah setiap baris dari contoh kode diatas:
 
 ```lua
 local mixed_table = {"a", "b", nil, "d"}
@@ -596,34 +624,6 @@ else
     print("Error: The table is nil and cannot be accessed.")
 end
 ```
-
-1.  **Numeric For Loop (Loop For Numerik):**
-
-    - **Deskripsi:** Digunakan untuk mengulang blok kode sejumlah tertentu kali. Loop ini menggunakan variabel kontrol yang secara otomatis diinisialisasi dan diinkrementasi (atau didekrementasi).
-    - **Sintaks:** `for variabel = awal, akhir, langkah do ... end`
-      - `variabel`: Variabel kontrol loop (bersifat lokal untuk loop). Nilainya tidak boleh diubah secara manual di dalam loop.
-      - `awal`: Nilai awal variabel kontrol.
-      - `akhir`: Batas akhir variabel kontrol. Loop berlanjut selama variabel belum melewati batas ini (tergantung `langkah`).
-      - `langkah` (opsional): Nilai penambahan/pengurangan untuk variabel kontrol setiap iterasi. Defaultnya adalah `1`.
-    - **Implementasi dalam Neovim:** Iterasi melalui rentang angka, misalnya, memproses baris dari nomor X hingga Y dalam buffer.
-    - **Sumber Dokumentasi Lua:**
-      - Lua 5.1 Reference Manual (Numeric For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
-      - Programming in Lua, 1st ed. (Numeric for): [https://www.lua.org/pil/4.3.4.html](https://www.lua.org/pil/4.3.4.html)
-
-2.  **Generic For Loop (Loop For Generik):**
-
-    - **Deskripsi:** Digunakan untuk melakukan iterasi atas koleksi nilai, seperti elemen dalam tabel. Loop ini bekerja dengan fungsi _iterator_. Fungsi iterator dipanggil pada setiap iterasi untuk menghasilkan nilai berikutnya dari koleksi.
-    - **Sintaks:** `for var_1, ..., var_n in explist do ... end`
-      - `explist` dievaluasi sekali. Hasilnya harus berupa tiga nilai: fungsi iterator, _state_ (keadaan), dan nilai awal untuk variabel kontrol pertama.
-      - Lua menyediakan beberapa fungsi iterator bawaan, yang paling umum adalah:
-        - `ipairs(t)`: Untuk iterasi atas elemen array dalam tabel `t` (indeks numerik berurutan mulai dari 1). Berhenti pada indeks `nil` pertama. Mengembalikan indeks dan nilai.
-        - `pairs(t)`: Untuk iterasi atas semua elemen (pasangan kunci-nilai) dalam tabel `t`, termasuk bagian array dan bagian _hash_. Urutan iterasi tidak ditentukan untuk bagian _hash_. Mengembalikan kunci dan nilai.
-    - **Implementasi dalam Neovim:** Sangat umum digunakan untuk mengiterasi item konfigurasi dalam tabel, hasil dari fungsi API Neovim (yang sering mengembalikan tabel), baris-baris dalam buffer, daftar plugin, dll.
-    - **Sumber Dokumentasi Lua:**
-      - Lua 5.1 Reference Manual (Generic For): [https://www.lua.org/manual/5.1/manual.html\#2.4.6](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%232.4.6)
-      - Lua 5.1 Reference Manual (`ipairs`, `pairs`): [https://www.lua.org/manual/5.1/manual.html\#5.1](https://www.google.com/search?q=https://www.lua.org/manual/5.1/manual.html%235.1)
-      - Programming in Lua, 1st ed. (Generic for): [https://www.lua.org/pil/4.3.5.html](https://www.lua.org/pil/4.3.5.html)
-      - Programming in Lua, 1st ed. (Iterators and Generic for): [https://www.lua.org/pil/7.html](https://www.lua.org/pil/7.html)
 
 ---
 
