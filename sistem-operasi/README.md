@@ -1,6 +1,6 @@
 ﻿![](ikon.png) ![](nama.png)
 
-**Panduan Lengkap Mengenal Sistem Operasi**
+# **[Panduan Lengkap Mengenal Sistem Operasi][0]**
 
 Sistem operasi (OS) adalah **perangkat lunak sistem**  yang menjadi penghubung antara perangkat keras (hardware) dan perangkat lunak [(software) ](https://repository.unimal.ac.id/4073/1/BUKU%20sistem%20operasi%20PDF.pdf#:~:text=Pengertian%20sistem%20operasi%20secara%20umum,daya%20sistem%20komputer) [komputer](https://id.wikipedia.org/wiki/Sistem_operasi#:~:text=Sistem%20%20operasi%20,pada%20komputer%20mereka%2C%20kecuali%20booting). OS bertugas mengatur dan mengawasi semua sumber daya komputer – seperti prosesor, memori, disk, dan perangkat I/O sehingga aplikasi dapat berjalan [dengan ](https://repository.unimal.ac.id/4073/1/BUKU%20sistem%20operasi%20PDF.pdf#:~:text=Pengertian%20sistem%20operasi%20secara%20umum,daya%20sistem%20komputer) [lancar](https://repository.unimal.ac.id/4073/1/BUKU%20sistem%20operasi%20PDF.pdf#:~:text=dan%20para%20pengguna,program%20aplikasi%20serta%20para%20pengguna). Tanpa sistem operasi, pengguna tidak dapat menjalankan aplikasi apapun pada komputernya, karena OS-lah yang memuat program ke memori, menjadwalkan tugas, dan memberikan antarmuka [kepada](https://repository.unimal.ac.id/4073/1/BUKU%20sistem%20operasi%20PDF.pdf#:~:text=Pengertian%20sistem%20operasi%20secara%20umum,daya%20sistem%20komputer) [pengguna](https://id.wikipedia.org/wiki/Sistem_operasi#:~:text=Sistem%20%20operasi%20,pada%20komputer%20mereka%2C%20kecuali%20booting). Dengan kata lain, sistem operasi berperan seperti “pemerintah” dalam komputer, memastikan semua komponen (hardware) aplikasi pengguna bekerja sama secara [terkoordinasi](https://repository.unimal.ac.id/4073/1/BUKU%20sistem%20operasi%20PDF.pdf#:~:text=dan%20para%20pengguna,program%20aplikasi%20serta%20para%20pengguna).
 
@@ -431,3 +431,4 @@ Dengan model ini, kita bisa melihat bahwa:
 
 ---
 
+[0]: ./../README.md

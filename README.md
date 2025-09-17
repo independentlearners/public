@@ -68,7 +68,7 @@
 
   - **[🐧 Linux](https://independentlearners.github.io/public/sistem-operasi/linux/)**
 
-      - [Distribusi & Kernel](./sistem-operasi/linux/distro-dan-kernel/README.md)
+      - [Distribusi & Kernel](./sistem-operasi/linux/README.md)
       - [Manajemen File & Sistem](https://www.google.com/search?q=)
       - [Konfigurasi Shell & CLI](https://www.google.com/search?q=)
 
@@ -122,7 +122,7 @@
 </details>
 
 
-##### [📁 Daftar Lengkap](sistem-operasi/others/README.md) | [⮝ Archlinux ](./sistem-operasi/linux/README.md)
+##### [📁 Daftar Lengkap](sistem-operasi/others/README.md) | [⮝ Archlinux ](./sistem-operasi/linux/archlinux/README.md)
 
   - **[📁 Filesystem Arch Linux](sistem-operasi/linux/archlinux/README.md)**
   - **[🗜 Instalasi Arch Linux](sistem-operasi/linux/archlinux/instalasi/README.md)**

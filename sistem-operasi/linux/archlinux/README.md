@@ -1,266 +1,389 @@
-#  **[Peta lengkap semua folder penting di Linux/Unix-like (beserta fungsinya)][0]**
-Prasyarat:
+## 📘 [Ringkasan Tujuan Roadmap Post-Instalasi][0]
 
-  * **Pemahaman Dasar CLI:** Memahami cara membuka terminal dan menjalankan perintah dasar seperti `ls`, `cd`, dan `pwd`. Jika belum, mulailah dengan tutorial dasar Linux CLI terlebih dahulu.
-  * **Sistem Operasi:** Memiliki sistem operasi Linux/Unix-like terinstal (disarankan **Arch Linux** sesuai preferensi Anda).
+Dokumen ini menuntun pelajar dan praktisi TI memahami struktur Arch Linux **setelah** instalasi: mulai arsitektur OS, manajemen paket, layanan, konfigurasi kernel/module, sistem file, troubleshooting, hingga kustomisasi akhir (dotfiles & workflow). Dengan road map ini, Anda dapat bergerak dari **dasar → mahir → pembuat dotfiles kustom**.
 
-Alat Esensial:
+---
 
-  * **Terminal Emulator:** Aplikasi terminal default di Arch Linux (`xterm`, `alacritty`, `kitty`, atau `gnome-terminal` jika Anda menginstalnya)
-  * **Editor Teks CLI:** `Vim`, `Neovim`, atau `Nano` untuk mengedit file konfigurasi.
-  * **Shell:** Shell default Bash atau Zsh.
+> Struktur file ini berfokus pada *konsep* dan *kebutuhan pengembangan/modifikasi* tiap subsistem — bukan panduan instalasi. Jika anda adalah pelajar baru, klik [disini][install] untuk instalasi
 
-Hasil Pembelajaran (Learning Outcomes):
+## 📌 Ringkasan Tujuan
+- Memahami arsitektur inti: kernel, systemd, pacman, initramfs, udev.
+- Mengelola paket & AUR, membangun PKGBUILD, dan menyiapkan repo pribadi.
+- Menulis modul kernel sederhana dan menyesuaikan initramfs (mkinitcpio).
+- Mengelola systemd units, logging (journald), dan troubleshooting boot.
+- Menyusun dotfiles reproducible: metode bare git, GNU Stow, chezmoi.
+- Menyusun pipeline bootstrap (install.sh) untuk provisioning cepat.
 
-Setelah menyelesaikan kurikulum ini, Anda akan:
+## 🧭 [1. Gambaran Arsitektur Sistem / Komponen Inti][1]
 
-  * Memahami struktur hierarki filesystem Linux/Unix-like secara mendalam, termasuk filosofi di baliknya.
-  * Mampu menavigasi, mengelola, dan memodifikasi file serta direktori dengan efisien menggunakan perintah-perintah CLI.
-  * Mengidentifikasi fungsi dan peran dari setiap direktori penting, dari `/bin` hingga `/var`.
-  * Mampu mendiagnosis masalah umum terkait filesystem dan menemukan file penting dengan cepat.
-  * Memiliki fondasi kuat untuk melangkah ke tingkat **superuser** (administrator sistem) dan mengelola sistem Linux secara profesional.
+**Inti yang harus dipahami:** kernel Linux (ringkasan subsistem), init (systemd), manajer paket (pacman), initramfs (mkinitcpio), modul kernel, udev, systemd-units, dan userland (coreutils, glibc/musl).
+
+* **Kernel Linux** — bahasa: *C* (dengan bagian kecil Rust); memahami subsistem: process scheduler, memory, VFS, drivers. ([Wikipedia][1])
+* **systemd** — bahasa: *C* — memahami unit types (.service, .socket, .mount), targets, journald.
+* **pacman** — bahasa implementasi inti: *C*; memahami repos, DB paket, dan makepkg/PKGBUILD. ([pacman.archlinux.page][2])
+* **mkinitcpio** — *Bash* script yang membuat initramfs; pahami hooks dan hooks custom. ([ArchWiki][3])
+
+**Persyaratan dev/modifikasi:** C (native), Bash, sistem build (meson/ninja, autotools), git, knowledge of system calls & kernel APIs, dan pengalaman chroot/container untuk pengujian.
+
+---
+
+## 🧰 [2. Manajemen Paket & Ekosistem AUR](/wiki/Arch_User_Repository)
+
+* **Pacman (C)** — paket biner .pkg.tar.zst; `pacman -Syu`, repo sync, signing. Untuk memodifikasi: pelajari meson/ninja build, PKGBUILD (Bash), dan repos mirror. ([pacman.archlinux.page][2])
+* **AUR + helper** — konsep: build from PKGBUILD; contoh helper populer: `yay` (ditulis Go) dan `paru` (ditulis Rust). Gunakan helper hanya setelah memahami risiko upgrade parsial. ([GitHub][4])
+* **Membuat paket & PKGBUILD:** struktur, `pkgbuild` fields, `makepkg`, sign package, menyiapkan repo pribadi.
+
+**Persyaratan dev/modifikasi:** Bash (PKGBUILD), C/C++/lang proyek target, Git, GPG (signing), pemahaman dependency tree dan versi ABI/SONAME.
+
+---
+
+## ⚙️ [3. Kernel, Modul, dan Initramfs](/wiki/Kernel)
+
+* **Kernel:** membangun kernel custom (config, make, tools), menambahkan patch, menulis modul kernel (C). ([Wikipedia][1])
+* **Modul:** `modprobe`, `lsmod`, `depmod`; menulis modul kernel memerlukan toolchain (gcc, make), headers, dan peralatan debugging (dmesg, kgdb).
+* **Initramfs (mkinitcpio — Bash):** menulis hook custom, menyesuaikan preset, men-debug boot-time issues lewat `mkinitcpio -p`. ([ArchWiki][3])
+
+**Persyaratan:** toolchain kernel (gcc/clang), make, git, pengalaman C sistem, dan lingkungan pengujian (VM).
+
+---
+
+## 🛎️ [4. systemd & Manajemen Layanan](/wiki/Systemd)
+
+* Pelajari `systemctl`, unit files (service, timer, socket), dependency graph, masking/enabling.
+* Logging: `journalctl` (journald), konfigurasi retention/ratelimit.
+* Unit testing: `systemd-analyze blame`, `systemd-run --user`.
+
+**Identitas teknis:** systemd ditulis C, berinteraksi via D-Bus; untuk berkontribusi butuh C & pemahaman D-Bus.
+
+---
+
+## 🗄️ [5. Filesystems, Mounting & Btrfs/LVM/LUKS][5]
+
+* Pahami `/etc/fstab`, systemd .mount units, fstab options.
+* Filesystem modern: ext4, btrfs (subvolumes, snapshots), XFS, F2FS.
+* Enkripsi: LUKS, luks2, header backup; integration with initramfs.
+
+**Persyaratan:** pemahaman filesystem semantics, tooling: `cryptsetup`, `lvm2`, `btrfs-progs`.
+
+---
+
+## 🔐 [6. Keamanan & Hardening](/wiki/Security)
+
+* Pengguna & hak akses: `sudo`, polkit rule.
+* Kernel hardening: grsecurity (historis), sysctl tuning, seccomp, AppArmor/SELinux (opsional).
+* Package & repo security: verify signatures, `pacman-key`, reproducible builds.
+* Network hardening: `iptables`/`nftables`, firewalls, `fail2ban`.
+
+**Persyaratan:** penguasaan jaringan, konsep ACL, kerangka kebijakan (AppArmor/SELinux), kriptografi dasar.
+
+---
+
+## 🌐 [7. Jaringan & Layanan Jaringan](/wiki/Network_configuration)
+
+* Tools: NetworkManager, systemd-networkd, `iwctl` (iwd), `nmcli`.
+* Server services: SSH, web server, reverse proxy, DNS (systemd-resolved vs resolvconf).
+* Container networking & bridging (bridge, macvlan).
+
+**Persyaratan:** TCP/IP, routing, VLAN, netfilter, systemd-networkd YAML-like config, knowledge of DNS/TLS.
+
+---
+
+## 🐳 [8. Virtualisasi & Containerization](/wiki/Virtualization)
+
+* Pilihan: KVM/QEMU, libvirt, Docker, Podman.
+* Building reproducible dev env: containers, system images, chroots with `arch-chroot` & build chroots for packages.
+
+**Persyaratan:** kernel modules (kvm), qemu tools, OCI knowledge, container registries, image building pipelines.
+
+---
+
+## 🧾 [9. Logging, Monitoring & Observability](/wiki/System_monitoring)
+
+* Tools: `journalctl`, `top/htop`, `iotop`, `perf`, `sar`, `prometheus` + `node_exporter`.
+* Collection: logging forwarding, persistent journal, logrotate.
+
+**Persyaratan:** familiarity with metrics, time series DB, alerting rules (Prometheus Alertmanager).
+
+---
+
+## 🧩 [10. Troubleshooting & Recovery](/wiki/System_maintenance)
+
+* Emergency: `journalctl -b -1`, `systemctl --failed`, `mkinitcpio` rebuild, chroot recovery via live ISO.
+* Kernel oops / panics: read dmesg, `kdump` optional.
+* Pacman troubleshooting: DB lock, partial upgrades, `pacman -Qk`, `pacman -Syyu` when mirror changed. ([pacman.archlinux.page][2])
+
+**Persyaratan:** debugging skills, ability to read logs, create minimal reproducer (VM).
+
+---
+
+## 🎨 [11. Kustomisasi Desktop, WM & Dotfiles](/wiki/Dotfiles)
+
+**Tujuan:** membuat lingkungan personal yang konsisten, reproducible, portable (dotfiles repo).
+
+* Struktur rekomendasi dotfiles:
+
+  ```
+  dotfiles/
+  ├─ README.md
+  ├─ .gitignore
+  ├─ home/
+  │  ├─ .zshrc
+  │  ├─ .config/
+  │  │  ├─ sway/
+  │  │  ├─ alacritty/
+  │  │  └─ nvim/
+  ├─ stow/ (optional)
+  ├─ scripts/
+  └─ install.sh (bootstrap)
+  ```
+* Teknik manajemen dotfiles:
+
+  * **Bare Git repo** (git --git-dir \~/dotfiles/ --work-tree=\$HOME) — populer, simple.
+  * **GNU Stow** — untuk symlink management per package.
+  * **chezmoi** — templating, secret management, OS-aware.
+  * **Ansible/Makefile** untuk provisioning host baru.
+* **Best practices:** jangan versi file berisi secrets (use .gitignore, pass, gpg encryption), buat installer idempotent, pisahkan host-specific config (hosts/hostname/\*).
+* **Testing:** gunakan container/VM untuk menguji installer dan symlink tanpa merusak environment utama.
+
+**Persyaratan:** Git, shell scripting (Bash/Zsh), knowledge symlink, basic Makefile, optional: Go/Rust/Python untuk custom tools.
+
+---
+
+## 🧪 \[12. Workflow Dotfiles — Contoh Bootstrapping Minimal]
+
+**Contoh pendek (bare repo):**
+
+```bash
+# in $HOME
+git init --bare $HOME/.cfg
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+config config --local status.showUntrackedFiles no
+config remote add origin git@github.com:username/dotfiles.git
+config pull origin main
+```
+
+**Jika ingin pake GNU Stow:**
+
+```bash
+# struktur: dotfiles/stow/alacritty -> ~/.config/alacritty
+cd ~/dotfiles
+stow alacritty sway nvim
+```
+
+---
+
+## 🚦 \[13. Roadmap Pembelajaran — Level & Capabilities]
+
+Berikut milestone yang membuat progres terukur dari *pasca-instalasi* → *mahir* → *pembuat dotfiles/kustom*.
+
+**Level: Fundamental (Dasar pasca-instalasi)**
+
+* Tujuan: sistem stabil, update aman, user management, backup.
+* Kuasai: pacman dasar, systemd units, journald, simple dotfiles.
+
+**Level: Menengah**
+
+* Tujuan: kustom kernel/modules dasar, packaging sederhana (PKGBUILD), automasi dotfiles (stow/chezmoi).
+* Kuasai: PKGBUILD structure, makepkg, building from ABS, unit files custom, LUKS basics.
+
+**Level: Lanjutan (Mahir)**
+
+* Tujuan: membuat paket repo sendiri, build kernel, mempatch module, advanced systemd units, reproducible dev env (Nix/containers optional).
+* Kuasai: C for kernel/modules, meson/ninja/autotools, chroot build envs, CI for package building.
+
+**Level: Pengembang/Contributor (Expert)**
+
+* Tujuan: kontribusi ke pacman/mkinitcpio/systemd, maintain AUR populer, membangun distro spin.
+* Kuasai: proyek source code besar (C), code review, maintainers workflow, secure package signing pipeline.
+
+---
+
+## 📚 \[14. Referensi Inti & Sumber Cepat]
+
+* Pacman (detail & tips). ([pacman.archlinux.page][2])
+* Mkinitcpio (initramfs). ([ArchWiki][3])
+* Kernel Linux overview. ([Wikipedia][1])
+* Yay (AUR helper — Go). ([GitHub][4])
+* Paru (AUR helper — Rust). ([OSTechNix][5])
+
+> Catatan: tautan yang saya cantumkan di setiap judul mereferensikan halaman rujukan (Arch Wiki atau proyek resmi) — buka judul jika Anda ingin baca langsung dokumentasi mendetail.
+
+---
+
+## ✅ Checklist Praktis Pasca-Instalasi (Ringkas)
+
+* [ ] Setup `pacman.conf` mirrors & enable multilib (jika perlu).
+* [ ] Atur keyring & `pacman-key --init && pacman-key --populate archlinux`.
+* [ ] Pasang AUR helper (opsional) setelah paham risikonya (yay/paru). ([GitHub][4])
+* [ ] Konfigurasikan `mkinitcpio.conf` bila memakai LUKS/RAID; rebuild initramfs. ([ArchWiki][3])
+* [ ] Buat dotfiles repo (bare/stow/chezmoi) dan skrip bootstrap.
+* [ ] Tambah monitoring sederhana (htop, glances, journal retention).
+
+---
+
+## 🔎 Tips akhir & filosofi belajar
+
+* Pelajari **satu subsistem** sampai Anda dapat mereparasinya (mis. systemd units + journald).
+* Selalu simpan konfigurasi penting (fstab, crypttab, mkinitcpio presets) di dotfiles/private atau dokumentasi offline.
+* Praktikkan membuat reproducible environment (container/VM) sebelum menerapkan perubahan besar di host produksi.
+
+---
+
+[kernel]: https://en.wikipedia.org/wiki/Linux_kernel?utm_source=chatgpt.com "Linux kernel"
+[archlinux]: https://pacman.archlinux.page/?utm_source=chatgpt.com "Pacman Home Page"
+[wiki]: https://wiki.archlinux.org/title/Mkinitcpio?utm_source=chatgpt.com "mkinitcpio - ArchWiki - Arch Linux"
+[github]: https://github.com/Jguer/yay?utm_source=chatgpt.com "Jguer/yay: Yet another Yogurt - An AUR Helper written in Go"
+[ostechnix]: https://ostechnix.com/how-to-install-paru-aur-helper-in-arch-linux/?utm_source=chatgpt.com "How To Install Paru AUR Helper In Arch Linux"
+
+<!--
+## 📂 [Pendahuluan](https://wiki.archlinux.org/title/Arch_Linux)
+
+Arch Linux adalah distribusi GNU/Linux dengan filosofi **KISS (Keep It Simple, Stupid)**, bersifat **rolling release**, dan mengutamakan dokumentasi melalui [Arch Wiki](https://wiki.archlinux.org/).
+
+---
+
+## 💿 [Persiapan Instalasi](https://wiki.archlinux.org/title/Installation_guide)
+
+* Persyaratan perangkat keras minimum
+* Media instalasi (ISO, USB Bootable)
+* Mode BIOS vs UEFI
+* Skema partisi dasar: `/boot`, `/boot/efi`, `swap`, `/`, `/home`
+* Tools partisi: `fdisk`, `cfdisk`, `parted`, `gparted`
+
+---
+
+## ⚡ [Instalasi Dasar](https://wiki.archlinux.org/title/Installation_guide)
+
+Perintah utama:
+
+```bash
+pacstrap /mnt base linux linux-firmware
+genfstab -U /mnt >> /mnt/etc/fstab
+arch-chroot /mnt
+```
+
+* Konfigurasi waktu, locale, hostname
+* Atur password root
+
+---
+
+## 🌀 [Bootloader](https://wiki.archlinux.org/title/Boot_loader)
+
+* Pilihan: GRUB, systemd-boot, rEFInd
+* Konfigurasi GRUB (tema, ASCII art, deteksi Windows)
+* Urutan instalasi dual boot → **Windows → Linux**
+* Troubleshooting jika boot gagal
+
+---
+
+## 🧩 [Kernel & Initramfs](https://wiki.archlinux.org/title/Kernel)
+
+* Jenis kernel: `linux`, `linux-lts`, `linux-hardened`, `zen`
+* File penting di `/boot`: `vmlinuz`, `initramfs`, `microcode`
+* Manajemen dengan `mkinitcpio`
+
+---
+
+## 🖥️ [Lingkungan Sistem](https://wiki.archlinux.org/title/Systemd)
+
+* Init system: systemd
+* Manajemen service: `systemctl`
+* Journald (log sistem)
+* User & grup (`useradd`, `usermod`, `sudo`)
+* Pilihan shell: bash, zsh, fish
+
+---
+
+## 📦 [Manajemen Paket](https://wiki.archlinux.org/title/Pacman)
+
+* Pacman: instal, upgrade, hapus paket
+* Konfigurasi `/etc/pacman.conf`
+* Mirrors & `reflector`
+* AUR (Arch User Repository): yay, paru, trizen
+* Membuat PKGBUILD
+
+---
+
+## 🎨 [Desktop & Window Manager](https://wiki.archlinux.org/title/Desktop_environment)
+
+* DE: GNOME, KDE, XFCE, Cinnamon
+* WM: i3, Sway, bspwm, dwm
+* Display Manager: GDM, LightDM, Ly
+* Konfigurasi multi-monitor
+
+---
+
+## 🌐 [Jaringan](https://wiki.archlinux.org/title/Network_configuration)
+
+* NetworkManager vs systemd-networkd
+* Wi-Fi: `iwctl`, `nmcli`
+* VPN setup
+* Firewall: `ufw`, `iptables`, `nftables`
+
+---
+
+## 🔋 [Power Management](https://wiki.archlinux.org/title/Power_management/Suspend_and_hibernate)
+
+* Suspend, Hibernate, Hybrid Sleep
+* Swapfile vs Swap Partition
+* Tools: `tlp`, `powertop`
+* Optimasi laptop
+
+---
+
+## 🛠️ [Perangkat Keras](https://wiki.archlinux.org/title/Hardware)
+
+* GPU: NVIDIA, AMD, Intel
+* Audio: ALSA, PulseAudio, PipeWire
+* Printer & scanner: CUPS, sane
+* Input device: touchpad, stylus
+
+---
+
+## 🔧 [Maintenance & Troubleshooting](https://wiki.archlinux.org/title/System_maintenance)
+
+* Update sistem (`pacman -Syu`)
+* Downgrade paket
+* Backup: `rsync`, Timeshift, Snapper (btrfs)
+* Recovery mode dengan live ISO
+* Emergency shell (initramfs error)
+
+---
+
+## 🎭 [Kustomisasi](https://wiki.archlinux.org/title/Color_output_in_console)
+
+* Konfigurasi shell prompt
+* Menampilkan teks otomatis di zsh/bash
+* Fastfetch/Neofetch untuk info sistem
+* ASCII art di terminal
+* Modifikasi tampilan bootloader & login manager
+
+---
+
+## 📘 [Advanced Topics](https://wiki.archlinux.org/title/General_recommendations)
+
+* Kernel custom & patching
+* Secure Boot
+* Virtualisasi: KVM, QEMU, Docker, Podman
+* Cross-compiling
+* Hardening Arch Linux
+
+---
+
+## 📖 [Referensi Tambahan]()
+
+* 📜 Arch Wiki – [Installation Guide](https://wiki.archlinux.org/title/Installation_guide)
+* 📜 Arch Wiki – [Pacman](https://wiki.archlinux.org/title/Pacman)
+* 📜 Arch Wiki – [Dual boot with Windows](https://wiki.archlinux.org/title/Dual_boot_with_Windows)
+* 📜 Microsoft Docs – [Partition Layout](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/configure-uefigpt-based-hard-drive-partitions)
 
 -----
-
-### **[Fase 1: Fundamental — Memahami Peta Jalan (Beginner)][1]**
-
-**Waktu Estimasi:** 10-15 jam
-
-Fase ini adalah fondasi yang akan memberikan Anda pemahaman holistik tentang mengapa filesystem Linux diatur seperti itu dan memperkenalkan Anda pada direktori paling penting yang akan sering Anda temui.
-
-#### **Modul 1: Filosofi Hierarki Filesystem (Filesystem Hierarchy Standard/FHS)**
-
-1.  **Deskripsi Konkret:** Anda akan mempelajari filosofi dan standar di balik penataan direktori di Linux/Unix-like. Ini bukan hanya tentang menghafal nama-nama folder, tetapi memahami alasan di balik strukturnya.
-
-2.  **Konsep Dasar dan Filosofi:** FHS adalah standar yang mendefinisikan direktori utama dan isinya di sistem operasi Linux. Tujuannya adalah untuk menjaga konsistensi di antara berbagai distribusi, sehingga administrator sistem dan pengembang tahu persis di mana mereka akan menemukan file yang mereka butuhkan. Filosofi utamanya adalah **"semuanya adalah file"** dan **pemisahan file yang dapat dibagikan (shareable) dari yang tidak dapat dibagikan (unshareable)**, serta **data statis dari data dinamis**.
-
-3.  **Sintaks Dasar/Contoh:**
-
-    ```bash
-    # Perintah untuk melihat semua direktori di root
-    ls -l /
-    ```
-
-4.  **Terminologi Kunci:**
-
-      * **Root Directory (`/`):** Direktori paling atas atau pangkal dari seluruh pohon filesystem. Semua direktori dan file lainnya berada di dalamnya. Ini berbeda dengan `root` user.
-      * **Filesystem Hierarchy Standard (FHS):** Standar yang mengatur struktur direktori utama di Linux.
-      * **Mount Point:** Direktori tempat sistem file lain (misalnya, partisi hard disk atau flash drive USB) dipasang.
-      * **Shared vs. Unshared Data:** Data yang dapat diakses oleh beberapa sistem (misalnya, file biner program) versus data yang spesifik untuk satu host (misalnya, file konfigurasi `/etc`).
-      * **Static vs. Dynamic Data:** Data yang tidak berubah tanpa campur tangan administrator (misalnya, file biner `/bin`) versus data yang terus berubah saat sistem berjalan (misalnya, log `/var/log`).
-
-5.  **Daftar Isi:**
-
-      * Apa itu Filesystem Hierarchy Standard (FHS)?
-      * Filosofi "Semuanya adalah File".
-      * Pemisahan Direktori `bin`, `lib`, dan `usr`.
-      * Perbedaan antara Data Statis, Dinamis, dan Data yang Dapat Dibagikan.
-
-6.  **Sumber Referensi:**
-
-      * [Filesystem Hierarchy Standard (FHS) - Official Documentation](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html)
-      * [Linux Foundation FHS Introduction](https://www.linuxfoundation.org/blog/2012/03/the-linux-filesystem-hierarchy-primer/)
-
------
-
-#### **Modul 2: Direktori Esensial Tingkat Tinggi**
-
-1.  **Deskripsi Konkret:** Anda akan memahami peran dari direktori-direktori inti yang berada di tingkat root (`/`) dan menjadi tulang punggung sistem.
-
-2.  **Konsep Dasar:** Direktori ini adalah "pusat komando" dari sistem Linux. Setiap direktori memiliki fungsi khusus yang tidak boleh dilanggar untuk menjaga stabilitas sistem.
-
-3.  **Sintaks Dasar/Contoh:**
-
-      * Menjelajahi direktori `/etc`: `ls /etc`
-      * Melihat file biner: `ls /bin`
-      * Melihat informasi proses: `ls /proc`
-
-4.  **Terminologi Kunci:**
-
-      * **`/bin` (Binaries):** Berisi perintah-perintah biner (executable) penting untuk boot dan fungsionalitas dasar sistem. Contoh: `ls`, `cp`, `mv`.
-      * **`/etc` (Et cetera):** Tempat menyimpan file konfigurasi sistem yang tidak dapat dibagikan. Contoh: `passwd`, `fstab`, `bash.bashrc`.
-      * **`/home` (Home Directories):** Direktori pribadi untuk setiap pengguna non-root. Contoh: `/home/username`.
-      * **`/root`:** Direktori home untuk pengguna `root`.
-      * **`/usr` (Unix System Resources):** Berisi file-file yang dapat dibagikan, termasuk biner dan library tambahan yang diinstal oleh pengguna. Contoh: `bin`, `lib`, `share`.
-      * **`/var` (Variable):** Berisi file-file yang isinya sering berubah selama sistem berjalan. Contoh: `log`, `mail`, `tmp`.
-
-5.  **Daftar Isi:**
-
-      * Penjelasan `/bin`, `/sbin`, dan `/lib`.
-      * Peran `/etc` sebagai pusat konfigurasi.
-      * Memahami `/home` dan `/root`.
-      * Fungsi `/usr`, `/var`, `/tmp`.
-
-6.  **Sumber Referensi:**
-
-      * [A Detailed Guide to Linux Filesystem Structure](https://www.geeksforgeeks.org/linux-file-system-structure/)
-      * [A Tour of the Linux Filesystem - How-To Geek](https://www.howtogeek.com/117435/htg-explains-the-linux-directory-structure-explained/)
-
------
-
-### **[Fase 2: Navigasi dan Modifikasi — Menguasai Peta (Intermediate)][2]**
-
-**Waktu Estimasi:** 15-20 jam
-
-Fase ini akan membawa Anda dari hanya "mengetahui" direktori menjadi "mengelola" dan "memahami" isinya secara lebih mendalam, termasuk navigasi yang efisien dan konsep penting lainnya.
-
-#### **Modul 3: Navigasi dan Manajemen Filesystem Tingkat Lanjut**
-
-1.  **Deskripsi Konkret:** Modul ini akan memperdalam kemampuan Anda dalam menavigasi direktori dan memanipulasi file menggunakan perintah-perintah CLI.
-
-2.  **Konsep Dasar:** Meskipun perintah dasar sudah dikenal, modul ini akan membahas opsi-opsi lanjutan yang membuat pekerjaan lebih efisien. Misalnya, memahami `.` dan `..` secara lebih dalam atau menggunakan `tree` untuk visualisasi.
-
-3.  **Sintaks Dasar/Contoh:**
-
-      * Menggunakan `find` untuk mencari file: `find / -name "filename.txt"`
-      * Melihat penggunaan disk: `df -h`
-      * Membuat file dan direktori: `mkdir -p /path/to/new/dir && touch /path/to/new/dir/file.txt`
-      * Visualisasi struktur direktori: `tree /etc`
-
-4.  **Terminologi Kunci:**
-
-      * **`find`:** Perintah untuk mencari file dan direktori berdasarkan nama, tipe, ukuran, dan kriteria lainnya.
-      * **`df` (Disk Free):** Perintah untuk melaporkan penggunaan ruang disk sistem file.
-      * **`du` (Disk Usage):** Perintah untuk memperkirakan penggunaan ruang file.
-      * **`symlink` (Symbolic Link) atau `hardlink`:** Link atau pintasan ke file atau direktori lain. `symlink` adalah pointer, sedangkan `hardlink` adalah entri direktori tambahan untuk file yang sama.
-
-5.  **Daftar Isi:**
-
-      * Navigasi Lanjutan: `.`, `..`, `~`, `-`.
-      * Mencari File dengan `find` dan `locate`.
-      * Memahami Symlink dan Hardlink.
-      * Perintah `df` dan `du` untuk mengelola ruang disk.
-
-6.  **Sumber Referensi:**
-
-      * [Linux `find` command explained with examples](https://www.tecmint.com/15-linux-find-command-examples/%5D\(https://www.tecmint.com/15-linux-find-command-examples/\))
-      * [Difference between Symlink and Hardlink](https://www.geeksforgeeks.org/difference-between-hard-link-and-symbolic-link-in-linux/)
-
------
-
-#### **Modul 4: Direktori Penting Lainnya dan Konsep Mount**
-
-1.  **Deskripsi Konkret:** Anda akan menyelami direktori yang kurang umum tetapi sama pentingnya, seperti `/dev`, `/proc`, dan `/sys`. Anda juga akan memahami bagaimana perangkat eksternal diakses oleh sistem.
-
-2.  **Konsep Dasar:** Direktori ini bukan berisi file "biasa". `/dev` adalah antarmuka ke perangkat keras, `/proc` adalah jendela ke kernel yang sedang berjalan, dan `/sys` adalah cara lain untuk berinteraksi dengan kernel dan perangkat. Mereka adalah representasi dari data yang dinamis dan virtual, yang sangat penting untuk diagnosis dan administrasi sistem.
-
-3.  **Sintaks Dasar/Contoh:**
-
-      * Melihat perangkat: `ls /dev`
-      * Melihat informasi CPU dari `/proc`: `cat /proc/cpuinfo`
-      * Memasang drive USB: `mount /dev/sdb1 /mnt/usb`
-
-4.  **Terminologi Kunci:**
-
-      * **`/dev` (Devices):** Berisi file-file spesial yang merepresentasikan perangkat keras sistem (misalnya, `sda` untuk hard disk, `tty1` untuk terminal).
-      * **`/proc` (Processes):** Sebuah filesystem virtual yang berisi informasi tentang proses yang sedang berjalan, memori, dan status kernel.
-      * **`/sys` (System):** Filesystem virtual lain yang menyediakan antarmuka ke perangkat dan driver.
-      * **`mount`:** Perintah yang digunakan untuk melampirkan sistem file eksternal (partisi, USB, dll.) ke sebuah direktori di pohon filesystem utama.
-
-5.  **Daftar Isi:**
-
-      * Menggali `/dev`, `/proc`, dan `/sys`.
-      * Konsep Mount dan Umount.
-      * Filesystem Virtual vs. Filesystem Fisik.
-      * Memahami `fstab` dan `df`.
-
-6.  **Sumber Referensi:**
-
-      * [Understanding `/dev`, `/proc`, and `/sys`](https://www.linuxtopia.org/online_books/linux_system_administration/ch24s03.html%5D\(https://www.linuxtopia.org/online_books/linux_system_administration/ch24s03.html\))
-      * [Linux `fstab` Explained](https://wiki.archlinux.org/title/fstab%5D\(https://wiki.archlinux.org/title/fstab\))
-
------
-
-### **[Fase 3: Menguasai Sistem — Menjadi Superuser (Expert/Enterprise)][3]**
-
-**Waktu Estimasi:** 20-30+ jam
-
-Fase ini adalah lompatan dari pengguna mahir ke administrator sistem. Anda akan belajar mengelola filesystem dari perspektif superuser, berurusan dengan perizinan, dan mengimplementasikan praktik keamanan.
-
-#### **Modul 5: Manajemen Perizinan (Permissions)**
-
-1.  **Deskripsi Konkret:** Anda akan belajar bagaimana sistem mengontrol siapa yang dapat membaca, menulis, dan menjalankan file. Memahami perizinan adalah kunci untuk keamanan dan administrasi sistem yang efektif.
-
-2.  **Konsep Dasar:** Setiap file dan direktori di Linux memiliki tiga set izin: untuk **pemilik (owner)**, **grup (group)**, dan **lainnya (others)**. Izin tersebut adalah **read (r)**, **write (w)**, dan **execute (x)**. Kombinasi ini memberikan kontrol granular atas akses ke sumber daya.
-
-3.  **Sintaks Dasar/Contoh:**
-
-      * Mengubah izin: `chmod 755 script.sh` (owner rwx, group rx, others rx).
-      * Mengubah pemilik: `chown user:group filename`
-      * Memahami output `ls -l`: `drwxr-xr-x`
-
-4.  **Terminologi Kunci:**
-
-      * **`chmod` (Change Mode):** Perintah untuk mengubah izin file.
-      * **`chown` (Change Owner):** Perintah untuk mengubah pemilik file.
-      * **Numeric vs. Symbolic Notation:** Dua cara untuk menetapkan izin, misalnya `755` (numerik) vs. `u=rwx,g=rx,o=rx` (simbolik).
-      * **`suid`, `sgid`, `sticky bit`:** Izin khusus yang memengaruhi bagaimana file biner dieksekusi atau bagaimana file dibuat di direktori.
-
-5.  **Daftar Isi:**
-
-      * Dasar-dasar Perizinan `rwx`.
-      * Numeric vs. Symbolic Mode.
-      * Menggunakan `chmod`, `chown`, dan `chgrp`.
-      * Memahami Izin Khusus: `suid`, `sgid`, dan `sticky bit`.
-
-6.  **Sumber Referensi:**
-
-      * [Linux File Permissions Explained](https://www.redhat.com/sysadmin/linux-file-permissions-101)
-      * [Arch Linux Wiki - File Permissions](https://wiki.archlinux.org/title/File_permissions)
-
------
-
-#### **Modul 6: Struktur Filesystem Lanjutan dan Praktik Admin**
-
-1.  **Deskripsi Konkret:** Modul ini akan memperluas pemahaman Anda tentang direktori yang digunakan untuk administrasi, log, dan manajemen paket. Anda akan belajar bagaimana file-file ini berinteraksi untuk menjaga sistem tetap sehat.
-
-2.  **Konsep Dasar:** Sebagai administrator, Anda perlu tahu di mana menemukan log sistem (`/var/log`), di mana paket-paket diinstal (`/usr/bin`), dan bagaimana boot sistem (`/boot`). Memahami interkoneksi direktori ini adalah kunci untuk pemecahan masalah.
-
-3.  **Sintaks Dasar/Contoh:**
-
-      * Melihat log: `tail -f /var/log/syslog`
-      * Melihat file kernel: `ls /boot`
-      * Mencari biner yang diinstal: `which nano`
-      * Memahami struktur paket: `ls /usr/share/doc/`
-
-4.  **Terminologi Kunci:**
-
-      * **`/boot`:** Berisi file-file yang diperlukan untuk proses bootloader dan kernel.
-      * **`/opt`:** Direktori untuk instalasi perangkat lunak pihak ketiga yang tidak dikelola oleh manajer paket sistem.
-      * **`/srv`:** Direktori untuk data situs web yang disajikan oleh server.
-      * **`/usr/local`:** Direktori untuk biner, library, dan header yang dikompilasi dari sumber secara manual.
-
-5.  **Daftar Isi:**
-
-      * Mengelola log di `/var/log`.
-      * Memahami peran `/boot` dan `/sbin`.
-      * Perbedaan `/bin`, `/sbin`, `/usr/bin`, `/usr/sbin`.
-      * Mengenal `/opt` dan `/usr/local` untuk instalasi manual.
-
-6.  **Sumber Referensi:**
-
-      * [Linux Boot Process Explained](https://www.linux.com/training-certification/linux-boot-process-explained/)
-      * [Arch Linux Wiki - The `root`](https://wiki.archlinux.org/title/File_hierarchy%5D) [filesystem](https://wiki.archlinux.org/title/File_hierarchy)
-
------
-
-### **Sumber Daya Komunitas & Sertifikasi**
-
-  * **Komunitas:**
-
-      * **Arch Linux Wiki:** Sumber daya terkemuka untuk pengguna Arch, dengan dokumentasi yang sangat detail dan akurat.
-      * **Reddit r/linux4noobs & r/linuxquestions:** Komunitas yang ramah untuk bertanya dan mendapatkan bantuan.
-      * **Stack Overflow:** Sumber daya global untuk pertanyaan teknis.
-
-  * **Sertifikasi:**
-
-      * **CompTIA Linux+:** Sertifikasi tingkat pemula yang mencakup dasar-dasar Linux.
-      * **LPIC-1 (Linux Professional Institute Certification):** Sertifikasi yang diakui secara global untuk administrator junior.
-      * **RHCSA (Red Hat Certified System Administrator):** Sertifikasi yang sangat dihormati dan berorientasi praktik untuk sistem Red Hat, tetapi konsepnya sangat relevan untuk semua distribusi.
-
------
+-->
 
 [0]: ../../README.md     
-[1]: ./bagian-1/README.md
+[1]: ./../archlinux/arsitektur-sistem/README.md
 [2]: ./bagian-2/README.md
 [3]: ./bagian-3/README.md
+[4]: ./
+[5]:./filesystem/README.md
+[install]: ../../linux/archlinux/instalasi/README.md
