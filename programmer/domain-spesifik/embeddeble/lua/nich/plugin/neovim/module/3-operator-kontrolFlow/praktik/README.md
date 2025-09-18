@@ -74,36 +74,45 @@ Sebelum masuk ke proyek, pahami dua hal sederhana:
 
 ```lua
 while true do
-    print("Pilih operasi (+, -, *, /):")
-    local operasi = io.read()
+  -- Tampilkan prompt dan baca input untuk operasi
+  print("Pilih operasi (+, -, *, /):")
+  local operasi = io.read()
 
-    print("Masukkan angka pertama:")
-    local a = tonumber(io.read())
-    print("Masukkan angka kedua:")
-    local b = tonumber(io.read())
+  -- Tampilkan prompt dan baca input untuk angka pertama
+  print("Masukkan angka pertama:")
+  local a = tonumber(io.read())
 
-    if operasi == "+" then
-        print("Hasil:", a + b)
-    elseif operasi == "-" then
-        print("Hasil:", a - b)
-    elseif operasi == "*" then
-        print("Hasil:", a * b)
-    elseif operasi == "/" then
-        if b == 0 then
-            print("Error: tidak bisa membagi dengan nol!")
-        else
-            print("Hasil:", a / b)
-        end
+  -- Tampilkan prompt dan baca input untuk angka kedua
+  print("Masukkan angka kedua:")
+  local b = tonumber(io.read())
+
+  -- Lakukan operasi berdasarkan input
+  if operasi == "+" then
+    print("Hasil:", a + b)
+  elseif operasi == "-" then
+    print("Hasil:", a - b)
+  elseif operasi == "*" then
+    print("Hasil:", a * b)
+  elseif operasi == "/" then
+    -- Periksa pembagian dengan nol
+    if b == 0 then
+      print("Error: tidak bisa membagi dengan nol!")
     else
-        print("Operasi tidak dikenal!")
+      print("Hasil:", a / b)
     end
+  else
+    print("Operasi tidak dikenal!")
+  end
 
-    print("\nApakah ingin lanjut? (y/n):")
-    local lanjut = io.read()
-    if lanjut ~= "y" then
-        print("Program selesai. Terima kasih!")
-        break
-    end
+  -- Tanyakan apakah pengguna ingin melanjutkan
+  print("\nApakah ingin lanjut? (y/n):")
+  local lanjut = io.read()
+
+  -- Keluar dari loop jika input bukan 'y'
+  if lanjut ~= "y" then
+    print("Program selesai. Terima kasih!")
+    break
+  end
 end
 ```
 
