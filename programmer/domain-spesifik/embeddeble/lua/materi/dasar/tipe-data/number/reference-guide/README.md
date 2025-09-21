@@ -1,5 +1,14 @@
 # **[Panduan Lengkap Number dalam Lua - Dari Dasar hingga Mahir][0]**
 
+
+### **Referensi Utama**
+
+Berikut sumber referensi resmi yang paling akurat untuk semua ini adalah dokumentasi Lua berikut:
+
+  * **Lua 5.4 Reference Manual - The Complete Syntax of Lua:** [https://www.lua.org/manual/5.4/manual.html\#3.1](https://www.google.com/search?q=https://www.lua.org/manual/5.4/manual.html%233.1)
+  * **Lua 5.4 Reference Manual - Mathematical Functions:** [https://www.lua.org/manual/5.4/manual.html\#6.7](https://www.google.com/search?q=https://www.lua.org/manual/5.4/manual.html%236.7)
+  * **Lua 5.4 Reference Manual - Bitwise Operations:** [https://www.lua.org/manual/5.4/manual.html\#6.8](https://www.google.com/search?q=https://www.lua.org/manual/5.4/manual.html%236.8)
+
 ## 1. Konsep Dasar Number di Lua
 
 ### 1.1 Tipe Data Number dalam Lua
@@ -8,6 +17,8 @@ Lua hanya memiliki SATU tipe data numerik yang disebut `number`. Secara internal
 
 - **Double-precision floating-point** (IEEE 754) sebagai representasi default
 - Sejak Lua 5.3: dukungan untuk **integer** dan **float** sebagai subtipe
+
+Bagian ini menjelaskan fondasi paling penting: di Lua, semua angka—baik itu bilangan bulat (seperti 10) maupun bilangan desimal (seperti 3.14)—memiliki satu tipe data yang sama, yaitu `number`.
 
 ```lua
 -- Semua ini adalah tipe number
@@ -21,6 +32,16 @@ local f = 0o777     -- octal (Lua 5.3+)
 print(type(a))      -- "number"
 print(type(b))      -- "number"
 ```
+
+#### Bedah Kode:
+
+  * `local a = 42`: `local` adalah kata kunci untuk membuat variabel yang cakupannya terbatas (lokal). `a` adalah nama variabel, dan `42` adalah nilainya. Lua menginterpretasikannya sebagai bilangan bulat.
+  * `local b = 3.14`: Variabel `b` diberi nilai `3.14`. Titik `.` menandakan ini adalah bilangan desimal (floating-point).
+  * `local c = 1e10`: Ini adalah **notasi ilmiah** (scientific notation). `1e10` berarti $1 \\times 10^{10}$, atau angka 1 diikuti oleh 10 angka nol.
+  * `local d = 0xFF`: Awalan `0x` menandakan ini adalah bilangan **heksadesimal** (basis 16). `FF` dalam heksadesimal sama dengan `255` dalam desimal.
+  * `local e = 0b1010`: **(Peringatan Lua 5.3+)** Awalan `0b` menandakan ini adalah bilangan **biner** (basis 2). `1010` dalam biner sama dengan `10` dalam desimal. Fitur ini tidak ada di Lua 5.2 atau versi lebih lama.
+  * `local f = 0o777`: **(Peringatan Lua 5.3+)** Awalan `0o` menandakan ini adalah bilangan **oktal** (basis 8). `777` dalam oktal sama dengan `511` dalam desimal. Fitur ini juga baru ada sejak Lua 5.3.
+  * `print(type(a))`: Fungsi `print()` menampilkan sesuatu ke konsol. Fungsi `type()` mengembalikan tipe data dari sebuah variabel. Meskipun `a`, `b`, `c`, dll. ditulis dalam format yang berbeda, `type()` akan selalu mengembalikan string `"number"` untuk semuanya. Ini membuktikan bahwa Lua hanya punya satu tipe data numerik utama.
 
 ### 1.2 Representasi Internal Number
 
