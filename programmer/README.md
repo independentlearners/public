@@ -1,4 +1,6 @@
-<details open>
+# 🧑‍💻 Programmer Hub
+
+<details>
   <summary>
     <strong>🌐 DSL (Domain-Specific Language)</strong>
     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Bahasa untuk Domain Khusus</i></div>
