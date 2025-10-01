@@ -137,6 +137,8 @@ print(player["class"]) -- Output: Archer
   local keyToAccess = "level"
   print(player[keyToAccess]) -- Output: 5
   ```
+- #### Perhatikan!
+- Pastikan bahwa nilai pada `keyToAccess` adalah key dari tabel tersebut dalam kasus ini ialah `player`. Jika tidak maka akan menghasilkan `nil` atau **Error**.
 
 **Contoh Kode 5: Modifikasi dan Penambahan Elemen**
 Anda menggunakan sintaks yang sama dengan operator penugasan (`=`) untuk mengubah nilai yang ada atau menambahkan elemen baru.
