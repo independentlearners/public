@@ -1,7 +1,6 @@
-
 # **📚 Kurikulum Instalasi Arch Linux** [↩️ Sumber Utama][0]
 
-> Kurikulum ini menjembatani pemahaman antara **"mengerti konsep bootloader"** dan **"memahami mekanika bootloader saat instalasi"**. Setiap perintah yang digunakan akan dijelaskan konteksnya, sehingga Anda tidak sekadar mengikuti langkah, tetapi mengerti alasan dan konsekuensinya.
+> Kurikulum ini menjembatani pemahaman antara **"mengerti konsep bootloader"** dan **"memahami mekanika bootloader saat instalasi"**. Setiap perintah yang digunakan akan dijelaskan konteksnya, sehingga Anda tidak sekadar mengikuti langkah, tetapi mengerti alasan dan konsekuensinya. Untuk instalasi versi non-live, yaitu instalasi dari terminal linux yang sudah ada dalam hal ini penginstalan dilakukan melalui terminal manjaro tanpa perlu masuk dan boot sesi live dan tanpa perlu menginstal file ISO, kunjungi [berikut][4]
 
 ---
 
@@ -79,3 +78,4 @@ instalasi/
 [1]: ./bagian-1/README.md  
 [2]: ./bagian-2/README.md  
 [3]: ./bagian-3/README.md
+[4]: ./nonlive/README.md
