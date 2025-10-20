@@ -153,6 +153,7 @@ print("Umur saja:", age_only)  -- Output: Umur saja: 25
 local name_val, age_val, city_val = get_name_and_age()
 print("Nama:", name_val, "Umur:", age_val, "Kota:", city_val)
 -- Output: Nama: John Umur: 25 Kota: nil (karena fungsi hanya mengembalikan 2 nilai)
+-- Untuk dapat menjalankan contoh pada bagian ini, pastikan untuk menggunakan koma sebagai sebagai separatornya | (,). Bukan operator ekspresion atau operator penggabungan seperti titik dua (..) karena itu akan mengembalikan Error Exceeption!.   
 
 function get_coordinates()
     return 10, 20, "center"
