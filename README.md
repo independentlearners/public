@@ -134,6 +134,7 @@
 
 ---
 
+<!--
 ## 🔄 *Keunggulan Struktur Ini*
 
 * Mengikuti **alur logis pembelajaran** dari konsep dasar hingga scripting dan automasi.
@@ -142,7 +143,6 @@
 * Memungkinkan integrasi lintas bahasa (Dart, Lua, Bash) sesuai arah pembelajaran Anda.
 
 ---
-<!--
 - **[🖥️ Basic Commands (Linux)](CLI/perintah/README.md)**
 - **[📦 Package Manager](CLI/package-manager/README.md)**
   - **[🐧 Linux](CLI/package-manager/linux/README.md)**
@@ -290,6 +290,7 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
 
 ---
 
+<!--
 ## 🧩 **Kelebihan Struktur Ini**
 
 * Memetakan **seluruh ekosistem pemrograman tanpa menyebutkan bahasa**.
@@ -299,7 +300,6 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
 
 ---
 
-<!--
 📌 **Kesimpulan:**
 Struktur ini sudah mewakili semua jenis pemrograman yang ada di dunia modern — dari **bahasa sistem rendah**, **bahasa konfigurasi**, **bahasa scripting**, hingga **bahasa domain-spesifik dan AI**.
 Anda hanya perlu mengisinya secara bertahap sesuai fokus studi Anda (misalnya mulai dari scripting, lalu framework, lalu compiler theory).
