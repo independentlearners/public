@@ -363,8 +363,7 @@ Fondasi umum sebelum memasuki konfigurasi teknis.
  
  
  
--  
-**📘 Pengantar OS**
+- **📘 Pengantar OS**
  
  
   - Definisi, fungsi, dan komponen utama OS
@@ -376,8 +375,7 @@ Fondasi umum sebelum memasuki konfigurasi teknis.
 
  
  
--  
-**⚙️ Arsitektur OS**
+- **⚙️ Arsitektur OS**
  
  
   - Kernel, driver, dan subsistem
@@ -389,8 +387,7 @@ Fondasi umum sebelum memasuki konfigurasi teknis.
 
  
  
--  
-**🧩 Manajemen Sumber Daya**
+- **🧩 Manajemen Sumber Daya**
  
  
   - CPU scheduling, interrupt handling
@@ -409,12 +406,81 @@ Fondasi umum sebelum memasuki konfigurasi teknis.
  
 Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna tingkat lanjut yang menginginkan kendali penuh.
  
+---
+
+### 🧠 **A. Fondasi GNU dan Filosofinya**
+
+> Penjelasan mengenai asal-usul proyek GNU, hubungannya dengan kernel Linux, serta komponen inti yang digunakan di sistem Arch Linux.
+
+1. **[📜 Sejarah GNU][1]**
+
+   * Ringkasan kronologis (pengumuman, milestone penting)
+   * Biografi singkat Richard Stallman dalam konteks proyek GNU
+   * Peran Free Software Foundation (FSF)
+   * Evolusi Hurd → kenapa muncul Linux → dampak terhadap adopsi GNU
+   * Catatan kontroversial & perdebatan penamaan (GNU vs GNU/Linux)
+   * Referensi primer (GNU, FSF, arsip manifesto, paper sejarah)
+
+2. **[Latar belakang Richard Stallman & Free Software Foundation][2]**
+
+   * Motivasi filosofis dan etika kebebasan perangkat lunak
+   * Empat kebebasan perangkat lunak (detail dan implikasi praktis)
+   * Struktur FSF, lisensi, dan advokasi komunitas
+   * Sumber primer dan analisis sekunder
+
+3. **[Tujuan proyek GNU dan lisensi GPL][3]**
+
+   * Tujuan teknis dan sosial proyek GNU
+   * Penjelasan lisensi GNU GPL (rekursif, copyleft) — versi 2 vs 3
+   * Contoh kasus: cara GPL memengaruhi distribusi perangkat lunak
+   * Cara memverifikasi lisensi pada paket dan contoh perintah
+
+4. **[⚙️ Komponen GNU di Linux (per komponen: detail teknis + bahasa + cara modifikasi)][4]**
+   Untuk setiap komponen (Coreutils, Bash, GCC, Make, GDB, Binutils) akan memuat:
+
+   * Fungsi dan peran dalam sistem
+   * Bahasa pemrograman utama yang digunakan (mis. C, C++)
+   * Dependensi & persyaratan build (toolchain, libs)
+   * Langkah mengunduh, membangun, menguji, dan cara membuat paket (contoh PKGBUILD untuk Arch)
+   * Contoh perintah penggunaan dan opsi penting
+   * Referensi dokumentasi resmi + artikel komunitas + rantai sumber
+
+5. **[Integrasi GNU Toolchain pada sistem Arch][5]**
+
+   * Paket Arch yang relevan (`coreutils`, `gcc`, `glibc`, `binutils`, dsb.)
+   * Cara memeriksa paket terpasang (`pacman -Q`, `pacman -Qo`)
+   * Contoh pembuatan paket dari source dengan `makepkg` / PKGBUILD
+   * Praktik terbaik untuk pengembang: chroot/containers, sandboxing, pengujian
+
+6. **[💡 Perbedaan GNU dan Linux][6]**
+
+   * Definisi teknis (GNU = kumpulan perangkat lunak / sistem; Linux = kernel)
+   * Mengapa nama yang benar menurut FSF adalah GNU/Linux (argumen + kontra-argumen)
+   * Dampak praktis pada distribusi dan dokumentasi
+
+7. **[🔍 Verifikasi Tools GNU (praktis & skrip)][7]**
+
+   * Perintah cepat: `ls --version`, `grep --version`, `bash --version` (output contoh)
+   * Skrip terperinci untuk memindai sistem dan menghasilkan daftar biner GNU (MD/CSV)
+   * Cara memeriksa paket terkait di Arch: `pacman -Q | grep -i gnu`, `pacman -Qs gnu` dan `pacman -Qo /usr/bin/ls`
+   * Cara verifikasi signature GPG dan checksum pada tarball GNU
+
+8. **[Lampiran: contoh PKGBUILD, contoh build dari source (grep/coreutils), dan checklist kontributor][8]**
+
+   * PKGBUILD contoh untuk `grep` atau `coreutils` yang siap dicoba di Arch
+   * Langkah debugging build besar (mis. GCC) — dependensi dan troubleshooting umum
+   * Checklist keamanan dan praktik verifikasi GPG
+
+9. **[Daftar referensi lengkap][9]**
+
+   * Link ke halaman resmi GNU, manual GCC, Autoconf, Arch Wiki, artikel tepercaya, paper sejarah, dsb. (semua akan dicantumkan di akhir tiap file dan ringkasan referensi global)
+
+---
   
-### 🪜 **A. Instalasi & Struktur Sistem**
+### 🪜 **B. Instalasi & Struktur Sistem**
  
  
--  
-**🗜️ Instalasi Dasar**
+- **🗜️ Instalasi Dasar**
  
  
   - Partisi manual (MBR/GPT) dan filesystem
@@ -426,8 +492,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**📁 Struktur Direktori**
+- **📁 Struktur Direktori**
  
  
   - `/`, `/usr`, `/etc`, `/home`, `/opt`, `/var`
@@ -439,11 +504,10 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
  
 
   
-### ⚙️ **B. Manajemen Sistem**
+### ⚙️ **C. Manajemen Sistem**
  
  
--  
-**📦 Paket & Repositori**
+- **📦 Paket & Repositori**
  
  
   - `pacman`, `makepkg`, `yay`, `paru`, dan AUR
@@ -453,8 +517,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🔄 Service Management**
+- **🔄 Service Management**
  
  
   - Konsep unit & target pada `systemd`
@@ -464,8 +527,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🧩 Kernel & Module**
+- **🧩 Kernel & Module**
  
  
   - Update kernel, DKMS, rebuild module
@@ -473,15 +535,11 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
   - Load/unload driver manual
  
 
- 
- 
-
   
-### 💻 **C. Lingkungan Kerja**
+### 💻 **D. Lingkungan Kerja**
  
  
--  
-**🪟 Window Manager**
+- **🪟 Window Manager**
  
  
   - `Sway`, `Hyprland`, `i3` — konsep tiling & compositor
@@ -491,8 +549,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🧱 UI & Komponen Terkait**
+- **🧱 UI & Komponen Terkait**
  
  
   - Menu launcher: `fuzzel`, `bemenu`, `wofi`
@@ -504,8 +561,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🎨 Tema & Tampilan**
+- **🎨 Tema & Tampilan**
  
  
   - GTK/Qt theming
@@ -513,15 +569,11 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
   - Font, icon, dan color scheme (Kanagawa, Gruvbox, Catppuccin)
  
 
- 
- 
-
   
-### 🌐 **D. Jaringan & Internet**
+### 🌐 **E. Jaringan & Internet**
  
  
--  
-**🌍 Konfigurasi Dasar**
+- **🌍 Konfigurasi Dasar**
  
  
   - `NetworkManager`, `iwctl`, `ip`, `netctl`
@@ -531,8 +583,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🔐 Remote Connection**
+- **🔐 Remote Connection**
  
  
   - `ssh`, `rsync`, `scp`, `sftp`
@@ -542,35 +593,29 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🛰️ Firewall & VPN**
+- **🛰️ Firewall & VPN**
  
  
   - `ufw`, `iptables`, `nftables`, `wireguard`
  
   - Policy rules dan persistent firewall
  
-
- 
  
 
   
-### 🧰 **E. Maintenance & Optimasi**
+### 🧰 **F. Maintenance & Optimasi**
  
  
--  
-**🩺 Troubleshooting**
+- **🩺 Troubleshooting**
  
  
   - `journalctl`, `systemctl status`, chroot recovery
  
   - Dependency fixing & log analysis
  
-
  
  
--  
-**💾 Backup & Restore**
+- **💾 Backup & Restore**
  
  
   - `rsync`, `btrfs`, `timeshift`, snapshot system
@@ -578,8 +623,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**⚙️ Performance**
+- **⚙️ Performance**
  
  
   - `htop`, `btop`, `systemd-analyze`, `iotop`
@@ -591,11 +635,10 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
  
 
   
-### 🧠 **F. Keamanan & Privasi**
+### 🧠 **G. Keamanan & Privasi**
  
  
--  
-**🔒 User Privilege**
+- **🔒 User Privilege**
  
  
   - `sudoers`, `ACL`, `polkit`, `pam`
@@ -605,8 +648,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🗜️ Enkripsi**
+- **🗜️ Enkripsi**
  
  
   - LUKS, Secure Boot, swap encryption
@@ -614,8 +656,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
  
  
--  
-**🧾 Hardening**
+- **🧾 Hardening**
  
  
   - Audit system, Fail2ban, AppArmor, SELinux
@@ -634,8 +675,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 ### 🪜 **A. Instalasi & Struktur Sistem**
  
  
--  
-**💽 Instalasi & Dual Boot**
+- **💽 Instalasi & Dual Boot**
  
  
   - Partisi, UEFI, dan GRUB integration
@@ -645,8 +685,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 
  
  
--  
-**📂 Struktur Direktori**
+- **📂 Struktur Direktori**
  
  
   - `C:\Windows`, `C:\Program Files`, `C:\Users`
@@ -661,8 +700,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 ### ⚙️ **B. Manajemen Sistem**
  
  
--  
-**🔧 System Control**
+- **🔧 System Control**
  
  
   - `services.msc`, `taskschd.msc`, `msconfig`
@@ -672,8 +710,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 
  
  
--  
-**📦 Package Manager**
+- **📦 Package Manager**
  
  
   - `winget`, `choco`, `scoop`
@@ -683,8 +720,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 
  
  
--  
-**🧩 Windows Subsystem for Linux (WSL)**
+- **🧩 Windows Subsystem for Linux (WSL)**
  
  
   - Integrasi Arch di WSL
@@ -699,8 +735,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 ### 💻 **C. Antarmuka & Produktivitas**
  
  
--  
-**🎨 Personalisasi**
+- **🎨 Personalisasi**
  
  
   - Tema, taskbar, layout, dan accessibility
@@ -710,8 +745,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 
  
  
--  
-**🗂️ File Explorer & Path Integration**
+- **🗂️ File Explorer & Path Integration**
  
  
   - Symbolic link, drive mapping, network share
@@ -726,8 +760,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 ### 🌐 **D. Jaringan & Keamanan**
  
  
--  
-**🌍 Network Management**
+- **🌍 Network Management**
  
  
   - Adapter properties, IP, DNS, sharing
@@ -737,8 +770,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 
  
  
--  
-**🛡️ Firewall & Defender**
+- **🛡️ Firewall & Defender**
  
  
   - Inbound/outbound rule management
@@ -748,8 +780,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 
  
  
--  
-**🔐 User Access Control**
+- **🔐 User Access Control**
  
  
   - Administrator privileges, UAC policy
@@ -764,8 +795,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 ### 🧰 **E. Backup & Recovery**
  
  
--  
-**💾 System Restore**
+- **💾 System Restore**
  
  
   - Restore point, recovery drive
@@ -775,8 +805,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
 
  
  
--  
-**🩺 Diagnostics**
+- **🩺 Diagnostics**
  
  
   - Event Viewer, `sfc`, `dism`, logs & dumps
@@ -793,8 +822,7 @@ Dokumentasi lintas OS untuk lingkungan dual-platform.
  
  
  
--  
-**🪟 Boot Management**
+- **🪟 Boot Management**
  
  
   - `systemd-boot`, `GRUB`, `efibootmgr`
@@ -804,8 +832,7 @@ Dokumentasi lintas OS untuk lingkungan dual-platform.
 
  
  
--  
-**📁 File System Interop**
+- **📁 File System Interop**
  
  
   - Akses NTFS dari Linux (`ntfs-3g`)
@@ -815,8 +842,7 @@ Dokumentasi lintas OS untuk lingkungan dual-platform.
 
  
  
--  
-**🔌 Remote & Clipboard**
+- **🔌 Remote & Clipboard**
  
  
   - RDP, VNC, dan clipboard sharing
@@ -826,8 +852,7 @@ Dokumentasi lintas OS untuk lingkungan dual-platform.
 
  
  
--  
-**🧩 WSL & Network**
+- **🧩 WSL & Network**
  
  
   - Integrasi tool CLI lintas OS
@@ -983,3 +1008,13 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
   </details>
 
 > **By MasBro | [s.id/gocoding](https://s.id/gocoding)**
+
+[1]: ./sistem-operasi/linux/gnu/bagian-1/README.md
+[2]: ./sistem-operasi/linux/gnu/bagian-2/README.md
+[3]: ./sistem-operasi/linux/gnu/bagian-3/README.md
+[4]: ./sistem-operasi/linux/gnu/bagian-4/README.md
+[5]: ./sistem-operasi/linux/gnu/bagian-5/README.md
+[6]: ./sistem-operasi/linux/gnu/bagian-6/README.md
+[7]: ./sistem-operasi/linux/gnu/bagian-7/README.md
+[8]: ./sistem-operasi/linux/gnu/bagian-8/README.md
+[9]: ./sistem-operasi/linux/gnu/bagian-9/README.md
