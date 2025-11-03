@@ -44,7 +44,7 @@ Ada perdebatan panjang apakah nama yang tepat adalah “Linux” atau “GNU/Lin
 
 ---
 
-## Referensi utama (untuk dicantumkan di dokumen)
+## Referensi utama 
 
 * **GNU Manifesto (Richard Stallman).** GNU Project. ([gnu.org][1])
 * **FSF — History & mission.** Free Software Foundation. ([fsf.org][3])
@@ -54,6 +54,7 @@ Ada perdebatan panjang apakah nama yang tepat adalah “Linux” atau “GNU/Lin
 
 ---
 
+<!--
 ## Catatan penulisan & rekomendasi file
 
 * Lokasi file yang direkomendasikan:
@@ -62,7 +63,6 @@ Ada perdebatan panjang apakah nama yang tepat adalah “Linux” atau “GNU/Lin
 * Untuk bagian berikutnya (sesuai rencana Anda): saya akan membahas **Latar belakang Richard Stallman & Free Software Foundation** (termasuk empat kebebasan perangkat lunak, struktur FSF, litera primer manifesto). Pada bagian itu akan saya sertakan kutipan terpilih (parafrase) dari Manifesto, lebih banyak sumber sekunder, serta contoh document/arsip historis yang relevan.
 
 ---
-<!--
 Apakah Anda ingin saya **melanjutkan ke bab berikutnya: “Latar belakang Richard Stallman & Free Software Foundation” sekarang**?
 Jika setuju, saya akan melanjutkan dan menulis bab itu secara mendalam (sejarah pribadi Stallman dalam konteks proyek, empat kebebasan perangkat lunak, pendirian FSF, dampak hukum & sosial).
 -->
