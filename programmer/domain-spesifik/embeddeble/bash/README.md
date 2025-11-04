@@ -111,7 +111,45 @@ Kurikulum ini adalah peta jalan untuk menguasai seni otomasi di lingkungan berba
     - [I/O Redirection (The Linux Documentation Project)](https://tldp.org/LDP/abs/html/io-redirection.html)
     - [Ryans Tutorials - Pipes and Redirection](https://ryanstutorials.net/linuxtutorial/piping.php)
 7. **Visualisasi:**
-    - Diagram alur sangat direkomendasikan di sini untuk mengilustrasikan bagaimana data mengalir dari `stdout` satu perintah ke `stdin` perintah berikutnya melalui sebuah _pipe_.
+    - Diagram alur untuk mengilustrasikan bagaimana data mengalir dari `stdout` satu perintah ke `stdin` perintah berikutnya melalui sebuah _pipe_.
+
+    - Bayangkan alur data di shell Bash seperti rantai pipa air: setiap perintah mengalirkan "air data" dari **stdout**-nya (output standar) menuju **stdin** perintah berikutnya (input standar). Diagram sederhananya bisa anda bayangkan seperti ini
+
+```bash
+[ command1 ] ──stdout──▶─stdin──[ command2 ]
+```
+
+Misalnya:
+
+```bash
+ls | grep ".txt" | sort
+```
+
+Jika kita gambarkan lebih lengkap:
+
+```bash
+[ ls ] ──stdout──▶─stdin──[ grep ".txt" ] ──stdout──▶─stdin──[ sort ]
+```
+
+Penjelasan alirannya:
+
+1. `ls` menulis daftar file ke **stdout**-nya.
+2. Pipa (`|`) mengalihkan **stdout** `ls` menjadi **stdin** untuk `grep`.
+3. `grep` menyaring data yang masuk dan menulis hasilnya ke **stdout**.
+4. Pipa berikutnya lagi mengalihkan hasil `grep` ke **stdin** milik `sort`.
+5. `sort` akhirnya menulis hasil akhir ke **stdout**, yang (jika tidak diarahkan ke file) akan tampil di terminal.
+
+Kita bisa memperjelas dengan tambahan opsi redirect:
+
+```bash
+command1 | command2 | command3 > output.txt
+```
+
+```bash
+[ command1 ] → [ command2 ] → [ command3 ] → (stdout) → output.txt
+```
+
+Setiap panah (`→`) di atas mewakili aliran data berbasis stream: teks, byte, atau baris.
 
 ---
 
@@ -139,6 +177,28 @@ Kurikulum ini adalah peta jalan untuk menguasai seni otomasi di lingkungan berba
     echo -n "Masukkan kota Anda: "
     read KOTA
     echo "Senang bertemu dengan Anda dari $KOTA!"
+    ```
+
+    - Contoh lain dengan input nama dan kota.
+
+    ```bash
+    #!/bin/bash
+
+    # 1. Deklarasi variabel (tanpa spasi di sekitar '=')
+    echo -n "Masukkan Nama Anda :"
+    read NAMA_ANDA
+
+    # 4. Membaca input dari pengguna
+    echo -n "Masukkan kota Anda: "
+    read KOTA
+
+    # 2. Menggunakan variabel (ekspansi)
+    echo "Halo, $NAMA_ANDA!"
+    echo "Senang bertemu dengan Anda dari $KOTA!"
+
+    # 3. Command Substitution: menyimpan output perintah ke variabel
+    LOKASI_SAAT_INI=$(pwd)
+    echo "Anda berada di direktori: $LOKASI_SAAT_INI"
     ```
 
     - Untuk menjalankan: `chmod +x sapa.sh` lalu `./sapa.sh`
