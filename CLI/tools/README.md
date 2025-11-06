@@ -1,4 +1,4 @@
-> **Halaman ini belum selesai!**
+> **Halaman ini mungkin masih dalam pengembangan!**
 
 <details open>
 <summary>
@@ -6,6 +6,8 @@
 <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Daftar Alat Komputasi berbasis CLI</i></div>
 </summary>
 <div style="padding-left: 25px; margin-top: 8px;">
+
+    > Semua yang ada di disini adalah tools berbasis CLI/antarmuka baris perintah, jika anda mencari basis GUI klik [disini][1]
 
   - **🐧 Manajemen Sistem & OS**
 
@@ -15,7 +17,7 @@
 
   - **💻 Pengembangan & Programming**
 
-      - [📁 Git & Version Control](https://www.google.com/search?q=)
+      - [📁 Git & Version Control][2]
       - [📄 Text Editor & Viewer](https://www.google.com/search?q=)
       - [🚀 Build & Automasi](https://www.google.com/search?q=)
 
@@ -81,3 +83,7 @@
 
 
 ##### [📁 Daftar Lengkap](https://www.google.com/search?q=) | [🏠 Home](https://www.google.com/search?q=)
+
+
+[1]: ./../../software/README.md
+[2]: ./git/README.md
