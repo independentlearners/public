@@ -915,3 +915,25 @@ VI. Saran jadwal implementasi singkat (milestone awal untuk 4 jam/hari)
 <!--
 Saya bisa jelaskan jadwal harian/mingguan yang lebih rinci (90-hari atau 180-hari) sesuai skenario waktu Anda (4 jam/hari atau 8 jam/hari). Tulis **Susun Jadwal 90** untuk versi 90-hari (4 atau 8 jam/hari, sebut angka jam), atau **Susun Jadwal 180** untuk versi 6-bulan, maka saya akan menyusunnya sekarang secara bertahap seperti permintaan Anda.
 -->
+
+Seluruh tahapan ini adalah **jalur lengkap menuju tingkat “Desktop Environment Engineering”**, bukan sekadar pengguna tingkat lanjut. Anda tidak hanya bisa **mengonfigurasi Sway** seperti pengguna biasa, tetapi juga benar-benar **memahami cara kerja di dalamnya**, hingga mampu:
+
+* 🔧 **Mendesain dan menulis komponen DE sendiri** (misalnya bar, notifikasi daemon, atau compositor eksternal).
+* 🧠 **Menghubungkan antar subsistem** (misalnya integrasi input, window manager, compositor, wallpaper daemon, hingga status system service).
+* ⚙️ **Membangun automation layer** (dengan Bash/Lua/Dart) agar konfigurasi DE bisa dikustomisasi secara dinamis.
+* 🧩 **Menciptakan framework TUI/CLI berbasis Dart** yang mengatur seluruh konfigurasi DE — seperti control center atau system builder interaktif.
+* 🧱 **Menyatukan semua sistem ke dalam satu binary** (misalnya: `de-builder` atau `sway-control`) yang menjadi produk final hasil engineering Anda.
+* 🎨 **Menambahkan lapisan estetika** seperti animasi, efek blur, atau transisi halus ala Windows/macOS, yang diimplementasikan melalui compositor-level script atau ekstensi.
+
+Dengan kata lain, Anda akan berpindah dari “pengguna dan pengonfigurasi” ke “**engineer dan arsitek sistem grafis berbasis Wayland**.”
+
+Tahapan ini juga bersifat modular dan berurutan, jadi hasil akhirnya dapat digunakan untuk:
+
+1. **Membangun DE Anda sendiri dari nol** di Arch atau distro lain berbasis Wayland.
+2. **Memodifikasi DE lain** seperti KDE Plasma, GNOME, Hyprland, dsb., karena fondasi konsepnya sama (kompositor, IPC, layer, dan event system).
+3. **Mengembangkan tool berbasis CLI/TUI** yang nantinya bisa menjadi proyek open-source untuk komunitas Indonesia.
+---
+<!--
+Jika Anda ingin, saya bisa tunjukkan **diagram jalur konseptualnya** (mirip roadmap visual) untuk menjelaskan posisi tiap tahap dan hubungan antar-skill — dari *user → scripter → developer → engineer → architect*.
+Apakah Anda ingin saya tampilkan diagram konseptual tersebut sebagai lanjutan sebelum kita susun jadwal pembelajaran rinci?
+-->

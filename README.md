@@ -981,6 +981,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 - **[⚙️ Settings](pengaturan/README.md)**
   - **[🖌️ Visual Studio Code](pengaturan/vsc/README.md)**
 - **[📝 Markdown](./programmer/domain-spesifik/tools/markdown/README.md)**
+- **[❗Others](./others/README.md)**
 
   </div>
 </details>

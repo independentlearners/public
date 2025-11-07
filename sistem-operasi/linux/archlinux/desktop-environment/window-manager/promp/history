@@ -1,0 +1,1769 @@
+: 1752488844:0;ls -a1
+: 1752488865:0;nano ~/.zshrc
+: 1752489329:0;touch ~/plugin
+: 1752489340:0;nano ~/plugin
+: 1752489523:0;nano ~/.zshrc
+: 1752490494:0;git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+: 1752490528:0;nano ~/plugin
+: 1752490555:0;git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+: 1752490567:0;nano ~/plugin
+: 1752494174:0;ls
+: 1752494211:0;mv ~/plugin ~/.plugin
+: 1752494214:0;ls
+: 1752494228:0;dash
+: 1752494292:0;bluetoothctl
+: 1752494391:0;clear && bluetoothctl && clear
+: 1752494690:0;bluetoothctl power off
+: 1752494701:0;bluetoothctl power on
+: 1752494707:0;clear && bluetoothctl && clear
+: 1752494817:0;firefox
+: 1752494877:0;git --config-env
+: 1752494937:0;git config --list
+: 1752494945:0;d
+: 1752494949:0;dash
+: 1752495011:0;sudo pacman -Rns pulseaudio-bluetooth\
+
+: 1752495026:0;clear
+: 1752495027:0;sudo pacman -Rns pulseaudio-bluetooth\
+
+: 1752495085:0;sudo pacman -Syyuu --noconfirm --needed pipewire pipewire-pulse pipewire-alsa pipewire-audio wireplumber\
+
+: 1752495189:0;sudo pacman -Syyuu --needed && clear\
+
+: 1752495251:0;systemctl --user daemon-reexec\
+systemctl --user --now enable pipewire pipewire-pulse wireplumber
+: 1752495295:0;exit
+: 1752495303:0;reboot
+: 1752495392:0;firefox
+: 1752495565:0;pactl info | grep "Server Name"
+: 1752495589:0;clear && bluetoothctl && clear
+: 1752495784:0;systemctl --user status pipewire pipewire-pulse wireplumber
+: 1752495960:0;clear && # Tampilkan daftar sink (output)\
+pactl list short sinks\
+\
+# Atur volume sink 0 ke 50%\
+pactl set-sink-volume 0 50%\
+
+: 1752495984:0;clear && pactl list short sinks# Atur volume sink 0 ke 50%\
+pactl set-sink-volume 0 50%\
+
+: 1752496000:0;clear && pactl list short sinks\
+pactl set-sink-volume 0 50%\
+
+: 1752496016:0;clear && pactl list short sinks
+: 1752496028:0;clear && pactl set-sink-volume 0 50%\
+
+: 1752496037:0;clear && pactl list short sinks\
+pactl set-sink-volume 0 50%\
+
+: 1752496173:0;clear && sudo pacman -Syyuu --noconfirm --needed helvum
+: 1752496251:0;clear && helvum
+: 1752496429:0;clear && sudo pacman -Syyuu --noconfirm --needed pavucontrol
+: 1752496905:0;clear && pavucontrol
+: 1752497582:0;clear && pacman -Syyuu --noconfirm --needed
+: 1752497599:0;clear && sudo pacman -Syyuu --noconfirm --needed
+: 1752497723:0;clear && sudo pacman -Syyuu --noconfirm --needed iwgtk
+: 1752498041:0;clear && pacman -Syyuu --noconfirm --needed base-devel
+: 1752498056:0;clear && sudo pacman -Syyuu --noconfirm --needed base-devel
+: 1752498423:0;cd /tmp\
+git clone https://aur.archlinux.org/yay.git\
+cd yay\
+makepkg -si
+: 1752500423:0;y
+: 1752500432:0;cd /tmp\
+git clone https://aur.archlinux.org/yay.git\
+cd yay\
+makepkg -si
+: 1752500474:0;ls
+: 1752500494:0;makepkg -si
+: 1752500539:0;cd ..
+: 1752500545:0;cd ~
+: 1752500570:0;ls /tmp
+: 1752500578:0;ls -a1 /tmp
+: 1752500604:0;cd /tmp\
+git clone https://aur.archlinux.org/paru.git\
+cd paru\
+makepkg -si\
+
+: 1752500803:0;nano ~/.plugin
+: 1752500819:0;nano ~/.aliases
+: 1752501256:0;yay -v
+: 1752501345:0;paru -v
+: 1752501350:0;paru -h
+: 1752501428:0;cd ~
+: 1752501430:0;paru -h
+: 1752501432:0;paru -v
+: 1752501435:0;yay -v
+: 1752501456:0;yay --version
+: 1752501464:0;paru --version
+: 1752501521:0;clear && sudo pacman -S rust
+: 1752501554:0;rustc --version && cargo --version\
+
+: 1752501569:0;rustc --version && cargo --version && dash\
+
+: 1752501581:0;nano ~/.aliases
+: 1752501758:0;. ~/.zshrc
+: 1752501768:0;firefox
+: 1752501870:0;cargo install --git https://github.com/phisch/rander
+: 1752501984:0;cat ~/.cargo/config.toml
+: 1752502031:0;ls -a1 ~/.cargo/
+: 1752502141:0;nano ~/.cargo/config.toml\
+
+: 1752502157:0;ls -a1 ~/.cargo/
+: 1752502217:0;cargo install --git https://github.com/phisch/rander
+: 1752502276:0;ls -a1 ~/.cargo/
+: 1752502298:0;. ~/.zshrc
+: 1752502301:0;cargo install --git https://github.com/phisch/rander
+: 1752502336:0;ls -a1 ~/.cargo/
+: 1752502349:0;cat ~/.cargo/config.toml\
+
+: 1752502361:0;firefox
+: 1752502368:0;cat ~/.cargo/config.toml\
+
+: 1752502433:0;git clone https://github.com/phisch/rander.git\
+cd rander\
+cargo build --release\
+cp target/release/rander ~/.local/bin/\
+
+: 1752502445:0;echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc\
+source ~/.bashrc\
+
+: 1752502608:0;echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc\
+source ~/.zshrc\
+
+: 1752502613:0;git clone https://github.com/phisch/rander.git\
+cd rander\
+cargo build --release\
+cp target/release/rander ~/.local/bin/\
+
+: 1752502710:0;remote: Repository not found.\
+fatal: Autentikasi gagal untuk 'https://github.com/phisch/rander.git/'\
+
+: 1752502733:0;cargo install --git
+: 1752502803:0;paru -Syyu rander
+: 1752502876:0;yay -Syyu rander
+: 1752503299:0;curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh\
+
+: 1752503331:0;clear && sudo pacman -Syyuu --noconfirm --needed unzip
+: 1752503386:0;curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh\
+
+: 1752503424:0;unzip cli_1.1.0_linux_amd64.zip\
+sudo mv cli_v1.1.0 /usr/local/bin/render\
+
+: 1752503465:0;render --version
+: 1752503470:0;render
+: 1752503533:0;render login
+: 1752504388:0;clear && sudo pacman -Syyuu --noconfirm --needed ranger
+: 1752504428:0;clear && ranger
+: 1752504724:0;ls -a1 ~/.config/
+: 1752504740:0;ls -a1 ~/.config/awesome
+: 1752504768:0;cat ~/.config/awesome/rc.lua
+: 1752505600:0;ps aux | grep "xorg-server"
+: 1752505606:0;ps aux | grep xorg-server
+: 1752505668:0;clear && sudo pacman -Syyuu --noconfirm --needed xorg-server xorg-xinit
+: 1752505745:0;ls -a1
+: 1752505764:0;nano ~/.xinitrc
+: 1752507896:0;sudo systemctl enable --now systemd-resolved.service\
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf\
+
+: 1752507929:0;sudo nano /etc/systemd/network/25-wifi.network
+: 1752507980:0;sudo systemctl restart iwd.service\
+sudo systemctl restart systemd-networkd.service
+: 1752508002:0;resolvectl status wlan0
+: 1752508081:0;sudo nano /etc/systemd/network/25-wifi.network
+: 1752508130:0;sudo systemctl restart iwd.service\
+sudo systemctl restart systemd-networkd.service
+: 1752508141:0;resolvectl status wlan0
+: 1752508317:0;cat /etc/systemd/network/25-wifi.network
+: 1752508330:0;resolvectl status wlan0
+: 1752508392:0;[200~networkctl status wlan0
+: 1752508405:0;networkctl status wlan0
+: 1752508462:0;ip addr show wlan0
+: 1752508558:0;ip link
+: 1752508563:0;firefox
+: 1752508744:0;ip link
+: 1752508770:0;networkctl list | grep wlan0
+: 1752508783:0;sudo systemctl restart systemd-networkd iwd
+: 1752508798:0;networkctl status wlan0\
+resolvectl status wlan0
+: 1752508904:0;clear && cat /etc/systemd/network/25-wifi.network
+: 1752508907:0;networkctl status wlan0\
+resolvectl status wlan0
+: 1752508957:0;clear && cat /etc/systemd/network/25-wifi.network
+: 1752508963:0;sudo nano /etc/systemd/network/10-wlan0.network
+: 1752509013:0;clear && cat /etc/systemd/network/25-wifi.network
+: 1752509035:0;cat /etc/systemd/network/10-wlan0.network
+: 1752509061:0;clear && cat /etc/systemd/network/25-wifi.network && cat /etc/systemd/network/10-wlan0.network
+: 1752509098:0;clear && cat /etc/systemd/network/25-wifi.network && dash && cat /etc/systemd/network/10-wlan0.network
+: 1752509108:0;clear && cat /etc/systemd/network/25-wifi.network
+: 1752509112:0;cat /etc/systemd/network/10-wlan0.network
+: 1752509127:0;sudo systemctl restart systemd-networkd iwd
+: 1752509137:0;resolvectl status wlan0
+: 1752509205:0;networkctl status wlan0\
+resolvectl status wlan0
+: 1752509218:0;sudo mv /etc/systemd/network/10-wlan0.network ~/10-wlan0.network.bak
+: 1752509230:0;sudo systemctl restart systemd-networkd iwd
+: 1752509236:0;networkctl status wlan0\
+resolvectl status wlan0
+: 1752509256:0;clear && networkctl status wlan0\
+resolvectl status wlan0
+: 1752509293:0;clear && sudo pacman -Syyuu --noconfirm --needed
+: 1752509436:0;clear && networkctl status wlan0\
+resolvectl status wlan0
+: 1752509574:0;pavucontrol
+: 1752509676:0;cat /etc/systemd/network/10-wlan0.network
+: 1752509683:0;clear && cat /etc/systemd/network/25-wifi.network
+: 1752509698:0;nano /etc/systemd/network/25-wifi.network
+: 1752509715:0;sudo nano /etc/systemd/network/10-wlan0.network
+: 1752509727:0;cat /etc/systemd/network/10-wlan0.network
+: 1752509736:0;sudo nano /etc/systemd/network/25-wifi.network
+: 1752509789:0;sudo systemctl restart systemd-networkd iwd
+: 1752509795:0;clear && networkctl status wlan0\
+resolvectl status wlan0
+: 1752509810:0;clear
+: 1752509825:0;nano ~/.aliases
+: 1752509869:0;. ~/.zshrc
+: 1752509885:0;clear && networkctl status wlan0\
+resolvectl status wlan0
+: 1752509899:0;sudo systemctl restart systemd-networkd iwd
+: 1752509909:0;sudo nano /etc/systemd/network/25-wifi.network
+: 1752509962:0;sudo systemctl restart systemd-networkd iwd
+: 1752509967:0;clear && networkctl status wlan0\
+resolvectl status wlan0
+: 1752510000:0;sudo nano /etc/systemd/network/25-wifi.network
+: 1752510122:0;sudo systemctl restart systemd-networkd iwd
+: 1752510126:0;clear && networkctl status wlan0\
+resolvectl status wlan0
+: 1752510167:0;ping -c3 google.com
+: 1752512928:0;c
+: 1752512943:0;.
+: 1752513173:0;clear && paru -Syyuu --noconfirm --needed bluetuith
+: 1752513271:0;blu
+: 1752513308:0;bluetuith
+: 1752513861:0;poweroff
+: 1752534528:0;bluetuith
+: 1752534540:0;firefox
+: 1752534736:0;pavucontrol
+: 1752537404:0;lspci -k | grep -EA3 'VGA|3D|Display'
+: 1752537434:0;lspci -k | grep -EA3 'Display'
+: 1752537493:0;sudo pacman -Q intel-media-driver libva-utils
+: 1752537636:0;pacman -Q nvidia-utils libvdpau\
+
+: 1752537820:0;clear && pacman -Syyuu --noconfirm --needed libva-utils yt-dlp ffmpeg mpv
+: 1752537835:0;clear && sudo pacman -Syyuu --noconfirm --needed libva-utils yt-dlp ffmpeg mpv
+: 1752537889:0;mpv -v
+: 1752537923:0;man mpv
+: 1752538110:0;c
+: 1752538121:0;ranger
+: 1752538240:0;ranger --help
+: 1752538269:0;man ranger
+: 1752538440:0;c
+: 1752538449:0;ranger
+: 1752538764:0;nvim
+: 1752538828:0;clear && sudo pacman -Syyuu --noconfirm --needed luajit
+: 1752538846:0;ls
+: 1752538894:0;mkdir -r saya/lua
+: 1752538900:0;mkdir -p saya/lua
+: 1752538902:0;tree
+: 1752539037:0;treec
+: 1752539040:0;c
+: 1752539049:0;ls -a1
+: 1752539520:0;cat ~/.plugin
+: 1752539543:0;nano ~/.plugin
+: 1752539655:0;. ~/.zshrc
+: 1752541644:0;nano ~/.plugin
+: 1752541685:0;nano ~/bin/install-font.sh
+: 1752541708:0;sudo nano ~/bin/install-font.sh
+: 1752541773:0;mkdir -p ~/bin/
+: 1752541779:0;nano ~/bin/install-font.sh
+: 1752541808:0;chmod +x ~/bin/install-font.sh
+: 1752541826:0;echo "$PATH"
+: 1752541917:0;nano ~/.zshrc
+: 1752541983:0;. ~/.zshrc
+: 1752541989:0;echo "$PATH"
+: 1752542025:0;which install-font.sh
+: 1752542110:0;install-font.sh https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/3270.zip
+: 1752542123:0;. ~/.zshrc
+: 1752542194:0;fc-list | grep -i 3270
+: 1752542305:0;echo "° ± ² ³"
+: 1752542310:0;. ~/.zshrc
+: 1752542322:0;echo "° ± ² ³"
+: 1752542332:0;fc-match "3270 Nerd Font Mono"
+: 1752542404:0;install-font.sh https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/0xProto.zip
+: 1752542438:0;install-font.sh https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/AdwaitaMono.zip
+: 1752542486:0;fc-match "3270 Nerd Font Mono"
+: 1752542499:0;fc-match "3270"
+: 1752542514:0;fc-match "Nerd Font"
+: 1752542523:0;fc-match "Mono"
+: 1752542534:0;fc-match "Font"
+: 1752542546:0;fc-match
+: 1752545530:0;lsblk -f
+: 1752545539:0;c && lsblk -f
+: 1752545603:0;sudo mkdir -p /mnt/data
+: 1752545625:0;sudo nvim /etc/fstab
+: 1752545698:0;c && lsblk -f
+: 1752546120:0;cat /etc/fstab
+: 1752546229:0;sudo nano /etc/fstab
+: 1752546435:0;sudo mkdir -p /mnt/data
+: 1752546446:0;sudo mount -a
+: 1752546462:0;lsblk | grep /mnt/data
+: 1752546480:0;df -h | grep /mnt/data
+: 1752546615:0;sudo nano /etc/fstab
+: 1752546662:0;sudo mount -a
+: 1752546678:0;df -h | grep /mnt/data
+: 1752546688:0;lsblk | grep /mnt/data
+: 1752546733:0;c
+: 1752546744:0;reboot
+: 1752546832:0;ranger
+: 1752547905:0;tree lua
+: 1752547912:0;ls
+: 1752547923:0;tree saya
+: 1752547932:0;cd saya
+: 1752547977:0;git clone https://github.com/file
+: 1752547988:0;git clone https://github.com/ameerkulal/file
+: 1752548213:0;firefox
+: 1752548629:0;c
+: 1752548637:0;cd ~
+: 1752548638:0;c
+: 1752548640:0;firefox
+: 1752548677:0;cd saya
+: 1752548714:0;git clone https://github.com/ameerkulal/file
+: 1752549591:0;ls
+: 1752549604:0;cd ~
+: 1752549617:0;clear && sudo pacman -Syyuu --noconfirm --needed brave
+: 1752549640:0;clear && sudo pacman -Syyuu --noconfirm --needed brave-bin
+: 1752549655:0;clear && sudo pacman -Syyuu --noconfirm --needed brave-browser
+: 1752549685:0;clear && sudo paru -Syyuu --noconfirm --needed brave
+: 1752549708:0;brave
+: 1752549765:0;clear && paru -Syyuu --noconfirm --needed brave
+: 1752557556:0;brave
+: 1752557562:0;brave-bin
+: 1752562684:0;brave
+: 1752562752:0;clear && paru -Syyuu --noconfirm --needed
+: 1752562790:0;c
+: 1752565153:0;mpv -v
+: 1752565160:0;ranger
+: 1752567226:0;c
+: 1752567230:0;c && lsblk -f
+: 1752567250:0;c && firefox
+: 1752567434:0;ls -a1
+: 1752567454:0;ls -a1 ~/.config/
+: 1752567473:0;tree ~/.config/
+: 1752567484:0;c && tree ~/.config/
+: 1752567530:0;yay -Syyu --noconfirm
+: 1752567651:0;sudo pacman -Syyu --noconfirm
+: 1752567680:0;c
+: 1752567684:0;c && tree ~/.config/
+: 1752567741:0;git clone https://github.com/LazyVim/starter ~/.config/nvim
+: 1752567748:0;c && tree ~/.config/
+: 1752567763:0;c && tree ~/.config/nvim
+: 1752567776:0;nvim
+: 1752568674:0;clear && sudo pacman -Syyuu --noconfirm --needed lazygit
+: 1752568719:0;ls -a1 ~/.config/nvim
+: 1752568728:0;c && tree ~/.config/nvim
+: 1752568743:0;nvim
+: 1752568786:0;lua
+: 1752569014:0;pacman -Q xz-utils
+: 1752569028:0;pacman -Q unzip
+: 1752569032:0;pacman -Q zip
+: 1752569067:0;pacman -Q libglu1-mesa
+: 1752569077:0;pacman -Q curl
+: 1752569135:0;clear && sudo pacman -Syyuu --noconfirm --needed xz-utils zip libglu1-mesa 
+: 1752569424:0;clear && yay -Syyuu --noconfirm --needed flutter android-sdk android-sdk-build-tools android-sdk-cmdline-tools-latest android-platform android-sdk-platform-tools
+: 1752569446:0;y
+: 1752569716:0;ranger
+: 1752569778:0;tree saya/file/public
+: 1752569808:0;exit
+: 1752570085:0;oke
+: 1752570102:0;1997
+: 1752570108:0;c
+: 1752570232:0;brave
+: 1752570236:0;brave-bin
+: 1752570258:0;clear && paru -Syyuu --noconfirm --needed brave-bin
+: 1752570360:0;brave
+: 1752570639:0;brave-browser
+: 1752570646:0;brave --version
+: 1752570683:0;brave &
+: 1752570730:0;c
+: 1752570736:0;firefox &
+: 1752570743:0;ls
+: 1752570890:0;y
+: 1752570902:0;pacman -Q
+: 1752570985:0;clear && flutter doctor -v
+: 1752571016:0;firefox &
+: 1752572618:0;sudo cp -R /opt/android-sdk ~
+: 1752572644:0;tree /opt/android-sdk
+: 1752572658:0;clear && ls -a1 /opt/android-sdk
+: 1752572694:0;cd ~\
+sudo chown -R yourusername:yourgroupname android-sdk
+: 1752572724:0;cd ~\
+sudo chown -R linux:amirzain android-sdk
+: 1752572754:0;cd ~\
+sudo chown -R amirzain:linux android-sdk
+: 1752572810:0;USER
+: 1752572824:0;userdel
+: 1752572833:0;userdbctl
+: 1752572898:0;c
+: 1752572902:0;id -un
+: 1752572913:0;id -Gn
+: 1752572935:0;cd ~\
+sudo chown -R amirzain:amirzain android-sdk
+: 1752572939:0;c
+: 1752572967:0;nano ~/.zshrc
+: 1752573433:0;touch ~/.programmer && nano ~/.programmer
+: 1752573447:0;nano ~/.zshrc
+: 1752575401:0;bluetuith
+: 1752575439:0;c
+: 1752575485:0;nano ~/.programmer
+: 1752575514:0;yes | flutter doctor --android-licenses
+: 1752575518:0;y
+: 1752575556:0;c && flutter doctor -v
+: 1752575571:0;flutter doctor --android-licenses
+: 1752575587:0;c && flutter doctor -v
+: 1752575648:0;flutter config --jdk-dir="path/to/jdk\
+\
+q\
+exit\
+os.exit()
+: 1752575675:0;paru search jdk
+: 1752575692:0;paru search list
+: 1752575744:0;paru search java
+: 1752575803:0;yay search jdk
+: 1752575809:0;yay search java
+: 1752575847:0;yay search java-dev
+: 1752575857:0;yay search kit
+: 1752575883:0;pacman search java
+: 1752575906:0;pacman -h
+: 1752575932:0;man pacman
+: 1752575944:0;c
+: 1752575961:0;flutter devices
+: 1752576982:0;pacman -Q adb
+: 1752576997:0;adb
+: 1752577028:0;nano ~/.aliases
+: 1752577420:0;poweroff
+: 1752594953:0;flutter devices
+: 1752594972:0;flutter doctor -v
+: 1752594990:0;paru search openjdk
+: 1752594998:0;ping -c3 google.com
+: 1752595013:0;c && iwctl
+: 1752595053:0;c && ip link
+: 1752595067:0;sudo systemctl restart systemd-networkd iwd
+: 1752595073:0;c && ip link
+: 1752595146:0;sudo systemctl restart systemd-networkd.service
+: 1752595155:0;ping -c3 google.com
+: 1752595161:0;c && ping -c3 google.com
+: 1752595173:0;c && iwctl
+: 1752595182:0;c
+: 1752595201:0;sudo systemctl enable --now systemd-resolved.service\
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf\
+
+: 1752595206:0;c && ping -c3 google.com
+: 1752595209:0;c
+: 1752595255:0;sudo systemctl enable iwd --now\
+
+: 1752595268:0;c && iwctl
+: 1752595289:0;c && ip link
+: 1752595302:0;ls -a1
+: 1752595322:0;ls
+: 1752595333:0;reboot
+: 1752595390:0;c && ping -c3 google.com
+: 1752595404:0;c && flutter doctor -v
+: 1752595410:0;paru search openjdk
+: 1752595421:0;yay search openjdk
+: 1752595472:0;clear && sudo pacman -Syyuu --noconfirm --needed openjdk-17
+: 1752595491:0;clear && sudo pacman -Syyuu --noconfirm --needed openjdk
+: 1752595505:0;clear && sudo pacman -Syyuu --noconfirm --needed jdk
+: 1752595539:0;clear && sudo pacman -Syyuu --needed jdk
+: 1752595556:0;clear && sudo pacman -Syyuu --needed jdk-17
+: 1752595582:0;c
+: 1752595586:0;firefox &
+: 1752595702:0;c && pacman -Ss jdk
+: 1752595746:0;c && yay -Ss jdk
+: 1752596034:0;c && yay -Ss jdk | grep java
+: 1752596310:0;c && yay -Syyuu --noconfirm --needed jdk11-openjdk
+: 1752596445:0;c && flutter doctor -v
+: 1752596484:0;eglinfo
+: 1752596728:0;flutter config --jdk-dir /usr/lib/jvm/java-11-openjdk 
+: 1752596813:0;. ~/.zshrc
+: 1752596822:0;nano ~/.programmer
+: 1752596854:0;. ~/.zshrc
+: 1752596865:0;flutter config --jdk-dir /usr/lib/jvm/java-11-openjdk 
+: 1752596868:0;. ~/.zshrc
+: 1752596873:0;c && flutter doctor -v
+: 1752596890:0;c && flutter doctor --android-licenses
+: 1752596925:0;nano ~/.programmer
+: 1752596933:0;c && flutter doctor --android-licenses
+: 1752596965:0;c && flutter doctor --android-licenses 
+: 1752596990:0;c && yay -Rns --noconfirm --needed jdk11-openjdk
+: 1752597006:0;c && yay -Rns --noconfirm jdk11-openjdk
+: 1752597030:0;c && yay -Syyuu --noconfirm --needed jdk17-openjdk
+: 1752597081:0;nano ~/.programmer
+: 1752597146:0;. ~/.zshrc
+: 1752597156:0;exit
+: 1752597166:0;. ~/.zshrc
+: 1752597178:0;c && flutter doctor -v
+: 1752597218:0;nano ~/.programmer
+: 1752597250:0;exit
+: 1752597254:0;c && flutter doctor -v
+: 1752597274:0;ps aux | grep java-11
+: 1752597281:0;ps aux | grep java
+: 1752597291:0;ps aux | grep "java"
+: 1752597297:0;ps aux | grep -i "java"
+: 1752597374:0;flutter config --jdk-dir /usr/lib/jvm/java-17-openjdk 
+: 1752597380:0;c && flutter doctor -v
+: 1752597434:0;flutter config --jdk-dir /usr/lib/jvm/java-17-openjdk/bin/java
+: 1752597443:0;c && flutter doctor -v
+: 1752597454:0;nano ~/.programmer
+: 1752597585:0;. ~/.zshrc
+: 1752597590:0;c && flutter doctor -v
+: 1752597641:0;nano ~/.programmer
+: 1752597671:0;flutter config --jdk-dir /usr/lib/jvm/java-17-openjdk/bin/java
+: 1752597675:0;nano ~/.programmer
+: 1752597679:0;c && flutter doctor -v
+: 1752597685:0;flutter config --jdk-dir /usr/lib/jvm/java-17-openjdk
+: 1752597689:0;c && flutter doctor -v
+: 1752597764:0;flutter doctor --android-licenses
+: 1752597770:0;y
+: 1752597784:0;c && flutter doctor -v
+: 1752597818:0;firefox &
+: 1752597920:0;nano ~/.programmer
+: 1752597941:0;. ~/.zshrc
+: 1752597943:0;c && flutter doctor -v
+: 1752597999:0;c && yay -Syyuu --noconfirm --needed mesa-utils
+: 1752598012:0;c && flutter doctor -v
+: 1752598043:0;c
+: 1752598176:0;ls -a1
+: 1752598186:0;cd saya
+: 1752598188:0;ls
+: 1752598195:0;cd file
+: 1752598204:0;git pull
+: 1752599026:0;cd saya
+: 1752599038:0;cd file
+: 1752599043:0;git pull
+: 1752599107:0;tree
+: 1752599201:0;git reset --hard ORIG_HEAD
+: 1752599206:0;tree
+: 1752599224:0;git status
+: 1752599245:0;git reset --hard ORIG_HEAD
+: 1752599261:0;git pull
+: 1752599276:0;git status
+: 1752599299:0;git add .
+: 1752599301:0;git status
+: 1752599306:0;git push
+: 1752599378:0;tree
+: 1752599395:0;clear
+: 1752599400:0;cd ~
+: 1752599402:0;c
+: 1752599428:0;reboot
+: 1752619704:0;c %% ping -c3 google.com
+: 1752619722:0;ping -c3 google.com
+: 1752619727:0;c
+: 1752619739:0;c && ping -c3 google.com
+: 1752619799:0;c && flutter doctor -v
+: 1752619819:0;ls -a1
+: 1752619828:0;ls 
+: 1752619835:0;cd saya
+: 1752619838:0;ls
+: 1752619873:0;flutter create flutter
+: 1752619911:0;flutter create aplikasi
+: 1752619944:0;cd aplikasi && flutter run
+: 1752620152:0;nvim
+: 1752620302:0;cd~
+: 1752620306:0;cd ~
+: 1752620310:0;c
+: 1752620313:0;firefox &
+: 1752620355:0;bluetuith
+: 1752620876:0;ranger
+: 1752621034:0;bluetuith
+: 1752621105:0;bluetoothctl power on
+: 1752621110:0;bluetoothctl
+: 1752621228:0;c
+: 1752621232:0;ranger
+: 1752621307:0;pavucontrol
+: 1752621469:0;cd saya/file
+: 1752621472:0;ls
+: 1752621479:0;ls public
+: 1752621485:0;git pull
+: 1752621580:0;ls public
+: 1752621595:0;cd public
+: 1752621597:0;ls
+: 1752621614:0;cd ..
+: 1752621618:0;git pull
+: 1752621637:0;ls public
+: 1752621645:0;tree public
+: 1752621667:0;cd ..
+: 1752621671:0;ls
+: 1752621681:0;rm -r file
+: 1752621700:0;ls
+: 1752621714:0;sudo rm -r file
+: 1752621719:0;ls
+: 1752621735:0;git clone --recurse-submodules https://github.com/ameerkulal/file.git
+: 1752621923:0;ls public
+: 1752621930:0;ls file
+: 1752621933:0;ls public
+: 1752621955:0;ls file/public
+: 1752621959:0;c
+: 1752621960:0;ls file/public
+: 1752621969:0;ls -a1 file/public
+: 1752622007:0;c
+: 1752622015:0;cd ~
+: 1752622017:0;c
+: 1752622047:0;adb
+: 1752622459:0;adb -a
+: 1752622462:0;c
+: 1752622463:0;adb -a
+: 1752622510:0;adb device
+: 1752622543:0;adb tcpip 5555
+: 1752622557:0;adb scan
+: 1752622567:0;adb usb
+: 1752622672:0;adb devices
+: 1752622695:0;ranger
+: 1752622756:0;c
+: 1752622758:0;adb devices
+: 1752622765:0;adb tcpip 5555
+: 1752622779:0;adb usb
+: 1752622793:0;adb
+: 1752622870:0;adb -a
+: 1752622876:0;c
+: 1752622877:0;adb -a
+: 1752622890:0;adb root
+: 1752622941:0;adb get-devpath
+: 1752622952:0;adb get-state
+: 1752623013:0;adb forward --list
+: 1752623042:0;adb tcpip:5555
+: 1752623047:0;adb tcpip: 5555
+: 1752623052:0;adb tcpip 5555
+: 1752623087:0;adb mdns check
+: 1752623095:0;adb list
+: 1752623126:0;adb attach
+: 1752623175:0;adb reverse --list
+: 1752623206:0;c
+: 1752623396:0;adb tcpip 5555
+: 1752623414:0;adb shell ip -f inet addr show wlan0
+: 1752623442:0;adb connect 192.168.1.9:5555
+: 1752623453:0;adb devices
+: 1752623467:0;c
+: 1752623485:0;flutter devices
+: 1752623526:0;c
+: 1752623527:0;flutter devices
+: 1752623550:0;flutter emulators
+: 1752623589:0;flutter emulators --create --mobile
+: 1752623605:0;flutter emulators --create mobile
+: 1752623643:0;flutter emulators 192.168.1.9:5555
+: 1752623649:0;flutter devices
+: 1752623651:0;c
+: 1752623652:0;flutter devices
+: 1752623675:0;flutter emulators --create "Android 10 (API 29)"
+: 1752623691:0;flutter emulators "Android 10 (API 29)"
+: 1752623922:0;flutter run -d 192.168.1.42:5555
+: 1752623946:0;flutter run pub
+: 1752623978:0;cd saya/aplikasi/
+: 1752623980:0;flutter run pub
+: 1752624019:0;flutter run pubspec
+: 1752624029:0;flutter run
+: 1752624251:0;flutter clean\
+rm -rf android/.gradle
+: 1752624262:0;flutter pub get
+: 1752624307:0;sudo mkdir -p /usr/lib/flutter/packages/flutter_tools/gradle/.kotlin/sessions\
+sudo chown -R $USER: /usr/lib/flutter/packages/flutter_tools/gradle/.kotlin\
+
+: 1752624331:0;flutter run
+: 1752624423:0;which lazygit    # harusnya: /usr/local/bin/lazygit\
+lazygit --version
+: 1752624466:0;nano ~/.config/nvim/lua/config/plugins.lua
+: 1752624493:0;ls ~/.config/nvim/lua/
+: 1752624506:0;ls ~/.config/nvim/lua/config
+: 1752624516:0;ls -a ~/.config/nvim/lua/config
+: 1752624522:0;ls -a ~/.config/nvim/lua/
+: 1752624537:0;ls -a ~/.config/nvim/
+: 1752624551:0;ls -a1 ~/.config/nvim/
+: 1752624564:0;tree -a1 ~/.config/nvim/
+: 1752624573:0;tree ~/.config/nvim/
+: 1752625096:0;ls ~/.config/nvim/
+: 1752626440:0;pavucontrol
+: 1752630822:0;c
+: 1752630838:0;nano ~/.config/nvim/lua/plugins/lazygit.lua
+: 1752630851:0;nvim
+: 1752631274:0;firefox &
+: 1752631390:0;c
+: 1752631393:0;nvim
+: 1752632920:0;which flutter
+: 1752632927:0;which dart
+: 1752632932:0;which git
+: 1752632936:0;which java
+: 1752632950:0;which python
+: 1752632956:0;which pacman
+: 1752632964:0;which paru yay
+: 1752632969:0;c
+: 1752633042:0;which paru yay flutter dart java python yt-dlp git curl pacman nvim nano perl 
+: 1752633054:0;which
+: 1752633064:0;which open
+: 1752633068:0;which openjdk
+: 1752633072:0;which openjdk-17
+: 1752633091:0;which java-17-openjdk
+: 1752633102:0;which clear
+: 1752633107:0;c
+: 1752633114:0;which paru yay flutter dart java python yt-dlp git curl pacman nvim nano perl clear ls
+: 1752633132:0;which paru yay flutter dart java python yt-dlp git curl pacman nvim nano perl clear zsh bash
+: 1752633140:0;c
+: 1752633148:0;pacman -Q
+: 1752633170:0;c
+: 1752633304:0;nvim ~/.config/nvim/lua/plugins/flutter.lua
+: 1752633327:0;nvim
+: 1752633462:0;nvim ~/.config/nvim/lua/plugins/flutter.lua
+: 1752633556:0;nvim
+: 1752633612:0;nvim ~/.config/nvim/lua/plugins/flutter.lua
+: 1752633670:0;nvim
+: 1752634218:0;nvim ~/.config/nvim/lua/plugins/flutter.lua
+: 1752634693:0;nvim
+: 1752634808:0;nvim ~/.config/nvim/lua/plugins/flutter.lua
+: 1752634864:0;nvim
+: 1752634944:0;c
+: 1752634953:0;brave &
+: 1752634961:0;c
+: 1752635113:0;pavucontrol
+: 1752635134:0;q
+: 1752635137:0;c
+: 1752637910:0;flutter devices
+: 1752637917:0;adb devices
+: 1752637930:0;c
+: 1752637961:0;mpv &
+: 1752637987:0;mpv --start &
+: 1752638001:0;c
+: 1752638070:0;mpv --start /mnt/data/Musik\
+git clone https://aur.archlinux.org/paru.git\
+cd paru\
+makepkg -si\
+
+: 1752638151:0;ls
+: 1752638158:0;cd ..
+: 1752638161:0;ls
+: 1752638178:0;mpv --start /mnt/data/Musik
+: 1752638197:0;c && git clone https://aur.archlinux.org/paru.git\
+cd paru\
+makepkg -si\
+
+: 1752638234:0;sudo mpv /mnt/data/Musik
+: 1752638280:0;c
+: 1752638346:0;firefox &
+: 1752638367:0;c
+: 1752638380:0;paru search helix
+: 1752638385:0;paru search
+: 1752638453:0;pacman -Ss
+: 1752638481:0;pacman -Ss pamac
+: 1752638489:0;pacman -Ss pacam
+: 1752638496:0;pacman -Ss python
+: 1752638517:0;pacman -Ss | grep blackarch
+: 1752638530:0;pacman -Ss blackarch | grep blackarch
+: 1752638540:0;pacman -Ss tcp | grep blackarch
+: 1752638549:0;pacman -Ss tcp | grep "blackarch"
+: 1752638551:0;c
+: 1752638555:0;. ~/.zshrc
+: 1752638558:0;c
+: 1752639527:0;pavucontrol
+: 1752639569:0;c
+: 1752640050:0;nano bahasa
+: 1752647529:0;reboot
+: 1752667445:0;firefox &
+: 1752669523:0;c && ping -c3 google.com
+: 1752669532:0;reboot
+: 1752669580:0;c && ping -c3 google.com
+: 1752669585:0;firefox &
+: 1752669589:0;c
+: 1752669594:0;c && ping -c3 google.com
+: 1752669597:0;c
+: 1752669938:0;poweroff
+: 1752674857:0;c && ping -c3 google.com
+: 1752674895:0;c && ping -c3 google.com && c
+: 1752674913:0;test
+: 1752674927:0;pacman -Q test
+: 1752674939:0;test
+: 1752674954:0;which test
+: 1752675024:0;which
+: 1752675030:0;test -h
+: 1752675033:0;test --help
+: 1752675042:0;man test
+: 1752675333:0;test --help saya
+: 1752675338:0;test saya
+: 1752675356:0;test -a saya
+: 1752675367:0;ls
+: 1752675391:0;test -a bahasa.save
+: 1752675425:0;test -n bahasa.save
+: 1752675440:0;test -z bahasa.save
+: 1752675452:0;test bahasa.save -a
+: 1752675455:0;test bahasa.save -n
+: 1752675493:0;nano ~/.aliases
+: 1752675602:0;. ~/.zshrc
+: 1752675607:0;c
+: 1752675660:0;cd /mnt/data/Musik
+: 1752675665:0;pwd
+: 1752675669:0;~
+: 1752675908:0;c
+: 1752676069:0;firefox &
+: 1752677420:0;nano ~/.aliases
+: 1752677537:0;. ~/.zshrc
+: 1752677539:0;c
+: 1752677542:0;o
+: 1752677548:0;. ~/.zshrc
+: 1752677554:0;o
+: 1752677558:0;nano ~/.aliases
+: 1752677580:0;. ~/.zshrc
+: 1752677582:0;o
+: 1752677597:0;cat ~/.zshrc
+: 1752677603:0;c
+: 1752677615:0;cat ~/.aliases
+: 1752677631:0;reboot
+: 1752677653:0;nano ~/.aliases
+: 1752677673:0;. ~/.zshrc
+: 1752677675:0;c
+: 1752677678:0;o
+: 1752677682:0;nano ~/.aliases
+: 1752677711:0;man reboot
+: 1752677730:0;reboot --help
+: 1752677756:0;nano ~/.aliases
+: 1752677793:0;. ~/.zshrc
+: 1752677798:0;o
+: 1752677885:0;off
+: 1752709220:0;nano ~/.aliases
+: 1752709586:0;bluetuith
+: 1752709798:0;firefox &
+: 1752709804:0;c
+: 1752709888:0;pavucontrol
+: 1752709903:0;bluetuith
+: 1752710095:0;ranger
+: 1752710366:0;yay search flutter
+: 1752710552:0;flutter doctor -v
+: 1752710568:0;c
+: 1752710573:0;nvim
+: 1752710802:0;adb devices
+: 1752710810:0;adb usb
+: 1752710816:0;adb tcpip 5555
+: 1752710846:0;adb shell ip -f inet addr show wlan0
+: 1752710857:0;adb connect 192.168.1.9:5555
+: 1752710901:0;adb tcpip 5555
+: 1752710904:0;adb connect 192.168.1.9:5555
+: 1752710936:0;c
+: 1752710960:0;flutter devices
+: 1752710994:0;flutter run
+: 1752711004:0;cd saya/aplikasi/
+: 1752711008:0;flutter run
+: 1752711084:0;nvim
+: 1752711414:0;ranger
+: 1752711871:0;ls ~/saya/file/public/programmer/domain-spesifik/mobile/google/flutter/tutorial/widget/statefulWidget
+: 1752711886:0;cat ~/saya/file/public/programmer/domain-spesifik/mobile/google/flutter/tutorial/widget/statefulWidget/README.md
+: 1752711907:0;ls -a1 ~/saya/file/public/programmer/domain-spesifik/mobile/google/flutter/tutorial/widget/
+: 1752711913:0;ranger
+: 1752711984:0;ls -a1 ~/saya/file/public/programmer/domain-spesifik/mobile/google/flutter/tutorial/widget/text/README.md
+: 1752711991:0;cat ~/saya/file/public/programmer/domain-spesifik/mobile/google/flutter/tutorial/widget/text/README.md
+: 1752712132:0;cd ~
+: 1752712134:0;c
+: 1752712135:0;ranger
+: 1752712176:0;nvim
+: 1752712268:0;ls
+: 1752712277:0;ls -a1
+: 1752712315:0;cp ~/.zshrc ~/.saya
+: 1752712318:0;ls -a1
+: 1752712336:0;c && cat ~/.saya
+: 1752712360:0;cat ~/.zshrc
+: 1752712374:0;c
+: 1752712384:0;nvim ~/.saya
+: 1752712500:0;man nvim
+: 1752712538:0;nvim -t ~/.saya
+: 1752712568:0;nvim -q ~/.saya
+: 1752712580:0;nvim
+: 1752712709:0;exit
+: 1752713498:0;which awesome-git
+: 1752713515:0;pacman -Q awesome-git
+: 1752713526:0;yay -Q awesome-git
+: 1752713569:0;yay -Syuu --noconfirm --needed awesome-git
+: 1752713959:0;awesome
+: 1752713982:0;yay -Q awesome-git
+: 1752714000:0;pacman -Q awesome-git
+: 1752714005:0;pacman -Q awesome
+: 1752714013:0;c
+: 1752714111:0;pacman -Q awesome
+: 1752714124:0;upgrade
+: 1752714129:0;nano ~/.aliases
+: 1752714148:0;c
+: 1752714149:0;pu
+: 1752714213:0;nano ~/.aliases
+: 1752714239:0;upgrade
+: 1752714249:0;nano ~/.aliases
+: 1752714261:0;upgrade
+: 1752714268:0;sudo -i
+: 1752714286:0;. ~/.zshrc
+: 1752714290:0;upgrade
+: 1752714300:0;nano ~/.aliases
+: 1752714356:0;c && cat ~/.aliases
+: 1752714365:0;yu
+: 1752714383:0;yau
+: 1752714402:0;pau
+: 1752714407:0;c && cat ~/.aliases
+: 1752714517:0;yau && yu && pu && pau && pclean && upgrade
+: 1752714602:0;yau && yu && pu && pau && upgrade
+: 1752714614:0;c
+: 1752714665:0;sudo pacman -Syyu --noconfirm
+: 1752714678:0;paru -Syyu --noconfirm
+: 1752714686:0;yay -Syyu --noconfirm
+: 1752714771:0;c
+: 1752714779:0;ls
+: 1752714781:0;ls -a1
+: 1752714835:0;c && cat ~/.zsh_history
+: 1752714869:0;c && cat ~/.bash_history
+: 1752714910:0;alsamixer
+: 1752715871:0;C
+: 1752715874:0;c
+: 1752720074:0;brave &
+: 1752720796:0;ps aux | grep -i client.connect_signal("property::fullscreen", function(c)\
+    if c.fullscreen and c.class == "Firefox" then\
+        c.fullscreen = false\
+        c.maximized = true\
+    end\
+end)\
+
+: 1752720828:0;ps aux | grep rc.lua
+: 1752720833:0;ps aux | grep "rc.lua"
+: 1752720839:0;ps aux | grep -f "rc.lua"
+: 1752720847:0;ps aux | grep -i "rc.lua"
+: 1752720854:0;c
+: 1752720873:0;tree ~/.config/awesome
+: 1752720877:0;tree ~/.config/awesome/rc.lua
+: 1752720886:0;nano ~/.config/awesome/rc.lua
+: 1752720936:0;nano ~/.aliases
+: 1752721247:0;ranger
+: 1752721314:0;c
+: 1752721319:0;firefox &
+: 1752721462:0;nano ~/.config/awesome/rc.lua
+: 1752721779:0;nano ~/.plugin
+: 1752721798:0;. ~/.zshrc
+: 1752721811:0;nano ~/.aliases
+: 1752721831:0;. ~/.zshrc
+: 1752721857:0;ranger
+: 1752721878:0;~
+: 1752721886:0;ranger
+: 1752722241:0;yt-dlp -h
+: 1752722317:0;brave &
+: 1752722342:0;pacman -Rns firefox
+: 1752722352:0;sudo pacman -Rns firefox
+: 1752722367:0;upgrade
+: 1752722397:0;yau && yu && pu && pau && upgrade
+: 1752722414:0;c
+: 1752722421:0;yt-dlp -h
+: 1752722859:0;yt-dlp -x --audio-format mp3 
+: 1752722866:0;yt-dlp -x --audio-format mp3 https://music.youtube.com/watch\?v\=aYNQQuZo7tM\&si\=FzxaQxEpwx3g1GNQ
+: 1752722891:0;yt-dlp -x --audio-format mp3 "https://music.youtube.com/watch\?v\=aYNQQuZo7tM\&si\=FzxaQxEpwx3g1GNQ"
+: 1752722912:0;yt-dlp -x --audio-format mp3 "https://youtube.com/watch\?v\=aYNQQuZo7tM\&si\=FzxaQxEpwx3g1GNQ"
+: 1752722921:0;c
+: 1752722936:0;yt-dlp -x --audio-format mp3 "https://youtube.com/watch\?v\=aYNQQuZo7tM"
+: 1752722964:0;yt-dlp -x --audio-format mp3 "https://youtube.com/watch\?v\=FzxaQxEpwx3g1GNQ"
+: 1752722971:0;c
+: 1752722982:0;yt-dlp -h
+: 1752722995:0;yt-dlp -x --audio-format -t "https://youtube.com/watch\?v\=FzxaQxEpwx3g1GNQ"
+: 1752723051:0;yt-dlp -t mp3 https://music.youtube.com/watch\?v\=aYNQQuZo7tM\&si\=FzxaQxEpwx3g1GNQ
+: 1752723066:0;~
+: 1752723070:0;yt-dlp -t mp3 https://music.youtube.com/watch\?v\=aYNQQuZo7tM\&si\=FzxaQxEpwx3g1GNQ
+: 1752723087:0;ls
+: 1752723095:0;ls -a1
+: 1752723130:0;mv 'Fearless Motivation - Self-Confidence - Song Mix (Epic Music) [aYNQQuZo7tM].mp3' 'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3'
+: 1752723133:0;ls -a1
+: 1752723196:0;mv 'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' /mnt/data/Musik/instrumen
+: 1752723221:0;cp ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' /mnt/data/Musik/instrumen
+: 1752723255:0;sudo mv ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' /mnt/data/Musik/instrumen
+: 1752723273:0;sudo cp ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' /mnt/data/Musik/instrumen
+: 1752723279:0;ranger
+: 1752723309:0;~
+: 1752723322:0;sudo cp ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' path/mnt/data/Musik/instrumen
+: 1752723333:0;sudo mv ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' path/mnt/data/Musik/instrumen
+: 1752723357:0;sudo mv ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' /path/mnt/data/Musik/instrumen
+: 1752723366:0;ranger
+: 1752723422:0;pwd
+: 1752723429:0;ls
+: 1752723442:0;ls *
+: 1752723450:0;pwd *
+: 1752723452:0;pwd*
+: 1752723475:0;pwd *
+: 1752723481:0;pwd && *
+: 1752723514:0;cat /home/amirzain/saya/file/public/CLI/perintah/mv/README.md
+: 1752723517:0;c
+: 1752723518:0;cat /home/amirzain/saya/file/public/CLI/perintah/mv/README.md
+: 1752723701:0;sudo mv ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' /path/mnt/data/Musik/instrumen
+: 1752723725:0;sudo mv ~/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' /mnt/data/Musik/instrumen
+: 1752723732:0;~
+: 1752723734:0;c
+: 1752723827:0;ls *
+: 1752723863:0;ls 10-wlan0.network.bak android-sdk bahasa.save bin go paru saya Screenshot-_20250717005705.png Unduhan Untitled 
+: 1752723870:0;ls *
+: 1752723873:0;c
+: 1752723876:0;ls *
+: 1752723888:0;..
+: 1752723893:0;ls *
+: 1752723911:0;c
+: 1752723920:0;~\\
+~
+: 1752723923:0;~
+: 1752723925:0;c
+: 1752723930:0;ls 10-wlan0.network.bak android-sdk bahasa.save bin go paru saya Screenshot-_20250717005705.png Unduhan Untitled 
+: 1752723942:0;ls *
+: 1752723965:0;ranger
+: 1752724038:0;r
+: 1752724038:0;ranger
+: 1752724998:0;~
+: 1752725000:0;ranger
+: 1752725174:0;~
+: 1752725196:0;reboot
+: 1752725536:0;pwd
+: 1752725588:0;..
+: 1752725610:0;~
+: 1752725623:0;cat ~/.aliases
+: 1752725647:0;nano ~/.aliases
+: 1752725673:0;c
+: 1752725676:0;~
+: 1752725685:0;. ~/.zshrc
+: 1752725691:0;..
+: 1752725695:0;.
+: 1752725698:0;..
+: 1752725702:0;~
+: 1752725727:0;reboot
+: 1752725831:0;..
+: 1752725835:0;~
+: 1752725999:0;..
+: 1752726026:0;~
+: 1752726563:0;c
+: 1752726568:0;ranger
+: 1752726616:0;mkdir -p ~/folder-saya
+: 1752726619:0;ls
+: 1752726649:0;~
+: 1752726656:0;ls
+: 1752726671:0;rm -r ~/folder-saya
+: 1752726674:0;ls
+: 1752726680:0;..
+: 1752726697:0;rm -r /folder-saya
+: 1752726715:0;mkdir -p /folder-saya
+: 1752726728:0;mkdir -p folder-saya
+: 1752726739:0;sudo mkdir -p /folder-saya
+: 1752726742:0;ls
+: 1752726756:0;..
+: 1752726768:0;ls
+: 1752726778:0;rm -r /folder-saya
+: 1752726788:0;ls
+: 1752726808:0;sudo rm -r /folder-saya
+: 1752726809:0;ls
+: 1752726823:0;~
+: 1752726826:0;..
+: 1752726841:0;rm -r folder-saya
+: 1752726856:0;mkdir -p folder-saya
+: 1752726867:0;sudo mkdir -p folder-saya
+: 1752726869:0;ls
+: 1752726871:0;c
+: 1752726875:0;ls -a1
+: 1752726890:0;cd folder-saya
+: 1752726894:0;ls
+: 1752726900:0;~
+: 1752726906:0;..
+: 1752726914:0;~
+: 1752726918:0;..
+: 1752726923:0;rm -r folder-saya
+: 1752726930:0;ls
+: 1752726935:0;sudo rm -r folder-saya
+: 1752726937:0;ls
+: 1752726960:0;tree
+: 1752726970:0;c
+: 1752726972:0;tree
+: 1752727067:0;c
+: 1752727078:0;ls *
+: 1752727091:0;ls -a1
+: 1752727096:0;~
+: 1752727097:0;ls -a1
+: 1752727101:0;c
+: 1752727102:0;ls -a1
+: 1752727118:0;clear && ls -a1
+: 1752727132:0;..
+: 1752727141:0;ls -a1
+: 1752727157:0;tree
+: 1752727426:0;c && ~
+: 1752727464:0;bluetuith
+: 1752727661:0;c
+: 1752727747:0;brave &
+: 1752728035:0;cc
+: 1752728037:0;c
+: 1752728044:0;flutter devices
+: 1752728061:0;c
+: 1752728385:0;pavucontrol
+: 1752728734:0;c && ping -c3 google.com
+: 1752728755:0;c && ping google.com
+: 1752728846:0;c
+: 1752730738:0;pavucontrol
+: 1752734201:0;bluetuith
+: 1752734224:0;c
+: 1752735085:0;ls
+: 1752735099:0;c
+: 1752735102:0;ls -a1
+: 1752735111:0;cd Downloads
+: 1752735115:0;ls -a1
+: 1752735120:0;c
+: 1752735121:0;ls -a1
+: 1752735789:0;pacman -Ss whatsapp
+: 1752735797:0;~
+: 1752735799:0;pacman -Ss whatsapp
+: 1752735829:0;pa search whatsapp
+: 1752735837:0;paru search whatsapp
+: 1752735844:0;yay search whatsapp
+: 1752735854:0;cat ~/.aliases
+: 1752735876:0;c
+: 1752735877:0;cat ~/.aliases
+: 1752735892:0;ps whatsapp
+: 1752736181:0;c && cat ~/.aliases
+: 1752736253:0;yau && yu && pu && pau && upgrade && yu --noconfirm --needed whatsapp-desktop-bin && pu
+: 1752736299:0;bluetuith
+: 1752736405:0;yau && yu && pu && pau && upgrade && ps --noconfirm --needed whatsapp-desktop-bin && pu
+: 1752736465:0;c
+: 1752737554:0;yay search whatsapp
+: 1752737572:0;ps whatsapp
+: 1752737583:0;c && ps whatsapp
+: 1752740318:0;brave -h
+: 1752740324:0;brave --help
+: 1752740332:0;brave help
+: 1752740375:0;brave chatgpt.com
+: 1752740433:0;brave chatgpt.com &
+: 1752740444:0;c
+: 1752740469:0;brave google.com &
+: 1752740492:0;ls
+: 1752740504:0;cd Downloads
+: 1752740506:0;ls
+: 1752740563:0;bluetuith
+: 1752740595:0;..
+: 1752740598:0;ls
+: 1752740605:0;c
+: 1752740609:0;cd Downloads
+: 1752740612:0;ls
+: 1752740636:0;~\~
+: 1752740638:0;~
+: 1752740645:0;cd /mnt/data/Musik
+: 1752740647:0;ls
+: 1752740655:0;~
+: 1752740657:0;c
+: 1752740664:0;cd /mnt/data/Musik/instrumen
+: 1752740667:0;ls
+: 1752740710:0;mpv 'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3'
+: 1752740722:0;mpv 'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' &
+: 1752740736:0;c
+: 1752740743:0;~
+: 1752741066:0;upgrade pulsemixer
+: 1752741154:0;pulsemixer
+: 1752741229:0;mpv 'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' &
+: 1752741238:0;c
+: 1752741241:0;mpv /mnt/data/Musik/instrumen/'Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3' &
+: 1752741289:0;mpv -h
+: 1752741344:0;man mpv
+: 1752741473:0;c
+: 1752741730:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752742217:0;ps socat gawk curl fzf rlwrap jq libnotify
+: 1752742236:0;upgrade socat gawk curl fzf rlwrap jq libnotify
+: 1752742284:0;which socat gawk curl fzf rlwrap jq libnotify
+: 1752742298:0;ps libnotify
+: 1752742311:0;pau libnotify
+: 1752742328:0;c && cat ~/.aliases
+: 1752742350:0;c && yu libnotify
+: 1752742416:0;c && cat ~/.aliases
+: 1752742428:0;c && pu libnotify
+: 1752742464:0;c
+: 1752742703:0;mpv
+: 1752742723:0;mpv --start
+: 1752742736:0;mpv --start=value
+: 1752742750:0;mpv --start value
+: 1752742753:0;c
+: 1752742809:0;pulsemixer
+: 1752742920:0;c && cat ~/.aliases
+: 1752742969:0;pacman -Rns pavucontrol
+: 1752742976:0;sudo pacman -Rns pavucontrol
+: 1752742990:0;pavucontrol
+: 1752743002:0;pulsemixer
+: 1752743163:0;C
+: 1752743167:0;c
+: 1752743263:0;ps aux | grep mpv
+: 1752743285:0;sudo 
+: 1752743290:0;sudo ps aux | grep mpv
+: 1752743307:0;c && sudo ps aux | grep mpv
+: 1752743329:0;kill %1
+: 1752743340:0;kill %2
+: 1752743347:0;c && sudo ps aux | grep mpv
+: 1752743371:0;kill 10155
+: 1752743570:0;brave &
+: 1752744777:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752744786:0;pulsemixer
+: 1752744797:0;c
+: 1752744811:0;which mpv ffmpeg lua libass youtubeâ€ƒ±dl ytâ€ƒ±dlp jq
+: 1752744885:0;which ytâ€ƒ±dlp
+: 1752744949:0;which yt-dlp
+: 1752744960:0;which mpv ffmpeg lua libass youtubeâ€ƒ±dl yt-dlp jq
+: 1752744998:0;upgrade libass youtubeâ€ƒ±dl
+: 1752745029:0;which libass
+: 1752745074:0;pacman -Q libass
+: 1752745096:0;yu youtube-dl
+: 1752745202:0;c
+: 1752745210:0;which mpv ffmpeg lua libass youtubeâ€ƒ±dl yt-dlp jq
+: 1752745245:0;pacman -Q mpv ffmpeg lua libass youtubeâ€ƒ±dl yt-dlp jq
+: 1752745264:0;pacman -Q mpv ffmpeg lua libass youtube-dl yt-dlp jq
+: 1752746252:0;pulsemixer
+: 1752746262:0;c
+: 1752746834:0;tree ~/.config/awesome/
+: 1752746842:0;cat ~/.config/awesome/rc.lua
+: 1752747394:0;c
+: 1752747629:0;cd ~/saya/file/
+: 1752747694:0;git status && git add . && git status && git commit -m "pesan biasa" && git pull
+: 1752747770:0;git pull
+: 1752747852:0;git status
+: 1752747860:0;pwd
+: 1752748127:0;kill 10155
+: 1752748131:0;ps aux | grep mpv
+: 1752748137:0;~
+: 1752748138:0;ps aux | grep mpv
+: 1752748146:0;sudo ps aux | grep mpv
+: 1752748167:0;kill 11593
+: 1752748175:0;c
+: 1752748177:0;cd ~/saya/file/
+: 1752748182:0;git status
+: 1752748733:0;git pull
+: 1752748789:0;git config pull.rebase false
+: 1752748796:0;git pull
+: 1752748856:0;git status
+: 1752748869:0;git status && git add . && git status && git commit -m "pesan biasa" && git pull
+: 1752748939:0;tree
+: 1752749035:0;git status
+: 1752749042:0;git push
+: 1752749071:0;tree Pribadi/book/other
+: 1752749084:0;git push
+: 1752749098:0;git status
+: 1752750636:0;~
+: 1752750637:0;c
+: 1752750641:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752750666:0;kill 2
+: 1752750685:0;sudo ps aux | grep mpv
+: 1752750695:0;c
+: 1752750714:0;pulsemixer
+: 1752750737:0;c
+: 1752750756:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752750767:0;sudo ps aux | grep mpv
+: 1752750783:0;kill 24631
+: 1752750800:0;kill 24739
+: 1752750807:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752750809:0;c
+: 1752750965:0;pulsemixer
+: 1752751086:0;c
+: 1752751167:0;pulsemixer
+: 1752751258:0;sudo ps aux | grep mpv
+: 1752751293:0;kill 24818
+: 1752751295:0;c
+: 1752751305:0;pulsemixer
+: 1752771989:0;bluetuith
+: 1752772488:0;ping -c3 google.com
+: 1752772491:0;c
+: 1752773288:0;pulsemixer
+: 1752805876:0;bluetuith
+: 1752805965:0;c
+: 1752806773:0;bluetuith
+: 1752806783:0;c
+: 1752812665:0;off
+: 1752821809:0;bluetuith
+: 1752822005:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752822010:0;c
+: 1752822866:0;..
+: 1752822872:0;ls -a1
+: 1752822879:0;c
+: 1752822880:0;ls -a1
+: 1752822895:0;tree temp
+: 1752822903:0;tree /temp
+: 1752822915:0;~
+: 1752822916:0;c
+: 1752822918:0;ranger
+: 1752822960:0;ls -a1
+: 1752822966:0;c
+: 1752822971:0;~
+: 1752822975:0;c
+: 1752822981:0;archinstall
+: 1752822987:0;sudo archinstall
+: 1752824344:0;c
+: 1752824603:0;sudo ps aux | grep mpv
+: 1752824624:0;kill 2495
+: 1752824628:0;c
+: 1752824940:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752825241:0;c
+: 1752825247:0;ranger
+: 1752826139:0;~
+: 1752826144:0;sudo ps aux | grep mpv
+: 1752826155:0;kill 3348
+: 1752826167:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752826168:0;c
+: 1752826220:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752826228:0;c
+: 1752826461:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752826464:0;c
+: 1752834286:0;bluetuith
+: 1752834309:0;reboot
+: 1752834358:0;off
+: 1752852578:0;bl
+: 1752852585:0;bluetuith
+: 1752852638:0;pulsemixer
+: 1752855570:0;c
+: 1752855585:0;ranger
+: 1752855671:0;ls
+: 1752855726:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/"Zack Hemsey - _The Way (Instrumental)_.mp3" &> /dev/null &\
+\
+\
+\
+\
+\
+\
+q\
+quit
+: 1752855728:0;~
+: 1752855744:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Zack Hemsey - _The Way (Instrumental)_.mp3" &> /dev/null & \
+\
+\
+\
+\
+\
+\
+q\
+quit
+: 1752855791:0;kill 3774
+: 1752855805:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Zack Hemsey - _The Way (Instrumental)_.mp3" &> /dev/null & 
+: 1752855814:0;c
+: 1752891029:0;bluetuith
+: 1752891045:0;x
+: 1752891069:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752891423:0;pulsemixer
+: 1752899776:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752899789:0;pulsemixer
+: 1752899810:0;c
+: 1752901246:0;pulsemixer
+: 1752901747:0;x
+: 1752901781:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Zack Hemsey - _The Way (Instrumental)_.mp3" &> /dev/null &
+: 1752901812:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752901849:0;c
+: 1752902798:0;ranger
+: 1752902826:0;pwd
+: 1752902835:0;~
+: 1752902845:0;ranger /mnt/data/Musik
+: 1752902853:0;~
+: 1752902866:0;ls /mnt/data/Musik
+: 1752902914:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Wali - takkan pisah (vidio lirik by as junior).mp3" &> /dev/null &
+: 1752902951:0;tree /mnt/data/Musik
+: 1752903195:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752903217:0;pulsemixer
+: 1752903233:0;x
+: 1752903244:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752903256:0;mpv
+: 1752903275:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752903306:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752903319:0;kill 11940
+: 1752903329:0;c
+: 1752904757:0;x
+: 1752910452:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752910464:0;pulsemixer
+: 1752910488:0;c
+: 1752911081:0;sudo archinstall
+: 1752911434:0;pacman -Q sway wayland-utils swaybg swayidle swaylock wofi grim slurp pipewire wireplenish xdg-desktop-portal-wlr foot alacritty
+: 1752911524:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752911529:0;c
+: 1752911545:0;pacman -Q sway wayland-utils swaybg swayidle swaylock wofi grim slurp pipewire wireplenish xdg-desktop-portal-wlr foot alacritty
+: 1752911562:0;nano ~/bahasa.save
+: 1752911643:0;upgrade sway wayland-utils swaybg swayidle swaylock wofi grim slurp wireplenish xdg-desktop-portal-wlr foot
+: 1752911675:0;upgrade sway wayland-utils swaybg swayidle swaylock wofi grim slurp xdg-desktop-portal-wlr foot
+: 1752911990:0;pu wireplenish
+: 1752912010:0;yu wireplenish
+: 1752912033:0;yau wireplenish
+: 1752912051:0;yay -Ss wireplenish
+: 1752912061:0;pu -Ss wireplenish
+: 1752912077:0;paru -Ss wireplenish
+: 1752912087:0;pacman -Ss wireplenish
+: 1752912093:0;c
+: 1752912097:0;pacman -Ss wireplenish
+: 1752912099:0;paru -Ss wireplenish
+: 1752912107:0;yay -Ss wireplenish
+: 1752912126:0;paru search wireplenish
+: 1752912135:0;yay search wireplenish
+: 1752912211:0;foot
+: 1752912290:0;nano ~/bahasa.save
+: 1752912477:0;ps aux | grep mpv
+: 1752912485:0;ps aux | grep brave
+: 1752912493:0;sudo ps aux | grep brave
+: 1752912533:0;c
+: 1752912543:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752912562:0;pulsemixer
+: 1752912597:0;qqqqqqqqqqqQQQQQqqqmmm
+: 1752912598:0;QqqqQq
+: 1752912601:0;c
+: 1752912648:0;clear && ls -a1
+: 1752912653:0;c
+: 1752912672:0;kill 11940
+: 1752912685:0;sudo ps aux | grep mpv
+: 1752912712:0;kill 31004
+: 1752912717:0;sudo ps aux | grep mpv
+: 1752912845:0;exit
+: 1752912906:0;sudo ps aux | grep brave
+: 1752912932:0;kill 30242
+: 1752912938:0;sudo ps aux | grep brave
+: 1752912946:0;c
+: 1752912948:0;sudo ps aux | grep brave
+: 1752912955:0;c
+: 1752912962:0;kill 30242
+: 1752912965:0;sudo ps aux | grep brave
+: 1752912980:0;kill 31636
+: 1752912987:0;sudo ps aux | grep brave
+: 1752912990:0;c
+: 1752912991:0;sudo ps aux | grep brave
+: 1752913004:0;kill 31696
+: 1752913017:0;c
+: 1752913018:0;sudo ps aux | grep brave
+: 1752913037:0;c
+: 1752913041:0;sudo ps aux | grep tty
+: 1752913091:0;kill 10878
+: 1752913097:0;c
+: 1752913098:0;sudo ps aux | grep tty
+: 1752913128:0;kill 31364
+: 1752913129:0;c
+: 1752913131:0;sudo ps aux | grep tty
+: 1752913149:0;kill 
+: 1752913154:0;kill 31364
+: 1752913156:0;c
+: 1752913158:0;sudo ps aux | grep tty
+: 1752913183:0;kill 30156
+: 1752913186:0;c
+: 1752913187:0;sudo ps aux | grep tty
+: 1752913214:0;kill 1354
+: 1752913218:0;c
+: 1752913219:0;sudo ps aux | grep tty
+: 1752913245:0;kill 31915
+: 1752913250:0;x
+: 1752913280:0;c
+: 1752913306:0;pacman -Q sway wayland-utils swaybg swayidle swaylock wofi grim slurp xdg-desktop-portal-wlr foot
+: 1752913336:0;sudo pacman -Rns awesome
+: 1752913363:0;nano ~/bahasa.save
+: 1752913406:0;y
+: 1752913410:0;c
+: 1752913420:0;nano ~/bahasa.save
+: 1752913453:0;c
+: 1752913473:0;rm -rf ~/.config/awesome
+: 1752913492:0;ls -a1 ~/.config/
+: 1752913503:0;c
+: 1752913508:0;nano ~/bahasa.save
+: 1752913530:0;c
+: 1752913547:0;rm -rf ~/.chace/awesome
+: 1752913557:0;ls -a1 ~/
+: 1752913569:0;c
+: 1752913585:0;rm -rf ~/.cache/awesome
+: 1752913593:0;rm -rf ~/.chace
+: 1752913602:0;ls -a1 ~/
+: 1752913613:0;c
+: 1752913624:0;ls -a1 ~/cache
+: 1752913632:0;ls -a1 ~/.cache
+: 1752913649:0;c
+: 1752913654:0;nano ~/bahasa.save
+: 1752913707:0;c
+: 1752913710:0;off
+: 1752914229:0;sway -h
+: 1752914234:0;sway -c
+: 1752914314:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752914363:0;bluetuith
+: 1752914380:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752914517:0;mkdir -p ~/.config/sway
+: 1752914610:0;cp /etc/sway/config ~/.config/sway/
+: 1752914621:0;ls ~/.config/sway/
+: 1752914627:0;tree ~/.config/sway/
+: 1752914668:0;foot
+: 1752914687:0;c
+: 1752914852:0;bindsym $mod+d exec wofi --show drun
+: 1752914875:0;upgrade bindsym
+: 1752915315:0;cat ~/.config/sway/config
+: 1752915354:0;. ~/.zshrc
+: 1752915423:0;off
+: 1752964208:0;ls ~/.config/dconf/
+: 1752964253:0;nano ~/.config/sway/config 
+: 1752964423:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752964439:0;bluetuith
+: 1752964460:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752964541:0;brave &
+: 1752964597:0;kill 2910
+: 1752964605:0;ps aux | grep brave
+: 1752964610:0;sudo ps aux | grep brave
+: 1752964655:0;kill 3128\\
+
+: 1752964661:0;kill 3128\
+
+: 1752964669:0;sudo ps aux | grep brave
+: 1752964678:0;kill 3315\
+
+: 1752964681:0;sudo ps aux | grep brave
+: 1752964701:0;kill 3362\
+
+: 1752964703:0;sudo ps aux | grep brave
+: 1752964724:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Most Wondrous Battle Music Ever Apocalypse Tomorrow Charles Evans.mp3" &> /dev/null &
+: 1752964732:0;brave &
+: 1752964774:0;ping -c3 google.com
+: 1752964781:0;c
+: 1752965074:0;nano ~/.config/sway/config 
+: 1752965132:0;pacman -Q wofi
+: 1752965294:0;. ~/.zshrc
+: 1752965359:0;nano ~/.config/sway/config 
+: 1752965382:0;. ~/.zshrc
+: 1752965432:0;pacman -Q gdm
+: 1752965441:0;upgrade gdm
+: 1752965488:0;c
+: 1752965493:0;pacman -Q sddm
+: 1752965514:0;pacman -Q lxdm
+: 1752965534:0;sudo archinstall
+: 1752965750:0;pacman -Q feh gnu-free-fonts slock terminus-font ttf-liberation xorg-server xorg-xinit xorg-xrandr xsel xterm
+: 1752965889:0;pacman -Q feh gnu-free-fonts slock terminus-font ttf-liberation xorg-server xorg-xinit xorg-xrandr xsel xterm lightdm-gtk-greeter
+: 1752966070:0;pacman -Q feh gnu-free-fonts slock terminus-font ttf-liberation xorg-server xorg-xinit xorg-xrandr xsel xterm lightdm-gtk-greeter ftp
+: 1752966412:0;upgrade vsftpd
+: 1752966470:0;sudo systemctl enable vsftpd.service
+: 1752966487:0;sudo systemctl start vsftpd.service
+: 1752966490:0;. ~/.zshrc
+: 1752966502:0;sudo systemctl status vsftpd.service
+: 1752966523:0;c
+: 1752966560:0;sudo nano /etc/vsftpd.conf
+: 1752966823:0;sudo systemctl restart vsftpd.service
+: 1752967498:0;..
+: 1752967503:0;ls
+: 1752967513:0;~
+: 1752967514:0;c
+: 1752967524:0;ls /srv
+: 1752967542:0;tree /srv
+: 1752967553:0;tree /srv/ftp
+: 1752967650:0;sudo useradd -m -d /srv/ftp/amirzain -s /usr/bin/nologin amirzain
+: 1752967874:0;mkdir -p /srv/ftp/amirzain
+: 1752967884:0;sudo mkdir -p /srv/ftp/amirzain
+: 1752967901:0;nologin amirzain
+: 1752967940:0;tree /srv
+: 1752968047:0;sudo rm -r /srv/ftp/amirzain
+: 1752968050:0;tree /srv
+: 1752968058:0;sudo mkdir -p /srv/ftp/saya
+: 1752968059:0;tree /srv
+: 1752969147:0;ip link
+: 1752969174:0;ip addr show wlan0
+: 1752969858:0;c
+: 1752969896:0;sudo useradd -m -d /srv/ftp/public -s /usr/bin/nologin public
+: 1752969952:0;sudo passwd public
+: 1752970025:0;sudo chown -R public:public /srv/ftp/public
+: 1752970059:0;sudo chown 755 /srv/ftp/public
+: 1752970140:0;sudo ip addr add 192.168.100.54/24 dev enp0s25
+: 1752970320:0;sudo touch /etc/systemd/network/20-enp0s25.network
+: 1752970337:0;sudo nano /etc/systemd/network/20-enp0s25.network
+: 1752970438:0;sudo ip addr add 192.168.100.54/24 dev enp0s25
+: 1752970447:0;sudo nano /etc/systemd/network/20-enp0s25.network
+: 1752970477:0;pulsemixer
+: 1752970564:0;ip addr show wlan0
+: 1752970580:0;ip addr show 
+: 1752970846:0;sudo ip addr add 192.168.100.54/24 dev wlan0
+: 1752970881:0;sudo systemctl restart vsftpd.service
+: 1752970909:0;sudo systemctl daemon-reload
+: 1752970931:0;sudo systemctl restart systemd-networkd
+: 1752971035:0;c
+: 1752971069:0;cat /etc/vsftpd.conf
+: 1752971161:0;cp /etc/vsftpd.conf /etc/vsftpd-public.conf
+: 1752971168:0;sudo cp /etc/vsftpd.conf /etc/vsftpd-public.conf
+: 1752971184:0;ls /etc/
+: 1752971214:0;cat /etc/vsftpd-public.conf
+: 1752971229:0;sudo nano /etc/vsftpd-public.conf
+: 1752971320:0;sudo cp /etc/vsftpd.conf /etc/vsftpd-private.conf
+: 1752971333:0;sudo nano /etc/vsftpd-private.conf
+: 1752972033:0;sudo pacman -Rns vsftpd
+: 1752972045:0;sudo pacman -Rns --needed vsftpd
+: 1752972049:0;sudo pacman -Rns vsftpd
+: 1752972057:0;ls /etc/
+: 1752972122:0;sudo rm -rf /etc/vsftpd-private.conf
+: 1752972130:0;sudo rm -rf /etc/vsftpd-public.conf
+: 1752972133:0;ls /etc/
+: 1752972180:0;ls /etc/systemd/network/20-enp0s25.network
+: 1752972190:0;ls /etc/systemd/
+: 1752972201:0;c
+: 1752972205:0;ls /etc/systemd/
+: 1752972216:0;ls -a1 /etc/systemd/
+: 1752972226:0;ls /etc/systemd/network/
+: 1752972234:0;ls -a1 /etc/systemd/network/
+: 1752972282:0;sudo rm -rf /etc/systemd/network/20-enp0s25.network
+: 1752972284:0;c
+: 1752972327:0;upgrade openssh
+: 1752972437:0;nano /etc/ssh/sshd_config
+: 1752972445:0;sudo nano /etc/ssh/sshd_config
+: 1752972932:0;sftp -v
+: 1752972981:0;ip addr show 
+: 1752973056:0;hostnamectl -l
+: 1752973059:0;hostnamectl
+: 1752973104:0;sftp -v amirzain@linux
+: 1752973147:0;ip addr show 
+: 1752973165:0;sftp -v amirzain@192.168.1.10
+: 1752973175:0;c
+: 1752973178:0;sftp -v amirzain@192.168.1.10
+: 1752973181:0;sftp -v amirzain@linux
+: 1752973257:0;sudo systemctl restart sshd
+: 1752973283:0;sftp amirzain@linux
+: 1752973616:0;sudo chown amirzain:amirzain /home/amirzain
+: 1752973621:0;sftp amirzain@linux
+: 1752973661:0;sudo systemctl restart sshd
+: 1752973668:0;sftp amirzain@linux
+: 1752973811:0;sftp amirzain@192.168.1.10
+: 1752973926:0;ls -a1 /etc/ssh
+: 1752974208:0;c
+: 1752974229:0;sudo systemctl status sshd
+: 1752974254:0;sudo systemctl start sshd
+: 1752974255:0;sudo systemctl status sshd
+: 1752974259:0;c
+: 1752974260:0;sudo systemctl status sshd
+: 1752974298:0;sudo nano /etc/ssh/sshd_config
+: 1752974551:0;ip addr show 
+: 1752974562:0;hostnamectl
+: 1752974707:0;sftp amirzain@amirzain
+: 1752974829:0;cat /etc/fstab
+: 1752974850:0;cat /etc/hosts
+: 1752974867:0;sftp amirzain@127.0.0.1
+: 1752975024:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - Self-Confidence - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752975201:0;sudo nano /etc/ssh/sshd_config
+: 1752975521:0;sudo chown amirzain:amirzain /home/amirzain
+: 1752975553:0;sudo systemctl restart sshd
+: 1752975576:0;sftp amirzain@127.0.0.1
+: 1752975853:0;sudo chown root:root /home/amirzain
+: 1752981586:1;sudo chown amirzain:amirzain /home/amirzain
+: 1752981629:0;brave &
+: 1752981652:0;sudo ps aux | grep brave
+: 1752981673:0;kill 44415
+: 1752981687:0;kill 455514
+: 1752981708:0;kill 44514
+: 1752981719:0;kill 6708
+: 1752981728:0;kill 4308
+: 1752981731:0;sudo ps aux | grep brave
+: 1752981879:0;pacman -Q xorg-xwayland
+: 1752981938:0;brave --ozon-platform=wayland &
+: 1752982000:0;sudo ps aux | grep -f brave
+: 1752982017:0;sudo ps aux | grep -i brave
+: 1752982087:0;cat ~/.zsh_history
+: 1752982116:0;pacman -Q feh gnu-free-fonts slock terminus-font ttf-liberation xorg-server xorg-xinit xorg-xrandr xsel xterm
+: 1752982258:0;sudo touch ~/.local/bin/brave-wayland
+: 1752982270:0;sudo tree ~/.local/bin/
+: 1752982289:0;sudo tree ~/.local/bin/render
+: 1752982301:0;sudo cat ~/.local/bin/render
+: 1752982314:0;sudo nano ~/.local/bin/render
+: 1752982330:0;sudo nano ~/.local/bin/brave-wayland
+: 1752982479:0;c
+: 1752982483:0;sudo nano ~/.local/bin/brave-wayland
+: 1752982504:0;sudo cat ~/.local/bin/brave-wayland
+: 1752982506:0;c
+: 1752982532:0;chmod +x ~/.local/bin/brave-wayland
+: 1752982543:0;sudo chmod +x ~/.local/bin/brave-wayland
+: 1752982564:0;brave-wayland
+: 1752982617:0;brave-wayland &
+: 1752982728:0;pacman -Q feh gnu-free-fonts slock terminus-font ttf-liberation xorg-server xorg-xinit xorg-xrandr xsel xterm
+: 1752982868:0;pacman -Q wl-clipboard swaybg swaylock foot
+: 1752982893:0;sudo pacman -Syu wl-clipboard 
+: 1752982914:0;sudo pacman -Rns xorg-server xorg-xinit xorg-xrandr xsel xterm slock\
+
+: 1752983075:0;pacman -Q greetd tuigreet
+: 1752983082:0;sudo pacman -Syu greetd tuigreet
+: 1752983099:0;paru -Syu greetd tuigreet
+: 1752983234:0;sudo pacman -S greetd-tuigreet
+: 1752983294:0;sudo nano /etc/greetd/config.toml
+: 1752983354:0;sudo systemctl enable --now greetd
+: 1752983376:0;cat /etc/greetd/config.toml
+: 1752983378:0;c
+: 1752983379:0;cat /etc/greetd/config.toml
+: 1752983384:0;sudo systemctl enable --now greetd
+: 1752983418:0;sudo systemctl disable --now lightdm.service
+: 1752977531:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - The Universe In Me - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752983531:0;sudo systemctl enable --now greetd
+: 1752985664:0;nano ~/.config/sway/config 
+: 1752985742:0;. ~/.zshrc
+: 1752985757:0;reboot
+: 1752985816:0;nano ~/.config/sway/config 
+: 1752985875:0;exit
+: 1752986166:0;nano ~/.config/sway/config 
+: 1752986185:0;exit
+: 1752986256:0;swaymsg reload
+: 1752986302:0;nano ~/.config/sway/config 
+: 1752986328:0;exit
+: 1752986417:0;nano ~/.config/sway/config 
+: 1752986450:0;clear
+: 1752987070:0;rm -r ~/.config/sway/config
+: 1752987098:0;tree ~/.config/sway/
+: 1752987104:0;reboot
+: 1752987165:0;brave-wayland &
+: 1752987228:0;pacman -Q xorg-server xorg-xinit xorg-xrandr xsel xterm slock\
+
+: 1752987246:0;sudo pacman -Rns xorg-server xorg-xinit xorg-xrandr xsel xterm slock\
+
+: 1752987273:0;sudo pacman -Rns xorg-xinit xorg-xrandr xsel xterm slock\
+
+: 1752987287:0;sudo pacman -Rns xorg-server xorg-xinit xorg-xrandr xsel xterm slock\
+
+: 1752987308:0;pacman -Q xorg-xinit xorg-xrandr xsel xterm slock\
+
+: 1752987317:0;sudo pacman -Rns xorg-server \
+
+: 1752987440:0;sudo systemctl disable lightdm.service
+: 1752987452:0;sudo pacman -Rns lightdm lightdm-gtk-greeter
+: 1752987473:0;pacman -Q greetd agreety seatd
+: 1752987490:0;sudo systemctl enable seatd.service
+: 1752987525:0;sudo nano /etc/greetd/config.toml
+: 1752987587:0;pacman -Q sway swayidle swaylock waybar wlroots xdg-desktop-portal-wlr \\
+  wofi foot alacritty grim slurp mako\
+
+: 1752987617:0;sudo pacman -S sway swayidle swaylock waybar wlroots xdg-desktop-portal-wlr \\
+  wofi foot alacritty grim slurp mako
+: 1752987655:0;pacman -Q sway swayidle swaylock waybar wlroots xdg-desktop-portal-wlr \\
+  wofi foot alacritty grim slurp mako\
+
+: 1752987682:0;upgrade mako waybar wlroots
+: 1752987713:0;upgrade mako waybar
+: 1752987764:0;pacman -Q sway swayidle swaylock waybar wlroots xdg-desktop-portal-wlr \\
+  wofi foot alacritty grim slurp mako\
+
+: 1752987780:0;paru -Syyuu wlroots
+: 1752987919:0;sudo pacman -Rns xorg-server xorg-server-common xorg-xinit xorg-apps
+: 1752987934:0;sudo pacman -Rns xorg-server xorg-server-common xorg-apps
+: 1752987962:0;pacman -Qi xorg-server | grep â€ƒ¸Required Byâ€ƒ¹
+: 1752988017:0;sudo pacman -Rns \\
+  xorg-xprop xorg-xrdb xorg-xset \\
+  at-spi2-core gnome-settings-daemon xdg-utils xorg-xwayland\
+
+: 1752988033:0;sudo pacman -Rnsdd xorg-xprop xorg-xrdb xorg-xset xorg-server-common xorg-server
+: 1752988099:0;pacman -Qi at-spi2-core  | grep 'Required By'\
+pacman -Qi xdg-utils     | grep 'Required By'
+: 1752988108:0;sudo pacman -Rnsdd xorg-xprop xorg-xrdb xorg-xset xorg-server-common xorg-server
+: 1752988111:0;pacman -Qi at-spi2-core  | grep 'Required By'\
+pacman -Qi xdg-utils     | grep 'Required By'
+: 1752988151:0;sudo pacman -Rns \\
+  at-spi2-core gtk3 gtk4 mutter gnome-shell gnome-settings-daemon \\
+  xdg-utils flatpak webkitgtk-6.0 atk atkmm qt5-base \\
+  xorg-xwayland\
+
+: 1752988174:0;pacman -Qtdq
+: 1752988189:0;sudo pacman -Rns $(pacman -Qtdq)
+: 1752988291:0;pacman -Qtdq
+: 1752988375:0;reboot
+: 1752988456:0;brave-wayland &
+: 1752988495:0;cp /etc/sway/config ~/.config/sway/config
+: 1752988508:0;tree ~/.config/sway/
+: 1752988549:0;pacman -Q wofi
+: 1752988585:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - The Universe In Me - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752988592:0;bluetuith
+: 1752988606:0;mpv --loop-file --no-terminal "/mnt/data/Musik/instrumen/Fearless Motivation - The Universe In Me - Song Mix (Epic Music).mp3" &> /dev/null &
+: 1752989010:0;pacman -Q sway wayland-utils swaybg swayidle swaylock wofi grim slurp pipewire wireplenish xdg-desktop-portal-wlr foot alacritty
+: 1752989115:0;cat ~/.config/sway/config
+: 1752989117:0;c
+: 1752989118:0;cat ~/.config/sway/config
+: 1752989264:0;pacman -Q sway wayland-utils swaybg swayidle swaylock wofi grim slurp foot xorg-xwayland light
+: 1752989284:0;sudo pacman -Syyu light
+: 1752989335:0;paru -Syyu light
+: 1752989360:0;foot
+: 1752989474:0;sudo pacman -Rns alacritty
+: 1752989493:0;reboot
+: 1752989567:0;pacman -Q alacritty
+: 1752989606:0;bluetuith
+: 1752989618:0;c
+: 1752991358:0;brave-wayland &
+: 1752991394:0;sudo pacman -S ttf-fira-code ttf-jetbrains-mono noto-fonts-emoji awesome-terminal-fonts
+: 1752991823:0;pacman -Q dmenu
+: 1752991908:0;sway
+: 1752992342:0;brave-wayland &
+: 1752992696:0;bluetuith
+: 1752993080:0;cp ~/.zsh_history ~/saya/file/Pribadi/promp

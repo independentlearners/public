@@ -1,6 +1,6 @@
-# Hal lain yang mungkin membantu
+# Kumpulan Teknologi
 
 > Halaman ini masih dalam tahap pengembangan
 
-- **[🕹 Virtual Machine/VM](./programmer/domain-spesifik/tools/vm/README.md)**
+- **[🕹 Virtual Machine/VM](./vm/README.md)**
 
