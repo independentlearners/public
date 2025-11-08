@@ -536,7 +536,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
  
 
   
-### 💻 **D. Lingkungan Kerja**
+### 💻 **[D. Lingkungan Kerja Dan Detail Teknis][12]**
  
  
 - **[🪟 Window Manager][10]**
@@ -1020,4 +1020,4 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [8]: ./sistem-operasi/linux/gnu/bagian-8/README.md
 [9]: ./sistem-operasi/linux/gnu/bagian-9/README.md
 [10]: ./sistem-operasi/linux/archlinux/desktop-environment/window-manager/README.md
-
+[12]: ./sistem-operasi/linux/archlinux/desktop-environment/README.md
