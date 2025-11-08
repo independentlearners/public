@@ -1,6 +1,7 @@
 - [Window-Manager](./window-manager/README.md)
 - [Gnome](./gnome/README.md)
 - [Kde-Plasma](./kde-plasma/README.md)
+- [Xfce](./xfce/README.md)
 <!--
 Bagus — saya kumpulkan **seluruh konsep relevan** yang dibutuhkan untuk *membangun Desktop Environment (DE)* dengan fokus pada aspek **scripting / konfigurasi** (bukan pengembangan low-level terus-menerus). Hasilnya adalah daftar terstruktur dan lengkap plus **jumlah pastinya** di akhir.
 
