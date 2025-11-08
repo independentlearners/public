@@ -10,7 +10,7 @@ Mulai sekarang — berikut pengembangan mendalam untuk setiap materi inti (urut:
 
 ---
 -->
-# 🪞 2. Pengenalan Wayland & Komponen Sway
+# [🪞 2. Pengenalan Wayland & Komponen Sway][0]
 
 **Estimasi waktu**: 2 minggu (intensif — pemahaman konsep + eksperimen konfigurasi)
 
@@ -557,7 +557,8 @@ Saya siap lanjutkan pembuatan file-file modul terperinci (Markdown + checklist l
 [selanjutnya]: ../bagian-2/README.md
 
 
-[0]: ../README.md
+-->
+[0]: ./sway/README.md
 [1]: ../
 [2]: ../
 [3]: ../
@@ -577,4 +578,3 @@ Saya siap lanjutkan pembuatan file-file modul terperinci (Markdown + checklist l
 [17]: ../
 [18]: ../
 
--->

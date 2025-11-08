@@ -23,7 +23,7 @@ Pengguna mampu melakukan instalasi minimal Arch, memahami sistem inti, serta men
 
 ---
 
-## 🪞 2. Pengenalan Wayland & Komponen Sway
+## [🪞 2. Pengenalan Wayland & Komponen Sway][0]
 
 **Estimasi waktu:** 2 minggu
 
@@ -551,6 +551,8 @@ Seluruh jalur disusun dari *fondasi sistem → konfigurasi modular → automasi 
 
 ---
 
-**[Klik Disini Untuk Masuk][0]**
+<!--
+**[Klik Disini Untuk Masuk][ ]**
+-->
 
 [0]: ./bagian-1/README.md
