@@ -1,3 +1,5 @@
+<!--
+
 * **Bahasa sumber utama** tempat tool tersebut ditulis.
 * **Tujuan dan manfaat utama**.
 * **Pra-syarat jika ingin memodifikasi atau mengembangkannya.**
@@ -141,4 +143,6 @@
 | Bahasa CLI       | Bash, Lua, Dart, Go, Rust | —              | Menengah–Sulit               |
 
 ---
+
+-->
 
