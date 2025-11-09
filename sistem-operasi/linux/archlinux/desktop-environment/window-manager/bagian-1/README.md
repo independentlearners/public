@@ -558,7 +558,7 @@ Saya siap lanjutkan pembuatan file-file modul terperinci (Markdown + checklist l
 
 
 -->
-[0]: ./sway/README.md
+[0]: ./../sway/README.md
 [1]: ../
 [2]: ../
 [3]: ../

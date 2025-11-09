@@ -3,7 +3,7 @@
 *(gaya dokumentasi profesional ala GitHub; tersusun rapi, menggunakan ikon untuk navigasi cepat; Bahasa Indonesia resmi)*
 -->
 
-Tujuan dokumen: memberikan **peta belajar dan referensi dependensi** yang sangat jelas sehingga siapa pun — termasuk pemula teknis — dapat mulai membuat dotfiles Sway yang dapat dimengerti hingga setiap baris konfigurasi memiliki makna. Setelah kamu meng-audit dokumen ini, saya akan perjelas **isi tiap fase** menjadi materi lengkap (teori, contoh, latihan, verifikasi).
+Tujuan dokumen: memberikan **peta belajar dan referensi dependensi** yang sangat jelas sehingga siapa pun — termasuk pemula teknis — dapat mulai membuat dotfiles Sway yang dapat dimengerti hingga setiap baris konfigurasi memiliki makna (teori, contoh, latihan, verifikasi).
 
 ---
 
@@ -25,8 +25,9 @@ Tujuan dokumen: memberikan **peta belajar dan referensi dependensi** yang sangat
 6. 🤖 **Fase 5 — IPC & Scripting Automasi**
 7. 🔍 **Fase 6 — Debugging, Logging, dan Tracing**
 8. 🛠️ **Fase 7 — Build From Source & Kontribusi**
-
+<!--
 > Setelah audit kamu, saya akan mengubah setiap fase menjadi sub-bab terperinci (tujuan, referensi man/URI, contoh `~/.config/sway/config` bertahap, laboratorium praktis, dan checklist verifikasi).
+-->
 
 ---
 
@@ -37,10 +38,10 @@ Tujuan dokumen: memberikan **peta belajar dan referensi dependensi** yang sangat
 ## Perangkat keras & sistem
 
 * Kernel modern (≥ generic kernel yang didukung distro).
-* Driver GPU dengan dukungan KMS/DRM (Intel, AMD, NVIDIA ~~(Nouveau atau NVIDIA proprietary dengan wayland support)~~).
+* Driver GPU dengan dukungan KMS/DRM (Intel, AMD, NVIDIA). <!-- ~~(Nouveau atau NVIDIA proprietary dengan wayland support)~~). -->
 * Akses ke TTY atau display manager yang mendukung Wayland.
 
-> Catatan: detil driver NVIDIA bervariasi; cek dokumentasi distribusi untuk dukungan Wayland + proprietary driver.
+> Catatan: detil driver NVIDIA bervariasi; cek dokumentasi distribusi untuk dukungan Wayland + proprietary driver [disini][0].
 
 ## Skill & tool yang direkomendasikan
 
@@ -280,3 +281,4 @@ Sebelum menandai fase “siap”, setiap modul harus memenuhi checklist berikut:
 ---
 
 Saya sudah menyusun roadmap lengkap, rapi, dan terstruktur sesuai permintaanmu. Silakan **audit dan beri catatan** (mis. tambahkan distro khusus, fokus bahasa scripting tertentu, atau permintaan templates tambahan). Setelah menerima audit, saya akan **memperjelas tiap fase** menjadi kurikulum detil yang kamu minta.-->
+[0]: https://github.com/swaywm/sway/wiki
