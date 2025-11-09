@@ -46,12 +46,10 @@ POSIX dan konvensi utilitas menjelaskan pola umum perintah: nama perintah, diiku
 **Komponen:**
  
  
-1.  
-**Command (nama program)** Contoh: `ls`, `git`, `python`, `tar`. Ini adalah executable atau built-in shell. 
+1. **Command (nama program)** Contoh: `ls`, `git`, `python`, `tar`. Ini adalah executable atau built-in shell. 
  
  
-2.  
-**Option / Flag (opsional, mengubah perilaku)**
+2. **Option / Flag (opsional, mengubah perilaku)**
  
  
   - **Short option**: satu huruf, diawali satu `-` → `-h`, `-v`. Kadang bisa digabung: `-la` (artinya `-l -a`).
@@ -63,12 +61,10 @@ POSIX dan konvensi utilitas menjelaskan pola umum perintah: nama perintah, diiku
 
  
  
-3.  
-**Argument (positional argument)** Argumen posisi adalah entitas yang biasanya menunjukkan sumber/destinasi/data, mis. `rm file.txt`, `tar -czf out.tar.gz folder/`. Posisi dan arti tergantung definisi perintah. 
+3. **Argument (positional argument)** Argumen posisi adalah entitas yang biasanya menunjukkan sumber/destinasi/data, mis. `rm file.txt`, `tar -czf out.tar.gz folder/`. Posisi dan arti tergantung definisi perintah. 
  
  
-4.  
-**Subcommand** Beberapa aplikasi menggunakan pola `command subcommand [options] [args]` (contoh: `git commit`, `docker run`). Subcommand membantu mengorganisasi fungsi besar menjadi sub-set perintah. Modern CLI frameworks memfasilitasi pola ini. 
+4. **Subcommand** Beberapa aplikasi menggunakan pola `command subcommand [options] [args]` (contoh: `git commit`, `docker run`). Subcommand membantu mengorganisasi fungsi besar menjadi sub-set perintah. Modern CLI frameworks memfasilitasi pola ini. 
  
  
 
