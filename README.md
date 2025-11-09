@@ -21,12 +21,12 @@
 
 > Fondasi sebelum menggunakan tools atau shell tertentu.
 
-* **[📘 Pengantar CLI](CLI/pengenalan/README.md)**
+* **[📘 Pengantar CLI](CLI_TUI/README.md)**
 
   * Apa itu CLI dan perbandingannya dengan GUI
   * Struktur perintah (`command [option] [argument]`)
   * Shortcut dan navigasi dasar terminal
-* **[📂 Struktur Sistem Linux](CLI/struktur-sistem/README.md)**
+* **[📂 Struktur Sistem Linux](CLI_TUI/struktur-sistem/README.md)**
 
   * Hirarki direktori (`/bin`, `/usr`, `/etc`, dll)
   * File permission & ownership (`chmod`, `chown`)
@@ -38,17 +38,17 @@
 
 > Menjelaskan perbedaan, konfigurasi, dan ekosistem shell.
 
-* **[🐚 Shell & Interpreter](CLI/shell/README.md)**
+* **[🐚 Shell & Interpreter](CLI_TUI/shell/README.md)**
 
   * Bash, Zsh, Fish, Dash: perbandingan dan keunggulan
   * Startup files (`.bashrc`, `.zshrc`, `.profile`, dll)
   * Prompt customization dan environment variable (`$PATH`, `$HOME`, dll)
-* **[💻 Emulator Terminal](CLI/terminal/README.md)**
+* **[💻 Emulator Terminal](CLI_TUI/konsep/terminal/README.md)**
 
   * Kitty, Alacritty, Foot, WezTerm, Konsole, dll
   * Font, tema, dan integrasi clipboard
   * Shortcut dan binding khusus
-* **[🔌 Multiplexer & Session Manager](CLI/multiplexer/README.md)**
+* **[🔌 Multiplexer & Session Manager](CLI_TUI/tools/multiplexer/README.md)**
 
   * tmux, screen, dtach
   * Skrip otomatisasi sesi dan layout workspace
@@ -59,14 +59,14 @@
 
 > Fokus pada distribusi dan perintah instalasi lintas OS.
 
-* **[🐧 Linux Package Manager](CLI/package-manager/linux/README.md)**
+* **[🐧 Linux Package Manager](CLI_TUI/package-manager/linux/README.md)**
 
   * pacman, apt, dnf, zypper
   * AUR dan helper-nya (`yay`, `paru`)
-* **[🪟 Windows Package Manager](CLI/package-manager/windows/README.md)**
+* **[🪟 Windows Package Manager](CLI_TUI/package-manager/windows/README.md)**
 
   * winget, Chocolatey, Scoop
-* **[🍎 macOS Package Manager](CLI/package-manager/macos/README.md)**
+* **[🍎 macOS Package Manager](CLI_TUI/package-manager/macos/README.md)**
 
   * Homebrew, MacPorts
 
@@ -76,22 +76,22 @@
 
 > Untuk kerja sehari-hari, pemrograman, dan administrasi.
 
-* **[🔧 Tools Produktivitas](CLI/tools/productivity/README.md)**
+* **[🔧 Tools Produktivitas](CLI_TUI/tools/productivity/README.md)**
 
   * `fzf`, `ripgrep`, `bat`, `exa`, `btop`, `fd`, `tldr`
-* **[💬 Network & Downloading](CLI/tools/network/README.md)**
+* **[💬 Network & Downloading](CLI_TUI/tools/network/README.md)**
 
   * `curl`, `wget`, `ping`, `traceroute`, `nmap`
-* **[🪄 Text & File Processing](CLI/tools/text/README.md)**
+* **[🪄 Text & File Processing](CLI_TUI/tools/text/README.md)**
 
   * `awk`, `sed`, `cut`, `sort`, `uniq`, `jq`, `yq`
-* **[🗜 Archiving & Compression](CLI/tools/archive/README.md)**
+* **[🗜 Archiving & Compression](CLI_TUI/tools/archive/README.md)**
 
   * `tar`, `gzip`, `bzip2`, `zip`, `7z`
-* **[💡 Dev Tools](CLI/tools/dev/README.md)**
+* **[💡 Dev Tools](CLI_TUI/tools/dev/README.md)**
 
   * `git`, `make`, `docker`, `podman`, `python`, `lua`, `dart`
-* **[📖 Editor & Viewer](CLI/tools/editor/README.md)**
+* **[📖 Editor & Viewer](CLI_TUI/tools/editor/README.md)**
 
   * `vim`, `nano`, `helix`, `less`, `neovim`
 
@@ -101,14 +101,14 @@
 
 > Mulai dari shell scripting dasar hingga integrasi lintas bahasa.
 
-* **[📜 Bash Scripting Dasar](CLI/scripting/bash/README.md)**
+* **[📜 Bash Scripting Dasar](CLI_TUI/scripting/bash/README.md)**
 
   * Variabel, argumen, kondisi, loop
-* **[🧩 Lua, Python, dan Dart CLI](CLI/scripting/advanced/README.md)**
+* **[🧩 Lua, Python, dan Dart CLI](CLI_TUI/scripting/advanced/README.md)**
 
   * Membangun CLI tools dengan bahasa pemrograman modern
   * Integrasi dengan shell environment
-* **[🔁 Automasi Sistem](CLI/scripting/automation/README.md)**
+* **[🔁 Automasi Sistem](CLI_TUI/scripting/automation/README.md)**
 
   * Cron, systemd, alias, dan event hook
 
@@ -118,9 +118,9 @@
 
 > Fokus pada interaksi jarak jauh dan sistem server.
 
-* **[🔐 SSH & SCP](CLI/network/ssh/README.md)**
-* **[📡 rsync & transfer file](CLI/network/transfer/README.md)**
-* **[🧩 CLI API & JSON Tools](CLI/network/api/README.md)**
+* **[🔐 SSH & SCP](CLI_TUI/network/ssh/README.md)**
+* **[📡 rsync & transfer file](CLI_TUI/network/transfer/README.md)**
+* **[🧩 CLI API & JSON Tools](CLI_TUI/network/api/README.md)**
 
 ---
 
@@ -128,9 +128,9 @@
 
 > Dokumentasi akhir yang membantu eksplorasi lebih dalam.
 
-* **[📚 Cheatsheet](CLI/referensi/cheatsheet/README.md)**
-* **[🧪 Eksperimen Terminal & Prompt](CLI/referensi/eksperimen/README.md)**
-* **[🔧 Troubleshooting CLI](CLI/referensi/troubleshooting/README.md)**
+* **[📚 Cheatsheet](CLI_TUI/referensi/cheatsheet/README.md)**
+* **[🧪 Eksperimen Terminal & Prompt](CLI_TUI/referensi/eksperimen/README.md)**
+* **[🔧 Troubleshooting CLI](CLI_TUI/referensi/troubleshooting/README.md)**
 
 
 <!--
