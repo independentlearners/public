@@ -25,7 +25,7 @@
 
   * Apa itu CLI dan perbandingannya dengan GUI
   * Struktur perintah (`command [option] [argument]`)
-  * Shortcut dan navigasi dasar terminal
+  * Shortcut dan navigasi dasar terminal dan daftar berbagai perintah
 * **[📂 Struktur Sistem Linux](./CLI_TUI/struktur-sistem/README.md)**
 
   * Hirarki direktori (`/bin`, `/usr`, `/etc`, dll)
