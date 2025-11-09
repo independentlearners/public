@@ -1,4 +1,4 @@
-[Daftar Perintah Populer]()
+[Daftar Perintah Populer](./perintah/README.md)
 # Dokumentasi singkat: CLI & Struktur Perintah (`command [option] [argument]`)
  
 Berikut dokumen ringkas, profesional, dan praktis untuk memahami apa itu **CLI**, bagaimana dibandingkan dengan **GUI**, serta penjelasan terperinci tentang struktur perintah umum `command [option] [argument]`. Disusun agar bisa dijadikan referensi cepat saat Anda merancang atau memodifikasi alat baris perintah.
