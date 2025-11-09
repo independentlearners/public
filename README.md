@@ -48,7 +48,7 @@
   * Kitty, Alacritty, Foot, WezTerm, Konsole, dll
   * Font, tema, dan integrasi clipboard
   * Shortcut dan binding khusus
-* **[🔌 Multiplexer & Session Manager](./CLI_TUI/tools/multiplexer/README.md)**
+* **[🔌 Multiplexer & Session Manager](./CLI_TUI/tools/productivity/multiplexer/README.md)**
 
   * tmux, screen, dtach
   * Skrip otomatisasi sesi dan layout workspace
