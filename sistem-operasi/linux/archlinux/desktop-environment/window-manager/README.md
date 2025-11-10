@@ -555,4 +555,4 @@ Seluruh jalur disusun dari *fondasi sistem → konfigurasi modular → automasi 
 **[Klik Disini Untuk Masuk][ ]**
 -->
 
-[0]: ./bagian-1/README.md
+[0]: ./wayland/README.md
