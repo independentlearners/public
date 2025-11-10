@@ -71,6 +71,32 @@ Secara ringkas, dokumentasi dan sumber resmi (situs Wayland, wiki, dan literatur
 
 > Referensi: Informasi di atas diambil dari dokumentasi dan sumber terpercaya, antara lain situs resmi Wayland dan Fedora, untuk mengunjungi semua tautan, buka kode dokumen dan pada bagian bawah, semua sumber tautan di sediakan dalam komentar.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!--
 Kutipan
 
