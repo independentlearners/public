@@ -1,550 +1,251 @@
-<!--
-<details>
-  <summary>📃 Daftar Isi</summary>
-
-</details>
-
-Bagus — saya akan langsung menyajikan **pengembangan mendalam** untuk setiap *Materi Inti* pada daftar Anda (bagian 2 — 7). Untuk tiap bagian saya akan menampilkan: Mini-Daftar Isi (struktur internal), Estimasi waktu, Penjelasan rinci (deskripsi, filosofi, konsep kunci), Contoh implementasi/praktik, Terminologi penting, Rekomendasi visualisasi, Hubungan lintas-modul, Persyaratan teknis & langkah untuk *memodifikasi* komponen, Tips/praktik terbaik, Kesalahan umum + cara perbaikan, dan Referensi resmi. Saya sertakan kutipan sumber utama untuk pernyataan teknis penting.
-
-Mulai sekarang — berikut pengembangan mendalam untuk setiap materi inti (urut: 2 → 7).
-
----
--->
 # [🪞 2. Pengenalan Wayland & Komponen Sway][0]
 
-**Estimasi waktu**: 2 minggu (intensif — pemahaman konsep + eksperimen konfigurasi)
+## Pengenalan Wayland
+Wayland adalah protokol tampilan (display server protocol) modern yang dirancang menggantikan X11 dengan arsitektur lebih sederhana dan kode basis lebih ringan. Dalam Wayland, aplikasi pengguna adalah klien yang berkomunikasi langsung dengan display server yang disebut compositor. Protokol ini juga merujuk ke arsitektur sistem tampilan: tidak ada satu server tunggal (seperti Xorg pada X11), melainkan banyak implementasi compositor yang berbeda untuk masing-masing lingkungan desktop. Pustaka inti Wayland, libwayland, mengambil definisi protokol berformat XML dan menggenerasi API C (memang hanya menerjemahkan pesan request/event tanpa logika khusus). Wayland bersifat sangat fleksibel: compositor bisa berjalan sendiri di Linux menggunakan KMS/evdev, atau dijalankan sebagai aplikasi di dalam X11 atau bahkan dijalankan bersarang dalam sesi Wayland lain
 
-## Mini-Daftar Isi (struktur isi)
+Protokol Wayland bersifat asinkron dan berbasis objek. Klien mengirim request (permintaan tindakan) ke objek di compositor, dan compositor merespons dengan event, tanpa perlu mekanisme ACK yang menyinkronkan kedua pihak. Dengan model asinkron ini, komunikasi menjadi cepat karena tidak perlu menunggu respon sinkron, sehingga mengurangi latensi round-trip. Setiap pesan Wayland dikirim melalui socket UNIX (secara default bernama wayland-0, dapat diubah lewat variabel lingkungan) dengan format word 32-bit berisi header (ID objek dan opcode) serta argumen data. Beberapa antarmuka (interfacing) inti Wayland yang penting antara lain wl_display (koneksi ke display), wl_registry, wl_compositor (objek kompositor), wl_surface (area jendela), wl_buffer (konten piksel), wl_output (layar/output), serta objek input seperti wl_pointer, wl_keyboard, wl_touch, dan wl_seat. Objek-objek ini dihasilkan dari file protokol wayland.xml yang mendefinisikan request dan event; libwayland menghasilkan stub C untuk mengakses objek-objek tersebut
 
-1. Gambaran arsitektur Wayland (compositor, client, protocol, event loop)
-2. Peran `wlroots` dan mengapa Sway dibangun di atasnya
-3. Sway Overview: struktur config, keybinding, mode, IPC
-4. Komponen Sway (bar, input, workspace, layout, wallpaper, output) — peran & contoh
-5. Interaksi proses: `swaymsg`, socket IPC, JSON payload
-6. Latihan praktis: inspect event, buat binding, kirim perintah IPC
-7. Persyaratan untuk modifikasi (bahasa, build tools, skillset)
-8. Visualisasi yang direkomendasikan
 
----
+## Sejarah dan Motivasi
+Wayland pertama kali diinisiasi oleh Kristian Høgsberg (Red Hat) sekitar tahun 2008. Rilis awal protokol Wayland terjadi pada 30 September 2008, dan pada Juli 2025 versi stabil terbaru adalah Wayland. Tujuan utama Wayland adalah mengatasi kompleksitas dan kekurangan X11 yang sudah tua. X11 dianggap kode yang rumit dan susah dipelihara, dan banyak fungsionalitasnya telah dipindahkan ke kernel atau pustaka terpisah seperti KMS, libevdev, Mesa, dll. Oleh karena itu Wayland dibuat untuk mengurangi lapisan berlebih dan mengurangi kode yang berjalan dengan hak istimewa (root). Misalnya, dengan menghapus model client-server tradisional X, Wayland bisa “mengeluarkan X dari jalur kritis” komunikasi antara aplikasi dan hardware grafis. Desain ini juga dimaksudkan agar sistem grafis menjadi lebih sederhana, lebih aman, dan lebih efisien secara performa. Wayland dikembangkan secara open-source di bawah lisensi MIT, oleh komunitas sukarelawan (awalnya dipimpin Høgsberg) dengan tujuan menggantikan X11 menjadi sistem windowing yang lebih aman dan sederhana untuk Linux dan Unix-like
 
-## 1) Deskripsi konkret & peran dalam kurikulum
 
-Wayland adalah *display server protocol* modern — menjelaskan cara compositor (server) berinteraksi dengan aplikasi (client). Sway adalah *tiling Wayland compositor* yang bertindak sebagai pengendali layar dan pengelola jendela; ia dibuat sebagai pengganti i3 pada Wayland. Memahami keduanya wajib untuk mendesain DE modern berbasis Wayland, debugging input/output, dan menulis konfigurasi yang aman. ([wayland.freedesktop.org][1])
+## Arsitektur dan Cara Kerja
+Diagram arsitektur Wayland: klien (aplikasi) berkomunikasi langsung dengan compositor yang juga bertugas sebagai display server. Dalam Wayland, compositor bertindak sebagai display server penuh. Semua masukan (input) dari kernel (evdev) langsung ke compositor, dan semua kontrol mode tampilan (KMS) dikuasai oleh compositor. Alur kerjanya secara singkat adalah sebagai berikut:
 
----
+1. Kernel -> Compositor: Kernel Linux mendeteksi masukan (misal klik mouse atau ketukan keyboard) dan mengirimkan event tersebut ke compositor (mirip X, tetapi langsung ke compositor)
+2. Compositor -> Klien: Compositor melihat scenegraph-nya (apa saja jendela yang tampil) untuk menentukan jendela (klien) mana yang menerima event, menghitung transformasi koordinat yang telah diterapkan, lalu meneruskan event input ke klien yang sesuai
+3. Klien merender dan “damage” ke compositor: Aplikasi-klien menerima event dan merespon dengan menggambar ulang tampilannya melalui pustaka grafis (misalnya OpenGL/EGL) langsung ke buffer grafisnya. Setelah merender, klien mengirimkan informasi damage (bagian layar yang berubah) ke compositor. Pada tahap ini, rendering oleh klien bersifat langsung (direct rendering); klien memiliki buffer shareable (misalnya dmabuf) dan mengisi buffer tersebut dengan konten baru
+Rekomposit dan flip: Compositor mengumpulkan semua damage dari klien-klien terkait, kemudian melakukan komposit ulang (menggambar seluruh layar dari komposisi permukaan jendela). Karena compositor mengendalikan KMS secara langsung, ia dapat melakukan page-flip buffer baru ke layar tanpa perantara. Hasilnya adalah tampilan akhir yang terkomposit sepenuhnya oleh compositor.
 
-## 2) Konsep kunci & filosofi mendalam
+Dengan model ini, dibanding X11 tidak diperlukan penyalinan ganda atau sinkronisasi melalui X server. Compositor Wayland menggunakan buffer yang dibuat klien sebagai tekstur, sehingga gerakan dan animasi dapat lebih mulus. Rendering grafis dikerjakan klien (mirip DRI2/XDirect), dengan compositor sebagai ‘pemilik layar’ akhir.
 
-### a. Model client–compositor
+## Protokol dan Komponen Utama
+Protokol Wayland didefinisikan melalui file XML (wayland.xml) yang mencantumkan antarmuka, request, event, enum, dsb. Pustaka libwayland secara otomatis meng-generasi kode C dari file XML ini. Klien dan server Wayland kemudian berkomunikasi lewat pesan berbasis objek: setiap request (dikirim oleh klien) dan event (dikirim oleh compositor) dipanggil pada objek tertentu. Tidak ada mekanisme polling status, melainkan status komposit (contoh posisi jendela) di-broadcast pada saat koneksi, dan semua perubahan dikirim via event ketika terjadi perubahan
 
-* **Client**: aplikasi (Chrome, Terminal, dll.) yang menggambar ke buffer dan meminta compositor menampilkan buffer tersebut.
-* **Compositor**: menerima buffer dari client, menggabungkannya (compositing), dan mengirimkan frame ke hardware.
-* **Protocol**: pesan asinkron antar-proses (method, event, argumen). Wayland menggunakan Unix domain socket untuk IPC. Filosofi: *simplicity & security* — compositor menerima pixel dari client; tidak ada API rendering pusat seperti X11. ([wayland.freedesktop.org][1])
 
-### b. Event loop & asynchronous design
+**Komponen-komponen utama ekosistem Wayland meliputi:**
 
-Wayland bersifat *asynchronous object-oriented protocol*: request dan event tanpa paket sinkron yang memblokir. Artinya desain compositor dan client harus non-blocking dan mempertimbangkan lifecycle buffer. ([wayland.freedesktop.org][1])
+- Wayland Compositor: Program display server yang menerapkan protokol Wayland sekaligus berfungsi sebagai window manager. Contohnya adalah Weston (referensi resmi Wayland), GNOME Shell (Mutter dengan backend Wayland), KDE KWin (sesi Plasma Wayland), Sway (tiling berbasis wlroots), dll.
+- Wayland Client: Aplikasi biasa yang dirancang untuk Wayland atau toolkit (GTK/Qt/SDL) yang mendukung Wayland. Klien berkomunikasi dengan compositor via libwayland-client.
+- libwayland-client dan libwayland-server: Pustaka C yang dihasilkan dari definisi XML; yang pertama digunakan oleh klien, yang kedua oleh compositor. Pustaka ini hanya menangani encoding/decoding pesan Wayland
+- Protokol Inti (Core Interfaces): Beberapa objek protokol dasar yang diharapkan ada di semua compositor, misalnya wl_display, wl_registry, wl_compositor, wl_surface, wl_buffer, wl_output, wl_pointer, wl_keyboard, wl_touch, wl_seat, dll. Objek-objek ini mengizinkan pembentukan jendela, pemrosesan input, dan manajemen output.
+- Protokol Ekstensi (wayland-protocols): Proyek terpisah yang menyediakan protokol tambahan (XML) di luar inti, seperti xdg-shell untuk fitur window tradisional (maks/min/fullscreen), xdg-activation, xdg-desktop-portal, dsb. Compositor dapat mengimplementasikan protokol tambahan ini sesuai kebutuhan.
+- XWayland: Server X11 yang berjalan sebagai klien Wayland. Ini digunakan untuk menjalankan aplikasi X11 lama di lingkungan Wayland. Tanpa XWayland, aplikasi X11 tidak dapat berjalan di sesi Wayland. (XWayland menjadi bagian dari X.Org 1.16 ke atas.)
 
-### c. `wlroots` — library modular
+Secara keseluruhan, Wayland memindahkan banyak tanggung jawab (mode-setting, input, rendering dasar) ke level kernel atau pustaka, sehingga compositor dapat fokus melakukan komposisi akhir. Protokolnya yang ringkas dan berbasis objek mendukung ekstensibilitas dan kompatibilitas mundur; setiap antarmuka memiliki atribut versi agar dapat berkembang tanpa memecah kompatibilitas.
 
-`wlroots` menyediakan building blocks (backends, input handling, outputs, layer shell) sehingga pembuat compositor fokus pada kebijakan (layout, hotkeys, IPC) bukan implementasi low-level Wayland. Jika ingin menulis atau memodifikasi compositor — pahami C dan API `wlroots`. ([GitHub][2])
+## Perbedaan Wayland vs X11
+Diagram arsitektur X11 tradisional: X server (ditandai) menangani input/output untuk aplikasi, dengan window manager dan compositing manager di luar server utama. Arsitektur Wayland sangat berbeda dibanding X11. Pada X11, protokolnya lama (1984) dan komplek: X server adalah perantara utama yang menerima input dan mengendalikan mode tampilan, sementara window manager eksternal menangani penempatan jendela dan dekorasi. Banyak pekerjaan X server sekarang sudah di-handle oleh kernel (DRM, evdev) atau pustaka (cairo, fontconfig, dll), sehingga X server sering menjadi “pihak ketiga” yang tidak perlu antara aplikasi dan compositing. Wayland mengatasi hal ini dengan menghilangkan X server: aplikasi berbicara langsung dengan compositor yang menggabungkan fungsi server dan window manager sekaligus. Akibatnya, jalur rendering menjadi lebih singkat dan efisien.
 
----
+## Perbandingan utama antara Wayland dan X11 meliputi:
 
-## 3) Contoh implementasi inti (praktik cepat)
+- Arsitektur: X11 menggunakan X server sebagai perantara pusat, sedangkan Wayland memadukan fungsionalitas display server dan window manager di dalam satu compositor. Dengan desain Wayland, setiap aplikasi kirim langsung ke compositor tanpa perantara ekstra, mengurangi lapisan kompleksitas.
+- Kinerja: Wayland cenderung lebih cepat dan lancar. Karena klien merender konten langsung ke buffer bersama, latensi input lebih rendah dan gerakan grafis lebih halus (minim tearing). X11, dengan jalur yang lebih panjang (aplikasi→X server→compositor), lebih rentan mengalami jitter, tearing, atau lag input jika compositing tidak optimal.
+- Keamanan: Wayland mengisolasi aplikasi; satu aplikasi tidak bisa melihat apa yang digambar aplikasi lain atau mendengarkan input global. Ini mencegah kelas serangan input sniffing dan keylogger yang umum di X11. X11 kurang aman karena semua klien berbagi X server yang sama, sehingga bisa saling menyusup atau mendapatkan data desktop secara bebas.
+- Dukungan Jaringan (Network Transparency): X11 sejak awal mendukung transparansi jaringan — aplikasi dapat dijalankan di satu mesin dan ditampilkan di mesin lain menggunakan X forwarding. Wayland tidak menyediakan fitur ini secara bawaan. Untuk kebutuhan sharing layar atau remote desktop, Wayland mengandalkan protokol eksternal (misalnya PipeWire + RDP/VNC) agar lebih aman dan modern.
 
-### Memeriksa versi Wayland & environment
+- Kompatibilitas Aplikasi: Banyak aplikasi grafis lama dirancang untuk X11. Di Wayland, diperlukan lapisan kompatibilitas XWayland untuk menjalankannya. Tanpa XWayland, aplikasi X tidak akan berjalan di sesi Wayland. Sebaliknya, aplikasi yang sudah memanfaatkan toolkit GTK/Qt modern dapat beralih ke backend Wayland tanpa diubah.
+- Pengelolaan Jendela: Pada X11, window manager terpisah mengatur dekorasi jendela (bingkai, tombol), sedangkan di Wayland semua fungsi tersebut ditangani oleh compositor. Compositor Wayland menentukan posisi, ukuran, dan dekorasi jendela secara langsung, mengurangi komunikasi antarproses.
 
-```bash
-# Cek apakah sesi Wayland aktif
-echo $WAYLAND_DISPLAY
-# biasanya :wayland-0 atau serupa
-```
+Singkatnya, Wayland menawarkan arsitektur yang lebih ramping dan aman dibanding X11, dengan peningkatan performa grafis. Namun demikian, ia harus menggantikan banyak fungsi lama sehingga beberapa fitur (seperti sharing layar, beberapa efek desktop khusus) harus di-implementasikan ulang lewat ekstensi protokol.
 
-### Mengirim perintah Sway via IPC (contoh)
+## Komunitas dan Ekosistem Wayland
+Wayland sudah diadopsi secara luas di ekosistem Linux Desktop. Misalnya, GNOME Shell (Mutter) menjadikan Wayland sebagai sesi default di banyak distro (Fedora, Ubuntu modern, dsb). KDE Plasma (KWin) juga menyediakan sesi Wayland yang semakin matang dengan terus diperbaiki bug dan fitur (misal dukungan sync eksplisit untuk driver NVIDIA telah ditambahkan pada 2024). Desktop ringan seperti Xfce dan LXQt baru mulai mengembangkan dukungan Wayland, sedangkan Enlightenment telah mendukung Wayland sejak 2015. Terdapat banyak compositor Wayland lainnya, antara lain Wayfire, Hyprland, atau river, serta driver alternatif seperti wlroots (digunakan oleh Sway, Wayfire, dsb) dan libweston sebagai basis komponennya.
 
-```bash
-# Menampilkan daftar workspaces (swaymsg)
-swaymsg -t get_workspaces
-# Pindah workspace ke nomor 2
-swaymsg workspace number 2
-```
+Sebagai perbandingan, rata-rata pengguna saat ini melihat tampilan desktop yang sangat mirip di Wayland maupun X11, karena desktop environment dan toolkit berusaha konsisten. Namun sistem file /proc, environment, dan utilitas sedikit berbeda. Contohnya, untuk mengetahui sesi yang sedang aktif dapat dicek dengan perintah echo $WAYLAND_DISPLAY (menghasilkan wayland-0 jika Wayland; kosong jika X11), atau loginctl show-session <NOMOR> -p Type untuk melihat tipe sesi. Sebagian distro juga menyediakan opsi di layar login (display manager) untuk memilih sesi Wayland atau X11 secara manual (misal Fedora Workstation memungkinkan pilihan “GNOME on Xorg”). Ubuntu dan distro lainnya pada rilis terbaru sudah memosisikan Wayland sebagai pilihan utama (meskipun terkadang dinonaktifkan sementara untuk kartu grafis tertentu seperti beberapa GPU NVIDIA lawas). Wayland sendiri bersifat lintas platform; meski dikembangkan untuk Linux, ada juga port eksperimental ke sistem BSD dan Haiku (ditulis dalam C dan bersifat open-source).
 
-`Sway` menerima perintah melalui socket IPC; `swaymsg` adalah klien sederhana yang mengirim perintah text/JSON ke server. (Contoh lebih lanjut ada di dokumentasi Sway). ([man.archlinux.org][3])
+## Cara Penggunaan dan Konfigurasi
 
----
+Bagi pengguna desktop biasa, menjalankan Wayland umumnya hanya perlu memilih sesi Wayland saat login. Banyak display manager (GDM untuk GNOME, SDDM untuk KDE, LightDM, dsb) menyediakan menu untuk memilih “GNOME” (Wayland) atau “GNOME on Xorg”. Setelah masuk, aplikasi yang mendukung Wayland otomatis menggunakan protokol tersebut. Bila aplikasi belum mendukung Wayland, XWayland akan mengaktif secara transparan agar aplikasi X dapat berjalan. Untuk mendeteksi penggunaan Wayland, perintah seperti echo $WAYLAND_DISPLAY atau loginctl dapat dipakai. Fedora Workstation misalnya mengaktifkan Wayland secara default pada GNOME, tetapi pengguna bebas beralih ke X11 jika diperlukan.
 
-## 4) Terminologi esensial (singkat)
+Beberapa detail konfigurasi teknis untuk admin meliputi file custom.conf di /etc/gdm (untuk menonaktifkan Wayland sepenuhnya), penggunaan driver GPU yang mendukung KMS/GBM untuk kinerja optimal, dan pengaturan security sandbox (Wayland mengisolasi klien, tetapi portal XDG-desktop-portal digunakan untuk akses file/screen-sharing). Namun pengaturan rinci di luar cakupan pengenalan ini. Inti penggunaannya adalah: pastikan desktop environment dan driver GPU Anda mendukung Wayland, lalu pilih sesi Wayland di login dan nikmati desktop yang di-render melalui Wayland.
 
-* **Compositor** — program yang mengelola tampilan & input (Sway).
-* **wl_surface, wl_buffer** — objek Wayland untuk menampung gambar/jendela.
-* **Layer shell / wlr_layer_shell** — protokol untuk bar, panel, background.
-* **IPC socket** — Unix domain socket untuk mengendalikan Sway (swaymsg).
-* **Backend** — implementasi hardware (DRM, Wayland, X11 bridging) di wlroots. ([wayland.freedesktop.org][1])
+## Pengembangan dan Kontribusi
 
----
+Proyek Wayland bersifat open source dengan kode di GitLab Freedesktop (misalnya repositori wayland/wayland). Selain protokol inti, ada proyek pendukung seperti wayland-protocols (sekumpulan protokol ekstensi XML) dan Weston (referensi compositor). Wayland ditulis dalam bahasa C dan dirilis di bawah lisensi MIT. Komunitas pengembangnya tersebar: terdapat mailing list Wayland-devel di Freedesktop untuk diskusi teknis, serta saluran IRC #wayland di jaringan OFTC. Kode sumber dan issue tracker publik memungkinkan siapa saja memeriksa masalah (bugs), mengajukan patch, atau mengikuti perkembangan fitur. Dokumen kontribusi dan aturan penulisan kode terdapat di repositori GitLab (tautan Contribution instructions pada situs Wayland).
 
-## 5) Persyaratan teknis & cara memodifikasi
+Bagi pengembang aplikasi, Wayland mendorong penggunaan toolkit yang mendukung protokol ini. Banyak toolkit GUI populer (GTK 3+, Qt 5+, SDL2, dsb.) sudah menyediakan backend Wayland, sehingga aplikasi biasanya tidak perlu diubah, cukup dikompilasi ulang dengan dukungan Wayland. Untuk pengembang compositor baru, ada pustaka seperti wlroots yang menyediakan kerangka kerja abstraksi Wayland, memudahkan pembuatan window manager tiling/dinamika. Pengembang juga dapat menulis ekstensi protokol baru (misalnya untuk fitur khusus) dengan menambah definisi XML yang sesuai. Dokumentasi pengembangan Wayland tersedia di situs resmi Wayland (Wayland Protocols, Wayland Book) dan wiki komunitas.
 
-Jika tujuan Anda: **memodifikasi Sway atau menulis plugin/komponen**:
+Secara ringkas, dokumentasi dan sumber resmi (situs Wayland, wiki, dan literatur terkait) wajib dipelajari untuk memahami rincian implementasi. Alur belajar yang umum: pelajari arsitektur protokol (libwayland, message loop), lihat kode referensi Weston, kemudian cobalah membuat atau memodifikasi protokol sederhana. Pada akhirnya, Wayland merupakan platform terbuka yang terus berkembang: setiap rilis stabil mencakup peningkatan performa (misalnya dukungan sync eksplisit atau color management), serta ekosistem yang meluas di berbagai desktop dan perangkat. Dengan memahami arsitektur dan protokolnya secara mendalam, Anda dapat mengkonfigurasi sistem desktop dengan Wayland secara optimal maupun langsung berkontribusi mengembangkannya ke depan.
 
-* **Sway**: ditulis dalam **C**. Untuk memodifikasi Sway — perlu menguasai C, meson/ninja build system (Sway menggunakan meson), pemahaman Wayland API, dan debugging dengan `gdb`/`valgrind`. Repositori: `github.com/swaywm/sway`. ([GitHub][4])
-* **wlroots**: library juga ditulis dalam **C**; membangun komponen low-level => belajar `wlroots` API. ([GitHub][2])
-* **Debugging runtime**: gunakan `WAYLAND_DEBUG=1` untuk melihat protokol serta `sway -d` atau log file.
+> Referensi: Informasi di atas diambil dari dokumentasi dan sumber terpercaya, antara lain situs resmi Wayland dan Fedora, untuk mengunjungi semua tautan, buka kode dokumen dan pada bagian bawah, semua sumber tautan di sediakan dalam komentar.
 
----
-
-## 6) Praktik terbaik & kesalahan umum
-
-* **Best**: jangan mengedit konfigurasi langsung saat sesi sensitif — selalu punya ttys/backup; gunakan `swaymsg reload` setelah uji.
-* **Kesalahan umum**: perintah binding ganda, konfigurasi block yang tidak tertutup `{}` → Sway gagal reload → solusi: simpan salinan config, validasi sintaks, gunakan `sway --validate` (lihat man page). ([man.archlinux.org][3])
-
----
-
-## 7) Rekomendasi visualisasi
-
-* Diagram arsitektur: *Client → Wayland socket → Compositor (wlroots) → Kernel/DRM*
-* Sequence diagram: *Client render → commit wl_buffer → Compositor composite → display*
-
----
-
-## Referensi utama
-
-* Wayland architecture (freedesktop): ([wayland.freedesktop.org][1])
-* Sway official site / repo: ([swaywm.org][5])
-* wlroots (repo): ([GitHub][2])
-
----
-
-# 🎛️ 3. Struktur dan Modularisasi Konfigurasi
-
-**Estimasi waktu**: 3–4 minggu (membangun dotfiles modular, pengujian berulang)
-
-## Mini-Daftar Isi
-
-1. Prinsip modularisasi (separation of concerns)
-2. Struktur folder rekomendasi (file by purpose)
-3. `include` / pemecahan file & strategi environment per-host
-4. Konvensi penamaan dan dokumentasi internal (header, komentar)
-5. Strategi Reload & Testing (safe cycle, sandbox)
-6. Otomasi deploy (dotfiles, symlink, installer)
-7. Persyaratan teknis untuk modifikasi & integrasi CI
-8. Visualisasi & checklist
-
----
-
-## 1) Deskripsi konkret & peran
-
-Modularisasi konfigurasi membuat konfigurasi Sway menjadi **terbaca, mudah di-maintain, dan dapat dipakai ulang** pada sistem lain. Ini esensial bila Anda ingin memublikasikan dotfiles atau menggabungkan konfigurasi dengan skrip otomatisasi. Hasil akhirnya: satu repository `.config/` yang dapat dipakai ulang, dengan dokumentasi dan installer. (Tujuan: reproducibility & collaboration.)
-
----
-
-## 2) Struktur folder praktis (contoh)
-
-```
-~/.config/sway/
-├── config                 # main file (includes: ...)
-├── config.d/
-│   ├── 00-base.conf
-│   ├── 10-input.conf
-│   ├── 20-wm.conf
-│   ├── 30-bar.conf
-│   └── 90-local.conf
-├── waybar/
-│   ├── config.jsonc
-│   └── style.css
-├── scripts/
-│   ├── theme-switcher.sh
-│   └── backlight.sh
-└── README.md
-```
-
-**Aturan**: file numerik (00,10,20) untuk kontrol urutan; `90-local.conf` untuk override host-specific.
-
----
-
-## 3) Include / import & variable strategy
-
-* Gunakan `include` (Sway mendukung `include` di config) untuk memecah file.
-* Gunakan `set $var ...` pada bagian atas untuk variabel global (terminal, mod key, theme path).
-* Strategy per-host: pada awal `config` — periksa hostname dan `include` file host-specific, atau gunakan `if`/`match` pattern saat tersedia (Sway memiliki `for_window` / `assign` untuk behaviour jendela). ([man.archlinux.org][3])
-
----
-
-## 4) Testing & safe reload strategy
-
-* **Workflow aman**:
-
-  1. Tulis perubahan di `config.d/20-wm.conf.new`.
-  2. Jalankan `sway -t config test` (validasi) atau `sway --validate`.
-  3. Jika valid, `mv` ke `config.d/20-wm.conf` dan `swaymsg reload`.
-* **Sandboxing**: gunakan VM/VM image atau session tty alternatif untuk mencoba perubahan besar sebelum memuat ke desktop utama.
-
----
-
-## 5) Otomasi deploy (dotfiles)
-
-* Gunakan `stow`, Makefile, atau skrip `install.sh` untuk membuat symlink `~/.config/*`.
-* Sertakan `deps.txt` (list package manager packages) agar pengguna lain tahu dependensi.
-* Buat `install` target untuk meng-copy service units (systemd user) yang diperlukan.
-
----
-
-## 6) Persyaratan teknis & modifikasi
-
-Untuk membuat tooling deploy / modular:
-
-* Bahasa: Bash (installer), Python (opsional, untuk tooling yang lebih kompleks), Makefile.
-* VCS: Git. Continuous integration dapat menggunakan GitHub Actions untuk linting config / menjalankan `sway --validate` (pada runner yang menjalankan Wayland mungkin butuh container/VM).
-* Jika menulis modul bar (Waybar) → butuh memahami JSONC + CSS, dan jika ingin menulis module native → C++/Meson (Waybar modules). ([GitHub][6])
-
----
-
-## 7) Visualisasi yang direkomendasikan
-
-* Tree view struktur folder (seperti contoh di atas).
-* Flowchart deploy: edit → test → validate → deploy.
-
----
-
-## 8) Kesalahan umum & solusi
-
-* **Masalah urutan**: include file dieksekusi top-to-bottom → penempatan `set` di bawah akan menimbulkan variable not found. *Solusi*: standar `00-base.conf` untuk semua `set`.
-* **Konfigurasi host-specific tertimpa**: gunakan `90-local.conf` dan jangan commit file tersebut ke repo publik (masukkan ke `.gitignore`).
-
----
-
-## Referensi utama
-
-* Sway man page / config guidance. ([man.archlinux.org][3])
-
----
-
-# 🎨 4. Tema, Estetika, dan Dinamika Tampilan
-
-**Estimasi waktu**: 3 minggu (pemilihan palet, integrasi wal, testing bar & fonts)
-
-## Mini-Daftar Isi
-
-1. Color scheme fundamentals (contrast, WCAG basics)
-2. Palet tematik populer (gruvbox, nord, catppuccin) — integrasi praktis
-3. Wallpaper & dynamic palette loader (swaybg, pywal)
-4. Font rendering & icon sets (JetBrains Mono, Font Awesome, Material Symbols)
-5. Kompositor & efek (swayfx, swayidle, animasi minimal)
-6. Contoh pipeline: image → palette → waybar CSS → terminal theme
-7. Persyaratan teknis (languages/tools)
-8. Visualisasi: contoh skema & before/after
-
----
-
-## 1) Deskripsi & filosofi
-
-Tampilan desktop adalah kombinasi fungsional + estetika: warna, tipografi, spacing mempengaruhi keterbacaan dan kenyamanan. Filosofi praktis: **kontras tinggi untuk informasi penting, konsistensi untuk UX**. Gunakan palet yang diuji dan alat untuk menerapkannya secara konsisten ke bar, terminal, editor, dan aplikasi lain.
-
----
-
-## 2) Palet tematik & integrasi
-
-* **Gruvbox / Nord / Catppuccin**: palet berisi set warna (background, foreground, accent, success, warn).
-* Cara integrasi: gunakan `pywal` (Python tool) untuk menghasilkan palet dari wallpaper; puis impor ke `waybar/style.css`, `alacritty.yml`, `gtk.css`, dsb. `pywal` adalah project Python yang membuat file warna dapat diexport ke berbagai format. ([GitHub][7])
-
----
-
-## 3) Wallpaper & dynamic color loader — contoh pipeline
-
-1. `swaybg` — program yang memasang wallpaper pada Wayland (ditulis/dirilis oleh project Sway). Gunakan `swaybg --image path/to/file`. ([GitHub][8])
-2. `pywal` — generate palette dari wallpaper:
-
-```bash
-wal -i ~/Pictures/wallpaper.jpg
-# atau pywal:
-pywal -i ~/Pictures/wallpaper.jpg
-```
-
-3. Skrip `theme-switcher.sh` membaca output pywal (file `~/.cache/wal/colors.json`) dan menulis CSS untuk Waybar + mengupdate Alacritty/GTK.
-
-**Contoh snippet** (bash, sangat ringkas):
-
-```bash
-pywal -i "$1"
-# create waybar CSS from ${HOME}/.cache/wal/colors.css
-cp ~/.cache/wal/colors.css ~/.config/waybar/style.css
-swaymsg reload
-```
-
----
-
-## 4) Font rendering & icon sets
-
-* Rekomendasi: *JetBrains Mono* untuk terminal/editor (monospace, ligatures opsional), *Noto Sans* atau *Inter* untuk UI, *Font Awesome* atau *Material Symbols* untuk icon.
-* Pastikan `fontconfig` (freetype) terpasang; jika ada fallback issue, atur `~/.config/fontconfig/fonts.conf`.
-
----
-
-## 5) Kompositor & efek visual tambahan
-
-* Tools seperti **swayfx** (project komunitas) menambahkan efek transisi; implementasinya beragam — cek repo spesifik jika ingin memodifikasi. Karena efek sering melibatkan compositing pipeline, uji performa GPU.
-* Gunakan efek ringan: fade, dim, tanpa mencampur heavy blur yang menghabiskan GPU.
-
----
-
-## 6) Persyaratan modifikasi & skillset
-
-* **swaybg**: repo Sway (C) — untuk modifikasi: C, meson build. ([GitHub][8])
-* **pywal**: ditulis dalam **Python** — mudah di-extend (plugin, exporter). ([GitHub][7])
-* **Waybar** styling: JSONC + CSS. Untuk menulis module native → C++ + Meson (Waybar repo). ([GitHub][6])
-
----
-
-## 7) Kesalahan umum & solusi
-
-* **Palet dengan contrast rendah**: gunakan alat uji contrast (WCAG) untuk memastikan teks terbaca.
-* **Update theme partial**: bila hanya satu komponen dimodifikasi, lakukan reload komponen tersebut (waybar restart) bukannya reload penuh yang berisiko.
-
----
-
-## Referensi utama
-
-* Waybar repo + dokumentasi (config JSONC, CSS). ([GitHub][6])
-* swaybg repo (wallpaper tool). ([GitHub][8])
-* pywal (palette generation). ([GitHub][7])
-
----
-
-# 🧠 5. Automasi dan Integrasi Shell
-
-**Estimasi waktu**: 4–6 minggu (Bash → event binding → workflow automation)
-
-## Mini-Daftar Isi
-
-1. Dasar-dasar Bash scripting untuk desktop (variabel, fungsi, error handling)
-2. Interaksi script dengan Sway (event binding, environment injection)
-3. Notifikasi & prompt dinamis (mako, dunst, swaync)
-4. Launcher integration (wofi, fuzzel, bemenu)
-5. Pathing & Execution context (Wayland env variables, systemd user, XDG_RUNTIME_DIR)
-6. Contoh skenario automatisasi (tema dinamis, power profile, external monitor)
-7. Persyaratan teknis untuk menulis plugin/extension
-
----
-
-## 1) Deskripsi & peran
-
-Automasi memungkinkan men-trigger perubahan UI/behaviour berdasarkan event sistem (plugging monitor, battery, connect VPN), sehingga meningkatkan produktivitas. Dalam praktiknya, tuliskan skrip shell yang aman, dapat diuji, dan di-trigger lewat binding Sway (`bindsym exec path/to/script`), systemd user, atau socket events.
-
----
-
-## 2) Contoh teknik & praktik
-
-### a. Struktur skrip shell yang aman (template)
-
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
-IFS=$'\n\t'
-
-log() { echo "$(date --iso-8601=seconds) - $*"; }
-
-if [[ "$1" == "apply-theme" ]]; then
-  pywal -i "$2"
-  cp ~/.cache/wal/colors.css ~/.config/waybar/style.css
-  pkill -USR1 waybar || true   # jika Waybar mendukung reload via signal
-  swaymsg reload
-fi
-```
-
-Penjelasan: `set -euo pipefail` membuat skrip fail-safe; gunakan exit codes untuk integrasi dengan systemd.
-
-### b. Integrasi event Sway
-
-* Bind script ke key: `bindsym $mod+Shift+t exec ~/.config/sway/scripts/theme-switcher.sh apply-theme ~/Pictures/wall.jpg`
-* Gunakan `swaymsg -t subscribe` untuk event streaming bila diperlukan.
-
-### c. Notifikasi
-
-* **Mako** / **Dunst** adalah notification daemons (mako khusus Wayland). Pilih sesuai kompatibilitas Wayland. Integrasi: kirim notifikasi via `notify-send` (mako menyediakan compat). Pastikan paket yang digunakan mendukung Wayland.
-
----
-
-## 3) Launcher Integration
-
-* **wofi**, **fuzzel**, **bemenu**: masing-masing adalah launcher Wayland-native.
-
-  * Wofi dan Fuzzel penulisan proyeknya dicatat developer (Fuzzel dari pembuat Foot). Untuk memodifikasi launcher: pahami bahasa proyek (contoh: Fuzzel ditulis di Rust? — periksa repository). Jika menulis integrasi dengan script, gunakan stdin/stdout contract (wofi dapat menerima daftar dari skrip).
-  * Contoh bind: `bindsym $mod+d exec wofi --show drun` (atau `fuzzel`) — masing-masing memiliki opsi berbeda.
-
-(Catatan: selalu cek repo launcher untuk bahasa & build instructions sebelum melakukan perubahan.)
-
----
-
-## 4) Pathing & execution context
-
-* **XDG_RUNTIME_DIR**: Wayland sockets bergantung pada path ini; systemd user services menjalankan session berbeda. Saat mengeksekusi GUI dari cron/systemd, pastikan environment Wayland tersedia (sering lebih aman gunakan `systemd --user` unit yang dieksekusi dalam sesi).
-* Untuk script yang memanggil GUI tools, forward env: `DISPLAY` tidak ada di Wayland — gunakan `WAYLAND_DISPLAY`. Pastikan script dijalankan dalam konteks user session.
-
----
-
-## 5) Persyaratan teknis
-
-* Bahasa: Bash (untuk skrip ringan), Python (untuk pipeline lebih kompleks), Rust/C++ (untuk tools performa tinggi).
-* Tools: systemd user, inotify (untuk watch file), swaymsg (IPC), notify-send (dengan backend mako).
-
----
-
-## 6) Kesalahan umum & solusi
-
-* **Script berjalan tapi GUI tidak muncul**: kemungkinan environment Wayland tidak tersedia — periksa `XDG_RUNTIME_DIR`, `WAYLAND_DISPLAY`.
-* **Permission denied** pada socket IPC: jalankan sebagai user yang sama dengan sesi Sway.
-
----
-
-# 🧰 6. Manajemen Paket, Komunitas, dan Ekosistem
-
-**Estimasi waktu**: 2 minggu
-
-## Mini-Daftar Isi
-
-1. Pengantar AUR & PKGBUILD / makepkg
-2. Membuat PKGBUILD sederhana untuk tool dotfiles (contoh: waybar module)
-3. Kontribusi dotfiles ke GitHub/GitLab (struktur, lisensi, README)
-4. Rilis & packaging (AUR vs distro package)
-5. Kompatibilitas & dokumentasi untuk pengguna lain
-6. Persyaratan teknis (bash, makepkg, gpg signing)
-7. Checklist publikasi
-
----
-
-## 1) Deskripsi & peran
-
-Mempelajari packaging (PKGBUILD) dan ekosistem membantu Anda mendistribusikan konfigurasi, modul custom, atau bar modules kepada komunitas. Mengemas kode menjadi paket memudahkan penginstalan dan reproduksi lingkungan. Dokumentasikan dependensi agar pengguna lain mudah mengadopsi. ([ArchWiki][9])
-
----
-
-## 2) Contoh PKGBUILD minimal (sketch)
-
-```bash
-# PKGBUILD sketch untuk skrip theme-switcher
-pkgname=theme-switcher
-pkgver=0.1.0
-pkgrel=1
-pkgdesc="Theme switcher scripts for sway + waybar using pywal"
-arch=('x86_64')
-license=('MIT')
-depends=('pywal' 'sway' 'waybar')
-source=('theme-switcher.sh')
-package() {
-  install -Dm755 theme-switcher.sh "$pkgdir/usr/bin/theme-switcher"
-}
-```
-
-Keterangan: `makepkg` akan membaca PKGBUILD dan membangun paket. Pastikan `sha256sums` diisi sebelum upload ke AUR.
-
----
-
-## 3) Kontribusi dotfiles
-
-* Buat README yang jelas: tujuan repo, cara install, dependensi per package manager (pacman/apt/dnf), sample screenshot, cara revert.
-* Lisensi: pilih lisensi permissive (MIT) untuk dotfiles/tools.
-* Gunakan `ISSUE_TEMPLATE` & `CONTRIBUTING.md` agar kontributor tahu standar coding/style.
-
----
-
-## 4) Persyaratan teknis
-
-* Mengemas paket di Arch: paham Bash (PKGBUILD adalah script Bash), `makepkg`, signing (GPG), dan verify checksums. ([ArchWiki][9])
-
----
-
-# 🏁 7. Finalisasi dan Dokumentasi Publik
-
-**Estimasi waktu**: 1–2 minggu
-
-## Mini-Daftar Isi
-
-1. Struktur dokumentasi dotfiles (README, INSTALL, USAGE, TROUBLESHOOTING)
-2. Linting & Validasi: pengecekan config, format, style guide
-3. Export & integrasi ke pipeline (installer, CI, release)
-4. Checklist rilis & versi
-5. Contoh Layout README final
-
----
-
-## 1) Deskripsi & peran
-
-Dokumentasi adalah produk akhir — memudahkan orang lain meniru setup Anda. Sertakan daftar dependensi, langkah instalasi otomatis (script), dan cara rollback. Pastikan README ringkas namun komprehensif.
-
----
-
-## 2) Linting & Validasi
-
-* Automasi: jalankan `sway --validate` (atau `sway -t config validate`) di CI (jika runner mendukung Wayland) atau set up test container.
-* Linting: gunakan checker untuk shell scripts (`shellcheck`), JSON/JSONC validator untuk Waybar config, dan CSS linter untuk style. ([man.archlinux.org][3])
-
----
-
-## 3) Checklist rilis
-
-* Pastikan `deps.txt` terupdate
-* Sertakan screenshot & video demo (opsional)
-* Tag versi di Git (semver)
-* Siapkan AUR package jika relevan (lengkapi PKGBUILD, checksums). ([ArchWiki][9])
-
----
-
-## 4) Contoh ringkas README structure
-
-```
-# dotfiles-sway
-Deskripsi singkat
-
-## Quick install
-1. Install dependencies
-2. Run `./install.sh`
-
-## Structure
-- ~/.config/sway/config
-- ~/.config/waybar/config.jsonc
-
-## Troubleshooting
-- Jika Sway gagal reload: check `~/.config/sway/config.d/` order
-```
-
----
-
-## Referensi & Sumber Utama (kumpulan)
-
-* Wayland protocol & arsitektur — freedesktop.org. ([wayland.freedesktop.org][1])
-* Sway (man page & repo). ([man.archlinux.org][3])
-* wlroots (repo) — dasar pembuatan compositor. ([GitHub][2])
-* Waybar (repo, JSONC+CSS config). ([GitHub][6])
-* PKGBUILD / makepkg / AUR (ArchWiki). ([ArchWiki][9])
-
----
 <!--
-## Langkah praktis selanjutnya (apa yang akan saya lakukan)
+Kutipan
 
-Saya telah menyelesaikan pengembangan mendalam untuk **Materi Inti** pada bagian 2 sampai 7 sesuai permintaan Anda: tiap topik disusun agar dapat langsung dipakai sebagai panduan belajar dan referensi teknis. Langkah berikut (opsional, saya siap lakukan jika Anda ingin langsung dilanjutkan oleh saya sekarang):
+wayland.freedesktop.org
+Wayland
+Wayland is a replacement for the X11 window system protocol and architecture with the aim to be easier to develop, extend, and maintain.
 
-* **A.** Mengonversi tiap bagian di atas menjadi **dokumen Markdown** terpisah (mis. `02-wayland.md`, `03-modularity.md`, dst.) siap commit ke repo.
-* **B.** Membuat serangkaian **latihan praktis** & rubrik penilaian untuk tiap modul.
-* **C.** Menyusun skrip instalasi contoh (`install.sh` + PKGBUILD contoh) untuk repo Anda.
+wayland.freedesktop.org
+Wayland
+Wayland is the language (protocol) that applications can use to talk to a display server in order to make themselves visible and get input from the user (a person). A Wayland server is called a "compositor". Applications are Wayland clients.
 
-Jika Anda ingin saya langsung membuat A, B, atau C — sebutkan hurufnya. Kalau tidak, saya akan melanjutkan otomatis membuat **dokumen Markdown** untuk setiap modul agar bisa langsung Anda review.
+wayland.freedesktop.org
+Wayland
+Wayland also refers to a system architecture. It is not just a server-client relationship between a compositor and applications. There is no single common Wayland server like Xorg is for X11, but every graphical environment brings with it one of many compositor implementations. Window management and the end user experience are often tied to the compositor rather than swappable components.
 
----
+wayland.freedesktop.org
+Wayland
+A core part of Wayland architecture is libwayland: an inter-process communication library that translates a protocol definition in XML to a C language API. This library does not implement Wayland, it merely encodes and decodes Wayland messages. The actual implementations are in the various compositor and application toolkit projects.
 
-Saya siap lanjutkan pembuatan file-file modul terperinci (Markdown + checklist latihan + contoh skrip) sekarang juga.
+wayland.freedesktop.org
+Wayland
+Wayland does not restrict where and how it is used. A Wayland compositor could be a standalone display server running on Linux kernel modesetting and evdev input devices or on many other operating systems, or a nested compositor that itself is an X11 or Wayland application (client). Wayland can even be used in application-internal communication as is done in some web browsers.
 
+wayland.freedesktop.org
+Chapter 4. Wayland Protocol and Model of Operation
+Basic Principles
+
+wayland.freedesktop.org
+Chapter 4. Wayland Protocol and Model of Operation
+Wire Format
+
+wayland.freedesktop.org
+Chapter 4. Wayland Protocol and Model of Operation
+host's byte-order. The message header has 2 words in it:
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+* wl_display – the core global object, a special object to encapsulate the Wayland protocol itself * wl_registry – the global registry object, in which the compositor registers all the global objects that it wants to be available to all clients * wl_compositor – an object that represents the compositor, and is in charge of combining the different surfaces into one output * wl_surface – an object representing a rectangular area on the screen, defined by a location, size and pixel content * wl_buffer – an object that, when attached to a wl_surface object, provides
+
+wayland.freedesktop.org
+Chapter 4. Wayland Protocol and Model of Operation
+The interfaces, requests and events are defined in `protocol/wayland.xml`. This xml is used to generate the function prototypes that can be used by clients and compositors.
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+The Wayland Display Server project was started by Red Hat developer Kristian Høgsberg in 2008.[ 15 ]
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+Initial release 30 September 2008; 17 years ago (2008-09-30)[ 1 ] Stable release
+
+tuxedocomputers.com
+What's the deal with X11 and Wayland? - TUXEDO Computers
+Since the code of X11 has long been a barely maintainable patchwork, a new project was started in 2008 to replace X11 one day: the Display Server Protocol Wayland. It is supposed to bring more security by abandoning the client-server model and executing far less code as root and also make image glitches like tearing, image flickering, and artifacts a thing of the past.
+
+wayland.freedesktop.org
+Wayland
+As suggested above, there are a few problems with this approach. The X server doesn't have the information to decide which window should receive the event, nor can it transform the screen coordinates to window-local coordinates. And even though X has handed responsibility for the final painting of the screen to the compositing manager, X still controls the front buffer and modesetting. Most of the complexity that the X server used to handle is now available in the kernel or self contained libraries (KMS, evdev, mesa, fontconfig, freetype, cairo, Qt, etc). In general, the X server is now just a middle man that introduces an extra step between applications and the compositor and an extra step between the compositor and the hardware.
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+> What's different now is that a lot of infrastructure has moved from the X server into the kernel (memory management, command scheduling, 130) or libraries (cairo , pixman, 132, fontconfig , 134, etc.), and there is very little left that has to happen in a central server process. ... [An X server has] a tremendous amount of functionality that you must support to claim to speak the X protocol, yet nobody will ever use this. ... This includes code tables, glyph rasterization and caching, XLFDs (seriously, XLFDs!), and the entire core rendering API that lets you draw stippled lines, polygons, wide arcs and many more state-of- the-1980s style graphics primitives. For many things we've been able to keep the
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+as a free and 112 community-driven project with the aim of replacing the X Window System with a secure[ 10 ][ 11 ][ 12 ][ 13 ] and simpler 104 for Linux and other 114 operating systems.[ 9 ][ 14 ] The project's source code is published under the terms of the MIT License , a 115.[ 14 ][ 6 ] The Wayland project also develops an implementation of a Wayland compositor called Weston.[ 9 ]
+
+wayland.freedesktop.org
+Wayland
+In wayland the compositor is the display server. We transfer the control of KMS and evdev to the compositor. The wayland protocol lets the compositor send the input events directly to the clients and lets the client send the damage event directly to the compositor:
+
+wayland.freedesktop.org
+Wayland
+1. The kernel gets an event and sends it to the compositor. This is similar to the X case, which is great, since we get to reuse all the input drivers in the kernel. 2. The compositor looks through its scenegraph to determine which window should receive the event. The scenegraph corresponds to what's on screen and the compositor understands the transformations that it may have applied to the elements in the scenegraph. Thus, the compositor can pick the right window and transform the screen coordinates to window-local coordinates, by applying the inverse transformations. The types of transformation that can be applied to a
+
+wayland.freedesktop.org
+Wayland
+3. As in the X case, when the client receives the event, it updates the UI in response. But in the wayland case, the rendering happens in the client, and the client just sends a request to the compositor to indicate the region that was updated. 4. The compositor collects damage requests from its clients and then recomposites the screen. The compositor can then directly issue an ioctl to schedule a pageflip with KMS.
+
+wayland.freedesktop.org
+Wayland
+rendering, the client and the server share a video memory buffer. The client links to a rendering library such as OpenGL that knows how to program the hardware and renders directly into the buffer. The compositor in turn can take the buffer and use it as a texture when it composites the desktop. After the initial setup, the client only needs to tell the compositor which buffer to use and when and where it has rendered new content into it.
+
+wayland.freedesktop.org
+Wayland
+4. The compositor collects damage requests from its clients and then recomposites the screen. The compositor can then directly issue an ioctl to schedule a pageflip with KMS.
+
+wayland.freedesktop.org
+Chapter 4. Wayland Protocol and Model of Operation
+The server sends back events to the client, each event is emitted from an object. Events can be error conditions. The event includes the object ID and the event opcode, from which the client can determine the type of event. Events are generated both in response to requests (in which case the request and the event constitutes a round trip) or spontaneously when the server state changes.
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+XWayland is an X Server running as a Wayland client, and thus is capable of displaying native X11 client applications in a Wayland compositor environment.[ 54 ][ 55 ] This is similar to the way XQuartz runs X applications in macOS's native windowing system. The goal of XWayland is
+
+tuxedocomputers.com
+What's the deal with X11 and Wayland? - TUXEDO Computers
+Differences between X11 and Wayland
+
+theserverhost.com
+X11 vs Wayland - Which one to choose? Key Differences
+X11: Think of X11 like an old office setup — everything has to go through a central manager  (the X server) who takes orders from apps, passes them to the hardware, and sends responses back. This adds extra steps, which can slow things down and create more complexity.
+
+theserverhost.com
+X11 vs Wayland - Which one to choose? Key Differences
+1. Better performance: Smooth graphics with reduced latency and less screen tearing. 2. Stronger security: Apps are isolated; no input or window snooping. 3. Simpler architecture: Fewer layers, making it easier to develop and maintain. 4. Energy-efficient: Helps extend battery life on laptops by reducing overhead.
+
+theserverhost.com
+X11 vs Wayland - Which one to choose? Key Differences
+1. Mature and stable: Decades of development make it reliable. 2. Broad compatibility: Works with nearly all Linux apps, drivers, and toolkits. 3. Remote display support: Enables network-transparent app forwarding (X forwarding). 4. Highly customizable: Extensive extensions, window managers, and compositors.
+
+tuxedocomputers.com
+What's the deal with X11 and Wayland? - TUXEDO Computers
+Wayland does not implement all functions of the X server for security reasons. For example, Wayland does not support the network transparency familiar from X11, which enables functions such as screen recording and screencasting. Functions like that must be implemented in Wayland by protocol extensions, which drags out the implementation of the protocol in time. Currently, Wayland is
+
+theserverhost.com
+X11 vs Wayland - Which one to choose? Key Differences
+2.2 X forwarding, Remote Desktop and Network Transparency
+
+docs.fedoraproject.org
+The Wayland Protocol :: Fedora Docs
+Wayland is enabled by default in the GNOME Desktop. You can choose to run GNOME in X11 by choosing the Gnome on xorg option in the session chooser on the login screen. Currently KDE still uses X11 and although there is a plasma-wayland session available, it is not considered stable or bugfree at this time.
+
+phoronix.com
+Wayland's Wild 2024 With Better KDE Plasma Support, NVIDIA Maturity & More Desktops - Phoronix
+KDE's KWin Merges Wayland Explicit Sync Support A day after explicit sync support was merged for XWayland, a week after explicit sync support for Mesa Vulkan drivers hit Mesa 24.1, and GNOME's Mutter enabling explicit sync at the end of March, KDE's KWin compositor has now merged its Wayland explicit sync support!
+
+tuxedocomputers.com
+What's the deal with X11 and Wayland? - TUXEDO Computers
+While the development of the Wayland protocol is complete, the implementation in the desktop environments under Linux is in different stages. The integration is most advanced with GNOME, followed by KDE Plasma. Xfce and LXQt are just taking their first steps in this direction. Already since 2015, the rather unknown window manager Enlightenment has supported the Wayland protocol. However, there is no rush because X11 will be with us for a while, even if it will increasingly fade into the background. In the transition phase, in which not all applications yet support Wayland, XWayland serves as a compatibility layer.
+
+docs.fedoraproject.org
+The Wayland Protocol :: Fedora Docs
+One way to determine if you’re running in Wayland, is to check the value of the variable $WAYLAND_DISPLAY. To do this type:
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+Written inC 96Official: Linux Unofficial: 98, FreeBSD , 100, DragonFly BSD [ 4 ] Compatibility layer: 102[ 5 ] Type
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+Repository
+
+wayland.freedesktop.org
+Wayland
+Development:
+
+wayland.freedesktop.org
+Wayland
+Development:
+
+docs.fedoraproject.org
+The Wayland Protocol :: Fedora Docs
+Wayland is a display server protocol which was (at the time of writing) introduced as the default in GNOME. It is said that Wayland will eventually replace X11 as the default display server on Linux and many distributions have begun implementation of Wayland. Wayland is a more modern protocol and has a smaller code base currently. Wayland is still under development, and there are still applications and behaviours that don’t work as expected, you may find that some applications have not been updated to work properly in Wayland and currently the only way these applications will run is using Xorg instead of Wayland. This includes some legacy system applications and games.
+
+en.wikipedia.org
+Wayland (protocol) - Wikipedia
+Wayland is a communication protocol that specifies the communication between a 105 and its clients, as well as a C library implementation of that protocol.[ 9 ] A display server using the Wayland protocol is called a 30, because it additionally performs the task of a compositing window manager.
+Semua Sumber
+
+wayland.freedesktop
+5
+
+en.wikipedia
+8
+
+phoronix
+2
+
+docs.fedoraproject
+
+tuxedocomputers
+
+theserverhost
 -->
-
-[1]: https://wayland.freedesktop.org/architecture.html?utm_source=chatgpt.com "Wayland Architecture"
-[2]: https://github.com/swaywm/wlroots?utm_source=chatgpt.com "swaywm/wlroots: A modular Wayland compositor library"
-[3]: https://man.archlinux.org/man/sway.5?utm_source=chatgpt.com "sway(5) - Arch manual pages"
-[4]: https://github.com/swaywm/sway?utm_source=chatgpt.com "swaywm/sway: i3-compatible Wayland compositor"
-[5]: https://swaywm.org/?utm_source=chatgpt.com "Sway"
-[6]: https://github.com/Alexays/Waybar?utm_source=chatgpt.com "Alexays/Waybar: Highly customizable Wayland bar for ..."
-[7]: https://github.com/dylanaraps/pywal?utm_source=chatgpt.com "dylanaraps/pywal: 🎨 Generate and change color-schemes ..."
-[8]: https://github.com/swaywm/swaybg?utm_source=chatgpt.com "swaywm/swaybg: Wallpaper tool for Wayland compositors"
-[9]: https://wiki.archlinux.org/title/PKGBUILD?utm_source=chatgpt.com "PKGBUILD - ArchWiki"
 
 <!--
 > - **[Ke Atas](#)**
@@ -552,7 +253,7 @@ Saya siap lanjutkan pembuatan file-file modul terperinci (Markdown + checklist l
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../README.md
+[home]: ../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
 
