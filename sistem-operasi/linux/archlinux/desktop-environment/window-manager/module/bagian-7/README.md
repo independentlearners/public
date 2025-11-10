@@ -156,7 +156,6 @@ Apakah kamu ingin saya lanjutkan dengan menyusun **diagram arsitektur keseluruha
 
 <!----------------------------------------------------->
 
--->
 
 [0]: ../README.md
 [1]: ../

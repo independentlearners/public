@@ -549,6 +549,27 @@ Seluruh jalur disusun dari *fondasi sistem → konfigurasi modular → automasi 
 **Total Waktu Keseluruhan:**
 🕒 ±16–20 minggu (4–5 bulan dengan 1 hari libur per pekan)
 
+# 1200 Istilah Dan Terminologi
+
+| Lapisan | Lingkup Teknis                       | Estimasi Jumlah Istilah | Cakupan Utama                                                |
+| ------- | ------------------------------------ | ----------------------- | ------------------------------------------------------------ |
+| **1**   | [Kernel & Graphics Subsystem][a]          | **150**                 | DRM, KMS, framebuffer, input, driver GPU, interrupt handling |
+| **2**   | [Display Server & Protocol][b]            | **200**                 | X11, Wayland, wlroots, Weston, protocol extensions, IPC      |
+| **3**   | [Compositor & Window Manager][c]          | **200**                 | tiling, stacking, surface management, scene graph, rendering |
+| **4**   | [Toolkit & Rendering Engine][d]          | **200**                 | GTK, Qt, Cairo, Clutter, Vulkan, Skia, rendering pipeline    |
+| **5**   | [Desktop Shell & Core Components][e]      | **200**                 | panel, workspace, applet, launcher, settings daemon          |
+| **6**   | [Session, Policy & System Integration][f] | **150**                 | login, PAM, systemd, polkit, dbus, session management        |
+| **7**   | [Utilities, Extensions & Theming][g]      | **100**                 | configurator, plugin system, theme engine, icon, sound theme |
+
+[a]: ./module/bagian-1/README.md
+[b]: ./module/bagian-2/README.md
+[c]: ./module/bagian-3/README.md
+[d]: ./module/bagian-4/README.md
+[e]: ./module/bagian-5/README.md
+[f]: ./module/bagian-6/README.md
+[g]: ./module/bagian-7/README.md
+
+
 ---
 
 <!--

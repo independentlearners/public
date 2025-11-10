@@ -536,10 +536,10 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
  
 
   
-### 💻 **[D. Lingkungan Kerja Dan Detail Teknis][12]**
+### 💻 **[D. Lingkungan Kerja Dan Detail Teknis][10]**
  
  
-- **[🪟 Window Manager][10]**
+- **[🪟 Window Manager][11]**
  
  
   - `Sway`, `Hyprland`, `i3` — konsep tiling & compositor
@@ -1020,4 +1020,4 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [8]: ./sistem-operasi/linux/gnu/bagian-8/README.md
 [9]: ./sistem-operasi/linux/gnu/bagian-9/README.md
 [10]: ./sistem-operasi/linux/archlinux/desktop-environment/window-manager/README.md
-[12]: ./sistem-operasi/linux/archlinux/desktop-environment/README.md
+[11]: ./sistem-operasi/linux/archlinux/desktop-environment/README.md
