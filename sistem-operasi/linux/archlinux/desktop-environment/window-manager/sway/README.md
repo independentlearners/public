@@ -4,7 +4,8 @@ Sway adalah **tiling Wayland compositor** yang dirancang sebagai pengganti drop-
 
 # Arsitektur dan komponen utama
 
-* **wlroots** — library modular yang mengabstraksi DRM/KMS, EGL, libinput, XWayland, rendering, dan backend lain; wlroots menjadi fondasi teknis Sway untuk akses perangkat dan rendering. ([GitHub][2])
+* **wlroots** — library modular yang mengabstraksi DRM/KMS, EGL, libinput, XWayland, rendering, dan backend lain; wlroots menjadi fondasi teknis Sway untuk akses perangkat dan rendering. ([GitLab][2])
+    - > Sumber tautan untuk GitHub di komentari karena proyek telah di arsipkan.
 * **Sway (kompositor)** — program utama (C) yang mengimplementasikan manajemen tata letak tiling, binding keyboard, pengaturan output dan input, serta mengeksekusi konfigurasi pengguna. Sway ditulis dalam **bahasa C**. ([GitHub][3])
 * **Utilitas pendukung** — `swaybar` (status bar), `swaylock` (lock screen), `swayidle` (idle management), `swaymsg` (CLI untuk IPC), dan daemon lain yang biasa disertakan di distribusi. ([GitHub][3])
 * **XWayland** — lapisan kompatibilitas untuk menjalankan aplikasi X11 di dalam sesi Wayland ketika diperlukan. wlroots/Sway mengelolanya bila dipasang. ([GitHub][2])
@@ -23,7 +24,7 @@ Sway adalah **tiling Wayland compositor** yang dirancang sebagai pengganti drop-
 
 # Pengembangan, modifikasi, dan prasyarat teknis
 
-Jika tujuan Anda adalah **memodifikasi Sway** (menambah fitur di sumbernya) atau **membangun komponennya sendiri**, berikut ringkasan teknis dan langkah persiapan yang direkomendasikan.
+Jika Anda memiliki tujuan untuk **memodifikasi Sway** (menambah fitur di sumbernya) atau **membangun komponennya sendiri**, berikut ringkasan teknis dan langkah persiapan yang direkomendasikan.
 
 Bahasa & teknologi inti:
 
@@ -80,7 +81,10 @@ Saya sudah menyiapkan overview lengkap ini sebagai peta besar: arsitektur, depen
 -->
 
 [1]: https://swaywm.org/?utm_source=chatgpt.com "Sway"
-[2]: https://github.com/swaywm/wlroots?utm_source=chatgpt.com "swaywm/wlroots: A modular Wayland compositor library"
+[2]: https://gitlab.freedesktop.org/wlroots/wlroots "swaywm/wlroots: A modular Wayland compositor library"
+<!-- Tautan wlroots untuk github
+https://github.com/swaywm/wlroots?utm_source=chatgpt.com 
+-->
 [3]: https://github.com/swaywm/sway?utm_source=chatgpt.com "swaywm/sway: i3-compatible Wayland compositor"
 [4]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
 [5]: https://en.wikipedia.org/wiki/Sway_%28window_manager%29?utm_source=chatgpt.com "Sway (window manager)"
