@@ -926,13 +926,13 @@ Seluruh jalur disusun dari *fondasi sistem → konfigurasi modular → automasi 
 | **6**   | [Session, Policy & System Integration][f] | **150**                 | login, PAM, systemd, polkit, dbus, session management        |
 | **7**   | [Utilities, Extensions & Theming][g]      | **100**                 | configurator, plugin system, theme engine, icon, sound theme |
 
-[a]: ./module/bagian-1/README.md
-[b]: ./module/bagian-2/README.md
-[c]: ./module/bagian-3/README.md
-[d]: ./module/bagian-4/README.md
-[e]: ./module/bagian-5/README.md
-[f]: ./module/bagian-6/README.md
-[g]: ./module/bagian-7/README.md
+[a]: ./istilah/bagian-1/README.md
+[b]: ./istilah/bagian-2/README.md
+[c]: ./istilah/bagian-3/README.md
+[d]: ./istilah/bagian-4/README.md
+[e]: ./istilah/bagian-5/README.md
+[f]: ./istilah/bagian-6/README.md
+[g]: ./istilah/bagian-7/README.md
 
 
 ---
