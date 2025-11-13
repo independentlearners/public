@@ -342,6 +342,7 @@ Berikut hasil penyusunan ulang dalam format *Markdown dokumentatif profesional*:
  
 *Dokumentasi sistem operasi yang berfokus pada Arch Linux dan Windows, meliputi konsep, konfigurasi, manajemen, keamanan, serta integrasi lintas platform.*
  
+  -  > Untuk memahami dokumentasi sebelum memulai scripting dan konfigurasi sistem [klik disini][docs]
   
 ### 🧭 **Main Navigation**
  
@@ -1021,3 +1022,5 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [9]: ./sistem-operasi/linux/gnu/bagian-9/README.md
 [10]: ./sistem-operasi/linux/archlinux/desktop-environment/window-manager/README.md
 [11]: ./sistem-operasi/linux/archlinux/desktop-environment/README.md
+
+[docs]: ./sistem-operasi/others/docs/README.md
