@@ -20,89 +20,7 @@ Saya akan menampilkan seluruh fase (0 → 7). Bila suatu bagian butuh snippet pa
 
 ---
 
--->
-# 🚦 Fase 0 — Persiapan & Prasyarat
-
-**Tujuan:** menyiapkan lingkungan yang stabil dan menginstal dependensi dasar.
-
-## Terminologi penting
-
-* **KMS/DRM**: Kernel Mode Setting / Direct Rendering Manager — cara kernel mengendalikan GPU dan mode layar.
-* **Wayland**: protocol modern untuk display server; menggantikan X11.
-* **wlroots**: library C yang menyediakan building blocks untuk compositor Wayland (Sway dibangun di atas ini).
-
-## Langkah praktis (Arch Linux & Debian/Ubuntu contoh)
-
-1. Pastikan sistem up-to-date.
-
-   * Arch:
-
-     ```bash
-     sudo pacman -Syu
-     ```
-
-     Penjelasan: `pacman -Syu` → sinkronisasi database paket dan upgrade seluruh paket.
-   * Debian/Ubuntu:
-
-     ```bash
-     sudo apt update && sudo apt upgrade -y
-     ```
-
-     Penjelasan: `apt update` memperbarui indeks paket; `apt upgrade -y` meng-upgrade paket.
-
-2. Instal paket runtime dasar (contoh Arch):
-
-   ```bash
-   sudo pacman -S --needed sway swaybg swaylock swayidle swaymsg swaynag \
-     waybar mako wofi grim slurp wl-clipboard alacritty jq git
-   ```
-
-   Baris demi baris:
-
-   * `sway` : compositor Wayland (core).
-   * `swaybg` : helper wallpaper.
-   * `swaylock` : lock screen.
-   * `swayidle` : manajemen idle.
-   * `swaymsg` : CLI untuk mengirim perintah IPC ke sway.
-   * `swaynag` : dialog on-screen.
-   * `waybar` : status bar modern (konfig JSON/CSS).
-   * `mako` : notification daemon.
-   * `wofi` : launcher untuk Wayland.
-   * `grim` `slurp` : screenshot + region selector.
-   * `wl-clipboard` : `wl-copy`/`wl-paste` (clipboard).
-   * `alacritty` : terminal contoh.
-   * `jq` : JSON processor (berguna parsing output `swaymsg`).
-   * `git` : version control untuk dotfiles.
-
-   (Pada Debian/Ubuntu nama paket bisa berbeda; gunakan `apt search`/`apt install` sesuai repositori atau PPA.)
-
-3. Instal build deps (jika akan build / kontribusi):
-
-   * Arch:
-
-     ```bash
-     sudo pacman -S --needed meson ninja pkgconf gcc wayland wayland-protocols \
-       wlroots-devel libinput libxkbcommon libseat
-     ```
-   * Debian/Ubuntu (contoh nama paket):
-
-     ```bash
-     sudo apt install -y meson ninja-build pkg-config build-essential \
-       libwayland-dev wayland-protocols libwlroots-dev libinput-dev \
-       libxkbcommon-dev libseat-dev
-     ```
-
-   Penjelasan: Meson + Ninja untuk build; development headers dibutuhkan untuk compile C.
-
-## Identitas teknis & persyaratan modifikasi
-
-* **Sway**: bahasa implementasi **C**. Untuk modifikasi perlu compiler C (gcc/clang), Meson+Ninja, header `wayland`, `wlroots`, `libinput`, `libxkbcommon`.
-* **Waybar**: **C++**, konfigurasi JSON/CSS; modifikasi visual cukup lewat config/CSS, perubahan core butuh toolchain C++ (g++/clang++).
-* **Mako, wofi, grim, slurp, wl-clipboard, PipeWire**: umumnya **C**; modifikasi membutuhkan toolchain C dan dev headers.
-
----
-
-# 🧭 Fase 1 — Fondasi Wayland & wlroots
+# 🧭 Fondasi Wayland & wlroots
 
 **Tujuan:** paham arsitektur Wayland dan peran wlroots agar perubahan konfigurasi tidak bersifat tebak-tebakan.
 
@@ -122,7 +40,7 @@ Saya akan menampilkan seluruh fase (0 → 7). Bila suatu bagian butuh snippet pa
 
 Tidak ada konfigurasi file di fase ini; tujuan adalah konsep.
 
----
+-->
 
 # ⚙️ Fase 2 — Konfigurasi Dasar Sway (`man 5 sway`)
 

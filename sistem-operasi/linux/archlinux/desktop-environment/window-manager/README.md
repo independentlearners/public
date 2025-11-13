@@ -5,11 +5,25 @@
 
 ---
 
-## 🧩 1. Fondasi Awal: Sistem dan Lingkungan Arch
+### 🗂 Struktur ringkasan logis roadmap
+
+1. 🧱 **Persiapan & Prasyarat**
+2. 🪟 **Fondasi Wayland & wlroots**
+3. ⚙️ **Konfigurasi Dasar Sway (man 5 sway)**
+4. 🔧 **Utilitas Resmi Sway**
+5. 🧩 **Integrasi Ekosistem Wayland**
+6. 🤖 **IPC & Scripting Automasi**
+7. 🔍 **Debugging, Logging, dan Tracing**
+8. 🛠️ **Build From Source & Kontribusi**
+
+**Estimasi waktu:** 2 minggu
+
+
+### 🧩 1. Fondasi Awal: Sistem dan Lingkungan Arch
 
 **Estimasi waktu:** 2–3 minggu (4–8 jam/hari)
 
-### Materi Inti
+#### Materi Inti
 
 * 📦 *Arch Linux Core & Pacman*: pemahaman sistem paket, repositori, dan manajemen dependensi.
 * 🧱 *Filesystem Hierarchy*: struktur direktori Linux (bin, lib, etc, usr, var, home).
@@ -17,7 +31,7 @@
 * 🔒 *Permission & Ownership*: `chmod`, `chown`, `setuid`, `capabilities`.
 * 🌐 *Network & Display Basics*: perbedaan antara X11 dan Wayland, dan konsep compositor.
 
-### Hasil Belajar
+#### Hasil Belajar
 
 Pengguna mampu melakukan instalasi minimal Arch, memahami sistem inti, serta mengonfigurasi jaringan dan sesi Wayland secara manual.
 
@@ -25,16 +39,255 @@ Pengguna mampu melakukan instalasi minimal Arch, memahami sistem inti, serta men
 
 ## [🪞 2. Pengenalan Wayland & Komponen Sway][0]
 
-**Estimasi waktu:** 2 minggu
+**Persiapan & Prasyarat Lengkap:** Tool, skill dan familiar dengan sistem
 
-### Materi Inti
+**Tujuan:** menyiapkan lingkungan yang stabil dan toolchain untuk pengembangan / konfigurasi.
+
+### 🔧 Perangkat keras & sistem
+
+* Kernel modern (≥ generic kernel yang didukung distro).
+* Driver GPU dengan dukungan KMS/DRM (Intel, AMD, NVIDIA). <!-- ~~(Nouveau atau NVIDIA proprietary dengan wayland support)~~). -->
+* Akses ke TTY atau display manager yang mendukung Wayland.
+
+> Catatan: detil driver NVIDIA bervariasi; cek dokumentasi distribusi untuk dukungan Wayland + proprietary driver [disini][0].
+
+### 🧭 Cakupan skill & tool yang direkomendasikan
+
+* Bash / shell scripting — wajib.
+* Git — wajib (dotfiles version control).
+* Pemahaman dasar C — wajib bila ingin build/kontribusi.
+* Meson & Ninja — untuk build Sway/wlroots.
+* Python (opsional, untuk i3ipc scripting), Rust/Lua (opsional).
+
+### 🛠️ Build From Source Untuk Paket, Dependensi & Contribusi
+
+🧩 Paket & dependensi (referensi **Arch Linux** — sesuaikan nama paket di distro lain)
+
+**Kebutuhan untuk kontribusi / patch:**
+
+* Bahasa: **C** (Sway & wlroots).
+* Build system: **Meson + Ninja**.
+* Toolchain: `meson`, `ninja`, `gcc/clang`, `pkg-config`, header library (wayland, wlroots, libinput, xkbcommon).
+* Familiar dengan workflow Git (fork → branch → patch → PR).
+
+**Deliverable fase:** langkah build reproducible, test minimal, panduan membuat patch dokumentasi atau bugfix kecil, dan checklist PR.
+
+---
+
+# 🚦 Persiapan & Prasyarat
+
+### 📦 Daftar Dependensi Lengkap (ringkasan — sesuaikan distro)
+
+**Tujuan:** menyiapkan lingkungan yang stabil dan menginstal dependensi dasar.
+
+## Terminologi penting
+
+* **KMS/DRM**: Kernel Mode Setting / Direct Rendering Manager — cara kernel mengendalikan GPU dan mode layar.
+* **Wayland**: protocol modern untuk display server; menggantikan X11.
+* **wlroots**: library C yang menyediakan building blocks untuk compositor Wayland (Sway dibangun di atas ini).
+
+## Langkah praktis (Arch Linux & Debian/Ubuntu contoh)
+
+1. Pastikan sistem up-to-date.
+
+   * Arch:
+
+     ```bash
+     sudo pacman -Syu
+     ```
+
+     Penjelasan: `pacman -Syu` → sinkronisasi database paket dan upgrade seluruh paket.
+   * Debian/Ubuntu:
+
+     ```bash
+     sudo apt update && sudo apt upgrade -y
+     ```
+
+     Penjelasan: `apt update` memperbarui indeks paket; `apt upgrade -y` meng-upgrade paket.
+
+2. Instal paket runtime dasar (contoh Arch):
+
+   ```bash
+   sudo pacman -S --needed sway swaybg swaylock swayidle swaymsg swaynag \
+     waybar mako wofi grim slurp wl-clipboard alacritty jq git
+   ```
+
+   * `sway` : compositor Wayland (core).
+   * `swaybg` : helper wallpaper.
+   * `swaylock` : lock screen.
+   * `swayidle` : manajemen idle.
+   * `swaymsg` : CLI untuk mengirim perintah IPC ke sway.
+   * `swaynag` : dialog on-screen.
+   * `waybar` : status bar modern (konfig JSON/CSS).
+   * `mako` : notification daemon.
+   * `wofi` : launcher untuk Wayland.
+   * `grim` `slurp` : screenshot + region selector.
+   * `wl-clipboard` : `wl-copy`/`wl-paste` (clipboard).
+   * `alacritty` : terminal contoh.
+   * `jq` : JSON processor (berguna parsing output `swaymsg`).
+   * `git` : version control untuk dotfiles.
+
+   (Pada Debian/Ubuntu nama paket bisa berbeda; gunakan `apt search`/`apt install` sesuai repositori atau PPA.)
+
+
+**Paket Runtime Minimal (pengguna dotfiles biasa):**
+
+* sway, swaybg, swaylock, swayidle, swaymsg, swaynag
+* waybar, mako, wofi
+* grim, slurp, wl-clipboard
+* terminal (alacritty / foot / wezterm)
+* pipewire, pipewire-pulse, wireplumber
+* network manager applet (opsional)
+* jq, git, bash
+
+```
+sudo pacman -Syu --noconfirm --neeeded sway swaybg swaylock swayidle swaymsg swaynag waybar mako wofi grim slurp wl-clipboard alacritty foot or wezterm pipewire pipewire-pulse wireplumber network-manager-applet jq
+```
+
+**Paket tambahan (disarankan):**
+
+```
+sudo pacman -Syu --noconfirm --neeeded wayland wayland-protocols wlroots python-pip # untuk i3ipc-python
+```
+
+3. Instal build deps (jika akan build / kontribusi):
+
+   * Arch:
+
+     ```bash
+     sudo pacman -S --needed meson ninja pkgconf gcc wayland wayland-protocols \
+       wlroots-devel libinput libxkbcommon libseat
+     ```
+   * Debian/Ubuntu (contoh nama paket):
+
+     ```bash
+     sudo apt install -y meson ninja-build pkg-config build-essential \
+       libwayland-dev wayland-protocols libwlroots-dev libinput-dev \
+       libxkbcommon-dev libseat-dev
+     ```
+
+   Penjelasan: Meson + Ninja untuk build; development headers dibutuhkan untuk compile C.
+
+## Identitas teknis & persyaratan modifikasi
+
+* **Sway**: bahasa implementasi **C**. Untuk modifikasi perlu compiler C (gcc/clang), Meson+Ninja, header `wayland`, `wlroots`, `libinput`, `libxkbcommon`.
+* **Waybar**: **C++**, konfigurasi JSON/CSS; modifikasi visual cukup lewat config/CSS, perubahan core butuh toolchain C++ (g++/clang++).
+* **Mako, wofi, grim, slurp, wl-clipboard, PipeWire**: umumnya **C**; modifikasi membutuhkan toolchain C dan dev headers.
+
+---
+
+
+**Development / build:**
+
+* meson, ninja, pkgconf / pkg-config
+* gcc / clang, make (untuk beberapa deps)
+* libwayland-dev / wayland-devel, wayland-protocols
+* wlroots (library + headers), libinput-dev, libxkbcommon-dev, libseat-dev
+
+**🔧 Dev/build deps (untuk fase build & kontribusi):**
+
+```
+sudo pacman -Syu --noconfirm --neeeded meson ninja pkgconf gcc sway-devel wlroots-devel wayland-devel libinput-devel libxkbcommon-devel libseat-devel libxcb-devel python # untuk test scripts
+```
+
+> Catatan: nama paket dan ketersediaan header dapat berbeda antar distro (Debian/Ubuntu: `libwayland-dev`, `libwlroots-dev` atau paket dari PPA). Sesuaikan sebelum build.
+
+---
+
+# Roadmap Terstruktur — **Sway & Ekosistem Wayland**
+
+Tujuan dokumen: memberikan **peta belajar dan referensi dependensi** yang sangat jelas sehingga siapa pun — termasuk pemula teknis — dapat mulai membuat dotfiles Sway yang dapat dimengerti hingga setiap baris konfigurasi memiliki makna (teori, contoh, latihan, verifikasi).
+
+
+---
+
+### 📚 Fondasi Wayland & wlroots
+
+**Inti:** pahami arsitektur Wayland (compositor ↔ client ↔ protocols) dan peran wlroots.
+**Mengapa penting:** tanpa gambaran ini, perubahan pada Sway dan troubleshooting akan terasa menebak-nebak.
+
+**Keluaran yang diharapkan:** ringkasan arsitektur (diagram), istilah penting (compositor, client, protocol, KMS/DRM, seat), serta catatan bagaimana wlroots menyediakan backend hardware abstraction.
+
+---
+
+### Integrasi Ekosistem Wayland
+
+**Komponen populer (bahasa & catatan modifikasi):**
+
+* **Waybar** — *C++ + JS/JSON config + CSS styling.*
+
+  * Untuk memodifikasi: edit JSON config + CSS; membuat module custom biasanya berupa script (Bash/Python).
+* **Mako** — *C.* Konfigurasi styling dan behavior via file; recompilasi memerlukan C.
+* **Wofi** — *C.* (launcher). Styling lewat CSS, pengaturan di file config.
+* **Grim** / **Slurp** — *C.* (screenshot + region selection).
+* **wl-clipboard** — *C.* (`wl-copy`, `wl-paste`).
+* **PipeWire / WirePlumber** — *C.* (audio/video); integrasi untuk volume/control.
+
+**Output fase:** dotfiles yang menjalankan Waybar + Mako + Wofi, shortcut screenshot, clipboard integration, dan contoh module Waybar (script + konfigurasi).
+
+---
+
+### 🪄 IPC & Scripting Automasi
+
+**Target:** membuat automasi nyata menggunakan Sway IPC.
+
+**Pilihan bahasa & libraries:**
+
+* **Bash**: langsung menggunakan `swaymsg` + `jq`. (Tidak perlu library eksternal).
+* **Python**: `i3ipc-python` (kompatibel, instal via pip). Cocok untuk event hooks (`window::new`).
+* **Rust**: `swayipc-rs` (untuk performa & binary standalone).
+* **Lua**: binding tersedia (untuk integrasi Neovim / dotfiles TUI).
+
+**Contoh use-cases yang disertakan:**
+
+* Auto-assign aplikasi ke workspace.
+* Dynamic monitor profile (laptop ↔ dock).
+* Wallpaper scheduler & theme switcher.
+* Event-driven notifications (mis. muncul notifikasi saat device terpasang).
+
+**Keluaran fase:** koleksi skrip contoh lengkap + penjelasan tiap baris, termasuk cara menjalankan sebagai systemd user service bila diperlukan.
+
+---
+
+### 🔍 Debugging, Logging & Tracing
+
+**Teknik & perintah utama:**
+
+* `sway -C ~/.config/sway/config` — syntax check.
+* `swaymsg -t get_tree` / `-t get_outputs` — inspect state.
+* `journalctl -b -u sway` / `journalctl -xe` — log systemd.
+* `WAYLAND_DEBUG=1 sway` — log protokol Wayland (besar; gunakan filter).
+* `sway -d 2> sway.log` — mode debug.
+
+**Output fase:** panduan analisis log (pattern umum error), latihan memicu error, dan template laporan bug (untuk kontribusi).
+
+
+# 📚 Ikhtisar cepat
+
+* 🔭 **Target akhir:** mengelola dotfiles Sway modular, mengintegrasikan tool Wayland (Waybar, Mako, Wofi, dsb.), menulis skrip automasi via IPC (`swaymsg`), dan memahami dasar kontributor Sway/wlroots.
+* 🧭 **Pendekatan:** bertahap — dari fondasi Wayland → konfigurasi dasar → utilitas resmi → ekosistem → scripting/IPC → debugging → build & kontribusi.
+* ✅ **Outcome:** setiap konfigurasi disertai komentar sintaks & efek, dependensi lengkap, dan panduan modifikasi komponen (bahasa implementasi + toolchain).
+
+---
+
+
+**Tujuan:** menyiapkan lingkungan yang stabil dan menginstal dependensi dasar.
+
+### Terminologi penting
+
+* **KMS/DRM**: Kernel Mode Setting / Direct Rendering Manager — cara kernel mengendalikan GPU dan mode layar.
+* **Wayland**: protocol modern untuk display server; menggantikan X11.
+* **wlroots**: library C yang menyediakan building blocks untuk compositor Wayland (Sway dibangun di atas ini).
+
+
+### 🧰 Materi Inti
 
 * 🧠 *Arsitektur Wayland*: compositor, client, protocol, dan event loop.
 * 🪟 *Sway Overview*: struktur `config`, keybinding, dan peran wlroots.
 * 🧩 *Sway Modules*: bar, input, workspace, layout, wallpaper, output.
 * ⚡ *IPC Communication*: memahami swaymsg dan interaksi antarproses.
 
-### Hasil Belajar
+### 🧰 Hasil Belajar
 
 Peserta mampu mengedit, memuat ulang, dan memodifikasi konfigurasi Sway tanpa crash atau kehilangan sesi.
 
@@ -43,6 +296,116 @@ Peserta mampu mengedit, memuat ulang, dan memodifikasi konfigurasi Sway tanpa cr
 ## 🎛️ 3. Struktur dan Modularisasi Konfigurasi
 
 **Estimasi waktu:** 3–4 minggu
+   
+### Konfigurasi Dasar Sway (man 5 sway)
+
+**Inti:** pelajari direktif `~/.config/sway/config` paling penting sehingga setiap baris konfigurasi bisa dijelaskan.
+
+**Daftar direktif inti yang akan dibahas per baris:**
+
+* `set` (variabel)
+* `include` (modular config)
+* `bindsym` / `bindcode` / `bindswitch` (keybindings)
+* `exec` / `exec_always` (autostart)
+* `workspace` & `assign` (penempatan aplikasi)
+* `for_window` / criteria (aturan per-jendela)
+* `input` block (keyboard/mouse/libinput options)
+* `output` block (monitor mode/pos/scale/transform)
+* Layout commands (`splith`, `splitv`, `floating`, `focus`, `move`)
+
+**Output akhir fase:** file `config` bertingkat (minimal → intermediate → production-ready) di mana setiap baris diberi komentar menandakan arti & efek runtime.
+
+---
+
+### Utilitas Resmi Sway
+
+**Komponen & identitas (bahasa implementasi + cara memodifikasi):**
+
+* `sway` — **C**. (core compositor). Untuk modifikasi: perlu C, Meson, ninja, membaca source `swaywm/sway`.
+* `swaymsg` — **C** (CLI IPC client). Dapat digunakan tanpa modifikasi.
+* `swayidle` — **C**. Digunakan untuk manajemen idle/suspend; modifikasi memerlukan C.
+* `swaylock` — **C**. Lock screen; konfigurasi lewat argumen & env.
+* `swaybg` — **C**. Wallpaper helper.
+* `swaynag` — **C**. On-screen dialogs.
+
+**Praktik kunci:**
+
+* Cara menggunakan `swaymsg` (perintah `get_tree`, `get_outputs`, `command`).
+* Membuat `swayidle` + `swaylock` pipeline.
+* Mengotomatisasi output layout via `swaymsg output <name> ...`.
+
+---
+
+### 🧾 Template Struktur Dotfiles (rekomendasi best-practice)
+# 🧭 Fondasi Wayland & wlroots
+
+**Tujuan:** paham arsitektur Wayland dan peran wlroots agar perubahan konfigurasi tidak bersifat tebak-tebakan.
+
+## Terminologi penting
+
+* **Compositor**: program yang menerima buffer dari client dan menggambar ke layar (Sway adalah compositor).
+* **Client**: aplikasi yang menampilkan UI (terminal, browser).
+* **Protocol**: definisi pesan (Wayland protocol).
+* **Seat**: abstraksi input (keyboard/mouse) untuk user.
+* **wlroots**: library untuk membuat compositor — menyediakan backend DRM, input, rendering helpers.
+
+## Langkah praktis
+
+1. Baca ringkasan konsep Wayland (bisa dimulai dari dokumentasi resmi).
+2. Gambarkan alur: aplikasi → Wayland client lib → Wayland compositor (Sway) → wlroots → kernel DRM → hardware.
+3. Eksperimen: jalankan `WAYLAND_DISPLAY=wayland-0 some-wayland-client` (contoh umum); lebih penting: lihat state dengan `swaymsg -t get_tree`.
+
+Tidak ada konfigurasi file di fase ini; tujuan adalah konsep.
+
+---
+
+
+```
+~/.dotfiles/
+├── README.md
+├── install.sh     # bootstrap (symlink + package checks)
+├── sway/
+│   ├── config
+│   └── config.d/
+│       ├── 00-vars.conf
+│       ├── 10-keybinds.conf
+│       ├── 20-inputs.conf
+│       ├── 30-outputs.conf
+│       └── 90-autostart.conf
+├── waybar/
+│   ├── config
+│   └── style.css
+├── mako/
+│   └── config
+├── scripts/
+│   ├── monitor-setup.sh
+│   ├── wallpaper-switcher.sh
+│   └── ipc-autoassign.py
+└── docs/
+    └── audit-log.md
+```
+
+* Gunakan `stow` / `chezmoi` untuk deployment symlink.
+* Sertakan `sway -C` syntax check di `install.sh` sebelum reload.
+
+---
+
+### ✅ Verifikasi & Checklist Awal (agar tidak ada kebingungan)
+
+Sebelum menandai fase “siap”, setiap modul harus memenuhi checklist berikut:
+
+* [ ] Semua paket runtime terinstal.
+* [ ] `~/.config/sway/config` valid (`sway -C`).
+* [ ] Keybinds dasar berfungsi (terminal, launcher, lock, screenshot).
+* [ ] Waybar & Mako berjalan setelah login.
+* [ ] Skrip monitor-setup mendeteksi dan mengaplikasikan preset.
+* [ ] Contoh skrip IPC berjalan dan auto-assign bekerja.
+* [ ] Ada dokumentasi singkat tiap file konfigurasi (komentar baris demi baris).
+
+---
+
+
+---
 
 ### Materi Inti
 
@@ -56,6 +419,8 @@ Peserta mampu mengedit, memuat ulang, dan memodifikasi konfigurasi Sway tanpa cr
 Peserta mampu menyusun *dotfiles* yang modular dan terstruktur secara hierarkis, siap diintegrasikan dalam repositori publik.
 
 ---
+
+## 🚦 Persiapan & Prasyarat
 
 ## 🎨 4. Tema, Estetika, dan Dinamika Tampilan
 

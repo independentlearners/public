@@ -8,7 +8,7 @@
 Repositori ini berfungsi sebagai **panduan lengkap dan dokumentasi teknis** bagi siapa pun yang ingin memahami, membangun, serta mengembangkan lingkungan desktop (Desktop Environment) di sistem berbasis Linux — dengan fokus utama pada **Wayland + Sway + wlroots** serta integrasi ekosistem modern seperti PipeWire, systemd dan XDG Portals.
 
 Dokumen ini menyatukan dua pendekatan:
-1. **Kurikulum Pembelajaran Terstruktur** – menyusun tahapan belajar dan eksperimen.
+1. **Pembelajaran Terstruktur** – menyusun tahapan belajar dan eksperimen.
 2. **Dokumentasi Teknis Mendalam** – menguraikan komponen DE, bahasa implementasi, dependensi, serta referensi resmi pengembang.
 
 ---
