@@ -1,3 +1,8 @@
+# 🧭 Timestamp, Randomness
+Timestamp dan randomness adalah dua konsep yang berbeda, tapi sering digunakan dalam konteks yang sama, terutama dalam teknologi dan komputasi.
+Timestamp adalah label waktu yang diberikan pada suatu data atau event, yang menunjukkan kapan data tersebut dibuat, dikirim, atau diterima. Timestamp biasanya berupa tanggal dan waktu yang akurat, dan digunakan untuk merekam riwayat suatu kejadian. Contohnya, ketika kamu mengirim email, timestamp akan mencatat waktu pengiriman email tersebut.
+Randomness, atau keacakan, adalah konsep yang terkait dengan ketidakpastian atau ketidakterdugaan. Dalam komputasi, randomness digunakan untuk menghasilkan angka-angka acak yang tidak dapat diprediksi. Randomness digunakan dalam berbagai aplikasi, seperti permainan, simulasi, dan keamanan data.
+Dalam beberapa kasus, timestamp dan randomness digunakan bersamaan, seperti dalam sistem keamanan yang menggunakan timestamp dan angka acak untuk menghasilkan token autentikasi yang unik.
 <!--
 <details>
   <summary>📃 Daftar Isi</summary>
@@ -5,60 +10,7 @@
 </details>
 
 #
-
-
-Bagus — sekarang saya akan **memperjelas setiap fase** secara rinci dan praktis. Untuk setiap fase saya akan menyajikan:
-
-* Tujuan singkat fase.
-* Terminologi penting yang harus dipahami.
-* Langkah-langkah praktis terurut (step-by-step).
-* Contoh konfigurasi / skrip yang **siap dijalankan**.
-* Penjelasan **baris demi baris** untuk setiap potongan kode.
-* Identitas teknis tiap komponen (bahasa implementasi) dan persyaratan untuk memodifikasi/mengembangkannya.
-
-Saya akan menampilkan seluruh fase (0 → 7). Bila suatu bagian butuh snippet panjang, saya tetap menjelaskan setiap barisnya. Mari mulai.
-
----
-
-# 🧭 Fondasi Wayland & wlroots
-
-**Tujuan:** paham arsitektur Wayland dan peran wlroots agar perubahan konfigurasi tidak bersifat tebak-tebakan.
-
-## Terminologi penting
-
-* **Compositor**: program yang menerima buffer dari client dan menggambar ke layar (Sway adalah compositor).
-* **Client**: aplikasi yang menampilkan UI (terminal, browser).
-* **Protocol**: definisi pesan (Wayland protocol).
-* **Seat**: abstraksi input (keyboard/mouse) untuk user.
-* **wlroots**: library untuk membuat compositor — menyediakan backend DRM, input, rendering helpers.
-
-## Langkah praktis
-
-1. Baca ringkasan konsep Wayland (bisa dimulai dari dokumentasi resmi).
-2. Gambarkan alur: aplikasi → Wayland client lib → Wayland compositor (Sway) → wlroots → kernel DRM → hardware.
-3. Eksperimen: jalankan `WAYLAND_DISPLAY=wayland-0 some-wayland-client` (contoh umum); lebih penting: lihat state dengan `swaymsg -t get_tree`.
-
-Tidak ada konfigurasi file di fase ini; tujuan adalah konsep.
-
 -->
-
-# ⚙️ Fase 2 — Konfigurasi Dasar Sway (`man 5 sway`)
-
-**Tujuan:** setiap baris di `~/.config/sway/config` dapat dijelaskan dan dimodifikasi dengan aman.
-
-Di bawah ini contoh `~/.config/sway/config` **minimal → production**, disertai penjelasan baris demi baris.
-
-## Struktur minimal & modular recommended
-
-```
-~/.config/sway/
- ├─ config
- └─ config.d/
-     ├─ 00-vars.conf
-     ├─ 10-keybinds.conf
-     ├─ 20-inputs.conf
-     └─ 30-outputs.conf
-```
 
 ### Contoh file utama: `~/.config/sway/config` (minimal)
 
