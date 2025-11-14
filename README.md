@@ -127,7 +127,7 @@
 ### 7. 🧠 *Referensi & Eksperimen*
 
 > Dokumentasi akhir yang membantu eksplorasi lebih dalam.
-
+* **[📄 Akses Panduan Perintah](./CLI_TUI/referensi/panduan/README.md)**
 * **[📚 Cheatsheet](./CLI_TUI/referensi/cheatsheet/README.md)**
 * **[🧪 Eksperimen Terminal & Prompt](./CLI_TUI/referensi/eksperimen/README.md)**
 * **[🔧 Troubleshooting CLI](./CLI_TUI/referensi/troubleshooting/README.md)**

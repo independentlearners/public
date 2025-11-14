@@ -4,7 +4,7 @@ Sway adalah **tiling Wayland compositor** yang dirancang sebagai pengganti drop-
 
 # Arsitektur dan komponen utama
 
-* **wlroots** — library modular yang mengabstraksi DRM/KMS, EGL, libinput, XWayland, rendering, dan backend lain; wlroots menjadi fondasi teknis Sway untuk akses perangkat dan rendering. ([GitLab][2])
+* **[wlroots][1]** — library modular yang mengabstraksi DRM/KMS, EGL, libinput, XWayland, rendering, dan backend lain; wlroots menjadi fondasi teknis Sway untuk akses perangkat dan rendering. ([GitLab][2])
     - > Sumber tautan untuk GitHub di komentari karena proyek telah di arsipkan.
 * **Sway (kompositor)** — program utama (C) yang mengimplementasikan manajemen tata letak tiling, binding keyboard, pengaturan output dan input, serta mengeksekusi konfigurasi pengguna. Sway ditulis dalam **bahasa C**. ([GitHub][3])
 * **Utilitas pendukung** — `swaybar` (status bar), `swaylock` (lock screen), `swayidle` (idle management), `swaymsg` (CLI untuk IPC), dan daemon lain yang biasa disertakan di distribusi. ([GitHub][3])
@@ -801,3 +801,5 @@ Dengan Bash dan Lua yang sudah Anda kuasai dasar-dasarnya, Anda sudah memiliki f
 Saya sudah menyusun roadmap lengkap, rapi, dan terstruktur sesuai permintaanmu. Silakan **audit dan beri catatan** (mis. tambahkan distro khusus, fokus bahasa scripting tertentu, atau permintaan templates tambahan). Setelah menerima audit, saya akan **memperjelas tiap fase** menjadi kurikulum detil yang kamu minta.-->
 [0]: https://github.com/swaywm/sway/wiki
 
+<!--wlroots-->
+[1]: ./../../module/bagian-1/README.md
