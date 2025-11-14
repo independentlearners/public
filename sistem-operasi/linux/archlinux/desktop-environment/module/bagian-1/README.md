@@ -37,3 +37,67 @@ Contoh lainnya: Komunitas juga memiliki contoh-contoh kecil lain. Misalnya, root
 
 > Sumber: Dokumentasi dan diskusi resmi wlroots serta berbagai blog dan tutorial komunitas (lihat tautan yang di komentari) menyediakan penjelasan teknis tentang arsitektur, API, dan cara penggunaan wlroots. Referensi utama termasuk README dan wiki wlroots, dokumentasi API di Freedesktop, tutorial berjenjang Drew DeVault, serta artikel teknis Emersion dan pengembang lainnya
 
+<!--
+Kutipan
+
+github.com
+GitHub - swaywm/wlroots: A modular Wayland compositor library
+Pluggable, composable, unopinionated modules for building a Wayland compositor; or about 60,000 lines of code you were going to write anyway.
+way-cooler.org
+Introduction to wlroots -
+> > * wlroots provides backends that abstract the underlying display and input hardware, including KMS/DRM, libinput, Wayland, X11, and headless backends, plus any custom backends you choose to write, which can all be created or destroyed at runtime and used in concert with each other. > * wlroots provides unopinionated, mostly standalone implementations of many
+
+github.com
+Getting started · swaywm/wlroots Wiki · GitHub
+Documentation
+wlroots.pages.freedesktop.org
+wlroots documentation
+URL: https://wlroots.pages.freedesktop.org/wlroots/ wlroots documentation
+
+drewdevault.com
+Writing a Wayland Compositor, Part 1: Hello wlroots
+This is the first in a series of many articles I’m writing on the subject of building a functional Wayland compositor from scratch. As you may know, I am the lead maintainer of sway, a reasonably popular Wayland compositor. Along with many other talented developers, we’ve been working on wlroots over the past few months. This is a powerful tool for creating new Wayland compositors, but it is very dense and difficult to understand. Do not despair! The intention of these articles is to make you understand and feel comfortable using it.
+
+drewdevault.com
+Writing a Wayland Compositor, Part 3: Rendering a window
+server.compositor = wlr_compositor_create(server.wl_display, wlr_backend_get_renderer(server.backend));
+
+inclem.net
+Thoughts on writing a wayland window manager with wlroots
+* Fork tinywl. This tiny example is shipped with wlroots and is an excellent base for a serious compositor. Although short it implements in a basic way almost every core functionality you’ll need, and implicitly teaches a lot about Wayland API interaction (especially if using the C interface to
+way-cooler.org
+Introduction to wlroots -
+Here is the elevator pitch for wlroots, taken straight from their README:
+emersion.fr
+Introduction to damage tracking · emersion
+Level zero of damage tracking is noticing when nothing changes and stopping rendering. Of course as soon as a client updates its buffer you need to start rendering again.
+
+drewdevault.com
+Input handling in wlroots
+I’ve said before that wlroots is a “batteries not included” kind of library, and one of the places where that is most apparent is with our approach to input handling. We implemented a very hands-off design for input, in order to support many use-cases: desktop input, phones with and without USB-OTG HIDs plugged in, multiple mice bound to a single cursor, multiple keyboards per seat, simulated input from fake input devices, on-screen keyboards, input which is processed by the compositor but not sent to clients… we support all of these use-cases and even more. However, the drawback of our powerful design is that it’s confusing. Very confusing.
+
+drewdevault.com
+Input handling in wlroots
+One of the fundamental building blocks of wlroots is the `wlr_backend`, which is a resource that abstracts the underlying hardware and exposes a consistent API for outputs and input devices. Outputs have been discussed elsewhere, so let’s focus just on input devices. Each backend provides an event: wlr_backend.events.new_input. The signal is called with a reference to a wlr_input_device each time a new input device appears on the backend - for example, when you plug a mouse into your computer when using the libinput backend.
+Semua Sumber
+wlroots....eedesktop
+4
+
+github
+23
+
+salsa.debian
+2
+
+layers.openembedded
+
+inclem
+2
+way-cooler
+
+drewdevault
+10
+raphlinus.github
+emersion
+3-->
+
