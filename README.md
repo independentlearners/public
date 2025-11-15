@@ -1009,7 +1009,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
     </div>
   </details>
 
-> **By MasBro | [s.id/gocoding](https://s.id/gocoding)**
+> **By MasBro | [s.id/gocoding](https://s.id/gocoding)** | **[Daftar Jobs](./jobs/README.md)**
 
 [1]: ./sistem-operasi/linux/gnu/bagian-1/README.md
 [2]: ./sistem-operasi/linux/gnu/bagian-2/README.md

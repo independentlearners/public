@@ -568,7 +568,6 @@ Bagus — saya sudah menampilkan seluruh isi `config.bak` Anda. Sekarang saya ak
 
 Semua penjelasan berikut disajikan dalam Bahasa Indonesia profesional dan fokus ke inti — langsung ke tiap komentar / baris konfigurasi yang ada di file yang Anda berikan.
 
--->
 ---
 
 # 1) Komentar & terjemahan (urut sesuai berkas)
@@ -651,7 +650,8 @@ Semua penjelasan berikut disajikan dalam Bahasa Indonesia profesional dan fokus 
 
 ---
 
-# 2) Penjelasan baris konfigurasi penting (kata-per-kata)
+-->
+# Penjelasan baris konfigurasi penting
 
 ---
 
