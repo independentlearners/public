@@ -1,8 +1,8 @@
-# Ringkasan singkat SwayWM
+# 🧰 Ringkasan singkat SwayWM
 
 Sway adalah **tiling Wayland compositor** yang dirancang sebagai pengganti drop-in untuk i3 (X11). Dikembangkan untuk bekerja di atas library **wlroots**, Sway menyediakan pengalaman manajemen jendela bertipe tiling dengan kompatibilitas konfigurasi i3, dukungan XWayland, IPC berbasis JSON, dan ekosistem utilitas (swaybar, swaylock, swayidle, dsb.). ([swaywm.org][1])
 
-##  Arsitektur dan komponen utama
+## 🧩 Arsitektur dan komponen utama
 
 * **[wlroots][a]** — library modular yang mengabstraksi DRM/KMS, EGL, libinput, XWayland, rendering, dan backend lain; wlroots menjadi fondasi teknis Sway untuk akses perangkat dan rendering. ([GitLab][2])
     - > Sumber tautan untuk GitHub di komentari karena proyek telah di arsipkan.
@@ -10,76 +10,41 @@ Sway adalah **tiling Wayland compositor** yang dirancang sebagai pengganti drop-
 * **Utilitas pendukung** — `swaybar` (status bar), `swaylock` (lock screen), `swayidle` (idle management), `swaymsg` (CLI untuk IPC), dan daemon lain yang biasa disertakan di distribusi. ([GitHub][3])
 * **XWayland** — lapisan kompatibilitas untuk menjalankan aplikasi X11 di dalam sesi Wayland ketika diperlukan. wlroots/Sway mengelolanya bila dipasang. ([GitHub][2])
 
-##  Fitur penting (apa yang membuat Sway menarik)
+## 🪄 Fitur penting (apa yang membuat Sway menarik)
 
 * Kompatibilitas konfigurasi i3: banyak konfigurasi i3 bisa langsung dipakai (salin `~/.config/i3/config` → `~/.config/sway/config`). ([wiki.archlinux.org][4])
 * IPC JSON melalui Unix socket: alat eksternal dapat mengontrol Sway dengan `swaymsg` atau library yang membaca/menulis JSON. Ini membuka kemungkinan integrasi dengan skrip (bash, Python, Lua, Rust, dll.). ([GitHub][3])
 * Tiling otomatis, layout fleksibel, multiple outputs, per-output config, dan binding keyboard/mouse yang kuat. ([swaywm.org][1])
 
-## Konfigurasi — tempat dan konsep penting
+## 🔁 Keterbatasan dan hal yang perlu diperhatikan
 
-* Lokasi konfigurasi umum: `~/.config/sway/config` (salin contoh dari `/etc/sway/config`). Banyak direktif mirip i3: `bindsym`, `workspace`, `output`, `input`, `exec`, dll. ([wiki.archlinux.org][4])
-* Mode binding, per-output rules, floating windows, sway-specific blocks (status bar) dan per-app rules tersedia.
-* Jalankan `sway` dari TTY; gunakan `sway -d` untuk debug/log; IPC socket biasanya tersedia via variabel lingkungan `SWAYSOCK` atau di path standar. ([GitHub][3])
-
-##  Pengembangan, modifikasi, dan prasyarat teknis
-
-Jika Anda memiliki tujuan untuk **memodifikasi Sway** (menambah fitur di sumbernya) atau **membangun komponennya sendiri**, berikut ringkasan teknis dan langkah persiapan yang direkomendasikan.
-
-Bahasa & teknologi inti:
-
-* **Bahasa utama:** C (kode sumber Sway dan wlroots ditulis di C). ([Wikipedia][5])
-* **Library inti:** `wlroots` (C), `libinput`, `libwayland`, `xkbcommon`, `cairo`, `pango`, `gdk-pixbuf`, `libevdev`, `mesa`/EGL/OpenGL, `xwayland` (opsional untuk kompatibilitas). ([GitHub][2])
-* **Build system:** Meson + Ninja (Sway dan wlroots menggunakan Meson). Paket pengembangan (`-dev` / `-devel`) untuk tiap library diperlukan. ([GitHub][3])
-
-Kemampuan dan pengalaman yang disarankan:
-
-* **Wajib/kuat disarankan:** pemahaman bahasa C (pointers, memori, debugging), konsep Wayland (surfaces, compositors, protocols), dasar DRM/KMS dan EGL/OpenGL, cara kerja input (libinput), penggunaan Meson/Ninja, serta pengalaman menggunakan alat debugging (gdb, valgrind, logs). ([GitHub][2])
-* **Opsional tapi membantu:** pengalaman dengan Rust atau Python bila ingin membuat alat eksternal yang terintegrasi lewat IPC; pengetahuan tentang XWayland bila butuh kompatibilitas aplikasi lama. ([GitHub][3])
-
-Langkah teknis untuk memulai pengembangan:
-
-1. Baca dokumentasi wlroots dan contoh-contohnya — wlroots menunjukkan pola integrasi perangkat keras dan protokol Wayland. ([GitHub][2])
-2. Siapkan lingkungan build (install paket dev untuk `wayland`, `wayland-protocols`, `xkbcommon`, `libinput`, `cairo`, `pango`, `meson`, `ninja`, dll.). ArchWiki dan README proyek biasanya memuat daftar deps. ([wiki.archlinux.org][4])
-3. Clone `wlroots` lalu `sway`; bangun wlroots dulu bila Anda bekerja dari master branch bersama Sway. Banyak panduan di blog/devlog yang menjelaskan langkah membangun gabungan wlroots + sway. ([bvngee.com][6])
-4. Jalankan Sway dari TTY dengan debugging aktif (`sway -d 2> sway.log`) untuk melihat pesan runtime saat bereksperimen. ([GitHub][3])
-
-##  Cara memperluas fungsionalitas tanpa memodifikasi kode C
-
-* **Skrip eksternal & status blocks**: banyak ekstensi dibuat hanya dengan skrip shell/Python/Node/Rust yang berkomunikasi lewat `swaymsg` atau menulis ke bar (i3bar protocol / swaybar). Ini adalah jalur tercepat untuk menambah fitur tanpa compile ulang. ([GitHub][3])
-* **IPC (JSON)**: gunakan socket IPC untuk membaca status, mengubah layout, memindahkan jendela, dsb. Tersedia binding pihak ketiga untuk bahasa populer. ([GitHub][3])
-
-##  Keterbatasan dan hal yang perlu diperhatikan
-
-* Karena berbasis Wayland, beberapa aplikasi X11 lama memerlukan XWayland—tidak semua perilaku X11 1:1 identik. ([GitHub][2])
+* Karena berbasis Wayland, beberapa aplikasi X11 lama memerlukan XWayland—tidak semua perilaku X11 menjadi 1:1 identik. ([GitHub][2])
 * Pengalaman hardware-accelerated bergantung pada driver GPU, kernel, dan konfigurasi DRM/EGL; pengujian pada mesin nyata lebih representatif daripada VM kecuali VM memiliki passthrough GPU yang baik. ([GitHub][7])
 * Ketergantungan ke wlroots berarti banyak keputusan arsitektural ditetapkan di layer tersebut; kontribusi fitur yang menyentuh rendering/input biasanya harus sinkron dengan desain wlroots. ([GitHub][2])
 
-##  Praktis: beberapa perintah & tip cepat
+##  ⚙️ Konfigurasi Dasar Sway
 
-* Menyalin konfigurasi i3 → sway: `cp /etc/sway/config ~/.config/sway/config` lalu sesuaikan. ([wiki.archlinux.org][4])
-* Mengirim perintah lewat IPC: `swaymsg 'workspace 2; exec alacritty'`. ([GitHub][3])
-* Debugging runtime: `sway -d 2> ~/sway.log` untuk melihat pesan kesalahan/diagnostik. ([GitHub][3])
-
-##  ⚙️ Konfigurasi Dasar Sway (`man 5 sway`)
-
-**Tujuan:** setiap baris di `~/.config/sway/config` dapat dijelaskan dan dimodifikasi dengan aman.
+* Lokasi konfigurasi umum: `~/.config/sway/config` (salin contoh dari `/etc/sway/config`). Banyak direktif mirip i3: `bindsym`, `workspace`, `output`, `input`, `exec`, dll. Setiap baris di `~/.config/sway/config` dapat dijelaskan dan dimodifikasi dengan aman.([wiki.archlinux.org][4])
+* Mode binding, per-output rules, floating windows, sway-specific blocks (status bar) dan per-app rules tersedia.
+* Jalankan `sway` dari TTY; gunakan `sway -d` untuk debug/log; IPC socket biasanya tersedia via variabel lingkungan `SWAYSOCK` atau di path standar. ([GitHub][3])
 
 Sway tidak hanya membaca file `~/.config/sway/configs`. Sway dapat membaca file konfigurasi dari beberapa lokasi, termasuk:
 
 - ##### `~/.config/sway/config`: Ini adalah lokasi default untuk file konfigurasi Sway.
 - ##### `~/.sway/config`: Ini adalah lokasi lain yang dapat digunakan untuk file konfigurasi Sway.
 - ##### `/etc/sway/config`: Ini adalah lokasi sistem-wide untuk file konfigurasi Sway.
-Lokasi lain yang ditentukan oleh variabel lingkungan `SWAY_CONFIG_FILE`. Sway juga dapat membaca file konfigurasi dari direktori `~/.config/sway/configs`, tetapi hanya jika anda menyertakan file konfigurasi tersebut secara manual menggunakan perintah include di file konfigurasi utama (~/.config/sway/config).
+Lokasi lain yang ditentukan oleh variabel lingkungan `SWAY_CONFIG_FILE`. Sway juga dapat membaca file konfigurasi dari direktori modular seperti `~/.config/sway/configs`, tetapi hanya jika anda menyertakan file konfigurasi tersebut secara manual menggunakan perintah include di file konfigurasi utama (`~/.config/sway/config`).
 ##### Contoh:
 ```Bash
+# Memasukkan konfigurasi bar
 include ~/.config/sway/configs/bar/bar.conf
+# Memasukkan konfigurasi binding
 include ~/.config/sway/configs/bind/bind.conf
 ```
-Sway tidak secara otomatis membaca semua file konfigurasi di direktori `~/.config/sway/configs`. Anda perlu menyertakan file konfigurasi tersebut secara manual menggunakan perintah include.
+Jadi Sway tidak secara otomatis membaca semua file konfigurasi di direktori `~/.config/sway/configs`. Anda perlu menyertakan file konfigurasi tersebut secara manual menggunakan perintah include.
 Jangan khawatir di bagian bawah nantinya akan dijelaskan contoh `~/.config/sway/config` **minimal → production**, disertai penjelasan baris demi baris, untuk sementara kita fokus dari sini dulu.
 
-## Struktur minimal & modular recommended
+## 🤖 Struktur minimal & modular recommended
 
 ```
 ~/.config/sway/
@@ -123,13 +88,14 @@ punya **makna teknis yang sangat penting** dalam cara **Sway** membaca dan mengg
 
 ---
 
-##  1) Sway membaca file **config.d** secara **berurutan berdasarkan nama file (lexicographical order)**
+## Sway membaca file dari direktif **config.d/** secara berurutan berdasarkan nama file (lexicographical order)
 
-Ini aturan bawaan dari directive:
+Aturan bawaan dari directive:
 
 ```
+# Konfigurasi bawaan sistem yang meng-overriade semua konfigurasi yang anda buat
 include /etc/sway/config.d/*
-# atau, jika Anda memakai:
+# Konfigurasi milik anda
 include ~/.config/sway/config.d/*
 ```
 
@@ -155,10 +121,6 @@ Urutan ini kritis karena:
 * Output (monitor/display) sering diproses terakhir karena menyangkut compositor state.
 
 ---
-
-##  2) Maksud setiap penomoran
-
-Mari kita jelaskan satu per satu.
 
 #### **00-vars.conf — tahap awal (initialization layer)**
 
@@ -236,7 +198,7 @@ Karena output sebaiknya diproses terakhir; compositor menyusun state tampilan se
 
 ---
 
-# 3) Kenapa harus pakai penomoran?
+## Kenapa harus pakai penomoran?
 
 Penomoran memberikan:
 
@@ -270,9 +232,7 @@ Misalnya:
 
 ---
 
-##  4) Penomoran ini mirip dengan apa?
-
-Ini konsep arsitektur yang sama seperti:
+#### Penomoran ini mirip dengan konsep arsitektur yang sama seperti:
 
 * `/etc/sysctl.d/`
 * `/usr/lib/systemd/system.conf.d/`
@@ -285,7 +245,7 @@ Modular, predictable, and override-friendly.
 
 ---
 
-##  5) Kesimpulan jelas dan langsung
+## Kesimpulan jelas dan langsung
 
 Penomoran file seperti:
 
@@ -296,7 +256,7 @@ Penomoran file seperti:
 30-outputs.conf
 ```
 
-adalah cara memberikan **prioritas & urutan eksekusi** pada konfigurasi Sway:
+Adalah cara memberikan **prioritas & urutan eksekusi** pada konfigurasi Sway:
 
 * **00** → definisi awal (variabel)
 * **10** → keybind yang pakai variabel
@@ -306,14 +266,7 @@ adalah cara memberikan **prioritas & urutan eksekusi** pada konfigurasi Sway:
 Sway membaca file-file dalam folder config.d sesuai **urutan alfabet**, jadi penomoran membuat struktur menjadi stabil, modular, dan mudah di-debug.
 
 ---
-<!--
-Jika Anda mau, saya bisa buatkan:
 
-1. **Template folder config.d lengkap** untuk Sway versi Anda.
-2. **Penjelasan kata-per-kata setiap directive di setiap file.**
-3. **Rancangan konfigurasi modular khusus Archlinux + Wayland + Swaybg + Waybar.**
-
-Tinggal beri perintah dan saya susun.-->
 # 🔧 Konfigurasi File Utama
 
 Pada saat anda membuka file konfigurasi yang berhasil di pindahkan ke direktori konfigurasi user, anda akan menemukannya sebagai bahasa inggris, berikut terjemahan seluruh isi file `.config` tersebut, baris demi baris sesuai urutan aslinya.
@@ -552,263 +505,9 @@ bar {
 
 include /etc/sway/config.d/*
 ```
-<!--
-Saya menerjemahkan semua baris komentar (`# ...`) secara lengkap sesuai urutan file tanpa mengurangi baris lain. Jika Anda ingin versi file yang benar-benar menggantikan komentar di file asli (mis. untuk disimpan langsung sebagai file konfigurasi), saya bisa:
-
-* Menyediakan file terjemahan sebagai teks yang dapat Anda salin-tempel, atau
-* Menyimpan terjemahan ke `/mnt/data/config_id.txt` dan memberikan tautan unduhan.
-
-Pilih salah satu jika Anda ingin saya simpan atau keluarkan sebagai file.
-
-Bagus — saya sudah menampilkan seluruh isi `config.bak` Anda. Sekarang saya akan:
-
-1. Menerjemahkan setiap komentar (baris yang diawali `#`) ke Bahasa Indonesia.
-2. Menjelaskan maksud setiap komentar dan baris konfigurasi yang relevan (kata-per-kata pada bagian perintah / variabel penting).
-3. Menambahkan catatan teknis (bahasa/pustaka yang membangun Sway, apa yang perlu dipersiapkan untuk memodifikasi, dan cara bantuan/diagnosa CLI terkait).
-
-Semua penjelasan berikut disajikan dalam Bahasa Indonesia profesional dan fokus ke inti — langsung ke tiap komentar / baris konfigurasi yang ada di file yang Anda berikan.
-
----
-
-# 1) Komentar & terjemahan (urut sesuai berkas)
-
-> **Baris**: `# Default config for sway`
-> **Terjemahan**: Konfigurasi default untuk sway
-> **Penjelasan**: Ini menyatakan bahwa file ini adalah contoh konfigurasi bawaan (default) untuk *sway* — yaitu template awal yang bisa Anda salin dan modifikasi.
-
----
-
-> **Baris**: `#`
-> **Terjemahan**: (baris kosong / pemisah)
-> **Penjelasan**: Hanya pemisah visual; tidak berpengaruh ke konfigurasi.
-
----
-
-> **Baris**: `# Copy this to ~/.config/sway/config and edit it to your liking.`
-> **Terjemahan**: Salin ini ke `~/.config/sway/config` dan sunting sesuai keinginan Anda.
-> **Penjelasan**: Petunjuk praktis — letakkan file konfigurasi sway Anda di `~/.config/sway/config`. Sway akan mencari file konfigurasi di sana ketika memulai sesi pengguna.
-
----
-
-> **Baris**: `#`
-> **Terjemahan**: (pemisah)
-
----
-
-> **Baris**: ``# Read `man 5 sway` for a complete reference.``
-> **Terjemahan**: Baca `man 5 sway` untuk referensi lengkap.
-> **Penjelasan**: Menyarankan manual page (section 5: file format) untuk dokumentasi lengkap mengenai sintaks konfigurasi sway. Perintah `man 5 sway` akan menampilkan dokumentasi format konfigurasi.
-
----
-
-> **Baris**: `### Variables`
-> **Terjemahan**: ### Variabel
-> **Penjelasan**: Header organiasi di file; bagian berikutnya akan mendefinisikan variabel-variabel yang dipakai berulang (mis. `$mod`, arah tombol dsb).
-
----
-
-> **Baris**: `#`
-> **Terjemahan**: (pemisah)
-
----
-
-> **Baris**: `# Logo key. Use Mod1 for Alt.`
-> **Terjemahan**: Kunci logo (tombol logo). Gunakan `Mod1` untuk Alt.
-> **Penjelasan**: Menjelaskan variabel `$mod` (modifier: tombol yang dipakai untuk shortcut). `Mod4` biasanya adalah tombol Super/Windows, `Mod1` mewakili Alt. Ini memberitahukan bahwa jika Anda ingin Alt sebagai modifier, gunakan `Mod1`.
-
----
-
-> **Baris**: `# Home row direction keys, like vim`
-> **Terjemahan**: Tuts arah pada baris home, seperti vim
-> **Penjelasan**: Bagian ini menjelaskan bahwa konfigurasi memilih tombol `h,j,k,l` (baris home pada layout QWERTY) untuk navigasi jendela—mirip standar arah pada editor vim.
-
----
-
-> **Baris**: `# Your preferred terminal emulator`
-> **Terjemahan**: Emulator terminal pilihan Anda
-> **Penjelasan**: Menandakan variabel yang akan menyimpan nama terminal yang ingin dipanggil lewat shortcut (misalnya `alacritty`, `kitty`, `foot`, `xterm`, dsb).
-
----
-
-> **Baris di blok swaybar**:
-> `# When the status_command prints a new line to stdout, swaybar updates.`
-> **Terjemahan**: Ketika `status_command` mencetak baris baru ke stdout, swaybar akan diperbarui.
-> **Penjelasan**: `swaybar` menunggu output dari `status_command`. Setiap kali program tersebut mengeluarkan baris baru, `swaybar` mem-parse dan menampilkan informasi (mis. jam, status baterai, dsb).
-
----
-
-> **Baris di blok swaybar**:
-> `# The default just shows the current date and time.`
-> **Terjemahan**: Default-nya hanya menampilkan tanggal dan waktu saat ini.
-> **Penjelasan**: Menjelaskan implementasi default `status_command` di file ini — script kecil yang mencetak tanggal & waktu setiap detik.
-
----
-
-> **Baris paling akhir**: `include /etc/sway/config.d/*`
-> **(bukan komentar; tapi penting)**
-> **Penjelasan**: Perintah `include` akan memuat semua file yang cocok di direktori `/etc/sway/config.d/`. Ini memungkinkan konfigurasi sistem-wide atau drop-in snippets (mis. dari paket distro) untuk ikut dimuat.
-
----
-
--->
-# Penjelasan baris konfigurasi penting
-
----
-
-## `set $mod Mod4`
-
-* `set` — perintah konfigurasi di file sway untuk membuat variabel.
-* `$mod` — nama variabel (konvensi: nama variabel diawali `$`). Anda bisa memakai `$mod` nanti di baris keybind, mis. `bindsym $mod+Return exec ...`.
-* `Mod4` — nilai yang diberikan; *Mod4* biasanya mewakili tombol "Super" (logo Windows). Alternatif: `Mod1` = Alt, `Mod3` dsb tergantung map keymap.
-
-**Ringkas:** `set $mod Mod4` menyetel `$mod` sebagai tombol Super/WINDOWS.
-
----
-
-## `set $left h` / `set $down j` / `set $up k` / `set $right l`
-
-* `set` — sama seperti di atas.
-* `$left`/`$down`/`$up`/`$right` — variabel yang menyimpan nama tombol.
-* nilai `h`, `j`, `k`, `l` — karakter keyboard (home row) meniru navigasi vim.
-
-**Fungsi praktis:** nanti di config biasanya ada keybind seperti `bindsym $mod+$left focus left` — yang berarti `Super+h` untuk fokus jendela sebelah kiri.
-
----
-
-## `status_command while date +'%Y-%m-%d %X'; do sleep 1; done`
-
-* `status_command` — pengaturan untuk `bar`/`swaybar` yang menetapkan program atau perintah yang dijalankan untuk menghasilkan status JSON/teks.
-* `while date +'%Y-%m-%d %X'; do sleep 1; done` — sebuah loop shell sederhana:
-
-  * `while ...; do ...; done` — bentuk loop shell `while` yang terus berjalan.
-  * `date +'%Y-%m-%d %X'` — memanggil utilitas `date` untuk mencetak tanggal dan waktu dengan format `YYYY-MM-DD HH:MM:SS`.
-  * `sleep 1` — jeda 1 detik antara iterasi.
-* Ketika loop ini mencetak baris baru, swaybar akan mengambil/memperbarui tampilannya. Dalam konfigurasi produksi biasanya `status_command` meng-output JSON khusus (i3bar protocol) atau menggunakan utilitas seperti `waybar`, `swaybar` dengan `i3status`, `polybar` (polybar but not native wayland) atau script custom.
-
-**Note:** contoh di file adalah contoh minimal; seringnya orang memakai `swaystatus`, `i3status`, `waybar` atau script berbasis `jq`.
-
----
-
-## `colors { statusline #ffffff background #323232 inactive_workspace #32323200 #32323200 #5c5c5c }`
-
-* `colors { ... }` — blok konfigurasi untuk warna pada `bar` (swaybar).
-* `statusline #ffffff` — warna teks utama (putih).
-* `background #323232` — warna latar (abu gelap).
-* `inactive_workspace #32323200 #32323200 #5c5c5c` — beberapa argumen yang mewakili warna untuk workspace yang tidak aktif (format tergantung versi sway bar).
-
-  * `#32323200` kemungkinan termasuk nilai alpha/hex (transparansi) tergantung implementasi.
-
-**Catatan:** warna biasanya dalam format hex `#RRGGBB` atau `#RRGGBBAA` (jika alpha). Jika Anda memodifikasi, pastikan format sesuai versi sway Anda.
-
----
-
-###  3) Cara mendapatkan bantuan dan dokumentasi (CLI & man pages)
-
-* `man 5 sway` — dokumentasi format file konfigurasi. (Baca dengan `man 5 sway`.)
-
-  * **Penjelasan kata-per-kata:** `man` = manual reader, `5` = section (file formats), `sway` = topik.
-* `man sway` atau `man 1 sway` — manual program sway (bagian 1: executable).
-* `sway --help` — opsi baris perintah singkat.
-* `swaymsg` — utilitas IPC untuk mengirim perintah ke sway yang sedang berjalan; `swaymsg -t get_outputs` mis.
-* `sway -c /path/to/config` — memulai sway dengan file konfigurasi yang ditentukan (berguna untuk testing konfigurasi non-default).
-
-  * **Penting:** `sway` akan memulai session Wayland; jangan jalankan dari TTY/seat yang sedang aktif tanpa persiapan — lihat catatan uji di bagian 4.
-
----
-
-###  4) Catatan: bahasa, arsitektur, dan apa yang perlu Anda siapkan untuk memodifikasi Sway atau komponennya
-
-**Identitas proyek & bahasa:**
-
-* **Sway** adalah *Wayland compositor* yang sebagian besar ditulis dalam bahasa **C**.
-* Sway banyak bergantung pada library **wlroots** (juga C) sebagai foundation untuk Wayland compositor.
-* Komponen terkait (swaybar, swaylock, swaybg) juga umumnya C dan menggunakan API Wayland/libseat/libinput/dll.
-
-**Untuk memodifikasi/compile Sway (ringkasan kebutuhan):**
-
-* Pengetahuan: C (bahasa pemrograman), pemahaman tentang Wayland, libinput, libseat, dan konsep compositor.
-* Alat build: `meson`, `ninja`, `pkg-config`, `clang` / `gcc`.
-* Dependensi devel: `libwayland-dev`, `wlroots` (devel), `libinput-dev`, `libxkbcommon-dev`, `libseat-dev`, `pcre2-dev`, `xcb` devel (tergantung fitur), dsb. (Nama paket bervariasi per distro.)
-* Pengujian: jalankan sway di TTY yang aman (bukan display grafis yang sedang berjalan) atau gunakan nested compositor/testing environment.
-
-**Untuk memodifikasi konfigurasi (bukan kode C):**
-
-* Bahasa konfigurasi: plain text — tidak perlu kompilasi.
-* Keahlian yang berguna: memahami layout keyboard (xkb), keycodes, aturan Wayland, dan cara kerja `swaymsg`.
-* Tools: editor teks (Neovim, helix), `swaymsg` untuk menguji perubahan tanpa harus restart penuh (`swaymsg reload` juga ada). Namun `swaymsg reload` memuat ulang config pada sesi yang sedang berjalan; hati-hati jika config bermasalah.
-
----
-
-###  5) Cara menguji perubahan konfigurasi tanpa mengganggu sesi yang sedang dipakai (ringkasan cepat & aman)
-
-* **Metode 1: Jalankan sway di TTY terpisah (recommended untuk pengujian)**
-
-  * Buat user lain atau gunakan TTY kosong (Ctrl+Alt+F3) dari login text mode. Login di TTY itu dan jalankan `sway` di sana dengan `sway -c /path/to/test-config`. Tidak mengganggu sesi grafis utama.
-* **Metode 2: Gunakan `sway -c` untuk start terpisah** — seperti di atas, jangan jalankan pada TTY yang sama dengan sesi grafis utama.
-* **Metode 3: `swaymsg` & `swaymsg reload`** — dapat memuat ulang konfigurasi pada sesi berjalan, tetapi jika ada error syntax atau kesalahan binding fatal, Anda bisa terkunci. Selalu backup config sebelum reload.
-* **Metode 4: Gunakan virtual machine/container dengan Wayland nested** — lebih aman untuk eksperimen radikal.
-
----
-
-###  6) Contoh praktis penjelasan perintah kunci (kata-per-kata, sesuai permintaan Anda)
-
-#### Contoh baris: `bindsym $mod+Return exec $terminal`
-
-* `bindsym` — perintah untuk membuat key binding; memonitor *symbolic* key names (bukan keycodes).
-* `$mod` — variabel modifier yang sebelumnya diset (`Mod4` kalau default).
-* `+` — operator penggabung kombinasikan modifier dan tombol.
-* `Return` — nama tombol (Enter).
-* `exec` — jalankan perintah eksternal.
-* `$terminal` — variabel yang menyimpan nama emulator terminal (mis. `alacritty` atau `kitty`).
-  **Arti lengkap:** ketika pengguna menekan `Super+Enter`, jalankan terminal yang didefinisikan.
-
----
-
-###  7) Rekomendasi & sumber belajar (ringkas)
-
-* Baca dokumentasi resmi: `man 5 sway` dan `man sway`.
-* Sumber online: repository GitHub Sway (`swaywm/sway`) dan `wlroots` untuk pemahaman lebih dalam. (Untuk link spesifik, beri tahu jika mau saya carikan dan berikan daftar link.)
-* Untuk membangun dari sumber: pelajari `meson`/`ninja`, pasang dependensi development, dan baca `CONTRIBUTING.md` di repo Sway.
-
----
-
-###   8) Ringkasan apa yang sudah saya lakukan untuk Anda
-
-* Menampilkan isi `config.bak` (sudah saya lakukan lewat eksekusi Python yang Anda lihat).
-* Menerjemahkan semua komentar yang ada di file (semua baris komentar yang terlihat).
-* Menjelaskan maksud tiap komentar, arti token kunci pada bagian konfigurasi, serta bagaimana cara menguji dan memodifikasi dengan aman.
-* Menambahkan informasi teknis: bahasa implementasi Sway (C), pustaka utama (wlroots/C), dan requirement pengembangan.
-
----
-<!--
-Jika Anda mau, saya bisa langsung melanjutkan ke salah satu dari hal berikut **tanpa menunggu** (pilih salah satu dan saya akan kerjakan sekarang):
-
-* A. Menyediakan **penjelasan baris-per-baris** untuk *seluruh* file (setiap baris konfigurasi non-komentar) — akan menjelaskan fungsi tiap baris konfigurasi secara terperinci.
-* B. Membuat **salinan konfigurasi yang dimodifikasi** (contoh: ganti `$mod` ke `Mod1`, set terminal Anda, tambahkan binding spesifik) lalu menyimpan sebagai `~/.config/sway/config.test` dan memberikan instruksi uji aman.
-* C. Menjelaskan langkah membangun Sway dari sumber (perintah `meson`/`ninja`) lengkap dengan daftar paket *devel* untuk Archlinux (karena Anda menggunakan Arch/WM Sway) — termasuk perintah instalasi paket yang dibutuhkan.
-* D. Menelusuri baris `...` dalam file (apakah itu placeholder literal atau file terpotong) dan menampilkan bagian yang mungkin terpotong — jika Anda ingin saya mengurai baris selanjutnya saya bisa tampilkan juga.
-
-Pilih A/B/C/D (atau katakan jika mau semua) — saya lakukan sekarang juga sesuai pilihan Anda.-->
-
-##  Sumber resmi & bacaan lanjutan (direkomendasikan)
-
-* Situs resmi Sway: swaywm.org — gambaran umum dan link dokumentasi. ([swaywm.org][1])
-* Repositori GitHub Sway: `swaywm/sway` — README, wiki, issue tracker (bagus untuk contoh bug/patch). ([GitHub][3])
-* wlroots: `swaywm/wlroots` — dokumentasi teknis dan contoh API. ([GitHub][2])
-* ArchWiki Sway — panduan instalasi, konfigurasi, dan tips distribusi. ([wiki.archlinux.org][4])
-* Wikipedia (ringkasan & sejarah singkat) — untuk konteks rilis dan penulis utama. ([Wikipedia][5])
-
-##  Rekomendasi langkah Anda berikutnya (direktif praktis)
-
-1. Jika Anda ingin **memodifikasi** Sway: mulailah dengan mempelajari C dan konsep Wayland, lalu clone wlroots + sway, setup Meson/Ninja, dan jalankan build lokal. Ikuti issue/PR di GitHub untuk melihat pola kontribusi. ([GitHub][2])
-2. Jika Anda ingin **mengembangkan plugin/fitur cepat**: gunakan `swaymsg`/IPC dan buat skrip (bash/Python/Lua/Rust) yang berinteraksi dengan Sway — ini sesuai dengan minat Anda pada TUI/CLI dan integrasi Neovim. ([GitHub][3])
-3. Bila butuh panduan langkah-demi-langkah (mis. buat environment build di Archlinux, contoh modifikasi sederhana, atau template config i3→sway yang rapi), saya siapkan panduan terperinci beserta snippet konfigurasi dan perintah build.
-
----
-
 ### 📁 Dasar-Dasar File Konfigurasi Sway
 
-File konfigurasi Sway (biasanya berada di `~/.config/sway/config`) adalah file teks yang berisi perintah-perintah yang dieksekusi saat Sway启动 . Ia memiliki beberapa fitur sintaksis inti:
+File konfigurasi Sway adalah file teks yang berisi perintah-perintah yang dieksekusi. Ia memiliki beberapa fitur sintaksis inti:
 
 | Fitur Sintaks | Deskripsi & Contoh |
 | :--- | :--- |
@@ -1474,6 +1173,101 @@ Untuk menjadi advanced user Sway, Anda perlu memahami:
 3. **IPC dan scripting integration** untuk dynamic configuration
 4. **Performance tuning** dengan render time dan adaptive sync
 5. **Complex multi-monitor setup** dengan workspace assignment
+
+---
+---
+---
+
+##  Praktis: beberapa perintah & tip cepat
+
+* Menyalin konfigurasi sway: `cp /etc/sway/config ~/.config/sway/config` lalu sesuaikan. ([wiki.archlinux.org][4])
+* Mengirim perintah lewat IPC: `swaymsg 'workspace 2; exec alacritty'`. ([GitHub][3])
+* Debugging runtime: `sway -d 2> ~/sway.log` untuk melihat pesan kesalahan/diagnostik. ([GitHub][3])
+
+##  Cara memperluas fungsionalitas tanpa memodifikasi kode C
+
+* **Skrip eksternal & status blocks**: banyak ekstensi dibuat hanya dengan skrip shell/Python/Node/Rust yang berkomunikasi lewat `swaymsg` atau menulis ke bar (i3bar protocol / swaybar). Ini adalah jalur tercepat untuk menambah fitur tanpa compile ulang. ([GitHub][3])
+* **IPC (JSON)**: gunakan socket IPC untuk membaca status, mengubah layout, memindahkan jendela, dsb. Tersedia binding pihak ketiga untuk bahasa populer. ([GitHub][3])
+
+
+# Penjelasan baris konfigurasi penting
+
+---
+
+## Variabel
+
+### `set $mod Mod4`
+
+* `set` — perintah konfigurasi di file sway untuk membuat variabel.
+* `$mod` — nama variabel (konvensi: nama variabel diawali `$`). Anda bisa memakai `$mod` nanti di baris keybind, mis. `bindsym $mod+Return exec ...`.
+* `Mod4` — nilai yang diberikan; *Mod4* biasanya mewakili tombol "Super" (logo Windows). Alternatif: `Mod1` = Alt, `Mod3` dsb tergantung map keymap.
+
+**Ringkas:** `set $mod Mod4` menyetel `$mod` sebagai tombol Super/WINDOWS.
+
+---
+
+## `set $left h` / `set $down j` / `set $up k` / `set $right l`
+
+* `set` — sama seperti di atas.
+* `$left`/`$down`/`$up`/`$right` — variabel yang menyimpan nama tombol.
+* nilai `h`, `j`, `k`, `l` — karakter keyboard (home row) meniru navigasi vim.
+
+**Fungsi praktis:** nanti di config biasanya ada keybind seperti `bindsym $mod+$left focus left` — yang berarti `Super+h` untuk fokus jendela sebelah kiri.
+
+---
+
+## Status Bar
+
+Lewati bagian ini karena kita tidak akan membahas status bar untuk swaybar sebab nantinya yang akan kita gunakan adalah [waybar][c]. Jika anda tertarik untuk memahami statusbar bawaan sway baca lebih lanjut [disini][d].
+
+---
+
+### Cara mendapatkan bantuan dan dokumentasi (CLI & man pages)
+
+* `man 5 sway` — dokumentasi format file konfigurasi. (Baca dengan `man 5 sway`.)
+  * **Penjelasan:** `man` = manual reader, `5` = section (file formats), `sway` = topik.
+* `man sway` atau `man 1 sway` — manual program sway (bagian 1: executable).
+* `sway --help` — opsi baris perintah singkat.
+* `swaymsg` — utilitas IPC untuk mengirim perintah ke sway yang sedang berjalan; `swaymsg -t get_outputs` mis.
+* `sway -c /path/to/config` — memulai sway dengan file konfigurasi yang ditentukan (berguna untuk testing konfigurasi non-default).
+  * **Penting:** `sway` akan memulai session Wayland; jangan jalankan dari TTY/seat yang sedang aktif tanpa persiapan — lihat catatan uji di bagian 4.
+
+---
+
+## Sumber resmi & bacaan lanjutan (direkomendasikan)
+
+* Situs resmi Sway: swaywm.org — gambaran umum dan link dokumentasi. ([swaywm.org][1])
+* Repositori GitHub Sway: `swaywm/sway` — README, wiki, issue tracker (bagus untuk contoh bug/patch). ([GitHub][3])
+* wlroots: `swaywm/wlroots` — dokumentasi teknis dan contoh API. ([GitHub][2])
+* ArchWiki Sway — panduan instalasi, konfigurasi, dan tips distribusi. ([wiki.archlinux.org][4])
+* Wikipedia (ringkasan & sejarah singkat) — untuk konteks rilis dan penulis utama. ([Wikipedia][5])
+
+---
+
+### Cara menguji perubahan konfigurasi tanpa mengganggu sesi yang sedang dipakai (ringkasan cepat & aman)
+
+* **Metode 1: Jalankan sway di TTY terpisah (recommended untuk pengujian)**
+
+  * Buat user lain atau gunakan TTY kosong (Ctrl+Alt+F3) dari login text mode. Login di TTY itu dan jalankan `sway` di sana dengan `sway -c /path/to/test-config`. Tidak mengganggu sesi grafis utama.
+* **Metode 2: Gunakan `sway -c` untuk start terpisah** — seperti di atas, jangan jalankan pada TTY yang sama dengan sesi grafis utama.
+* **Metode 3: `swaymsg` & `swaymsg reload`** — dapat memuat ulang konfigurasi pada sesi berjalan, tetapi jika ada error syntax atau kesalahan binding fatal, Anda bisa terkunci. Selalu backup config sebelum reload.
+* **Metode 4: Gunakan virtual machine/container dengan Wayland nested** — lebih aman untuk eksperimen radikal.
+
+---
+
+#### Contoh baris: `bindsym $mod+Return exec $terminal`
+
+* `bindsym` — perintah untuk membuat key binding; memonitor *symbolic* key names (bukan keycodes).
+* `$mod` — variabel modifier yang sebelumnya diset (`Mod4` kalau default).
+* `+` — operator penggabung kombinasikan modifier dan tombol.
+* `Return` — nama tombol (Enter).
+* `exec` — jalankan perintah eksternal.
+* `$terminal` — variabel yang menyimpan nama emulator terminal (mis. `alacritty` atau `kitty`).
+  **Arti lengkap:** ketika pengguna menekan `Super+Enter`, jalankan terminal yang didefinisikan.
+
+---
+
+
 <!--
 🔧🧭🪄🧰🧩🤖🔁
 
@@ -1495,4 +1289,8 @@ https://github.com/swaywm/wlroots?utm_source=chatgpt.com
 <!---------------------->
 <!--wlroots-->
 [a]: ./../../module/bagian-1/README.md
+
+<!--dir dalam sway-->
 [b]: ./bagian-1/README.md
+[c]: ./../waybar/README.md
+[d]: ./bagian-2/README.md
