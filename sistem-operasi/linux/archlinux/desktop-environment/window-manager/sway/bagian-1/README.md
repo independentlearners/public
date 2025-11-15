@@ -10,7 +10,6 @@ Dalam beberapa kasus, timestamp dan randomness digunakan bersamaan, seperti dala
 </details>
 
 #
--->
 
 ### Contoh file utama: `~/.config/sway/config` (minimal)
 
@@ -468,7 +467,6 @@ Jika ini sesuai, langkah berikut yang saya lakukan (otomatis, tanpa menunggu) ad
 Saya telah menyajikan fase-per-fase dengan penjelasan baris demi baris untuk kode kunci (config minimal, skrip idle, monitor setup, waybar volume script, Python event handler). Jika kamu ingin saya *lanjutkan sekarang* dan menyusun fase tertentu (mis. Fase 2 lengkap — semua direktif `man 5 sway` dibedah baris-per-baris, plus 10 contoh use-case), katakan fase mana yang ingin diperdalam pertama.
 
 Saya siap memperjelas fase mana pun selanjutnya — langsung kerjakan tanpa menunggu konfirmasi panjang.
--->
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Kurikulum][kurikulum]**
