@@ -34,6 +34,7 @@ Sway tidak hanya membaca file `~/.config/sway/configs`. Sway dapat membaca file 
 - ##### `~/.sway/config`: Ini adalah lokasi lain yang dapat digunakan untuk file konfigurasi Sway.
 - ##### `/etc/sway/config`: Ini adalah lokasi sistem-wide untuk file konfigurasi Sway.
 Lokasi lain yang ditentukan oleh variabel lingkungan `SWAY_CONFIG_FILE`. Sway juga dapat membaca file konfigurasi dari direktori modular seperti `~/.config/sway/configs`, tetapi hanya jika anda menyertakan file konfigurasi tersebut secara manual menggunakan perintah include di file konfigurasi utama (`~/.config/sway/config`).
+
 ##### Contoh:
 ```Bash
 # Memasukkan konfigurasi bar
@@ -41,6 +42,21 @@ include ~/.config/sway/configs/bar/bar.conf
 # Memasukkan konfigurasi binding
 include ~/.config/sway/configs/bind/bind.conf
 ```
+`SWAY_CONFIG_FILE` adalah variabel lingkungan yang digunakan oleh Sway untuk menentukan lokasi file konfigurasi Sway. Secara default, Sway mencari file konfigurasi di beberapa lokasi, termasuk:
+
+```bash
+/etc/sway/config
+~/.config/sway/config
+/usr/share/sway/config.d/*.conf
+/etc/sway/config.d/*.conf
+~/.config/sway/config.d/*.conf
+```
+Dengan mengatur variabel SWAY_CONFIG_FILE, Anda dapat menentukan lokasi file konfigurasi Sway yang berbeda dari lokasi default. Contohnya, jika Anda ingin menggunakan file konfigurasi yang berbeda dari umumnya dimana anda ingin menentukan sendiri, Anda dapat menjalankan perintah berikut:
+```Bash
+SWAY_CONFIG_FILE=~/konfigurasi-sway sway
+```
+Perintah ini akan menjalankan Sway dengan file konfigurasi yang terletak di `~/konfigurasi-sway`.
+
 Jadi Sway tidak secara otomatis membaca semua file konfigurasi di direktori `~/.config/sway/configs`. Anda perlu menyertakan file konfigurasi tersebut secara manual menggunakan perintah include.
 Jangan khawatir di bagian bawah nantinya akan dijelaskan contoh `~/.config/sway/config` **minimal → production**, disertai penjelasan baris demi baris, untuk sementara kita fokus dari sini dulu.
 
@@ -505,8 +521,671 @@ bar {
 
 include /etc/sway/config.d/*
 ```
-### 📁 Dasar-Dasar File Konfigurasi Sway
+Sebelum menjalankan sangat penting untuk dipahami bahwa komentar hanya berlaku di awal baris, jadi anda tidak diperbolehkan untuk menulis komentar setelah baris kode meskipun dalam tutorial disini kita mungkin mengabaikan itu tetapi pada kenyataannya tidak. Contoh:
+```bash
+# Letakan komentar disini 
+set $mod Mod4 # Bukan disini
+```
+---
 
+# 📁 Dasar-Dasar File Konfigurasi
+
+#### Filosofi Variabel dalam Sway
+
+Bayangkan variabel sebagai **"nama panggilan"** atau **"placeholder"** untuk sebuah nilai. Tujuannya adalah:
+
+1.  **Daya Rawat (Maintainability):** Jika suatu nilai (seperti aplikasi terminal) digunakan di 10 tempat berbeda dan Anda ingin menggantinya, Anda hanya perlu mengubahnya di **satu tempat** (di definisi variabel).
+2.  **Keterbacaan (Readability):** `exec $term` jauh lebih mudah dipahami daripada `exec alacritty --some-flag --another-flag`.
+3.  **Konsistensi:** Memastikan nilai yang sama digunakan di seluruh konfigurasi.
+
+---
+
+## Anatomi Variabel dan deklarasinya
+
+Konfigurasi Sway menggunakan bahasa *scripting* `bash`-like untuk bagian variabel dan ekspansinya. Sintaks dasarnya sangat sederhana, cukup gunakan perintah `set` dan berikan nilainya.
+
+```
+set $nama_variabel nilai
+```
+
+- `set`: Kata kunci untuk menetapkan nilai.
+- `$nama_variabel`: Nama variabel, selalu diawali dengan tanda `$`.
+- `nilai`: Nilai yang ingin Anda simpan. Bisa berupa satu kata atau string yang lebih panjang.
+
+### Penjelasan mendetail
+
+Contoh:
+
+```text
+set $mod Mod4
+set $term foot
+set $wallpaper /home/poweruser/Pictures/wall.png
+
+bindsym $mod+Return exec $term
+output * bg $wallpaper fill
+```
+
+1. `set`
+
+   * Kata kunci Sway untuk **mendefinisikan variabel** konfigurasi. Saat Sway mem-parse, `set` menyimpan mapping nama→nilai.
+
+2. `$mod` (di `set $mod Mod4`)
+
+   * `$` menandakan **nama variabel** (konvensi). `mod` adalah nama variabel (bisa anda ganti).
+   * Dalam `set $mod Mod4`: arti keseluruhan — buat variabel bernama `mod` yang nilainya `Mod4`.
+
+3. `Mod4`
+
+   * Nilai string — di sini menunjuk ke tombol modifier (biasanya tombol “Super/Windows”).
+
+4. `bindsym $mod+Return exec $term`
+
+   * `bindsym` = perintah Sway untuk mendaftarkan binding key.
+   * `$mod+Return` = gabungan nilai variabel `$mod` (nilai `Mod4`) dan tombol `Return` (Enter). Saat dibaca, Sway melihat `Mod4+Return`.
+   * `exec` = perintah Sway untuk menjalankan program eksternal.
+   * `$term` = variabel yang kita definisikan (`foot`), jadi ini menjalankan `foot`.
+
+5. `output * bg $wallpaper fill`
+
+   * `output` = perintah konfigurasi untuk display. `*` berarti semua output.
+   * `bg` = sub-perintah untuk background/ wallpaper.
+   * `$wallpaper` = variabel yang berisi path gambar.
+   * `fill` = mode pengisian (stretch/center/fill/scale/tile tergantung opsi).
+
+> Catatan penting: nilai variabel adalah **substitusi literal** pada saat parsing. Jika anda menulis `set $wallpaper ~/wall.png`, perilaku `~` bisa membingungkan karena `~` adalah ekspansi shell — lebih aman memakai path absolut (`/home/username/...`) atau `$HOME` dalam konteks yang tepat. Banyak contoh di dokumentasi memakai `~/…` tapi bila gagal, gunakan path absolut. ([ArchWiki][2])
+
+# Batasan & perilaku penting
+
+1. **Variabel untuk config ≠ environment variables.**
+
+   * `set $foo bar` hanya mengganti teks di config; program lain (waybar, aplikasi) **tidak** akan melihat `$foo` sebagai env var. Untuk env var, atur sebelum Sway dijalankan (login manager, wrapper script, systemd environment.d, PAM, dsb.). ([GitHub][3])
+
+2. **Waktu penggantian (parse time) & order/include matters.**
+
+   * Substitusi variabel terjadi saat parsing konfigurasi — urutan file `include` dan posisi `set` menentukan apakah variabel tersedia pada titik digunakan. Di i3 (dan kompatibel dengan Sway), ada batasan: variabel yang didefinisikan **di file yang di-include setelah** tidak bisa digunakan oleh file induk karena ekspansi terjadi sebelum include. Jadi tempatkan semua `set` di bagian atas (atau file yang di-include lebih dulu). Inilah mengapa penjelasan diatas merekomendasikan pelelatakan file khusus variabel sebagai 00-var.conf ([i3][4]).
+
+3. **Variabel umumnya tidak dapat diubah dinamis dari dalam sesi Sway.**
+
+   * Percobaan mengganti variabel lewat `bindsym`/mode seringkali tidak berhasil karena parsing/substitusi bukan operasi runtime. Jika anda butuh perilaku dinamis, gunakan mekanisme lain (mis. mode, skrip yang mengubah file config lalu trigger reload, atau IPC). (banyak diskusi/issue terkait topik ini). ([GitHub][5])
+
+---
+
+### Poin-poin Kunci yang Harus Dipahami
+
+- **`$mod` adalah Jantung Konfigurasi:** Hampir semua keybinding Anda akan melibatkan `$mod`. Variabel ini menentukan "kunci pemimpin" untuk semua pintasan Anda.
+- **Refresh Config Setelah Perubahan:** Setelah mengubah config, selalu ingat untuk melakukan:
+  - `$mod+Shift+c`: Merefresh konfigurasi (membaca ulang file config).
+  - `$mod+Shift+r`: Restart Sway (jika refresh tidak cukup, misalnya setelah perubahan output).
+- **Variabel vs. Langsung:** Mana yang lebih baik, `exec $browser` atau `exec firefox`? Jawabannya hampir selalu `exec $browser` karena kekuatan dan kejelasannya.
+
+---
+
+## **Contoh-contoh Praktis:**
+
+```bash
+# Variabel Utama (Biasanya ditaruh di bagian paling atas config)
+set $mod Mod4 # Mod4 biasanya adalah Super/Windows key
+set $term kitty
+set $browser firefox
+set $file_manager thunar
+set $menu bemenu-run -i -p "Run:" --fn "Hack 12"
+
+# Variabel untuk Path (Jalur)
+set $wallpaper_path ~/Pictures/Wallpapers/mountain.jpg
+
+# Variabel untuk Binding yang Sering Digunakan
+set $left h
+set $down j
+set $up k
+set $right l
+```
+
+#### 2. Menggunakan (Memanggil) Variabel
+
+Setelah dideklarasikan, Anda memanggil variabel tersebut dengan menuliskan `$nama_variabel`. Sway akan secara otomatis menggantinya dengan nilai yang Anda tetapkan.
+
+**Contoh Penggunaan dalam Konteks:**
+
+```bash
+# Deklarasi
+set $mod Mod4
+set $term alacritty
+set $left h
+
+# Penggunaan dalam `bindsym` (Binding Simbol)
+# bindsym <key-combo> <action>
+bindsym $mod+Return exec $term # Buka terminal
+bindsym $mod+$left focus left   # Pindah fokus ke jendela di kiri
+
+# Penggunaan dalam `exec` (Menjalankan Perintah)
+exec_always $browser  # Jalankan browser saat Sway start
+
+# Penggunaan di perintah yang lebih kompleks
+bindsym $mod+d exec $menu
+```
+
+---
+
+Dengan menguasai variabel, Anda sudah memegang kunci untuk membuat konfigurasi Sway yang terstruktur, mudah dirawat, dan disesuaikan dengan kebutuhan pribadi. Ini adalah langkah pertama yang fundamental.
+
+## Sumber resmi & bacaan lanjutan (direkomendasikan)
+
+* Situs resmi Sway: swaywm.org — gambaran umum dan link dokumentasi. ([swaywm.org][1])
+* Repositori GitHub Sway: `swaywm/sway` — README, wiki, issue tracker (bagus untuk contoh bug/patch). ([GitHub][3])
+* wlroots: `swaywm/wlroots` — dokumentasi teknis dan contoh API. ([GitHub][2])
+* ArchWiki Sway — panduan instalasi, konfigurasi, dan tips distribusi. ([wiki.archlinux.org][4])
+* Wikipedia (ringkasan & sejarah singkat) — untuk konteks rilis dan penulis utama. ([Wikipedia][5])
+
+[0]: https://github.com/swaywm/sway/wiki
+[1]: https://swaywm.org/?utm_source=chatgpt.com "Sway"
+[2]: https://gitlab.freedesktop.org/wlroots/wlroots "swaywm/wlroots: A modular Wayland compositor library"
+[3]: https://github.com/swaywm/sway?utm_source=chatgpt.com "swaywm/sway: i3-compatible Wayland compositor"
+[4]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
+[5]: https://en.wikipedia.org/wiki/Sway_%28window_manager%29?utm_source=chatgpt.com "Sway (window manager)"
+[6]: https://bvngee.com/blogs/compile-sway-and-wlroots-together-from-source?utm_source=chatgpt.com "Compiling Sway with wlroots from Source - Bvngee"
+[7]: https://github.com/swaywm/sway/issues/4802?utm_source=chatgpt.com "Sway is laggy/unresponsive on VirtualBox Arch guest #4802"
+---
+
+# Keybindings
+
+##  Inti singkat (ringkasan cepat)
+
+* Binding utamanya memakai `bindsym` (mengikat ke *keysym* / nama tombol) atau `bindcode` (mengikat ke *keycode* / nomor hardware). Default dan perilaku layout keyboard memengaruhi `bindsym`. ([man.archlinux.org][1])
+* Flag penting: `--to-code`, `--release`, `--no-repeat`, `--inhibited`, dan opsi untuk mengikat ke input device tertentu. ([man.archlinux.org][1])
+* Untuk menemukan nama tombol di Wayland: pakai `wev` (pengganti `xev`), `libinput debug-events`, atau `evtest`. ([man.archlinux.org][2])
+
+---
+
+##  1. Konsep & istilah penting
+
+* **bindsym**
+  Perintah di config Sway untuk mengikat kombinasi tombol (menggunakan XKB keysyms / nama tombol seperti `Return`, `Mod4`, `XF86AudioRaiseVolume`) ke sebuah perintah Sway atau `exec`. `bindsym` membaca *keysyms* yang bergantung pada layout keyboard kecuali bila memakai `--to-code`. ([man.archlinux.org][1])
+
+* **bindcode**
+  Mirip `bindsym` tapi menerima *keycode* (nomor hardware) — tidak bergantung pada layout keyboard. Berguna ketika kamu ingin binding tetap konsisten terlepas dari layout. ([man.archlinux.org][1])
+
+* **$mod dan variabel**
+  Di config biasanya ada baris `set $mod Mod4` (atau `Mod1`), lalu gunakan `$mod` dalam binding: `bindsym $mod+Return exec …`. `set` mendefinisikan variabel string yang memudahkan pengaturan ulang satu tempat untuk mengganti perilaku global. ([man.archlinux.org][1])
+
+* **mode**
+  Mode seperti `mode "resize" { ... }` membuat kumpulan binding sementara — tekan sebuah binding untuk masuk ke mode, lalu beberapa binding khusus aktif sampai kamu keluar mode. Cocok untuk resize/move modes. ([git.bracken.jp][3])
+
+* **--to-code**
+  Menginstruksikan Sway untuk menerjemahkan keysym ke keycode menurut layout pertama yang dikonfigurasi, membantu jika kamu punya multi-layout sehingga bindings tetap bekerja di layout lain. Tidak selalu sempurna (beberapa issue/edge case di proyek). ([GitHub][4])
+
+* **--release**
+  Eksekusi perintah saat key combo **dilepas** — berguna bila sebuah program/utility tidak bekerja saat keyboard masih “digrab”. Namun implementasinya ada bug/limitasi (beberapa kombinasi tidak selalu andal). ([man.archlinux.org][1])
+
+---
+
+##  2. Cara menemukan nama / kode tombol (praktik)
+
+1. `wev` — buka jendela wayland kecil, tekan kunci, lihat output: keysyms & keycodes. (setara `xev` di X11). Contoh: `wev` lalu tekan `Print` dan catat. ([man.archlinux.org][2])
+2. `libinput debug-events` — output event perangkat; cocok untuk mouse/media keys, dan untuk mengetahui device id. Jalankan `sudo libinput debug-events --verbose`. ([wayland.freedesktop.org][5])
+3. `evtest`/`showkey` — untuk level kernel / evdev jika perlu (akses `input` group). ([Stack Overflow][6])
+
+Contoh cepat:
+
+* Jalankan `wev`, tekan tombol angka `1` pada row angka → catat “keysym” (mis. `1`) dan kode yang ditampilkan. Gunakan keysym itu di `bindsym` atau gunakan keycode di `bindcode`.
+
+---
+
+##  3. Contoh konfigurasi keybinding — **penjelasan kata-per-kata**
+
+Berikut contoh block tipikal, lalu saya jelaskan setiap token:
+
+```conf
+# 1. menetapkan tombol mod
+set $mod Mod4
+```
+
+* `set` : perintah Sway untuk mendefinisikan variabel.
+* `$mod` : nama variabel yang kamu pilih.
+* `Mod4` : nilai string; XKB name untuk tombol “Super/Windows”.
+  (artinya: setiap kali kamu menulis `$mod` di config, Sway ganti dengan `Mod4`)
+
+```conf
+# 2. membuka terminal dengan mod+Return
+bindsym $mod+Return exec alacritty
+```
+
+* `bindsym` : perintah untuk membuat key binding berdasarkan *keysym* (XKB name).
+* `$mod+Return` : kombinasi tombol; `$mod` = `Mod4`, `Return` = Enter key.
+* `exec` : aksi untuk menjalankan program eksternal.
+* `alacritty` : perintah yang dijalankan (program terminal).
+  (hasil: tekan Super+Enter akan menjalankan `alacritty`)
+
+```conf
+# 3. pindah ke workspace 1 menggunakan angka (layout-aware)
+bindsym $mod+1 workspace 1
+```
+
+* `workspace 1` : perintah internal sway untuk fokus/peralihan ke ruang kerja bernama `1`.
+* Jika punya multi-layout, terkadang nomor row tidak cocok → pakai `bindsym --to-code` atau `bindcode` jika perlu. ([GitHub][4])
+
+```conf
+# 4. pindahkan container (window) fokus ke workspace 1
+bindsym $mod+Shift+1 move container to workspace 1
+```
+
+* `Shift` : modifier tambahan.
+* `move container to workspace 1` : operasi untuk memindahkan window yang sedang fokus ke workspace bernama `1`.
+
+```conf
+# 5. resize mode contoh (mode + escape to exit)
+mode "resize" {
+    bindsym h resize shrink width 10px
+    bindsym l resize grow  width 10px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+```
+
+* `mode "resize" { ... }` : definisi mode bernama `resize`. Semua `bindsym` di dalamnya hanya berlaku ketika sedang dalam mode ini.
+* `bindsym h resize shrink width 10px` : saat tekan `h`, jalankan perintah `resize shrink width 10px`.
+
+  * `resize shrink width 10px` : perintah internal sway untuk mengecilkan lebar container sebesar 10px.
+* `bindsym Return mode "default"` : tekan Return untuk kembali ke mode `default`.
+* `bindsym $mod+r mode "resize"` : kombinasi mod+r masuk ke mode `resize`.
+
+```conf
+# 6. contoh menggunakan --release (eksekusi saat dilepas)
+bindsym --release $mod+q exec swaymsg exit
+```
+
+* `--release` : jalankan perintah ketika tombol dilepas, bukan saat ditekan. Berguna untuk perintah yang tidak jalan saat keyboard “digrab”. Tapi catat: ada edge cases/bug pada beberapa versi. ([GitHub][7])
+
+```conf
+# 7. contoh bindcode (keycode fixed)
+bindcode 133 exec dmenu_run
+```
+
+* `bindcode` : mengikat berdasarkan nomor keycode (133 contoh) — tidak tergantung layout keyboard.
+* `dmenu_run` : program peluncur (contoh).
+
+---
+
+##  4. Opsi & flags penting — arti teknis singkat
+
+* `--to-code` : paksa Sway terjemahkan keysym → keycode sesuai layout pertama; membantu konsistensi saat multi-layout. (Gunakan di binding sensitif seperti workspace switching). ([GitHub][4])
+* `--release` : eksekusi saat pelepasan tombol. Hati-hati, beberapa kombinasi bermasalah. ([man.archlinux.org][1])
+* `--no-repeat` : mencegah perintah diulang saat tombol ditahan. (berguna untuk aksi tunggal) ([man.archlinux.org][1])
+* `--inhibited` : jalankan meskipun ada shortcut inhibitor (mis. virtual machine/remote desktop ingin menangkap shortcut). ([manpages.debian.org][8])
+* `input <device>` di binding: batasi binding pada input device tertentu (mis. hanya keyboard built-in). Gunakan `swaymsg -t get_inputs` untuk daftar perangkat. ([manpages.ubuntu.com][9])
+
+---
+
+##  5. Debug & troubleshooting (praktis)
+
+* Reload config: tekan `$mod+Shift+c` (default) atau jalankan `swaymsg reload`. Cek log jika reload error. ([valerioviperino.me][10])
+* Lihat device & outputs: `swaymsg -t get_inputs` dan `swaymsg -t get_outputs`. Gunakan untuk memastikan nama device/output saat memakai opsi berbasis device. ([manpages.ubuntu.com][9])
+* Jika binding tidak bereaksi pada layout tertentu: tambahkan `--to-code` ke `bindsym` sensitif atau gunakan `bindcode`. Periksa isu upstream bila perilaku aneh (ada beberapa issue terkait `--to-code` pada versi tertentu). ([GitHub][11])
+* Untuk melihat event tombol: jalankan `wev` (lihat keysyms/kode saat tekan & release). ([man.archlinux.org][2])
+
+Contoh debugging workflow:
+
+1. Tekan tombol yang ingin di-bind → catat output `wev`.
+2. Coba `bindsym <that_keysym> exec notify-send test` → reload config → tekan.
+3. Jika tidak muncul, coba `bindsym --to-code ...` atau `bindcode <keycode> ...`.
+4. Check `~/.local/share/sway/log` atau `journalctl --user -b` untuk pesan error terkait parsing config.
+
+---
+<!--
+##  6. Persiapan untuk *memodifikasi Sway* (kalau kamu mau bikin patch / fitur)
+
+> Catatan: **untuk sekedar mengedit config tidak perlu programming**. Berikut ini jika kamu mau mengubah kode Sway sendiri atau mengembangkan tooling terkait:
+
+* Bahasa & stack Sway: **dibangun terutama dalam C**, menggunakan **wlroots** (C) untuk layer Wayland. Build system: **Meson** + **Ninja**. Paket dev yang biasa perlu: `libwayland-dev`, `libxkbcommon-dev`, `libseat`, `libinput`, `pkg-config`, dll. Untuk kontribusi perlu pengalaman C, pemahaman Wayland, XKB, dan meson. ([about.gitlab.com][12])
+* Tooling/dev: `meson setup build`, `meson compile -C build`, `meson test -C build`. Gunakan `sway -d` untuk debug logging saat menjalankan binary kustom.
+* Jika ingin membuat util CLI untuk meng-generate binding atau viewer: bahasa yang cocok — **Rust**, **Go**, atau **Python** (Rust banyak dipakai di komunitas Wayland karena safety + performa). Tetapi buat plugin/config generator cukup dengan shell scripts / python.
+* Jika intentmu adalah membuat editor/visualizer keybindings: baca struktur config Sway, dan pertimbangkan membuat parser (Sway config adalah sekumpulan perintah; formatnya ringkas). Ada proyek komunitas yang sudah membuat keybinding viewers (mis. `remontoire` untuk i3/Sway). ([varac.net][13])
+
+---
+
+-->
+##  6. Praktik terbaik & tips organisasi
+
+* Pisahkan bindings ke file terpisah di `~/.config/sway/config.d/` atau gunakan `include` untuk modularisasi (mis. `include configs/00-vars`), sehingga mudah maintain. Banyak distribusi (Manjaro Sway) memakai struktur ini. (jika include tak terbaca, periksa path dan urutan include). ([Manjaro Linux Forum][14])
+* Tandai binding dengan komentar yang konsisten (nama, deskripsi) sehingga mudah diparse oleh tooling. Beberapa dotfiles mengandalkan komentar berstruktur agar tooling bisa menampilkan daftar shortcut. ([Mark Stosberg][15])
+* Untuk workspace switching yang stabil di multi-layout: gunakan `bindsym --to-code` pada bindings workspace (atau gunakan `bindcode` jika kamu tahu keycode row angka). ([EndeavourOS][16])
+
+---
+
+##  7. Referensi penting (baca lebih lanjut)
+
+* Manual Sway (sway(5)) — panduan syntax config & opsi `bindsym`/`bindcode`. ([man.archlinux.org][1])
+* ArchWiki — overview Sway + tips. ([wiki.archlinux.org][17])
+* wev (wayland event viewer) repo & man page — untuk menemukan keysyms pada Wayland. ([GitHub][18])
+* Issue GitHub / diskusi tentang `--to-code` dan layout dependency (berguna untuk edge cases). ([GitHub][4])
+
+---
+
+[1]: https://man.archlinux.org/man/sway.5?utm_source=chatgpt.com "sway(5) - Arch manual pages"
+[2]: https://man.archlinux.org/man/wev.1.en?utm_source=chatgpt.com "wev(1) - Arch manual pages"
+[3]: https://git.bracken.jp/dotfiles/file/.config/sway/config.html?utm_source=chatgpt.com "config - dotfiles - Personal dotfiles"
+[4]: https://github.com/swaywm/sway/issues/8275?utm_source=chatgpt.com "Bindings to keysyms are layout-dependent · Issue #8275"
+[5]: https://wayland.freedesktop.org/libinput/doc/latest/tools.html?utm_source=chatgpt.com "Helper tools — libinput 1.29.901 documentation"
+[6]: https://stackoverflow.com/questions/79646256/how-could-i-detect-key-events-in-the-terminal-using-c?utm_source=chatgpt.com "How could I detect key events in the terminal using C?"
+[7]: https://github.com/swaywm/sway/issues/6456?utm_source=chatgpt.com "`keysym --release` is unreliable · Issue #6456 · swaywm/ ..."
+[8]: https://manpages.debian.org/testing/sway/sway.5.en.html?utm_source=chatgpt.com "sway(5) - testing"
+[9]: https://manpages.ubuntu.com/manpages/questing/man5/sway.5.html?utm_source=chatgpt.com "sway - configuration file and commands"
+[10]: https://valerioviperino.me/sway-fresh-start/?utm_source=chatgpt.com "Setting up sway on a new machine"
+[11]: https://github.com/swaywm/sway/issues/8022?utm_source=chatgpt.com "Unable to translate bindsym to bindcode since 1.9 #8022"
+[12]: https://gitlab.com/dnkl/sway/-/tags?utm_source=chatgpt.com "Tags · Daniel Eklöf / sway"
+[13]: https://www.varac.net/docs/desktop/wayland/sway/keybindings.html?utm_source=chatgpt.com "Sway keybindings - Varac's documentation"
+[14]: https://forum.manjaro.org/t/default-config-sway-config/146594?utm_source=chatgpt.com "Default .config/sway/config - Support - Manjaro Linux Forum"
+[15]: https://mark.stosberg.com/sway-keybindings/?utm_source=chatgpt.com "Tips for organizing Sway keybindings - Mark Stosberg"
+[16]: https://forum.endeavouros.com/t/keybindings-not-matching-my-config/39321?utm_source=chatgpt.com "Keybindings not matching my config - All WMs"
+[17]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
+[18]: https://github.com/jwrdegoede/wev?utm_source=chatgpt.com "jwrdegoede/wev"
+
+# Ringkasan singkat untuk bantuan
+
+1. Sumber otoritatif: **man pages** (`sway(5)`, `sway-input(5)`, `sway-output(5)`) dan **default config** di repository Sway (`config.in`) — ini berisi daftar directive/keyword yang dipakai Sway. ([Man Archlinux][1])
+2. Untuk *kata kunci runtime* (nama device/outputs/inputs) gunakan `swaymsg -t get_outputs` dan `swaymsg -t get_inputs`. ([manpages.debian.org][2])
+3. Untuk daftar variabel yang kamu pakai di konfigurasi — parse file konfigurasi kamu (grep/awk) karena Sway tidak menyediakan perintah bawaan untuk “list variables” runtime. (Gunakan `set` lines). ([GitHub][3])
+
+---
+
+##  1) Dapatkan **semua kata kunci Sway (perintah / directives)** — dua cara terbaik
+
+### A. Dari manual lokal (man pages)
+
+Perintah:
+
+```bash
+man 5 sway | col -b | sed -n '1,400p' > ~/tmp/sway-man.txt
+```
+
+Penjelasan kata-per-kata:
+
+* `man 5 sway` → buka manual section 5 (file formats/config) untuk `sway`. Section 5 berisi directive/config options.
+* `|` → pipe: meneruskan output ke perintah berikutnya.
+* `col -b` → hapus kontrol karakter backspaces/format supaya output bersih.
+* `sed -n '1,400p'` → ambil baris 1–400 (contoh; sesuaikan jika perlu).
+* `> ~/tmp/sway-man.txt` → simpan hasil ke file `~/tmp/sway-man.txt`.
+
+Setelah itu, ekstrak kata kunci (perintah yang muncul di awal baris):
+
+```bash
+grep -oP '^[a-zA-Z0-9_-]+' ~/tmp/sway-man.txt | sort -u
+```
+
+Penjelasan:
+
+* `grep -oP '^[a-zA-Z0-9_-]+'` → cari token di awal baris (mengasumsikan directive dimulai di awal baris).
+* `sort -u` → sortir dan hilangkan duplikat.
+
+**Catatan:** man pages berbeda antar distribusi; selalu cek `man 5 sway` di sistemmu untuk versi yang terpasang. ([Man Archlinux][1])
+
+---
+
+### B. Dari default config / repo Sway (komprehensif & contoh)
+
+Ambil file contoh yang disertakan di repo (online) atau dari paket sistem (`/etc/sway/config`).
+
+Ambil online (jika punya internet):
+
+```bash
+curl -s https://raw.githubusercontent.com/swaywm/sway/master/config.in > ~/tmp/sway-config.in
+grep -oP '^[[:space:]]*([a-zA-Z0-9_-]+)' ~/tmp/sway-config.in | sed 's/^[[:space:]]*//' | sort -u
+```
+
+Penjelasan:
+
+* `curl -s URL` → ambil file dari GitHub (raw). `-s` = silent.
+* `grep -oP '^[[:space:]]*([a-zA-Z0-9_-]+)'` → ambil token pertama tiap baris (directive atau example keyword).
+* `sed 's/^[[:space:]]*//'` → hapus spasi di depan.
+* `sort -u` → sortir unik.
+
+`config.in` biasanya berisi contoh `output`, `bindsym`, `set`, `exec`, `for_window`, `bar`, `input`, dsb. Ini berguna karena ia menunjukkan direct usage dan contoh yang luas. ([GitHub][3])
+
+---
+
+##  2) Dapatkan **semua kata kunci variabel** (yang digunakan di config kamu)
+
+Sway tidak punya perintah `list variables` — variabel konfigurasi adalah baris `set`. Cara praktis:
+
+```bash
+grep -R "^[[:space:]]*set " ~/.config/sway | sed -E "s/.*set[[:space:]]+\\$?([A-Za-z0-9_-]+).*/\\1/" | sort -u
+```
+
+Penjelasan:
+
+* `grep -R "^[[:space:]]*set "` → cari semua baris yang mulai dengan `set` di direktori config Sway.
+* `sed -E "s/.*set[[:space:]]+\\$?([A-Za-z0-9_-]+).*/\\1/"` → ekstrak nama variabel (menghapus `$` jika ada).
+* `sort -u` → sortir unik.
+
+Contoh keluaran: `mod`, `term`, `wallpaper`, `menu`, dsb — itu semua **nama variabel** yang kamu definisikan di config. ([GitHub][3])
+
+---
+
+##  3) Dapatkan **kata kunci input / output** (runtime + directive)
+
+Ada dua hal: (A) nama device/identifier runtime (mis. `eDP-1`, `HDMI-A-1`, `type:keyboard`) dan (B) directive/config keywords untuk mengatur input/output (`input`, `output`, dan sub-directives).
+
+### A. Nama device runtime (apa yang ada di mesinmu)
+
+Perintah:
+
+```bash
+swaymsg -t get_inputs   # daftar input devices (keyboard, pointer, touchpad)
+swaymsg -t get_outputs  # daftar outputs (monitors)
+```
+
+Penjelasan:
+
+* `swaymsg` → klien IPC untuk mengirim perintah ke sway.
+* `-t get_inputs` / `-t get_outputs` → tipe permintaan; sway mengembalikan JSON berisi devices/outputs.
+
+Untuk mengekstrak nama:
+
+```bash
+swaymsg -t get_outputs | jq -r '.[].name'
+swaymsg -t get_inputs  | jq -r '.[].identifier, .[].name'   # fields dapat berbeda per versi
+```
+
+Penjelasan:
+
+* `jq -r '.[].name'` → parse JSON dan keluarkan nama perangkat per baris.
+
+Ini memberi **nama-nama aktual** yang bisa dipakai sebagai `output NAME { ... }` atau `input NAME { ... }`. ([manpages.debian.org][2])
+
+### B. Directive / opsi yang tersedia untuk `input` dan `output`
+
+Baca manual khusus:
+
+* `man 5 sway-input` — menjelaskan semua opsi yang bisa dipakai di blok `input <identifier> { ... }`. ([manpages.ubuntu.com][4])
+* `man 5 sway-output` — menjelaskan opsi untuk blok `output`. ([manpages.debian.org][2])
+
+Kamu bisa mengekstrak kata kunci dari manpages sama seperti di langkah (1A):
+
+```bash
+man 5 sway-input | col -b | grep -oP '^[a-zA-Z0-9_-]+' | sort -u
+man 5 sway-output | col -b | grep -oP '^[a-zA-Z0-9_-]+' | sort -u
+```
+
+Penjelasan sama seperti sebelumnya: parse man, ambil token awal tiap baris, sortir unik.
+
+---
+
+##  4) Dapatkan **seluruh kata kunci konfigurasi Sway** (komprehensif)
+
+Gabungkan sumber: man pages, config.in (repo), dan file konfigurasimu sendiri.
+
+Contoh skrip satu-liner untuk mengumpulkan semuanya (lokal + repo online):
+
+```bash
+mkdir -p ~/tmp/sway-keys
+man 5 sway | col -b > ~/tmp/sway-keys/sway-man.txt
+curl -s https://raw.githubusercontent.com/swaywm/sway/master/config.in > ~/tmp/sway-keys/config.in
+grep -hoP '^[[:space:]]*([A-Za-z0-9_-]+)' ~/tmp/sway-keys/*.txt ~/tmp/sway-keys/*.in | sed 's/^[[:space:]]*//' | sort -u > ~/tmp/sway-keys/all-keywords.txt
+wc -l ~/tmp/sway-keys/all-keywords.txt && sed -n '1,200p' ~/tmp/sway-keys/all-keywords.txt
+```
+
+Penjelasan:
+
+* `mkdir -p` → buat folder kerja.
+* `man 5 sway | col -b` → simpan man.
+* `curl -s` → ambil config.in.
+* `grep -hoP '^[[:space:]]*([A-Za-z0-9_-]+)'` → ambil token pertama tiap baris dari setiap file.
+* `sed 's/^[[:space:]]*//'` → bersihkan leading whitespace.
+* `sort -u > all-keywords.txt` → hasil final unik.
+* `wc -l` dan `sed -n` → tunjukkan jumlah dan contoh isi file.
+
+**Catatan penting:** hasil ini adalah daftar token yang muncul sebagai "kata pertama" pada baris — ini adalah pendekatan pragmatis untuk mendapatkan directive/keywords dan contoh. Untuk definisi lengkap/penjelasan tiap keyword, rujuk man pages (penjelasan masing-masing directive). ([Man Archlinux][1])
+
+---
+
+##  5) Tips lanjutan & gotchas (pengalaman nyata)
+
+* `swaymsg -t get_config` mengembalikan konfigurasi utama **tetapi** mungkin tidak memasukkan isi file yang di-`include`. Jadi pengumpulan hanya lewat `swaymsg -t get_config` **tidak** selalu lengkap; parsing file konfigurasi di `~/.config/sway` lebih andal. ([GitHub][5])
+* Gunakan `jq` untuk JSON runtime; gunakan `rg` (ripgrep) untuk pencarian cepat di konfigurasi.
+* Untuk definisi fungsi/keyword yang sebenarnya (argumen dan nilai yang diizinkan), **baca man pages**: itu sumber yang menjelaskan tipe argumen, contoh, dan perilaku. ([Man Archlinux][1])
+
+---
+
+##  6) Referensi utama (baca lanjut)
+
+* `sway` manpage (config): `man 5 sway`. ([Man Archlinux][1])
+* `sway-input` manpage (input directives): `man 5 sway-input`. ([manpages.ubuntu.com][4])
+* `sway-output` manpage (output directives): `man 5 sway-output`. ([manpages.debian.org][2])
+* `config.in` (default example / repo Sway) — contoh komprehensif dan default usage. ([GitHub][3])
+* ArchWiki / distro wikis (tutorial & practical tips). ([ArchWiki][6])
+
+---
+
+[1]: https://man.archlinux.org/man/sway.5?utm_source=chatgpt.com "sway(5) - Arch manual pages"
+[2]: https://manpages.debian.org/experimental/sway/sway-output.5.en.html?utm_source=chatgpt.com "sway-output(5)"
+[3]: https://raw.githubusercontent.com/swaywm/sway/master/config.in?utm_source=chatgpt.com "https://raw.githubusercontent.com/swaywm/sway/mast..."
+[4]: https://manpages.ubuntu.com/manpages/focal/man5/sway-input.5.html?utm_source=chatgpt.com "sway-input - input configuration file and commands"
+[5]: https://github.com/swaywm/sway/issues/5559?utm_source=chatgpt.com "swaymsg get_config doesn't show config parameters that ..."
+[6]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
+
+<!--
+
+# Bagaimana jika anda perlu environment variables untuk aplikasi (contoh: MOZ_ENABLE_WAYLAND)
+
+Pilihan umum:
+
+* **Set pada saat login**: letakkan export di `~/.profile`, `~/.xprofile` (kadang tidak dipakai oleh DM), atau gunakan PAM (`~/.pam_environment`).
+* **Wrapper script**: buat script `~/bin/sway-run`:
+
+  ```sh
+  #!/bin/sh
+  export MOZ_ENABLE_WAYLAND=1
+  export XDG_CURRENT_DESKTOP=sway
+  exec sway "$@"
+  ```
+
+  lalu jalankan script ini dari greeter / .desktop session. Ini cara sederhana & reproducible.
+* **systemd --user + import-environment**: jalankan `exec_always "systemctl --user import-environment"` di config atau gunakan `~/.config/environment.d/*.conf` systemd mechanism tergantung DM.
+  Referensi & diskusi: ada banyak issue/forum yang menekankan — Sway sendiri **tidak** menetapkan env var arbitrary dari `set` di config. ([EndeavourOS][6])
+
+# Perintah debugging / menemukan nama output (menjawab kebutuhan praktismu)
+
+Untuk mengetahui nama output (mis. `eDP-1`, `HDMI-A-1`, atau nama lengkap device), jalankan:
+
+```bash
+swaymsg -t get_outputs
+```
+
+Penjelasan kata-per-kata:
+
+* `swaymsg` = utilitas klien yang mengirim perintah ke sway melalui IPC.
+* `-t` = opsi untuk tipe request.
+* `get_outputs` = perintah IPC yang mengembalikan daftar output dalam format JSON (nama, mode, position, scale, dsb).
+
+Anda bisa pipe ke `jq` agar lebih rapi:
+
+```bash
+swaymsg -t get_outputs | jq -r '.[] | .name'
+```
+
+* `|` = pipe shell, meneruskan output ke `jq`.
+* `jq -r '.[] | .name'` = mengekstrak field `name` dari setiap object JSON.
+
+Sumber & contoh resmi: dokumentasi/ArchWiki merekomendasikan perintah ini untuk menemukan nama output. ([ArchWiki][2])
+
+# Praktik terbaik (recommendasi langsung)
+
+1. Buat file `definitions` terpisah dan **include** itu di bagian paling atas config:
+
+   ```text
+   include $HOME/.config/sway/definitions.d/*.conf
+   ```
+
+   isi `definitions.d/00-vars.conf`:
+
+   ```text
+   set $mod Mod4
+   set $term foot
+   set $wallpaper /home/poweruser/Pictures/wall.png
+   ```
+
+   Pastikan include dilakukan sebelum baris yang memakai variabel. ([Random bits and pieces][7])
+
+2. Gunakan path absolut untuk file (atau `$HOME`) agar tidak terjebak masalah ekspansi `~`.
+
+3. Untuk nilai kompleks (command pipeline), definisikan variabel berisi command yang sesuai dan periksa perbedaan antara `exec` dan `exec_always` (behaviour parsing berbeda—banyak issue di repo terkait hal ini).
+
+4. Untuk env vars yang harus tersedia ke *aplikasi*, jangan andalkan `set` — gunakan metode wrapper/script/systemd/DM seperti dijelaskan di atas. ([Lorenzo Bettini][8])
+
+# Identitas teknologi & persyaratan jika anda mau *mengembangkan / memodifikasi* Sway
+
+* **Bahasa**: Sway ditulis dalam **C**; bergantung kuat pada library **wlroots** (C) yang menyediakan building blocks Wayland compositor. ([GitHub][9])
+* **Jika ingin membangun/modifikasi Sway dari sumber**: minimal yang perlu dipersiapkan:
+
+  * Pengetahuan: C (memory management, pointers), Wayland protocol concepts, wlroots API, dan build systems (Meson).
+  * Tools & dependencies: `meson`, `ninja`, `pkg-config`, `wayland` dev headers, `wayland-protocols`, `libinput`, `libxkbcommon`, `pango`, `cairo`, `json-c`, `pcre2`, dsb. (dokumentasi repo mencantumkan daftar lengkap dependensi). ([GitHub][9])
+  * Workflow: clone repo `git clone https://github.com/swaywm/sway`, jalankan `meson build` → `ninja -C build` → `ninja -C build install` (run di environment development).
+* **Untuk sekadar memodifikasi konfigurasi**: cukup memahami syntax config Sway (text), shell scripting dasar (untuk wrapper scripts), dan tools debugging (`swaymsg`, `jq`, `journalctl`).
+
+# Tugas praktis singkat supaya anda kebal implementasi
+
+1. Buat direktori `~/.config/sway/definitions.d/` dan file `00-vars.conf` isi contoh variabel di atas. Include direktori itu di top of `~/.config/sway/config`. Reload sway (`swaymsg reload` atau `sway reload`) dan cek apakah binding dan wallpaper bekerja.
+2. Jalankan `swaymsg -t get_outputs | jq -r '.[] | .name'` untuk memastikan nama output. Ganti `output eDP-1` di config dengan nama yang benar jika perlu.
+3. Jika aplikasi tidak membaca env var (mis. `MOZ_ENABLE_WAYLAND`), buat `~/bin/sway-run` wrapper seperti contoh lalu ubah session greeter / .desktop yang memanggil sway untuk menjalankan script itu.
+
+# Sumber pokok yang saya gunakan (baca lanjut)
+
+* `sway` manual & konfigurasi (man pages) — penjelasan `set`, `bindsym`, `output`. ([Man Archlinux][1])
+* ArchWiki — panduan config dan perintah `swaymsg -t get_outputs`. ([ArchWiki][2])
+* Issue & diskusi upstream (GitHub) tentang environment variables & perilaku config (menjelaskan bahwa `set` bukan export). ([GitHub][3])
+* i3 userguide (penjelasan tentang waktu ekspansi variabel dan include order — relevan karena kompatibilitas i3). ([i3][4])
+* Repo GitHub Sway (build deps & instruksi membangun). ([GitHub][9])
+
+---
+
+-->
+[1]: https://man.archlinux.org/man/sway.5?utm_source=chatgpt.com "sway(5) - Arch manual pages"
+[2]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
+[3]: https://github.com/swaywm/sway/issues/4403?utm_source=chatgpt.com "Environment not included in sway · Issue #4403"
+[4]: https://i3wm.org/docs/userguide.html?utm_source=chatgpt.com "i3 User's Guide"
+[5]: https://github.com/swaywm/sway/issues/3093?utm_source=chatgpt.com "[Question] Set Variables via bindsym in config · Issue #3093"
+[6]: https://forum.endeavouros.com/t/environment-variables-in-sway/56650?utm_source=chatgpt.com "Environment variables in Sway - All WMs"
+[7]: https://www.igordejanovic.net/recipes/sway-config/?utm_source=chatgpt.com "Sway config • Random bits and pieces - Igor Dejanović"
+[8]: https://www.lorenzobettini.it/2024/06/environment-variables-in-sway/?utm_source=chatgpt.com "Environment Variables in Sway | Lorenzo Bettini"
+[9]: https://github.com/swaywm/sway?utm_source=chatgpt.com "swaywm/sway: i3-compatible Wayland compositor"
+<!--
+### Eksperimen dan Latihan Mandiri
+
+Sekarang, coba praktikkan dalam file konfigurasi Sway Anda (biasanya `~/.config/sway/config`).
+
+1.  **Temukan dan Pahami:** Buka file config Anda dan cari blok kode yang berisi `set $...`. Apakah Anda memahami apa yang dilakukan setiap variabel itu?
+2.  **Ubah dan Rasakan:** Coba ganti nilai dari variabel `$term` dari `alacritty` ke `kitty` atau sebaliknya. Setelah menyimpan config dan merefresh Sway (`$mod+Shift+c`), tekan `$mod+Return`. Apa yang terjadi?
+3.  **Buat Variabel Sendiri:**
+    - Anda punya editor teks favorit, misalnya `vim` atau `vscode`. Buatlah variabel `$editor` untuknya.
+    - Lalu, buat keybinding untuk membukanya. Misalnya: `bindsym $mod+e exec $editor`.
+4.  **Eksplorasi Lanjutan (Opsional):** Variabel bisa menyimpan perintah yang lebih kompleks. Coba ini:
+    ```bash
+    set $screenshot 'grim -g "$(slurp)" - | swappy -f -'
+    bindsym Print exec $screenshot
+    ```
+    Sekarang, ketika Anda menekan `Print Screen`, Anda bisa memilih area layar untuk discreenshot dan langsung diedit di `swappy`.
+
+**Tantangan Selanjutnya:** Coba pikirkan, jika Anda ingin mengubah perilaku "memindahkan fokus jendela" dari tombol HJKL menjadi tombol panah, di bagian mana saja Anda harus melakukan perubahan? Dengan menggunakan variabel, perubahan itu akan sangat minimal.
 File konfigurasi Sway adalah file teks yang berisi perintah-perintah yang dieksekusi. Ia memiliki beberapa fitur sintaksis inti:
 
 | Fitur Sintaks | Deskripsi & Contoh |
@@ -1234,16 +1913,6 @@ Lewati bagian ini karena kita tidak akan membahas status bar untuk swaybar sebab
 
 ---
 
-## Sumber resmi & bacaan lanjutan (direkomendasikan)
-
-* Situs resmi Sway: swaywm.org — gambaran umum dan link dokumentasi. ([swaywm.org][1])
-* Repositori GitHub Sway: `swaywm/sway` — README, wiki, issue tracker (bagus untuk contoh bug/patch). ([GitHub][3])
-* wlroots: `swaywm/wlroots` — dokumentasi teknis dan contoh API. ([GitHub][2])
-* ArchWiki Sway — panduan instalasi, konfigurasi, dan tips distribusi. ([wiki.archlinux.org][4])
-* Wikipedia (ringkasan & sejarah singkat) — untuk konteks rilis dan penulis utama. ([Wikipedia][5])
-
----
-
 ### Cara menguji perubahan konfigurasi tanpa mengganggu sesi yang sedang dipakai (ringkasan cepat & aman)
 
 * **Metode 1: Jalankan sway di TTY terpisah (recommended untuk pengujian)**
@@ -1278,14 +1947,6 @@ Tautan wlroots untuk github
 https://github.com/swaywm/wlroots?utm_source=chatgpt.com 
 -->
 
-[0]: https://github.com/swaywm/sway/wiki
-[1]: https://swaywm.org/?utm_source=chatgpt.com "Sway"
-[2]: https://gitlab.freedesktop.org/wlroots/wlroots "swaywm/wlroots: A modular Wayland compositor library"
-[3]: https://github.com/swaywm/sway?utm_source=chatgpt.com "swaywm/sway: i3-compatible Wayland compositor"
-[4]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
-[5]: https://en.wikipedia.org/wiki/Sway_%28window_manager%29?utm_source=chatgpt.com "Sway (window manager)"
-[6]: https://bvngee.com/blogs/compile-sway-and-wlroots-together-from-source?utm_source=chatgpt.com "Compiling Sway with wlroots from Source - Bvngee"
-[7]: https://github.com/swaywm/sway/issues/4802?utm_source=chatgpt.com "Sway is laggy/unresponsive on VirtualBox Arch guest #4802"
 <!---------------------->
 <!--wlroots-->
 [a]: ./../../module/bagian-1/README.md

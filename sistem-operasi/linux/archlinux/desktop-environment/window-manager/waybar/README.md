@@ -327,7 +327,9 @@ Anda meminta fokus pada *conjunctions* (kata hubung). "Whereas" adalah kata hubu
     * (Dia lebih suka pengaturan yang ringan, **padahal** saya lebih suka sistem dengan semua fitur aktif secara default.)
 
 ---
-
+dependensi:
+gtkmm3 jsoncpp libsigc++ fmt wayland chrono-date spdlog libgtk-3-dev gobject-introspection libgirepository1.0-dev libpulse libnl libappindicator-gtk3 libdbusmenu-gtk3 libmpdclient libsndio libevdev xkbregistry upower
+---
 ## 💡 Rekomendasi Sumber Daya
 
 Untuk menerapkan konsep-konsep ini, referensi utama Anda adalah **Waybar Wiki di GitHub** (sesuai permintaan Anda untuk referensi dari repositori). Ini adalah sumber utama (dari komunitas global) untuk daftar lengkap modul, placeholder, dan opsi konfigurasi.
