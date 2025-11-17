@@ -693,6 +693,7 @@ Dengan menguasai variabel, Anda sudah memegang kunci untuk membuat konfigurasi S
 * Binding utamanya memakai `bindsym` (mengikat ke *keysym* / nama tombol) atau `bindcode` (mengikat ke *keycode* / nomor hardware). Default dan perilaku layout keyboard memengaruhi `bindsym`. ([man.archlinux.org][1])
 * Flag penting: `--to-code`, `--release`, `--no-repeat`, `--inhibited`, dan opsi untuk mengikat ke input device tertentu. ([man.archlinux.org][1])
 * Untuk menemukan nama tombol di Wayland: pakai `wev` (pengganti `xev`), `libinput debug-events`, atau `evtest`. ([man.archlinux.org][2])
+    - > Install paket tambahan jika tidak ada dengan `sudo pacman -Syu --noconfirm --needed evtest wev`
 
 ---
 
