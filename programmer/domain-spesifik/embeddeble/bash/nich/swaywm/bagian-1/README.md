@@ -255,9 +255,9 @@ Kita sekarang memiliki kemampuan untuk "berbicara" dan "mendengar" dari Sway. Ta
 Di modul berikutnya, kita akan belajar cara menjadi "penerjemah" JSON yang andal.
 
 > - **[Selanjutnya][selanjutnya]**
-> - **[Home][domain]**
+> - **[Sebelumnya][domain]**
 
-[domain]: ../../../../README.md
+[domain]: ../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
 

@@ -549,43 +549,37 @@ set $nama_variabel nilai
 ```
 
 - `set`: Kata kunci untuk menetapkan nilai.
-- `$nama_variabel`: Nama variabel, selalu diawali dengan tanda `$`.
+- `$nama_variabel`: Nama variabel, selalu diawali dengan tanda `$`. Ini adalah tanda konvensi. `mod` adalah nama variabel (bisa anda ganti).
 - `nilai`: Nilai yang ingin Anda simpan. Bisa berupa satu kata atau string yang lebih panjang.
+   > * Contoh nyata dalam `set $mod Mod4`: arti keseluruhan — buat variabel bernama `mod` yang nilainya `Mod4` (Tombol Super/Windows).
+   > * Satu variabel akan digunakan untuk semua konfigurasi, beberapa contoh di bawah yang masih menyertakan penulisan `set $mod Mod4` semisal, hanya untuk penekanan bahwa anda perlu menuliskan variabel terkait sebelum membuat perubahan.
+   > * Nilai string — di sini menunjuk ke tombol modifier (biasanya tombol “Super/Windows”).
 
-### Penjelasan mendetail
-
-Contoh:
+### Contoh:
 
 ```text
+# Buat tombol untuk super
 set $mod Mod4
+# Buat tombol untuk terminal
 set $term foot
+# Buat tombol untuk browser
+set $browser firefox
+# Buat tombol untuk wallpaper
 set $wallpaper /home/poweruser/Pictures/wall.png
-
+# Buat tombol untuk file manager
+set $file_manager yazi
 bindsym $mod+Return exec $term
 output * bg $wallpaper fill
 ```
 
-1. `set`
-
-   * Kata kunci Sway untuk **mendefinisikan variabel** konfigurasi. Saat Sway mem-parse, `set` menyimpan mapping nama→nilai.
-
-2. `$mod` (di `set $mod Mod4`)
-
-   * `$` menandakan **nama variabel** (konvensi). `mod` adalah nama variabel (bisa anda ganti).
-   * Dalam `set $mod Mod4`: arti keseluruhan — buat variabel bernama `mod` yang nilainya `Mod4`.
-
-3. `Mod4`
-
-   * Nilai string — di sini menunjuk ke tombol modifier (biasanya tombol “Super/Windows”).
-
-4. `bindsym $mod+Return exec $term`
+1. `bindsym $mod+Return exec $term`
 
    * `bindsym` = perintah Sway untuk mendaftarkan binding key.
    * `$mod+Return` = gabungan nilai variabel `$mod` (nilai `Mod4`) dan tombol `Return` (Enter). Saat dibaca, Sway melihat `Mod4+Return`.
    * `exec` = perintah Sway untuk menjalankan program eksternal.
    * `$term` = variabel yang kita definisikan (`foot`), jadi ini menjalankan `foot`.
 
-5. `output * bg $wallpaper fill`
+2. `output * bg $wallpaper fill`
 
    * `output` = perintah konfigurasi untuk display. `*` berarti semua output.
    * `bg` = sub-perintah untuk background/ wallpaper.
@@ -619,15 +613,13 @@ output * bg $wallpaper fill
 - **Variabel vs. Langsung:** Mana yang lebih baik, `exec $browser` atau `exec firefox`? Jawabannya hampir selalu `exec $browser` karena kekuatan dan kejelasannya.
 
 ---
-
+<!--
 ## **Contoh-contoh Praktis:**
 
 ```bash
 # Variabel Utama (Biasanya ditaruh di bagian paling atas config)
 set $mod Mod4 # Mod4 biasanya adalah Super/Windows key
 set $term kitty
-set $browser firefox
-set $file_manager thunar
 set $menu bemenu-run -i -p "Run:" --fn "Hack 12"
 
 # Variabel untuk Path (Jalur)
@@ -666,6 +658,7 @@ bindsym $mod+d exec $menu
 
 ---
 
+-->
 Dengan menguasai variabel, Anda sudah memegang kunci untuk membuat konfigurasi Sway yang terstruktur, mudah dirawat, dan disesuaikan dengan kebutuhan pribadi. Ini adalah langkah pertama yang fundamental.
 
 ## Sumber resmi & bacaan lanjutan (direkomendasikan)

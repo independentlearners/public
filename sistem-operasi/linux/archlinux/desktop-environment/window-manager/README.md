@@ -37,7 +37,7 @@ Pengguna mampu melakukan instalasi minimal Arch, memahami sistem inti, serta men
 
 ---
 
-## [🪞 2. Pengenalan Wayland & Komponen Sway][0]
+## [🪞 2. Pengenalan Wayland & Komponen Sway][wayland]
 
 **Persiapan & Prasyarat Lengkap:** Tool, skill dan familiar dengan sistem
 
@@ -214,20 +214,20 @@ Tujuan dokumen: memberikan **peta belajar dan referensi dependensi** yang sangat
 
 **Komponen populer (bahasa & catatan modifikasi):**
 
-* **Waybar** — *C++ + JS/JSON config + CSS styling.*
+* **[Waybar][0]** — *C++ + JS/JSON config + CSS styling.*
 
   * Untuk memodifikasi: edit JSON config + CSS; membuat module custom biasanya berupa script (Bash/Python).
-* **Mako** — *C.* Konfigurasi styling dan behavior via file; recompilasi memerlukan C.
-* **Wofi** — *C.* (launcher). Styling lewat CSS, pengaturan di file config.
-* **Grim** / **Slurp** — *C.* (screenshot + region selection).
-* **wl-clipboard** — *C.* (`wl-copy`, `wl-paste`).
-* **PipeWire / WirePlumber** — *C.* (audio/video); integrasi untuk volume/control.
+* **[Mako][1]** — *C.* Konfigurasi styling dan behavior via file; recompilasi memerlukan C.
+* **[Wofi][2]** — *C.* (launcher). Styling lewat CSS, pengaturan di file config.
+* **[Grim][3]** / **Slurp** — *C.* (screenshot + region selection).
+* **[wl-clipboard][4]** — *C.* (`wl-copy`, `wl-paste`).
+* **[PipeWire / WirePlumber][5]** — *C.* (audio/video); integrasi untuk volume/control.
 
 **Output fase:** dotfiles yang menjalankan Waybar + Mako + Wofi, shortcut screenshot, clipboard integration, dan contoh module Waybar (script + konfigurasi).
 
 ---
 
-### 🪄 IPC & Scripting Automasi
+### [🪄 IPC & Scripting Automasi][ipc]
 
 **Target:** membuat automasi nyata menggunakan Sway IPC.
 
@@ -937,8 +937,15 @@ Seluruh jalur disusun dari *fondasi sistem → konfigurasi modular → automasi 
 
 ---
 
+[ipc]: ./../../../../../programmer/domain-spesifik/embeddeble/bash/nich/swaywm/README.md
+[wayland]: ./wayland/README.md
 <!--
 **[Klik Disini Untuk Masuk][ ]**
 -->
 
-[0]: ./wayland/README.md
+[0]: ./waybar/README.md
+[1]: ./mako/README.md
+[2]: ./wofi/README.md
+[3]: ./grim/README.md
+[4]: ./wl-clipboard/README.md
+[5]: ./audio-video/README.md

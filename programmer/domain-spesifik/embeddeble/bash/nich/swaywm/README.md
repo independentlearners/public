@@ -104,8 +104,7 @@ Ini adalah konsep **paling penting** yang harus Anda pahami.
   * **Bagaimana Cara Kerjanya di Sway?**
     Sway menggunakan mekanisme bernama **Unix Socket**. Anggap saja ini sebagai file khusus di sistem Anda yang bertindak seperti saluran telepon internal. Skrip Anda "menelepon" *socket* ini untuk mengirim perintah, dan Sway "mendengarkan" telepon itu, mengeksekusi perintahnya, dan kadang mengirim balasan.
 
-    > **Analogi:**
-
+    >   * #### **Analogi:**
     >   * **Sway** adalah Manajer di kantornya (sedang berjalan).
     >   * **Unix Socket** adalah nomor telepon internalnya.
     >   * **Skrip Anda** adalah Asisten di meja lain.
@@ -213,7 +212,8 @@ Anda sekarang telah memahami 3 pilar fundamental:
 <!--
 Fondasi kita sudah kokoh. Apakah Anda merasa konsep IPC, Environment, dan Toolset ini sudah jelas?
 Jika ya, kita bisa langsung menyelam ke alat pertama kita dan mulai memberi perintah pada Sway di **Modul 1: `swaymsg` — Juru Bicara Anda ke Sway**.
-> - **[Ke Atas](#)**
+
 > - **[Kurikulum][kurikulum]**
 -->
+> - **[Selanjutnya](./bagian-1/README.md)**
 
