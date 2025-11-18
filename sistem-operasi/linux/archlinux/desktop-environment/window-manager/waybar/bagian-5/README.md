@@ -1,6 +1,6 @@
-### 🗺️ Tahap 5: Konfigurasi Modul (Inti Kustomisasi)
+### [🗺️ Tahap 5: Konfigurasi Modul (Inti Kustomisasi)][0]
 
-Bagian ini berfokus pada *objek-objek* JSON yang Anda tambahkan di *level atas* (Top-Level) file `config` Anda. Setiap objek ini **mendefinisikan** perilaku dan tampilan dari satu modul spesifik yang Anda daftarkan di Tahap 4 (`modules-left`, dll.). 
+Bagian ini berfokus pada *objek-objek* JSON. Setiap objek ini **mendefinisikan** perilaku dan tampilan dari satu modul spesifik yang Anda daftarkan di Tahap 4 (`modules-left`, dll.). 
 Kita sekarang memasuki **jantung** dari kustomisasi Waybar. Tahap 1-3 adalah fondasi (Filosofi, Prasyarat, Lokasi File) dan Tahap 4 adalah cetak biru (Layout Global).
 
 <details>
@@ -266,7 +266,6 @@ Waybar membagi modulnya menjadi beberapa jenis, yang penting untuk diketahui di 
   * **Kasus 3: "Perintah `on-click` saya tidak berfungsi."**
       * **Solusi:** **Uji perintah Anda di terminal (CLI) terlebih dahulu.** Buka terminal dan ketik `pavucontrol`. Apakah itu berjalan? Jika ya, itu akan berjalan di Waybar. Jika tidak (misal: "command not found"), itu berarti *executable*-nya tidak ada di `$PATH` Anda atau Anda salah mengetiknya.
 
------
 <!--
 #### 5.8 🧐 Fokus Bahasa Inggris (Sesuai Instruksi)
 
@@ -327,9 +326,6 @@ Langkah selanjutnya adalah mengambil "kerangka" (layout) yang kita buat di Tahap
 
 Kita akan menerapkan aturan umum dari Tahap 5 ini untuk mengonfigurasi `sway/workspaces` secara detail, lalu `clock`, lalu `cpu`, dan seterusnya, sambil mempelajari *placeholder* dan properti *khusus* milik mereka masing-masing.
 
------
-
-Ini adalah akhir dari Bagian 5. Kita telah menyelesaikan semua *konsep* konfigurasi.
 
 **Apakah Anda siap untuk mulai menerapkan pengetahuan ini dan melakukan *deep-dive* pada modul spesifik pertama kita, dimulai dengan yang paling penting untuk lingkungan Anda: `sway/workspaces`?**
 > - **[Ke Atas](#)**
@@ -340,7 +336,14 @@ Ini adalah akhir dari Bagian 5. Kita telah menyelesaikan semua *konsep* konfigur
 [kurikulum]: ../../../../README.md
 [selanjutnya]: ../bagian-6/README.md
 -->
+
+-----
+# Selamat!
+
+Kita telah menyelesaikan semua *konsep* konfigurasi **Waybar**.
+
 > - **[Sebelumnya][sebelumnya]**
+
 [sebelumnya]: ../bagian-4/README.md
 
 <!----------------------------------------------------->
