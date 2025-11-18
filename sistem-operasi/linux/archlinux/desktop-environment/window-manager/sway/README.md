@@ -881,6 +881,164 @@ Contoh debugging workflow:
 [17]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
 [18]: https://github.com/jwrdegoede/wev?utm_source=chatgpt.com "jwrdegoede/wev"
 
+---
+
+# Konsep inti tata letak di Sway
+
+1. **Container tree** — Sway mengatur jendela sebagai pohon kontainer (parent/child). Anda mengubah layout pada *container* yang sedang difokuskan. ([git.marussy.com][2])
+2. **Split** — dua mode split: `splith` (horizontal split) dan `splitv` (vertical split). Perintah `split` mengubah orientasi split selanjutnya. ([Man Archlinux][3])
+3. **Layout modes** — ada beberapa mode layout untuk sebuah container:
+
+   * `default` / last split (kembali ke split yang terakhir),
+   * `stacking` (jendela ditumpuk, seperti stack),
+   * `tabbed` (tab di bagian atas, setiap jendela jadi tab),
+   * `splith` / `splitv` (paksa split orientasi).
+     Anda dapat *toggle* atau set layout dengan perintah `layout`. ([Man Archlinux][3])
+4. **Floating vs Tiling** — aplikasi bisa dibuat floating (bebas dipindah, di-resize) lewat `floating enable` atau toggle. Aturan otomatis bisa dibuat dengan `for_window` kriteria. Untuk menemukan `app_id`/`class` gunakan `swaymsg -t get_tree`. ([wiki.archlinux.org][4])
+5. **Resize** — ada perintah `resize grow|shrink width|height [<amt>] [px|ppt]` dan `resize set ...` untuk mengatur ukuran. Unit: `px` (pixel) atau `ppt` (percentage points). Default amount biasanya 10 jika tidak ditentukan. (Perlu hati-hati: beberapa versi Sway punya perilaku/perubahan terkait units). ([Man Archlinux][3])
+6. **Gaps & borders** — Sway mendukung `gaps inner|outer ...` dan `default_border` untuk mengatur jarak dan border. Beberapa opsi gap/perilaku bisa bergantung versi; ada catatan bahwa `gaps` bersifat runtime untuk workspace tertentu. ([git.marussy.com][2])
+
+---
+
+# Contoh singkat (konfigurasi & penjelasan per-kata)
+
+Letakkan baris-baris ini di `~/.config/sway/config`. Untuk tiap contoh saya jelaskan **kata-per-kata** setelahnya.
+
+### A. Set modifier dan split default
+
+```conf
+# set mod key
+set $mod Mod4
+
+# split orientasi cepat
+bindsym $mod+v splitv
+bindsym $mod+h splith
+```
+
+**Penjelasan kata-per-kata**
+
+* `set` → perintah konfigurasi untuk menetapkan variabel.
+* `$mod` → nama variabel (konvensi: `$` di depan artinya variabel config).
+* `Mod4` → nama *keysym* (biasanya tombol Super/Windows).
+* `bindsym` → bind key (menautkan kombinasi tombol ke perintah).
+* `$mod+v` → kombinasi tombol (variabel `$mod` + tombol `v`).
+* `splitv` → perintah: buat split vertikal (container fokus dibagi secara vertikal).
+* `splith` → perintah: buat split horizontal.
+  (Catatan: `split` juga tersedia dan dapat dipakai sebagai `split` agar berganti ke split terakhir; dokumentasi man menjelaskan perilaku switching). ([Man Archlinux][3])
+
+---
+
+### B. Ganti layout container (stacked / tabbed / toggle)
+
+```conf
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+```
+
+**Penjelasan kata-per-kata**
+
+* `bindsym` → (lihat atas).
+* `$mod+s` → tekan mod + s.
+* `layout` → perintah untuk mengubah mode layout container fokus.
+* `stacking` → mode stacking (jendela ditumpuk, hanya satu terlihat kecuali diatur).
+* `tabbed` → mode tab (bar tab, perpindahan antar tab).
+* `toggle` → sub-perintah `layout toggle` : berputar melalui daftar layout.
+* `split` → argumen `toggle` (di sini maksudnya toggle antar orientasi split seperti `splith`/`splitv`).
+  (Ini cara umum untuk beralih mode layout di runtime atau via keybind). ([Man Archlinux][3])
+
+---
+
+### C. Toggle floating & fokus mode
+
+```conf
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+```
+
+**Per-kata**
+
+* `floating` → mode jendela yang tidak di-tiling (boleh dipindah bebas).
+* `toggle` → ubah ke sebaliknya (on→off / off→on).
+* `focus mode_toggle` → alihkan fokus ke jendela floating ketika ada; berguna untuk berpindah antara tiling dan floating. ([Random bits and pieces][5])
+
+---
+
+### D. Aturan otomatis untuk aplikasi (floating)
+
+```conf
+# buat Bitwarden selalu floating
+for_window [app_id="Bitwarden"] floating enable
+```
+
+**Per-kata**
+
+* `for_window` → jalankan perintah saat jendela yang **cocok** muncul.
+* `[app_id="Bitwarden"]` → **criteria**: pilih jendela berdasarkan `app_id` (bisa juga `class`, `instance`, `title`). Gunakan `swaymsg -t get_tree` untuk menemukan `app_id`.
+* `floating` → target perintah: mode floating.
+* `enable` → aktifkan (bisa `disable` atau `toggle`). ([wiki.archlinux.org][4])
+
+---
+
+### E. Resize via mode (contoh mode resize seperti i3)
+
+```conf
+mode "resize" {
+    bindsym j resize shrink width 10 px
+    bindsym k resize grow height 10 px
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+```
+
+**Per-kata**
+
+* `mode "resize"` → masuk ke mode keybinding bernama `resize`.
+* `bindsym j` → saat tekan `j` di mode ini.
+* `resize` → perintah untuk ubah ukuran container fokus.
+* `shrink` / `grow` → arah operasi (perkecil / perbesar).
+* `width` / `height` → sumbu yang diubah.
+* `10` → jumlah (angka).
+* `px` → unit pixel (bisa juga `ppt` untuk percentage points).
+* `Escape mode "default"` → keluar dari mode dan kembali ke mode default.
+* `bindsym $mod+r mode "resize"` → tekan `$mod+r` untuk masuk ke mode `resize`. ([Man Archlinux][3])
+
+---
+
+# Cara inspeksi & debugging (praktis)
+
+* **Lihat tree & properti jendela**: `swaymsg -t get_tree` — gunakan `jq` atau `grep` untuk mencari `app_id`/`window_properties`. Contoh: `swaymsg -t get_tree | grep app_id`. ([wiki.archlinux.org][4])
+* **Coba perintah runtime**: jalankan `swaymsg 'layout tabbed'` atau `swaymsg 'splitv'` untuk menguji tanpa reload config. ([Man Archlinux][3])
+* **IPC / scripting**: gunakan socket IPC (`SWAYSOCK`) untuk kontrol programatik dari bahasa apapun (JSON). `sway --get-socketpath` / `SWAYSOCK` environment. ([manpages.debian.org][6])
+
+---
+
+# Tips lanjutan & praktik terbaik
+
+* Simpan keybind untuk layout yang sering Anda pakai (stacked/tabbed/split).
+* Gunakan `for_window` untuk aplikasi tertentu (mis. dialog, password manager) supaya otomatis floating. ([wiki.archlinux.org][4])
+* **Hati-hati** dengan unit `ppt` vs `px` saat mereset ukuran; beberapa perilaku berbeda antara versi Sway dan i3. Jika butuh ukuran absolut gunakan `px`. ([Man Archlinux][3])
+* Gap & smart_gaps: `gaps inner 10`, `gaps outer all set 20`, dan `smart_gaps on` — jika tidak muncul setelah reload, beberapa perintah gap lebih tepat dijalankan runtime atau versi Sway Anda punya perbedaan implementasi. ([git.marussy.com][2])
+
+---
+
+# Ringkasan tindakan cepat (cheatsheet)
+
+* Split vertical: `splitv` / horizontal: `splith`. ([Man Archlinux][3])
+* Ubah layout container: `layout stacking` / `layout tabbed` / `layout toggle split`. ([Man Archlinux][3])
+* Toggle floating: `floating toggle` atau rule: `for_window [...] floating enable`. ([wiki.archlinux.org][4])
+* Resize: `resize grow width 10 px` / `resize set width 800 px height 600 px`. ([Man Archlinux][3])
+* Cek jendela & properties: `swaymsg -t get_tree`. ([wiki.archlinux.org][4])
+
+---
+
+[1]: https://swaywm.org/?utm_source=chatgpt.com "Sway"
+[2]: https://git.marussy.com/sway/blame/sway/sway.5.txt?id=953d6880c7f534b1e333fd00d32aceea63d0eda5&utm_source=chatgpt.com "sway.5.txt"
+[3]: https://man.archlinux.org/man/sway.5?utm_source=chatgpt.com "sway(5) - Arch Linux manual pages"
+[4]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
+[5]: https://www.igordejanovic.net/recipes/sway-config/?utm_source=chatgpt.com "Sway config • Random bits and pieces - Igor Dejanović"
+[6]: https://manpages.debian.org/testing/sway/sway-ipc.7.en.html?utm_source=chatgpt.com "sway-ipc(7) — sway — Debian testing"
+
 # Ringkasan singkat untuk bantuan
 
 1. Sumber otoritatif: **man pages** (`sway(5)`, `sway-input(5)`, `sway-output(5)`) dan **default config** di repository Sway (`config.in`) — ini berisi daftar directive/keyword yang dipakai Sway. ([Man Archlinux][1])
