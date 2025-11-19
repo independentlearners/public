@@ -1,412 +1,270 @@
+# [Modul 2: Bedah Sintaks dan Anatomi Konfigurasi][0]
 
-<!--
-<details>
-  <summary>📃 Daftar Isi</summary>
+Di Linux, "Power" ada pada file teks. Jika Anda bisa menguasai file konfigurasi, Anda menguasai aplikasinya.
 
-</details>
+-----
 
-#-->
-# Modul 2 — Sintaks & Penulisan Konfigurasi Wofi (penjelasan **kata-per-kata**) lalu contoh konfigurasi terperinci
+Secara bawaan, Wofi mungkin terlihat polos dan fungsinya standar. Kita akan mengubahnya. Wofi mencari konfigurasi di direktori standar XDG, yaitu `~/.config/wofi/`. Biasanya direktori ini belum ada, jadi kita harus membuatnya.
 
-Bagus — sebelum langsung mengubah file, kita akan uraikan **semua aturan penulisan** konfigurasi wofi dengan detil kata-per-kata (format, tipe nilai, komentar, escaping, aturan mode-spesifik, precedence CLI vs config, dan CSS theming). Setelah bagian sintaks selesai, saya sertakan contoh `~/.config/wofi/config` dan `style.css` lengkap — setiap baris akan dijelaskan satu-per-satu seperti yang Anda minta. Semua pernyataan teknis penting disertai rujukan dokumentasi resmi. ([Man Arch Linux][1])
+Ada dua file utama yang perlu Anda pahami:
 
----
+1.  **`config`**: Mengatur perilaku (*behavior*), parameter, dan logika.
+2.  **`style.css`**: Mengatur tampilan (*appearance*), warna, dan estetika.
 
-## 1) Ringkasan singkat tentang file yang relevan (lokasi & fungsi)
+### 1\. Identitas dan Konsep Teknis (Technical Deep Dive)
 
-* `~/.config/wofi/config` — file konfigurasi utama (opsional). Berisi pasangan *key=value* (snake_case). ([Man Arch Linux][1])
-* `~/.config/wofi/style.css` — file CSS untuk theming tampilan wofi (opsional). Wofi memakai styling berbasis GTK/CSS. ([Cloud Ninja][2])
-* `XDG_CACHE_HOME/wal/colors` — file warna opsional (pywal integration). ([Man Arch Linux][3])
-* Prioritas: **argumen CLI > file config > nilai default internal**. (argument command-line menimpa config). ([Man Arch Linux][1])
+#### **A. The Config File (Logic)**
 
----
+Format file ini mirip dengan file `.ini` standar tetapi sedikit lebih longgar.
 
-##  2) Format umum konfigurasi — **aturan dasar** (kata-per-kata)
+  * **Sintaks Dasar:** `key=value`
+  * **Boolean:** Jika sebuah fitur hanya perlu dinyalakan, cukup tulis kuncinya atau `key=true`.
+  * **Lokasi:** `~/.config/wofi/config`
 
-Dasar: file berisi baris *key=value*, satu pasangan per baris.
-Format ringkas:
+Beberapa parameter krusial (berdasarkan `man 5 wofi`):
 
-```
-snake_case_key=value
-```
+  * `mode`: Menentukan mode default (`drun`, `run`, atau `dmenu`).
+  * `width` / `height`: Dimensi jendela (bisa dalam pixel `px` atau persentase `%`).
+  * `insensitive`: Fitur pencarian *fuzzy* yang tidak membedakan huruf besar/kecil (Sangat penting untuk UX cepat).
+  * `allow_images`: Mengizinkan ikon (penting untuk estetika).
 
-Penjelasan kata-per-kata:
+#### **B. The Style File (Aesthetics)**
 
-* `snake_case_key` — nama opsi ditulis dengan huruf kecil dan underscore (`_`) untuk memisahkan kata. Contoh: `hide_scroll`, `matching`, `insensitive`. (Ini konsisten dengan flag CLI yang diubah ke snake_case di config). ([ManKier][4])
-* `=` — tanda sama dengan, pemisah antara *key* dan *value*. Harus ada tepat satu `=` yang memisahkan nama opsi dari nilainya untuk baris tersebut.
-* `value` — nilai opsi; tipe nilainya tergantung opsi (boolean `true/false`, integer, string/path, enum seperti `contains|fuzzy|multi-contains`, atau daftar mode dipisah koma). Contoh: `hide_scroll=true`, `lines=10`, `style=/home/poweruser/.config/wofi/style.css`. ([ManKier][4])
+Wofi menggunakan **GTK3 CSS**. Ini berbeda dengan CSS web biasa, meskipun sintaksnya 90% mirip.
 
-Aturan spasi:
+  * **Selectors (Pemilih):** Bagian mana yang ingin diubah?
+      * `#window`: Kontainer utama wofi.
+      * `#input`: Kotak pencarian tempat Anda mengetik.
+      * `#entry`: Setiap baris item dalam daftar.
+      * `#entry:selected`: Baris item yang sedang disorot kursor.
+  * **Lokasi:** `~/.config/wofi/style.css`
 
-* Biasanya spasi sebelum/ sesudah `=` **tidak diperlukan**; sebagian besar parser menerima `key = value` tetapi praktik terbaik adalah tulis tanpa spasi: `key=value`. (man page menyarankan pasangan sederhana; gunakan format konsisten). ([Man Arch Linux][1])
+-----
 
-Tipe nilai umum:
+### 2\. English Corner: Instructions & Configuration
 
-* **Boolean** — `true` atau `false` (semua huruf kecil). Contoh: `insensitive=true`.
-* **Integer** — angka desimal tanpa tanda: `lines=8`.
-* **String / Path** — path absolut relatif ke home kita: `style=/home/poweruser/.config/wofi/style.css`. Tidak perlu tanda kutip kecuali path mengandung `#` atau karakter spesial — lihat aturan escaping.
-* **Enum / Keyword** — opsi yang menerima daftar pilihan: `matching=contains` atau `matching=fuzzy`.
-* **List (mode list)** — ketika menerima beberapa mode, pisahkan dengan koma tanpa spasi: `show=run,drun,dmenu`. Untuk pemanggilan CLI juga bisa `--show run,drun`. ([Man Arch Linux][5])
+Di sini kita belajar bahasa instruksi yang sering Anda temukan di README GitHub atau dokumentasi konfigurasi.
 
----
+#### **A. Key Vocabulary**
 
-##  3) Komentar & escaping — (lihat ini bagus untuk dokumentasi inline)
+| Word | Part of Speech | Definition (ID) | Context Example |
+| :--- | :--- | :--- | :--- |
+| **Directory** | Noun | Folder (Istilah teknis Linux/CLI). | *Create the configuration **directory** first.* |
+| **Boolean** | Noun/Adj | Tipe data logika (Benar/Salah). | *Set the allow\_images flag to true (a **boolean** value).* |
+| **Comment** | Noun/Verb | Catatan dalam kode yang tidak dieksekusi. | *Use `#` to add a **comment** in the config file.* |
+| **Override** | Verb | Mengganti pengaturan default dengan pengaturan kita. | *This user config will **override** the system defaults.* |
+| **Properties** | Noun | Atribut yang diubah (misal: warna, lebar). | *CSS **properties** define the look of the window.* |
 
-* **Komentar**: segala sesuatu **setelah tanda `#`** pada sebuah baris dianggap komentar dan diabaikan. Jadi:
+#### **B. Grammar Focus: Imperative Sentences (Kalimat Perintah)**
 
-  ```
-  hide_scroll=true   # sembunyikan scrollbar
-  ```
+Dalam panduan teknis, kita jarang menggunakan subjek ("I", "You"). Kita langsung menggunakan **Verb 1 (Base Form)** di awal kalimat. Ini disebut *Imperative*.
 
-  akan mem-parsing `hide_scroll=true` dan sisanya komentar. ([Man Arch Linux][1])
+  * **Pola:** `[Verb 1] + [Object/Complement]`
+  * **Contoh:**
+      * *Salah:* You should open the file. (Terlalu bertele-tele).
+      * *Benar (Professional):* **Open** the configuration file. (Buka file konfigurasi).
+      * *Lainnya:* **Set** the width to 50%. **Save** the changes. **Restart** the application.
 
-* **Jika Anda perlu menggunakan `#` sebagai bagian dari nilai**, prefix `#` dengan backslash `\#`. Tetapi per man page: “Anything following a `#` is considered comment unless the `#` is prefixed with a `\`.” Selain itu backslash harus di-escape sendiri. Jadi untuk menulis literal `\` atau literal `#` mungkin perlu `\\` atau `\#`. Contoh:
+#### **C. Professional Interaction**
 
-  ```
-  example=some\#value
-  path_with_backslash=C:\\\\path\\to\\file
-  ```
+Jika Anda ingin bertanya mengenai styling di komunitas:
 
-  (prinsip: backslash memerlukan perhatian—jika pakai banyak backslash, test dulu). ([Man Arch Linux][1])
+> *"Does Wofi support the standard GTK `box-shadow` property? I attempted to apply it to the `#window` selector, but it doesn't render."*
+> (Apakah Wofi mendukung properti GTK `box-shadow` standar? Saya mencoba menerapkannya pada selektor `#window`, tapi tidak muncul).
 
----
+-----
 
-##  4) Mode-spesifik option (format khusus)
+### 3\. Implementasi: Membuat Konfigurasi (CLI Based)
 
-Beberapa opsi hanya berlaku untuk mode tertentu (mis. `dmenu`, `drun`, `run`). **Penulisan di file config** menggunakan pola:
+Mari kita praktikkan di terminal Sway Anda. Kita akan menggunakan editor teks CLI (saya asumsikan Anda bisa menggunakan `nano`, `vim`, atau `micro`).
 
-```
-<mode>-<option_name>=<value>
-```
+**Langkah 1: Buat Direktori**
 
-Contoh:
-
-```
-dmenu-parse_action=true
-```
-
-Penjelasan kata-per-kata:
-
-* `<mode>` — nama mode (dmenu, drun, run).
-* `-` — tanda minus sebagai pemisah antara nama mode dan nama opsi mode-spesifik.
-* `<option_name>` — nama opsi yang spesifik untuk mode itu (contoh `parse_action`).
-* `=` dan `<value>` seperti biasa. ([ManKier][4])
-
-Catatan: Anda dapat menggabungkan beberapa mode di CLI (mis. `--show run,drun`) dan mode akan dimuat sesuai urutan; masing-masing mode hanya boleh dimuat satu kali. ([Man Arch Linux][5])
-
----
-
-##  5) Pengaturan lewat CLI setara / define dari baris perintah
-
-* Anda bisa menetapkan opsi config langsung saat menjalankan wofi menggunakan `-D`/`--define KEY=VALUE` atau menggunakan flag CLI yang setara. Ini berguna untuk skrip. Contoh:
-
-```
-wofi -Dhide_scroll=true --show drun
+```bash
+mkdir -p ~/.config/wofi
 ```
 
-Penjelasan: `-D` beri definisi sementara yang menimpa config pada proses berjalan. Pilihan CLI memiliki prioritas tertinggi. ([Man Arch Linux][3])
+*Catatan:* `-p` (parents) memastikan tidak error jika direktori induknya belum ada.
 
----
+**Langkah 2: Membuat File `config`**
+Kita buat file yang mendukung *fuzzy search* dan tampilan responsif.
 
-##  6) Opsi penting yang sering dipakai — ringkasan (kata-per-kata)
-
-Saya tampilkan opsi yang sering Anda butuhkan; tiap opsi disertai arti singkat dan contoh penggunaan di config + CLI. Semua diambil dari man page/ dokumentasi. ([Man Arch Linux][3])
-
-* `style=PATH`
-
-  * arti: path ke file CSS yang dipakai.
-  * contoh config: `style=/home/poweruser/.config/wofi/style.css`
-  * CLI: `--style /path/to/style.css`. ([Manpages Ubuntu][6])
-
-* `conf=PATH` atau CLI `-c/--conf=PATH`
-
-  * arti: gunakan config file selain default.
-  * contoh: `wofi --conf /home/poweruser/.config/wofi/myconf`. ([Man Arch Linux][3])
-
-* `show=MODE[,MODE...]` atau CLI `--show`
-
-  * arti: mode yang akan ditampilkan (mis. `drun`, `run`, `dmenu`). Pisahkan koma tanpa spasi.
-  * contoh: `show=drun` atau `wofi --show run,drun`. ([Man Arch Linux][5])
-
-* `dmenu-parse_action=BOOL` (contoh mode-specific)
-
-  * arti: opsi mode `dmenu` untuk parse action. `true/false`. ([ManKier][4])
-
-* `lines=NUMBER` atau `-L, --lines`
-
-  * arti: tinggi jendela dalam jumlah baris (bukan pixel).
-  * contoh: `lines=8` atau `wofi --lines 8`. ([Man Arch Linux][3])
-
-* `columns=NUMBER` atau `-w, --columns`
-
-  * arti: jumlah kolom item yang ditampilkan. Default 1.
-  * contoh: `columns=2`. ([Man Arch Linux][3])
-
-* `hide_scroll=BOOL`
-
-  * arti: sembunyikan scrollbar (tetap bisa scroll jika CSS/behavior mendukung).
-  * contoh: `hide_scroll=true`. ([ManKier][4])
-
-* `insensitive=BOOL`
-
-  * arti: pencarian case-insensitive jika `true`.
-  * contoh: `insensitive=true`. ([ManKier][4])
-
-* `allow_markup` / CLI `--allow-markup`
-
-  * arti: izinkan Pango markup pada entri (bisa menambah formatting seperti `<b>`, `<i>`). Hati-hati jika input berasal dari sumber tak tepercaya. ([Linux Command Library][7])
-
-* `fork` / `-f, --fork`
-
-  * arti: jalankan wofi dan forking ke background sehingga terminal yang memanggil bisa ditutup. ([Linux Command Library][7])
-
-* `term` / `-t, --term`
-
-  * arti: perintah terminal yang dipakai saat membuka terminal dari mode `run`. Contoh: `term=alacritty -e`. ([Linux Command Library][7])
-
-* `gtk-dark` / `--gtk-dark`
-
-  * arti: paksa style GTK ke tema gelap. ([Man Arch Linux][3])
-
-Catatan: daftar lengkap ada di manual (man pages); di sini saya tampilkan yang paling sering berguna untuk workflow di Sway. ([Man Arch Linux][3])
-
----
-
-##  7) Theming CSS — struktur selector & properti yang penting (kata-per-kata)
-
-Wofi memakai CSS/GTK selectors — beberapa selector umum yang sering dipakai (nama selector dapat berbeda antar versi, tapi umumnya tersedia yang berikut):
-
-* `window` — container jendela wofi (seluruh area).
-* `#outer-box` — kotak luar (wrapper).
-* `#inner-box` — area yang menampilkan daftar entry.
-* `#input` — area input / search box.
-* `#entry` — tiap baris/entry pada daftar.
-* `#text` — teks judul entry.
-* `#img` — gambar/icon entri.
-* `#scroll` — scrollbar area.
-  Contoh CSS ringkas:
-
-```css
-window {
-  margin: 8px;           /* jarak luar jendela */
-  border-radius: 8px;    /* sudut membulat */
-  background-color: rgba(20,20,20,0.9);
-}
-
-#input {
-  padding: 6px;          /* jarak dalam input */
-  font-size: 16px;
-}
-
-#entry {
-  padding: 4px 8px;      /* jarak tiap entry: vertikal 4px, horizontal 8px */
-}
-
-#img {
-  width: 24px;
-  height: 24px;
-}
+```bash
+nano ~/.config/wofi/config
 ```
 
-Penjelasan kata-per-kata property umum:
-
-* `margin` — ruang di luar box (jarak ke elemen lain).
-* `padding` — ruang di dalam box (jarak isi ke border).
-* `border-radius` — sudut membulat.
-* `background-color` — warna latar; dapat menggunakan `rgba()` untuk transparansi.
-* `font-size` — ukuran font.
-* `width/height` — ukuran elemen (ikon).
-  Sumber contoh selector: dokumentasi theming wofi dan koleksi tema. ([Cloud Ninja][2])
-
-Catatan: CSS di wofi mirip CSS GTK — beberapa property CSS standar GTK berfungsi; uji perubahan dan reload wofi untuk melihat efek.
-
----
-
-##  8) Contoh `~/.config/wofi/config` lengkap — **setiap baris dijelaskan kata-per-kata**
-
-Berikut contoh file config yang aman sebagai starting point. Setelah itu saya jelaskan tiap baris.
+Salin konfigurasi berikut (Isi materi ini saya buat untuk performa dan estetika minimalis):
 
 ```ini
-# ~/.config/wofi/config
-# Basic behaviour
+# Wofi Configuration
+# Mode drun = Desktop Run (Mencari aplikasi terinstal)
+mode=drun
+
+# Tampilan (Layout)
 show=drun
-style=/home/poweruser/.config/wofi/style.css
-conf=/home/poweruser/.config/wofi/config
+width=500
+height=400
+# Posisi: center, top, bottom, left, right
+location=center
 
-# Appearance
-lines=10
-columns=1
-hide_scroll=true
-gtk_dark=false
-
-# Search behavior
+# Perilaku (Behavior)
+# Prompt text di kotak pencarian
+prompt=Search...
+# Pencarian tidak peduli huruf besar/kecil (Wajib untuk kecepatan)
 insensitive=true
-matching=contains
+# Mengizinkan pencarian fuzzy (tidak harus urut karakter)
+allow_markup=true
+# Hilangkan scrollbar jika tidak suka
+no_actions=true
 
-# dmenu mode specific
-dmenu-parse_action=true
+# Ikon
+allow_images=true
+image_size=24
 
-# Markdown / markup
-allow_markup=false
+# Eksekusi
+# Jika menjalankan command terminal, gunakan foot (sesuaikan terminal Anda)
+term=foot
 ```
 
-Penjelasan baris per baris (kata-per-kata):
+*Simpan (Ctrl+O) dan Keluar (Ctrl+X).*
 
-* `# ~/.config/wofi/config`
+**Langkah 3: Membuat File `style.css`**
+Kita buat tampilan yang elegan, gelap, dan minimalis (sesuai selera estetika Anda).
 
-  * komentar: judul file supaya mudah identifikasi.
+```bash
+nano ~/.config/wofi/style.css
+```
 
-* `# Basic behaviour`
-
-  * komentar pemisah.
-
-* `show=drun`
-
-  * `show` = nama opsi; `=` pemisah; `drun` = nilai.
-  * arti lengkap: jalankan wofi di mode `drun` (tampilkan aplikasi dari `.desktop` entries). Anda bisa mengganti `drun` menjadi `run` atau `dmenu` atau `run,drun` jika ingin beberapa mode. ([Man Arch Linux][5])
-
-* `style=/home/poweruser/.config/wofi/style.css`
-
-  * `style` = nama opsi; nilai adalah path absolut ke file CSS. Menentukan file ini menimpa default style. Pastikan path benar dan file terbaca. ([Manpages Ubuntu][6])
-
-* `conf=/home/poweruser/.config/wofi/config`
-
-  * eksplisit memberi tahu wofi path config. Biasanya tidak perlu (karena ini adalah file default), tapi berguna kalau menjalankan wofi dengan config lain.
-
-* `# Appearance`
-
-  * komentar bagian tampilan.
-
-* `lines=10`
-
-  * `lines` = tinggi tampilan dalam baris; `10` = nilai integer. Ini mengatur berapa banyak baris yang terlihat tanpa scroll. ([Man Arch Linux][3])
-
-* `columns=1`
-
-  * `columns` = jumlah kolom; `1` = nilai integer. Jika `2`, entri akan ditata 2 kolom. ([Man Arch Linux][3])
-
-* `hide_scroll=true`
-
-  * sembunyikan scrollbar (boolean). Perhatikan: Anda mungkin masih bisa scrolling; CSS dapat mengatur perilaku tampilan lebih lanjut. ([ManKier][4])
-
-* `gtk_dark=false`
-
-  * jangan paksa mode GTK gelap. Bisa diganti `true` jika ingin GTK dark.
-
-* `# Search behavior`
-
-  * komentar.
-
-* `insensitive=true`
-
-  * pencarian case-insensitive (`true` berarti “abaikan huruf besar/kecil”). ([ManKier][4])
-
-* `matching=contains`
-
-  * `matching` = mode pencocokan; `contains` berarti cocok bila query muncul di bagian nama entry. Alternatif: `fuzzy`, `multi-contains`. ([ManKier][4])
-
-* `# dmenu mode specific`
-
-  * komentar untuk opsi mode-spesifik.
-
-* `dmenu-parse_action=true`
-
-  * `dmenu-parse_action` adalah opsi khusus untuk mode `dmenu`; `true` mengaktifkannya. Format `mode-option=value` sesuai aturan mode-spesifik. ([ManKier][4])
-
-* `# Markdown / markup`
-
-  * komentar
-
-* `allow_markup=false`
-
-  * jangan izinkan Pango markup pada entri (keamanan & stabilitas). Jika Anda ingin format kaya, ubah ke `true` (tapi hati-hati terhadap input tak tepercaya). ([Linux Command Library][7])
-
----
-
-##  9) Contoh `style.css` terperinci — setiap aturan dijelaskan
-
-File: `~/.config/wofi/style.css`
+Salin CSS berikut:
 
 ```css
-/* style.css contoh untuk wofi */
-window {
-  margin: 8px;                 /* jarak luar jendela */
-  border-radius: 12px;         /* sudut membulat */
-  background-color: rgba(18,18,18,0.85); /* latar semi-transparan */
-  min-width: 400px;            /* lebar minimal jendela */
+/* Reset dasar */
+* {
+    font-family: "JetBrains Mono", monospace; /* Sesuaikan font Anda */
+    font-size: 14px;
 }
 
+/* Jendela Utama */
+#window {
+    margin: 0px;
+    border: 2px solid #458588; /* Warna border (misal: Gruvbox Teal) */
+    background-color: #282828; /* Background gelap */
+    border-radius: 10px; /* Sudut membulat */
+}
+
+/* Kotak Input */
 #input {
-  padding: 8px;                /* jarak dalam input */
-  font-size: 15px;             /* ukuran huruf input */
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin: 5px;
+    border: none;
+    background-color: #3c3836;
+    color: #ebdbb2; /* Warna teks */
+    border-radius: 5px;
 }
 
+/* Area dalam input */
 #inner-box {
-  padding: 6px;                /* jarak di sekitar daftar entry */
+    margin: 5px;
+    background-color: transparent;
 }
 
+/* Item List (Non-selected) */
 #entry {
-  padding: 6px 10px;           /* padding vertikal dan horizontal */
-  border-radius: 6px;          /* sedikit rounding tiap entry */
+    margin: 0px 5px;
+    padding: 5px;
+    border: none;
+    background-color: transparent;
 }
 
+/* Item List (Selected/Hover) */
 #entry:selected {
-  background-color: rgba(100, 100, 100, 0.12); /* highlight saat seleksi */
-}
-
-#img {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;           /* jarak antara icon dan text */
-}
-
-#text {
-  font-size: 14px;
+    background-color: #458588; /* Warna sorotan */
+    color: #282828;
+    border-radius: 5px;
+    font-weight: bold;
 }
 ```
 
-Penjelasan kilas kata-per-kata:
+-----
 
-* `window { ... }` — selector untuk keseluruhan jendela wofi. Semua property di dalam memengaruhi tampilan dasar.
-* `margin: 8px;` — beri jarak 8px di luar container.
-* `border-radius: 12px;` — sudut membulat 12px.
-* `background-color: rgba(18,18,18,0.85);` — warna latar pakai `rgba(red,green,blue,alpha)`; alpha <1 membuat transparansi.
-* `min-width: 400px;` — ukuran minimal lebar; berguna untuk mencegah layout terlalu sempit.
-* `#input { ... }` — area input/search. `padding` membuat ruang internal; `font-size` mengatur ukuran teks.
-* `#entry:selected { ... }` — pseudo-state untuk entry yang dipilih (serupa :hover / selected).
-* `#img` & `#text` — mengatur ukuran ikon dan teks pada tiap entry.
+### 4\. Sumber Resmi (Official References)
 
-Sumber selector/property: dokumentasi theming wofi dan contoh tema. ([Cloud Ninja][2])
+Selalu validasi sintaks di sini jika ragu:
 
----
+1.  **Config Parameters:** Jalankan `man 5 wofi` di terminal. Ini adalah "kitab suci" untuk mengetahui parameter apa saja yang valid di file `config`.
+2.  **GTK CSS Properties:** Wofi menggunakan subset dari GTK CSS. Referensi lengkap properti CSS yang didukung GTK ada di [Gnome Developer Documentation (CSS Overview)](https://docs.gtk.org/gtk3/css-overview.html).
 
-##  10) Checklist praktek sebelum Anda mengedit file (kesalahan umum)
+-----
 
-* Pastikan folder `~/.config/wofi/` ada dan file `config` / `style.css` dapat dibaca oleh user.
-* Gunakan path absolut di config untuk menghindari masalah PATH saat dipanggil dari sway.
-* Jika mengubah style, jalankan `wofi --show drun` dari terminal untuk melihat pesan error (redirect stderr ke file bila perlu). ([GitHub][8])
-* Saat menulis komentar atau memasukkan `#` dalam nilai, ingat aturan escaping. ([Man Arch Linux][1])
+### 5\. Error Handling & Troubleshooting
 
----
+Bagian penting untuk Anda catat.
 
-##  11) Referensi ringkas (bahan bacaan lanjutan)
+**Error A: Perubahan tidak terlihat**
+
+  * **Penyebab:** Wofi tidak mendukung *hot-reload* (memuat ulang otomatis saat file disimpan).
+  * **Solusi:** Anda harus menutup Wofi dan menjalankannya lagi.
+      * *Command:* `pkill wofi` lalu jalankan `wofi --show drun`.
+
+**Error B: Tampilan berantakan / CSS Parsing Error**
+
+  * **Gejala:** Wofi muncul tapi warnanya putih polos atau terminal mengeluarkan pesan error "CSS parsing error".
+  * **Solusi:** Jalankan Wofi lewat terminal (`wofi --show drun`). Perhatikan output log-nya. Wofi akan memberitahu baris ke berapa di `style.css` yang salah sintaksnya.
+  * **English Error Message:** \*"Gtk-WARNING \**: Parsing error at line 10: 'foobar' is not a valid property name."*
+
+**Error C: Ikon tidak muncul**
+
+  * **Analisis:** Anda mungkin sudah set `allow_images=true` tapi tidak muncul.
+  * **Solusi:** Pastikan tema ikon sistem diatur dengan benar (biasanya diatur via `gsettings` atau `nwg-look` di Arch/Sway). Wofi mengambil ikon dari tema GTK sistem.
+
+-----
+
+**Next Step:**
+Sekarang Wofi Anda sudah memiliki "otak" (config) dan "wajah" (style). Tapi, membukanya lewat terminal itu merepotkan. Kita perlu mengintegrasikannya dengan tombol keyboard di Sway.
+
+## Referensi ringkas (bahan bacaan lanjutan)
 
 * Manual page wofi (config & opsi). ([Man Arch Linux][1])
 * Dokumen theming & contoh CSS. ([Cloud Ninja][2])
 * Contoh penggunaan mode & kombinasi `--show`. ([Man Arch Linux][5])
+* Jika mengubah style, jalankan `wofi --show drun` dari terminal untuk melihat pesan error (redirect stderr ke file bila perlu). ([GitHub][8])
+* Pencarian case-insensitive (`true` berarti “abaikan huruf besar/kecil”). ([ManKier][4])
+* `XDG_CACHE_HOME/wal/colors` — file warna opsional (pywal integration). ([Man Arch Linux][3])
+* jangan izinkan Pango markup pada entri (keamanan & stabilitas). Jika Anda ingin format kaya, ubah ke `true` (tapi hati-hati terhadap input tak tepercaya). ([Linux Command Library][7])
+* `style` = nama opsi; nilai adalah path absolut ke file CSS. Menentukan file ini menimpa default style. Pastikan path benar dan file terbaca. ([Manpages Ubuntu][6])
 
 ---
-<!--
-Kalau Anda setuju, langkah berikutnya saya akan **terapkan contoh konfigurasi nyata** (salin-tempel) dan menjelaskan **setiap argumen/opsi klinis** pada baris `bindsym` Sway atau skrip pemanggil (mis. script power menu dengan pipe) — **kata-per-kata** untuk setiap command dan argumennya, lalu latihan debugging. Saya akan langsung keluarkan file contoh siap pakai dan langkah verifikasi.
 
-Katakan "lanjut konfigurasi praktis" dan saya kerjakan seluruh file konfigurasi + skrip integrasi ke Sway (dijelaskan per-baris).
-Baik, kita masuk **Modul 2 — Sintaks & Struktur Dasar Config Wofi**.
-Ini modul yang sangat fundamental: kita mempelajari *bahasa* yang dipakai Wofi dulu sebelum mulai menulis konfigurasi nyata. Semua detail sintaks akan dibongkar kata-per-kata agar nanti Anda bisa membaca setiap baris config seperti membaca Bahasa Indonesia sendiri.
+###   **4. SUMBER BANTUAN RESMI UNTUK SINTAKS**
 
+Anda bisa memvalidasi dan mendalami lebih lanjut:
 
--->
-[0]: ../
+* Dokumentasi Wofi resmi:
+  [https://hg.sr.ht/~scoopta/wofi/tree/default/docs](https://hg.sr.ht/~scoopta/wofi/tree/default/docs)
+* GTK CSS Reference (Wofi memakai GTK layer):
+  [https://docs.gtk.org](https://docs.gtk.org)
+* Sway Wiki:
+  [https://github.com/swaywm/sway/wiki](https://github.com/swaywm/sway/wiki)
+* lalulintas bantuan CLI seperti:
+
+```
+wofi --help
+man wofi
+```
+---
+
+> - **[Selanjutnya][selanjutnya]**
+> - **[Sebelumnya][sebelumnya]**
+> - **[Nich][kurikulum]**
+> - **[Home][domain]**
+
+[domain]: ../../../../../../../README.md
+[kurikulum]: ../../README.md
+[sebelumnya]: ../bagian-1/README.md
+[selanjutnya]: ../bagian-3/README.md
+
+<!----------------------------------------------------->
+
+[0]: ../README.md
 [1]: https://man.archlinux.org/man/wofi.5.en?utm_source=chatgpt.com "wofi(5) - Arch manual pages"
 [2]: https://cloudninja.pw/docs/wofi.html?utm_source=chatgpt.com "Wofi"
 [3]: https://man.archlinux.org/man/wofi.1.en?utm_source=chatgpt.com "wofi(1) - Arch manual pages"
@@ -426,764 +284,4 @@ Ini modul yang sangat fundamental: kita mempelajari *bahasa* yang dipakai Wofi d
 [17]: ../
 [18]: ../
 
----
-
-# **Sintaks Config Wofi (Konsep Penulisan, Struktur, Hierarki Opsi)**
-
-*(Sebelum membuat config nyata)*
-
----
-
-## **Bagian A — Prinsip umum: wofi memakai format *key = value* sederhana**
-
-Wofi **tidak** memakai JSON, YAML, TOML, atau INI lengkap.
-Formatnya adalah:
-
-```
-nama_opsi=nilai
-```
-
-atau
-
-```
-nama_opsi: nilai
-```
-
-Format ini diterima *keduanya*, tetapi gaya utama yang muncul di dokumentasi adalah bentuk memakai **=**.
-
-### Penjelasan kata-per-kata:
-
-* **nama_opsi**
-  Ini adalah identifier, yaitu nama sebuah properti internal yang dipahami Wofi.
-  Semua nama opsi memakai **snake_case** (huruf kecil + underscore).
-  Contoh: `prompt`, `width`, `height`, `no_actions`, `allow_images`, `normal_window`.
-
-* **=**
-  Operator assignment. Artinya: “setel properti ini menjadi nilai berikut”.
-
-* **nilai**
-  Bisa berupa:
-
-  * angka (mis. `width=600`)
-  * teks/string (mis. `prompt=Jalankan:`)
-  * boolean (mis. `no_actions=true`)
-  * nama mode (mis. `show=drun`)
-  * enumerasi tertentu
-  * path file
-
-* **Tidak ada tanda kutip wajib**
-  Anda hanya menulis teks langsung:
-
-  ```
-  prompt=Jalankan aplikasi
-  ```
-
-  Jika ada spasi, tetap tidak perlu kutip. Wofi membaca seluruh setelah tanda `=` sebagai nilai.
-
----
-
-## **Bagian B — Hal-hal penting tentang parsing file config**
-
-1. **Whitespace tidak penting**
-   Spasi sebelum/ sesudah tanda `=` diabaikan. Ini valid:
-
-   ```
-   prompt = Cari app
-   ```
-
-2. **Tidak ada section seperti `[General]`**
-   Berbeda dari INI. Semua opsi berada di satu namespace global.
-
-3. **Komentar diawali tanda pagar `#`**
-   Segala teks setelah `#` sampai akhir baris diabaikan.
-
-   Contoh:
-
-   ```
-   prompt=Menu utama  # ini komentar
-   ```
-
-4. **Prioritas nilai (urutan penting)**
-   Wofi memproses nilai dalam urutan berikut:
-
-   ```
-   Argumen CLI > File config > Default internal
-   ```
-
-   Artinya: opsi pada command line (*mis. `wofi --width 600`*) **menggantikan** apa pun yang ada di file config.
-
-5. **Jika opsi tidak dikenal**
-   Wofi akan mengabaikannya tanpa error fatal.
-   Ini penting untuk debugging: jika ada salah eja, Wofi **tidak akan memberi tahu**, hanya diam-diam mengabaikan.
-
----
-
-## **Bagian C — Struktur umum file config Wofi**
-
-File Anda nantinya akan berada di:
-
-```
-~/.config/wofi/config
-```
-
-Struktur tipikal:
-
-```
-# Mode default untuk wofi ketika tidak diberi argumen
-show=drun
-
-# Ukuran jendela
-width=600
-height=300
-
-# Prompt teks
-prompt=Run:
-
-# Perilaku
-normal_window=true
-allow_images=true
-```
-
-Setiap baris selalu satu opsi. Tidak ada nested block.
-
----
-
-## **Bagian D — Sintaks opsi via Command Line (CLI)**
-
-Wofi memiliki dua cara konfigurasi:
-
-1. **via file config**
-2. **via argumen CLI** (yang selalu override config)
-
-Bentuk CLI mengikuti pola:
-
-```
-wofi --nama-opsi nilai
-```
-
-Contoh:
-
-```
-wofi --show drun
-```
-
-Penjelasan kata-per-kata:
-
-* `--show` → nama opsi
-* `drun` → nilai
-* Spasi digunakan untuk memisahkan opsi dan nilai, bukan tanda `=`.
-
-Beberapa opsi adalah *flag* (boolean).
-Contoh:
-
-```
-wofi --normal-window
-```
-
-Flag ini setara dengan:
-
-```
-normal_window=true
-```
-
-di file config.
-
----
-
-## **Bagian E — Bagaimana Wofi membaca style.css**
-
-`style.css` *tidak mengikuti format config* tetapi sepenuhnya mengadopsi **CSS GTK**.
-
-Struktur CSS Wofi:
-
-* Wofi secara internal memiliki ID dan kelas GTK tertentu.
-* Tema bekerja dengan selector seperti:
-
-```
-window {
-    background-color: #1e1e1e;
-}
-
-entry {
-    padding: 5px;
-}
-
-listview row:selected {
-    background-color: #444;
-}
-```
-
-*Karena ini CSS GTK, bukan CSS browser,* beberapa properti berbeda.
-Nanti kita buat modul khusus mengenai CSS Wofi (Modul 3).
-
----
-
-## **Bagian F — Konsep hierarki opsi (logika internal)**
-
-Wofi membagi opsi dalam dua kelompok besar:
-
-### 1. **Opsi tampilan dan jendela (Window/UI)**
-
-Mengatur bentuk window, lebar, tinggi, padding, prompt, alignment.
-
-### 2. **Opsi perilaku & mode operasi**
-
-Mengatur bagaimana wofi bekerja:
-
-* mode (“run”, “drun”, “dmenu”)
-* pencarian fuzzy
-* perintah fallback
-* filtering
-* jumlah hasil
-* apakah history disimpan
-* path icon
-* mode dmenu via stdin
-
-Dalam modul 2 ini kita baru membongkar sintaks & konsep penulisan opsinya.
-
----
-
-## **Bagian G — Perbedaan penting antara tiga mode Wofi**
-
-Wofi memiliki 3 mode inti, dan ini akan mempengaruhi *set opsi* yang relevan.
-
-### **1) Mode “drun”**
-
-Membaca menu dari `.desktop` (XDG Desktop Entry).
-Ini yang digunakan sebagai launcher aplikasi grafis.
-
-### **2) Mode “run”**
-
-Membaca PATH dan menjalankan perintah shell.
-Secara teknis ia tidak memanggil shell secara langsung; ia mengeksekusi perintah seperti launcher.
-
-### **3) Mode “dmenu”**
-
-Membaca dari stdin.
-Jika Anda membuat piped menu, mode ini yang dipakai.
-
-Kita nanti akan membahas opsinya satu-per-satu di **Modul 2B**.
-
----
-
-## **Bagian H — Terminologi penting dalam Wofi (harus dikuasai sebelum lanjut)**
-
-Sebelum masuk konfigurasi lengkap, pahami istilah berikut:
-
-* **Entry**
-  Input box tempat Anda mengetik.
-
-* **Row**
-  Setiap item hasil pencarian, baik aplikasi maupun teks dalam mode dmenu.
-
-* **Listview / list**
-  Container daftar hasil.
-
-* **Prompt**
-  Label di sebelah kiri input box.
-
-* **Action**
-  Fitur Wofi untuk memunculkan menu tindakan (ikon kanan). Bisa dimatikan dengan `no_actions=true`.
-
-* **Icons**
-  Icon aplikasi pada mode drun. Path icon mengikuti standar XDG icon theme.
-
-* **Re-filtering / live filtering**
-  Cara Wofi menyaring hasil setiap kali Anda mengetik.
-
-* **Word match / fuzzy match**
-  Mode pencarian. (Beberapa versi wofi mengubah defaultnya, kita bahas detail nanti).
-
-Semua ini akan muncul dalam opsi konfigurasi.
-
----
-
-## **Bagian I — Bagian paling penting dari Modul 2: Cara membaca dan menulis config Wofi secara benar**
-
-Ini inti modul.
-
-### **1. Semua opsi = satu baris = satu assignment**
-
-Tidak ada nested sections.
-
-### **2. Tidak ada koma, bracket, atau tanda petik wajib**
-
-Ini bukan JSON/YAML.
-
-### **3. Anda bisa menulis opsinya dalam urutan apa pun**
-
-Urutan tidak mempengaruhi parsing.
-
-### **4. Jika salah tulis nama opsi**
-
-Wofi tidak error, hanya diabaikan → debugging harus manual.
-
-### **5. Jika Anda kombinasi CLI dan config**
-
-Argumen CLI menang.
-
-### **6. Jika ada dua file config**
-
-Wofi hanya membaca *satu*, yaitu:
-
-```
-$XDG_CONFIG_HOME/wofi/config
-```
-
-Jika environment variable tidak ada, berarti:
-
-```
-~/.config/wofi/config
-```
-
----
-
-## **Bagian J — Tugas praktik Modul 2**
-
-Sebelum lanjut ke opsi lengkap, lakukan latihan berikut (sangat penting).
-
----
-
-### **Tugas 1 — Buat file config minimal dan uji parsing**
-
-Buat file:
-
-```
-mkdir -p ~/.config/wofi
-nano ~/.config/wofi/config
-```
-
-Isi:
-
-```
-prompt=Test prompt
-width=500
-height=200
-```
-
-Jalankan:
-
-```
-wofi 2> /tmp/wofi.cfgtest
-```
-
-Periksa apakah ada error parsing:
-
-```
-cat /tmp/wofi.cfgtest
-```
-
-(Jika kosong berarti parsing OK.)
-
----
-
-### **Tugas 2 — Salah-sengaja menulis opsi dan lihat efeknya**
-
-Ubah:
-
-```
-widt=500
-```
-
-Jalankan kembali.
-Anda akan lihat **wofi tetap berjalan** tetapi lebar default digunakan.
-
-Ini latihan penting memahami bahwa wofi tidak memunculkan error untuk opsi yang tidak dikenali.
-
----
-
-### **Tugas 3 — Tes override CLI**
-
-Isi config:
-
-```
-width=300
-height=100
-```
-
-Jalankan:
-
-```
-wofi --width 800 --height 600
-```
-
-Window akan memakai nilai dari CLI, bukan config.
-
----
-
-## **Bagian K — Checklist Kompetensi Modul 2**
-
-Setelah modul ini Anda harus bisa:
-
-* [ ] Menjelaskan bentuk sintaks wofi (key=value).
-* [ ] Menulis opsi sederhana dan mengetahui bahwa Wofi tidak memakai tanda kutip.
-* [ ] Memahami cara kerja komentar `#`.
-* [ ] Memahami bahwa CLI override config.
-* [ ] Mengetahui bahwa opsi salah-eja tidak error.
-* [ ] Mengerti konsep entry, row, prompt, listview.
-* [ ] Mengerti tiga mode wofi dan pengaruhnya.
-* [ ] Menguji parsing file config dengan redirect stderr.
-
-Jika semuanya sudah aman dan Anda siap masuk ke bagian paling besar:
-
----
-
-# **Modul 2B — Detail seluruh opsi konfigurasi Wofi, penjelasan kata-per-kata, ilustrasi, contoh, debugging, dan rekomendasi Sway**
-
-Ini modul yang sangat besar.
-Akan mencakup:
-
-* Semua opsi window/layout (width, height, location, padding, halignment, valignment, image support, fixed height/width behaviour)
-* Semua opsi input/filter/pencarian
-* Semua opsi mode drun/run/dmenu
-* Semua opsi perilaku UI
-* Semua perbedaan antar versi Wofi
-* Debugging common misconfiguration
-* Contoh file config lengkap
-* Penjelasan kata-per-kata untuk **setiap** baris
-<!--
-Jika Anda siap lanjut, cukup jawab:
-
-**"lanjut Modul 2B"**
-
-Setelah itu saya buka seluruh daftar opsi lengkap satu per satu, sangat rinci, sampai Anda bisa menguasai wofi seperti developer internalnya.
-
-Baik, kita lanjut ke **Modul 2 — Bagian B: Sintaks Lengkap, Anatomi, dan Cara Kerja File Konfigurasi Wofi**.
-Ini bagian yang sangat teknis, jadi anggap ini seperti membedah organisme kecil bernama *wofi.conf* dan *style.css* hingga setiap sel-selnya terlihat jelas.
-
--->
----
-
-## **MODUL 2 — BAGIAN B
-
-Anatomi Sintaks Wofi (wofi.conf & style.css) — Dijelaskan Kata-per-Kata**
-
-Sebelum menyentuh konfigurasi, peserta harus memahami logika internal yang dipatuhi Wofi. Ibarat belajar sihir, kamu harus tahu dulu grammarnya sebelum merapal mantra.
-
----
-
-# **1. STRUKTUR DASAR KONFIGURASI WOFI**
-
-Wofi memiliki dua jenis berkas konfigurasi:
-
-### 1) **wofi.conf**
-
-Berisi *opsi perilaku* (behavior) dan *logika internal program*.
-
-Formatnya sederhana:
-
-```
-kunci = nilai
-```
-
-Tidak ada array, tidak ada nested object, tidak ada JSON. Hanya key-value.
-
----
-
-### 2) **style.css**
-
-Berisi styling seperti tema GTK/CSS yang mengatur tampilan antarmuka: warna, padding, radius, font, dsb.
-Format: CSS murni.
-
----
-
-# **2. SEMUA OPSI DI wofi.conf
-
-(DIBEDAH SATU PER SATU, KATA PER KATA)**
-
-Di bawah ini seluruh opsi penting dalam wofi.conf, dijelaskan detail makna per kata dan efeknya.
-
----
-
-## **2.1. `mode=`**
-
-Contoh:
-
-```
-mode = drun
-```
-
-Pembagian kata-per-kata:
-
-* **mode** → kunci yang memberi tahu Wofi: “Jenis launcher apa yang harus aku jalankan?”
-* **=** → operator penugasan; memberi nilai pada kunci.
-* **drun** → mode untuk memunculkan desktop entries (.desktop files) dalam sistem.
-
-Mode lain:
-
-* **run** → mode menjalankan aplikasi via PATH
-* **dmenu** → kompatibel dengan dmenu (mode text list)
-* **ssh** → daftar host SSH
-* **window** → switcher antar-window
-
-Makna teknis:
-Mode menentukan *backend* internal Wofi yang diambil dari modul penyedia data.
-
----
-
-## **2.2. `prompt=`**
-
-```
-prompt = Cari:
-```
-
-* **prompt** → teks petunjuk dalam input bar
-* **Cari:** → string literal yg ditampilkan apa adanya
-
-Efek: muncul di field input di UI.
-
----
-
-## **2.3. `normal_window=`**
-
-```
-normal_window = true
-```
-
-* **normal_window** → apakah jendela Wofi muncul sebagai “window normal” atau overlay.
-* **true/false** → nilai boolean.
-
-*true* membuat Wofi behave seperti aplikasi biasa; *false* membuatnya jadi panel overlay seperti dmenu.
-
----
-
-## **2.4. `width=` dan `height=`**
-
-```
-width = 800
-height = 400
-```
-
-* **width/height** → ukuran window Wofi dalam satuan pixel.
-* **800** → integer; bukan %, bukan auto.
-
-Jika tidak ditentukan, Wofi menyesuaikan berdasarkan konten.
-
----
-
-## **2.5. `lines=`**
-
-```
-lines = 10
-```
-
-* **lines** → jumlah item yang ditampilkan
-* **10** → integer jumlah baris
-
-Wofi akan membuat UI tinggi sesuai jumlah item.
-
----
-
-## **2.6. `location=`**
-
-```
-location = center
-```
-
-Nilai yang valid:
-
-* center
-* top-left
-* top
-* top-right
-* left
-* right
-* bottom-left
-* bottom
-* bottom-right
-
-Arti:
-
-* **location** → memerintahkan posisi window di layar
-* **center** → posisikan tepat di tengah monitor aktif (monitor di mana fokus keyboard berada)
-
----
-
-## **2.7. `key_bindings=`**
-
-Contoh umum:
-
-```
-key_up = Up
-key_down = Down
-```
-
-Makna kata-per-kata:
-
-* **key_up** → aksi internal: memilih item di atas
-* **Up** → nama tombol di keyboard (mengikuti penamaaan XKB)
-
-Binding lain yang umum:
-
-```
-key_left = Left
-key_right = Right
-key_accept = Return
-key_exit = Escape
-```
-
----
-
-## **2.8. `allow_markup=`**
-
-```
-allow_markup = true
-```
-
-* **allow_markup** → apakah item boleh pakai markup Pango
-* **true** → izinkan font bold/italic warna dsb dalam hasil
-
-Markup mengikuti format Pango, bukan HTML.
-
----
-
-## **2.9. `cache=`**
-
-```
-cache = true
-```
-
-Menentukan apakah Wofi menyimpan hasil input terakhir agar lebih cepat startup.
-
----
-
-## **2.10. `insensitive=`**
-
-```
-insensitive = false
-```
-
-* **insensitive** → apakah pencarian *case-insensitive*
-* **false** → case-sensitive
-
-Set ke true untuk pencarian lebih ramah.
-
----
-
-## **2.11. `hide_scrollbar=`**
-
-```
-hide_scrollbar = true
-```
-
-Menghilangkan scrollbar dari UI.
-
----
-
-## **2.12. `image_size=`**
-
-```
-image_size = 32
-```
-
-Jika item punya icon (e.g. drun mode), ikon akan di-resize ke 32px.
-
----
-
-# **3. SINTAKS style.css (DIBEDAH KATA-PER-KATA)**
-
-Mari bedah contoh tema sederhana:
-
-```
-window {
-    background-color: #1e1e1e;
-}
-
-#input {
-    border-radius: 6px;
-    padding: 6px;
-    background-color: #2d2d2d;
-    color: white;
-}
-
-#entry:selected {
-    background-color: #4c4c4c;
-}
-```
-
-Penjelasan:
-
----
-
-## **3.1. Selector: `window`**
-
-* **window** → selector elemen root UI Wofi.
-  Ini sama seperti `<body>` di HTML.
-
----
-
-## **3.2. Property: `background-color:`**
-
-* **background-color** → warna latar.
-* **#1e1e1e** → warna hex RGB.
-
----
-
-## **3.3. Selector: `#input`**
-
-* **#input** → ID CSS. Wofi mendefinisikan elemen input dengan id “input”.
-
-Property penting:
-
-* **border-radius** → lengkungan sudut
-* **padding** → jarak isi terhadap tepi
-* **color** → warna teks
-
----
-
-## **3.4. Selector: `#entry:selected`**
-
-* **#entry** → tiap entri dalam list
-* **:selected** → pseudo-class yang aktif saat item dipilih
-
-Property umum:
-
-* background-color
-* color
-* padding
-* font-weight
-
----
-
-# **4. SUMBER BANTUAN RESMI UNTUK SINTAKS**
-
-Agar kamu bisa memvalidasi dan mendalami lebih lanjut:
-
-* Dokumentasi Wofi resmi:
-  [https://hg.sr.ht/~scoopta/wofi/tree/default/docs](https://hg.sr.ht/~scoopta/wofi/tree/default/docs)
-* GTK CSS Reference (Wofi memakai GTK layer):
-  [https://docs.gtk.org](https://docs.gtk.org)
-* Sway Wiki:
-  [https://github.com/swaywm/sway/wiki](https://github.com/swaywm/sway/wiki)
-* lalulintas bantuan CLI seperti:
-
-```
-wofi --help
-```
-
-dan
-
-```
-man wofi
-```
-
----
-
-# **5. SEBELUM LANJUT KE BAGIAN C**
-
-Bagian berikutnya baru kita siapkan:
-
-**Modul 2 — Bagian C: Pengelolaan Template, Variabel, dan Pembuatan File wofi.conf + style.css yang Saling Bersinergi dengan Sway.**
-
-> - **[Selanjutnya][selanjutnya]**
-> - **[Sebelumnya][sebelumnya]**
-> - **[Kurikulum][kurikulum]**
-> - **[Home][domain]**
-
-[domain]: ../../../../../../README.md
-[kurikulum]: ../README.md
-[sebelumnya]: ../bagian-1/README.md
-[selanjutnya]: ../bagian-3/README.md
-
-<!----------------------------------------------------->
 

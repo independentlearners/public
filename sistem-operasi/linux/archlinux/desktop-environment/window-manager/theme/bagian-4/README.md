@@ -5,18 +5,16 @@
 
 #
 
-<!-- > - **[Selanjutnya][selanjutnya]** -->
-
 > - **[Ke Atas](#)**
+> - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../../README.md
-[sebelumnya]: ../bagian-14/README.md
-
-<!-- [selanjutnya]: ../bagian-3/README.md -->
+[sebelumnya]: ../bagian-3/README.md
+[selanjutnya]: ../bagian-5/README.md
 
 <!----------------------------------------------------->
 

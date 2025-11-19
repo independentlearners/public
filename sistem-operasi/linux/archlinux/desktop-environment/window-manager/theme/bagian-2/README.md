@@ -1,23 +1,19 @@
-<!--
+<!-- <details> -->
+<!--   <summary>📃 Daftar Isi</summary> -->
+<!---->
+<!-- </details> -->
+<!---->
+<!-- # -->
 
-<details>
-  <summary>📃 Daftar Isi</summary>
-
-</details>
-
--->
-# Kode saya
-
-> - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../README.md
-[sebelumnya]: ../bagian-5/README.md
-[selanjutnya]: ../bagian-7/README.md
+[domain]: ../../../../../../../README.md
+[kurikulum]: ../../../../README.md
+[sebelumnya]: ../bagian-1/README.md
+[selanjutnya]: ../bagian-3/README.md
 
 <!----------------------------------------------------->
 

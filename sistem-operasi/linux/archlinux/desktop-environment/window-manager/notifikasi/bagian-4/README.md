@@ -13,8 +13,8 @@
 
 [domain]: ../../../../../../README.md
 [kurikulum]: ../../../../README.md
-[sebelumnya]: ../bagian-13/README.md
-[selanjutnya]: ../bagian-15/README.md
+[sebelumnya]: ../bagian-3/README.md
+[selanjutnya]: ../bagian-5/README.md
 
 <!----------------------------------------------------->
 

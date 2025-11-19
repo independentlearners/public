@@ -1,6 +1,6 @@
 # Silabus: Kelas Master Scripting Sway
 
-### 🏛️ Modul 0: Prasyarat dan Landasan (Foundation)
+### [🏛️ Modul 0: Prasyarat dan Landasan (Foundation)](#satu)
 
 Sebelum kita menyelam ke Sway, kita perlu memastikan fondasi kita kuat. Modul ini adalah tentang *konteks* skrip di dalam Sway.
 
@@ -10,7 +10,7 @@ Sebelum kita menyelam ke Sway, kita perlu memastikan fondasi kita kuat. Modul in
 
 ---
 
-### 💬 Modul 1: `swaymsg` — Juru Bicara Anda ke Sway
+### [💬 Modul 1: `swaymsg` — Juru Bicara Anda ke Sway][1]
 
 Modul ini adalah inti dari segalanya. **`swaymsg`** adalah *satu-satunya* alat yang Anda perlukan untuk berkomunikasi dengan Sway yang sedang berjalan.
 
@@ -20,7 +20,7 @@ Modul ini adalah inti dari segalanya. **`swaymsg`** adalah *satu-satunya* alat y
 
 ---
 
-### parsing Modul 2: `jq` — Membedah JSON dari Sway
+### [parsing Modul 2: `jq` — Membedah JSON dari Sway][2]
 
 Output dari `swaymsg` (dari Modul 1.2) adalah JSON. Untuk membuat skrip yang cerdas, kita harus bisa membacanya. Ini adalah *skill khusus* yang memisahkan skrip Sway dasar dan lanjutan.
 
@@ -30,7 +30,7 @@ Output dari `swaymsg` (dari Modul 1.2) adalah JSON. Untuk membuat skrip yang cer
 
 ---
 
-### 🚀 Modul 3: Dari Konfig ke Skrip (Integrasi)
+### [🚀 Modul 3: Dari Konfig ke Skrip (Integrasi)][3]
 
 Bagaimana Sway *menjalankan* skrip Anda? Modul ini menghubungkan file `config` Anda dengan skrip eksternal.
 
@@ -40,7 +40,7 @@ Bagaimana Sway *menjalankan* skrip Anda? Modul ini menghubungkan file `config` A
 
 ---
 
-### 🔬 Modul 4: Skrip Reaktif (Event-driven)
+### [🔬 Modul 4: Skrip Reaktif (Event-driven)][4]
 
 Ini adalah tingkat lanjut. Daripada *memberi tahu* Sway apa yang harus dilakukan, kita akan *mendengarkan* apa yang Sway lakukan dan bereaksi secara otomatis.
 
@@ -50,7 +50,7 @@ Ini adalah tingkat lanjut. Daripada *memberi tahu* Sway apa yang harus dilakukan
 
 ---
 
-### 🛠️ Modul 5: Integrasi Ekosistem (Tools Pendukung)
+### [🛠️ Modul 5: Integrasi Ekosistem (Tools Pendukung)][5]
 
 Skrip Anda tidak hidup dalam ruang hampa. Mereka perlu berinteraksi dengan alat lain di ekosistem Wayland.
 
@@ -61,7 +61,7 @@ Skrip Anda tidak hidup dalam ruang hampa. Mereka perlu berinteraksi dengan alat 
 
 ---
 
-### 🩺 Modul 6: Debugging — "Kenapa Skrip Saya Tidak Jalan?"
+### [🩺 Modul 6: Debugging — "Kenapa Skrip Saya Tidak Jalan?"][6]
 
 Sesuai permintaan Anda, modul ini fokus pada pemecahan masalah. Tujuannya adalah agar Anda tahu *apa yang harus dilakukan* saat terjadi error.
 
@@ -73,7 +73,7 @@ Sesuai permintaan Anda, modul ini fokus pada pemecahan masalah. Tujuannya adalah
 
 ---
 
-### 🏆 Modul 7: Proyek Akhir (Capstone)
+### [🏆 Modul 7: Proyek Akhir (Capstone)][7]
 
 Menggabungkan semua yang telah dipelajari untuk membangun satu skrip canggih dari awal hingga akhir.
 
@@ -82,6 +82,8 @@ Menggabungkan semua yang telah dipelajari untuk membangun satu skrip canggih dar
 * **Pilihan Proyek C:** *Wofi Session Manager* (Skrip `wofi` yang terintegrasi untuk menyimpan dan memulihkan sesi jendela).
 
 ---
+
+<h3 id="satu"></h3>
 
 # 🏛️ Modul 0: Prasyarat dan Landasan
 
@@ -216,4 +218,15 @@ Jika ya, kita bisa langsung menyelam ke alat pertama kita dan mulai memberi peri
 > - **[Kurikulum][kurikulum]**
 -->
 > - **[Selanjutnya](./bagian-1/README.md)**
+> - **[Nich][kurikulum]**
+> - **[Home][domain]**
 
+[domain]: ../../../../../../../README.md
+[kurikulum]: ../README.md
+[1]: ../swaywm/bagian-1/README.md
+[2]: ../swaywm/bagian-2/README.md
+[3]: ../swaywm/bagian-3/README.md
+[4]: ../swaywm/bagian-4/README.md
+[5]: ../swaywm/bagian-5/README.md
+[6]: ../swaywm/bagian-6/README.md
+[7]: ../swaywm/bagian-7/README.md

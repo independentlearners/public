@@ -1,218 +1,89 @@
-
-# **[Kelas Lengkap Wofi untuk Sway (dari Dasar → Lanjutan → Troubleshooting)][0]**
-
----
-
-## Ringkasan singkat tentang Wofi (fakta penting)
-
-Wofi adalah launcher/menu untuk compositor Wayland berbasis wlroots (mis. sway). Wofi menggunakan GTK/GLib dan dibangun dengan tool seperti Meson/CMake; dependensinya termasuk GTK3, GLib, GObject dan pkg-config — artinya modifikasi mendalam biasanya butuh pengetahuan C + ekosistem GTK. ([GitHub][1])
+Kurikulum ini disusun untuk menjembatani pemahaman teknis mendalam tentang **Wofi pada ekosistem Arch Linux (Sway/Wayland)** dengan tambahan peningkatan kemampuan bahasa Inggris profesional. Berikut adalah **Rancangan Kurikulum (Syllabus)** untuk kelas "Mastering Wofi in Sway".
 
 ---
 
-## Target audiens
+### [🎓 Kurikulum Kelas: Mastering Wofi on Sway Window Manager][0]
+**Target:** Pemahaman mendalam tentang launcher Wofi, integrasi total dengan Sway, sintaks konfigurasi, *scripting* tingkat lanjut (CLI), penanganan error, serta penguasaan Bahasa Inggris Teknis.
 
-* Pengguna Sway / wlroots yang ingin launcher kustom dan integrasi penuh.
-* Pengembang/pengonfigurasi yang ingin memodifikasi tema/style atau membangun dari sumber.
-* Level: dari pemula Wayland → lanjutan (build dari sumber + debugging Wayland).
+#### **[Modul 1: Identitas, Konsep Dasar, dan Instalasi][a]**
+* **Fokus Teknis:**
+    * Apa itu Wofi? (Perbedaan dengan Rofi/Dmenu).
+    * Identitas Teknologi: Bahasa pembuat (C), lisensi, dan repositori (Sourcehut/Github).
+    * Arsitektur: Bagaimana Wofi berinteraksi dengan protokol Wayland.
+    * Instalasi di Arch Linux (Pacman vs AUR) dan dependensi wajib.
+* **Fokus Bahasa Inggris:**
+    * **Vocabulary:** *Dependency, Repository, Protocol, Fork, Deprecated.*
+    * **Grammar:** Penggunaan *Passive Voice* dalam dokumentasi teknis (e.g., *"Wofi is built based on..."*).
+
+#### **[Modul 2: Bedah Sintaks dan Anatomi Konfigurasi][b]**
+* **Fokus Teknis:**
+    * **The Config File:** Penjelasan mendalam mengenai format standar (INI-style syntax). Kita akan membedah struktur *Key-Value pairs*.
+    * **The Style File:** Penjelasan sintaks CSS (GTK3 CSS) yang digunakan Wofi. Memahami *Selectrors*, *Properties*, dan *Values*.
+    * **Mode Operasi:** Memahami argumen CLI (`--show drun`, `--show run`, `--dmenu`).
+* **Fokus Bahasa Inggris:**
+    * **Terminologi:** *Syntax, Parameter, Argument, Property, Selector.*
+    * **Professional Interaction:** Cara bertanya atau menjelaskan struktur kode (e.g., *"Could you clarify the syntax for..."*).
+
+#### **[Modul 3: Integrasi Wofi ke dalam Sway (The Handshake)][c]**
+* **Fokus Teknis:**
+    * Mbedah file konfigurasi Sway (`~/.config/sway/config`).
+    * Sintaks `bindsym` dan variabel di Sway.
+    * Menggantikan `dmenu` default dengan Wofi.
+    * Fuzzy Search concept: Bagaimana algoritma pencarian bekerja.
+* **Fokus Bahasa Inggris:**
+    * **Grammar:** *Imperative Sentences* (Kalimat perintah) yang sering muncul di file konfigurasi dan manual.
+    * **Connectors:** Kata hubung untuk menjelaskan sebab-akibat (*Therefore, Thus, Consequently*).
+
+#### **[Modul 4: Advanced Scripting & Custom Menus (CLI Focus)][d]**
+* **Fokus Teknis:**
+    * **Standard Input (stdin) & Pipes:** Konsep inti Linux (`|`) untuk mengirim data ke Wofi.
+    * Membuat menu interaktif kustom (contoh: Power Menu, Wifi Menu) menggunakan Bash Script.
+    * Membaca *Standard Output (stdout)* dari Wofi untuk dieksekusi.
+    * Sintaks Bash dasar yang diperlukan: `case`, `echo`, `printf`, `read`.
+* **Fokus Bahasa Inggris:**
+    * **Technical Descriptions:** Menjelaskan alur data (*Data Flow*).
+    * **Verbs:** *Pipe, Redirect, Execute, Parse, Fetch.*
+
+#### **[Modul 5: Troubleshooting, Error Handling, & Resources][e]**
+* **Fokus Teknis:**
+    * Cara membaca log error Wofi (menjalankan via terminal untuk *debugging*).
+    * Masalah umum: *Missing icons, Cache issues, Scaling/Resolution issues on Wayland.*
+    * Alternatif jika Wofi gagal (Fuzzel, Bemenu) – *Plan B*.
+    * Sumber Referensi: Menelusuri dokumentasi resmi (`man wofi`, `man 5 wofi`) dan diskusi komunitas (Arch Wiki, Reddit, Github Issues).
+* **Fokus Bahasa Inggris:**
+    * **Reading Comprehension:** Menganalisis pesan error (*Error messages*).
+    * **Grammar:** *Conditional Sentences* (If clauses) untuk menjelaskan skenario *troubleshooting* (*"If the error persists, then..."*).
 
 ---
 
-## Prasyarat teknis sebelum kursus
+#####  📝 Metodologi Pembelajaran
 
-Minimal:
+Setiap kali kita memasuki sebuah modul, struktur penjelasannya akan seperti ini:
 
-* Pemahaman dasar Sway / Wayland (konsep compositor, workspace, input).
-* Shell scripting (bash/sh).
-* CLI Linux dasar (paket manager, file paths).
-  Disarankan untuk pengembangan/kontribusi:
-* Bahasa C dasar + GTK3/GLib dasar.
-* Tooling: meson / ninja atau cmake, gcc/clang, pkg-config, libgtk-3-dev, libwayland-dev.
-  (Saya akan sertakan daftar paket OS-spesifik dan cara menginstal nanti). ([GitHub][1])
-
----
-
-## Struktur kursus (fase & modul) — ringkasan cepat
-
-1. **Fase 0 — Pengenalan & Konsep Wayland/Wlroots**
-2. **Fase 1 — Instalasi & Mode Operasi Wofi**
-3. **Fase 2 — Integrasi Wofi ke Konfigurasi Sway (keybinds & autostart)**
-4. **Fase 3 — Konfigurasi Dasar Wofi (config file & argumen CLI)**
-5. **Fase 4 — Theming & Styling (CSS, icon, fonts, layout)**
-6. **Fase 5 — Skema Menu: drun, run, custom lists, stdin**
-7. **Fase 6 — Automasi & Scripted Menus (power menus, launcher wrappers)**
-8. **Fase 7 — Build from Source & Contributing (Meson/CMake, patching)**
-9. **Fase 8 — Debugging & Troubleshooting Mendalam**
-10. **Fase 9 — Packaging / Distribusi / Integrasi (AUR, Nix, Debian package)**
-11. **Fase 10 — Proyek Akhir & Penilaian**
-
-Di bawah ini: uraian tiap fase + submodul, tujuan pembelajaran, latihan, dan indikator penguasaan.
+1.  **Technical Deep Dive:** Penjelasan konsep, sintaks, dan cara kerja (Indonesia).
+2.  **English Corner:**
+    * **Key Vocabulary:** Daftar kata penting (Noun/Verb/Adjective).
+    * **Grammar Focus:** Bedah satu aturan tata bahasa yang relevan dengan teks teknis tersebut.
+    * **Example Phrases:** Contoh kalimat profesional untuk dokumentasi atau percakapan kerja.
+3.  **Implementation:** Kode, Konfigurasi, atau Perintah CLI.
+4.  **Official Sources:** Link ke dokumentasi resmi (man pages/repo).
+5.  **Error Handling:** Apa yang harus dilakukan jika langkah ini gagal.
 
 ---
 
-# Detil per Fase (kurikulum lengkap)
-
-## [Fase 0 — Pengenalan & Konsep Wayland / wlroots][a]
-
-Tujuan: Memastikan semua peserta paham ekosistem sehingga pengaturan Wofi tidak “ngambang”.
-
-* Materi:
-
-  * Perbedaan X11 vs Wayland (socket, env vars).
-  * Apa itu wlroots dan bagaimana sway menggunakan wlroots.
-  * Bagaimana aplikasi Wayland berinteraksi dengan compositor (xdg-shell, xdg-desktop-portal secara singkat).
-* Latihan:
-
-  * Mengecek apakah sesi sedang Wayland (`echo $WAYLAND_DISPLAY`) dan memeriksa socket.
-* Hasil yang diharapkan:
-
-  * Peserta bisa menjelaskan mengapa beberapa masalah wofi muncul karena Wayland/seat/socket.
-
-## Fase 1 — Instalasi & Mode Operasi Wofi
-
-Tujuan: Meng-install dan menjalankan wofi; memahami mode operasi dasar.
-
-* Submodul:
-
-  * Instalasi paket (Arch, Debian/Ubuntu, Nix, build from source).
-  * Menjalankan `wofi` dari terminal; mode umum (launcher/menu).
-  * Perbedaan antara `drun` (desktop entries), `run` (command entry), dan piping stdin.
-* Latihan:
-
-  * Install via paket distro; jalankan wofi; buka aplikasi dari wofi.
-* Sumber & catatan teknis: README repo wofi (dependensi: GTK3, GLib, GObject, meson/cmake). ([GitHub][1])
-
-## Fase 2 — Integrasi Wofi ke Konfigurasi Sway (keybinds & autostart)
-
-Tujuan: Menempatkan wofi di workflow Sway (keybinds, style, behavior).
-
-* Submodul:
-
-  * Menambahkan keybind di `~/.config/sway/config` (contoh: binding ke `$mod+d`), dengan penjelasan setiap argumen.
-  * Launching wofi trayless vs persistent; menangani focus/keyboard grabbing di Wayland.
-  * Autostart vs socket activation.
-* Latihan:
-
-  * Tambah keybind, reload sway, cek behavior.
-* Output:
-
-  * Peserta bisa menulis konfigurasi sway yang konsisten dan menjelaskan apa yang dilakukan setiap baris.
-
-## Fase 3 — Konfigurasi Dasar Wofi (file config & opsi CLI)
-
-Tujuan: Pahami `~/.config/wofi/config` (atau lokasi config) dan flag CLI.
-
-* Submodul:
-
-  * Struktur file config (opsi umum: mode, show-icons, placement, width/height).
-  * Menjalankan wofi dengan opsi CLI (debug flags, verbose).
-  * Lokasi fallback config, prioritas argumen CLI vs config file.
-* Latihan:
-
-  * Buat config minimal; jalankan wofi dengan `--show` atau flag contoh (nanti akan jelaskan per-flag kata per-kata).
-* Catatan:
-
-  * Kita akan menyertakan daftar flag resmi dan arti tiap- tiap argumen dengan contoh.
-
-## Fase 4 — Theming & Styling (CSS, icon, fonts, layout)
-
-Tujuan: Menjadikan wofi tampil visual sesuai preferensi (CSS GTK).
-
-* Submodul:
-
-  * `style.css` untuk wofi: selector, property, ukuran, padding, border, font-family.
-  * Mengatur icon theme (where .desktop icons come from: ~/.local/share/applications & /usr/share/applications). ([bbs.archlinux.org][2])
-  * Menggabungkan theme dengan global GTK theme; font fallback/pango.
-* Latihan:
-
-  * Terapkan contoh theme (menggunakan koleksi tema) dan jelaskan tiap rule CSS. ([GitHub][3])
-
-## Fase 5 — Skema Menu: drun, run, custom lists, stdin
-
-Tujuan: Mengontrol apa yang dimunculkan wofi dan bagaimana input disediakan.
-
-* Submodul:
-
-  * `drun` mode: bagaimana wofi mengambil `.desktop` (desktop database). ([bbs.archlinux.org][2])
-  * `run` mode: menjalankan perintah bebas.
-  * Menyediakan daftar custom lewat stdin (pipe), dan integrasi dengan script (contoh: menu shutdown).
-* Latihan:
-
-  * Buat script power menu yang menulis daftar ke stdout lalu dipipe ke wofi; verifikasi behavior.
-
-## Fase 6 — Automasi & Scripted Menus (power menus, workflows)
-
-Tujuan: Bangun tools tambahan (power menu, window switcher, custom launcher).
-
-* Submodul:
-
-  * Contoh proyek: `wofi-power-menu` (arsitektur), cara memanggil wofi dari skrip, opsi konfirmasi. ([GitHub][4])
-  * Integrasi dengan systemctl, swaymsg, hyprctl (jika diperlukan).
-* Latihan:
-
-  * Implementasi power menu sederhana + binding di sway.
-
-## Fase 7 — Build from Source & Contributing
-
-Tujuan: Peserta mampu membangun, memodifikasi, dan membuat patch.
-
-* Submodul:
-
-  * Environment dev: install libgtk-3-dev, meson, ninja, pkg-config, gcc/clang. ([GitHub][1])
-  * Struktur kode wofi: file utama, rendering (Pango/GTK), thema CSS handling.
-  * Men-debug build error; workflow patch & PR (hg / git forks).
-* Latihan:
-
-  * Clone repo resmi, build, lakukan perubahan kecil (mis. default width), commit & test.
-
-## Fase 8 — Debugging & Troubleshooting Mendalam (kunci kursus)
-
-Tujuan: Peserta mengerti cara mendiagnosa dan memperbaiki error umum.
-
-* Submodul (setiap item = topik mendalam + checklist debug):
-
-  * Wofi tidak muncul / crash ketika dipanggil dari sway (periksa env, stderr logs, wayland socket).
-  * Icon tidak muncul (periksa XDG_DATA_DIRS, desktop file locations). ([bbs.archlinux.org][2])
-  * CSS style tidak terpakai (cache, file path ~/.config/wofi/style.css, syntax error).
-  * Build failures (missing dev headers: libgtk-3-dev, glib2.0-dev). ([GitHub][1])
-  * Performa / lag / focus stealing di Wayland (investigasi seat/input grab).
-* Praktik:
-
-  * Skenario troubleshooting lab (error injection + langkah perbaikan).
-* Outcome:
-
-  * Peserta dapat menulis laporan debugging singkat (what, why, fix).
-
-## Fase 9 — Packaging / Distribusi / Integrasi
-
-Tujuan: Pelajari cara membungkus perubahan jadi paket untuk distro (AUR, DEB, Nix).
-
-* Submodul:
-
-  * Contoh PKGBUILD (AUR) dan tips penandaan versi.
-  * Membuat flake / package Nix, atau .deb sederhana.
-* Latihan:
-
-  * Buat paket distribusi kecil untuk hasil modifikasi tema atau patch.
-
-## Fase 10 — Proyek Akhir & Penilaian
-
-* Pilihan proyek (pilih 1): kustom launcher multi-menu (power + apps + scripts), kontribusi patch ke repo wofi, atau paket AUR + dokumentasi.
-* Kriteria penilaian: fungsionalitas, dokumentasi, kemampuan debugging, clean build, styling lengkap.
-* Rubrik: teori (25%), praktek (50%), debugging & docs (25%).
-
----
-
-# Materi Tambahan & Sumber Referensi (awalan)
+##  Materi Tambahan & Sumber Referensi (awalan)
 
 * Repo / README wofi (dependensi & build): ([GitHub][1])
 * Tutorial & artikel pengguna: mephisto (pengantar penggunaan): ([mephisto.cc][5])
 * Koleksi tema wofi (contoh style.css): ([GitHub][3])
 * Perbandingan app launcher Wayland (untuk konteks dan alternatif): ([Mark Stosberg][6])
 * Daftar paket Debian/Arch terkait wofi (packaging): ([packages.debian.org][7])
+* `drun` mode: bagaimana wofi mengambil `.desktop` (desktop database). ([bbs.archlinux.org][2])
+* Contoh proyek: `wofi-power-menu` (arsitektur), cara memanggil wofi dari skrip, opsi konfirmasi. ([GitHub][4])
 
 ---
 
-# Format pengajaran & deliverable per modul
+##  Format pengajaran & deliverable per modul
 
 * Teori ringkas (konsep inti).
 * Contoh konfigurasi minimal (dijelaskan kata-per-kata untuk tiap baris ketika masuk isi materi).
@@ -223,14 +94,14 @@ Tujuan: Pelajari cara membungkus perubahan jadi paket untuk distro (AUR, DEB, Ni
 
 ---
 
-# Estimasi pembagian waktu belajar (opsional)
+##  Estimasi pembagian waktu belajar (opsional)
 
 Estimasi jam per fase supaya Anda punya gambaran; ini fleksibel dan bisa disesuaikan:
 
-* Fase 0–2 (fundamental): 2–4 jam
-* Fase 3–5 (konfig & thema): 4–8 jam
-* Fase 6–8 (scripting, build, debug): 6–12 jam
-* Fase 9–10 (packaging & proyek): 4–8 jam
+* Modul 0–2 (fundamental): 2–4 jam
+* Modul 3–5 (konfig & thema): 4–8 jam
+* Modul 6–8 (scripting, build, debug): 6–12 jam
+* Modul 9–10 (packaging & proyek): 4–8 jam
 
 <!--
 (Bila Anda ingin saya ubah alokasi atau jadwal pembelajaran sesuai rutinitas Anda, saya sesuaikan.)
@@ -255,6 +126,7 @@ Saya siap mulai kapan Anda bilang “lanjut” — beri tanda yang jelas (mis. �
 [c]: ../wofi/bagian-3/README.md
 [d]: ../wofi/bagian-4/README.md
 [e]: ../wofi/bagian-5/README.md
+<!--
 [f]: ../wofi/bagian-6/README.md
 [g]: ../wofi/bagian-7/README.md
 [h]: ../wofi/bagian-8/README.md
@@ -265,7 +137,6 @@ Saya siap mulai kapan Anda bilang “lanjut” — beri tanda yang jelas (mis. �
 [m]: ../wofi/bagian-13/README.md
 [n]: ../wofi/bagian-14/README.md
 [o]: ../wofi/bagian-15/README.md
-<!--
 [p]: ../wofi/bagian-1/README.md
 [q]: ../wofi/bagian-1/README.md
 [r]: ../wofi/bagian-1/README.md-->

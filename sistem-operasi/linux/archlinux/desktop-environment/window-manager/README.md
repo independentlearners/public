@@ -944,7 +944,7 @@ Seluruh jalur disusun dari *fondasi sistem → konfigurasi modular → automasi 
 -->
 
 [0]: ./waybar/README.md
-[1]: ./mako/README.md
+[1]: ./notifikasi/README.md
 [2]: ./wofi/README.md
 [3]: ./grim/README.md
 [4]: ./wl-clipboard/README.md

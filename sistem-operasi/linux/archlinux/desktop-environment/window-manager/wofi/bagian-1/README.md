@@ -1,310 +1,165 @@
-<!--
-<details>
-  <summary>📃 Daftar Isi</summary>
+# [Modul 1: Identitas, Konsep Dasar, dan Instalasi][0]
 
-</details>
+Sebelum kita menyentuh konfigurasi, Anda harus memahami "siapa" dan "apa" Wofi itu sebenarnya. Di dunia Linux (terutama Arch), memahami asal-usul paket membantu kita memprediksi perilaku dan cara penanganannya.
 
-#-->
+### 1. Identitas dan Konsep Teknis (Technical Identity)
 
-# Modul 1 — Dasar kuat (Fase 0 + Fase 1): Wayland & Wofi — Instalasi, Pemanggilan, dan Integrasi awal ke Sway
+**Apa itu Wofi?**
+Wofi adalah sebuah *launcher* (peluncur aplikasi) dan *menu builder* yang dibangun khusus untuk protokol **Wayland**. Jika di X11 Anda mengenal `dmenu` atau `rofi`, maka Wofi adalah ekuivalennya untuk Wayland yang tidak memerlukan lapisan kompatibilitas XWayland.
 
-Di bawah ini materi **lengkap** untuk Fase 0 (konsep Wayland/wlroots) dan Fase 1 (instalasi & mode operasi wofi). Semua perintah akan dijelaskan **kata-per-kata**, termasuk variabel lingkungan, lokasi file, dan langkah debugging awal. Di akhir ada checklist latihan dan tugas singkat untuk Anda praktikkan.
+**Identitas Teknologi:**
 
-> Sumber utama yang digunakan: repo/README wofi, manual page wofi, paket distro (Arch/Debian), dan panduan integrasi Sway. ([GitHub][1])
+  * **Bahasa Pemrograman:** Dibangun menggunakan **C**. Ini penting diketahui karena C menawarkan performa tinggi dan akses memori tingkat rendah, menjadikan Wofi ringan (*lightweight*).
+  * **Basis GUI:** Menggunakan **GTK3**. Ini berarti Wofi bisa dikustomisasi tampilannya menggunakan CSS (seperti web), sebuah poin plus untuk estetika.
+  * **Lisensi:** GPLv3 (General Public License v3). Ini adalah *Open Source* murni.
+  * **Sifat:** *Standalone*. Wofi tidak terikat pada Sway saja, tapi bisa berjalan di *compositor* Wayland lain (seperti Hyprland atau River).
 
----
+**Persyaratan Pengembangan/Modifikasi (Jika Anda ingin membedahnya):**
+Jika Anda ingin memodifikasi *source code*-nya (forking), Anda memerlukan:
 
-# Bagian A — Konsep inti: Wayland, wlroots, compositor, dan peran Wofi
+1.  Pengetahuan bahasa **C**.
+2.  Paham pustaka **GTK3** dan **Wayland protocol**.
+3.  Compiler seperti `gcc` atau `clang` dan build system `meson`.
 
-1. **Wayland vs X11 (singkat)**
+-----
 
-   * Wayland adalah protokol modern untuk menampilkan grafik dan input; **compositor** (mis. sway) bertugas menjadi server grafis sekaligus window manager. X11 menggunakan server X; Wayland tidak.
-   * Implikasi praktis: banyak aplikasi tradisional (X11) berperilaku berbeda under Wayland (clipboard, focus, input grabs). Jika wofi tidak muncul atau input tidak diterima, penyebab sering berkaitan dengan environment Wayland (socket/display) atau cara compositor menangani grab. ([ArchWiki][2])
+### 2. English Corner: Grammar & Vocabulary for Documentation
 
-2. **wlroots**
+Di sesi ini, kita belajar bagaimana membaca dokumentasi teknis Wofi layaknya seorang profesional.
 
-   * wlroots adalah library/kerangka kerja untuk membangun compositor Wayland (sway, hyprland, dsome). Wofi didesain untuk compositor berbasis wlroots sehingga integrasinya optimal dengan sway.
+#### **A. Key Vocabulary (Kosa Kata Kunci)**
 
-3. **Peran Wofi**
+| Word | Part of Speech | Definition (ID) | Context Example |
+| :--- | :--- | :--- | :--- |
+| **Launcher** | Noun (Kata Benda) | Peluncur aplikasi/menu. | *Wofi is a minimalist application **launcher**.* |
+| **Dependency** | Noun (Kata Benda) | Paket lain yang dibutuhkan agar software berjalan. | *GTK3 is a required **dependency** for Wofi.* |
+| **Repository** | Noun (Kata Benda) | Tempat penyimpanan kode sumber. | *Clone the **repository** to build from source.* |
+| **Argument** | Noun (Kata Benda) | Nilai tambahan yang diberikan pada perintah CLI. | *Pass the `--show` **argument** to start Wofi.* |
+| **Deprecated** | Adjective (Kata Sifat) | Usang/tidak disarankan lagi (biasanya akan dihapus). | *This flag is **deprecated** in the latest version.* |
 
-   * Wofi adalah *application launcher / menu* untuk compositor berbasis wlroots. Mode utamanya: `drun` (desktop entries), `run` (eksekusi baris perintah), dan `dmenu`/stdin (baca daftar lewat stdin). Wofi sangat dapat ditema menggunakan CSS (style.css). ([Debian Packages][3])
+#### **B. Grammar Focus: Passive Voice (Kalimat Pasif)**
 
----
+Dokumentasi teknis sering menggunakan *Passive Voice* untuk menekankan **objek** atau **tindakan**, bukan pelakunya.
 
-# Bagian B — Identitas teknis Wofi & apa yang perlu Anda siapkan untuk memodifikasi/bangun
+  * **Rumus:** Subject + to be + Verb 3 (Past Participle).
+  * **Contoh:**
+      * *Active:* The developer wrote Wofi in C. (Developer menulis Wofi dalam bahasa C).
+      * *Passive:* Wofi **is written** in C. (Wofi ditulis dalam bahasa C). -\> *Fokus pada Wofi-nya.*
+      * *Passive:* The configuration file **is loaded** from `~/.config/wofi`. (File konfigurasi dimuat dari...).
 
-* **Bahasa implementasi:** Wofi ditulis mayoritas dalam **C** dan menggunakan **GTK3** (GObject/GLib) untuk UI. Untuk membangun/modifikasi Anda perlu pengetahuan dasar C dan pemahaman GTK (widget, CSS theming di GTK). ([GitHub][1])
-* **Tooling & dependensi dev (wajib/umum):**
+#### **C. Professional Interaction (Contoh Percakapan)**
 
-  * `meson` + `ninja` atau `cmake` (build system) — untuk men-configure dan membangun.
-  * `pkg-config` (mendeteksi library), `libgtk-3-dev` / `gtk3-devel`, `libwayland-dev`, `glib2.0-dev` (header).
-  * Compiler: `gcc` atau `clang`.
-  * Optional: `desktop-file-utils` (untuk validasi `.desktop`), `update-desktop-database`. ([GitHub][4])
-* **Apa yang harus dikuasai untuk memodifikasi:**
+Jika Anda bertanya di forum internasional (seperti Reddit r/swaywm atau Github Issues) mengenai instalasi:
 
-  * C dasar + memory basics (malloc/free), build system (meson/cmake), cara kerja GTK CSS, struktur repo wofi, dan proses debugging (gdb/logging).
-  * Untuk membuat theme atau skrip integrasi: bash/sh, pemahaman `.desktop` (XDG) dan env vars XDG.
+> *"Excuse me, could you verify if Wofi **is compatible with** the latest wlroots update? I noticed some rendering issues in my setup."*
+> (Permisi, bisakah Anda memverifikasi apakah Wofi kompatibel dengan pembaruan wlroots terbaru? Saya melihat ada masalah rendering di setup saya.)
 
----
+-----
 
-# Bagian C — Instalasi: paket distro & penjelasan kata-per-kata per perintah
+### 3. Instalasi di Arch Linux (Implementation)
 
-## 1) Instalasi di Arch (cara singkat)
+Karena Anda menggunakan Arch Linux, kita akan menggunakan manajer paket `pacman`. Wofi sudah tersedia di repositori resmi (biasanya di `extra`).
 
-Perintah contoh:
-
-```
-sudo pacman -Syu wofi
-```
-
-Penjelasan kata-per-kata:
-
-* `sudo` — jalankan perintah sebagai superuser (root).
-* `pacman` — package manager Arch.
-* `-Syu` — tiga opsi digabung:
-
-  * `-S` = sinkronisasi/pasang paket,
-  * `-y` = refresh database paket dari remote,
-  * `-u` = upgrade paket yang terpasang.
-* `wofi` — nama paket yang akan dipasang.
-  Keterangan: Paket `wofi` tersedia di repositori Arch (extra). ([Arch Linux][5])
-
-## 2) Instalasi di Debian/Ubuntu
-
-Contoh:
-
-```
-sudo apt update
-sudo apt install wofi
-```
-
-Penjelasan:
-
-* `sudo` — jalankan perintah sebagai root.
-* `apt update` — perbarui indeks paket lokal (ambil daftar versi terbaru dari repositori).
-* `apt install wofi` — instal paket `wofi` dari repositori yang terkonfigurasi.
-  Catatan: pada beberapa distro paket mungkin tersedia di versi terbaru (sid/bookworm). Periksa `packages.debian.org/wofi`. ([Debian Packages][3])
-
-## 3) Build from source (ketika ingin modifikasi)
-
-Contoh ringkas (menggunakan mercurial upstream pada sr.ht):
-
-```
-hg clone https://hg.sr.ht/~scoopta/wofi
-cd wofi
-meson setup build
-ninja -C build
-sudo ninja -C build install
-```
-
-Penjelasan:
-
-* `hg clone URL` — `hg` (Mercurial) clone: unduh salinan kode sumber dari URL. (Upstream wofi di sr.ht menggunakan hg).
-* `cd wofi` — change directory ke folder `wofi` hasil clone.
-* `meson setup build` — buat direktori build bernama `build` dan konfigurasikan proyek (meson membaca `meson.build`).
-* `ninja -C build` — jalankan `ninja` di direktori `build` untuk membangun binari.
-* `sudo ninja -C build install` — pasang hasil build ke sistem (biasanya `/usr/local`) sebagai root.
-  Catatan: beberapa fork/mirror menggunakan git; beberapa distribusi menyediakan PKGBUILD/AUR untuk mem-build. Pastikan terpasang `libgtk-3-dev`, `libwayland-dev`, `pkg-config` sebelum build. ([GitHub][4])
-
----
-
-# Bagian D — Menjalankan Wofi & opsi mode (uji dari terminal)
-
-## 1) Menjalankan dasar
-
-Dari terminal (dalam sesi sway/Wayland), jalankan:
-
-```
-wofi
-```
-
-Jika wofi tidak muncul, jalankan untuk debugging:
-
-```
-wofi --show drun 2> /tmp/wofi.log
-```
-
-Penjelasan:
-
-* `wofi` — jalankan aplikasi wofi.
-* `--show drun` — opsi jalankan wofi dalam mode `drun` (tampilkan desktop entries).
-* `2> /tmp/wofi.log` — redirect `stderr` (stream 2) ke file `/tmp/wofi.log` sehingga error/debug dapat diperiksa.
-  Catatan: log dapat memuat pesan terkait protocol error atau masalah GTK/Wayland; ini langkah pertama debugging. ([Man Arch Linux][6])
-
-## 2) Mode penting
-
-* `drun` — tampilkan aplikasi dari `.desktop` (XDG desktop entries).
-* `run` — mode untuk mengetik perintah dan menjalankannya (mencari di `$PATH`).
-* `dmenu` / stdin — baca baris dari stdin sehingga skrip bisa menghasilkan daftar pilihan (bisa dipipe).
-  Contoh piped menu (power menu sederhana):
+**Langkah 1: Instalasi via CLI**
+Buka terminal (foot/alacritty/kitty) Anda di Sway.
 
 ```bash
-printf "Suspend\nReboot\nShutdown" | wofi --dmenu
+# Perbarui database paket dulu agar tidak error "target not found"
+sudo pacman -Syu
+
+# Instal wofi
+sudo pacman -S wofi
 ```
 
-Penjelasan:
+**Langkah 2: Verifikasi Instalasi**
+Setelah proses selesai, pastikan Wofi terinstal dengan benar dan cek versinya.
 
-* `printf "..."` — cetak tiga baris ke stdout.
-* `|` — pipe: kirim stdout dari `printf` ke stdin program berikutnya.
-* `wofi --dmenu` — jalankan wofi dalam mode dmenu membaca stdin.
-
----
-
-# Bagian E — Integrasi ke Sway: contoh keybind dan penjelasan kata-per-kata
-
-Tambahkan ke `~/.config/sway/config` (contoh baris):
-
-```
-set $mod Mod4
-bindsym $mod+d exec wofi --show drun
+```bash
+wofi --version
 ```
 
-Penjelasan tiap bagian:
+*Output yang diharapkan:* Menampilkan nomor versi (misal: `v1.4.1`).
 
-* `set $mod Mod4` — definisikan variabel `$mod` sama dengan key `Mod4` (biasanya tombol Super / Windows).
-* `bindsym` — instruksi Sway untuk mengikat sebuah key combination.
-* `$mod+d` — kombinasi tombol: tekan `$mod` dan `d`.
-* `exec` — jalankan perintah berikutnya (sebagai proses background dikelola sway).
-* `wofi --show drun` — perintah yang dijalankan; `--show drun` memaksa mode drun.
-  Catatan tambahan: jika ingin memastikan path config tertentu, gunakan:
+**Langkah 3: Uji Coba Sederhana (Dry Run)**
+Mari kita coba jalankan Wofi tanpa konfigurasi (mode default) untuk melihat apakah ia muncul di layar Sway Anda.
 
-```
-bindsym $mod+d exec /usr/bin/wofi --show drun -C ~/.config/wofi/config
+```bash
+wofi --show drun
 ```
 
-Penjelasan: `-C` (atau `--config`) memberi path config (opsi ini ada/akan dijelaskan lengkap di modul config). Pastikan path absolute untuk menghindari masalah PATH saat sway dijalankan dari systemd atau login manager.
+  * `--show`: Argument untuk memberi tahu mode apa yang ingin ditampilkan.
+  * `drun`: Singkatan dari *Desktop Run*. Ini akan mencari file `.desktop` di sistem Anda (aplikasi GUI yang terinstal).
 
-Sway reload config:
+Jika jendela melayang muncul di tengah layar berisi daftar aplikasi, selamat\! Tahap 1 sukses.
 
-```
-swaymsg reload
-```
+-----
 
-* `swaymsg` — util untuk mengirim pesan/command ke sway.
-* `reload` — instruksi untuk reload file konfigurasi tanpa restart sesi.
+### 4. Sumber Resmi (Official Resources)
 
-Sumber: panduan Sway dan contoh konfigurasi. ([ArchWiki][2])
+Simpan tautan ini. Sebagai profesional, kita merujuk ke sini dulu sebelum bertanya ke forum.
 
----
+1.  **Primary Source (Mercurial Repo):** [hg.sr.ht/\~scoopta/wofi](https://hg.sr.ht/~scoopta/wofi)
+      * Ini adalah "rumah" aslinya. Dibuat oleh pengembang bernama `Scoopta`.
+2.  **Documentation (Man Pages):**
+      * Ketik di terminal: `man wofi` (untuk argumen CLI).
+      * Ketik di terminal: `man 5 wofi` (untuk sintaks file konfigurasi - *Section 5 di man pages khusus untuk format file*).
 
-# Bagian F — Lokasi konfigurasi, style, dan prioritas opsi
+-----
 
-* **Lokasi config wofi (default):** `$XDG_CONFIG_HOME/wofi/config` (biasanya `~/.config/wofi/config`). Jika tidak ada, wofi pakai nilai default internal. (Man page wofi menjelaskan format config snake_case dan bahwa mayoritas opsi juga tersedia sebagai argumen CLI). ([Man Arch Linux][7])
-* **Style (CSS):** `~/.config/wofi/style.css` (atau file CSS yang Anda tentukan). Wofi memakai styling GTK/CSS untuk render; banyak tema tersedia di repo tema wofi. ([DEV Community][8])
-* **Prioritas:** Argumen CLI > config file > default internal.
+### 5. Error Handling & Troubleshooting
 
----
+Bagian ini penting untuk mentalitas *problem solving* Anda.
 
-# Bagian G — Debugging awal (cek cepat bila tidak muncul)
+**Kasus 1: Error "Target not found: wofi"**
 
-1. Pastikan Anda menjalankan dalam sesi Wayland:
+  * **Analisis:** `pacman` tidak menemukan paket tersebut di database lokalnya.
+  * **Solusi:** Kemungkinan Anda belum sinkronisasi database. Jalankan `sudo pacman -Syu` terlebih dahulu.
+  * **English Error Message:** *"error: target not found: wofi"*
 
-   ```
-   echo $WAYLAND_DISPLAY
-   ```
+**Kasus 2: Error "Failed to connect to Wayland display"**
 
-   * Jika kosong, berarti mungkin bukan sesi Wayland. Pada sway normal variabel ini ada (mis. `wayland-0`).
+  * **Analisis:** Anda mencoba menjalankan Wofi di luar sesi Wayland (misalnya di sesi TTY atau X11 tanpa variabel lingkungan yang benar).
+  * **Solusi:** Pastikan Anda menjalankan perintah tersebut *di dalam* sesi Sway yang sedang aktif. Cek variabel: `echo $WAYLAND_DISPLAY`.
+  * **Plan B (Alternatif):**
+    Jika Wofi ternyata berat atau *buggy* di hardware Anda, alternatif CLI-based yang lebih ringan dan "Unix philosophy" banget untuk Wayland adalah **Fuzzel** atau **Bemenu**. (Tapi kita fokus Wofi dulu).
 
-2. Jalankan wofi dari terminal dan simpan error:
+-----
 
-   ```
-   wofi --show drun 2> /tmp/wofi.err
-   tail -n +1 /tmp/wofi.err
-   ```
-
-   * Periksa pesan `Protocol error`, `missing symbol`, atau `Gtk-WARNING`.
-
-3. Periksa apakah GTK/Wayland dev headers terpasang (jika build dari source). Contoh paket: `libgtk-3-dev`, `libwayland-dev`, `pkg-config`.
-
-4. Jika icon atau aplikasi `.desktop` tidak muncul:
-
-   * Pastikan `.desktop` berada di `~/.local/share/applications` atau `/usr/share/applications`.
-   * Jalankan `update-desktop-database` jika menambah manual file baru. ([Garuda Linux Forum][9])
-
-5. Jika konfigurasi CSS tidak berefek:
-
-   * Periksa path `~/.config/wofi/style.css`, permission file, dan syntax CSS (kurung/selector). Forum/discussion menunjukkan kadang style file tidak terbaca jika path salah atau cache. ([lists.fedoraproject.org][10])
-
-6. Jika wofi crash pada versi tertentu (contoh kasus nyata): beberapa rilis berubah setting (`lines` broken — gunakan `height` sebagai pengganti). Periksa changelog dan bugtracker bagi rilis yang bermasalah. ([bbs.archlinux.org][11])
-
----
-
-# Bagian H — Latihan praktis (tugas singkat untuk Modul 1)
-
-1. **Instal & jalankan**
-
-   * Di Arch: `sudo pacman -Syu wofi` lalu jalankan `wofi --show drun` dari terminal. Simpan error ke `/tmp/wofi.err` dan paste hasilnya bila ada masalah. ([Arch Linux][5])
-
-2. **Integrasi Sway**
-
-   * Tambahkan ke `~/.config/sway/config`:
-
-     ```
-     set $mod Mod4
-     bindsym $mod+d exec wofi --show drun
-     ```
-
-     lalu `swaymsg reload`. Coba tekan `$mod+d`.
-
-3. **Buat power menu piped**
-
-   * Jalankan:
-
-     ```bash
-     printf "Lock\nSuspend\nReboot\nShutdown" | wofi --dmenu
-     ```
-   * Pilih opsi, dan cek bagaimana Anda bisa menangani hasil pilihan (nanti di modul scripting kita bedah).
-
-4. **Cek env & log**
-
-   * `echo $WAYLAND_DISPLAY`
-   * `cat /tmp/wofi.err` (jika ada)
-
----
-
-# Bagian I — Checklist penguasaan Modul 1 (indikator Anda siap lanjut Modul 2)
-
-* [ ] Menjelaskan perbedaan X11/Wayland dan mengapa wofi dibuat untuk wlroots.
-* [ ] Menginstal wofi di distro (Arch/Debian) dan menjalankannya dari terminal.
-* [ ] Menambahkan binding wofi di `~/.config/sway/config` dan reload sway.
-* [ ] Menjalankan wofi dalam `drun`, `run`, dan `dmenu` mode (piped) dan memahami perbedaan.
-* [ ] Mengumpulkan log `stderr` ketika wofi error dan mengidentifikasi apakah masalah berkaitan dengan GTK/Wayland atau .desktop entries.
-
----
-
-# Referensi utama (baca lanjutan)
+### Referensi utama (baca lanjutan)
 
 * Wofi — repo/README (implementasi & dependensi). ([GitHub][1])
 * Manual page wofi (man) — format config & opsi. ([Man Arch Linux][7])
 * Paket Arch: detail paket `wofi` (dependensi dan repo). ([Arch Linux][5])
 * Panduan build (contoh meson/ninja) & dependensi dev. ([GitHub][4])
 * Panduan Sway (ArchWiki) — konfigurasi bindsym, reload, environment. ([ArchWiki][2])
+* Catatan: pada beberapa distro paket mungkin tersedia di versi terbaru (sid/bookworm). Periksa `packages.debian.org/wofi`. ([Debian Packages][3])
+* Jika icon atau aplikasi `.desktop` tidak muncul:
+   > * Pastikan `.desktop` berada di `~/.local/share/applications` atau `/usr/share/applications`.
+   > * Jalankan `update-desktop-database` jika menambah manual file baru. ([Garuda Linux Forum][9])
+* **Style (CSS):** `~/.config/wofi/style.css` (atau file CSS yang Anda tentukan). Wofi memakai styling GTK/CSS untuk render; banyak tema tersedia di repo tema wofi. ([DEV Community][8])
+* Log dapat memuat pesan terkait protocol error atau masalah GTK/Wayland; ini langkah pertama debugging. ([Man Arch Linux][6])
 
 ---
-<!--
-Kalau Anda setuju dengan hasil Modul 1 ini, saya akan lanjut **Modul 2**: *Konfigurasi Wofi (file config + semua opsi CLI) — lengkap dengan penjelasan kata-per-kata pada setiap opsi, contoh `style.css` dan contoh file `~/.config/wofi/config`*, termasuk latihan mengubah tampilan dan debugging CSS.
 
-Konfirmasi “lanjut Modul 2” dan saya keluarkan modul berikutnya lengkap dengan contoh file, snippet config, dan latihan debugging yang sangat rinci (keterangan per baris).
-> - **[Home][domain]**
-[domain]: ../../../../README.md
--->
-[1]: https://github.com/SimplyCEO/wofi?utm_source=chatgpt.com "SimplyCEO/wofi"
-[2]: https://wiki.archlinux.org/title/Sway?utm_source=chatgpt.com "Sway - ArchWiki"
-[3]: https://packages.debian.org/sid/wofi?utm_source=chatgpt.com "Details of package wofi in sid"
-[4]: https://github.com/fuzzybritches0/wofi?utm_source=chatgpt.com "fuzzybritches0/wofi"
-[5]: https://archlinux.org/packages/extra/x86_64/wofi/?utm_source=chatgpt.com "wofi 1.5.1-1 (x86_64)"
-[6]: https://man.archlinux.org/man/wofi.1.en?utm_source=chatgpt.com "wofi(1) - Arch manual pages"
-[7]: https://man.archlinux.org/man/wofi.5.en?utm_source=chatgpt.com "wofi(5) - Arch manual pages"
-[8]: https://dev.to/juniordevforlife/how-i-set-up-wifi-in-debian-11-14ka?utm_source=chatgpt.com "How I Set Up Wifi In Debian 11"
-[9]: https://forum.garudalinux.org/t/adding-an-application-to-wofi/17048?utm_source=chatgpt.com "Adding an application to Wofi - Sway"
-[10]: https://lists.fedoraproject.org/archives/list/sway%40lists.fedoraproject.org/thread/T2ECWRN7WFQZG6IA5QQLF7GG55QAZQS6/?utm_source=chatgpt.com "User Friendly Wofi Documentation - Sway"
-[11]: https://bbs.archlinux.org/viewtopic.php?id=307150&utm_source=chatgpt.com "wofi crashing since 1.5 update / Applications & Desktop ..."
+[1]: https://github.com/SimplyCEO/wofi "SimplyCEO/wofi"
+[2]: https://wiki.archlinux.org/title/Sway "Sway - ArchWiki"
+[3]: https://packages.debian.org/sid/wofi "Details of package wofi in sid"
+[4]: https://github.com/fuzzybritches0/wofi "fuzzybritches0/wofi"
+[5]: https://archlinux.org/packages/extra/x86_64/wofi "wofi 1.5.1-1 (x86_64)"
+[6]: https://man.archlinux.org/man/wofi.1.en "wofi(1) - Arch manual pages"
+[7]: https://man.archlinux.org/man/wofi.5.en "wofi(5) - Arch manual pages"
+[8]: https://dev.to/juniordevforlife/how-i-set-up-wifi-in-debian-11-14ka "How I Set Up Wifi In Debian 11"
+[9]: https://forum.garudalinux.org/t/adding-an-application-to-wofi/17048 "Adding an application to Wofi - Sway"
+[10]: https://lists.fedoraproject.org/archives/list/sway%40lists.fedoraproject.org/thread/T2ECWRN7WFQZG6IA5QQLF7GG55QAZQS6/ "User Friendly Wofi Documentation - Sway"
+[11]: https://bbs.archlinux.org/viewtopic.php "wofi crashing since 1.5 update / Applications & Desktop ..."
 
 > - **[Selanjutnya][selanjutnya]**
 > - **[Kurikulum][kurikulum]**
+> - **[Home][domain]**
 
+[domain]: ../../../../../../../README.md
 [kurikulum]: ../README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->
-
+[0]: ../README.md

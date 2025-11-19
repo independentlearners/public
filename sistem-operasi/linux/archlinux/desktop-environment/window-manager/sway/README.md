@@ -1207,6 +1207,7 @@ Penjelasan:
 * ArchWiki / distro wikis (tutorial & practical tips). ([ArchWiki][6])
 
 ---
+> Jika mungkin membantu,berikut [kamus kata kunci sway oleh chatgpt][f]. Untuk informasi modifikasi coba [kunjungi berikut][e]. Ingat satu hal bahwa semua dalam repository ini dihasilkan oleh AI. Apabila anda ingin melihat hasil Generate AI yang tidak saya Tampilkan coba buka kode sumber file ini. Mungkin isinya agak rancu tapi mungkin bisa membantu walaupun tidak menjawab pertanyaan anda. **Terimakasih banyak.**
 
 [1]: https://man.archlinux.org/man/sway.5?utm_source=chatgpt.com "sway(5) - Arch manual pages"
 [2]: https://manpages.debian.org/experimental/sway/sway-output.5.en.html?utm_source=chatgpt.com "sway-output(5)"
@@ -2107,3 +2108,5 @@ https://github.com/swaywm/wlroots?utm_source=chatgpt.com
 [b]: ./bagian-1/README.md
 [c]: ./../waybar/README.md
 [d]: ./bagian-2/README.md
+[e]: ./bagian-3/README.md
+[f]: ./bagian-4/README.md

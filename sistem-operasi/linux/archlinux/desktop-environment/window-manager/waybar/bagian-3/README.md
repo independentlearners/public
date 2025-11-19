@@ -1,4 +1,4 @@
-### 🗺️ Tahap 3: Struktur File dan Konsep Dasar
+### [🗺️ Tahap 3: Struktur File dan Konsep Dasar][0]
 
 Bagian ini berfokus pada *di mana* Waybar mencari file konfigurasinya dan *mengapa* file-file tersebut dipisahkan. Ini adalah fondasi fisik (digital) dari penyiapan Anda.
 

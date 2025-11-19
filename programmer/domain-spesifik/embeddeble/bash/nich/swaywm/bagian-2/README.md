@@ -266,7 +266,11 @@ Apakah Anda ingin mendalami "Resep `jq`" lainnya, atau kita siap untuk melanjutk
 
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
+> - **[Nich][kurikulum]**
+> - **[Home][domain]**
 
+[domain]: ../../../../../../../README.md
+[kurikulum]: ../../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 

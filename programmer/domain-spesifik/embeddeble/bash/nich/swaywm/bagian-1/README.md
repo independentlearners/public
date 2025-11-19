@@ -256,7 +256,10 @@ Di modul berikutnya, kita akan belajar cara menjadi "penerjemah" JSON yang andal
 
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][domain]**
+> - **[Nich][kurikulum]**
+> - **[Home][home]**
 
+[home]: ../../../../../../../README.md
 [domain]: ../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md

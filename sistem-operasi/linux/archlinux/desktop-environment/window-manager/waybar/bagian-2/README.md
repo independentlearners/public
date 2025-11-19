@@ -1,4 +1,4 @@
-### 🛠️ Bagian 2: Identitas Teknologi & Prasyarat
+### [🛠️ Bagian 2: Identitas Teknologi & Prasyarat][0]
 
 Bagian ini berfokus pada pemahaman "bahan-bahan" teknis yang membangun Waybar dan keterampilan dasar yang *mutlak* diperlukan untuk memodifikasinya. Ini adalah jembatan antara "filosofi" (Bagian 1) dan "praktik" (Bagian 3).
 

@@ -7,7 +7,7 @@ Mari kita mulai dengan bagian pertama: **Ikhtisar dan Filosofi Konfigurasi Wayba
 
 ---->
 
-### 🏛️ Bagian 1: Ikhtisar & Filosofi Konfigurasi Waybar
+### [🏛️ Bagian 1: Ikhtisar & Filosofi Konfigurasi Waybar][0]
 
 Bagian ini adalah fondasi konseptual. Memahami "mengapa" di balik desain Waybar adalah kunci untuk menguasai "bagaimana" dalam mengonfigurasinya. Tanpa pemahaman ini, kustomisasi hanya akan menjadi "salin-tempel" (copy-paste) tanpa pemahaman sejati.
 

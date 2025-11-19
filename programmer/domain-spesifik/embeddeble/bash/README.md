@@ -2,6 +2,8 @@
 
 > **[71 Istilah dalam scripting][5]**
 
+> **[Nich scripting][6]**
+
 # **Kurikulum Komprehensif: Menguasai Shell Scripting (Bash)**
 
 Kurikulum ini adalah peta jalan untuk menguasai seni otomasi di lingkungan berbasis Unix/Linux. Shell scripting bukan hanya tentang menulis kode, tetapi tentang memahami dan memanfaatkan kekuatan baris perintah secara maksimal.
@@ -717,3 +719,4 @@ Kurikulum ini adalah fondasi yang sangat kokoh. Penambahan yang saya rekomendasi
 [3]:../bash/bagian-3/README.md
 [4]:../bash/bagian-4/README.md
 [5]:../bash/bagian-5/README.md
+[6]:../bash/nich/README.md

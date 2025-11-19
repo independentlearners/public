@@ -1,4 +1,4 @@
-## [🚀 Ikhtisar: Filosofi Konfigurasi Waybar][1]
+## [🚀 Ikhtisar: Filosofi Konfigurasi Waybar][0]
 
 Sebelum melangkah ke teknis, penting untuk memahami filosofi Waybar. Waybar dirancang untuk menjadi **modular** dan **dapat disesaiakan gayanya (styleable)**.
 
@@ -9,7 +9,7 @@ Pemisahan antara *struktur* (JSON) dan *tampilan* (CSS) inilah yang memberikan W
 
 ---
 
-## [🛠️ Identitas Teknologi & Prasyarat][2]
+## 🛠️ Identitas Teknologi & Prasyarat
 
 Sesuai preferensi Anda untuk memahami teknologi secara mendalam:
 
@@ -25,11 +25,11 @@ Sesuai preferensi Anda untuk memahami teknologi secara mendalam:
 
 ---
 
-## [🗺️ Tahapan Pembelajaran Konfigurasi Waybar][3]
+## 🗺️ Tahapan Pembelajaran Konfigurasi Waybar
 
 Ini adalah peta jalan (roadmap) langkah demi langkah untuk menguasai konfigurasi Waybar, dari dasar hingga mahir.
 
-### Tahap 1: Struktur File dan Konsep Dasar
+### [Tahap 1: Struktur File dan Konsep Dasar][1]
 
 Fokus di tahap ini adalah memahami di mana Waybar mencari file dan bagaimana file-file tersebut berinteraksi.
 
@@ -42,7 +42,7 @@ Fokus di tahap ini adalah memahami di mana Waybar mencari file dan bagaimana fil
     * **Tujuan:** File ini (dalam format CSS) mendefinisikan **tampilan** bar Anda.
     * **Konsep Kunci:** Waybar secara otomatis memuat file ini. Anda "menargetkan" elemen di bar Anda menggunakan pemilih CSS.
 
-### Tahap 2: Pengaturan Global (Level Atas) dalam `config`
+### [Tahap 2: Pengaturan Global (Level Atas) dalam `config`][2]
 
 Ini adalah properti di dalam objek JSON utama yang mendefinisikan perilaku bar secara keseluruhan.
 
@@ -57,7 +57,7 @@ Ini adalah properti di dalam objek JSON utama yang mendefinisikan perilaku bar s
     * `"output"`: Penting untuk pengaturan multi-monitor. (Konsep: Menentukan pada monitor mana bar ini akan muncul).
     * `"height"` / `"width"`: Mengatur dimensi bar secara manual, meskipun biasanya otomatis lebih baik.
 
-### Tahap 3: Konfigurasi Modul (Inti Kustomisasi)
+### [Tahap 3: Konfigurasi Modul (Inti Kustomisasi)][3]
 
 Ini adalah bagian terbesar dan terpenting. Setiap item yang Anda lihat di bar (jam, CPU, workspace) adalah sebuah modul.
 
@@ -82,7 +82,7 @@ Ini adalah bagian terbesar dan terpenting. Setiap item yang Anda lihat di bar (j
         * **Konsep:** Anda memberikan perintah shell (`"exec"`) dan Waybar akan menampilkan *output* (stdout) dari perintah tersebut.
         * **Ini adalah kunci** untuk menampilkan informasi apa pun yang bisa Anda dapatkan melalui skrip CLI.
 
-### Tahap 4: Styling (CSS)
+### [Tahap 4: Styling (CSS)][4]
 
 Setelah struktur Anda (JSON) selesai, Anda beralih ke `style.css` untuk membuatnya terlihat bagus.
 
@@ -96,7 +96,7 @@ Setelah struktur Anda (JSON) selesai, Anda beralih ke `style.css` untuk membuatn
         * **Contoh Konsep:** Modul baterai (`#battery`) mungkin mendapatkan class `.charging` saat mengisi daya atau `.warning` saat baterai lemah.
         * **Penerapan:** Anda dapat menulis CSS seperti `#battery.warning { background-color: red; }`. Ini memungkinkan bar Anda bereaksi secara visual terhadap status sistem.
 
-### Tahap 5: Penanganan Error dan Iterasi
+### [Tahap 5: Penanganan Error dan Iterasi][5]
 
 Sesuai permintaan Anda mengenai penanganan *error*.
 
@@ -336,6 +336,9 @@ Untuk menerapkan konsep-konsep ini, referensi utama Anda adalah **Waybar Wiki di
 
 Apakah Anda ingin saya melanjutkan dengan membedah satu modul spesifik (seperti `sway/workspaces` atau `custom`) secara mendalam, atau fokus pada contoh CSS untuk mencapai estetika tertentu?
 -->
+[0]: ./../README.md
 [1]: ./bagian-1/README.md
 [2]: ./bagian-2/README.md
 [3]: ./bagian-3/README.md
+[4]: ./bagian-4/README.md
+[5]: ./bagian-5/README.md

@@ -1,4 +1,4 @@
-### 🗺️ Tahap 4: Pengaturan Global (Level Atas) dalam `config`
+### [🗺️ Tahap 4: Pengaturan Global (Level Atas) dalam `config`][0]
 
 Bagian ini berfokus secara eksklusif pada *key-value pair* (pasangan kunci-nilai) di level teratas (Top-Level) dari file `config` JSON Anda. Ini adalah properti yang mengontrol **bar secara keseluruhan**, bukan modul-modul individual di dalamnya.
 
