@@ -713,7 +713,7 @@ Kurikulum ini adalah fondasi yang sangat kokoh. Penambahan yang saya rekomendasi
 - **[Home][domain-spesifik]**
 
 [domain-spesifik]: ../../README.md
-[0]:../../../../CLI/terminal/README.md
+[0]:../../../../CLI_TUI/perintah/README.md
 [1]:../bash/bagian-1/README.md
 [2]:../bash/bagian-2/README.md
 [3]:../bash/bagian-3/README.md
