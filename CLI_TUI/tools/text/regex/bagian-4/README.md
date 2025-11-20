@@ -4,7 +4,7 @@ Awk bukanlah sekadar perintah; ia adalah **Bahasa Pemrograman Turing-Complete** 
 
 -----
 
-# 📊 FASE 4: The Analyst (GNU Awk - Parsing Struktural)
+# [📊 FASE 4: The Analyst (GNU Awk - Parsing Struktural)][0]
 
 **Status:** *Expert Data Manipulation*
 **Fokus Utama:** Pengolahan data kolom (Log, CSV, TSV), Aritmatika, dan Pelaporan.

@@ -6,7 +6,7 @@ Banyak orang takut pada Regex karena terlihat seperti kode acak (contoh: `(?<=\d
 
 -----
 
-# 🧠 FASE 2: The Brain of Pattern (Logika Pola - PCRE)
+# [🧠 FASE 2: The Brain of Pattern (Logika Pola - PCRE)][0]
 
 Di fase ini, kita berhenti melihat teks sebagai "kata-kata" dan mulai melihatnya sebagai "struktur" dan "pola".
 
@@ -297,10 +297,10 @@ Di sinilah kita akan masuk ke **FASE 3: Sed (Stream Editor)**. Sed menggunakan R
 
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Kurikulum CLI][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../../../README.md
+[domain]: ../../../../../README.md
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md

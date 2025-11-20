@@ -38,7 +38,7 @@ Fase ini membangun mental model tentang bagaimana teks "mengalir" di Linux dan b
 **Identitas Teknologi:**
 
   * **Bahasa Asli:** C.
-  * **Pengembang:** Ken Thompson (versi asli), Mike Haertel (GNU Grep).
+  * **Pengembang:** [Ken Thompson (versi asli),](https://id.wikipedia.org/wiki/Ken_Thompson) Mike Haertel (GNU Grep).
   * **Lisensi:** GPL (GNU General Public License).
   * **Repositori:** [GNU Grep Git (Savannah)](https://git.savannah.gnu.org/git/grep.git) | [Mirror GitHub (Unofficial)](https://www.google.com/search?q=https://github.com/frederic/grep).
 
@@ -285,6 +285,18 @@ Setelah menyelesaikan kurikulum ini, Anda akan mampu:
 3.  **Automasi:** Menulis *one-liners* (perintah satu baris) yang dapat melakukan pekerjaan manual berjam-jam dalam hitungan detik.
 4.  **Diagnosa:** Memahami error sistem dengan mencari pola anomali secara cepat.
 5.  **Profesionalisme Bahasa:** Memahami dokumentasi teknis bahasa Inggris (man pages) dengan presisi gramatikal.
+
+-----
+
+Kurikulum ini secara resmi mencakup technical safety:
+
+1.  **PCRE2:** (Inti dari Fase 2).
+2.  **POSIX BRE/ERE:** (Telah dijelaskan perbedaannya di atas).
+3.  **Lookaround:** (Tercakup di Fase 2 - Advanced).
+4.  **Backreference:** (Tercakup di Fase 3 - Sed).
+5.  **Pattern Grouping:** (Tercakup di Fase 2 & 3).
+6.  **Integrasi:** (Tercakup di Fase 5 - Log Sentinel).
+7.  **Regex dalam Pemrograman:** (Telah ditambahkan contoh Dart di atas).
 
 -----
 

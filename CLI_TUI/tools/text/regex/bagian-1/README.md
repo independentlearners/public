@@ -2,7 +2,7 @@ Banyak orang langsung belajar `grep`, tapi bingung ketika outputnya tidak bisa d
 
 -----
 
-# 🚀 FASE 1: The Stream & The Search (Pondasi & Pencarian)
+# [🚀 FASE 1: The Stream & The Search (Pondasi & Pencarian)][0]
 
 Fase ini adalah tentang bagaimana kita mengontrol data yang bergerak dan bagaimana kita menangkap informasi dari data tersebut.
 
@@ -226,9 +226,71 @@ grep "root" /etc/passwd
 
 **Output:**
 
-```text
+```bash
 root:x:0:0::/root:/bin/bash
 ```
+Jika menggunakan zsh maka outputnya hanya berubah sedikit
+
+```
+root:x:0:0::/root:/usr/bin/zsh
+```
+
+<details>
+  <summary>📃 Hasil output bisa anda lewati jika tidak membutuhkan penjelasannya</summary>
+
+### Penjelasan 
+
+- **`root`** → Nama akun pengguna. Ini adalah superuser dengan hak akses penuh.
+- **`x`** → Placeholder untuk password terenkripsi. Nilai sebenarnya disimpan di file **/etc/shadow**.
+- **`0`** → UID (User ID). Nilai `0` selalu berarti superuser.
+- **`0`** → GID (Group ID). Biasanya menunjuk ke grup `root`.
+- **`` (kosong)** → Field komentar atau GECOS (informasi tambahan seperti nama lengkap). Di sini kosong.
+- **`/root`** → Home directory untuk user root.
+- **`/usr/bin/zsh`** → Shell login default. Dalam hal ini menggunakan **Z shell (zsh)**, bukan bash.
+
+### Konteks
+File **/etc/passwd** berisi informasi akun sistem. Setiap baris mewakili satu user dengan format:
+
+```
+username:password:UID:GID:GECOS:home_directory:login_shell
+```
+
+### Catatan
+- Akun `root` sangat sensitif; perubahan pada baris ini bisa memengaruhi seluruh sistem.
+- Mengganti shell default root ke `zsh` berarti setiap kali root login, shell yang digunakan adalah **zsh**.
+
+### Makna tanda `::` dalam baris `/etc/passwd`
+
+Dalam format **/etc/passwd**, setiap field dipisahkan oleh tanda titik dua `:`.  
+Jika Anda melihat **`::`** (dua titik dua berurutan), artinya **field di antaranya kosong**.
+
+Contoh pada baris:
+
+```
+root:x:0:0::/root:/usr/bin/zsh
+```
+
+- Field pertama → `root` (username)  
+- Field kedua → `x` (password placeholder)  
+- Field ketiga → `0` (UID)  
+- Field keempat → `0` (GID)  
+- **Field kelima → kosong** → ditulis sebagai `::`  
+  - Ini biasanya disebut **GECOS field**, berisi informasi tambahan seperti nama lengkap, nomor telepon, dsb.  
+  - Karena tidak diisi, maka ditampilkan kosong dengan `::`.  
+- Field keenam → `/root` (home directory)  
+- Field ketujuh → `/usr/bin/zsh` (login shell)
+
+### Ringkasnya
+
+`::` hanyalah penanda bahwa **kolom GECOS tidak memiliki nilai**. Jadi bukan error, melainkan memang dibiarkan kosong.  
+
+Jadi anda bisa juga melakukannya seperti ini jika anda hanya mencari bagian yang kosong
+
+```zshrc
+grep "::" /etc/passwd   
+```
+
+</details>
 
 -----
 

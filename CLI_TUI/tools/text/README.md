@@ -1,13 +1,25 @@
-
-# Overview: Text Processing & Fondasi Regex
+# 📘 Overview: Text Processing & Fondasi Regex
 
 **Memahami Teks di Komputer Sebelum Masuk ke Regex**
 
-Dokumen ini menjelaskan konsep dasar mengenai **teks**, **representasi data**, serta **pengolahan teks (text processing)** di komputer. Materi ini menjadi pondasi sebelum peserta belajar **regex (regular expressions)**. Pemahaman konteks ini akan membuat peserta memahami *mengapa regex penting*, *kapan digunakan*, dan *bagaimana text processing bekerja dalam sistem komputer modern*.
+Dokumen ini menjelaskan konsep dasar mengenai **teks**, **representasi data**, serta **pengolahan teks (text processing)** di komputer. Materi ini menjadi pondasi sebelum peserta belajar **regex (regular expressions)**. Pemahaman konteks ini akan membuat peserta memahami *mengapa regex penting*, *kapan digunakan*, dan *bagaimana text processing bekerja dalam sistem komputer modern*. Berikut pengantar sistematis serta profesional untuk memahami jenis-jenis file dan teks di Linux.
 
 ---
 
-## 1. Apa Itu “Teks” di Dunia Komputer?
+## Jenis File dan Teks di Linux (Pra-Regex)
+
+### 🎯 Tujuan
+
+Untuk memberikan pemahaman dasar mengenai:
+
+- Perbedaan antara file teks dan file biner
+- Jenis-jenis file berdasarkan struktur datanya
+- Kapan dan bagaimana regex dapat digunakan
+- Alat bantu untuk mengenali dan mengelola file di Linux CLI
+
+---
+
+## 🧩 1. Apa Itu “Teks” di Dunia Komputer?
 
 Dalam komputer, **teks adalah data yang direpresentasikan sebagai urutan byte**, biasanya menggunakan encoding seperti:
 
@@ -24,6 +36,85 @@ Contoh representasi byte:
 * Karakter `你` dalam UTF-8 → tiga byte: `0xE4 0xBD 0xA0`
 
 **Kesimpulan:** sebelum kita bisa memproses teks, kita harus memahami bahwa semua teks adalah *data mentah* yang hanya terlihat bermakna setelah diinterpretasikan oleh aplikasi.
+
+
+### Jenis Teks:
+| Jenis | Ciri | Contoh |
+|-------|------|--------|
+| **Plain Text** | Teks murni tanpa format khusus | `.txt`, `.md`, `.conf` |
+| **Structured Text** | Teks dengan struktur tertentu | `.json`, `.yaml`, `.csv`, `.html` |
+| **Source Code** | Teks berisi instruksi program | `.c`, `.py`, `.lua`, `.sh` |
+
+---
+
+## 🧱 2. Apa Itu File Biner?
+
+**File biner** adalah file yang berisi data dalam format byte mentah, tidak bisa dibaca langsung oleh manusia tanpa decoding.
+
+### Contoh File Biner:
+| Jenis | Ekstensi | Keterangan |
+|-------|----------|------------|
+| **Executable** | `.exe`, `.bin`, `.so` | Berisi instruksi mesin |
+| **Media** | `.mp3`, `.mp4`, `.jpg`, `.png` | Data audio/visual |
+| **Archive** | `.zip`, `.tar`, `.gz` | Kompresi file |
+| **Database** | `.db`, `.sqlite`, `.mdb` | Data terstruktur dalam format biner |
+
+---
+
+### 🔍 3. Bagaimana Mengenali Jenis File?
+
+Gunakan perintah CLI berikut:
+
+```bash
+file nama_file
+```
+
+Contoh output:
+- `ASCII text` → Plain text
+- `gzip compressed data` → Arsip terkompresi
+- `ELF 64-bit LSB executable` → File eksekusi Linux
+
+---
+
+### 🧮 4. Kapan Regex Bisa Digunakan?
+
+**Regex hanya efektif untuk file teks.** Regex tidak cocok untuk file biner karena:
+- Struktur datanya tidak berbasis karakter
+- Bisa menyebabkan hasil pencarian tidak valid atau error
+
+### File yang Cocok untuk Regex
+
+Hanya file untuk penulisan yang dapat di edit seperti: 
+
+✅ `.txt`, `.log`, `.conf`, `.json`, `.html`, `.csv`, `.py`, `.sh`
+
+### File yang Tidak Cocok untuk Regex
+
+Semua file matang seperti:
+
+❌ `.mp3`, `.mp4`, `.zip`, `.exe`, `.db`, `.png`, `.pdf` (tergantung encoding)
+
+---
+
+### 🛠️ 5. Tools CLI Terkait
+
+| Tool | Fungsi |
+|------|--------|
+| `cat`, `less`, `nano`, `vim` | Membaca dan mengedit file teks |
+| `grep`, `sed`, `awk` | Pencarian dan manipulasi teks (regex) |
+| `file` | Mengidentifikasi tipe file |
+| `strings` | Mengekstrak teks dari file biner |
+| `xxd`, `hexdump` | Melihat isi file dalam format heksadesimal |
+| `jq`, `yq` | Parsing file JSON/YAML |
+
+---
+
+### 📌 Kesimpulan Inti
+
+- Tidak semua file di Linux adalah teks.
+- Regex hanya bekerja pada file teks.
+- Penting untuk mengenali tipe file sebelum memprosesnya dengan regex.
+- Gunakan `file` dan `strings` untuk investigasi awal.
 
 ---
 
@@ -225,7 +316,7 @@ Keduanya saling melengkapi.
 
 ## 9. Pembelajaran Lanjutan (Arah ke Regex)
 
-Setelah memahami overview ini, peserta akan siap memasuki pembelajaran:
+Setelah memahami overview ini, seharusnya anda siap memasuki pembelajaran:
 
 * PCRE2
 * POSIX BRE/ERE

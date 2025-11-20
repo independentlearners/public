@@ -1,12 +1,8 @@
-Ini adalah tahap terakhir dan paling krusial: **Integrasi**.
-
-Anda sudah menguasai alat-alat individu (`grep`, `sed`, `awk`, `regex`). Namun, di dunia Enterprise dan DevOps, menjalankan perintah satu per satu secara manual itu berbahaya dan tidak efisien.
-
-Di fase ini, kita akan merakit semua alat tersebut menjadi sebuah **Automated Pipeline** yang tangguh (*robust*), cepat, dan aman. Kita akan membungkusnya dalam **Shell Scripting** dengan standar industri (bukan sekadar skrip coba-coba).
+Ini adalah tahap terakhir dan paling krusial: **Integrasi**. Anda sudah menguasai alat-alat individu (`grep`, `sed`, `awk`, `regex`). Namun, di dunia Enterprise dan DevOps, menjalankan perintah satu per satu secara manual itu berbahaya dan tidak efisien. Di fase ini, kita akan merakit semua alat tersebut menjadi sebuah **Automated Pipeline** yang tangguh (*robust*), cepat, dan aman. Kita akan membungkusnya dalam **Shell Scripting** dengan standar industri (bukan sekadar skrip coba-coba).
 
 -----
 
-# 🏗️ FASE 5: Enterprise Integration & Automation
+# [🏗️ FASE 5: Enterprise Integration & Automation][0]
 
 **Status:** *Architect Level*
 **Fokus:** Keandalan, Kecepatan (Performance), dan Error Handling.

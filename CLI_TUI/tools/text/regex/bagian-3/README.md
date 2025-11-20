@@ -4,7 +4,7 @@ Selamat datang di **Fase 3**, di mana Anda akan belajar menjadi "Ahli Bedah Teks
 
 -----
 
-# 🔪 FASE 3: The Surgeon (Sed — Stream Editor)
+# [🔪 FASE 3: The Surgeon (Sed — Stream Editor)][0]
 
 **Status:** *Advanced Text Manipulation*
 
@@ -231,6 +231,91 @@ sed -n '1!G;h;$p' file.txt
 4.  `$p`: Jika sudah baris TERAKHIR (`$`), cetak (`p`) isi Meja.
 
 *Hasilnya:* Tumpukan terbalik.
+
+-----
+
+#### 1. POSIX BRE vs ERE (The Standards War)
+
+**Mengapa ini penting?** Di Linux, kadang skrip Anda error hanya karena kurang satu karakter opsi. Anda harus tahu kapan harus melakukan *escape* dan kapan tidak.
+
+**Konsep Dasar:**
+Ada dua standar regex "kuno" sebelum PCRE (Perl) merajai dunia:
+
+1.  **BRE (Basic Regular Expressions):** Standar tertua.
+
+      * **Perilaku:** Karakter sakti seperti `?`, `+`, `{`, `}`, `(`, `)` **TIDAK** dianggap sakti kecuali diberi backslash (`\`).
+      * **Default di:** `grep` (tanpa flag), `sed` (tanpa flag).
+      * **Masalah:** Anda harus mengetik banyak backslash (The Backslash Hell).
+      * *Contoh:* Mencari "(abc)?" -\> `\(abc\)\?`
+
+2.  **ERE (Extended Regular Expressions):** Standar yang lebih modern.
+
+      * **Perilaku:** Karakter `?`, `+`, `(`, `)` langsung dianggap sakti.
+      * **Diaktifkan dengan:** `grep -E` atau `sed -E` (atau `sed -r` di versi GNU lama).
+      * *Contoh:* Mencari "(abc)?" -\> `(abc)?`
+
+**Tabel Perbandingan Sintaks (Wajib Hafal):**
+
+| Fitur | BRE (Grep/Sed Biasa) | ERE (`grep -E`, `sed -E`) | PCRE (`grep -P`) |
+| :--- | :--- | :--- | :--- |
+| Grouping | `\(...\)` | `(...)` | `(...)` |
+| Quantifier {n,m} | `\{n,m\}` | `{n,m}` | `{n,m}` |
+| One or More (+) | `\+` | `+` | `+` |
+| Zero or One (?) | `\?` | `?` | `?` |
+| Alternation (OR) | `\|` | `\|` | `\|` |
+
+**Best Practice:**
+Selalu gunakan **ERE** (`-E`) atau **PCRE** (`-P`) jika memungkinkan, agar regex Anda bersih dan mudah dibaca (kompatibel dengan cara pikir programmer modern). Gunakan BRE hanya jika Anda menulis skrip untuk sistem UNIX kuno (seperti Solaris atau AIX).
+
+-----
+
+#### 2. Regex dalam Bahasa Pemrograman (Dart/Flutter Context)
+
+**Mengapa ini penting?** Sebagai programmer. Anda perlu tahu bahwa logika yang Anda pelajari di CLI (`grep -P`) bisa langsung di-*copy paste* ke kode Anda.
+
+**Implementasi: Dari CLI ke Dart**
+
+Mari kita gambarkan dalam dart, misalkan Anda sudah berhasil menyusun regex untuk menangkap Email di terminal:
+**Terminal (CLI):**
+
+```bash
+grep -P "[\w\.-]+@[\w\.-]+\.\w+" data.txt
+```
+
+**Penerapan di Dart (Flutter):**
+Di Dart, Regex adalah objek first-class. Library standarnya adalah `dart:core`.
+
+```dart
+void main() {
+  // 1. Definisikan Teks Sumber
+  String rawText = "Hubungi admin di support@archlinux.org segera.";
+
+  // 2. Definisikan Pola (Sama persis dengan PCRE, tapi escape backslash)
+  // Perhatikan 'r' (raw string) agar kita tidak perlu double escape (\\w)
+  RegExp emailPattern = RegExp(r"[\w\.-]+@[\w\.-]+\.\w+");
+
+  // 3. Eksekusi Pencarian (Mirip grep)
+  // Mencari kecocokan pertama
+  RegExpMatch? match = emailPattern.firstMatch(rawText);
+
+  if (match != null) {
+    // Ini outputnya ($0 di awk/bash)
+    print("Email ditemukan: ${match.group(0)}"); 
+  }
+  
+  // 4. Validasi (Mirip grep -q)
+  bool isValid = emailPattern.hasMatch("bukan_email");
+  print("Validasi: $isValid"); // false
+}
+```
+
+**Konsep Kunci Interoperabilitas:**
+
+1.  **Raw String (`r"..."`):** Di Python dan Dart, selalu gunakan `r` sebelum string regex. Ini mencegah bahasa pemrograman menerjemahkan `\n` atau `\t` sebelum regex membacanya.
+2.  **Method Mapping:**
+      * `grep` -\> `RegExp.hasMatch()` atau `RegExp.allMatches()`
+      * `sed s///` -\> `String.replaceAll(RegExp(...), "replacement")`
+      * `awk` logic -\> Dilakukan dengan manipulasi List/Map di Dart.
 
 -----
 
