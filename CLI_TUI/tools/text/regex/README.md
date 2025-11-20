@@ -2,7 +2,7 @@ Kurikulum ini dirancang untuk membawa Anda dari pemahaman dasar aliran teks (*te
 
 -----
 
-# 📜 Master Kurikulum: Text Processing Command Line Interface (CLI)
+# [📜 Master Kurikulum: Text Processing Command Line Interface (CLI)][0]
 
 **Fokus:** Regex (PCRE), Grep, Sed, Awk.
 **Filosofi:** *Do one thing and do it well* (Lakukan satu hal dan lakukan dengan sangat baik).
@@ -26,7 +26,7 @@ Sebelum masuk ke materi inti, pastikan lingkungan Arch Linux Anda siap.
 
 -----
 
-## FASE 1: The Stream & The Search (Fondasi & Pencarian)
+## [FASE 1: The Stream & The Search (Fondasi & Pencarian)][1]
 
 **Level:** Novice to Intermediate
 **Waktu:** 2-3 Minggu
@@ -84,7 +84,7 @@ Grep bekerja berdasarkan prinsip **Filtering**. Ia tidak mengubah teks, ia hanya
 
 -----
 
-## FASE 2: The Brain of Pattern (Logika Pola)
+## [FASE 2: The Brain of Pattern (Logika Pola)][2]
 
 **Level:** Intermediate to Advanced
 **Waktu:** 3-4 Minggu
@@ -138,7 +138,7 @@ Regex adalah **Abstraksi**. Alih-alih mencari kata "Senin", Anda mencari "Kata a
 
 -----
 
-## FASE 3: The Surgeon (Pengeditan Otomatis)
+## [FASE 3: The Surgeon (Pengeditan Otomatis)][3]
 
 **Level:** Advanced
 **Waktu:** 3-4 Minggu
@@ -188,7 +188,7 @@ Sed bekerja dengan siklus: **Read, Execute, Print**. Sed memiliki **Pattern Spac
 
 -----
 
-## FASE 4: The Analyst (Parsing Struktural)
+## [FASE 4: The Analyst (Parsing Struktural)][4]
 
 **Level:** Expert
 **Waktu:** 4-5 Minggu
@@ -237,7 +237,7 @@ Awk memperlakukan teks sebagai **Records** (biasanya baris) dan **Fields** (kolo
 
 -----
 
-## FASE 5: Enterprise Integration & Automation
+## [FASE 5: Enterprise Integration & Automation][5]
 
 **Level:** Enterprise / Architect
 **Waktu:** 2-3 Minggu
@@ -289,31 +289,31 @@ Setelah menyelesaikan kurikulum ini, Anda akan mampu:
 -----
 
 > - **[Selanjutnya][selanjutnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Tahap Ujiab][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../../README.md
-[kurikulum]: ../../README.md
+[domain]: ../../../../../../README.md
+[kurikulum]: ../regex/bagian-6/README.md
 [selanjutnya]: ../bagian-1/README.md
 
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ../regex/bagian-1/README.md
+[2]: ../regex/bagian-2/README.md
+[3]: ../regex/bagian-3/README.md
+[4]: ../regex/bagian-4/README.md
+[5]: ../regex/bagian-5/README.md
+[6]: ../regex/bagian-6/README.md
+<!-- [7]: ../regex/bagian-1/README.md -->
+<!-- [8]: ../regex/bagian-1/README.md -->
+<!-- [9]: ../regex/bagian-1/README.md -->
+<!-- [10]: ../regex/bagian-1/README.md -->
+<!-- [11]: ../regex/bagian-1/README.md -->
+<!-- [12]: ../regex/bagian-1/README.md -->
+<!-- [13]: ../regex/bagian-1/README.md -->
+<!-- [14]: ../regex/bagian-1/README.md -->
+<!-- [15]: ../regex/bagian-1/README.md -->
+<!-- [16]: ../regex/bagian-1/README.md -->
+<!-- [17]: ../regex/bagian-1/README.md -->
+<!-- [18]: ../regex/bagian-1/README.md -->
