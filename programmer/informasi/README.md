@@ -1,4 +1,4 @@
-[Kembali Ke Home](../README.md)
+[Home](../../README.md)
 
 # Penjelasan Konsep Dalam Dunia Programming
 
@@ -120,66 +120,3 @@ Kumpulan konsep dalam pemrograman yang mencakup istilah‑istilah. Daftar ini di
 
 Setiap konsep di atas saling terkait dan memberikan fondasi kuat bagi pengembangan perangkat lunak. Dari desain hingga eksekusi, pemahaman mendalam tentang konsep‑konsep ini akan membantumu menciptakan aplikasi yang terstruktur, efisien, dan scalable.
 
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#

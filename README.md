@@ -185,25 +185,37 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
 
 * **📘 Paradigma Pemrograman**
 
-  * Prosedural
-  * Berorientasi Objek (OOP)
-  * Fungsional
-  * Deklaratif
-  * Event-driven
-  * Reactive
-
+  * [Imperatif][imperatif] — pemrograman sebagai urutan instruksi yang mengubah state.
+  * [Procedural][prosedural] — sub-Imperatif dengan organisasi berbasis prosedur/ fungsi.
+  * [Structured Programming (subset imperatif)][subset-imperatif] — Imperatif terkontrol (tanpa goto; kontrol alur terstruktur).
+  * [Berorientasi Objek (OOP)][oop] — entitas disebut objek: enkapsulasi, relasi, dan state.
+  * [Fungsional][fungsional] — fungsi murni, komposisi, tanpa state yang berubah.
+  * [Logic Programming][logic] — aturan dan inferensi (Prolog, Datalog).
+  * [Constraint / SAT/SMT languages][constraint] — menyatakan constraint dan mencari solusi yang memenuhi.
+  * [Deklaratif][deklaratif] — hanya menyatakan hasil yang diinginkan, bukan langkahnya.
+  * [Reactive][reactive] — pemrograman dengan perubahan state berkelanjutan secara real-time.
+  * [Event-driven][event-driven] — alur dikendalikan oleh event dan callback (GUI, server async).
+  * [Concurrent / Parallel / Actor-based][concurrent] — eksekusi banyak proses secara simultan (threads/actors).
+  * [Actor Model][actor] — concurrency berbasis pesan antar actors (Erlang, Akka).
+  * [Dataflow Programming][dataflow] — eksekusi berdasarkan aliran data (stream graph).
+  * [Array / Vector Programming][array] — operasi pada seluruh koleksi sebagai primitif (APL, MATLAB).
+  * [Concatenative / Stack-Based][concatenative] — komposisi fungsi lewat manipulasi stack (Forth, Joy).
+  * [Aspect-Oriented Programming (AOP)][aspec] — cross-cutting concerns dipisahkan sebagai aspek.
+  * [Probabilistic Programming (PPL)][probabilistic] — model probabilistik + inferensi statistik otomatis.
+  * [Metaprogramming / Homoiconic][metaprogramming] — program memanipulasi/menulis program lain (Lisp macros).  
 * **🧮 Struktur Logika & Data**
 
-  * Variabel, tipe data, dan ekspresi
-  * Struktur kontrol (if, loop, switch)
-  * Struktur data (list, map, tree, graph)
-  * Algoritma dan kompleksitas
+  * [Variabel, tipe data, dan ekspresi][struktur-1]
+  * [Struktur kontrol (if, loop, switch)][struktur-2]
+  * [Struktur data (list, map, tree, graph)][struktur-3]
+  * [Algoritma dan kompleksitas][struktur-4]
 
 * **🔄 Prinsip Abstraksi & Modularitas**
 
-  * Fungsi, modul, dan namespace
-  * Komposisi dan enkapsulasi
-  * Reusabilitas dan maintainability
+  * [Fungsi, modul, dan namespace][struktur-5]
+  * [Komposisi dan enkapsulasi][struktur-6]
+  * [Reusabilitas dan maintainability][struktur-7]
+
 
 ---
 
@@ -286,7 +298,7 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
 * **📐 Linting & Dokumentasi Otomatis**
 * **💬 Gaya Komentar dan Dokumentasi Teknis**
 * **⚖️ Etika Open Source & Lisensi Perangkat Lunak**
-
+* **⚠️ [Konsistensi][konsistensi]**
 ---
 
 <!--
@@ -1011,6 +1023,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 
 > **By MasBro | [s.id/gocoding](https://s.id/gocoding)** | **[Daftar Jobs](./jobs/README.md)**
 
+<!-- OPERATING SYSTEM -->
 [1]: ./sistem-operasi/linux/gnu/bagian-1/README.md
 [2]: ./sistem-operasi/linux/gnu/bagian-2/README.md
 [3]: ./sistem-operasi/linux/gnu/bagian-3/README.md
@@ -1022,7 +1035,38 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [9]: ./sistem-operasi/linux/gnu/bagian-9/README.md
 [10]: ./sistem-operasi/linux/archlinux/desktop-environment/window-manager/README.md
 [11]: ./sistem-operasi/linux/archlinux/desktop-environment/README.md
-
 [docs]: ./sistem-operasi/others/docs/README.md
-[dasar]: ./programmer/konsep/dasar/README.md
-[konsistensi]: ./programmer/konsep/pemrograman/README.md
+
+<!-- PROGRAMMER HUB -->
+
+<!-- Dir Informasi -->
+[dasar]: ./programmer/informasi/dasar/README.md
+[konsistensi]: ./programmer/informasi/standarisasi/konsistensi/README.md
+<!-- Dir Paradigma -->
+[prosedural]: ./programmer/informasi/paradigma/prosedural/README.md
+[oop]: ./programmer/informasi/paradigma/oop/README.md
+[fungsional]: ./programmer/informasi/paradigma/fungsional/README.md
+[deklaratif]: ./programmer/informasi/paradigma/deklaratif/README.md
+[event-driven]: ./programmer/informasi/paradigma/event-driven/README.md
+[reactive]: ./programmer/informasi/paradigma/reactive/README.md
+[imperatif]: ./programmer/informasi/paradigma/imperatif/README.md
+[logic]: ./programmer/informasi/paradigma/logic/README.md
+[constraint]: ./programmer/informasi/paradigma/constraint/README.md
+[concurrent]: ./programmer/informasi/paradigma/concurrent/README.md
+[subset-imperatif]: ./programmer/informasi/paradigma/subset-imperatif/README.md
+[actor]: ./programmer/informasi/paradigma/actor/README.md
+[dataflow]: ./programmer/informasi/paradigma/dataflow/README.md
+[array]: ./programmer/informasi/paradigma/array/README.md
+[concatenative]: ./programmer/informasi/paradigma/concatenative/README.md
+[aspec]: ./programmer/informasi/paradigma/aspect/README.md
+[probabilistic]: ./programmer/informasi/paradigma/probabilistic/README.md
+[metaprogramming]: ./programmer/informasi/paradigma/metaprogramming/README.md
+<!-- Dir Konsep vardatex-->
+[struktur-1]: ./programmer/informasi/konsep/bagian-1/README.md
+[struktur-2]: ./programmer/informasi/konsep/bagian-2/README.md
+[struktur-3]: ./programmer/informasi/konsep/bagian-3/README.md
+[struktur-4]: ./programmer/informasi/konsep/bagian-4/README.md
+[struktur-5]: ./programmer/informasi/konsep/bagian-5/README.md
+[struktur-6]: ./programmer/informasi/konsep/bagian-6/README.md
+[struktur-7]: ./programmer/informasi/konsep/bagian-7/README.md
+

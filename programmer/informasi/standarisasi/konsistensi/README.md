@@ -72,4 +72,4 @@ Jangan takut dengan perjalanan panjang: nikmati tiap lapisan, dokumentasikan pro
 
 > #### [Home][domain-spesifik]
 
-[domain-spesifik]: ../programmer/domain-spesifik/README.md
+[domain-spesifik]: ./../../../../README.md
