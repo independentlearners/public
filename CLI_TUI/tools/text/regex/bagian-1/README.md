@@ -363,6 +363,230 @@ dmesg | grep -C 3 "fail"
 
 -----
 
+# Tambahan
+
+Berikut daftar perintah `grep` dasar untuk pemula dan alat terkait yang mudah dipahami:
+
+---
+
+### **Dasar-Dasar Grep**
+1. **Pencarian sederhana dalam file**  
+   `grep "kata" namafile.txt`  
+   Mencari kata *"kata"* dalam file *namafile.txt*.
+
+2. **Pencarian tidak case-sensitive**  
+   `grep -i "kata" namafile.txt`  
+   Mengecilkan semua huruf (*ignore case*), jadi "KATA", "kata", "KaTa" akan cocok.
+
+3. **Menampilkan jumlah baris yang cocok**  
+   `grep -c "kata" namafile.txt`  
+   Hanya menampilkan berapa banyak baris yang mengandung *"kata"*.
+
+4. **Menampilkan nomor baris**  
+   `grep -n "kata" namafile.txt`  
+   Menunjukkan nomor baris tempat kata ditemukan.
+
+5. **Mencari di semua file dalam direktori**  
+   `grep "kata" *`  
+   Mencari *"kata"* di semua file di direktori saat ini.
+
+6. **Pencarian invers (yang TIDAK mengandung kata)**  
+   `grep -v "kata" namafile.txt`  
+   Menampilkan baris yang **tidak** mengandung *"kata"*.
+
+7. **Pencarian kata utuh (whole word)**  
+   `grep -w "kata" namafile.txt`  
+   Hanya cocok jika *"kata"* utuh (bukan bagian dari kata lain, misal "kata" tidak cocok dengan "katalog").
+
+8. **Mencari di file tersembunyi & subdirektori**  
+   `grep -r "kata" .`  
+   Mencari rekursif di semua file, termasuk subfolder (dasar untuk eksplorasi file).
+
+---
+
+### **Alat Terkait Sederhana**
+1. **`echo` + `grep` (Simulasi pencarian)**  
+   `echo "ini contoh teks" | grep "contoh"`  
+   Cocok untuk latihan dengan teks pendek.
+
+2. **`ls` + `grep` (Filter file)**  
+   `ls | grep ".txt"`  
+   Menampilkan hanya file berekstensi *.txt* di direktori.
+
+3. **`history` + `grep` (Cari perintah lama)**  
+   `history | grep "git"`  
+   Mencari perintah *git* yang pernah digunakan di terminal.
+
+---
+
+### **Tips Penting**
+- Gunakan **tanda kutip ganda** (`" "`) untuk pola yang mengandung spasi.
+- Grep cocok dengan **regex sangat dasar** seperti `.*` (wildcard), tapi hindari regex kompleks di tahap pemula.
+- Untuk file teks sederhana (log, konfigurasi, skrip), grep sudah cukup membantu.
+
+---
+
+### **Contoh Kombinasi Umum**
+```bash
+# Cari "error" di file log tanpa peduli huruf kapital
+grep -i "error" system.log
+
+# Hitung berapa kali "login" muncul di file
+grep -c "login" auth.log
+
+# Cari di semua file .conf di direktori
+grep "port" *.conf
+```
+
+Mulai dengan contoh di atas sebelum beralih ke opsi lanjutan seperti `-A`/`-B`/`-C` (konteks baris) atau regex kompleks.
+
+---
+
+Juga untuk pemula, mungkin ingin mencoba alat seperti:
+
+`ack`: sebuah tool pencarian yang dirancang untuk programmer, lebih cepat dan ramah pengguna untuk kode sumber.
+Contoh: `ack "pattern"`
+
+`ag` (The Silver Searcher): mirip dengan `ack`, tetapi lebih cepat.
+Contoh: `ag "pattern"`
+
+`ripgrep` (Perintah: `rg`): alat yang sangat cepat dan efisien, menggabungkan kegunaan grep dengan kecepatan yang tinggi.
+Contoh: `rg "pattern"`
+
+Namun meskipun begitu, terkadang pemula lebih disarankan untuk mulai dengan `grep` karena merupakan alat standar dan tersedia di hampir semua sistem Unix-like.
+
+Catatan: Untuk alat seperti `ack`, `ag`, dan `rg` mungkin perlu diinstal terlebih dahulu.
+
+```zsh
+yay -Syu --noconfirm --needed ripgrep ack ag
+```
+
+Berikut ini trik-trik dasar `grep` yang praktis untuk pemula:
+
+---
+
+### **Trik Pencarian Praktis**
+
+1. **Cari multiple patterns sederhana**
+   ```bash
+   grep -e "error" -e "fail" logfile.txt
+   ```
+   Cari "error" ATAU "fail" dalam satu perintah.
+
+2. **Cari dengan wildcard sederhana**
+   ```bash
+   grep "2024-*" file.txt
+   ```
+   Cari baris yang dimulai dengan "2024-" (paling dasar regex).
+
+3. **Highlight hasil pencarian**
+   ```bash
+   grep --color=auto "kata" file.txt
+   ```
+   Hasil yang cocok ditandai warna (biasanya sudah otomatis di shell modern).
+
+4. **Cari file tertentu saja**
+   ```bash
+   grep "config" *.php
+   ```
+   Hanya cari di file PHP saja.
+
+---
+
+### **Trik Filtering Output**
+
+5. **Tampilkan hanya teks yang cocok**
+   ```bash
+   grep -o "user_[0-9]*" file.txt
+   ```
+   Hanya tampilkan bagian yang cocok (misal: "user_123"), bukan seluruh baris. Jika kurang jelas, coba [masuk kesini][1]
+
+6. **Cari yang diawali kata tertentu**
+   ```bash
+   grep "^Hello" file.txt
+   ```
+   Cari baris yang dimulai dengan "Hello".
+
+7. **Cari yang diakhiri kata tertentu**
+   ```bash
+   grep "end$" file.txt
+   ```
+   Cari baris yang diakhiri "end".
+
+---
+
+### **Trik File & Direktori**
+
+8. **Exclude file tertentu**
+   ```bash
+   grep "error" * --exclude="*.tmp"
+   ```
+   Cari di semua file kecuali file *.tmp.
+
+9. **Cari di file tersembunyi juga**
+   ```bash
+   grep -r "setting" .*
+   ```
+   Cari termasuk file hidden (yang namanya mulai dengan dot).
+
+---
+
+### **Trik Kombinasi Simpel**
+
+10. **Cari + Hitung sekaligus**
+    ```bash
+    grep -c "success" *.log | grep -v ":0"
+    ```
+    Tampilkan hanya file yang ADA kata "success"-nya.
+
+11. **Cari case insensitive + tunjukkan line number**
+    ```bash
+    grep -in "warning" application.log
+    ```
+    Kombinasi -i dan -n.
+
+12. **Cari + tampilkan 1 baris sebelum/sesudah (sangat dasar)**
+    ```bash
+    grep -A1 "Exception" error.log
+    ```
+    Tampilkan baris yang cocok + 1 baris setelahnya.
+
+---
+
+### **Trik Debug Sederhana**
+
+13. **Test pattern dulu dengan echo**
+    ```bash
+    echo "test123" | grep "test"
+    ```
+    Coba pattern sebelum pakai ke file besar.
+
+14. **Cari special characters sederhana**
+    ```bash
+    grep "\\" file.txt
+    ```
+    Cari backslash (perlu escape dengan double backslash).
+
+---
+
+### **Contoh Kasus Harian**
+
+```bash
+# Cari error di log files
+grep -i "error" /var/log/*.log
+
+# Cari function di source code
+grep -n "function_" *.c
+
+# Cari user ID dalam file CSV
+grep -o "U[0-9]*" users.csv
+
+# Cari config yang tidak dikomentari
+grep "^[^#]" config.txt
+```
+
+**Ingat**: Trik ini benar-benar dasar! Hindari regex kompleks, backreferences, lookaround, atau opsi advanced lain sampai benar-benar paham dasar-dasarnya.
+
 ### 4\. Hubungan dengan Modul Lain
 
 Bagian ini (Grep dasar) adalah pintu gerbang menuju **Fase 2 (Regex)**.
@@ -396,7 +620,7 @@ Bagian ini (Grep dasar) adalah pintu gerbang menuju **Fase 2 (Regex)**.
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
+[1]: ../bagian-1/a/README.md
 [2]: ../
 [3]: ../
 [4]: ../

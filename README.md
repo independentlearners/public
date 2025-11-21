@@ -181,7 +181,7 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
 
 ### 1. 🧠 **Konsep & Paradigma Pemrograman**
 
-> Dasar pemikiran dan orientasi logika di balik semua bahasa.
+> [Dasar pemikiran dan orientasi logika di balik semua bahasa.][dasar]
 
 * **📘 Paradigma Pemrograman**
 
@@ -1024,3 +1024,5 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [11]: ./sistem-operasi/linux/archlinux/desktop-environment/README.md
 
 [docs]: ./sistem-operasi/others/docs/README.md
+[dasar]: ./programmer/konsep/dasar/README.md
+[konsistensi]: ./programmer/konsep/pemrograman/README.md
