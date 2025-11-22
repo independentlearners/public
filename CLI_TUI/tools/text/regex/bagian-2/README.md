@@ -143,11 +143,25 @@ Setelah tahu cara memilih karakter (`\d`), kita harus menentukan "berapa banyak"
 3.  **Specific Quantifiers:** `{n,m}`.
 4.  **Greedy vs Lazy:** Konsep rakus vs secukupnya.
 
-### 1\. Konsep Kunci
+### 1. Konsep Kunci
 
-Quantifier selalu berlaku untuk **satu token tepat di sebelah kirinya**.
+🔎 **Quantifier Secara Umum** adalah simbol atau kata dalam logika maupun bahasa pemrograman yang digunakan untuk menyatakan jumlah atau cakupan objek dalam suatu pernyataan.  
 
-### 2\. Sintaks Dasar (Detail Per Simbol)
+- **Universal quantifier (∀)** → menyatakan *“untuk semua”*. Contoh: ∀x ∈ N, x + 0 = x.  
+- **Existential quantifier (∃)** → menyatakan *“ada setidaknya satu”*. Contoh: ∃x ∈ N, x² = 4.  
+
+**Quantifier dipakai untuk mengontrol ruang lingkup kebenaran pernyataan**: apakah berlaku untuk semua elemen, atau cukup ada satu elemen yang memenuhi. Dalam regex juga sama, Quantifier adalah simbol di regex yang menentukan berapa kali sebuah pola harus muncul. Contoh umum:
+
+`*` : 0 atau lebih kali
+`+` : 1 atau lebih kali
+`?` : 0 atau 1 kali
+`{n}` : tepat n kali
+`{n,}` : n atau lebih kali
+`{n,m}` : antara n dan m kali
+
+Jadi ketika anda menulis a* artinya “a” boleh tidak muncul atau muncul berulang‑ulang. Quantifier selalu berlaku untuk **satu token tepat di sebelah kirinya**.
+
+### 2. Sintaks Dasar (Detail Per Simbol)
 
 #### A. The Question Mark (`?`) — 0 atau 1 (Opsional)
 
@@ -159,6 +173,7 @@ grep -P "colou?r" text.txt
 
   * `u?`: Huruf 'u' bersifat opsional.
   * *Cocok:* "color", "colour".
+  * [Lebih lanjut][1]
 
 #### B. The Plus (`+`) — 1 atau Lebih (Wajib Ada Minimal Satu)
 
@@ -171,6 +186,7 @@ grep -P "Go+gle" text.txt
   * `o+`: Huruf 'o' harus ada minimal satu.
   * *Cocok:* "Gogle", "Google", "Gooooogle".
   * *Tidak Cocok:* "Ggle".
+  * [Lebih lanjut][2]
 
 #### C. The Star (`*`) — 0 atau Lebih
 
@@ -182,12 +198,14 @@ grep -P "10*1" text.txt
 
   * `0*`: Angka 0 boleh hilang, boleh banyak.
   * *Cocok:* "11" (0 nya nol kali), "101", "100001".
+  * [Lebih lanjut][3]
 
 #### D. Curly Braces (`{min,max}`) — Spesifik
 
   * `{3}`: Tepat 3 kali.
   * `{2,5}`: Minimal 2, Maksimal 5.
   * `{2,}`: Minimal 2, Maksimal tak terhingga.
+  * [Lebih lanjut][4]
 
 **Contoh Implementasi:** Mencari IP Address (sederhana).
 
@@ -197,10 +215,11 @@ grep -P "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" access.log
 
   * `\d{1,3}`: Angka (digit) sebanyak 1 sampai 3 kali.
   * `\.`: Titik literal (di-escape).
+  * [Lebih lanjut][5]
 
 -----
 
-### 3\. Visualisasi Penting: Greedy vs Lazy (PENTING)
+### 3. Visualisasi Penting: Greedy vs Lazy (PENTING)
 
 Ini adalah konsep yang sering membuat error logika. Secara default, Regex itu **Greedy (Rakus)**. Dia akan memakan teks sebanyak mungkin.
 
@@ -229,7 +248,7 @@ Regex: `<.*?>`
 
 Di sini kita mulai membangun logika pemrograman di dalam pencarian teks.
 
-### 1\. Grouping `(...)`
+### 1. Grouping `(...)`
 
 Kurung biasa `()` memiliki dua fungsi:
 
@@ -245,7 +264,7 @@ grep -P "(ha)+" text.txt
   * Tanpa kurung `ha+`: h diikuti aaaaa (haaaaa).
   * Dengan kurung `(ha)+`: frase "ha" diulang (hahahaha).
 
-### 2\. Alternation `|` (OR Logic)
+### 2. Alternation `|` (OR Logic)
 
 Memilih satu opsi atau lainnya.
 
@@ -308,21 +327,21 @@ Di sinilah kita akan masuk ke **FASE 3: Sed (Stream Editor)**. Sed menggunakan R
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
-[2]: ../
-[3]: ../
-[4]: ../
-[5]: ../
-[6]: ../
-[7]: ../
-[8]: ../
-[9]: ../
-[10]: ../
-[11]: ../
-[12]: ../
-[13]: ../
-[14]: ../
-[15]: ../
-[16]: ../
-[17]: ../
-[18]: ../
+[1]: ./bagian-1/README.md
+[2]: ./bagian-2/README.md
+[3]: ./bagian-3/README.md
+[4]: ./bagian-4/README.md
+[5]: ./bagian-5/README.md
+[6]: ./
+[7]: ./
+[8]: ./
+[9]: ./
+[10]: ./
+[11]: ./
+[12]: ./
+[13]: ./
+[14]: ./
+[15]: ./
+[16]: ./
+[17]: ./
+[18]: ./
