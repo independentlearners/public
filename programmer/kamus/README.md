@@ -160,7 +160,7 @@
 
 5. **Reinforcement Learning**: Area machine learning yang berfokus pada bagaimana agen harus mengambil tindakan dalam suatu lingkungan.
 
-## K. Istilah Spesifik yang Anda Sebutkan
+## K. Istilah spesifik yang sering disebutkan
 
 1. **Backend**: Bagian dari aplikasi yang menangani logika bisnis dan interaksi dengan database.
 
@@ -4336,7 +4336,7 @@ Semua aspek ini bersama-sama membantu bukan hanya dalam menciptakan pengalaman p
 
 **Incremental :** berarti meningkat atau berkembang secara bertahap dan terus-menerus dalam jumlah kecil atau langkah-langkah kecil.
 
-#
+---
 
 **Subroutine** adalah blok kode yang dapat dipanggil berulang kali dari berbagai bagian program untuk melakukan tugas tertentu. Subroutine membantu:
 
@@ -4347,7 +4347,7 @@ Semua aspek ini bersama-sama membantu bukan hanya dalam menciptakan pengalaman p
 **Meningkatkan reusabilitas:** Subroutine dapat digunakan kembali di berbagai bagian program atau bahkan di program lain.
 Subroutine sering disebut sebagai fungsi atau prosedur, tergantung pada apakah mereka mengembalikan nilai atau tidak.
 
-#
+---
 
 **Placeholder** adalah istilah yang digunakan untuk menggambarkan sesuatu yang sementara atau penanda yang digunakan untuk mengisi ruang atau posisi tertentu sampai digantikan oleh konten atau objek yang sebenarnya. Placeholder bisa berupa:
 
@@ -4359,7 +4359,7 @@ Subroutine sering disebut sebagai fungsi atau prosedur, tergantung pada apakah m
 
 Placeholder membantu dalam proses pengembangan, desain, atau pengisian data dengan memberikan struktur dan format yang jelas sebelum konten akhir ditambahkan.
 
-#
+---
 
 **Mark-and-sweep** adalah algoritma pengelolaan memori yang digunakan dalam garbage collection (pengumpulan sampah) untuk mengidentifikasi dan menghapus objek yang tidak lagi digunakan dalam program. Berikut cara kerjanya:
 
@@ -4369,7 +4369,7 @@ Placeholder membantu dalam proses pengembangan, desain, atau pengisian data deng
 
 Mark-and-sweep membantu mengelola memori secara efisien dan mencegah kebocoran memori dengan membersihkan objek yang tidak lagi diperlukan.
 
-#
+---
 
 **Invisible** berarti tidak dapat dilihat atau tidak terlihat. Ini bisa merujuk pada:
 
@@ -4380,7 +4380,7 @@ Konsep atau perasaan tidak terlihat: Seperti perasaan atau pikiran yang tidak te
 
 Dalam berbagai konteks, "invisible" bisa digunakan untuk menggambarkan sesuatu yang tidak dapat dilihat atau dipersepsikan secara langsung.
 
-#
+---
 
 **Pure** bisa memiliki beberapa arti tergantung konteksnya:
 
@@ -4391,7 +4391,7 @@ Dalam berbagai konteks, "invisible" bisa digunakan untuk menggambarkan sesuatu y
 
 Dalam berbagai konteks, "pure" bisa merujuk pada kemurnian, kesederhanaan, atau ketulusan.
 
-#
+---
 
 **Milestone** adalah titik penting atau pencapaian signifikan dalam sebuah proyek atau proses. Ini digunakan untuk menandai kemajuan dan mencapai tujuan tertentu. Dalam pengembangan perangkat lunak, milestone sering digunakan untuk:
 
@@ -4403,11 +4403,11 @@ Dalam berbagai konteks, "pure" bisa merujuk pada kemurnian, kesederhanaan, atau 
 
 Milestone membantu tim proyek tetap fokus, terorganisir, dan termotivasi untuk mencapai tujuan.
 
-#
+---
 
 **Skeleton:** Dalam konteks teknologi, skeleton bisa merujuk pada kerangka atau struktur dasar dari sebuah sistem atau aplikasi yang dibangun untuk mendukung fungsi-fungsi tertentu.
 
-#
+---
 
 Dalam pemrograman, istilah **argument** dan **parameter** seringkali digunakan secara bergantian, tetapi sebenarnya memiliki makna yang berbeda.
 
@@ -4432,7 +4432,7 @@ Dalam contoh di atas, a dan b adalah parameter yang didefinisikan dalam fungsi t
 
 Jadi, saat seorang programer memanggil fungsi, dia memasukkan argument (isi) ke dalam parameter (kotak) yang telah didefinisikan sebelumnya.
 
-#
+---
 
 **Reassign** berarti memberikan nilai baru kepada variabel yang sudah ada, sehingga nilai lama digantikan oleh nilai baru. Dalam pemrograman, reassign memungkinkan kamu untuk mengubah nilai variabel sesuai kebutuhan program.
 Contoh:
@@ -4450,525 +4450,14 @@ Mengubah status program berdasarkan kondisi tertentu
 
 Mengoptimalkan kode dengan mengurangi kebutuhan variabel baru
 
-#
+---
 
-#
+[Buffer:][buffer] Anggap saja semacam penyanggah samar yang ditujukan sementara sebelum akhirnya dapat berubah peran seperti dia mungkin dapat menghapus apa yang disanggah setelah tujuan intinya berhasil
 
-#
+---
 
-#
+---
 
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
-
-#
 
 [486]: ../konsep/regex/README.md
 
@@ -4979,3 +4468,4 @@ Mengoptimalkan kode dengan mengurangi kebutuhan variabel baru
 [1]: ../../README.md
 [dsl]: ../../README.md
 [escape]: ./escape/README.md
+[buffer]: ./buffer/README.md

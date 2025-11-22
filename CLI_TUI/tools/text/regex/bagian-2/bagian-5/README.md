@@ -39,7 +39,7 @@ Some text without ip
 
 `grep -P "...pattern..." access.log` akan menampilkan kedua baris pertama (baris yang mengandung pola IPv4).
 
-# 4 — Kekurangan pola Anda (pitfall) dan perbaikan
+# 4 — Kekurangan pola (pitfall) dan perbaikan
 
 * **Validasi rentang**: `\d{1,3}` akan mencocokkan `999` — sehingga `999.999.999.999` *termasuk* padahal bukan IPv4 sah (0–255 per oktet).
   Untuk validasi oktet 0–255 diperlukan regex lebih kompleks.
