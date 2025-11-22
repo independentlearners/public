@@ -216,47 +216,15 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
   * [Komposisi dan enkapsulasi][struktur-6]
   * [Reusabilitas dan maintainability][struktur-7]
 
+---
+
+* #### **[📌 Daftar Teknologi][daftar]**
+
+  > Lihat Lebih Lanjut kumpulan bahasa pemrograman dan konfigurasi serta berbagai tools lainnya
 
 ---
 
-### 2. ⚙️ **Jenis Bahasa Pemrograman**
-
-> Klasifikasi berdasarkan tujuan, domain, dan cara interaksi dengan sistem.
-
-* **🔣 Bahasa Imperatif** — mengeksekusi perintah langkah demi langkah.
-* **🧩 Bahasa Deklaratif** — menyatakan hasil yang diinginkan tanpa menjelaskan caranya.
-* **🧠 Bahasa Fungsional** — berorientasi pada ekspresi dan fungsi murni.
-* **🏗 Bahasa Berorientasi Objek** — berfokus pada entitas dan relasinya.
-* **🪄 Bahasa Domain Spesifik (DSL)** — dirancang untuk domain tertentu (misal konfigurasi, build system, query).
-* **💬 Bahasa Scripting** — untuk otomasi tugas, integrasi sistem, dan CLI tools.
-* **⚙️ Bahasa Sistem & Kernel** — untuk membangun sistem operasi, driver, atau compiler.
-
----
-
-### 3. 🧱 **Tingkat Abstraksi Bahasa**
-
-> Menunjukkan seberapa dekat bahasa berinteraksi dengan mesin.
-
-* **🧩 Low-Level Language** — dekat dengan perangkat keras, seperti assembly atau C.
-* **⚙️ Mid-Level Language** — menggabungkan performa dan abstraksi, biasanya digunakan untuk sistem atau aplikasi.
-* **[🧠 High-Level Language](programmer/README.md)** — berorientasi manusia dan mudah dibaca, misalnya scripting dan bahasa modern.
-* **☁️ Very High-Level / Domain-Specific** — fokus pada ekspresi tujuan, seperti JSON, SQL, YAML, HTML, dsb.
-
----
-
-### 4. 🧰 **Lingkungan & Ekosistem Pemrograman**
-
-> Setiap bahasa hidup dalam sebuah ekosistem alat bantu.
-
-* **🖋️ Editor & IDE** — tempat menulis kode (CLI Editor, GUI IDE, Web-based).
-* **📦 Package & Dependency Manager** — pengelolaan pustaka dan dependensi.
-* **🧩 Build System** — alat untuk kompilasi, linking, atau deployment otomatis.
-* **🔬 Testing & Benchmarking Tools** — validasi dan pengukuran performa.
-* **🧭 Version Control & Repository** — pengelolaan revisi kode dan kolaborasi.
-
----
-
-### 5. 🔧 **Framework & Domain Ekspresif**
+### 2. 🔧 **Framework & Domain Ekspresif**
 
 > Kumpulan pustaka atau mini-language untuk domain tertentu.
 
@@ -269,17 +237,7 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
 
 ---
 
-### 6. 🗃️ **Bahasa Konfigurasi & Integrasi**
-
-> Bahasa yang tidak menjalankan logika tetapi mengatur perilaku sistem.
-
-* **🧾 Konfigurasi Sistem & Aplikasi (Deklaratif)**
-* **📜 Pipeline & Workflow Automation**
-* **🔧 Integrasi antar bahasa (FFI, Binding, Embedding)**
-
----
-
-### 7. 🧪 **Eksperimen & Penelitian Bahasa**
+### 3. 🧪 **Eksperimen & Penelitian Bahasa**
 
 > Bidang untuk eksplorasi arsitektur baru dan teori bahasa.
 
@@ -290,7 +248,7 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
 
 ---
 
-### 8. 📚 **Standarisasi, Gaya, dan Etika Pemrograman**
+### 4. 📚 **Standarisasi, Gaya, dan Etika Pemrograman**
 
 > Panduan berpikir dan bertindak sebagai developer profesional.
 
@@ -1069,4 +1027,4 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [struktur-5]: ./programmer/informasi/konsep/bagian-5/README.md
 [struktur-6]: ./programmer/informasi/konsep/bagian-6/README.md
 [struktur-7]: ./programmer/informasi/konsep/bagian-7/README.md
-
+[daftar]: ./programmer/README.md
