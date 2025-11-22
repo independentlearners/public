@@ -1,4 +1,4 @@
-# **[Kurikulum Masif "Mastery in Bash Scripting: From Zero to Enterprise Automation"][0]**.
+# **[Kurikulum Masif "Mastery in Bash Scripting: From Zero to Enterprise Automation"][0]**
 
 Kurikulum ini dirancang untuk membawa seseorang yang belum pernah membuka terminal (command line) hingga mampu membangun sistem otomasi infrastruktur yang kompleks.
 

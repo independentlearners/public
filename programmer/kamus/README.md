@@ -2909,7 +2909,7 @@
      \- _NFD_: Canonical Decomposition.
      \- _NFKC/NFKD_: Compatibility variants with pemetaan karakter tambahan.
 
-870. **Code Point Escape**
+870. **[Code Point Escape][escape]**
      Sintaks di bahasa pemrograman atau regex untuk mewakili karakter Unicode berdasarkan kode titiknya, mis. `\u{1F600}` atau `\U0001F600` untuk emoji.
 
 871. **PCL (Printer Command Language)**
@@ -4976,5 +4976,6 @@ Mengoptimalkan kode dengan mengurangi kebutuhan variabel baru
 
 **[Home][1]**
 
-[1]: ../domain-spesifik/README.md
-[dsl]: ../konsep/domain/README.md
+[1]: ../../README.md
+[dsl]: ../../README.md
+[escape]: ./escape/README.md

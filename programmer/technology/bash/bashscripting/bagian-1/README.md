@@ -1,13 +1,8 @@
-> Membangun pemahaman yang mendalam (deep learning) membutuhkan kesabaran dan ketelitian.
+> **Motifasi:** Membangun pemahaman yang mendalam (deep learning) membutuhkan kesabaran dan ketelitian. Maksimalkan waktu anda sebaik mungkin sebelum sesuatu mangambil sebagian besar waktu yang anda miliki sekarang.
 
-Berikut adalah penyesuaian untuk **Fase 1 (The Foundation)** agar alurnya tidak terputus saat masuk ke Fase 2:
+---
 
-1.  **Penambahan Modul 1.3: Text Editors (The Painter's Brush).** Kurikulum asli langsung melompat ke scripting di Fase 2 tanpa mengajarkan cara menulis file teks di terminal. Kita wajib membahas `Nano` (untuk kemudahan) atau `Vim` (untuk kecepatan) sebelum membuat script.
-2.  **Perluasan Modul 1.1:** Kita harus membahas konsep **Absolute vs Relative Path** secara mendalam karena ini adalah penyebab utama error "File not found" bagi pemula.
-
------
-
-Mari kita mulai perjalanan mendalam ini.
+Mari kita mulai perjalanan ini secara mendalam.
 
 # PHASE 1: The Foundation – Berbicara dengan Kernel
 

@@ -215,7 +215,8 @@ Berikut adalah **rancangan ideal** untuk struktur **Programmer Hub** versi konse
   * [Fungsi, modul, dan namespace][struktur-5]
   * [Komposisi dan enkapsulasi][struktur-6]
   * [Reusabilitas dan maintainability][struktur-7]
-
+  
+    > [Lebih lanjut][konsep]
 ---
 
 * #### **[📌 Daftar Teknologi][daftar]**
@@ -971,6 +972,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
   - **[🇮🇩 Indonesian](kamus/bahasa/Indonesia/README.md)**
   - **[🇬🇧 English](kamus/bahasa/Inggris/README.md)**
 - **[➕ Mathematics](matematik/README.md)**
+  - **[🇬🇧 Kamus](./kamus/README.md)**
 - **[🧠 My Readings](saya/README.md)**
 
   - **[📜 Kitab Ta'lim Muta'allim](saya/book/talim_mutaallim/README.md)**
@@ -978,6 +980,8 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 
     </div>
   </details>
+
+*Potensi seseorang dipengaruhi oleh apa yang tumbuh dalam hatinya, ketika begitu kuat untuk menggapai, perlahan tapi pasti, dunia akan menghadiahkan bingkisan yang memang sudah harus menjadi bagiannya! Selamat menempuh perjalanan panjang kawan! Teknologi komputasi adalah bidang yang begitu luas, persiapkan mental dan akal anda karena kita akan mengeksplorasi dunia teknologi paling modern sepanjang peradaban umat manusia.*
 
 > **By MasBro | [s.id/gocoding](https://s.id/gocoding)** | **[Daftar Jobs](./jobs/README.md)**
 
@@ -1027,4 +1031,5 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [struktur-5]: ./programmer/informasi/konsep/bagian-5/README.md
 [struktur-6]: ./programmer/informasi/konsep/bagian-6/README.md
 [struktur-7]: ./programmer/informasi/konsep/bagian-7/README.md
+[konsep]: ./programmer/informasi/konsep/README.md
 [daftar]: ./programmer/README.md
