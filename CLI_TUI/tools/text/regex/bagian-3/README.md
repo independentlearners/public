@@ -115,6 +115,9 @@ Target: `17/08/2025`
 
 ```bash
 echo "2025-08-17" | sed 's/\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)/\3\/\2\/\1/'
+
+# outputnya:
+17/08/2025
 ```
 
 **Bedah Sintaks Sinting ini:**
@@ -129,6 +132,15 @@ echo "2025-08-17" | sed 's/\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)/\3\/\2\/
       * Cetak `/` (di-escape `\/`).
       * Ambil Group 2 (Bulan).
       * ...dan seterusnya.
+
+Jika cotoh ditas masih membingungkan, kita juga dapat menulisnya seperti ini:
+
+```bash
+echo "2025-08-17" | sed 's#\([0-9]\{4\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)#\3\#\2\#\1#'
+
+# outputnya:
+17#08#2025
+```
 
 -----
 
@@ -234,9 +246,118 @@ sed -n '1!G;h;$p' file.txt
 
 -----
 
+# **POSIX BRE & ERE** 
+
+Regex ini masih dipakai dan tidak usang tetapi jarang direkomendasikan untuk kebutuhan modern jika tersedia alternatif yang lebih kaya fitur seperti **PCRE/PCRE2 (Perl-Compatible Regular Expressions)**.
+
+Berikut penjelasan langsung ke poin yang penting.
+
+---
+
+## 1. Apa itu POSIX BRE & ERE?
+
+| Jenis Regex | Kepanjangan                 | Contoh Tool               | Catatan                              |
+| ----------- | --------------------------- | ------------------------- | ------------------------------------ |
+| BRE         | Basic Regular Expression    | `grep`, `sed`, `ed`       | Banyak meta-karakter harus di-escape |
+| ERE         | Extended Regular Expression | `egrep`, `grep -E`, `awk` | Lebih simpel, fitur lebih banyak     |
+
+## 2. Status Rekomendasi Saat Ini
+
+**Masih ternstandarisasi dan di pakai luas**
+Karena POSIX merupakan standar interoperabilitas Unix. Banyak sistem inti masih bergantung pada REGEX POSIX untuk:
+
+* Shell scripting dasar
+* Tool CLI klasik (grep, sed, awk)
+* Environment minimal (initramfs, busybox, embedded)
+
+**Namun kurang direkomendasikan untuk:**
+
+* Pengolahan teks yang kompleks
+* Validasi pola modern (email, URL, Unicode)
+* Performa tinggi
+* Ekspresi lookaround dan fitur lanjutan
+
+1. **Karena fitur terbatas**
+
+   * Tidak ada lookahead/lookbehind
+   * Tidak ada PCRE-style groups
+
+2. **Handling Unicode lemah**
+
+3. **Sintaks META Berbeda dengan PCRE**
+
+   * Menyebabkan kebingungan lintas environment
+
+---
+
+## 3. Rekomendasi Saat Ini (Jika Bisa Memilih)
+
+| Use Case                                             | Rekomendasi                                                           |
+| ---------------------------------------------------- | --------------------------------------------------------------------- |
+| Scripting di environment minimal (busybox, POSIX sh) | Gunakan POSIX ERE                                                     |
+| Regex lintas Linux/Unix yang portable                | POSIX ERE                                                             |
+| Aplikasi modern (security tools, parsing kompleks)   | PCRE/PCRE2                                                            |
+| Bahasa pemrograman modern                            | Engine internal masing-masing (sering berbasis PCRE/Javascript-Regex) |
+
+---
+
+## 4. Contoh Perbandingan Sintaks
+
+### Mencari digit berulang 3–5 kali
+
+POSIX BRE:
+
+```
+grep "\( [0-9]\{3,5\} \)" file.txt
+```
+
+Penjelasan :
+
+* `grep` = search text di command line interface
+* `\(`, `\)` = grouping (harus escape)
+* `[0-9]` = digit range 0 sampai 9
+* `\{3,5\}` = quantifier minimal 3 maksimal 5 kali
+* `file.txt` = sumber pencarian
+
+POSIX ERE:
+
+```
+grep -E "([0-9]{3,5})" file.txt
+```
+
+PCRE:
+
+```
+grep -P "(\d{3,5})" file.txt
+```
+
+---
+
+## Kesimpulan
+
+| Pertanyaan                                         | Jawaban                                                 |
+| -------------------------------------------------- | ------------------------------------------------------- |
+| Apakah POSIX BRE/ERE sudah tidak direkomendasikan? | Tidak, masih relevan untuk portabilitas dan tool klasik |
+| Apakah masih cocok untuk semua kebutuhan?          | Tidak, banyak kebutuhan sekarang lebih cocok PCRE       |
+
+- **Standar terbaik: gunakan POSIX ERE ketika ingin portable.**
+- **Gunakan PCRE ketika butuh fitur modern.**
+
+---
+
+## Coba cek berikut:
+
+   * `man 7 regex`
+   * `info grep`
+   * `grep --help`
+
+---
+
+**Meskipun sebetulnya bagian ini sudah jarang digunakan adakalanya kita perlu mengerti bagaimana itu terjadi?**
+
 #### 1. POSIX BRE vs ERE (The Standards War)
 
-**Mengapa ini penting?** Di Linux, kadang skrip Anda error hanya karena kurang satu karakter opsi. Anda harus tahu kapan harus melakukan *escape* dan kapan tidak.
+Di Linux, kadang skrip Anda error hanya karena kurang satu karakter opsi. Anda harus tahu kapan harus melakukan *escape* dan kapan tidak.
 
 **Konsep Dasar:**
 Ada dua standar regex "kuno" sebelum PCRE (Perl) merajai dunia:
@@ -269,55 +390,54 @@ Selalu gunakan **ERE** (`-E`) atau **PCRE** (`-P`) jika memungkinkan, agar regex
 
 -----
 
-#### 2. Regex dalam Bahasa Pemrograman (Dart/Flutter Context)
-
-**Mengapa ini penting?** Sebagai programmer. Anda perlu tahu bahwa logika yang Anda pelajari di CLI (`grep -P`) bisa langsung di-*copy paste* ke kode Anda.
-
-**Implementasi: Dari CLI ke Dart**
-
-Mari kita gambarkan dalam dart, misalkan Anda sudah berhasil menyusun regex untuk menangkap Email di terminal:
-**Terminal (CLI):**
-
-```bash
-grep -P "[\w\.-]+@[\w\.-]+\.\w+" data.txt
-```
-
-**Penerapan di Dart (Flutter):**
-Di Dart, Regex adalah objek first-class. Library standarnya adalah `dart:core`.
-
-```dart
-void main() {
-  // 1. Definisikan Teks Sumber
-  String rawText = "Hubungi admin di support@archlinux.org segera.";
-
-  // 2. Definisikan Pola (Sama persis dengan PCRE, tapi escape backslash)
-  // Perhatikan 'r' (raw string) agar kita tidak perlu double escape (\\w)
-  RegExp emailPattern = RegExp(r"[\w\.-]+@[\w\.-]+\.\w+");
-
-  // 3. Eksekusi Pencarian (Mirip grep)
-  // Mencari kecocokan pertama
-  RegExpMatch? match = emailPattern.firstMatch(rawText);
-
-  if (match != null) {
-    // Ini outputnya ($0 di awk/bash)
-    print("Email ditemukan: ${match.group(0)}"); 
-  }
-  
-  // 4. Validasi (Mirip grep -q)
-  bool isValid = emailPattern.hasMatch("bukan_email");
-  print("Validasi: $isValid"); // false
-}
-```
-
-**Konsep Kunci Interoperabilitas:**
-
-1.  **Raw String (`r"..."`):** Di Python dan Dart, selalu gunakan `r` sebelum string regex. Ini mencegah bahasa pemrograman menerjemahkan `\n` atau `\t` sebelum regex membacanya.
-2.  **Method Mapping:**
-      * `grep` -\> `RegExp.hasMatch()` atau `RegExp.allMatches()`
-      * `sed s///` -\> `String.replaceAll(RegExp(...), "replacement")`
-      * `awk` logic -\> Dilakukan dengan manipulasi List/Map di Dart.
-
------
+<!-- #### 2. Regex dalam Bahasa Pemrograman (Dart/Flutter Context) -->
+<!---->
+<!-- **Mengapa ini penting?** Sebagai programmer. Anda perlu tahu bahwa logika yang Anda pelajari di CLI (`grep -P`) bisa langsung di-*copy paste* ke kode Anda. -->
+<!---->
+<!-- **Implementasi: Dari CLI ke Dart** -->
+<!---->
+<!-- Mari kita gambarkan dalam dart, misalkan Anda sudah berhasil menyusun regex untuk menangkap Email di terminal: -->
+<!-- **Terminal (CLI):** -->
+<!---->
+<!-- ```bash -->
+<!-- grep -P "[\w\.-]+@[\w\.-]+\.\w+" data.txt -->
+<!-- ``` -->
+<!---->
+<!-- **Penerapan di Dart (Flutter):** -->
+<!-- Di Dart, Regex adalah objek first-class. Library standarnya adalah `dart:core`. -->
+<!---->
+<!-- ```dart -->
+<!-- void main() { -->
+<!--   // 1. Definisikan Teks Sumber -->
+<!--   String rawText = "Hubungi admin di support@archlinux.org segera."; -->
+<!---->
+<!--   // 2. Definisikan Pola (Sama persis dengan PCRE, tapi escape backslash) -->
+<!--   // Perhatikan 'r' (raw string) agar kita tidak perlu double escape (\\w) -->
+<!--   RegExp emailPattern = RegExp(r"[\w\.-]+@[\w\.-]+\.\w+"); -->
+<!---->
+<!--   // 3. Eksekusi Pencarian (Mirip grep) -->
+<!--   // Mencari kecocokan pertama -->
+<!--   RegExpMatch? match = emailPattern.firstMatch(rawText); -->
+<!---->
+<!--   if (match != null) { -->
+<!--     // Ini outputnya ($0 di awk/bash) -->
+<!--     print("Email ditemukan: ${match.group(0)}");  -->
+<!--   } -->
+<!---->
+<!--   // 4. Validasi (Mirip grep -q) -->
+<!--   bool isValid = emailPattern.hasMatch("bukan_email"); -->
+<!--   print("Validasi: $isValid"); // false -->
+<!-- } -->
+<!-- ``` -->
+<!---->
+<!-- **Konsep Kunci Interoperabilitas:** -->
+<!---->
+<!-- 1.  **Raw String (`r"..."`):** Di Python dan Dart, selalu gunakan `r` sebelum string regex. Ini mencegah bahasa pemrograman menerjemahkan `\n` atau `\t` sebelum regex membacanya. -->
+<!-- 2.  **Method Mapping:** -->
+<!--       * `grep` -\> `RegExp.hasMatch()` atau `RegExp.allMatches()` -->
+<!--       * `sed s///` -\> `String.replaceAll(RegExp(...), "replacement")` -->
+<!--       * `awk` logic -\> Dilakukan dengan manipulasi List/Map di Dart. -->
+<!---->
 
 ## ⚠️ Potensi Kesalahan Umum & Solusi
 

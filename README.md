@@ -162,7 +162,7 @@
 
 ---
 
-<details open>
+<details>
   <summary>
     <strong>👨‍💻 Programmer Hub</strong>
     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Click here to enter the programming center.</i></div>
@@ -866,7 +866,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 
 
 
-<details open>
+<details>
 <summary>
 <strong>💻 Sistem Operasi</strong>
 <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Kompilasi OS, Arsitektur, dan Konsep</i></div>
