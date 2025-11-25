@@ -1,10 +1,3 @@
-<details>
-  <summary>📃 Daftar Isi</summary>
-
-</details>
-
-Kita memasuki **PHASE 2: Core Scripting**.
-
 Ini adalah momen transisi terbesar dalam kurikulum ini. Di Fase 1, Anda adalah **Operator** (mengemudikan mobil secara manual). Di Fase 2, Anda menjadi **Engineer** (merakit autopilot agar mobil menyetir sendiri).
 
 Kita tidak akan langsung melompat ke variabel yang rumit. Kita akan mulai dengan membedah "Jantung" dari sebuah script. Banyak tutorial hanya menyuruh Anda menyalin kode `#!/bin/bash` tanpa menjelaskan apa artinya. Di sini, kita akan membedahnya hingga ke level byte.
@@ -15,6 +8,11 @@ Kita tidak akan langsung melompat ke variabel yang rumit. Kita akan mulai dengan
 
 ## MODUL 2.1: Anatomi Script, The Shebang, & Mekanisme Eksekusi
 
+<details>
+  <summary>📃 Daftar Isi</summary>
+
+-----
+
 ### 📑 Struktur Pembelajaran Internal (Mini Daftar Isi)
 
 1.  **Filosofi Otomasi:** Script sebagai "Rekaman Intelektual".
@@ -24,7 +22,7 @@ Kita tidak akan langsung melompat ke variabel yang rumit. Kita akan mulai dengan
 5.  **Mekanisme Eksekusi:** Mengapa harus pakai titik-garis miring (`./`)?
 6.  **Study Kasus:** Membuat "Hello World" yang benar secara teknis.
 
------
+</details>
 
 ### 1\. Deskripsi Konkret & Peran
 
