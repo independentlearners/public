@@ -807,6 +807,250 @@ Dengan selesainya **Modul 2.4**, kita telah memiliki semua blok bangunan dasar p
 2.  Kondisional (Otak)
 3.  Loops (Otot)
 
+Penjelasan sebelumnya masih terlalu fokus pada fitur spesifik Bash (*Bashisms*) dan kurang menekankan pada **Portabilitas Script** (kemampuan script berjalan di semua jenis Unix/Linux, termasuk Alpine Linux yang sering dipakai di Docker, macOS, atau BSD).
+
+Ini adalah materi tingkat lanjut yang membedakan *scripter* biasa dengan *System Engineer* yang paham standar industri.
+
+Mari kita sisipkan materi ini sebagai **MODUL 2.5 (Spesial)**, tepat setelah kita belajar Looping dan sebelum masuk ke Fase Pipes.
+
+-----
+
+# PHASE 2: Core Scripting (Extension)
+
+## MODUL 2.5: Standar POSIX, Portabilitas, & Bahaya "Bashisms"
+
+### 📑 Struktur Pembelajaran Internal
+
+1.  **Definisi POSIX:** Apa itu dan mengapa menjadi "Hukum Tertinggi" di dunia Unix.
+2.  **Bash vs Sh:** Perbedaan antara Shell modern dan Shell standar.
+3.  **Implikasi Nyata:** Studi kasus Docker (Alpine Linux) dan Sistem Embedded.
+4.  **Anatomi "Bashism":** Fitur-fitur enak di Bash yang dilarang di POSIX.
+5.  **Substitusi Sintaks:** Cara menulis ulang kode Bash menjadi kode POSIX-compliant.
+6.  **Studi Kasus:** Mengaudit script yang rusak saat dijalankan di server minimalis.
+
+-----
+
+### 1\. Deskripsi Konkret & Peran
+
+Modul ini mengajarkan Anda cara menulis script yang "Universal". Script Bash biasa mungkin berjalan lancar di Ubuntu Anda, tapi **gagal total** saat dijalankan di dalam container Docker ringan (seperti Alpine) atau di server perbankan tua (Solaris/AIX).
+**Peran:** Memahami POSIX melindungi Anda dari error "Syntax Error" yang memalukan saat script Anda dipindahkan ke lingkungan yang berbeda. Ini adalah standar disiplin tertinggi dalam penulisan shell script.
+
+### 2\. Konsep Kunci & Filosofi Mendalam
+
+**Apa itu POSIX?**
+**POSIX** (Portable Operating System Interface) bukanlah sebuah software, melainkan **Dokumen Standar** (ISO/IEC 9945) yang dibuat oleh IEEE. Standar ini mendefinisikan bagaimana seharusnya OS Unix bekerja.
+
+  * **Filosofi:** "Tulis sekali, jalan di mana saja (Write once, run anywhere within Unix)."
+  * Jika script Anda mematuhi standar POSIX, script itu dijamin jalan di Linux, macOS, FreeBSD, OpenBSD, bahkan di Android shell, tanpa perlu diubah satu huruf pun.
+
+**Apa itu "Bashism"?**
+Bashism adalah fitur-fitur canggih yang **hanya** dimiliki oleh `bash` (GNU Bourne Again Shell) tapi **tidak ada** di standar POSIX `sh`.
+
+  * Contoh: Array, `[[ ... ]]`, Loop gaya C `for ((i=0;...))`.
+  * **Bahaya:** Jika Anda menggunakan Shebang `#!/bin/sh` (yang menyiratkan POSIX) tapi menggunakan sintaks Array (Bashism), sistem operasi yang ketat akan menolak menjalankan script tersebut.
+
+-----
+
+### 3\. Perbedaan Sintaks: Bashism vs POSIX (Analisis Kode demi Kode)
+
+Mari kita bedah sintaks umum yang sering salah digunakan, dan bagaimana cara menulisnya agar sesuai standar POSIX.
+
+#### A. Pengecekan Kondisi (The Test Condition)
+
+**❌ Kode Bash (Non-Portable):**
+
+```bash
+if [[ "$NAMA" == "Budi" ]]; then
+    echo "Halo Budi"
+fi
+```
+
+**Analisis Masalah:**
+
+  * `[[ ... ]]`: Kurung siku ganda adalah fitur spesial Bash. Shell lain (seperti `dash` di Debian/Ubuntu atau `ash` di Alpine) tidak mengerti simbol ini.
+  * `==`: Operator perbandingan string gaya C/Python ini tidak standar di POSIX `sh`.
+
+**✅ Kode POSIX (Portable):**
+
+```bash
+if [ "$NAMA" = "Budi" ]; then
+    echo "Halo Budi"
+fi
+```
+
+**Perubahan:**
+
+  * Gunakan `[ ... ]` (Single bracket).
+  * Gunakan `=` (Satu sama dengan) untuk string.
+
+**Implikasi Keamanan POSIX:**
+Di POSIX `[ ]`, variabel yang mengandung spasi bisa menyebabkan crash jika tidak di-quote.
+
+  * Salah: `[ $NAMA = Budi ]` (Jika NAMA kosong, perintah jadi `[ = Budi ]` -\> Error).
+  * Benar: `[ "$NAMA" = "Budi" ]` (Wajib pakai tanda kutip dua).
+
+#### B. Array (Larik Data)
+
+**❌ Kode Bash (Non-Portable):**
+
+```bash
+SERVER_LIST=("web01" "db01" "cache01") # Definisi Array
+echo "Server pertama: ${SERVER_LIST[0]}"
+```
+
+**Analisis Masalah:**
+POSIX `sh` **TIDAK MENDUKUNG ARRAY**. Sama sekali. Jika Anda butuh menyimpan daftar item, Anda tidak bisa menggunakan sintaks kurung `( ... )`.
+
+**✅ Kode POSIX (Portable):**
+Anda harus menggunakan string panjang yang dipisahkan spasi, lalu memotongnya.
+
+```bash
+SERVER_LIST="web01 db01 cache01" # String biasa
+
+# Cara iterasi tanpa array
+for SERVER in $SERVER_LIST; do
+    echo "Memproses: $SERVER"
+done
+```
+
+**Implikasi:** Menulis script POSIX membutuhkan logika manipulasi string yang lebih cerdik karena ketiadaan struktur data Array.
+
+#### C. Brace Expansion (Ekspansi Kurung Kurawal)
+
+**❌ Kode Bash (Non-Portable):**
+
+```bash
+# Membuat file data1.txt s/d data10.txt
+touch data{1..10}.txt
+```
+
+**Analisis Masalah:**
+Fitur `{1..10}` adalah Bashism. Shell standar akan menganggap `{1..10}` sebagai nama file literal yang aneh.
+
+**✅ Kode POSIX (Portable):**
+Gunakan perintah eksternal `seq` (sequence) yang tersedia di hampir semua Unix.
+
+```bash
+# Gunakan command substitution
+for i in $(seq 1 10); do
+    touch "data$i.txt"
+done
+```
+
+#### D. String Manipulation (Substring & Replace)
+
+**❌ Kode Bash (Non-Portable):**
+
+```bash
+FILE="gambar.png"
+# Mengganti ekstensi .png jadi .jpg langsung di variabel
+BARU=${FILE/.png/.jpg}
+```
+
+**✅ Kode POSIX (Portable):**
+POSIX Shell tidak bisa memanipulasi isi variabel secara langsung. Anda harus menggunakan alat eksternal seperti `sed` atau `cut`.
+
+```bash
+FILE="gambar.png"
+# Kirim ke 'sed' lewat pipe
+BARU=$(echo "$FILE" | sed 's/\.png/\.jpg/')
+```
+
+**Implikasi Performa:**
+Cara Bash jauh lebih cepat (microseconds) karena terjadi di dalam memori shell. Cara POSIX lebih lambat (milliseconds) karena harus memanggil program eksternal `sed` (membuat proses baru). Namun, cara POSIX dijamin jalan di mana saja.
+
+-----
+
+### 4\. Studi Kasus Implikasi: "Docker Crash"
+
+Bayangkan Anda membuat Docker image berbasis **Alpine Linux** (distro linux super kecil, hanya 5MB). Alpine tidak menggunakan Bash secara default, dia menggunakan `ash` (Almquist Shell) yang patuh pada POSIX.
+
+**Script Anda (`startup.sh`):**
+
+```bash
+#!/bin/sh
+# Saya pakai /bin/sh biar terlihat standar (padahal isinya Bashism)
+
+function mulai_app() {  # <-- Kata kunci 'function' adalah Bashism!
+    echo "Mulai..."
+}
+
+mulai_app
+```
+
+**Hasil di Alpine Linux:**
+
+```text
+/entrypoint.sh: line 4: syntax error: unexpected "("
+```
+
+**Analisis:**
+Di standar POSIX, mendefinisikan fungsi **TIDAK BOLEH** menggunakan kata kunci `function`.
+
+  * **Bash:** `function nama() { ... }` atau `nama() { ... }` (Boleh dua-duanya).
+  * **POSIX:** `nama() { ... }` (Hanya boleh cara ini).
+
+Script Anda akan membuat container Docker gagal start (*CrashLoopBackOff*), dan Anda akan bingung karena "Di laptop saya (Ubuntu dengan Bash) ini jalan lancar\!".
+
+-----
+
+### 5\. Cara Validasi: `checkbashisms`
+
+Bagaimana cara tahu script kita mengandung Bashism atau tidak? Jangan menebak. Gunakan alat audit.
+
+**Instalasi:**
+`sudo apt install devscripts` (Ubuntu/Debian)
+
+**Penggunaan:**
+
+```bash
+checkbashisms script_saya.sh
+```
+
+**Contoh Output Audit:**
+
+```text
+possible bashism in script_saya.sh line 5 (arrays):
+    SERVERS=(a b c)
+possible bashism in script_saya.sh line 10 ([[ .. ]]):
+    if [[ $A == $B ]]; then
+```
+
+Alat ini akan menunjukkan baris mana yang melanggar standar POSIX.
+
+-----
+
+### 6\. Kapan Harus POSIX, Kapan Harus Bash?
+
+Tidak semua script harus POSIX. Berikut panduannya:
+
+1.  **Gunakan BASH (`#!/bin/bash`) jika:**
+
+      * Script Anda kompleks (butuh Array, String Manipulation canggih).
+      * Anda yakin 100% server target memiliki Bash (Standar di RedHat, Ubuntu, CentOS).
+      * Anda butuh performa (menghindari pemanggilan `sed`/`awk` berlebihan).
+      * **Keuntungan:** Koding lebih cepat, fitur lebih kaya.
+
+2.  **Gunakan POSIX (`#!/bin/sh`) jika:**
+
+      * Script Anda adalah `entrypoint.sh` untuk Docker.
+      * Script Anda akan berjalan di sistem Embedded (Router, IoT) yang memorinya kecil.
+      * Script Anda didistribusikan ke publik (Open Source) dan Anda tidak tahu user akan menjalankannya di OS apa (mungkin macOS, mungkin FreeBSD).
+      * **Keuntungan:** Portabilitas 100%, jalan di sistem paling minimalis sekalipun.
+
+-----
+
+### Ringkasan Implikasi untuk Kurikulum
+
+Dalam konteks kurikulum kita:
+
+  * **Modul 2.3 (Logic)** sebelumnya menggunakan `[[ ]]`. Itu adalah praktik terbaik **Modern Bash**, tapi tidak POSIX.
+  * **Modul 4.1 (Function)** sebelumnya menggunakan `local`. Kata kunci `local` sebenarnya **TIDAK** ada di standar POSIX murni, meskipun didukung oleh banyak shell (dash/ash). Di POSIX ketat, semua variabel adalah global.
+
+**Revisi Mental untuk Anda:**
+Saat Anda menulis `#!/bin/bash`, Anda aman menggunakan semua fitur canggih yang kita pelajari. Tapi jika suatu saat Anda dipaksa bekerja di lingkungan terbatas dan harus mengganti header ke `#!/bin/sh`, Anda harus siap membuang array, double brackets, dan fitur canggih lainnya.
+
+<!-- Apakah penjelasan mendalam mengenai standar POSIX dan implikasi "Syntax Error" di lingkungan berbeda ini sudah cukup jelas dan memenuhi standar audit Anda? -->
 Sekarang, mari kita masuk ke **PHASE 3: The Power of Pipes**. Di sinilah Bash benar-benar bersinar dan berbeda dari bahasa pemrograman biasa. Kita akan belajar mengalirkan data antar program.
 
 Apakah Anda siap masuk ke **Modul 3.1: Input/Output Redirection & Piping**? Di sinilah kita belajar "menyambung pipa".

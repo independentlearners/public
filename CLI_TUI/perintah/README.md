@@ -1,6 +1,6 @@
 # Pembelajaran dasar
 
-Berikut adalah daftar **perintah dasar terminal Linux** yang penting untuk dipelajari. Perintah yang umum di sebutkan seperti (`cp`, `echo`, `ls`, `mkdir`, `ps`, `rm`, `mv`, `touch`) memang termasuk dasar, tetapi masih banyak perintah penting lainnya. Disini kita akan mengelompokkannya berdasarkan kategori untuk memudahkan pemahaman:
+Berikut adalah daftar **perintah dasar terminal Linux** yang penting untuk dipelajari. Perintah yang umum di sebutkan seperti (`cp`, `echo`, `ls`, `mkdir`, `ps`, `rm`, `mv`, `touch`) memang termasuk dasar, tetapi masih banyak perintah penting lainnya. Disini kita akan mengelompokkannya berdasarkan kategori untuk memudahkan pemahaman. Untuk setiap perintah apapun dilinux, kita bisa menggunakan argumen/flag `--help`, kadang `-h` contoh `cp --help` atau `mkdir --help` untuk mendapatkan bantuan terkait apa saja fitur yang disediakan. Untuk bantuan dokumentasi lengkap kita bisa menggunakan perintah `man` seperti contoh `man cp`, semua perintah dasar pasti tersedia di dalam `man` namun untuk berbagai jenis tools diluar perintah dasar/umum biasanya diperlukan pemasangan tools tersebut agar dokumentasi man tersedia
 
 ---
 

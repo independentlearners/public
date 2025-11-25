@@ -1,6 +1,6 @@
 # **[Kurikulum Masif "Mastery in Bash Scripting: From Zero to Enterprise Automation"][0]**
 
-Kurikulum ini dirancang untuk membawa seseorang yang belum pernah membuka terminal (command line) hingga mampu membangun sistem otomasi infrastruktur yang kompleks.
+Kurikulum sama dengan yang ada [disini][7] hanya saja jauh lebih dijelaskan secara detail dan ini dirancang untuk membawa seseorang yang belum pernah membuka terminal (command line) hingga mampu membangun sistem otomasi infrastruktur yang kompleks.
 
 -----
 
@@ -244,7 +244,7 @@ Setelah menyelesaikan kurikulum ini, Anda akan mampu:
 [4]: ../bashscripting/bagian-4/README.md
 [5]: ../bashscripting/bagian-5/README.md
 [6]: ../bashscripting/bagian-6/README.md
-[7]: ../
+[7]: ../README.md
 [8]: ../
 [9]: ../
 [10]: ../

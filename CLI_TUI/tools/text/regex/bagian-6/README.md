@@ -53,12 +53,14 @@ EOF
 **Tantangan:**
 Tulis satu perintah untuk menampilkan semua variasi error tersebut beserta nomor barisnya.
 
-\<details\>
-\<summary\>👉 \<b\>Klik untuk melihat Kunci Jawaban & Penjelasan\</b\>\</summary\>
+<details>
+<summary>👉 <b>Klik untuk melihat Kunci Jawaban & Penjelasan</b></summary>
 
 ```bash
 grep -in "error" server_kotor.log
 ```
+
+-----
 
 **Penjelasan Bedah Kode:**
 
@@ -68,9 +70,8 @@ grep -in "error" server_kotor.log
   * `"error"`: Pola string literal.
   * `server_kotor.log`: File target.
 
-\</details\>
 
------
+</details>
 
 ## 🎯 LEVEL 2: The Extraction (Regex PCRE)
 
@@ -79,8 +80,8 @@ grep -in "error" server_kotor.log
 **Tantangan:**
 Gunakan `grep` dengan Regex PCRE untuk mengekstrak *hanya* pola IP Address (format `angka.angka.angka.angka`). Output tidak boleh mengandung teks lain.
 
-\<details\>
-\<summary\>👉 \<b\>Klik untuk melihat Kunci Jawaban & Penjelasan\</b\>\</summary\>
+<details\>
+<summary\>👉 <b\>Klik untuk melihat Kunci Jawaban & Penjelasan</b></summary>
 
 ```bash
 grep -P -o "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" server_kotor.log
@@ -99,7 +100,7 @@ grep -P -o "(\d{1,3}\.){3}\d{1,3}" server_kotor.log
   * `\d{1,3}`: Digit angka, muncul 1 sampai 3 kali.
   * `\.`: Titik literal (di-escape). Tanpa backslash, titik berarti "karakter apa saja".
 
-\</details\>
+</details\>
 
 -----
 
@@ -111,8 +112,8 @@ Kita harus membersihkan spasi berlebih tersebut agar bisa dimasukkan ke database
 **Tantangan:**
 Hapus semua spasi yang berada *di sekitar* tanda koma. Contoh: `,` menjadi `,` dan ` ,  ` menjadi `,`. Gunakan `sed`.
 
-\<details\>
-\<summary\>👉 \<b\>Klik untuk melihat Kunci Jawaban & Penjelasan\</b\>\</summary\>
+<details>
+<summary>👉 <b>Klik untuk melihat Kunci Jawaban & Penjelasan</b></summary>
 
 ```bash
 sed 's/\s*,\s*/,/g' karyawan_kacau.csv
@@ -126,7 +127,7 @@ sed 's/\s*,\s*/,/g' karyawan_kacau.csv
   * **Logika:** Cari [SpasiBanyak][Koma][SpasiBanyak], lalu ganti dengan [Koma] saja.
   * **Hasil:** `101, buDi santoso,   IT, 5000` berubah jadi `101,buDi santoso,IT,5000` (Jauh lebih rapi untuk parsing).
 
-\</details\>
+</details>
 
 -----
 
@@ -139,8 +140,8 @@ Hitung berapa kali setiap IP Address muncul di dalam log.
 Gunakan **Awk** (bukan `grep`). Anda harus menggunakan *Regex extraction* di dalam Awk (sedikit advanced) atau memadukan `grep` dan `awk`.
 *Hint: Gunakan pipa (`|`). Ambil IP dulu, lalu hitung.*
 
-\<details\>
-\<summary\>👉 \<b\>Klik untuk melihat Kunci Jawaban & Penjelasan\</b\>\</summary\>
+<details\>
+<summary\>👉 <b\>Klik untuk melihat Kunci Jawaban & Penjelasan</b></summary>
 
 **Solusi Paling Elegan (Pipeline):**
 
@@ -164,7 +165,7 @@ grep -P -o "\d{1,3}(\.\d{1,3}){3}" server_kotor.log | awk '{ count[$1]++ } END {
 192.168.1.50 muncul 2 kali
 ```
 
-\</details\>
+</details>
 
 -----
 

@@ -1,4 +1,4 @@
-> **Motifasi:** Membangun pemahaman yang mendalam (deep learning) membutuhkan kesabaran dan ketelitian. Maksimalkan waktu anda sebaik mungkin sebelum sesuatu mangambil sebagian besar waktu yang anda miliki sekarang.
+> **Motifasi:** Membangun pemahaman yang mendalam (deep learning) membutuhkan kesabaran dan ketelitian. Maksimalkan waktu anda sebaik mungkin sebelum sesuatu mangambil sebagian besar waktu yang anda miliki sekarang adalah cara terbaik untuk mewujudkan apa yang di sebut sebagai bagian dari keberhasilan yang ingin anda gapai dalam kehidupan ini. **Selamat Belajar!**
 
 ---
 
@@ -85,6 +85,7 @@ drwxr-xr-x  5 root  admin  160 Nov 19 09:00 ..
 -rw-r--r--  1 budi  staff  200 Nov 20 10:01 .bashrc  <-- File tersembunyi
 -rw-r--r--  1 budi  staff  500 Nov 20 12:00 notes.txt
 ```
+Arti dari Output diatas dijelaskan [disini][1] tetapi mungkin bagi pemula ini justru semakin membingungkan, sebaiknya anda kembali melihatnya setelah anda nyaman menggunakan terminal. Untuk sekarang mari sebaiknya kita fokus melanjutkan. 
 
 #### C. Berpindah Tempat: `cd`
 
@@ -98,6 +99,8 @@ cd /etc
 
   * `cd`: Singkatan dari **C**hange **D**irectory.
   * `/etc`: **Argumen** tujuan. Ini adalah alamat absolut (dijelaskan di bawah).
+
+Untuk perintah lainnya dilinux yang sangat membantu anda bisa mengunjunginya [disini][2]
 
 -----
 
@@ -705,8 +708,8 @@ Sekarang, Anda memiliki lisensi penuh untuk mulai memprogram.
 <!----------------------------------------------------->
 
 [0]: ../README.md
-[1]: ../
-[2]: ../
+[1]: ../bagian-1/bagian-1/README.md
+[2]: ../../../../../CLI_TUI/perintah/README.md
 [3]: ../
 [4]: ../
 [5]: ../

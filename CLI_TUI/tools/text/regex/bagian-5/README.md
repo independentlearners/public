@@ -13,11 +13,11 @@ Ini adalah tahap terakhir dan paling krusial: **Integrasi**. Anda sudah menguasa
 
 Skrip yang "jalan di komputer saya" tapi hancur di server produksi biasanya kekurangan satu hal: **Strict Mode**.
 
-### 1\. Konsep & Filosofi
+### 1. Konsep & Filosofi
 
 Secara default, Bash itu "pemaaf". Jika satu perintah gagal di tengah jalan, dia akan lanjut ke baris berikutnya seolah tidak terjadi apa-apa. Dalam pengolahan data, ini **BENCANA**. Kita ingin skrip kita **Fail Fast** (Gagal secepatnya jika ada error) agar tidak merusak data lebih jauh.
 
-### 2\. Terminologi Esensial
+### 2. Terminologi Esensial
 
   * **Shebang (`#!`) / Noun:**
       * *Definisi:* Dua karakter pertama di file skrip yang memberi tahu kernel, program apa yang harus dipakai untuk menjalankan file ini.
@@ -26,14 +26,14 @@ Secara default, Bash itu "pemaaf". Jika satu perintah gagal di tengah jalan, dia
   * **Pipefail / Noun:**
       * *Konsep:* Opsi konfigurasi agar pipeline (`cmd1 | cmd2`) dianggap gagal jika *salah satu* rantainya gagal (bukan hanya yang terakhir).
 
-### 3\. Sintaks Dasar: The Unofficial Bash Strict Mode
+### 3. Sintaks Dasar: The Unofficial Bash Strict Mode
 
 Setiap skrip text processing Anda HARUS dimulai dengan ini:
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-IFS=$'\n\t'
+IFS=$'nt'
 ```
 
 **Bedah Kode Kata per Kata (Sangat Penting):**
@@ -47,7 +47,7 @@ IFS=$'\n\t'
 4.  `set -o pipefail`:
       * *Tanpa ini:* `cat file_tidak_ada | grep "data"` dianggap SUKSES oleh Bash karena `grep` sukses (walau input kosong).
       * *Dengan ini:* Skrip akan error karena `cat` gagal, meskipun `grep` sukses.
-5.  `IFS=$'\n\t'`:
+5.  `IFS=$'nt'`:
       * Mengubah *Internal Field Separator* agar spasi dalam nama file tidak menghancurkan logika loop Anda.
 
 -----
@@ -58,7 +58,7 @@ IFS=$'\n\t'
 
 Di Arch Linux, Anda punya akses ke hardware level rendah. Gunakan itu. Jangan biarkan `grep` berjalan lambat.
 
-### 1\. Teknik `LC_ALL=C` (Membunuh Unicode)
+### 1. Teknik `LC_ALL=C` (Membunuh Unicode)
 
 Secara default, Linux modern menggunakan `UTF-8`. Ini mendukung emoji dan aksara dunia, tapi **sangat lambat** karena sistem harus mengecek setiap byte apakah itu bagian dari karakter multi-byte.
 
@@ -76,7 +76,7 @@ LC_ALL=C grep "Error" huge_log.txt
 
   * `LC_ALL=C`: Memaksa locale menggunakan format "C" (ASCII sederhana/byte-by-byte).
 
-### 2\. Parallel Processing dengan `xargs`
+### 2. Parallel Processing dengan `xargs`
 
 Pipa standar (`|`) itu *single-threaded*. CPU Anda punya 8-16 core, tapi `sed`/`grep` hanya pakai 1 core.
 Gunakan `xargs -P` untuk memecah tugas.
@@ -109,9 +109,9 @@ Mengambil data cuaca dari API, lalu memformatnya dengan Awk.
 
 ```bash
 # 1. Ambil JSON -> 2. Filter field tertentu dengan jq -> 3. Format tabel dengan awk
-curl -s "https://api.example.com/weather" | \
-jq -r '.data[] | "\(.city) \(.temp)"' | \
-awk '{ printf "Kota: %-10s | Suhu: %s°C\n", $1, $2 }'
+curl -s "https://api.example.com/weather" | 
+jq -r '.data[] | "(.city) (.temp)"' | 
+awk '{ printf "Kota: %-10s | Suhu: %s°Cn", $1, $2 }'
 ```
 
   * Pastikan kurikulum Anda mencakup jembatan antara *legacy tools* (awk) dan *modern data* (json/jq).
@@ -124,7 +124,7 @@ awk '{ printf "Kota: %-10s | Suhu: %s°C\n", $1, $2 }'
 
 Kita akan membuat skrip utuh yang menggabungkan **Regex**, **Grep**, **Sed**, dan **Awk** dengan keamanan **Strict Mode**.
 
-**Tujuan:** Menganalisis log web server, mencari serangan (IP yang melakukan request \> 100 kali), memblokir IP tersebut di firewall (simulasi), dan membuat laporan CSV.
+**Tujuan:** Menganalisis log web server, mencari serangan (IP yang melakukan request > 100 kali), memblokir IP tersebut di firewall (simulasi), dan membuat laporan CSV.
 
 ### 📜 Source Code Lengkap (Disertai Komentar Detail)
 
@@ -137,7 +137,7 @@ Kita akan membuat skrip utuh yang menggabungkan **Regex**, **Grep**, **Sed**, da
 
 # 1. Safety First: Strict Mode
 set -euo pipefail
-IFS=$'\n\t'
+IFS=$'nt'
 
 # 2. Variabel Konfigurasi
 LOG_FILE="access.log"
@@ -148,16 +148,16 @@ echo "[*] Memulai analisis pada: $LOG_FILE"
 
 # 3. Pipeline Utama
 # Langkah A: Baca File
-cat "$LOG_FILE" | \
+cat "$LOG_FILE" | 
 # Langkah B: Ambil hanya IP Address (Kolom 1)
-awk '{ print $1 }' | \
+awk '{ print $1 }' | 
 # Langkah C: Urutkan agar bisa dihitung
-sort | \
+sort | 
 # Langkah D: Hitung kemunculan tiap IP (uniq -c)
-uniq -c | \
+uniq -c | 
 # Langkah E: Filter IP yang melebihi ambang batas (THRESHOLD)
 # $1 adalah jumlah hitungan (dari uniq -c), $2 adalah IP
-awk -v limit="$THRESHOLD" '$1 >= limit { print $2, $1 }' | \
+awk -v limit="$THRESHOLD" '$1 >= limit { print $2, $1 }' | 
 # Langkah F: Format output menjadi CSV (IP,Count) dan simpan
 sed 's/ /,/g' > "$REPORT_FILE"
 
@@ -168,7 +168,7 @@ echo "----------------------------------------"
 echo "Top Attackers:"
 
 # Gunakan Awk untuk membaca laporan CSV yang baru dibuat dan print dengan cantik
-awk -F, '{ printf "IP: %-15s | Requests: %d\n", $1, $2 }' "$REPORT_FILE"
+awk -F, '{ printf "IP: %-15s | Requests: %dn", $1, $2 }' "$REPORT_FILE"
 ```
 
 **Analisis Alur Kerja:**
@@ -183,13 +183,13 @@ awk -F, '{ printf "IP: %-15s | Requests: %d\n", $1, $2 }' "$REPORT_FILE"
 
 ## 🎓 Rangkuman & Langkah Pamungkas
 
-Selamat\! Anda telah memiliki peta jalan kurikulum dari **Foundation** hingga **Enterprise Automation**.
+Selamat! Anda telah memiliki peta jalan kurikulum dari **Foundation** hingga **Enterprise Automation**.
 
 ### Rekomendasi Visualisasi Akhir
 
 Untuk memperkuat pemahaman, direkomendasikan untuk mencari atau membuat **"Cheat Sheet Wallpaper"** untuk dipasang di desktop Arch Linux Anda. Cheat sheet ini harus berisi:
 
-1.  Regex tokens (`^`, `$`, `\d`, `+`, `?`).
+1.  Regex tokens (`^`, `$`, `d`, `+`, `?`).
 2.  Awk built-in vars (`NR`, `NF`, `$0`).
 3.  Sed flags (`s///g`, `-i`).
 

@@ -6,7 +6,7 @@
 
 # **Kurikulum Komprehensif: Menguasai Shell Scripting (Bash)**
 
-Kurikulum ini adalah peta jalan untuk menguasai seni otomasi di lingkungan berbasis Unix/Linux. Shell scripting bukan hanya tentang menulis kode, tetapi tentang memahami dan memanfaatkan kekuatan baris perintah secara maksimal. Anda bisa menggunakan metode pendekatan di halaman ini atau jika ingin yang lebih detail lagi, anda bisa memeriksanya [disini][7]
+Kurikulum ini adalah peta jalan untuk menguasai inti dari seni otomasi di lingkungan berbasis Unix/Linux. Shell scripting bukan hanya tentang menulis kode, tetapi tentang memahami dan memanfaatkan kekuatan baris perintah secara maksimal. Anda bisa menggunakan metode pendekatan di halaman ini atau jika ingin yang lebih detail lagi, anda bisa memeriksanya [disini][7]. Sedangkan halaman ini adalah dimana ketika anda ingin memahami bagian inti dari scripting.
 
 #### **Prasyarat**
 
@@ -706,14 +706,10 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 
 -----
 
-**Kesimpulan Audit:**
-
-Kurikulum ini adalah fondasi yang sangat kokoh. Penambahan yang saya rekomendasikan bersifat melengkapi dan mendalamkan, bukan korektif terhadap kesalahan fundamental. Kita dapat melanjutkan dengan pendalaman setiap bagian.
-
 - **[Home][domain-spesifik]**
 
 [domain-spesifik]: ../../README.md
-[0]:../../../../CLI_TUI/perintah/README.md
+[0]: ./../../../CLI_TUI/perintah/README.md
 [1]:../bash/bagian-1/README.md
 [2]:../bash/bagian-2/README.md
 [3]:../bash/bagian-3/README.md
