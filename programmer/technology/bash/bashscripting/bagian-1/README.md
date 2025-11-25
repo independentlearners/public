@@ -157,6 +157,8 @@ Anda berada di `/home/budi/Music` dan ingin mundur ke `/home/budi` lalu masuk ke
 
 ### 8\. Tips & Praktik Terbaik
 
+  - >Khusus pengguna Shell modern seperti **zsh** atau **fish** dan tidak cocok jika dengan Shell seperti **bash**.
+
   * **Gunakan `Tab` Completion:** Jangan ketik nama folder secara manual dan lengkap\! Ketik 3 huruf pertama, lalu tekan tombol `Tab` di keyboard. Terminal akan melengkapinya otomatis. Ini mencegah *typo* (salah ketik).
   * **Tahu jalan pulang:** Jika Anda tersesat di kedalaman folder, ketik `cd` (tanpa argumen) lalu Enter. Itu akan langsung memulangkan Anda ke "Home Directory" (`~` atau `/home/user_anda`).
 
@@ -168,7 +170,7 @@ Anda berada di `/home/budi/Music` dan ingin mundur ke `/home/budi` lalu masuk ke
       * **Masalah:** Di Linux, `File.txt`, `file.txt`, dan `FILE.TXT` adalah 3 file yang berbeda.
       * **Solusi:** Selalu perhatikan kapitalisasi. Gunakan `ls` untuk mengecek nama asli file.
   * **Kesalahan:** Terjebak di folder root atau folder sistem dan tidak bisa membuat file (Permission Denied).
-      * **Solusi:** Pahami bahwa user biasa hanya boleh mengacak-acak di dalam `/home/user_anda`. Jangan bermain di `/bin` atau `/etc` tanpa izin khusus (yang akan dibahas di Modul tentang `sudo`).
+      * **Solusi:** Pahami bahwa user biasa hanya boleh mengacak-acak di dalam `/home/user_anda`. Jangan bermain di `/bin` atau `/etc` tanpa izin khusus (yang akan dibahas di Modul tentang tentang perintah `sudo`).
 
 -----
 
@@ -311,7 +313,7 @@ mv *.jpg /home/budi/Pictures/
   * `file?.txt`: Cocok dengan `file1.txt`, `fileA.txt`.
   * Tidak cocok dengan `file10.txt` (karena 10 adalah dua karakter).
 
-*(Visualisasi disarankan: Gambar corong filter. Di atas masuk berbagai bentuk file. Di tengah ada saringan berbentuk bintang. Di bawah hanya keluar file yang sesuai pola).*
+<!-- *(Visualisasi disarankan: Gambar corong filter. Di atas masuk berbagai bentuk file. Di tengah ada saringan berbentuk bintang. Di bawah hanya keluar file yang sesuai pola).* -->
 
 -----
 
@@ -355,7 +357,7 @@ mv *.jpg /home/budi/Pictures/
 
 Sebelum kita bisa mengatur "Izin" (Permissions) atau menulis "Script" (Fase 2), kita menghadapi satu **kesenjangan kritis**: Kita perlu alat untuk menulis kode tersebut. Di dunia GUI, Anda punya Notepad atau VS Code. Di dunia server (CLI) yang seringkali tidak memiliki layar grafis, Anda harus menggunakan **Terminal Text Editor**.
 
-Oleh karena itu, **Modul 1.3** ini adalah modul tambahan (hasil audit) yang sangat krusial sebelum kita masuk ke Permissions.
+Oleh karena itu, **Modul 1.3** ini adalah modul tambahan yang sangat krusial sebelum kita masuk ke Permissions.
 
 -----
 
@@ -410,6 +412,7 @@ Di bagian bawah layar Nano, Anda akan melihat baris bantuan seperti `^X Exit`.
 2.  **Simpan (Write Out):** Tekan `Ctrl + O`.
       * Nano akan bertanya: *File Name to Write: catatan.txt*. Tekan **Enter**.
 3.  **Keluar (Exit):** Tekan `Ctrl + X`.
+4.  **Bantuan:** `F1`
 
 -----
 
