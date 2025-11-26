@@ -972,11 +972,12 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
   - **[🇮🇩 Indonesian](kamus/bahasa/Indonesia/README.md)**
   - **[🇬🇧 English](kamus/bahasa/Inggris/README.md)**
 - **[➕ Mathematics](matematik/README.md)**
-  - **[🇬🇧 Kamus](./kamus/README.md)**
+  - **[ Kamus](./kamus/README.md)**
 - **[🧠 My Readings](saya/README.md)**
 
-  - **[📜 Kitab Ta'lim Muta'allim](saya/book/talim_mutaallim/README.md)**
-  - **[📜 Kitab Lubabul Hadits](saya/book/lubabul_hadits/README.md)**
+  - **[📜 Kitab Ta'lim Muta'allim](./saya/book/talim_mutaallim/README.md)**
+  - **[📜 Kitab Lubabul Hadits](./saya/book/lubabul_hadits/README.md)**
+  - **[📜 Note](./saya/note/README.md)**
 
     </div>
   </details>
