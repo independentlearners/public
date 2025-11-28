@@ -242,8 +242,6 @@ Kita akan mempelajari **"The Holy Trinity"** (Tritunggal Suci) dalam pemrosesan 
 
 -----
 
-# PHASE 3: The Power of Pipes
-
 ## MODUL 3.2: The Holy Trinity (Grep, Sed, Awk) & Regex
 
 ### 📑 Struktur Pembelajaran Internal (Mini Daftar Isi)

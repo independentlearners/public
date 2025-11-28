@@ -260,8 +260,6 @@ Di sini kita akan mempelajari **Interoperabilitas**: Kemampuan Bash untuk bertuk
 
 -----
 
-# PHASE 4: Advanced Modular Scripting & System
-
 ## MODUL 4.2: Interoperabilitas, Jaringan (cURL), & JSON Parsing (`jq`)
 
 ### 📑 Struktur Pembelajaran Internal (Mini Daftar Isi)

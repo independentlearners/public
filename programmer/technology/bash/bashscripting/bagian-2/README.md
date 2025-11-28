@@ -169,13 +169,9 @@ Kita telah berhasil melahirkan program pertama. Kerangka fisiknya sudah ada, tap
 
 Selanjutnya di **Modul 2.2**, kita akan mengisi otaknya dengan memori. Kita akan belajar **Variables (Variabel)**: Cara script mengingat nama user, tanggal, dan hasil perhitungan.
 
-Kita melangkah lebih dalam ke **PHASE 2**.
-
-Setelah kita berhasil membuat "tubuh" script (file dan izin eksekusi) di Modul 2.1, sekarang kita harus memberinya "ingatan". Tanpa variabel, script Anda akan amnesia—tidak bisa mengingat siapa penggunanya, jam berapa sekarang, atau file mana yang sedang diproses.
-
 -----
 
-# PHASE 2: Core Scripting
+Setelah kita berhasil membuat "tubuh" script (file dan izin eksekusi) di Modul 2.1, sekarang kita harus memberinya "ingatan". Tanpa variabel, script Anda akan amnesia—tidak bisa mengingat siapa penggunanya, jam berapa sekarang, atau file mana yang sedang diproses.
 
 ## MODUL 2.2: Variables (Variabel), Input, & Aritmatika Dasar
 
@@ -279,7 +275,7 @@ Meminta pengguna mengetik sesuatu saat script berjalan.
 read -p "Masukkan nama folder proyek: " FOLDER_PROYEK
 mkdir "$FOLDER_PROYEK"
 ```
-
+Jika menggunakan zsh, jalankan kode ini dengan tanpa menyertakan `.` seperti `. ~/script.sh`.
   * `read`: Perintah baca input keyboard.
   * `-p`: **P**rompt. Menampilkan pesan teks sebelum menunggu ketikan.
   * `FOLDER_PROYEK`: Nama variabel penampung input.
@@ -375,8 +371,6 @@ Kita memasuki **MODUL 2.3**. Ini adalah modul di mana script Anda mulai "hidup".
 Jika **Variabel (Modul 2.2)** adalah **Memori** (ingatan), maka **Logic & Control Flow (Modul 2.3)** adalah **Kecerdasan** (kemampuan mengambil keputusan). Tanpa modul ini, script Anda hanya robot bodoh yang menjalankan perintah urut dari baris 1 sampai 100 tanpa peduli apakah terjadi error di tengah jalan.
 
 -----
-
-# PHASE 2: Core Scripting
 
 ## MODUL 2.3: Logika, Kondisional, & Pengambilan Keputusan
 
@@ -594,8 +588,6 @@ Jika **Logic (Modul 2.3)** membuat script Anda pintar mengambil keputusan sekali
 
 -----
 
-# PHASE 2: Core Scripting
-
 ## MODUL 2.4: Loops (Perulangan) & Iterasi Otomatis
 
 ### 📑 Struktur Pembelajaran Internal (Mini Daftar Isi)
@@ -812,8 +804,6 @@ Ini adalah materi tingkat lanjut yang membedakan *scripter* biasa dengan *System
 Mari kita sisipkan materi ini sebagai **MODUL 2.5 (Spesial)**, tepat setelah kita belajar Looping dan sebelum masuk ke Fase Pipes.
 
 -----
-
-# PHASE 2: Core Scripting (Extension)
 
 ## MODUL 2.5: Standar POSIX, Portabilitas, & Bahaya "Bashisms"
 
@@ -1040,18 +1030,205 @@ Tidak semua script harus POSIX. Berikut panduannya:
 
 ### Ringkasan Implikasi untuk Kurikulum
 
-Dalam konteks kurikulum kita:
-
   * **Modul 2.3 (Logic)** sebelumnya menggunakan `[[ ]]`. Itu adalah praktik terbaik **Modern Bash**, tapi tidak POSIX.
-  * **Modul 4.1 (Function)** sebelumnya menggunakan `local`. Kata kunci `local` sebenarnya **TIDAK** ada di standar POSIX murni, meskipun didukung oleh banyak shell (dash/ash). Di POSIX ketat, semua variabel adalah global.
+  <!-- * **Modul 4.1 (Function)** sebelumnya menggunakan `local`. Kata kunci `local` sebenarnya **TIDAK** ada di standar POSIX murni, meskipun didukung oleh banyak shell (dash/ash). Di POSIX ketat, semua variabel adalah global. -->
 
 **Revisi Mental untuk Anda:**
 Saat Anda menulis `#!/bin/bash`, Anda aman menggunakan semua fitur canggih yang kita pelajari. Tapi jika suatu saat Anda dipaksa bekerja di lingkungan terbatas dan harus mengganti header ke `#!/bin/sh`, Anda harus siap membuang array, double brackets, dan fitur canggih lainnya.
 
+-----
+
+Dalam kurikulum tingkat "Expert" atau "Enterprise", ketergantungan hanya pada `echo` adalah kelemahan. `echo` tidak konsisten antar sistem operasi (implikasi POSIX), dan tidak bisa merapikan teks (misalnya membuat tabel kolom yang rapi).
+
+## MODUL 2.6: Precision Output (printf) & Text Formatting
+
+### 📑 Struktur Pembelajaran Internal
+
+1.  **Filosofi Output:** Mengapa `echo` dianggap "kekanak-kanakan" dan `printf` adalah standar profesional.
+2.  **Anatomi `printf`:** Membedah struktur Format String dan Argumen.
+3.  **Format Specifiers:** Memahami `%s` (String), `%d` (Desimal/Angka), dan `%f` (Float).
+4.  **Escape Sequences:** Mengendalikan baris baru (`\n`), Tab (`\t`), dan suara (`\a`).
+5.  **Layout & Alignment:** Membuat tabel rapi dengan padding (rata kanan/kiri).
+6.  **Studi Kasus:** Membuat Laporan Tabel Inventaris yang Rapi.
+
+-----
+
+### 1\. Deskripsi Konkret & Peran
+
+Modul ini mengajarkan Anda cara menampilkan data dengan presisi milimeter. Jika `echo` seperti melempar cat ke tembok, `printf` seperti melukis dengan kuas halus.
+**Peran:** Saat Anda membuat script CLI profesional, user mengharapkan output yang rapi, sejajar, dan mudah dibaca. `printf` (Print Formatted) adalah satu-satunya cara untuk mencapai ini secara konsisten di semua sistem Unix/Linux (POSIX Compliant).
+
+### 2\. Konsep Kunci & Filosofi Mendalam
+
+**Filosofi: "C-Style Formatting"**
+Bash meminjam perintah `printf` langsung dari bahasa pemrograman C. Ini berarti ia sangat kuat dan standar.
+
+  * **Predictability:** `printf` tidak pernah menambahkan baris baru (`newline`) secara otomatis kecuali Anda memintanya. Ini memberi Anda kontrol total.
+  * **Separation of Concerns:** `printf` memisahkan **"Bagaimana data ditampilkan"** (Format String) dari **"Apa datanya"** (Arguments).
+
+-----
+
+### 3\. Sintaks Dasar & Implementasi Inti
+
+#### A. Hello World dengan `printf`
+
+Perbedaan utama dengan `echo`.
+
+```bash
+# Menggunakan echo (Otomatis ganti baris)
+echo "Halo Dunia"
+
+# Menggunakan printf
+printf "Halo Dunia" 
+# Output: Halo Dunia(kursor berhenti disini, tidak ganti baris!)
+
+# printf yang benar
+printf "Halo Dunia\n"
+```
+
+#### B. Membedah Sintaks `printf`
+
+```bash
+printf "Nama: %s, Umur: %d tahun\n" "Budi" 25
+```
+
+**Penjelasan Kata per Kata:**
+
+1.  **`printf`**: Perintah utama.
+2.  **`"Nama: %s, Umur: %d tahun\n"`**: Disebut **Format String**. Ini adalah cetakan/template.
+      * **`%s`**: *Specifier* untuk **String** (Teks). Bash akan mengambil argumen pertama ("Budi") dan menempelkannya di sini.
+      * **`%d`**: *Specifier* untuk **Decimal** (Angka Bulat). Bash mengambil argumen kedua (25) dan menempelkannya di sini.
+      * **`\n`**: *Escape Sequence* untuk **New Line** (Baris Baru).
+3.  **`"Budi"`**: Argumen pertama (mengisi `%s`).
+4.  **`25`**: Argumen kedua (mengisi `%d`).
+
+#### C. Daftar Specifier Penting (Wajib Tahu)
+
+  * **`%s`**: String (Teks).
+  * **`%d`** atau **`%i`**: Integer (Bilangan Bulat).
+  * **`%f`**: Float (Bilangan Desimal). *Catatan: Bash math tidak support float, tapi `printf` BISA menampilkan float jika inputnya string desimal.*
+  * **`%b`**: String dengan interpretasi backslash (misal inputnya punya `\n`, akan diproses).
+
+#### D. Escape Sequences (Karakter Spesial)
+
+Karakter yang diawali backslash `\` memiliki makna khusus:
+
+  * **`\n` (New Line):** Turun ke baris bawah.
+  * **`\t` (Tab):** Geser spasi (biasanya 4 atau 8 spasi) untuk indentasi.
+  * **`\r` (Carriage Return):** Balik ke awal baris (sering dipakai untuk menimpa loading bar).
+  * **`\\`**: Menampilkan karakter backslash itu sendiri.
+
+-----
+
+### 4\. Advanced Formatting: Padding & Alignment (Membuat Tabel)
+
+Ini adalah fitur "Killer" dari `printf`. Bagaimana cara membuat tabel agar kolomnya lurus meskipun panjang namanya beda-beda?
+
+**Masalah (Pakai Echo):**
+
+```bash
+echo "Nama Barang Harga"
+echo "Buku 5000"
+echo "KomputerGaming 15000000"
+```
+
+*Output (Berantakan):*
+
+```text
+Nama Barang Harga
+Buku 5000
+KomputerGaming 15000000
+```
+
+**Solusi (Pakai Printf dengan Lebar Kolom):**
+
+```bash
+# Header
+printf "%-20s | %10s\n" "NAMA BARANG" "HARGA (IDR)"
+printf "%s\n" "-----------------------------------"
+
+# Data
+printf "%-20s | %10d\n" "Buku" 5000
+printf "%-20s | %10d\n" "KomputerGaming" 15000000
+```
+
+**Bedah Kode Formatting:**
+
+1.  **`%-20s`**:
+      * `%s`: Ini String.
+      * `20`: Sediakan ruang kosong sebanyak **20 karakter**.
+      * `-` (Minus): **Rata Kiri (Left Align)**. Teks ditempel di kiri, sisa ruang kosong di kanan.
+2.  **`%10d`**:
+      * `%d`: Ini Angka.
+      * `10`: Sediakan ruang 10 karakter.
+      * *(Tanpa Minus)*: Defaultnya **Rata Kanan (Right Align)**. Ini standar akuntansi agar angka satuan/puluhan lurus ke bawah.
+
+**Output (Rapi Sempurna):**
+
+```text
+NAMA BARANG          | HARGA (IDR)
+-----------------------------------
+Buku                 |       5000
+KomputerGaming       |   15000000
+```
+
+-----
+
+### 5\. Menyimpan Output ke Variabel (`-v`)
+
+Fitur canggih `printf` di Bash (sejak versi 3.1) adalah opsi `-v`. Alih-alih mencetak ke layar, dia menyimpan hasil formatnya langsung ke variabel tanpa perlu sub-shell `$()`. Ini **lebih cepat**.
+
+```bash
+# Cara Lama (Lambat, membuat proses baru)
+PESAN=$(printf "User %s login pada jam %s" "Budi" "12:00")
+
+# Cara Baru (Cepat, internal Bash)
+printf -v PESAN "User %s login pada jam %s" "Budi" "12:00"
+
+echo "$PESAN"
+```
+
+-----
+
+### 6\. Studi Kasus: Script Laporan User
+
+Kita akan membuat script yang meloop daftar user dan menampilkan data mereka dalam tabel yang cantik.
+
+**File: `laporan_user.sh`**
+
+```bash
+#!/bin/bash
+
+# Header Tabel
+# %-15s : String rata kiri, lebar 15
+# %-10s : String rata kiri, lebar 10
+# %6s   : String rata kanan, lebar 6 (untuk ID)
+printf "%-15s %-10s %6s\n" "USERNAME" "GROUP" "UID"
+printf "%s\n" "----------------------------------"
+
+# Loop membaca file /etc/passwd
+# Kita set IFS (Internal Field Separator) jadi titik dua ':' karena format passwd adalah user:x:uid:gid...
+while IFS=':' read -r user pass uid gid comment home shell; do
+    # Hanya tampilkan user dengan UID >= 1000 (User manusia, bukan sistem)
+    # (Menggunakan aritmatika bash)
+    if (( uid >= 1000 )); then
+        # Cetak data sesuai format header
+        printf "%-15s %-10s %6d\n" "$user" "users" "$uid"
+    fi
+done < /etc/passwd
+```
+
+-----
+
+### 7\. Hubungan dengan Modul Lain
+
+  * **Prasyarat:** **Modul 2.2 (Variabel)**.
+  * **Koneksi:** Materi ini sangat krusial untuk **Modul 5.1 (Logging)**. Log yang baik harus terformat rapi (Timestamp, Level, Pesan) menggunakan `printf` agar mudah diparsing mesin.
+
+<!-- Apakah penambahan Modul 2.6 tentang `printf` ini sudah menjawab kekhawatiran Anda mengenai kelengkapan materi formatting dan kode C-style dalam Bash? -->
 <!-- Apakah penjelasan mendalam mengenai standar POSIX dan implikasi "Syntax Error" di lingkungan berbeda ini sudah cukup jelas dan memenuhi standar audit Anda? -->
 Sekarang, mari kita masuk ke **PHASE 3: The Power of Pipes**. Di sinilah Bash benar-benar bersinar dan berbeda dari bahasa pemrograman biasa. Kita akan belajar mengalirkan data antar program.
 
-Apakah Anda siap masuk ke **Modul 3.1: Input/Output Redirection & Piping**? Di sinilah kita belajar "menyambung pipa".
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**

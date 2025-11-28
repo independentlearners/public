@@ -509,8 +509,6 @@ Jika Modul 1.2 adalah tentang "Membangun Rumah", maka **Modul 1.4** adalah tenta
 
 -----
 
-# PHASE 1: The Foundation
-
 ## MODUL 1.4: Permissions (Izin) & Ownership (Kepemilikan)
 
 ### 📑 Struktur Pembelajaran Internal (Mini Daftar Isi)

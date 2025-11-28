@@ -1,3 +1,87 @@
+<details>
+  <summary>📃 Daftar Sumber</summary>
+
+# Tabel sumber dokumentasi & tooling (online → offline → CLI)
+
+**Tabel komprehensif** (online → offline → CLI) untuk seluruh sumber dokumentasi Bash dan tooling pendukung yang relevan 
+
+> Catatan: difokuskan pada sumber resmi dan mirror terpercaya (GNU, The Open Group, TLDP, man7/man.cx, ShellCheck, dll.). Untuk perintah instalasi terdapat contoh untuk **Arch Linux**  dan juga alternatif umum (Debian/Ubuntu). Semua link sumber tercantum sebagai sitasi pada baris terkait. ([GNU][1])
+
+
+| Kategori                                |                                                                                                     Resource (judul) | Online (URL / apa cari)                                                                                                                 | Offline / file yang bisa disimpan                                                                                                                                                                   | Perintah CLI & instalasi (contoh Arch / umum)                                                                                                  | Kenapa penting / catatan                                                                                                  |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Dokumen resmi — Bash**                |                                                                          GNU **Bash Reference Manual** (`info bash`) | Manual resmi GNU Bash (halaman web GNU). ([GNU][1])                                                                                     | Bisa diakses offline lewat `info` setelah paket doc terpasang; PDF/HTML mirror tersedia. (unduh `https://www.gnu.org/s/bash/manual/bash.html` atau mirror PDF). ([GNU][1])                          | Baca: `info bash` atau `man bash` (ringkasan). <br>Install docs (Arch): `sudo pacman -S man-db man-pages` + `sudo mandb`. ([archlinux.org][2]) | **Sumber otoritatif** untuk behaviour Bash, expansions, quoting, job control. Gunakan sebagai referensi utama. ([GNU][1]) |
+| **Man page (ringkasan cepat)**          |                                                      `man bash` — man-pages / man7 / man.cx mirrors. ([man7.org][3]) | Man page lokal (man-db + man-pages) — tersedia offline setelah instal. Juga mirror HTML (man7.org / man.cx). ([man7.org][3])            | Tampilkan cepat: `man bash` <br>Search keyword: `man -k <term>` / `apropos <term>` <br>Build cache: `sudo mandb`. ([man.archlinux.org][4])                                                          | Man page ideal untuk **SYNOPSIS**, opsi CLI, contoh cepat. Gunakan untuk lookup cepat. ([man7.org][3])                                         |                                                                                                                           |
+| **Tutorial & praktik**                  |                                            **Advanced Bash-Scripting Guide** (TLDP) — Mendel Cooper. ([tldp.org][5]) | Online HTML + PDF (`abs-guide.pdf`) — simpan untuk referensi offline. ([tldp.org][6])                                                   | Unduh: `wget https://tldp.org/LDP/abs/abs-guide.pdf` (atau mirror). <br>Praktik: copy/snippet, jalankan di container.                                                                               | Panduan praktis, contoh pola scripting, banyak contoh nyata (berguna untuk belajar pola skrip). ([tldp.org][5])                                |                                                                                                                           |
+| **Standar / Portabilitas**              |                             **POSIX / The Open Group** — Shell Command Language (sh spec). ([pubs.opengroup.org][7]) | HTML resmi dari The Open Group — bisa disimpan offline (HTML/PDF). ([pubs.opengroup.org][7])                                            | Baca: `https://pubs.opengroup.org/onlinepubs/` <br>Gunakan untuk cek fitur POSIX-kompatibel.                                                                                                        | Untuk portabilitas ( `/bin/sh` ), tentukan fitur yang safe dipakai. Penting jika target script harus portable. ([pubs.opengroup.org][7])       |                                                                                                                           |
+| **Linter & static analysis**            |                                                                    **ShellCheck** (web + CLI). ([shellcheck.net][8]) | Web UI: shellcheck.net (paste & test). <br>Binary/packaged untuk offline: paket distro atau `shellcheck-bin` AUR. ([shellcheck.net][8]) | Install Arch: `sudo pacman -S shellcheck` (paket `extra`). <br>Debian/Ubuntu: `sudo apt install shellcheck`. <br>Lint: `shellcheck script.sh`. ([archlinux.org][9])                                 | Wajib pakai saat menulis/men-review skrip: temukan quoting, word-splitting, substitution bug. ([shellcheck.net][8])                            |                                                                                                                           |
+| **Coreutils & utilitas pendukung**      |                      **GNU Coreutils manual** (grep/sed/awk/find ditunjuk melalui coreutils / gnu docs). ([GNU][10]) | Man pages lokal (`man grep`, `man sed`, `man awk`) — unduh paket `man-pages` & `coreutils`. ([GNU][10])                                 | Contoh: `man grep`, `man sed`, `man awk`, `man find` <br>Install coreutils (biasanya default): `sudo pacman -S coreutils` (umum sudah ada). ([GNU][10])                                             | Sering digunakan di skrip — pahami opsi utama (e.g. `-r`, `-P`, `-F`, `-E` untuk grep). ([GNU][10])                                            |                                                                                                                           |
+| **Online aggregator / browser**         |                               **DevDocs** — webapp (offline-capable), cepat untuk lookup banyak doc. ([DevDocs][11]) | DevDocs mendukung mode offline (download docsets) → simpan di browser / gunakan app. ([DevDocs][11])                                    | Akses: `https://devdocs.io/` → Preferences → Download (offline). <br>Alternatif desktop: `devdocs-desktop` atau `DevDocs` electron build. ([DevDocs][11])                                           | Baik untuk referensi cepat multi-language; bisa digabung dengan Zeal/DevDocs offline. ([DevDocs][11])                                          |                                                                                                                           |
+| **Offline doc browser (desktop)**       |                                           **Zeal** (Linux/Windows) / **Dash** (macOS) — docset offline. ([Zeal][12]) | Install Zeal → download docsets termasuk Bash, coreutils, POSIX, TLDP jika tersedia. ([Zeal][13])                                       | Install (Arch): `sudo pacman -S zeal` (atau unduh dari zealdocs.org). <br>Setelah terpasang: Tools → Docsets → Download. ([Zeal][12])                                                               | Berguna untuk browsing offline dengan UI cepat, cocok jika sering berpindah topik. ([Zeal][12])                                                |                                                                                                                           |
+| **Man mirrors / HTML**                  |                          **man7.org** / **man.cx** / **man.archlinux.org** — mirror manpage lengkap. ([man7.org][3]) | Simpan halaman HTML atau gunakan `wget -r` untuk mirror topik tertentu (hati-hati bandwith). ([man7.org][3])                            | Contoh: buka `https://man7.org/linux/man-pages/man1/bash.1.html` atau `https://man.cx/bash(1)` untuk referensi cepat. ([man7.org][3])                                                               | Mirror man berguna jika man lokal tidak terpasang; juga bahan referensi cross-distro. ([man.archlinux.org][14])                                |                                                                                                                           |
+| **Sumber kode (bila ingin modifikasi)** |                       **Bash source** — repository resmi (Savannah / GNU) + beberapa mirror GitHub. ([Savannah][15]) | Clone repo: `git clone git://git.sv.gnu.org/bash.git` atau mirror GitHub; simpan lokal untuk baca kode. ([Savannah][15])                | `git clone git://git.savannah.gnu.org/bash.git` (atau `git clone https://git.savannah.gnu.org/git/bash.git`) <br>Build: `./configure && make && sudo make install` (lihat README). ([Savannah][15]) | Hanya jika Anda ingin **memodifikasi/compile** Bash sendiri — butuh C toolchain, autoconf, readline, testing. ([Savannah][15])                 |                                                                                                                           |
+| **Books & referensi cetak**             |                 *Bash Reference Manual* (printer-friendly / buku), buku tercetak + Google Books. ([Google Buku][16]) | Beli/unduh versi PDF/ebook; simpan pada koleksi pribadi.                                                                                | Unduh contoh PDF mirror: `wget <link-abs-guide.pdf>` atau simpan halaman.                                                                                                                           | Berguna untuk studi maraton offline dan pencetakan rujukan. ([tldp.org][6])                                                                    |                                                                                                                           |
+| **Tutorial modern / articles**          | freeCodeCamp, DigitalOcean tutorials, blog teknik — bagus untuk pengantar & pattern modern. ([freecodecamp.org][17]) | Simpan artikel sebagai PDF / markdown untuk referensi pribadi.                                                                          | Cari & simpan: `wget <url>` atau `curl -o file.html <url>`.                                                                                                                                         | Praktis untuk start-to-finish tutorial (step-by-step). ([freecodecamp.org][17])                                                                |                                                                                                                           |
+| **Utility bantu baca & search**         |                                       `rg` (ripgrep), `bat`, `less -R`, `fzf` — percepat navigasi dokumentasi lokal. | Instal via pacman: `sudo pacman -S ripgrep bat fzf`                                                                                     | `rg 'pattern' /usr/share/man -n` ; `bat file` ; `less -R file`                                                                                                                                      | Mempercepat pencarian contoh & highlight syntax saat membaca dokumen offline.                                                                  |                                                                                                                           |
+| **Anki / flashcards (bahasa teknis)**   |                                                    buat deck sendiri (frasa dokumentatif, contoh `man` → terjemahan) | Ekspor impor `.apkg` untuk cadangan                                                                                                     | `anki` desktop atau `ankiconnect` plugin jika ingin automasi                                                                                                                                        | Sangat efektif untuk retention frasa dokumentatif.                                                                                             |                                                                                                                           |
+
+---
+
+# Petunjuk cepat (kata-per-kata) — perintah CLI penting & arti singkat
+
+* `man bash` — buka manual ringkas Bash (SYNOPSIS / OPTIONS / EXAMPLES). ([man7.org][3])
+* `info bash` — buka GNU Bash Reference Manual (node-based, lebih mendetail). ([GNU][1])
+* `help <builtin>` — dokumentasi singkat untuk builtin Bash (contoh: `help read`).
+* `bash -n script.sh` — syntax-check (baca tapi jangan eksekusi).
+* `bash -x script.sh` atau `set -x` — tracing / debug: tampilkan perintah setelah substitusi.
+* `shellcheck script.sh` — linter statis untuk menemukan bug & antipattern. ([shellcheck.net][8])
+* `sudo pacman -S shellcheck man-db man-pages` — instal contoh di Arch. (lihat paket Arch). ([archlinux.org][9])
+
+# Rekomendasi urutan pemakaian (praktis—hari pertama)
+
+1. Pastikan `man`/`info` terpasang: `sudo pacman -S man-db man-pages` lalu `sudo mandb`. ([archlinux.org][2])
+2. Buka `man bash` untuk overview; lalu `info bash` untuk bacaan mendalam. ([man7.org][3])
+3. Unduh **Advanced Bash-Scripting Guide (PDF)** untuk latihan contoh: `wget https://tldp.org/LDP/abs/abs-guide.pdf`. ([tldp.org][6])
+4. Pasang `shellcheck` dan jalankan `shellcheck` pada skrip contoh Anda. ([archlinux.org][9])
+5. Jika sering offline, pasang **Zeal** dan download docsets Bash / coreutils / POSIX. ([Zeal][12])
+
+# Sumber utama & bukti (sitasi ringkas)
+
+* GNU Bash Reference Manual (official). ([GNU][1])
+* `man` / man7.org / man.cx — mirrors man page. ([man7.org][3])
+* Advanced Bash-Scripting Guide (TLDP) — HTML & PDF. ([tldp.org][5])
+* POSIX / The Open Group (Shell Command Language). ([pubs.opengroup.org][7])
+* ShellCheck (web + CLI linter). ([shellcheck.net][8])
+* GNU Coreutils manual. ([GNU][10])
+* DevDocs (multi-doc web aggregator, offline-capable) & Zeal offline doc browser. ([DevDocs][11])
+* Bash source (Savannah / GNU git). ([Savannah][15])
+* Arch package references (man-db, man-pages, shellcheck). ([archlinux.org][2])
+
+---
+
+[1]: https://www.gnu.org/s/bash/manual/bash.html?utm_source=chatgpt.com "Bash Reference Manual"
+[2]: https://archlinux.org/packages/core/x86_64/man-db/?utm_source=chatgpt.com "man-db 2.13.1-1 (x86_64)"
+[3]: https://man7.org/linux/man-pages/man1/bash.1.html?utm_source=chatgpt.com "bash(1) - Linux manual page"
+[4]: https://man.archlinux.org/man/man.1.en?utm_source=chatgpt.com "man(1) - Arch manual pages"
+[5]: https://tldp.org/LDP/abs/html/?utm_source=chatgpt.com "Advanced Bash-Scripting Guide"
+[6]: https://tldp.org/LDP/abs/abs-guide.pdf?utm_source=chatgpt.com "Advanced Bash-Scripting Guide"
+[7]: https://pubs.opengroup.org/onlinepubs/9799919799/?utm_source=chatgpt.com "The Open Group Base Specifications Issue 8"
+[8]: https://www.shellcheck.net/?utm_source=chatgpt.com "ShellCheck – shell script analysis tool"
+[9]: https://archlinux.org/packages/extra/x86_64/shellcheck/?utm_source=chatgpt.com "shellcheck 0.11.0-71 (x86_64)"
+[10]: https://www.gnu.org/s/coreutils/manual/coreutils.html?utm_source=chatgpt.com "GNU Coreutils Manual"
+[11]: https://devdocs.io/?utm_source=chatgpt.com "DevDocs API Documentation"
+[12]: https://zealdocs.org/?utm_source=chatgpt.com "Zeal - Offline Documentation Browser"
+[13]: https://zealdocs.org/download.html?utm_source=chatgpt.com "Download"
+[14]: https://man.archlinux.org/?utm_source=chatgpt.com "Arch manual pages - Arch Linux"
+[15]: https://savannah.gnu.org/git/?group=bash&utm_source=chatgpt.com "The GNU Bourne-Again SHell - Git Repositories [Savannah]"
+[16]: https://books.google.com/books/about/Bash_Reference_Manual.html?id=fY2_rEP_pDYC&utm_source=chatgpt.com "Bash Reference Manual"
+[17]: https://www.freecodecamp.org/news/bash-scripting-tutorial-linux-shell-script-and-command-line-for-beginners/?utm_source=chatgpt.com "Bash Scripting Tutorial – Linux Shell Script and Command ..."
+
+</details>
+
+<details>
+  <summary>📃 Daftar Kurikulum</summary>
+
 > **[Belajar CLI/Terminal Baris Perintah][0]**
 
 > **[71 Istilah dalam scripting][5]**
@@ -705,6 +789,8 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 - **Rekomendasi:** Tidak ada rekomendasi.
 
 -----
+
+</details>
 
 - **[Home][domain-spesifik]**
 

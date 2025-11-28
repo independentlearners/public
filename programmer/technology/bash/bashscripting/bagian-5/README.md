@@ -294,8 +294,6 @@ Di era modern, server jarang dikelola secara manual (SSH satu per satu). Server 
 
 -----
 
-# PHASE 5: Enterprise Automation & DevOps
-
 ## MODUL 5.2: Cloud CLI, Container Automation (Docker), & CI/CD Pipelines
 
 ### 📑 Struktur Pembelajaran Internal (Mini Daftar Isi)
