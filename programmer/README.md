@@ -55,14 +55,14 @@ Dokumen ini memetakan banyak bahasa / bahasa-domain ke dalam: **Level Abstraksi*
 
 | 🧑‍💻 Bahasa / DSL                                                 |      ♻️ Level Abstraksi | 🧠 Paradigma utama                    | 🎯 Domain / Spesialisasi                  | 🚀 Implementasi umum (engine/kompiler dibuat dengan) | 📍 Persyaratan teknis ringkas (untuk modifikasi/kontribusi) |
 | ------------------------------------------------------------ | --------------------: | ---------------------------------- | -------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------- |
-| Machine code / Binary                                        |         Machine-level | Instruksi CPU                      | Semua (OS/firmware/boot/embedded)      | — (dieks. langsung di CPU)                        | Arsitektur CPU, encoding instruksi, assembler/disassembler, JTAG, ICE |
-| Assembly (x86/x86-64/ARM/RISC-V/MIPS)                        |                   Low | Imperatif/procedural               | Bootloaders, drivers, embedded, kernel | Assembler (GNU as, NASM)                          | ABI/calling conventions, linker scripts, ELF/PE/Mach-O, QEMU, gdb     |
-| C                                                            |                   Low | Imperatif/procedural               | Systems, OS, embedded, runtime         | GCC/Clang (C/C++)                                 | C, build systems (make/cmake), sanitizers, gdb, cross-compiling       |
-| C++                                                          |                   Mid | Imperatif, OOP, Generic            | Browsers, game engines, desktop apps   | GCC/Clang (C++)                                   | Modern C++ (17/20), templates, cmake, UB understanding                |
-| Rust                                                         |                   Mid | Ownership-based, concurrent        | Systems, CLI, Wasm, embedded           | rustc (Rust + LLVM)                               | Rust ownership/borrow, Cargo, unsafe/FFI, clippy, miri                |
-| Zig                                                          |                   Mid | Imperatif, explicit memory         | Systems, cross-compiling               | Zig compiler (Zig/C)                              | Zig lang, build.zig, cross-linking                                    |
-| D                                                            |                   Mid | Multi-paradigm                     | Systems, apps                          | DMD/LDC (D/C++)                                   | D language, dub, interop C                                            |
-| Go                                                           |              Mid/High | Imperatif, CSP concurrency         | Cloud-native, infra, CLI               | go toolchain (Go/C)                               | Go modules, goroutines, race detector, cross-build                    |
+| [Machine code / Binary][machine_code]                                        |         Machine-level | Instruksi CPU                      | Semua (OS/firmware/boot/embedded)      | — (dieks. langsung di CPU)                        | Arsitektur CPU, encoding instruksi, assembler/disassembler, JTAG, ICE |
+| [Assembly (x86/x86-64/ARM/RISC-V/MIPS)][assembly]                        |                   Low | Imperatif/procedural               | Bootloaders, drivers, embedded, kernel | Assembler (GNU as, NASM)                          | ABI/calling conventions, linker scripts, ELF/PE/Mach-O, QEMU, gdb     |
+| [C][c]                                                            |                   Low | Imperatif/procedural               | Systems, OS, embedded, runtime         | GCC/Clang (C/C++)                                 | C, build systems (make/cmake), sanitizers, gdb, cross-compiling       |
+| [C++][c_plus_plus]                                                          |                   Mid | Imperatif, OOP, Generic            | Browsers, game engines, desktop apps   | GCC/Clang (C++)                                   | Modern C++ (17/20), templates, cmake, UB understanding                |
+| [Rust][rust]                                                         |                   Mid | Ownership-based, concurrent        | Systems, CLI, Wasm, embedded           | rustc (Rust + LLVM)                               | Rust ownership/borrow, Cargo, unsafe/FFI, clippy, miri                |
+| [Zig][zig]                                                          |                   Mid | Imperatif, explicit memory         | Systems, cross-compiling               | Zig compiler (Zig/C)                              | Zig lang, build.zig, cross-linking                                    |
+| [D][d]                                                            |                   Mid | Multi-paradigm                     | Systems, apps                          | DMD/LDC (D/C++)                                   | D language, dub, interop C                                            |
+| [Go][go]                                                           |              Mid/High | Imperatif, CSP concurrency         | Cloud-native, infra, CLI               | go toolchain (Go/C)                               | Go modules, goroutines, race detector, cross-build                    |
 | Nim                                                          |                   Mid | Imperatif + meta                   | Native apps, embedded                  | Nim compiler (Nim/C)                              | Nim macro system, C interop, nimble                                   |
 | Crystal                                                      |              Mid/High | OOP, static-typed Ruby-like        | Native apps, web                       | Crystal compiler (Crystal/C)                      | Crystal lang, LLVM backend, shards                                    |
 | Java                                                         |              Mid/High | OOP, managed runtime               | Enterprise, Android (JVM), backend     | OpenJDK / HotSpot (C++/Java)                      | Java, JVM internals, GC, HotSpot build                                |
@@ -746,4 +746,15 @@ Hasil komprehensif ini mencakup **spektrum ekosistem perangkat lunak**, sehingga
 <!---->
 <!-- --- -->
 
+**[Promp][promp]**
+
 [bash]: ./technology/bash/README.md
+[machine_code]: ./technology/machine_code/README.md
+[assembly]: ./technology/assembly/README.md
+[c]: ./technology/c/README.md
+[c_plus_plus]: ./technology/c_plus_plus/README.md
+[rust]: ./technology/rust/README.md
+[zig]: ./technology/zig/README.md
+[d]: ./technology/d/README.md
+[go]: ./technology/go/README.md
+[promp]: ./technology/promp/README.md

@@ -1,3 +1,304 @@
+# 🧑‍💻 Linearning 
+
+From Source Documentation or AI Generative With Curriculum Hirarcies
+
+<details>
+  <summary>
+    <strong>Belajar dari dokumentasi langsung</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Belajar langsung ke dokumentasi yang dihasilkan dari pencarian AI dengan berbagai jenis sumber data termasuk pdf dll</i></div>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+
+Berikut **kompilasi komprehensif** untuk *Rust* sumber resmi → dokumen rujukan → tooling → instalasi (Arch / Debian/Ubuntu) → identitas teknis + persyaratan untuk mengembangkan / memodifikasi → perintah CLI penting (penjelasan kata-per-kata) → roadmap belajar praktis. Semua bagian dibuat untuk jadi *reference lifelong* Anda.
+
+> **Catatan penting sitasi (paling load-bearing):** kita mencantumkan sumber otoritatif utama untuk pernyataan kunci: situs resmi Rust, *The Rust Programming Language* (The Book), Rust Reference, rustc book, Cargo docs, dan rustup installer. Semua bagian lain mengacu ke dokumentasi / repo resmi yang relevan. ([rust-lang.org][1])
+
+---
+
+# Ringkasan singkat — apa itu Rust (sumber resmi)
+
+Rust adalah bahasa pemrograman sistem yang menekankan **performansi**, **memory safety tanpa garbage collector**, dan model kepemilikan yang mencegah banyak kelas bug pada waktu kompilasi. Dokumentasi resmi dan buku pengantar utama tersedia online. ([rust-lang.org][1])
+
+---
+
+# 1. Sumber resmi & dokumentasi primer (online → bagaimana disimpan offline)
+
+* **rust-lang.org (situs resmi)** — entrypoint, berita, rilis. Unduh halaman/arsip untuk offline jika perlu. ([rust-lang.org][1])
+* **The Rust Programming Language (The Book)** — tutorial resmi (lengkap, projek contoh). Cocok sebagai jalur pembelajaran utama. (online: `doc.rust-lang.org/book/`). Unduh HTML / simpan PDF. ([doc.rust-lang.org][2])
+* **Rust Reference** — definisi bahasa (semantik, tipe, konversi) — gunakan sebagai rujukan teknis. (online: `doc.rust-lang.org/reference/`). ([doc.rust-lang.org][3])
+* **rustc Book / rustc-dev-guide** — dokumentasi compiler (bagus bila ingin kontribusi atau memahami internals). Clone repo & baca panduan dev. ([doc.rust-lang.org][4])
+* **Cargo Book** — manajer paket + build system resmi (manifest Cargo.toml, workspace, publikasi ke crates.io). Simpan dokumentasi. ([doc.rust-lang.org][5])
+* **Crates.io** — registry paket Rust. Untuk riset dependency, paket, dan metadata. (offline: index Git atau mirror). ([crates.io][6])
+* **Rust By Example, The Rustonomicon, Async Book, Embedded Book** — sumber pembelajaran tambahan & topik khusus (unsafe, async, embedded). ([doc.rust-lang.org][7])
+
+---
+
+# 2. Tooling inti (apa + di mana) — unduh/instal
+
+**Toolchain resmi (direkomendasikan):** `rustup` (installer & toolchain manager) — *gunakan rustup untuk mengelola stable/nightly & component*. ([Rustup][8])
+
+Tool & repos penting:
+
+* `rustc` — compiler (frontend + lowering ke MIR + codegen ke LLVM). ([doc.rust-lang.org][4])
+* `cargo` — package manager & build tool. ([doc.rust-lang.org][5])
+* `rustup` — manajer toolchain / installer resmi. ([Rustup][8])
+* `rust-analyzer` — LSP untuk editor (VSCode, Neovim, Emacs, dll.). ([Rust Analyzer][9])
+* `clippy` — linter koleksi *lints* (bantu idiomatik & bug). ([doc.rust-lang.org][10])
+* `rustfmt` — formatter (convention). ([rust-lang.github.io][11])
+* `miri` — interpreter untuk mendeteksi *undefined behavior* pada MIR (Bagus untuk menguji `unsafe`). ([GitHub][12])
+* `bindgen`, `cbindgen` — FFI: otomatisasi pembuatan binding C/C++. ([GitHub][13])
+* `wasm-pack` / rust-wasm toolchain — build ke WebAssembly. ([Rust and WebAssembly][14])
+* `cross` — tools untuk cross-compilation “zero setup” (Docker-backed). ([GitHub][15])
+
+---
+
+# 3. Instalasi & contoh perintah (Arch / Debian/Ubuntu) — rekomendasi
+
+**Rekomendasi umum:** gunakan **rustup** (supaya bisa ganti channel, pasang component, cross targets). ([Rustup][8])
+
+A. *Instal via rustup (direkomendasikan — semua distro)*:
+
+```bash
+# download & jalankan installer interaktif (POSIX shell)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# setelah selesai, muat environment dan set default:
+source "$HOME/.cargo/env"
+rustup default stable
+```
+
+Penjelasan singkat: `curl` ambil skrip installer dari rustup.rs lalu `sh` jalankan; `rustup default stable` set toolchain stable sebagai default. ([Rustup][8])
+
+B. *Komponen yang biasa ditambahkan (setelah rustup terpasang):*
+
+```bash
+rustup component add rust-src rustfmt clippy
+# (opsional, untuk debug / UB detection)
+rustup component add miri
+# pasang target untuk cross or embedded
+rustup target add aarch64-unknown-linux-gnu
+```
+
+Penjelasan: `rustup component add` tambahkan toolchain component ke toolchain aktif (mis. rust-src untuk IDE jump-to-source, rustfmt/clippy untuk tooling). ([rust-lang.github.io][16])
+
+C. *Arch Linux (alternatif — paket resmi):*
+
+```bash
+sudo pacman -S rust rustup # rust package biasanya tersedia
+# tapi tetap rekomendasi: gunakan rustup dari rustup.rs
+```
+
+D. *Debian/Ubuntu (alternatif; paket distro mungkin usang):*
+
+```bash
+sudo apt update
+sudo apt install build-essential curl libssl-dev pkg-config
+sudo apt install rustc cargo    # versi repo distro (biasanya lebih tua)
+# lebih baik gunakan rustup
+```
+
+**Catatan:** paket distro seringkali terlambat; `rustup` memberikan rilis terbaru dan akses ke nightly untuk fitur/eksperimen. ([rust-lang.org][17])
+
+---
+
+# 4. Identitas teknis & persyaratan untuk memodifikasi / mengembangkan Rust atau ekosistemnya
+
+**Ringkas:**
+
+* `rustc` sekarang ditulis *mayoritas* dalam Rust; backend codegen default: **LLVM** (kecuali optional backends seperti `cranelift`/others). Untuk kontribusi rustc perlu toolchain Rust + LLVM build deps. ([doc.rust-lang.org][4])
+* `cargo`, `rustup`, `rustfmt`, `clippy`, `rust-analyzer`, `miri` — semuanya ditulis dalam Rust (atau sebagian besar) dengan repositori publik di GitHub. Untuk mengembangkan: pengetahuan Rust tingkat lanjut + familiarity dengan Git, CI, dan prosedur contributing repos. ([GitHub][18])
+
+**Yang Anda harus siapkan bila ingin memodifikasi/membangun sendiri:**
+
+1. **Toolchain kerja:** `rustup` (nightly + stable), `cargo`, `rust-src` (source stdlib), `llvm` (versi kompatibel), `python`/`perl`/`cmake` tergantung bagian yang dibangun. ([rust-lang.github.io][16])
+2. **Pengetahuan wajib:** ownership/borrow checker, lifetimes, unsafe semantics (Rustonomicon), MIR & HIR concepts, basic LLVM IR. ([doc.rust-lang.org][19])
+3. **Dev environment:** editor + `rust-analyzer`, debuggers (gdb/ lldb), `sccache` (opsional), Docker untuk cross-building/CI. ([Rust Analyzer][9])
+4. **Repos & panduan:** clone `github.com/rust-lang/rust` dan baca `rustc-dev-guide` untuk alur build/bootstrapping. ([GitHub][20])
+
+---
+
+# 5. Perintah CLI paling penting — **kata-per-kata** (penjelasan teknis)
+
+Saya berikan perintah yang akan sering Anda pakai, dengan penjelasan token demi token.
+
+1. `rustup toolchain install nightly`
+
+* `rustup` : manajer toolchain. ([Rustup][8])
+* `toolchain` : sub-command untuk mengelola toolchain.
+* `install` : instruksi memasang toolchain baru.
+* `nightly` : target toolchain (versi nightly).
+  Gunakan untuk memasang toolchain nightly yang diperlukan untuk features eksperimental atau membangun `miri`/compiler.
+
+2. `rustup component add rust-src rustfmt clippy`
+
+* `component add` : perintah menambahkan komponen ke toolchain aktif.
+* `rust-src` : source code dari library standar (dipakai IDE untuk jump-to-def/analysis).
+* `rustfmt` : formatter resmi.
+* `clippy` : lint collection. ([rust-lang.github.io][11])
+
+3. `cargo new mycrate --bin`
+
+* `cargo` : package manager & build tool. ([doc.rust-lang.org][5])
+* `new` : buat project baru.
+* `mycrate` : nama projek (folder).
+* `--bin` : buat binary project (bukan library).
+
+4. `cargo build --release`
+
+* `build` : compile project.
+* `--release` : gunakan profile release (optimizations, `target/release/` output).
+  Hasil: binari teroptimasi untuk distribusi.
+
+5. `cargo test -- --nocapture`
+
+* `test` : jalankan test suite.
+* `--` : pemisah argumen untuk test runner.
+* `--nocapture` : tampilkan stdout test (tidak ditangkap).
+
+6. `cargo doc --open`
+
+* `doc` : generate dokumentasi API (rustdoc).
+* `--open` : buka dokumentasi yang dihasilkan di browser.
+
+7. `cargo install cargo-edit`
+
+* `install` : pasang crate yang menyediakan binary ke `$HOME/.cargo/bin`.
+* `cargo-edit` : nama crate (contoh: menambah `cargo add`/`cargo rm` helper).
+
+8. `rustc --version` — tampilkan versi compiler.
+
+* `rustc` : Rust compiler binary.
+* `--version` : opsi untuk menampilkan versi.
+
+9. `cargo audit` (dengan `cargo-audit` terpasang)
+
+* `cargo-audit` : tool pihak ketiga untuk memeriksa vulnerability di dependency crate (advisory DB).
+
+10. `cargo +nightly miri run`
+
+* `+nightly` : instruct Cargo/rustup untuk menggunakan toolchain `nightly` untuk perintah ini.
+* `miri` : jalankan via component `miri` (interpreter MIR) — perlu `rustup component add miri --toolchain nightly`.
+
+Semua perintah di atas: gunakan `--help` untuk dokumentasi ringkas (contoh: `cargo build --help`), atau `cargo <command> --help`. ([doc.rust-lang.org][21])
+
+---
+
+# 6. Ekosistem & libraries penting (pilihan untuk berbagai domain)
+
+* **Async / Networking:** `tokio` (ecosystem & runtimes), `async-std`, `hyper`. (lihat docs tokio.rs).
+* **WebAssembly:** `wasm-pack`, `wasm-bindgen`. ([Rust and WebAssembly][14])
+* **FFI / Interop:** `bindgen`, `cbindgen`, `libc` crate. ([GitHub][13])
+* **Embedded / no_std:** `embedded-hal`, `cortex-m`, `rtic`, `probe-rs`.
+* **Security / Audit / Hardening:** `cargo-audit`, `cargo-deny`.
+* **Cross compile:** `cross` (zero-setup via Docker), `zig` as linker shim (opsional). ([GitHub][15])
+
+---
+
+# 7. Testing / UB detection / sanitizers / debugging
+
+* **Miri** — deteksi UB pada level MIR (bagus untuk `unsafe` checks). ([GitHub][12])
+* **Sanitizers (ASAN/TSAN etc.)** — tersedia lewat LLVM/clang toolchain saat membangun; konfigurasi linking khusus.
+* **gdb / lldb** — debugging natif; gunakan `rust-gdb` / `rust-lldb` wrapper untuk symbol/pretty printers.
+* **Profiling / tracing:** `perf`, `pprof`, `tokio-console` (async tracing).
+
+---
+
+# 8. Contributing / membangun compiler & stdlib (ringkas)
+
+1. Clone: `git clone https://github.com/rust-lang/rust.git`
+2. Baca `rustc-dev-guide` → memahami bootstrap build (`x.py`), test harness, & tooling. ([GitHub][20])
+3. Siapkan dependency: *nix build deps (python, cmake, LLVM dev libraries) — ikuti README repo.
+4. Untuk eksperimen internals: pelajari MIR / borrow checker & run `./x.py test` untuk test suite.
+
+---
+
+# 9. Referensi belajar (urutan dianjurkan)
+
+1. **The Book** (langkah demi langkah). ([doc.rust-lang.org][2])
+2. **Rust By Example** (practical snippets). ([doc.rust-lang.org][7])
+3. **Rustonomicon** (unsafe & layout details). ([doc.rust-lang.org][19])
+4. **Async Book** (jika butuh async). ([rust-lang.github.io][22])
+5. Hands-on: **Rustlings** (exercises) + CTF/praktik embedded / wasm projects.
+6. Advanced: baca `rustc-dev-guide`, baca source `rustc` & ikut working groups jika mau kontribusi. ([GitHub][20])
+
+---
+
+# 10. Cara menyimpan offline & membuat mirror
+
+* `git clone` semua repo penting (`rust`, `rust-lang/book`, `rust-by-example`, `rustfmt`, `clippy`, `miri`, `rust-analyzer`) ke koleksi `~/docs/rust/`. ([GitHub][18])
+* Unduh buku HTML/PDF (The Book / Rust By Example / Nomicon) → simpan ke folder dan buat index di Zeal / DevDocs offline. ([doc.rust-lang.org][2])
+
+---
+
+# 11. Roadmap belajar + praktek 3–6 bulan (singkat)
+
+* Minggu 0–4: The Book + Rust By Example → proyek kecil CLI. ([doc.rust-lang.org][2])
+* Bulan 2: Ownership patterns, lifetimes, trait system, error handling, unit tests.
+* Bulan 3: Unsafe Rust + Nomicon + FFI (bindgen) → buat binding ke C sederhana. ([doc.rust-lang.org][19])
+* Bulan 4: Async (Tokio) dan WebAssembly (wasm-pack) → deploy ke web. ([Rust and WebAssembly][14])
+* Bulan 5–6: Contribute ke crate kecil (fix docs/tests), baca `rustc-dev-guide`, coba build rustc dari source. ([GitHub][20])
+
+---
+
+# 12. Sumber / sitasi ringkas (utama)
+
+* Rust Official — rust-lang.org. ([rust-lang.org][1])
+* The Rust Programming Language (The Book). ([doc.rust-lang.org][2])
+* Rust Reference. ([doc.rust-lang.org][3])
+* rustc book / rustc-dev-guide. ([doc.rust-lang.org][4])
+* Cargo Book. ([doc.rust-lang.org][5])
+* rustup installer docs. ([Rustup][8])
+* crates.io registry. ([crates.io][6])
+* rust-analyzer (LSP). ([Rust Analyzer][9])
+* Clippy, rustfmt, Miri docs (lint/format/UB detection). ([doc.rust-lang.org][10])
+* wasm / wasm-pack / Rust→Wasm docs. ([Rust and WebAssembly][14])
+* bindgen (FFI) & cross (cross-compile helper). ([GitHub][13])
+
+---
+
+Jika Anda ingin **ekspor** daftar ini menjadi:
+
+* (A) **Markdown README** siap cetak/arsip,
+* (B) **CSV** (kolom: kategori → resource → online → offline → contoh instalasi), atau
+* (C) **script bash** otomatis yang mengunduh PDF/repos primer (The Book, Nomicon, rust, rust-by-example, cargo, rustfmt, clippy, miri, rust-analyzer) ke `~/docs/rust/` — saya bisa buatkan langsung sekarang.
+
+Pilih opsi (A/B/C) atau minta saya langsung **buatkan skrip backup** + `cargo` checklist instalasi lengkap untuk Arch + Debian/Ubuntu (saya akan sertakan penjelasan kata-per-kata setiap baris skrip).
+
+[1]: https://rust-lang.org/?utm_source=chatgpt.com "Rust Programming Language"
+[2]: https://doc.rust-lang.org/book/?utm_source=chatgpt.com "The Rust Programming Language"
+[3]: https://doc.rust-lang.org/reference/?utm_source=chatgpt.com "Introduction - The Rust Reference"
+[4]: https://doc.rust-lang.org/rustc/what-is-rustc.html?utm_source=chatgpt.com "What is rustc? - The rustc book"
+[5]: https://doc.rust-lang.org/cargo/?utm_source=chatgpt.com "Introduction - The Cargo Book"
+[6]: https://crates.io/?utm_source=chatgpt.com "crates.io: Rust Package Registry"
+[7]: https://doc.rust-lang.org/rust-by-example/?utm_source=chatgpt.com "Introduction - Rust By Example"
+[8]: https://rustup.rs/?utm_source=chatgpt.com "rustup.rs - The Rust toolchain installer"
+[9]: https://rust-analyzer.github.io/?utm_source=chatgpt.com "rust-analyzer"
+[10]: https://doc.rust-lang.org/stable/clippy?utm_source=chatgpt.com "Introduction - Clippy Documentation"
+[11]: https://rust-lang.github.io/rustfmt/?utm_source=chatgpt.com "Configuring Rustfmt"
+[12]: https://github.com/rust-lang/miri?utm_source=chatgpt.com "rust-lang/miri: An interpreter for Rust's mid- ..."
+[13]: https://github.com/rust-lang/rust-bindgen?utm_source=chatgpt.com "rust-lang/rust-bindgen: Automatically generates Rust FFI ..."
+[14]: https://rustwasm.github.io/docs/wasm-pack/?utm_source=chatgpt.com "Hello wasm-pack! - Rust and WebAssembly"
+[15]: https://github.com/cross-rs/cross?utm_source=chatgpt.com "“Zero setup” cross compilation and “cross testing” of Rust ..."
+[16]: https://rust-lang.github.io/rustup/installation/index.html?utm_source=chatgpt.com "Installation - The rustup book"
+[17]: https://rust-lang.org/tools/install/?utm_source=chatgpt.com "Install Rust"
+[18]: https://github.com/rust-lang/rust-analyzer?utm_source=chatgpt.com "rust-lang/rust-analyzer: A Rust compiler front-end for IDEs"
+[19]: https://doc.rust-lang.org/nomicon/?utm_source=chatgpt.com "Introduction - The Rustonomicon"
+[20]: https://github.com/rust-lang/rustc-dev-guide?utm_source=chatgpt.com "rust-lang/rustc-dev-guide"
+[21]: https://doc.rust-lang.org/cargo/commands/cargo.html?utm_source=chatgpt.com "cargo - The Cargo Book"
+[22]: https://rust-lang.github.io/async-book/?utm_source=chatgpt.com "Introduction - Asynchronous Programming in Rust"
+
+  </div>
+</details>
+
+
+<details>
+  <summary>
+    <strong>Belajar dari hasil buatan AI</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Berisi penjelasan dalam bahasa indonesia dari hasil buatan AI yang terstruktur, penjelasan ini lebih bersifat experiment</i></div>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+
 # Kurikulum Lengkap Rust: Dari Pemula hingga Expert Level
 
 Rust adalah bahasa pemrograman multi-paradigma yang berfokus pada performa, keamanan tipe, dan konkurensi. Dikenal karena pendekatannya yang unik terhadap manajemen memori tanpa _garbage collector_, Rust memungkinkan pengembangan aplikasi dengan performa tinggi dan bebas dari banyak masalah keamanan umum yang ditemukan di bahasa lain. Kurikulum ini akan membimbing Anda melalui perjalanan dari dasar-dasar Rust hingga topik-topuleran, memungkinkan Anda membangun berbagai jenis aplikasi, mulai dari sistem _embedded_ hingga _web services_ skala enterprise.
@@ -2099,4 +2400,33 @@ Dengan perbaikan kecil ini, kurikulum ini akan menjadi salah satu sumber belajar
 
 Kurikulum ini dirancang untuk menjadi panduan yang sangat detail dan komprehensif. Ingatlah bahwa pembelajaran adalah proses berkelanjutan, dan eksplorasi di luar cakupan kurikulum ini akan sangat memperkaya perjalanan Anda di Rust.
 
+  </div>
+</details>
+
+
 [Home](../../../README.md)
+<!---->
+<!-- # 🧑‍💻 Linearning  -->
+<!---->
+<!-- From Source Documentation or AI Generative With Curriculum Hirarcies -->
+<!---->
+<!-- <details> -->
+<!--   <summary> -->
+<!--     <strong>Belajar dari dokumentasi langsung</strong> -->
+<!--     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Belajar langsung ke dokumentasi yang dihasilkan dari pencarian AI dengan berbagai jenis sumber data termasuk pdf dll</i></div> -->
+<!--   </summary> -->
+<!--   <div style="padding-left: 25px; margin-top: 8px;"> -->
+<!---->
+<!---->
+<!--   </div> -->
+<!-- </details> -->
+<!---->
+<!---->
+<!-- <details> -->
+<!--   <summary> -->
+<!--     <strong>Belajar dari hasil buatan AI</strong> -->
+<!--     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Berisi penjelasan dalam bahasa indonesia dari hasil buatan AI yang terstruktur, penjelasan ini lebih bersifat experiment</i></div> -->
+<!--   </summary> -->
+<!--   <div style="padding-left: 25px; margin-top: 8px;"> -->
+<!---->
+

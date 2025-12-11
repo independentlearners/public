@@ -1,3 +1,328 @@
+# 🧑‍💻 Linearning 
+
+From Source Documentation or AI Generative With Curriculum Hirarcies
+
+<details>
+  <summary>
+    <strong>Belajar dari dokumentasi langsung</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Belajar langsung ke dokumentasi yang dihasilkan dari pencarian AI dengan berbagai jenis sumber data termasuk pdf dll</i></div>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+
+Di bawah ini kita susun **kompilasi sumber paling lengkap** untuk belajar **bahasa C** dari tingkat pemula → sistem → compiler → OSDev → reverse engineering → standardisasi ISO/ANSI → ABI/ELF → toolchain GCC/Clang → debugging.
+Struktur mengikuti format Anda sebelumnya: **resmi → standar → compiler → runtime → OSDev → buku → reference → cross-compiling → build system → library penting → debugging → keamanan → riset tingkat lanjut.**
+
+Tujuan daftar ini: **tidak ada satu pun sumber penting tentang C—standar, implementasi, dokumentasi, compiler, atau tooling—yang tertinggal.**
+
+---
+
+# 1. SPESIFIKASI RESMI BAHASA C
+
+Ini adalah sumber paling fundamental yang menentukan bagaimana C bekerja.
+
+## 1.1 ISO/IEC C Standard (resmi)
+
+| Standar                 | Link Online                                                                        | Offline                   |
+| ----------------------- | ---------------------------------------------------------------------------------- | ------------------------- |
+| ISO/IEC 9899:2018 (C18) | [https://www.iso.org/standard/74528.html](https://www.iso.org/standard/74528.html) | PDF berbayar (mirror ada) |
+| ISO/IEC 9899:2011 (C11) | sama seperti di atas                                                               | PDF                       |
+| ISO/IEC 9899:1999 (C99) | sama                                                                               | PDF                       |
+| ISO/IEC 9899:1990 (C90) | sama                                                                               | PDF                       |
+
+## Free equivalent (kompatibel dengan standar)
+
+| Sumber                   | Link                                                                                                                   |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| N1570 Draft (C11 Draft)  | [http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf](http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf) |
+| WG14 Committee Documents | [http://www.open-std.org/jtc1/sc22/wg14/](http://www.open-std.org/jtc1/sc22/wg14/)                                     |
+
+---
+
+# 2. KOMPILER RESMI (C IMPLEMENTATION)
+
+## 2.1 GCC (GNU Compiler Collection)
+
+| Resource             | Link                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| GCC Manual           | [https://gcc.gnu.org/onlinedocs/](https://gcc.gnu.org/onlinedocs/)                     |
+| GCC Internals Manual | [https://gcc.gnu.org/onlinedocs/gccint/](https://gcc.gnu.org/onlinedocs/gccint/)       |
+| GCC Source Code      | [https://gcc.gnu.org/git.html](https://gcc.gnu.org/git.html)                           |
+| Libgcc / libstdc++   | [https://gcc.gnu.org/onlinedocs/libstdc++/](https://gcc.gnu.org/onlinedocs/libstdc++/) |
+
+Instalasi Arch:
+
+```
+sudo pacman -S gcc base-devel
+```
+
+## 2.2 LLVM/Clang
+
+| Resource                  | Link                                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Clang documentation       | [https://clang.llvm.org/docs/](https://clang.llvm.org/docs/)                                               |
+| Clang Language Extensions | [https://clang.llvm.org/docs/LanguageExtensions.html](https://clang.llvm.org/docs/LanguageExtensions.html) |
+| LLVM Language Reference   | [https://llvm.org/docs/LangRef.html](https://llvm.org/docs/LangRef.html)                                   |
+| LLVM Source               | [https://github.com/llvm/llvm-project](https://github.com/llvm/llvm-project)                               |
+
+Instal Arch:
+
+```
+sudo pacman -S clang llvm lld lldb
+```
+
+## 2.3 TinyCC (TCC)
+
+| Resource          | Link                                                           |
+| ----------------- | -------------------------------------------------------------- |
+| TCC Official      | [https://repo.or.cz/tinycc.git](https://repo.or.cz/tinycc.git) |
+| TCC Documentation | repo.or.cz website                                             |
+
+## 2.4 PCC (Portable C Compiler)
+
+| Link                                                           | https |
+| -------------------------------------------------------------- | ----- |
+| [https://github.com/xorhex/pcc](https://github.com/xorhex/pcc) |       |
+
+---
+
+# 3. ASSEMBLER & LINKER UNTUK C
+
+## GNU Binutils (Wajib)
+
+| Tool      | Fungsi       |
+| --------- | ------------ |
+| `as`      | assembler    |
+| `ld`      | linker       |
+| `objdump` | disassembler |
+| `readelf` | ELF reader   |
+
+Dokumentasi: [https://sourceware.org/binutils/docs/](https://sourceware.org/binutils/docs/)
+
+---
+
+# 4. RUNTIME / ABI C
+
+Ini menentukan bagaimana fungsi C dipanggil, bagaimana stack disusun, bagaimana struktur disimpan, dan bagaimana binary bekerja.
+
+## 4.1 System V ABI (Linux x86/x64)
+
+| Resource        | Link                                                                                   |
+| --------------- | -------------------------------------------------------------------------------------- |
+| SysV ABI        | [https://refspecs.linuxfoundation.org/elf/](https://refspecs.linuxfoundation.org/elf/) |
+| psABI for AMD64 | [https://github.com/ARM-software/abi-aa](https://github.com/ARM-software/abi-aa)       |
+
+## 4.2 Windows ABI (Microsoft)
+
+| Resource               | Link                                                                                                                                         |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| x64 calling convention | [https://learn.microsoft.com/en-us/cpp/build/x64-software-conventions](https://learn.microsoft.com/en-us/cpp/build/x64-software-conventions) |
+| PE/COFF Format         | [https://learn.microsoft.com/en-us/windows/win32/debug/pe-format](https://learn.microsoft.com/en-us/windows/win32/debug/pe-format)           |
+
+## 4.3 ARM ABI
+
+| Resource | Link                                                                                 |
+| -------- | ------------------------------------------------------------------------------------ |
+| AAPCS    | [https://developer.arm.com/documentation/](https://developer.arm.com/documentation/) |
+
+## 4.4 RISC-V ABI
+
+| Resource         | Link                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------------------ |
+| RISC-V ELF psABI | [https://github.com/riscv-non-isa/riscv-elf-psabi-doc](https://github.com/riscv-non-isa/riscv-elf-psabi-doc) |
+
+---
+
+# 5. DOKUMENTASI LIBC (IMPLEMENTASI STANDARD LIBRARY)
+
+## 5.1 glibc (GNU)
+
+| Resource     | Link                                                                                   |
+| ------------ | -------------------------------------------------------------------------------------- |
+| glibc manual | [https://www.gnu.org/software/libc/manual/](https://www.gnu.org/software/libc/manual/) |
+| glibc source | [https://sourceware.org/git/?p=glibc.git](https://sourceware.org/git/?p=glibc.git)     |
+
+## 5.2 musl libc
+
+| Resource    | Link                                           |
+| ----------- | ---------------------------------------------- |
+| musl docs   | [https://musl.libc.org](https://musl.libc.org) |
+| musl source | git.musl-libc.org/cgit/musl/                   |
+
+## 5.3 uClibc-ng
+
+| Link                                             | https |
+| ------------------------------------------------ | ----- |
+| [https://uclibc-ng.org/](https://uclibc-ng.org/) |       |
+
+---
+
+# 6. REFERENSI LENGKAP (FREE)
+
+| Sumber                         | Link                                                                   |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| cppreference (bagian C)        | [https://en.cppreference.com/w/c](https://en.cppreference.com/w/c)     |
+| C Standard Library (man pages) | `man 3 <function>`                                                     |
+| Linux man-pages project        | [https://man7.org/linux/man-pages/](https://man7.org/linux/man-pages/) |
+
+---
+
+# 7. BUKU TERBAIK (GRATIS & RESMI)
+
+Semua ini digunakan di universitas top.
+
+## Pengantar
+
+* *The C Programming Language* (Kernighan & Ritchie – K&R)
+  Still #1. Banyak mirror PDF.
+* *Modern C* (Jens Gustedt – free PDF)
+  [https://gustedt.gitlabpages.inria.fr/modern-c/](https://gustedt.gitlabpages.inria.fr/modern-c/)
+
+## Tingkat lanjut
+
+* *Expert C Programming: Deep C Secrets* – Peter van der Linden
+* *Advanced Programming in the UNIX Environment (APUE)* – Stevens
+* *Computer Systems: A Programmer’s Perspective (CS:APP)* – Bryant & O’Hallaron
+
+## Gratis Akademik
+
+* Stanford CS107 materials
+* MIT 6.172 Performance Engineering
+* CMU 15-213 (CS:APP labs)
+
+---
+
+# 8. KOMPILASI CROSS-COMPILER C
+
+## GCC Cross Compiler OSDev
+
+Instruksi resmi:
+[https://wiki.osdev.org/GCC_Cross-Compiler](https://wiki.osdev.org/GCC_Cross-Compiler)
+
+---
+
+# 9. BUILD SYSTEM
+
+| Tool      | Dokumentasi                                                                                    |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| CMake     | [https://cmake.org/documentation/](https://cmake.org/documentation/)                           |
+| Meson     | [https://mesonbuild.com](https://mesonbuild.com)                                               |
+| Autotools | [https://www.gnu.org/software/automake/manual/](https://www.gnu.org/software/automake/manual/) |
+
+---
+
+# 10. STATIC ANALYSIS & LINTER
+
+| Tool       | Link                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------ |
+| clang-tidy | [https://clang.llvm.org/extra/clang-tidy/](https://clang.llvm.org/extra/clang-tidy/) |
+| cppcheck   | [https://cppcheck.sourceforge.io/](https://cppcheck.sourceforge.io/)                 |
+
+---
+
+# 11. DEBUGGING
+
+## GDB
+
+| Link                                                                                                   | https |
+| ------------------------------------------------------------------------------------------------------ | ----- |
+| [https://sourceware.org/gdb/current/onlinedocs/gdb](https://sourceware.org/gdb/current/onlinedocs/gdb) |       |
+
+## LLDB
+
+| Link                                           | https |
+| ---------------------------------------------- | ----- |
+| [https://lldb.llvm.org](https://lldb.llvm.org) |       |
+
+---
+
+# 12. REVERSE ENGINEERING & SECURITY
+
+| Tool            | Fungsi                    |
+| --------------- | ------------------------- |
+| Ghidra          | Disassembler & decompiler |
+| IDA Free        | Disassembler              |
+| Radare2/Cutter  | Reverse engineering       |
+| pwndbg          | GDB enhancement           |
+| ASAN/UBSAN/MSAN | Sanitizer untuk C         |
+
+Dokumentasi Sanitizer:
+[https://clang.llvm.org/docs/index.html](https://clang.llvm.org/docs/index.html)
+
+---
+
+# 13. SHELLCODE + BINARY-LEVEL C
+
+| Resource                                  | Link            |
+| ----------------------------------------- | --------------- |
+| Shellcode Tutorial (Skape)                | berbagai mirror |
+| LiveOverflow – modern binary exploitation | YouTube         |
+| pwn.college                               | free course     |
+| exploit.education                         | ROP, fmt, heap  |
+
+---
+
+# 14. SEMUA HAL WAJIB YANG HARUS DIDOWNLOAD
+
+Checklist wajib:
+
+[x] Draft standard C (N1570)
+[x] GCC manual
+[x] Clang manual
+[x] glibc manual PDF
+[x] musl manual
+[x] SysV ABI PDF
+[x] GNU Binutils docs
+[x] Linux man-pages (offline)
+[x] Modern C PDF
+[x] CS:APP lab materials
+[x] APUE PDF
+[x] GDB manual
+[x] LLVM LangRef
+[x] CMake docs offline
+
+---
+
+# 15. KATEGORI REFERENSI SPESIAL UNTUK ANDA (OSDev & Security)
+
+## OSDev yang wajib
+
+* [https://wiki.osdev.org](https://wiki.osdev.org)
+* Bare metal C examples (x86, ARM)
+
+## C untuk sistem tingkat rendah
+
+* *Linkers & Loaders* – John Levine
+* ELF Spec (refspecs.linuxfoundation.org/elf)
+* *C Interfaces and Implementations* – Hanson
+
+## C untuk reversing
+
+* Ghidra API docs
+* Radare2 book
+* Capstone engine docs
+* LLVM MC docs (encoding)
+
+---
+<!---->
+<!-- Jika Anda ingin, saya bisa buatkan **tabel Markdown lengkap**, **versi CSV**, atau **versi “learning roadmap 6 bulan”** berdasarkan daftar ini. -->
+<!---->
+<!-- Anda ingin lanjut ke bahasa apa atau topik apa berikutnya? -->
+<!-- C++? Rust? Kernel development? Compiler construction? -->
+<!---->
+  </div>
+</details>
+
+
+<details>
+  <summary>
+    <strong>Belajar dari hasil buatan AI</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Berisi penjelasan  dalam bahasa indonesia dari hasil buatan AI yang terstruktur, penjelasan ini lebih bersifat experiment</i></div>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+
+
 # 🚀 **MASTER C - PROGRAMMING**
 
 ## _The Ultimate Journey from Zero to Systems Expert_
@@ -717,5 +1042,8 @@ Kurikulum ini mencakup semua aspek C programming dari dasar hingga tingkat exper
 Kurikulum ini dirancang untuk menghasilkan C programmer yang tidak hanya memahami syntax, tetapi juga dapat membangun sistem-sistem kompleks seperti OS kernel, database engine, game engine, dan embedded systems!
 
 > #### [Home][domain-spesifik]
+
+  </div>
+</details>
 
 [domain-spesifik]: ../../README.md
