@@ -1,3 +1,20 @@
+# PANCAVIP
+
+- Pronoun: Kata Ganti
+- Adjective: Kata Sifat
+- Noun: Kata Benda
+- Conjunction: Kata Sambung
+- Adverb: Kata Keterangan
+- Verb: Kata Kerja
+- Interjection: Kata Seru !
+- Preposition: Kata Depan
+
+## Pronoun
+
+| Subject | Object | Possessive Adjective (Kata Ganti Kepunyaan) | Possessive Pronoun (Kata Ganti Kepunyaan) | Reflexive Pronoun (Kata Ganti Diri Sendiri) |
+| I (Saya) | Me |
+
+
 # Dasar: Frasa vs Klausa
 
 Seluruh kalimat dokumentasi dibangun dari sini.
