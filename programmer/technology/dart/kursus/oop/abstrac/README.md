@@ -1,3 +1,4 @@
+```dart
 abstract class Location {
   String? name;
 }
@@ -14,3 +15,5 @@ void main() {
   var city = City('Nusantara');
   // $ var location = Location{} // ini pasti error
 }
+```
+

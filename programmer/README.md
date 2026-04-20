@@ -71,7 +71,7 @@ Dokumen ini memetakan banyak bahasa / bahasa-domain ke dalam: **Level Abstraksi*
 | C#                                                           |                  High | OOP, Async, LINQ                   | .NET apps, enterprise                  | Roslyn (C#) + CoreCLR (C++/C#)                    | C#, Roslyn APIs, .NET runtime internals                               |
 | JavaScript                                                   |                  High | Event-driven, FP                   | Web front-end, Node.js                 | V8/SpiderMonkey/JavaScriptCore (C++)              | JS, engine internals (C++), embedding (Node addons)                   |
 | TypeScript                                                   |                  High | Static-typed JS superset           | Large web apps, tooling                | tsc (TypeScript/Node.js)                          | TypeScript language services, tsserver plugins                        |
-| Dart                                                         |                  High | OOP, async/reactive                | Flutter UI, mobile/web/desktop         | Dart VM & AOT (C++/Dart), Flutter engine (C++)    | Dart, pub, embedding, Flutter engine build                            |
+| [Dart][dart]                                                         |                  High | OOP, async/reactive                | Flutter UI, mobile/web/desktop         | Dart VM & AOT (C++/Dart), Flutter engine (C++)    | Dart, pub, embedding, Flutter engine build                            |
 | Flutter (framework)                                          |             Framework | Declarative UI                     | Cross-platform UI                      | Framework (Dart) + Engine (C++)                   | Dart, widget lifecycle, Skia, platform channels                       |
 | Python                                                       |                  High | Imperatif, OOP, scripting          | Scripting, data science                | CPython (C), PyPy, MicroPython                    | Python, C for CPython extensions, packaging (wheel)                   |
 | Ruby                                                         |                  High | OOP, metaprogramming               | Web (Rails)                            | MRI (C), JRuby (Java)                             | Ruby, C for MRI extensions, VM internals                              |
@@ -758,3 +758,4 @@ Hasil komprehensif ini mencakup **spektrum ekosistem perangkat lunak**, sehingga
 [d]: ./technology/d/README.md
 [go]: ./technology/go/README.md
 [promp]: ./technology/promp/README.md
+[dart]: ./technology/dart/README.md

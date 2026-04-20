@@ -1,7 +1,193 @@
-<details>
-  <summary>📚 Master Kurikulum</summary>
-
 # 🎯 **MASTER DART PROGRAMMING**
+
+## Overview
+
+**Dart** adalah bahasa pemrograman **client-optimized**, **portable**, dan **produktif** untuk membangun aplikasi berkualitas tinggi di berbagai platform. Dart didukung oleh Google dan bersifat open source. SDK-nya menyediakan library serta tools baris-perintah untuk aplikasi **command-line**, **server**, dan **web**; bila Anda memakai Flutter, Flutter SDK sudah menyertakan Dart SDK penuh. ([dart.dev][1])
+
+Dart juga dirancang dengan fitur modern seperti **null safety**, **pattern matching**, **async-await**, dan konkurensi berbasis **isolate**; secara model bahasa, Dart adalah bahasa **object-oriented** dengan **classes** dan **mixin-based inheritance**. ([dart.dev][1])
+
+---
+
+## Sumber resmi & dokumentasi utama
+
+1. **Halaman resmi Dart** — pusat proyek, ringkasan bahasa, dan entry point dokumentasi. ([dart.dev][1])
+2. **Get Dart SDK** — panduan instalasi SDK, channel rilis, dan opsi pemasangan. ([dart.dev][2])
+3. **Dart documentation** — pusat dokumentasi resmi: language tour, effective dart, packages, SDK, dan tools. ([dart.dev][3])
+4. **Introduction to Dart / Language** — pengantar konsep bahasa. ([dart.dev][4])
+5. **Dart CLI tool (`dart`)** — referensi resmi subcommand command-line. ([dart.dev][5])
+6. **Learn Dart** — jalur belajar resmi, termasuk tutorial CLI interaktif. ([dart.dev][6])
+7. **Effective Dart** — pedoman gaya dan praktik penulisan kode yang disarankan. ([dart.dev][7])
+8. **Language specification** — spesifikasi formal bahasa Dart. ([dart.dev][8])
+9. **Packages / pub** — ekosistem paket dan manajemen dependensi. ([dart.dev][9])
+10. **Dart DevTools** — alat debugging dan performa. ([dart.dev][10])
+
+---
+
+## Instalasi ringkas
+
+Cara resmi yang direkomendasikan adalah memakai **package manager**, **Docker image**, atau memasang **Flutter SDK** jika Anda memang membangun aplikasi Flutter; untuk Flutter, Dart SDK sudah ikut di dalamnya. Dart team juga menyatakan bahwa dukungan resmi fokus pada **latest stable release**. ([dart.dev][2])
+
+Contoh verifikasi setelah instalasi:
+
+```bash
+dart --version
+```
+
+* `dart` = CLI resmi milik Dart SDK.
+* `--version` = menampilkan versi SDK/alat yang terpasang.
+  Dokumentasi CLI resmi menegaskan bahwa `dart` adalah antarmuka command-line ke Dart SDK. ([dart.dev][5])
+
+---
+
+## Tooling utama
+
+Dart SDK menyediakan command-line tools untuk **create**, **format**, **analyze**, **test**, **compile**, **document**, dan bekerja dengan **pub package manager**. `dart devtools` membuka Dart DevTools untuk debugging dan analisis performa. ([dart.dev][10])
+
+Tool yang paling penting untuk dipahami terlebih dahulu:
+
+* `dart create` — membuat project baru. ([dart.dev][11])
+* `dart run` — menjalankan program Dart. ([dart.dev][12])
+* `dart analyze` — static analysis proyek. ([dart.dev][13])
+* `dart format` — memformat source code. ([dart.dev][14])
+* `dart test` — menjalankan tes dalam package. ([dart.dev][15])
+* `dart pub get` — mengambil dependensi dari `pubspec.yaml`. ([dart.dev][16])
+* `dart compile exe` — menghasilkan executable native mandiri. ([dart.dev][17])
+
+---
+
+## Perintah `dart` yang penting — kata demi kata
+
+### `dart create -t console my_app`
+
+* `dart` : executable/CLI resmi Dart SDK. ([dart.dev][5])
+* `create` : subcommand untuk membuat project baru. ([dart.dev][11])
+* `-t` : singkatan dari `--template`. ([dart.dev][11])
+* `console` : template project console/CLI. ([dart.dev][11])
+* `my_app` : nama folder/project yang akan dibuat. ([dart.dev][11])
+
+### `dart run bin/my_app.dart`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `run` : menjalankan program Dart. ([dart.dev][12])
+* `bin/my_app.dart` : file target yang dieksekusi. Dokumentasi resmi juga menyebut bahwa `dart <DART_FILE>` bisa menjalankan file, tetapi `dart run` lebih disarankan. ([dart.dev][12])
+
+### `dart analyze`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `analyze` : menjalankan static analysis pada source code. ([dart.dev][13])
+
+### `dart format lib/`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `format` : memformat source code sesuai pedoman Dart. ([dart.dev][14])
+* `lib/` : direktori target yang diformat. ([dart.dev][14])
+
+### `dart test`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `test` : menjalankan test yang berada di direktori `test` pada project Dart. ([dart.dev][15])
+
+### `dart pub get`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `pub` : package manager command di bawah `dart`. ([dart.dev][9])
+* `get` : mengambil dependensi yang tercantum di `pubspec.yaml` beserta dependensi transitifnya. ([dart.dev][16])
+
+### `dart pub add http`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `pub` : antarmuka package manager. ([dart.dev][9])
+* `add` : menambahkan package ke `pubspec.yaml` lalu mengambil dependensinya. ([dart.dev][18])
+* `http` : nama package yang ditambahkan. ([dart.dev][18])
+
+### `dart compile exe bin/my_app.dart -o bin/my_app`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `compile` : subcommand kompilasi. ([dart.dev][17])
+* `exe` : format output untuk executable mandiri di Windows, macOS, atau Linux. ([dart.dev][17])
+* `bin/my_app.dart` : file sumber input. ([dart.dev][17])
+* `-o` : menentukan nama file output. ([dart.dev][17])
+* `bin/my_app` : nama hasil executable. ([dart.dev][17])
+
+### `dart devtools`
+
+* `dart` : CLI resmi. ([dart.dev][5])
+* `devtools` : membuka Dart DevTools, suite debugging dan performance tools. ([dart.dev][19])
+
+---
+
+## Pub, paket, dan dependency management
+
+Ekosistem paket Dart memakai **pub**. Pola kerja dasarnya adalah membuat `pubspec.yaml`, lalu menjalankan `dart pub get` untuk menyelesaikan dependensi. Dokumentasi resmi juga menyediakan perintah seperti `dart pub add`, `dart pub upgrade`, `dart pub outdated`, dan `dart pub publish` untuk lifecycle paket. ([dart.dev][20])
+
+---
+
+## Debugging, analisis, dan kualitas kode
+
+Untuk kualitas kode, alur minimal yang masuk akal adalah:
+
+1. `dart format` untuk konsistensi gaya. ([dart.dev][14])
+2. `dart analyze` untuk static analysis. ([dart.dev][13])
+3. `dart test` untuk pengujian. ([dart.dev][15])
+4. `dart devtools` untuk inspeksi runtime dan performa. ([dart.dev][19])
+
+Dart juga mendokumentasikan **linter rules** dan **analyzer plugins**, jadi Anda bisa memperluas aturan analisis bila proyek makin besar. ([dart.dev][21])
+
+---
+
+## Rekomendasi urutan belajar
+
+1. Baca **Learn Dart** dan selesaikan tutorial CLI interaktif. ([dart.dev][6])
+2. Pahami **language tour** dan halaman **Introduction to Dart**. ([dart.dev][4])
+3. Fokus pada tipe dasar, koleksi, class, dan null safety. ([dart.dev][22])
+4. Pelajari `dart create`, `dart run`, `dart pub get`, `dart analyze`, `dart test`, `dart format`. ([dart.dev][19])
+5. Naik ke **Effective Dart**, **testing**, **packages**, dan **DevTools**. ([dart.dev][7])
+6. Setelah itu, masuk ke **language specification** bila ingin memahami bahasa secara formal. ([dart.dev][8])
+
+---
+
+## Sumber resmi utama
+
+* Dart home dan overview. ([dart.dev][1])
+* Install / SDK. ([dart.dev][2])
+* Documentation hub. ([dart.dev][3])
+* Learn / tutorial. ([dart.dev][6])
+* Dart CLI reference. ([dart.dev][5])
+* Pub / packages. ([dart.dev][9])
+* Effective Dart. ([dart.dev][7])
+* Language specification. ([dart.dev][8])
+
+[1]: https://dart.dev/?utm_source=chatgpt.com "Dart programming language"
+[2]: https://dart.dev/get-dart?utm_source=chatgpt.com "Get the Dart SDK"
+[3]: https://dart.dev/docs?utm_source=chatgpt.com "Dart documentation"
+[4]: https://dart.dev/language?utm_source=chatgpt.com "Introduction to Dart"
+[5]: https://dart.dev/tools/dart-tool?utm_source=chatgpt.com "dart: The Dart command-line tool"
+[6]: https://dart.dev/learn?utm_source=chatgpt.com "Learn Dart"
+[7]: https://dart.dev/effective-dart?utm_source=chatgpt.com "Effective Dart"
+[8]: https://dart.dev/resources/language/spec?utm_source=chatgpt.com "Dart language specification"
+[9]: https://dart.dev/tools/pub/cmd?utm_source=chatgpt.com "dart pub"
+[10]: https://dart.dev/tools?utm_source=chatgpt.com "Tools"
+[11]: https://dart.dev/tools/dart-create?utm_source=chatgpt.com "dart create"
+[12]: https://dart.dev/tools/dart-run?utm_source=chatgpt.com "dart run"
+[13]: https://dart.dev/tools/dart-analyze?utm_source=chatgpt.com "dart analyze - Dart programming language"
+[14]: https://dart.dev/tools/dart-format?utm_source=chatgpt.com "dart format"
+[15]: https://dart.dev/tools/dart-test?utm_source=chatgpt.com "dart test"
+[16]: https://dart.dev/tools/pub/cmd/pub-get?utm_source=chatgpt.com "dart pub get"
+[17]: https://dart.dev/tools/dart-compile?utm_source=chatgpt.com "dart compile - Dart programming language"
+[18]: https://dart.dev/tools/pub/cmd/pub-add?utm_source=chatgpt.com "dart pub add"
+[19]: https://dart.dev/tools/dart-tool "dart: The Dart command-line tool"
+[20]: https://dart.dev/tools/pub/packages?utm_source=chatgpt.com "How to use packages - Dart programming language"
+[21]: https://dart.dev/tools/linter-rules?utm_source=chatgpt.com "Linter rules - Dart programming language"
+[22]: https://dart.dev/language/built-in-types?utm_source=chatgpt.com "Built-in types"
+
+---
+
+# 📚 Master Kurikulum
+
+> Ini adalah karya pribadi berbahasa Indonesia dari hasil generate AI. Kirimkan saran dan masukan untuk perbaikan. Terimakasih telah berkunjung!
+
+<details>
+  <summary>📚 Daftar Kurikulum</summary>
 
 ## _The Ultimate Journey from Flutter to Full-Stack Development_
 
@@ -1240,9 +1426,9 @@ Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir
 
 ## [1. Pondasi Dart](../dart/kursus/materi/fondation/README.md)
 
-1. **[Sintaks Dasar & Tipe Data](../dart/bin/dasar/tipe-data/README.md)(2–3 minggu)**
+1. **[Sintaks Dasar & Tipe Data](../dart/kursus/dasar/tipe-data/README.md)(2–3 minggu)**
 
-   - [Variabel](programmer\mobile\dart\bin\dasar\variabel), tipe primitif ([`int`, `double`,](programmer\mobile\dart\bin\dasar\tipe-data\number\README.md) `String`, `bool`)
+   - [Variabel](../dart/kursus/dasar/variabel/README.md), tipe primitif ([`int`, `double`,](../dart/kursus/dasar/tipe-data/number/README.md) `String`, `bool`)
    - Koleksi (`List`, `Map`, `Set`)
    - Null safety: `?`, `!`, `late`
    - **Tips:** Praktikkan setiap konsep dengan mini–project (misal: kalkulator sederhana).
@@ -1475,10 +1661,10 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 #
 
-> #### [Home][domain-spesifik]
+> ##### [Home][domain-spesifik]
 
 [domain-spesifik]: ../../../README.md
-[master-flutter]: ../../../../framework/flutter/README.md
+[master-flutter]: ../../technology/flutter/README.md
 [syarat-flutter]: ../../README.md
 [dartcli]: ../dart/nich/cli/README.md
 [detailkurikulum]: ../dart/laporan-dart/README.md
