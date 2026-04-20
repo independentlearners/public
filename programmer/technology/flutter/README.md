@@ -2,6 +2,8 @@
 
 _Kurikulum Komprehensif untuk Menguasai Flutter Development dari Foundation hingga Enterprise Architecture_
 
+> Untuk instalasi, mungkin ini bisa membantu. [Klik Disini][disini]
+
 <details>
   <summary>📃 Struktur Daftar Isi</summary>
 
@@ -1643,6 +1645,7 @@ Peserta akan mampu:
 [prasyarat]: ../../domain-spesifik/mobile/README.md
 [overview]: ../flutter/overview/README.md
 [0]: ../README.md
+[disini]: ../flutter/instalasi/README.md
 
 <!--FLASH ---------------------------------------------- -->
 
