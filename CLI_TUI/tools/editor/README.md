@@ -16,7 +16,7 @@ Berikut daftar inti **editor CLI/terminal** yang paling relevan dan lintas platf
 
 7. **JOE** — terminal-based screen editor yang sudah lama dipakai dan tersedia di banyak distribusi Linux. Dokumentasi resminya menyebut JOE ditulis dalam **C**, hanya bergantung pada **libc**, dan mudah dibangun dengan `configure` + `make install`. ([joe-editor.sourceforge.io][7])
 
-8. **GNU nano** — editor kecil dan ramah untuk terminal; fitur resminya mencakup **undo/redo, syntax coloring, interactive search-and-replace, auto-indentation, line numbers, word completion, backup files**, dan lain-lain. ([nano-editor.org][8])
+8. **[GNU nano][nano]** — editor kecil dan ramah untuk terminal; fitur resminya mencakup **undo/redo, syntax coloring, interactive search-and-replace, auto-indentation, line numbers, word completion, backup files**, dan lain-lain. ([nano-editor.org][8])
 
 9. **ed** — editor **line-oriented** yang dipakai interaktif maupun dari shell script. Ini adalah utilitas standar POSIX, jadi sangat fundamental di dunia Unix-like. ([gnu.org][9])
 
@@ -35,3 +35,4 @@ Kalau dilihat dari sisi **ekstensibilitas untuk belajar dan modifikasi**, urutan
 [9]: https://www.gnu.org/software/ed/manual/ed_manual.html?utm_source=chatgpt.com "GNU 'ed' Manual"
 [10]: https://man7.org/linux/man-pages/man1/vi.1p.html "vi(1p) - Linux manual page"
 [nvim]: ./neovim/README.md
+[nano]: ./nano/README.md
