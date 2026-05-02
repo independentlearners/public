@@ -2,3 +2,7 @@
 	path = saya/dart
 	url = git@github.com:independentlearners/dart.git
 	branch = main
+[submodule "saya/lua"]
+	path = saya/lua
+	url = git@github.com:independentlearners/lua.git
+	branch = main
