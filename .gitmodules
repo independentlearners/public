@@ -12,3 +12,7 @@
 	path = saya/tmoex
 	url = git@github.com:independentlearners/tmoex.git
 	branch = main
+[submodule "saya/dartpedia"]
+	path = saya/dartpedia
+	url = git@github.com:independentlearners/dartpedia.git
+	branch = main
