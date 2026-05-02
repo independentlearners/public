@@ -984,7 +984,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 
 *Potensi seseorang dipengaruhi oleh apa yang tumbuh dalam hatinya, ketika begitu kuat untuk menggapai, perlahan tapi pasti, dunia akan menghadiahkan bingkisan yang memang sudah harus menjadi bagiannya! Selamat menempuh perjalanan panjang kawan! Teknologi komputasi adalah bidang yang begitu luas, persiapkan mental dan akal anda karena kita akan mengeksplorasi dunia teknologi paling modern sepanjang peradaban umat manusia.*
 
-> **[By MasBro] | [s.id/gocoding](https://s.id/gocoding)** | **[Daftar Jobs](./jobs/README.md)**
+> **[By MasBro][bymasbro] | [s.id/gocoding](https://s.id/gocoding)** | **[Daftar Jobs](./jobs/README.md)**
 
 <!-- OPERATING SYSTEM -->
 [1]: ./sistem-operasi/linux/gnu/bagian-1/README.md
