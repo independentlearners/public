@@ -1,4 +1,4 @@
 [submodule "dart"]
-	path = dart
+	path = saya/dart
 	url = git@github.com:independentlearners/dart.git
 	branch = main
