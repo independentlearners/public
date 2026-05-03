@@ -16,3 +16,7 @@
 	path = saya/dartpedia
 	url = git@github.com:independentlearners/dartpedia.git
 	branch = main
+[submodule "saya/aplikasi"]
+	path = saya/aplikasi
+	url = git@github.com:independentlearners/aplikasi.git
+	branch = main
