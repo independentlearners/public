@@ -4273,97 +4273,25 @@ Mengoptimalkan kode dengan mengurangi kebutuhan variabel baru
 ---
 
 
-Dalam dunia pemrograman, **mismatch** adalah kondisi ketika **dua hal yang seharusnya kompatibel ternyata tidak sesuai secara spesifikasi**. Ini biasanya muncul sebagai error, warning, atau bug ⚠️
+**Mismatch** adalah kondisi ketika **dua hal yang seharusnya kompatibel ternyata tidak sesuai secara spesifikasi**. Ini biasanya muncul sebagai error, warning, atau bug ⚠️
 
 Maknanya lebih teknis: ada **kontrak (expectation)** yang dilanggar.
 
----
-
-### 1. Type Mismatch (paling fundamental)
-
-Terjadi ketika tipe data tidak sesuai dengan yang diharapkan oleh sistem tipe.
-
-Contoh di **Dart**:
-
-```dart
-int umur = "dua puluh"; // ❌ mismatch
-```
-
-Kenapa?
-
-* Variabel `umur` mengharapkan `int`
-* Yang diberikan `String`
-
-**Solusi:**
-
-* Ubah tipe data
-* Atau lakukan konversi (casting / parsing)
+[Lebih Lanjut][mismatch]
 
 ---
 
-### 2. Argument / Parameter Mismatch
+**Data race** adalah kondisi dalam pemrograman paralel/konkuren ketika **dua atau lebih thread mengakses variabel yang sama secara bersamaan**, dan **setidaknya satu di antaranya melakukan operasi tulis (write)**, tanpa mekanisme sinkronisasi yang benar. ⚠️
 
-Ketika fungsi menerima argumen yang tidak sesuai dengan definisinya.
+Akibatnya, hasil eksekusi menjadi **tidak deterministik**—nilai akhir bisa berbeda-beda setiap kali program dijalankan.
 
-```dart
-void cetakUmur(int umur) {}
+[Lebih Lanjut][datarace]
 
-cetakUmur("20"); // ❌ mismatch
-```
+<!--
 
 ---
 
-### 3. Data Structure Mismatch
-
-Terjadi saat struktur data tidak sesuai dengan yang diharapkan.
-
-```dart
-Map<String, int> data = {
-  "umur": "20" // ❌ value harus int
-};
-```
-
----
-
-### 4. Interface / Contract Mismatch
-
-Dalam OOP atau API:
-
-* Method tidak sesuai signature
-* Return type berbeda
-* Implementasi tidak mengikuti kontrak
-
----
-
-### 5. Runtime vs Compile-time Mismatch
-
-Ini penting secara arsitektural:
-
-* **Compile-time mismatch** → error langsung saat build
-  (contoh: Dart strong typing)
-* **Runtime mismatch** → lolos compile, tapi error saat dijalankan
-  (contoh: `dynamic`, parsing JSON, dll)
-
----
-
-### 6. Mismatch dalam konteks sistem (lebih luas)
-
-* Database schema mismatch
-* API response mismatch (JSON tidak sesuai model)
-* Encoding mismatch (UTF-8 vs ASCII)
-
----
-
-### Inti konsep (yang perlu kamu pegang sebagai engineer)
-
-Mismatch =
-
-> **pelanggaran kontrak antara "yang diberikan" vs "yang diharapkan"**
-
-Dalam pemrograman modern (terutama Dart, Rust, TypeScript):
-
-* Sistem tipe dibuat untuk **mendeteksi mismatch sedini mungkin**
-* Tujuannya: **mengurangi bug runtime**
+--- 
 
 ---
 
@@ -4371,6 +4299,7 @@ Dalam pemrograman modern (terutama Dart, Rust, TypeScript):
 
 ---
 
+-->
 
 [486]: ../konsep/regex/README.md
 
@@ -4383,3 +4312,6 @@ Dalam pemrograman modern (terutama Dart, Rust, TypeScript):
 [escape]: ./escape/README.md
 [buffer]: ./buffer/README.md
 [plceholder]: ./placeholder/README.md
+[datarace]: ./data_race/README.md
+[mismatch]: ./mismatch/README.md
+
