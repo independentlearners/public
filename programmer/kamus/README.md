@@ -4287,11 +4287,20 @@ Akibatnya, hasil eksekusi menjadi **tidak deterministik**—nilai akhir bisa ber
 
 [Lebih Lanjut][datarace]
 
-<!--
-
 ---
 
+Istilah **“literal”** dalam pemrograman, merujuk pada **nilai yang ditulis langsung di dalam kode sumber tanpa melalui variabel, ekspresi kompleks, atau komputasi**. Ini adalah konsep fundamental dalam *language syntax* dan *type system*.
+
+Secara presisi:
+
+> **Literal = representasi langsung dari sebuah nilai (value) di dalam source code.**
+
+[Lebih Lanjut][literal]
+
 --- 
+
+<!--
+
 
 ---
 
@@ -4314,4 +4323,4 @@ Akibatnya, hasil eksekusi menjadi **tidak deterministik**—nilai akhir bisa ber
 [plceholder]: ./placeholder/README.md
 [datarace]: ./data_race/README.md
 [mismatch]: ./mismatch/README.md
-
+[literal]: ./literal/README.md
