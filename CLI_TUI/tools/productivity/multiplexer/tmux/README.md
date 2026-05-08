@@ -197,6 +197,90 @@ Prefix default: `Ctrl-b`. Kita tuliskan format `Prefix + X`.
 
 ---
 
+Untuk menyembunyikan tab/status bar pada tmux, inti utamanya ada pada opsi `status`.
+
+Nonaktifkan sementara pada session aktif:
+
+```bash
+# Non-tmux
+tmux set-option status off
+```
+
+Atau versi singkat:
+
+```bash
+# Non-tmux
+tmux set -g status off
+```
+
+Mengaktifkan kembali:
+
+```bash
+# Non-tmux
+tmux set -g status on
+```
+
+Agar permanen, tambahkan ke file konfigurasi atau jalankan langsung di sesi tmux:
+
+```tmux
+# ~/.tmux.conf
+set -g status off # Gunakan on/off untuk perintah didalam sesi
+```
+
+Lalu reload:
+
+```bash
+tmux source-file ~/.tmux.conf
+```
+
+Atau restart tmux.
+
+Untuk menjalankan perintah ketika status bar sudah off, langsung tekan `Prefix + :` atau `Ctlr + b` lalu tahan `Shift + ;`.
+
+Penjelasan teknis:
+
+* `status` → mengontrol status bar bawah tmux.
+* `off` → menyembunyikan daftar window/tab.
+* `on` → menampilkan daftar window/tab.
+* `-g` → global untuk seluruh session.
+* tanpa `-g` → hanya session aktif.
+
+Jika yang dimaksud adalah benar-benar menyembunyikan daftar window tetapi tetap mempertahankan status line kosong/minimal, bisa gunakan:
+
+```tmux
+set -g status-format[0] ''
+set -g status-format[1] ''
+```
+
+Atau tinggi status jadi nol:
+
+```tmux
+set -g status 0
+```
+
+Konsep yang perlu dipahami untuk modifikasi tmux:
+
+* Shell scripting 🖥️
+* Escape sequence terminal ANSI
+* Konsep terminal multiplexer
+* Struktur konfigurasi tmux (`set-option`, keybinding, hooks)
+* Sedikit POSIX shell/Bash untuk automasi plugin
+
+Teknologi inti tmux:
+
+* Dibangun dengan bahasa C
+* Berjalan di atas pseudo terminal (PTY)
+* Sangat erat dengan:
+
+  * UNIX terminal subsystem
+  * terminfo/termcap
+  * shell environment
+
+Dokumentasi resmi:
+
+* [tmux Official Wiki](https://github.com/tmux/tmux/wiki?utm_source=chatgpt.com)
+* [tmux Manual Page](https://man.openbsd.org/tmux?utm_source=chatgpt.com)
+
 # 4. File Konfigurasi (`~/.tmux.conf`) — Contoh & Penjelasan
 
 Minimal modern (recommended):
@@ -356,3 +440,5 @@ bind -n C-Down select-pane -D
 * TPM (tmux-plugins/tpm) dan plugin repositori: `tmux-plugins/*`.
 * Artikel & buku yang sering direkomendasikan: *tmux* chapters in modern terminal workflows and “tmux: Productive Mouse-Free Development” (referensi praktis).
 * Blog & tutorial: berbagai tutorial step-by-step (search: "tmux tutorial", "tmux copy mode vi", "tmux-resurrect").
+
+[Cheatsheet](https://tmuxcheatsheet.com/)

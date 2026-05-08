@@ -949,11 +949,12 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
   <div style="padding-left: 25px; margin-top: 8px;">
 
 - **[💻 Software](software/README.md)**
-  - **[🌐 Browser Extension (Vimium-C)](software/browser/extention/vimium-c/README.md)**
+- **[🌐 Browser Extension (Vimium-C)](software/browser/extention/vimium-c/README.md)**
 - **[⚙️ Settings](pengaturan/README.md)**
-  - **[🖌️ Visual Studio Code](pengaturan/vsc/README.md)**
-- **[📝 Markdown](./programmer/domain-spesifik/tools/markdown/README.md)**
-- **[❗Others](./others/README.md)**
+- **[🖌️ Visual Studio Code](pengaturan/vsc/README.md)**
+- **[📝 Markdown](./markdown/README.md)**
+- **[❗ Others](./others/README.md)**
+- **[🔗 Source Site](./situs.md)**
 
   </div>
 </details>
