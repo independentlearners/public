@@ -441,4 +441,4 @@ bind -n C-Down select-pane -D
 * Artikel & buku yang sering direkomendasikan: *tmux* chapters in modern terminal workflows and “tmux: Productive Mouse-Free Development” (referensi praktis).
 * Blog & tutorial: berbagai tutorial step-by-step (search: "tmux tutorial", "tmux copy mode vi", "tmux-resurrect").
 
-[Cheatsheet](https://tmuxcheatsheet.com/)
+[config](./config.md)
