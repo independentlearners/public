@@ -441,4 +441,78 @@ bind -n C-Down select-pane -D
 * Artikel & buku yang sering direkomendasikan: *tmux* chapters in modern terminal workflows and “tmux: Productive Mouse-Free Development” (referensi praktis).
 * Blog & tutorial: berbagai tutorial step-by-step (search: "tmux tutorial", "tmux copy mode vi", "tmux-resurrect").
 
+## Keuntungan dan Kerugian Menjalankan Semua Aplikasi Terminal melalui `tmux`
+
+### **Keuntungan**
+
+1. **Persistensi sesi**  
+   Aplikasi tetap berjalan meskipun koneksi SSH terputus, terminal ditutup, atau komputer klien mati. Cukup `tmux attach` untuk melanjutkan.
+
+2. **Detach & attach fleksibel**  
+   Bisa meninggalkan pekerjaan di latar belakang lalu menyambung kembali dari perangkat lain (misal dari kantor lalu dari rumah).
+
+3. **Manajemen banyak aplikasi dalam satu jendela**  
+   - Split vertikal/horizontal (pane) untuk menjalankan beberapa program bersamaan (misal editor + terminal + server log).  
+   - Window terpisah untuk kelompok aplikasi berbeda.  
+   - Beralih antar aplikasi tanpa membuka banyak tab terminal.
+
+4. **Berbagi sesi**  
+   Dua pengguna bisa menyambung ke sesi `tmux` yang sama secara real-time → cocok untuk pairing atau demo.
+
+5. **Kustomisasi dan otomatisasi**  
+   - Skrip untuk mengatur layout, keybindings, environment variables.  
+   - Simpan dan pulihkan tata letak jendela secara otomatis.
+
+6. **Fitur bawaan yang berguna**  
+   - **Logging** (`capture-pane` / `pipe-pane`) untuk merekam output.  
+   - **Copy mode** untuk scroll/search/copy dengan keyboard.  
+   - **Kelompok sesi** memungkinkan satu jendela muncul di beberapa sesi.
+
+7. **Efisiensi sumber daya (terbatas)**  
+   Dibanding membuka 5 emulator terminal terpisah, `tmux` bisa lebih ringan karena hanya satu proses dengan beberapa pseudo-terminal.
+
+---
+
+### **Kerugian**
+
+1. **Overhead tambahan**  
+   Meskipun kecil, `tmux` tetap menggunakan memori (beberapa MB) dan sedikit CPU untuk menangani multipleksing.
+
+2. **Kompleksitas & kurva belajar**  
+   - Perlu menghafal shortcut (Prefix `Ctrl-b`, lalu `%`, `"`, `d`, dll.).  
+   - Manajemen sesi/window/pane yang membingungkan bagi pemula.
+
+3. **Potensi konflik dengan aplikasi**  
+   - **Prefix default (`Ctrl-b`)** bisa bentrok dengan shortcut di dalam aplikasi (misal `Ctrl-b` di vim atau readline).  
+   - Beberapa aplikasi terminal (program ncurses lama) mungkin tidak mendeteksi ukuran jendela dengan benar saat di-pane kecil.
+
+4. **Masalah kompatibilitas minor**  
+   - Warna, font, atau kontrol mouse terkadang perlu konfigurasi ekstra (`set -g mouse on`).  
+   - Aplikasi yang mengandalkan hardware terminal tertentu (grafik kitty, sixel) bisa terbatas.
+
+5. **Single point of failure**  
+   Jika proses `tmux` utama crash atau mati (jarang, tapi bisa), **semua** aplikasi yang berjalan di dalamnya akan ikut mati tanpa ada kesempatan menyimpan.
+
+6. **Tidak bisa menjalankan aplikasi GUI**  
+   `tmux` hanya mengelola **terminal** (TTY). Jadi aplikasi grafis (Firefox, VSCode, GIMP) tidak bisa dijalankan melalui `tmux` — kecuali Anda memaksanya dengan `DISPLAY` dan tetap akan terpisah.
+
+7. **Keterbatasan clipboard**  
+   Mengkopi teks dari `tmux` ke luar sistem (misal ke browser) memerlukan konfigurasi khusus (misal menggunakan `xclip`, `pbcopy`, atau integrasi mouse). Tidak semudah terminal biasa.
+
+---
+
+### **Kapan sebaiknya (tidak) digunakan?**
+
+| Gunakan `tmux` untuk... | Jangan gunakan `tmux` untuk... |
+|--------------------------|--------------------------------|
+| Pekerjaan remote lewat SSH | Aplikasi GUI atau game |
+| Workflow yang butuh banyak terminal (developer, sysadmin) | Pengguna awam yang jaruhut terminal |
+| Ingin session persist selama berminggu-minggu | Lingkungan dengan resource sangat terbatas (misal embedded device kecil) |
+| Kolaborasi real-time via terminal | Jika semua aplikasi CLI Anda sudah punya manajemen sendiri (misal `screen`, `zellij`) |
+
+---
+
+### **Kesimpulan**
+Menjalankan **semua** aplikasi *terminal* melalui `tmux` memberikan keuntungan besar dalam hal **persistensi, organisasi, dan fleksibilitas** dengan biaya **kompleksitas dan overhead minimal**. Namun, ini tidak mungkin untuk aplikasi non-terminal. Untuk penggunaan sehari-hari di server/workstation CLI, `tmux` adalah alat yang sangat direkomendasikan selama Anda bersedia mempelajari shortcut dan mengonfigurasi beberapa opsi.
+
 [config](./config.md)
