@@ -1656,6 +1656,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 ### Beberapa yang mungkin menarik
 
 - **[Dart CLI][dartcli]**
+- **[Dart TUI][tui]**
 
 </details>
 
@@ -1666,6 +1667,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [master-flutter]: ../../technology/flutter/README.md
 [syarat-flutter]: ../../README.md
 [dartcli]: ../dart/nich/cli/README.md
+[tui]: ../dart/nich/tui/README.md
 [detailkurikulum]: ../dart/laporan-dart/README.md
 [sayadart]: ../../../saya/dart/README.md
 <!-- FOUNDATION LEVEL -->
