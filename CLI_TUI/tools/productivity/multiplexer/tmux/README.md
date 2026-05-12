@@ -269,7 +269,7 @@ Konsep yang perlu dipahami untuk modifikasi tmux:
 Teknologi inti tmux:
 
 * Dibangun dengan bahasa C
-* Berjalan di atas pseudo terminal (PTY)
+* Berjalan di atas [pseudo terminal (PTY)][pty]
 * Sangat erat dengan:
 
   * UNIX terminal subsystem
@@ -516,3 +516,5 @@ bind -n C-Down select-pane -D
 Menjalankan **semua** aplikasi *terminal* melalui `tmux` memberikan keuntungan besar dalam hal **persistensi, organisasi, dan fleksibilitas** dengan biaya **kompleksitas dan overhead minimal**. Namun, ini tidak mungkin untuk aplikasi non-terminal. Untuk penggunaan sehari-hari di server/workstation CLI, `tmux` adalah alat yang sangat direkomendasikan selama Anda bersedia mempelajari shortcut dan mengonfigurasi beberapa opsi.
 
 [config](./config.md)
+
+[pty]: ./../../../../konsep/pty/README.md
