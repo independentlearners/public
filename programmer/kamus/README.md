@@ -4293,11 +4293,11 @@ Istilah **“literal”** dalam pemrograman, merujuk pada **nilai yang ditulis l
 
 Secara presisi:
 
-> **Literal = representasi langsung dari sebuah nilai (value) di dalam source code.**
-
-[Lebih Lanjut][literal]
+> **[Literal][literal] = representasi langsung dari sebuah nilai (value) di dalam source code.**
 
 --- 
+
+**[Benchmark:][benchmark]** Proses mengukur performa
 
 <!--
 
@@ -4324,3 +4324,4 @@ Secara presisi:
 [datarace]: ./data_race/README.md
 [mismatch]: ./mismatch/README.md
 [literal]: ./literal/README.md
+[benchmark]: ./benchmark/README.md
