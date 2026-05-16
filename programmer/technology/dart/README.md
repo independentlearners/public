@@ -1581,31 +1581,6 @@ Selain keahlian teknis, pengembang senior harus menguasai kemampuan non-teknis:
 </details>
 
 <details>
-  <summary>📃 Sertifikasi</summary>
-
-## Sertifikasi dan Proyek Portofolio
-
-### Sertifikasi
-
-Saat ini **belum ada sertifikasi resmi khusus Flutter** dari Google. Namun, untuk meningkatkan kredibilitas dapat mempertimbangkan:
-
-- **Google Associate Android Developer:** Meski fokusnya Android native, sertifikat ini menunjukkan kemampuan mobile fundamental.
-- **Google Cloud – Professional Cloud Developer:** Sertifikasi Google Cloud ini mencakup pengembangan aplikasi cloud-native (termasuk Firebase). Google merekomendasikan pengalaman industri ≥3 tahun sebelum ujian ini.
-- **Kursus/TCP Online:** Banyak platform (Coursera, Udemy, Pluralsight) menawarkan kursus Flutter/Firebase dengan sertifikat. Meskipun sertifikat kursus bukan formal, ini bisa melengkapi portofolio. Google Developer Certification menyebut materi pelatihan tersedia online sebagai persiapan sertifikat mereka.
-
-### Proyek Portofolio
-
-Portofolio projek sangat krusial. Beberapa ide yang direkomendasikan:
-
-- **Proyek Pemula:** Aplikasi _to-do list_, kalkulator, pemutar musik sederhana, atau aplikasi cuaca dasar. Tujuannya menguasai UI Flutter dan logika sederhana.
-- **Proyek Menengah:** Tambahkan kompleksitas seperti sinkronisasi cloud atau fitur latar belakang. Misalnya _aplikasi catatan dengan sinkronisasi Firebase_, _to-do list dengan notifikasi_ atau _aplikasi berita (API eksternal)_. Integrasi API/JSON dan Firebase Auth disarankan.
-- **Proyek Lanjutan:** Aplikasi full-stack: e‑commerce, media sosial mini, atau platform berbagi konten. Fitur otentikasi pengguna, database terstruktur, penyimpanan file (gambar/video), push notification, dan logic bisnis komplek. Projek ini menunjukkan penguasaan Flutter dan Firebase secara menyeluruh (full-stack).
-
-Portofolio harus dipajang di **GitHub** (untuk programmer) dengan dokumentasi jelas. Buat situs pribadi atau blog untuk menampilkan demo aplikasi. Sebuah riset menunjukkan portofolio nyata (aplikasi yang sudah dibuat) sangat menentukan saat melamar posisi programmer.
-
-</details>
-
-<details>
   <summary>🏢 Standar Industri</summary>
 
 ## Standar Industri: Senior Flutter Remote
@@ -1660,9 +1635,12 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 </details>
 
+##### [Certificate][certification]
+
 - [Home][domain-spesifik]
 - [Pembelajaran Saya][sayadart]
 
+[certification]: ./sertifikasi/README.md
 [domain-spesifik]: ../../../README.md
 [master-flutter]: ../../technology/flutter/README.md
 [syarat-flutter]: ../../README.md
