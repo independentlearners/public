@@ -23,21 +23,21 @@ Selain GDE khusus Flutter, Indonesia juga memiliki ahli-ahli di bidang lain yang
 
 Secara ringkas, jika Anda mencari talenta yang sekadar "bisa dan jago membuat aplikasi", Indonesia punya ribuan orang. Namun, jika mencari yang "kehebatannya diakui oleh para ahli dunia" melalui sertifikasi resmi Google Developer Expert, jumlahnya sangat elite, yaitu kurang dari 5 orang. [12, 13, 14] 
 
-[1] [https://en.wikipedia.org](https://translate.google.com/translate?u=https://en.wikipedia.org/wiki/Google_Developer_Expert&hl=id&sl=en&tl=id&client=sge)
-[2] [https://www.facebook.com](https://www.facebook.com/groups/flutterid/)
-[3] [https://developers.google.com](https://translate.google.com/translate?u=https://developers.google.com/static/community/experts/assets/GDE_Program_Application_Guide.pdf&hl=id&sl=en&tl=id&client=sge)
-[4] [https://www.youtube.com](https://www.youtube.com/watch?v=lbP1riigUIQ)
-[5] [https://www.youtube.com](https://www.youtube.com/playlist?list=PLJr4_58dr-w5mjGQPRzKPFeJ1e8QySn6N)
-[6] [https://www.youtube.com](https://www.youtube.com/watch?v=E1okdx4WN8s)
-[7] [https://www.instagram.com](https://www.instagram.com/p/DRT6H5YkonQ/)
-[8] [https://www.instagram.com](https://www.instagram.com/reel/C6sNPiUvdBm/)
-[9] [https://www.instagram.com](https://www.instagram.com/p/DKlbqrYT5L1/)
-[10] [https://id.linkedin.com](https://id.linkedin.com/in/veroanggra)
-[11] [https://www.instagram.com](https://www.instagram.com/p/DUW9wpCgdwi/)
-[12] [https://developers.google.com](https://developers.google.com/community/experts?hl=id)
-[13] [https://id.jobstreet.com](https://id.jobstreet.com/id/flutter-developer-jobs)
-[14] [https://www.dicoding.com](https://www.dicoding.com/academies/110)
-[15] [https://www.dicoding.com](https://www.dicoding.com/academies/199-menjadi-flutter-developer-expert)
+<!-- [https://en.wikipedia.org](https://translate.google.com/translate?u=https://en.wikipedia.org/wiki/Google_Developer_Expert&hl=id&sl=en&tl=id&client=sge) -->
+<!-- [https://www.facebook.com](https://www.facebook.com/groups/flutterid/) -->
+<!-- [https://developers.google.com](https://translate.google.com/translate?u=https://developers.google.com/static/community/experts/assets/GDE_Program_Application_Guide.pdf&hl=id&sl=en&tl=id&client=sge) -->
+<!-- [https://www.youtube.com](https://www.youtube.com/watch?v=lbP1riigUIQ) -->
+<!-- [https://www.youtube.com](https://www.youtube.com/playlist?list=PLJr4_58dr-w5mjGQPRzKPFeJ1e8QySn6N) -->
+<!-- [https://www.youtube.com](https://www.youtube.com/watch?v=E1okdx4WN8s) -->
+<!-- [https://www.instagram.com](https://www.instagram.com/p/DRT6H5YkonQ/) -->
+<!-- [https://www.instagram.com](https://www.instagram.com/reel/C6sNPiUvdBm/) -->
+<!-- [https://www.instagram.com](https://www.instagram.com/p/DKlbqrYT5L1/) -->
+<!-- [https://id.linkedin.com](https://id.linkedin.com/in/veroanggra) -->
+<!-- [https://www.instagram.com](https://www.instagram.com/p/DUW9wpCgdwi/) -->
+<!-- [https://developers.google.com](https://developers.google.com/community/experts?hl=id) -->
+<!-- [https://id.jobstreet.com](https://id.jobstreet.com/id/flutter-developer-jobs) -->
+<!-- [https://www.dicoding.com](https://www.dicoding.com/academies/110) -->
+<!-- [https://www.dicoding.com](https://www.dicoding.com/academies/199-menjadi-flutter-developer-expert) -->
 
 ---
 
@@ -79,19 +79,18 @@ Ini adalah tahapan paling krusial dan mendalam. Kandidat akan langsung diwawanca
 ------------------------------
 ## Hasil Akhir & Keanggotaan
 Jika berhasil melewati wawancara produk, kandidat akan menandatangani Non-Disclosure Agreement (NDA) resmi dari Google dan secara legal menyandang gelar Google Developer Expert. Gelar ini hanya berlaku selama 1 tahun. Setiap tahunnya, Google akan mengevaluasi ulang apakah orang tersebut masih aktif berkontribusi atau tidak untuk memperpanjang masa baktinya. [1, 4, 11] 
-Apakah Anda berencana membangun portofolio ke arah sana? Jika iya, saya bisa memberikan tips mengenai bagaimana cara memulai kontribusi open-source yang dilirik oleh Google, atau merekomendasikan jejaring komunitas Flutter terbesar di Indonesia untuk mulai membangun relasi. Manakah yang ingin Anda pelajari terlebih dahulu?
 
-[1] [https://medium.com](https://medium.com/@kondwani0099/my-journey-to-becoming-a-google-developer-expert-gde-in-ai-bb7c42f19720)
-[2] [https://developers.google.com](https://developers.google.com/static/community/experts/assets/GDE_Program_Application_Guide.pdf)
-[3] [https://www.youtube.com](https://www.youtube.com/watch?v=eHQ19Ln2bHM&t=40)
-[4] [https://www.youtube.com](https://www.youtube.com/watch?v=5FS1EsxDq8c&t=60)
-[5] [https://dev.to](https://dev.to/josefine/road-to-becoming-a-gde-the-google-developers-programm-1anc)
-[6] [https://theflutterway.medium.com](https://theflutterway.medium.com/how-i-became-a-google-developer-expert-and-how-you-can-too-dbae87eb0c4b)
-[7] [https://developers.google.com](https://developers.google.com/static/community/experts/assets/GDE_Program_Application_Guide.pdf)
-[8] [https://www.alainchautard.com](https://www.alainchautard.com/how-to-become-a-google-developer-expert-gde/)
-[9] [https://www.youtube.com](https://www.youtube.com/watch?v=ijv1B79F3U0&t=258)
-[10] [https://medium.com](https://medium.com/google-developer-experts/how-i-became-a-google-developer-expert-gde-for-android-with-the-help-of-the-roadtogde-program-2ba97729b469)
-[11] [https://www.youtube.com](https://www.youtube.com/shorts/FbdsJrQFBxo)
+<!-- [https://medium.com](https://medium.com/@kondwani0099/my-journey-to-becoming-a-google-developer-expert-gde-in-ai-bb7c42f19720) -->
+<!-- [https://developers.google.com](https://developers.google.com/static/community/experts/assets/GDE_Program_Application_Guide.pdf) -->
+<!-- [https://www.youtube.com](https://www.youtube.com/watch?v=eHQ19Ln2bHM&t=40) -->
+<!-- [https://www.youtube.com](https://www.youtube.com/watch?v=5FS1EsxDq8c&t=60) -->
+<!-- [https://dev.to](https://dev.to/josefine/road-to-becoming-a-gde-the-google-developers-programm-1anc) -->
+<!-- [https://theflutterway.medium.com](https://theflutterway.medium.com/how-i-became-a-google-developer-expert-and-how-you-can-too-dbae87eb0c4b) -->
+<!-- [https://developers.google.com](https://developers.google.com/static/community/experts/assets/GDE_Program_Application_Guide.pdf) -->
+<!-- [https://www.alainchautard.com](https://www.alainchautard.com/how-to-become-a-google-developer-expert-gde/) -->
+<!-- [https://www.youtube.com](https://www.youtube.com/watch?v=ijv1B79F3U0&t=258) -->
+<!-- [https://medium.com](https://medium.com/google-developer-experts/how-i-became-a-google-developer-expert-gde-for-android-with-the-help-of-the-roadtogde-program-2ba97729b469) -->
+<!-- [https://www.youtube.com](https://www.youtube.com/shorts/FbdsJrQFBxo) -->
 
 ---
 
@@ -128,13 +127,15 @@ Meskipun Google tidak membayar Anda, gelar GDE bertindak sebagai "Super-Sertifik
 Singkatnya, Google memberikan panggung, fasilitas, dan validasi, sementara Anda memanfaatkan hal tersebut untuk membuka keran pendapatan yang jauh lebih besar di industri teknologi global. [1, 4, 8] 
 Jika Anda tertarik untuk mulai menyusun strategi, saya bisa membagikan langkah awal apa yang harus dilakukan di tahun pertama agar portofolio Anda mulai dilirik oleh komunitas global. Apakah Anda ingin membahas hal tersebut?
 
-[1] [https://theflutterway.medium.com](https://theflutterway.medium.com/how-i-became-a-google-developer-expert-and-how-you-can-too-dbae87eb0c4b)
-[2] [https://www.youtube.com](https://www.youtube.com/watch?v=eHQ19Ln2bHM&t=40)
-[3] [https://www.youtube.com](https://www.youtube.com/watch?v=3v_39T_MSUM&t=31)
-[4] [https://theflutterway.medium.com](https://theflutterway.medium.com/how-i-became-a-google-developer-expert-and-how-you-can-too-dbae87eb0c4b)
-[5] [https://dev.to](https://dev.to/josefine/road-to-becoming-a-gde-the-google-developers-programm-1anc)
-[6] [https://medium.com](https://medium.com/google-developer-experts/how-and-why-i-became-a-gcp-google-developer-expert-ee026bb4e837)
-[7] [https://developers.google.com](https://developers.google.com/community/experts)
-[8] [https://www.linkedin.com](https://www.linkedin.com/posts/ashwani-sharma-handa-0a029217_io-2025-registered-google-developer-activity-7299298672406671360-iyl6)
-[9] [https://dev.to](https://dev.to/jacobandrewsky/i-am-a-google-developer-expert-49ai)
-[10] [https://www.quora.com](https://www.quora.com/If-I-become-a-GDE-Google-Developer-Expert-do-I-have-more-chances-of-being-hired-by-Google)
+> Seluruh sumber dikomentari, buka file untuk melihat!
+<!---->
+<!-- [theflutterway.medium.com](https://theflutterway.medium.com/how-i-became-a-google-developer-expert-and-how-you-can-too-dbae87eb0c4b) -->
+<!-- [youtube.com](https://www.youtube.com/watch?v=eHQ19Ln2bHM&t=40) -->
+<!-- [youtube.com](https://www.youtube.com/watch?v=3v_39T_MSUM&t=31) -->
+<!-- [theflutterway.medium.com](https://theflutterway.medium.com/how-i-became-a-google-developer-expert-and-how-you-can-too-dbae87eb0c4b) -->
+<!-- [dev.to](https://dev.to/josefine/road-to-becoming-a-gde-the-google-developers-programm-1anc) -->
+<!-- [medium.com](https://medium.com/google-developer-experts/how-and-why-i-became-a-gcp-google-developer-expert-ee026bb4e837) -->
+<!-- [developers.google.com](https://developers.google.com/community/experts) -->
+<!-- [linkedin.com](https://www.linkedin.com/posts/ashwani-sharma-handa-0a029217_io-2025-registered-google-developer-activity-7299298672406671360-iyl6) -->
+<!-- [dev.to](https://dev.to/jacobandrewsky/i-am-a-google-developer-expert-49ai) -->
+<!-- [quora.com](https://www.quora.com/If-I-become-a-GDE-Google-Developer-Expert-do-I-have-more-chances-of-being-hired-by-Google) -->
