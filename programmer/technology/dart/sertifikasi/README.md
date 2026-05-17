@@ -127,8 +127,6 @@ Meskipun Google tidak membayar Anda, gelar GDE bertindak sebagai "Super-Sertifik
 Singkatnya, Google memberikan panggung, fasilitas, dan validasi, sementara Anda memanfaatkan hal tersebut untuk membuka keran pendapatan yang jauh lebih besar di industri teknologi global. [1, 4, 8] 
 Jika Anda tertarik untuk mulai menyusun strategi, saya bisa membagikan langkah awal apa yang harus dilakukan di tahun pertama agar portofolio Anda mulai dilirik oleh komunitas global. Apakah Anda ingin membahas hal tersebut?
 
-> Seluruh sumber dikomentari, buka file untuk melihat!
-<!---->
 <!-- [theflutterway.medium.com](https://theflutterway.medium.com/how-i-became-a-google-developer-expert-and-how-you-can-too-dbae87eb0c4b) -->
 <!-- [youtube.com](https://www.youtube.com/watch?v=eHQ19Ln2bHM&t=40) -->
 <!-- [youtube.com](https://www.youtube.com/watch?v=3v_39T_MSUM&t=31) -->
@@ -139,3 +137,42 @@ Jika Anda tertarik untuk mulai menyusun strategi, saya bisa membagikan langkah a
 <!-- [linkedin.com](https://www.linkedin.com/posts/ashwani-sharma-handa-0a029217_io-2025-registered-google-developer-activity-7299298672406671360-iyl6) -->
 <!-- [dev.to](https://dev.to/jacobandrewsky/i-am-a-google-developer-expert-49ai) -->
 <!-- [quora.com](https://www.quora.com/If-I-become-a-GDE-Google-Developer-Expert-do-I-have-more-chances-of-being-hired-by-Google) -->
+
+```
+Bukankah sumber kode Dart sudah ada diGitHub yang sipapun bisa mengembangkannya, mengapa masiha ada istilah kerahasiaan?
+```
+
+Pertanyaan ini sangat kritis dan cerdas. Memang benar bahwa Dart dan Flutter adalah proyek open-source yang seluruh kode sumbernya terbuka di GitHub. Siapa pun bisa melihat proses pengembangan, membaca diskusi antardev, hingga melihat pull request yang sedang dikerjakan. [1, 2, 3] 
+Meskipun demikian, perjanjian kerahasiaan (NDA) tetap diberlakukan bagi Google Developer Expert (GDE) karena beberapa alasan berikut: [4] 
+## 1. Rahasia Strategi Bisnis dan Integrasi Produk Google
+
+* Integrasi Ekosistem Tertutup: Dart/Flutter memang open-source, tetapi ekosistem Google lainnya seperti Google Cloud, Firebase, Android 17+, atau model AI (seperti Gemini Nano) bersifat tertutup (closed-source).
+* Contoh Nyata: Ketika tim Google bereksperimen menggabungkan fitur AI canggih ke dalam framework Flutter versi masa depan, mereka harus menguji integrasi tersebut ke dalam sistem internal Google terlebih dahulu sebelum kodenya dipisahkan dan dilempar ke GitHub publik. GDE dilibatkan untuk menguji stabilitas integrasi ini di bawah payung NDA. [1, 4, 5, 6] 
+
+## 2. "Eksperimen Rahasia" Sebelum Menjadi Kode di GitHub
+
+* Grup Kerja Internal: Sebelum sebuah fitur diunggah ke branch publik di GitHub, tim engineer Google sering kali membuat dokumen riset, desain arsitektur awal (design docs), atau repro privat untuk mendiskusikan arah teknologi tersebut.
+* Keuntungan GDE adalah mereka dilibatkan dalam diskusi internal ini untuk memberikan masukan (feedback) mentah. Jika ide tersebut gagal atau berisiko, Google bisa membatalkannya tanpa menimbulkan kegaduhan atau kepanikan di kalangan komunitas developer global.
+
+## 3. Kontrol terhadap Dampak Pasar dan Kompetisi Internasional
+
+* Strategi Pengumuman (Launch Timing): Google memiliki acara besar tahunan seperti Google I/O. Mereka sering kali ingin memberikan kejutan besar kepada industri teknologi agar mendapat sorotan media global.
+* Jika fitur revolusioner dibocorkan terlalu cepat oleh GDE sebelum versi stabilnya siap, kompetitor bisa mencuri momentum tersebut, atau pengguna bisa kecewa jika ternyata fitur tersebut masih memiliki banyak bug berat. [1] 
+
+## 4. Mencegah Salah Paham dan Kerugian Finansial Perusahaan
+
+* Di GitHub, ada ribuan baris kode eksperimental yang belum tentu akan dirilis ke publik.
+* Jika seorang pakar (GDE) salah menginterpretasikan sebuah baris kode di GitHub dan mengumumkannya ke publik sebagai "Fitur Baru Flutter Bulan Depan", perusahaan-perusahaan besar yang menggunakan Flutter bisa mengambil keputusan bisnis atau investasi yang salah berdasarkan rumor tersebut. NDA memastikan bahwa apa yang dibahas di internal tetap menjadi konsumsi evaluasi teknis saja. [4] 
+
+Jadi, sederhananya: Kodenya memang terbuka untuk umum di GitHub, tetapi arah masa depan, integrasi produk komersial Google, dan keputusan strategis di balik kode tersebut adalah hal yang dijaga kerahasiaannya. [4] 
+Apakah penjelasan ini masuk akal bagi Anda, atau ada bagian dari alur kerja open-source korporat seperti ini yang masih membuat Anda penasaran?
+
+<!-- [1] [https://blog.flutter.dev](https://blog.flutter.dev/flutter-darts-2026-roadmap-89378f17ebbd) -->
+<!-- [2] [https://github.com](https://github.com/flutter/flutter/issues/62129) -->
+<!-- [3] [https://github.com](https://github.com/googleapis/google-cloud-dart/blob/main/CONTRIBUTING.md) -->
+<!-- [4] [https://blog.thestateofme.com](https://blog.thestateofme.com/2022/09/15/google-developer-expert/) -->
+<!-- [5] [https://aitrichacademy.com](https://aitrichacademy.com/flutter-2026-performance-devtools-future-roadmap/) -->
+<!-- [6] [https://github.com](https://github.com/dart-lang/language/issues/3727) -->
+
+> Seluruh sumber dikomentari, buka file untuk melihat!
+
