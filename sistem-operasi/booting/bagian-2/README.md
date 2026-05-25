@@ -209,8 +209,8 @@ Kita telah menyelesaikan pendalaman untuk **Fase 2, Modul 2**.
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../README.md
+[kurikulum]: ../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 

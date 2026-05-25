@@ -207,8 +207,8 @@ Kita telah menyelesaikan seluruh kurikulum ini. Anda kini memiliki pemahaman yan
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../README.md
+[kurikulum]: ../README.md
 [sebelumnya]: ../bagian-3/README.md
 [selanjutnya]: ../bagian-5/README.md
 

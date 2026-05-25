@@ -235,8 +235,8 @@ Kita telah menyelesaikan pendalaman untuk **Fase 3, Modul 3**. Ini adalah modul 
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../README.md
+[kurikulum]: ../README.md
 [sebelumnya]: ../bagian-2/README.md
 [selanjutnya]: ../bagian-4/README.md
 

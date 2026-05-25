@@ -244,8 +244,8 @@ Kita telah menyelesaikan pendalaman untuk **Fase 1, Modul 1**.
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[domain]: ../../../README.md
+[kurikulum]: ../README.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->

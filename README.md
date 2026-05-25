@@ -328,7 +328,7 @@ Berikut hasil penyusunan ulang dalam format *Markdown dokumentatif profesional*:
  
 
   
-## 🧠 **Konsep Dasar Sistem Operasi**
+## 🧠 **[Konsep Dasar Sistem Operasi][os]**
  
  
 Fondasi umum sebelum memasuki konfigurasi teknis.
@@ -373,7 +373,7 @@ Fondasi umum sebelum memasuki konfigurasi teknis.
  
 
   
-## 🐧 **Arch Linux**
+## 🐧 **[Arch Linux][archlinux]**
  
  
 Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna tingkat lanjut yang menginginkan kendali penuh.
@@ -449,7 +449,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 
 ---
   
-### 🪜 **B. Instalasi & Struktur Sistem**
+### 🪜 **[B. Instalasi & Struktur Sistem][instalasi]**
  
  
 - **🗜️ Instalasi Dasar**
@@ -652,7 +652,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
  
   - Partisi, UEFI, dan GRUB integration
  
-  - Konfigurasi bootloader bersama Arch Linux
+  - [Konfigurasi bootloader bersama Arch Linux][bootloader]
  
 
  
@@ -669,7 +669,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
  
 
   
-### ⚙️ **B. Manajemen Sistem**
+### ⚙️ **[B. Manajemen Sistem][filesystem]**
  
  
 - **🔧 System Control**
@@ -988,6 +988,11 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 > **[By MasBro][bymasbro] | [s.id/gocoding](https://s.id/gocoding)** | **[Daftar Jobs](./jobs/README.md)**
 
 <!-- OPERATING SYSTEM -->
+[os]: ./sistem-operasi/README.md
+[archlinux]: ./sistem-operasi/linux/README.md
+[instalasi]: ./sistem-operasi/linux/archlinux/instalasi/README.md
+[bootloader]: ./sistem-operasi/booting/README.md
+[filesystem]: ./sistem-operasi/linux/archlinux/filesystem/README.md
 [1]: ./sistem-operasi/linux/gnu/bagian-1/README.md
 [2]: ./sistem-operasi/linux/gnu/bagian-2/README.md
 [3]: ./sistem-operasi/linux/gnu/bagian-3/README.md
@@ -1000,6 +1005,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [10]: ./sistem-operasi/linux/archlinux/desktop-environment/window-manager/README.md
 [11]: ./sistem-operasi/linux/archlinux/desktop-environment/README.md
 [docs]: ./sistem-operasi/others/docs/README.md
+
 
 <!-- PROGRAMMER HUB -->
 

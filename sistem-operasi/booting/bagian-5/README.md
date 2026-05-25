@@ -51,8 +51,8 @@ Dengan mengikuti langkah-langkah praktis ini, Anda akan mentransformasi pengetah
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[domain]: ../../../README.md
+[kurikulum]: ../README.md
 [sebelumnya]: ../bagian-4/README.md
 
 <!----------------------------------------------------->
