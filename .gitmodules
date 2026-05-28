@@ -11,11 +11,13 @@
 [submodule "saya/tmoex"]
 	path = saya/tmoex
 	url = https://github.com/independentlearners/tmoex.git
-	branch = master
+	branch = main
+
 [submodule "saya/dartpedia"]
 	path = saya/dartpedia
 	url = https://github.com/independentlearners/dartpedia.git
 	branch = main
+
 [submodule "saya/aplikasi"]
 	path = saya/aplikasi
 	url = https://github.com/independentlearners/aplikasi.git
