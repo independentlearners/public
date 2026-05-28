@@ -654,6 +654,8 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
  
   - [Konfigurasi bootloader bersama Arch Linux][bootloader]
  
+  - [WinPe][winpe]
+ 
 
  
  
@@ -1042,3 +1044,4 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [konsep]: ./programmer/informasi/konsep/README.md
 [daftar]: ./programmer/README.md
 [bymasbro]: ./saya/README.md
+[winpe]: ./sistem-operasi/windows/winpe/README.md
