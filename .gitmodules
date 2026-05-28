@@ -1,24 +1,24 @@
-[submodule "dart"]
-	path = saya/dart
-	url = https://github.com/independentlearners/dart.git
-	branch = main
+[submodule "saya/dart"]
+    path = saya/dart
+    url = git@github.com:independentlearners/dart.git
+    branch = main
 
 [submodule "saya/lua"]
 	path = saya/lua
-	url = https://github.com/independentlearners/lua.git
+	url = git@github.com:independentlearners/lua.git
 	branch = main
 
 [submodule "saya/tmoex"]
 	path = saya/tmoex
-	url = https://github.com/independentlearners/tmoex.git
+	url = git@github.com:independentlearners/tmoex.git
 	branch = main
 
 [submodule "saya/dartpedia"]
 	path = saya/dartpedia
-	url = https://github.com/independentlearners/dartpedia.git
+	url = git@github.com:independentlearners/dartpedia.git
 	branch = main
 
 [submodule "saya/aplikasi"]
 	path = saya/aplikasi
-	url = https://github.com/independentlearners/aplikasi.git
+	url = git@github.com:independentlearners/aplikasi.git
 	branch = main
