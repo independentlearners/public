@@ -100,8 +100,17 @@ sudo mount /dev/nvme0n1p3 /mnt/boot/efi
 **3. Eksekusi Debootstrap & Pembuatan `fstab**`
 Tarik basis sistem `bookworm` dan rekam arsitektur partisinya.
 
+###### Debian 12
 ```bash
+# 
 sudo debootstrap --arch amd64 bookworm /mnt http://deb.debian.org/debian/
+```
+###### Debian 13
+```bash
+sudo debootstrap --arch amd64 trixie /mnt http://deb.debian.org/debian/
+```
+###### Dan Lanjutkan
+```bash
 sudo genfstab -U /mnt | sudo tee -a /mnt/etc/fstab
 
 ```
@@ -130,11 +139,21 @@ sudo mount --bind /dev/pts /mnt/dev/pts
 sudo mount --bind /proc /mnt/proc
 sudo mount --bind /sys /mnt/sys
 sudo mount --bind /run /mnt/run
-sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf
+# Jangan disalin dari arch, sebab Konfigurasinya berbeda
+# sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf
 
 sudo chroot /mnt /bin/bash
 export PATH=$PATH:/usr/sbin:/sbin
 
+# Sebagai ganti dari sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf
+# Gunakan berikut didalam chroot sebelum melakukan update:
+cat > /etc/resolv.conf << EOF
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+EOF
+# Langsung uji hasilnya, jika kedua ini bekerja, Lanjutkan!
+ping -c3 deb.debian.org
+ping -c3 1.1.1.1
 ```
 
 > **Validasi Hasil:**
