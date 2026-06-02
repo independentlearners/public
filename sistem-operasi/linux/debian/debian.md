@@ -100,14 +100,21 @@ sudo mount /dev/nvme0n1p3 /mnt/boot/efi
 
 ```
 
-**3. Jalankan Debootstrap untuk Mengunduh Sistem Dasar Debian**
-Kita akan menginstal Debian versi stabil terbaru (Debian 12 Bookworm):
+**3. Eksekusi Debootstrap & Pembuatan `fstab`**
+Tarik basis sistem `bookworm` dan rekam arsitektur partisinya.
 
+###### Debian 12
 ```bash
 sudo debootstrap --arch amd64 bookworm /mnt http://deb.debian.org/debian/
-
 ```
-
+###### Debian 13
+```bash
+sudo debootstrap --arch amd64 trixie /mnt http://deb.debian.org/debian/
+```
+###### Dan Lanjutkan
+```bash
+sudo genfstab -U /mnt | sudo tee -a /mnt/etc/fstab
+```
 Proses ini akan langsung mengunduh paket-paket dasar minimal (seperti `apt`, `dpkg`, `bash`, dll.) langsung dari mirror resmi Debian ke dalam direktori `/mnt`.
 
 **4. Generate File `/etc/fstab`**
@@ -133,8 +140,9 @@ Karena disini tidak menggunakan `arch-chroot` (yang secara otomatis menangani *m
 Asumsikan partisi Debian minimal Kita saat ini di-mount di direktori `/mnt` pada Arch Linux Kita. Cara ini juga untuk menghindari `E: Can not write log (Is /dev/pts mounted?)`. Jalankan perintah berikut di terminal Arch Linux:
 
 
-```bash
+**1. Bind Mount & Masuk ke Chroot**
 
+```bash
 # BACA INI:
 # Jika mountpoint berada didalam dir /mnt seperti /mnt/debian maka :
 # sudo chroot /mnt/debian /bin/bash dan semua bind juga harus melakukan hal yang sama
@@ -144,20 +152,61 @@ sudo mount --bind /dev /mnt/dev
 sudo mount --bind /dev/pts /mnt/dev/pts
 sudo mount --bind /proc /mnt/proc
 sudo mount --bind /sys /mnt/sys
-sudo mount --bind /run  /mnt/run
-
-# 2. Salin konfigurasi DNS (resolv.conf) dari Arch Linux ke Debian
-# Ini wajib agar lingkungan chroot Kita memiliki koneksi internet untuk mengunduh paket
-sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf
-
-# 3. Masuk ke dalam sistem Debian menggunakan chroot standar
-sudo chroot /mnt /bin/bash
-# 4. Pastikan untuk menjalankan minimal sekali saja dalam chroot
-export PATH=$PATH:/usr/sbin:/sbin
-
+sudo mount --bind /run /mnt/run
 ```
+Jangan menyalin Konfigurasi berikut dari arch, sebab Konfigurasinya berbeda: `sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf`.
+Sebagai gantinya, gunakan cara berikut didalam chroot sebelum melakukan update:
 
+##### Masuk ke chroot
+```bash
+sudo chroot /mnt /bin/bash
+export PATH=$PATH:/usr/sbin:/sbin
+```
 *Sekarang Kita berada di dalam terminal Debian dasar.*
+##### Jalankan berikut
+```bash
+cat > /etc/resolv.conf << EOF
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+EOF
+# Langsung uji hasilnya, jika kedua ini bekerja, Lanjutkan!
+ping -c3 deb.debian.org
+ping -c3 1.1.1.1
+```
+Output pengujiannya mungkin mirip seperti ini:
+```bash
+
+root@archlinux:/# ping -c3 deb.debian.org
+ping -c3 1.1.1.1
+
+PING deb.debian.org (2a04:4e42::644) 56 data bytes
+64 bytes from 2a04:4e42::644: icmp_seq=1 ttl=54 time=274 ms
+64 bytes from 2a04:4e42::644: icmp_seq=2 ttl=54 time=299 ms
+64 bytes from 2a04:4e42::644: icmp_seq=3 ttl=54 time=322 ms
+
+--- deb.debian.org ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+rtt min/avg/max/mdev = 273.673/298.128/322.098/19.772 ms
+PING 1.1.1.1 (1.1.1.1) 56(84) bytes of data.
+64 bytes from 1.1.1.1: icmp_seq=1 ttl=55 time=31.2 ms
+64 bytes from 1.1.1.1: icmp_seq=2 ttl=55 time=26.5 ms
+64 bytes from 1.1.1.1: icmp_seq=3 ttl=55 time=30.8 ms
+
+--- 1.1.1.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+rtt min/avg/max/mdev = 26.494/29.491/31.161/2.124 ms
+root@archlinux:/#
+```
+> **Validasi Hasil:**
+> ```bash
+> echo $PATH
+> cat /etc/debian_version
+> ```
+> *PATH harus memuat `/usr/sbin`, dan versi Debian (`13.x`) harus tampil, menandakan Anda sudah berada di dalam lingkungan terisolasi:*
+>```
+>/usr/local/sbin:/usr/local/bin:/usr/bin
+>13.5
+>```
 
 Laptop seperti Asus Vivobook membutuhkan firmware *non-free* agar kartu Wi-Fi dan Bluetooth (seperti Intel atau Atheros) dapat dikenali saat sistem melakukan proses booting mandiri.
 
@@ -166,12 +215,15 @@ Buka atau buat file `/etc/apt/sources.list`:
 
 ```bash
 nano /etc/apt/sources.list
-
 ```
 
-Masukkan baris repositori berikut (termasuk komponen `non-free-firmware` untuk driver hardware laptop Asus Vivobook Kita):
+Siapkan repositori agar menyertakan paket *non-free-firmware* untuk dukungan optimal perangkat keras driver hardware. Pastikan bahwa repositori sesuai dengan versi debianya. Jika menggunakan `nano` simpan dengan (Ctrl+O, Enter) dan keluar (Ctrl+X).
+Atau salin tempel berikut:
 
-```text
+##### Repositori untuk versi Debian 12
+
+```bash
+cat << 'EOF' > /etc/apt/sources.list
 deb http://deb.debian.org/debian/ bookworm main contrib non-free non-free-firmware
 deb-src http://deb.debian.org/debian/ bookworm main contrib non-free non-free-firmware
 
@@ -180,10 +232,42 @@ deb-src http://security.debian.org/debian-security bookworm-security main contri
 
 deb http://deb.debian.org/debian/ bookworm-updates main contrib non-free non-free-firmware
 deb-src http://deb.debian.org/debian/ bookworm-updates main contrib non-free non-free-firmware
-
+EOF
 ```
 
-Simpan (Ctrl+O, Enter) dan keluar (Ctrl+X).
+##### Repositori untuk versi Debian 13
+
+```bash
+cat << 'EOF' > /etc/apt/sources.list
+deb http://deb.debian.org/debian trixie main contrib non-free non-free-firmware
+
+deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+
+deb http://deb.debian.org/debian trixie-updates main contrib non-free non-free-firmware
+EOF
+```
+##### Periksa hasil
+```bash
+cat /etc/apt/sources.list
+```
+Output akan menunjukan daftar repo diatas
+```bash
+cat /etc/os-release
+```
+Output mungkin seperti ini
+```bash
+PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+VERSION_CODENAME=trixie
+DEBIAN_VERSION_FULL=13.5
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+```
+Lakukan instalasi paket komprehensif, kernel, perkakas jaringan (`iwd`), Bluetooth (`bluez`), dan editor teks modern berbasis terminal (`nvim`, `helix` via binari nanti, atau perkakas manajemen seperti `zsh` dan `yazi`).
 
 **2. Update & Install Kernel, Firmware, serta peralatan dan Konfigurasi Jaringan Berbasis `iwd` (`iwctl`)**
 Untuk membuat Debian minimal tetap ringan tanpa perlu memasang manajer jaringan besar (seperti `NetworkManager` atau `dhcpcd`), kita akan memanfaatkan **fitur DHCP internal bawaan `iwd`**.
@@ -200,8 +284,8 @@ Untuk membuat Debian minimal tetap ringan tanpa perlu memasang manajer jaringan 
   # Perbarui basis data paket Debian Kita di dalam chroot
   apt update
   apt install linux-image-amd64 firmware-linux systemd-sysv \
-  network-manager systemd-resolved locales sudo nano yazi nvim git iwd bat gdu zsh btop \
-  dbus firmware-iwlwifi firmware-linux-nonfree -y
+  network-manager systemd-resolved locales sudo nano neovim git iwd bat gdu zsh btop \
+  dbus firmware-iwlwifi firmware-linux-nonfree bluez bluez-tools -y
 
   dpkg -l | grep linux-image
   # output:
@@ -214,7 +298,7 @@ Untuk membuat Debian minimal tetap ringan tanpa perlu memasang manajer jaringan 
  >  - Buat atau edit file konfigurasi utama `iwd` agar ia otomatis meminta alamat IP (DHCP) setelah Kita terhubung ke Wi-Fi via `iwctl`:
  >  ```bash
  >  mkdir -p /etc/iwd
- >  nano /etc/iwd/main.conf
+ >  nvim /etc/iwd/main.conf
  >  ```
  >
  >
@@ -225,6 +309,19 @@ Untuk membuat Debian minimal tetap ringan tanpa perlu memasang manajer jaringan 
  >  ```
  >  *Simpan file dengan menekan `Ctrl+O`, `Enter`, lalu keluar dengan `Ctrl+X`.*
 
+   - Atau jalankan berikut langsung:
+
+   ```bash
+    mkdir -p /etc/iwd
+    cat << 'EOF' > /etc/iwd/main.conf
+    [General]
+    EnableNetworkConfiguration=true
+    EOF
+
+    systemctl enable iwd dbus systemd-networkd systemd-resolved bluetooth
+    ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+   ```
   - 3. **Aktifkan Layanan Jaringan:**
   Aktifkan layanan agar langsung berjalan otomatis saat Debian di-boot:
 
@@ -233,33 +330,15 @@ Untuk membuat Debian minimal tetap ringan tanpa perlu memasang manajer jaringan 
 
 
   ```bash
-  systemctl enable iwd
-  systemctl enable dbus
-  systemctl enable systemd-networkd
-  systemctl enable systemd-resolved 
+  systemctl enable iwd dbus systemd-networkd systemd-resolved bluetooth
   ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 
   # Uji hasil:
-  ping 1.1.1.1
-  ping google.com
+  ping -c3 1.1.1.1
+  ping -c3 google.com
   ```
 
 ---
-
-##### Langkah 4: Instalasi dan Konfigurasi Bluetooth
-
-  - 1. **Instal paket Bluetooth resmi (`bluez`) dan perkakas CLI-nya:**
-  ```bash
-  apt install bluez bluez-tools
-  
-  ```
-
-
- - 2. **Aktifkan Layanan Bluetooth:**
-  ```bash
-  systemctl enable bluetooth
-  
-  ```
 
 **3. Konfigurasi Dasar Sistem (Hostname, Locale, & Password Root)**
 
@@ -342,7 +421,34 @@ Cek juga:
 ls /usr/sbin/useradd
 ls /usr/bin/passwd
 ```
-
+<!---->
+<!-- /usr/local/sbin:/usr/local/bin:/usr/bin -->
+<!-- root@archlinux:/# which useradd -->
+<!-- root@archlinux:/# echo $PATH -->
+<!-- /usr/local/sbin:/usr/local/bin:/usr/bin -->
+<!-- root@archlinux:/# export PATH=$PATH:/usr/sbin:/sbin -->
+<!-- root@archlinux:/# which useradd -->
+<!-- /usr/sbin/useradd -->
+<!-- root@archlinux:/# useradd -m -G sudo -s /bin/bash user -->
+<!-- root@archlinux:/# passwd user -->
+<!-- New password: -->
+<!-- Retype new password: -->
+<!-- passwd: password updated successfully -->
+<!-- root@archlinux:/# dpkg -S $(which passwd) -->
+<!-- passwd: /usr/bin/passwd -->
+<!-- root@archlinux:/# dpkg -l passwd -->
+<!-- Desired=Unknown/Install/Remove/Purge/Hold -->
+<!-- | Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend -->
+<!-- |/ Err?=(none)/Reinst-required (Status,Err: uppercase=bad) -->
+<!-- ||/ Name           Version      Architecture Description -->
+<!-- +++-==============-============-============-============================================= -->
+<!-- ii  passwd         1:4.17.4-2   amd64        change and administer password and group data -->
+<!-- root@archlinux:/# ls /usr/sbin/useradd -->
+<!-- ls /usr/bin/passwd -->
+<!-- /usr/sbin/useradd -->
+<!-- /usr/bin/passwd -->
+<!-- root@archlinux:/# -->
+<!---->
 ---
 
 ###### Perbedaan dengan Arch
@@ -616,6 +722,7 @@ Sesuai dengan skenario Kita, **Manjaro memegang kendali bootloader utama di `/de
 
 1. Silakan **Reboot** laptop Kita dan masuk ke sistem **Manjaro** Kita seperti biasa.
 2. Setelah masuk ke terminal Manjaro, pastikan fitur `os-prober` aktif agar GRUB Manjaro dapat mendeteksi distro lain (Debian). Buka file konfigurasi GRUB di Manjaro:
+3. Jika ingin membuka Manjaro melalui terminal archlinux tanpa perlu masuk ke Manjaro. Kunjungi [disini][2]
 ```bash
 sudo nano /etc/default/grub
 
@@ -734,4 +841,4 @@ maka konfigurasi GRUB sudah benar.
 <!-- Daftar Tautan -->
 
 [1]: ./satu.md
-
+[2]: ./manjaroluks.md

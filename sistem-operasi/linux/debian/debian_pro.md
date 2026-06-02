@@ -93,16 +93,13 @@ sudo mount /dev/nvme0n1p3 /mnt/boot/efi
 > findmnt -l | grep /mnt
 > 
 > ```
-> 
-> 
 > *Pastikan `/mnt` dan `/mnt/boot/efi` menunjuk ke partisi yang benar.*
 
-**3. Eksekusi Debootstrap & Pembuatan `fstab**`
+**3. Eksekusi Debootstrap & Pembuatan `fstab`**
 Tarik basis sistem `bookworm` dan rekam arsitektur partisinya.
 
 ###### Debian 12
 ```bash
-# 
 sudo debootstrap --arch amd64 bookworm /mnt http://deb.debian.org/debian/
 ```
 ###### Debian 13
@@ -139,14 +136,17 @@ sudo mount --bind /dev/pts /mnt/dev/pts
 sudo mount --bind /proc /mnt/proc
 sudo mount --bind /sys /mnt/sys
 sudo mount --bind /run /mnt/run
-# Jangan disalin dari arch, sebab Konfigurasinya berbeda
-# sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf
+```
+Jangan menyalin Konfigurasi berikut dari arch, sebab Konfigurasinya berbeda: `sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf`.
+Sebagai gantinya, gunakan cara berikut didalam chroot sebelum melakukan update:
 
+##### Masuk ke chroot
+```bash
 sudo chroot /mnt /bin/bash
 export PATH=$PATH:/usr/sbin:/sbin
-
-# Sebagai ganti dari sudo cp -L /etc/resolv.conf /mnt/etc/resolv.conf
-# Gunakan berikut didalam chroot sebelum melakukan update:
+```
+##### Jalankan berikut
+```bash
 cat > /etc/resolv.conf << EOF
 nameserver 1.1.1.1
 nameserver 8.8.8.8
@@ -155,19 +155,45 @@ EOF
 ping -c3 deb.debian.org
 ping -c3 1.1.1.1
 ```
+Output pengujiannya mungkin mirip seperti ini:
+```bash
 
+root@archlinux:/# ping -c3 deb.debian.org
+ping -c3 1.1.1.1
+
+PING deb.debian.org (2a04:4e42::644) 56 data bytes
+64 bytes from 2a04:4e42::644: icmp_seq=1 ttl=54 time=274 ms
+64 bytes from 2a04:4e42::644: icmp_seq=2 ttl=54 time=299 ms
+64 bytes from 2a04:4e42::644: icmp_seq=3 ttl=54 time=322 ms
+
+--- deb.debian.org ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+rtt min/avg/max/mdev = 273.673/298.128/322.098/19.772 ms
+PING 1.1.1.1 (1.1.1.1) 56(84) bytes of data.
+64 bytes from 1.1.1.1: icmp_seq=1 ttl=55 time=31.2 ms
+64 bytes from 1.1.1.1: icmp_seq=2 ttl=55 time=26.5 ms
+64 bytes from 1.1.1.1: icmp_seq=3 ttl=55 time=30.8 ms
+
+--- 1.1.1.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+rtt min/avg/max/mdev = 26.494/29.491/31.161/2.124 ms
+root@archlinux:/#
+```
 > **Validasi Hasil:**
 > ```bash
 > echo $PATH
 > cat /etc/debian_version
-> 
 > ```
-> 
-> 
-> *PATH harus memuat `/usr/sbin`, dan versi Debian (`12.x`) harus tampil, menandakan Anda sudah berada di dalam lingkungan terisolasi.*
+> *PATH harus memuat `/usr/sbin`, dan versi Debian (`13.x`) harus tampil, menandakan Anda sudah berada di dalam lingkungan terisolasi:*
+>```
+>/usr/local/sbin:/usr/local/bin:/usr/bin
+>13.5
+>```
 
 **2. Penyatuan Repositori & Instalasi Utilitas Fundamental**
-Siapkan repositori agar menyertakan paket *non-free-firmware* untuk dukungan optimal kerasan Anda.
+Siapkan repositori agar menyertakan paket *non-free-firmware* untuk dukungan optimal kerasan Anda. Pastikan bahwa repositori sesuai dengan versi debianya.
+
+##### Repositori untuk versi Debian 12
 
 ```bash
 cat << 'EOF' > /etc/apt/sources.list
@@ -183,13 +209,27 @@ EOF
 
 ```
 
+##### Repositori untuk versi Debian 13
+
+```bash
+cat << 'EOF' > /etc/apt/sources.list
+deb http://deb.debian.org/debian trixie main contrib non-free non-free-firmware
+
+deb http://security.debian.org/debian-security trixie-security main contrib non-free non-free-firmware
+
+deb http://deb.debian.org/debian trixie-updates main contrib non-free non-free-firmware
+EOF
+
+```
+
+
 Lakukan instalasi paket komprehensif, kernel, perkakas jaringan (`iwd`), Bluetooth (`bluez`), dan editor teks modern berbasis terminal (`nvim`, `helix` via binari nanti, atau perkakas manajemen seperti `zsh` dan `yazi`).
 
 ```bash
 apt update
 apt install -y linux-image-amd64 firmware-linux firmware-iwlwifi firmware-linux-nonfree \
 systemd-sysv iwd dbus systemd-resolved bluez bluez-tools \
-locales sudo nano yazi nvim git bat gdu zsh btop passwd curl wget
+locales sudo nano yazi nvim git bat gdu zsh btop passwd curl wget tmux cmus
 
 ```
 
