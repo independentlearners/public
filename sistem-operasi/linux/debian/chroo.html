@@ -1,0 +1,153 @@
+
+<h2 class="sr-only">Perbandingan menyeluruh arch-chroot versus sudo chroot untuk instalasi Debian dari terminal Arch Linux, mencakup mekanisme kerja, risiko busy, dan rekomendasi</h2>
+
+<div style="padding:1rem 0 0;">
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+
+  <div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <i class="ti ti-terminal-2" style="font-size:18px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+      <span style="font-size:13px;font-weight:500;color:var(--color-text-primary);font-family:var(--font-mono);">arch-chroot</span>
+    </div>
+    <div style="font-size:11px;color:var(--color-text-secondary);font-family:var(--font-mono);margin-bottom:10px;">arch-chroot /mnt/debian /bin/bash</div>
+    <span style="font-size:11px;padding:2px 8px;border-radius:100px;background:var(--color-background-warning);color:var(--color-text-warning);">Dirancang untuk Arch → Arch</span>
+  </div>
+
+  <div style="background:var(--color-background-primary);border:2px solid var(--color-border-success);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+      <span style="font-size:11px;background:var(--color-background-success);color:var(--color-text-success);padding:2px 8px;border-radius:100px;">Direkomendasikan</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;margin-top:4px;">
+      <i class="ti ti-terminal" style="font-size:18px;color:var(--color-text-secondary);" aria-hidden="true"></i>
+      <span style="font-size:13px;font-weight:500;color:var(--color-text-primary);font-family:var(--font-mono);">sudo chroot</span>
+    </div>
+    <div style="font-size:11px;color:var(--color-text-secondary);font-family:var(--font-mono);margin-bottom:10px;">sudo chroot /mnt/debian /bin/bash --login</div>
+    <span style="font-size:11px;padding:2px 8px;border-radius:100px;background:var(--color-background-success);color:var(--color-text-success);">Stabil untuk cross-distro</span>
+  </div>
+
+</div>
+
+<table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;">
+  <colgroup><col style="width:28%"><col style="width:36%"><col style="width:36%"></colgroup>
+  <thead>
+    <tr style="border-bottom:0.5px solid var(--color-border-primary);">
+      <th style="text-align:left;padding:0 8px 8px 0;font-size:11px;font-weight:500;color:var(--color-text-secondary);">Aspek</th>
+      <th style="text-align:left;padding:0 8px 8px;font-size:11px;font-weight:500;color:var(--color-text-secondary);">arch-chroot</th>
+      <th style="text-align:left;padding:0 0 8px 8px;font-size:11px;font-weight:500;color:var(--color-text-secondary);">sudo chroot</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Mekanisme internal</td>
+      <td style="padding:10px 8px;color:var(--color-text-secondary);">Menggunakan <span style="font-family:var(--font-mono);font-size:11px;">unshare -m</span> untuk membuat mount namespace terpisah, lalu bind mount otomatis, lalu masuk chroot</td>
+      <td style="padding:10px 0 10px 8px;color:var(--color-text-secondary);">Murni masuk ke root baru tanpa namespace tambahan. Bind mounts dikelola secara eksplisit oleh pengguna sebelum perintah dijalankan</td>
+    </tr>
+    <tr style="background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Bind mounts</td>
+      <td style="padding:10px 8px;color:var(--color-text-secondary);">Otomatis: <span style="font-family:var(--font-mono);font-size:11px;">/dev /dev/pts /proc /sys /run</span>. Namun karena namespace, visibility mount tidak selalu transparan dari host</td>
+      <td style="padding:10px 0 10px 8px;color:var(--color-text-secondary);">Manual dan eksplisit. Kamu tahu persis apa yang di-mount, urutan pemasangan, dan dapat verifikasi kapanpun dengan <span style="font-family:var(--font-mono);font-size:11px;">mount | grep /mnt/debian</span></td>
+    </tr>
+    <tr style="border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Perilaku saat exit</td>
+      <td style="padding:10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-danger);color:var(--color-text-danger);">Berbahaya</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Script cleanup berjalan otomatis untuk unmount semua bind. Jika ada proses Debian yang masih aktif, unmount gagal dan meninggalkan ghost mount</div>
+      </td>
+      <td style="padding:10px 0 10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-success);color:var(--color-text-success);">Aman & terkontrol</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Exit shell tidak memicu unmount apapun. Kamu yang menentukan kapan dan urutan unmount secara manual</div>
+      </td>
+    </tr>
+    <tr style="background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Risiko "target is busy"</td>
+      <td style="padding:10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-danger);color:var(--color-text-danger);">Tinggi</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Muncul ketika proses Debian (D-Bus socket, background daemon, shell yang tertinggal) masih aktif saat arch-chroot mencoba cleanup. Hasilnya: <span style="font-family:var(--font-mono);font-size:11px;">umount: /mnt/debian/dev: target is busy</span></div>
+      </td>
+      <td style="padding:10px 0 10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-success);color:var(--color-text-success);">Rendah</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Jika ada proses busy, kamu bisa identifikasi dan tangani terlebih dahulu dengan <span style="font-family:var(--font-mono);font-size:11px;">fuser -km /mnt/debian</span> sebelum memulai unmount</div>
+      </td>
+    </tr>
+    <tr style="border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Risiko korupsi filesystem</td>
+      <td style="padding:10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-danger);color:var(--color-text-danger);">Sedang–tinggi</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Lazy unmount yang gagal sebagian dapat meninggalkan filesystem Debian dalam kondisi tidak konsisten, terutama jika terjadi di tengah operasi apt atau dpkg</div>
+      </td>
+      <td style="padding:10px 0 10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-success);color:var(--color-text-success);">Rendah</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Karena unmount dilakukan manual setelah semua operasi selesai dan terverifikasi, risiko filesystem korup jauh lebih kecil</div>
+      </td>
+    </tr>
+    <tr style="background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Konteks desain asli</td>
+      <td style="padding:10px 8px;color:var(--color-text-secondary);">Dibuat untuk instalasi Arch ke Arch. Mengasumsikan environment target adalah Arch dan menggunakan konvensi path serta init system yang sama</td>
+      <td style="padding:10px 0 10px 8px;color:var(--color-text-secondary);">Perintah POSIX standar. Tidak ada asumsi tentang distro target. Bekerja identik untuk Arch → Debian, Ubuntu, Void, atau distro apapun</td>
+    </tr>
+    <tr style="border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Debugging saat gagal</td>
+      <td style="padding:10px 8px;color:var(--color-text-secondary);">Sulit. Ghost mount tersembunyi dalam namespace. Sering harus reboot host Arch untuk bersih-bersih, yang sendiri berisiko jika Debian sedang dalam state tidak konsisten</td>
+      <td style="padding:10px 0 10px 8px;color:var(--color-text-secondary);">Mudah. Semua mount terlihat jelas di <span style="font-family:var(--font-mono);font-size:11px;">mount | grep debian</span>. Proses yang menggunakan mount teridentifikasi via <span style="font-family:var(--font-mono);font-size:11px;">fuser -mv /mnt/debian</span></td>
+    </tr>
+    <tr style="background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Kesederhanaan perintah</td>
+      <td style="padding:10px 8px;color:var(--color-text-secondary);">Satu perintah. Lebih cepat dan terasa praktis di permukaan, tetapi menyembunyikan kompleksitas yang bisa meledak saat exit</td>
+      <td style="padding:10px 0 10px 8px;color:var(--color-text-secondary);">Memerlukan 5–7 perintah mount sebelum masuk. Lebih panjang, tetapi setiap langkah transparan dan dapat diverifikasi</td>
+    </tr>
+    <tr style="vertical-align:top;">
+      <td style="padding:10px 8px 10px 0;font-weight:500;color:var(--color-text-primary);">Rekomendasi untuk Arch → Debian</td>
+      <td style="padding:10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-danger);color:var(--color-text-danger);">Hindari</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Tool ini bukan untuk skenario ini. Risikonya nyata dan konsekuensinya sulit dipulihkan tanpa reboot</div>
+      </td>
+      <td style="padding:10px 0 10px 8px;">
+        <span style="font-size:11px;padding:2px 7px;border-radius:100px;background:var(--color-background-success);color:var(--color-text-success);">Gunakan ini</span>
+        <div style="margin-top:6px;color:var(--color-text-secondary);">Kontrol penuh, prediktif, tidak ada kejutan saat exit. Standar yang tepat untuk lintas distro</div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="margin-top:20px;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:1rem 1.25rem;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    <i class="ti ti-alert-triangle" style="font-size:16px;color:var(--color-text-warning);" aria-hidden="true"></i>
+    <span style="font-size:12px;font-weight:500;color:var(--color-text-primary);">Anatomi masalah "target is busy" pada arch-chroot</span>
+  </div>
+  <div style="font-size:12px;color:var(--color-text-secondary);line-height:1.7;">
+    Ketika kamu mengetik <span style="font-family:var(--font-mono);font-size:11px;">exit</span> dari dalam arch-chroot, script cleanup berjalan otomatis mencoba unmount semua bind mount. Jika environment Debian pernah menjalankan daemon (D-Bus, udev, systemd unit), atau masih ada file descriptor yang terbuka, proses unmount gagal dengan pesan <span style="font-family:var(--font-mono);font-size:11px;">target is busy</span>. arch-chroot kemudian melakukan <span style="font-family:var(--font-mono);font-size:11px;">umount -l</span> (lazy unmount) sebagai fallback — ini mendetach mount point dari filesystem hierarchy, tetapi mount tetap aktif untuk proses yang masih menggunakannya. Hasilnya adalah "ghost mount" yang tidak terlihat tapi masih ada: perintah <span style="font-family:var(--font-mono);font-size:11px;">umount /mnt/debian/dev</span> berikutnya gagal, sesi baru <span style="font-family:var(--font-mono);font-size:11px;">arch-chroot</span> menumpuk mount baru di atas yang lama, dan jika ini terjadi di tengah operasi <span style="font-family:var(--font-mono);font-size:11px;">apt install</span> atau <span style="font-family:var(--font-mono);font-size:11px;">dpkg</span>, database paket Debian bisa korup.
+  </div>
+</div>
+
+<div style="margin-top:16px;background:var(--color-background-primary);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+    <i class="ti ti-checklist" style="font-size:16px;color:var(--color-text-success);" aria-hidden="true"></i>
+    <span style="font-size:12px;font-weight:500;color:var(--color-text-primary);">Template sudo chroot yang benar untuk instalasi Debian dari Arch</span>
+  </div>
+  <div style="font-size:11px;font-family:var(--font-mono);color:var(--color-text-secondary);line-height:1.9;">
+    <div style="color:var(--color-text-secondary);margin-bottom:2px;"># --- masuk ---</div>
+    <div>mount --bind /dev &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/mnt/debian/dev</div>
+    <div>mount --bind /dev/pts /mnt/debian/dev/pts</div>
+    <div>mount --bind /proc &nbsp;&nbsp;&nbsp;&nbsp;/mnt/debian/proc</div>
+    <div>mount --bind /sys &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/mnt/debian/sys</div>
+    <div>mount --bind /run &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/mnt/debian/run</div>
+    <div style="margin-top:4px;">cp /etc/resolv.conf /mnt/debian/etc/resolv.conf</div>
+    <div>sudo chroot /mnt/debian /bin/bash --login</div>
+    <div style="margin-top:8px;color:var(--color-text-secondary);"># --- selesai, keluar dari chroot ---</div>
+    <div>exit</div>
+    <div style="margin-top:4px;color:var(--color-text-secondary);"># --- verifikasi tidak ada proses aktif ---</div>
+    <div>fuser -mv /mnt/debian 2>/dev/null</div>
+    <div style="margin-top:4px;color:var(--color-text-secondary);"># --- unmount urutan terbalik ---</div>
+    <div>umount /mnt/debian/run</div>
+    <div>umount /mnt/debian/sys</div>
+    <div>umount /mnt/debian/proc</div>
+    <div>umount /mnt/debian/dev/pts</div>
+    <div>umount /mnt/debian/dev</div>
+    <div>umount /mnt/debian</div>
+  </div>
+</div>
+
+<button style="margin-top:16px;font-size:12px;" onclick="sendPrompt('Jelaskan cara recovery jika sudah terlanjur terjadi ghost mount akibat arch-chroot busy saat instalasi Debian dari Arch')">Cara recovery jika sudah terjadi ghost mount ↗</button>
+
+</div>

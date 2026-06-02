@@ -1,0 +1,241 @@
+<h2 class="sr-only">Tabel 28 masalah instalasi Debian dari terminal berbasis Arch Linux, diurutkan dari paling umum ke paling jarang, dengan filter interaktif berdasarkan frekuensi dan kategori</h2>
+
+<div style="padding:1rem 0 0;">
+
+<input type="text" id="srch" placeholder="Cari masalah, gejala, atau solusi..." style="width:100%;box-sizing:border-box;font-size:13px;margin-bottom:12px;" oninput="render()">
+
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px;">
+  <span style="font-size:11px;color:var(--color-text-secondary);white-space:nowrap;font-weight:500;">Frekuensi</span>
+  <div id="freq-btns" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px;">
+  <span style="font-size:11px;color:var(--color-text-secondary);white-space:nowrap;font-weight:500;">Kategori</span>
+  <div id="cat-btns" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+</div>
+
+<div id="stats" style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px;"></div>
+
+<div style="overflow-x:auto;">
+  <table id="tbl" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+    <colgroup>
+      <col style="width:28px">
+      <col>
+      <col style="width:13%">
+      <col style="width:17%">
+    </colgroup>
+    <thead>
+      <tr style="border-bottom:0.5px solid var(--color-border-primary);">
+        <th style="text-align:left;padding:0 8px 8px 0;font-size:11px;font-weight:500;color:var(--color-text-secondary);">#</th>
+        <th style="text-align:left;padding:0 8px 8px;font-size:11px;font-weight:500;color:var(--color-text-secondary);">Masalah, gejala & solusi</th>
+        <th style="text-align:left;padding:0 8px 8px;font-size:11px;font-weight:500;color:var(--color-text-secondary);">Kategori</th>
+        <th style="text-align:left;padding:0 0 8px 8px;font-size:11px;font-weight:500;color:var(--color-text-secondary);">Frekuensi</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div id="empty" style="display:none;text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:13px;">
+  <i class="ti ti-search-off" style="font-size:22px;display:block;margin-bottom:6px;" aria-hidden="true"></i>
+  Tidak ada hasil yang cocok.
+</div>
+
+<div style="margin-top:16px;padding-top:12px;border-top:0.5px solid var(--color-border-tertiary);display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  <span style="font-size:11px;color:var(--color-text-secondary);font-weight:500;">Legenda:</span>
+  <span id="leg-su" style="font-size:11px;padding:2px 8px;border-radius:100px;"></span>
+  <span id="leg-u" style="font-size:11px;padding:2px 8px;border-radius:100px;"></span>
+  <span id="leg-cu" style="font-size:11px;padding:2px 8px;border-radius:100px;"></span>
+  <span id="leg-j" style="font-size:11px;padding:2px 8px;border-radius:100px;"></span>
+  <span id="leg-sj" style="font-size:11px;padding:2px 8px;border-radius:100px;"></span>
+</div>
+
+</div>
+
+<script>
+const FM=[
+  {v:'all',l:'Semua'},
+  {v:'sangat-umum',l:'Sangat umum'},
+  {v:'umum',l:'Umum'},
+  {v:'cukup-umum',l:'Cukup umum'},
+  {v:'jarang',l:'Jarang'},
+  {v:'sangat-jarang',l:'Sangat jarang'}
+];
+const CM=[
+  {v:'all',l:'Semua'},
+  {v:'chroot',l:'Chroot'},
+  {v:'path',l:'PATH / env'},
+  {v:'network',l:'Jaringan'},
+  {v:'bootloader',l:'Bootloader'},
+  {v:'paket',l:'Paket'},
+  {v:'sistem',l:'Sistem'}
+];
+const DATA=[
+  {no:1,m:"/dev/pts tidak di-bind mount",g:"sudo, passwd, su gagal: 'no tty present' atau 'must be run from a terminal'",k:'chroot',f:'sangat-umum',s:"Tambahkan: mount --bind /dev/pts /mnt/debian/dev/pts sebelum masuk chroot"},
+  {no:2,m:"PATH tidak memuat /usr/sbin dan /sbin",g:"useradd, grub-install, fsck: command not found meski paket sudah terpasang",k:'path',f:'sangat-umum',s:"export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin, atau gunakan bash --login"},
+  {no:3,m:"resolv.conf tidak disalin ke chroot",g:"apt update gagal: Temporary failure resolving 'deb.debian.org'",k:'network',f:'sangat-umum',s:"cp /etc/resolv.conf /mnt/debian/etc/resolv.conf sebelum masuk chroot"},
+  {no:4,m:"Bash masuk tanpa flag --login",g:"/etc/profile tidak ter-source; PATH, locale, dan variabel sistem tidak terkonfigurasi otomatis",k:'path',f:'sangat-umum',s:"Gunakan: chroot /mnt/debian /bin/bash --login atau langsung pakai arch-chroot /mnt/debian"},
+  {no:5,m:"Paket GRUB belum terpasang",g:"grub-install: command not found meski PATH sudah benar",k:'bootloader',f:'sangat-umum',s:"apt install grub-efi-amd64 (UEFI) atau apt install grub-pc (BIOS/Legacy)"},
+  {no:6,m:"/sys/firmware/efi/efivars tidak di-bind",g:"grub-install gagal: EFI variables not supported atau Cannot set EFI variable Boot",k:'bootloader',f:'umum',s:"mount --bind /sys/firmware/efi/efivars /mnt/debian/sys/firmware/efi/efivars — hanya jika sistem UEFI"},
+  {no:7,m:"Environment Arch ikut terbawa ke dalam chroot",g:"Binary Arch dieksekusi bukan binary Debian; LD_LIBRARY_PATH menunjuk ke path Arch",k:'path',f:'umum',s:"Gunakan env -i HOME=/root TERM=$TERM PATH=... chroot /mnt/debian, atau arch-chroot"},
+  {no:8,m:"Locale belum dikonfigurasi",g:"Setiap apt menampilkan: cannot set LC_ALL to default locale atau perl: warning: Setting locale failed",k:'sistem',f:'umum',s:"dpkg-reconfigure locales di dalam chroot; pilih id_ID.UTF-8 atau en_US.UTF-8"},
+  {no:9,m:"debootstrap second stage belum dijalankan",g:"Hampir semua binary menampilkan command not found; direktori /usr/bin terlihat kosong atau berisi file .dpkg-tmp",k:'paket',f:'umum',s:"Di dalam chroot: /debootstrap/debootstrap --second-stage"},
+  {no:10,m:"/etc/fstab tidak dikonfigurasi",g:"Sistem bisa boot ke GRUB tapi root filesystem gagal mount; kernel panic atau mode read-only",k:'sistem',f:'umum',s:"Tambahkan entry root, swap, dan EFI ke /etc/fstab menggunakan UUID dari output blkid"},
+  {no:11,m:"dpkg lock tidak terhapus setelah proses terputus",g:"E: dpkg was interrupted atau dpkg frontend lock could not be obtained",k:'paket',f:'umum',s:"rm /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock; dpkg --configure -a"},
+  {no:12,m:"Kernel Linux Debian belum terpasang",g:"GRUB tidak menemukan vmlinuz; sistem boot ke grub rescue atau blank screen",k:'bootloader',f:'cukup-umum',s:"apt install linux-image-amd64 di dalam chroot"},
+  {no:13,m:"Hostname belum diset",g:"Prompt menampilkan hostname generik; layanan tertentu menolak start tanpa hostname valid",k:'sistem',f:'cukup-umum',s:"echo 'nama-host' > /etc/hostname; sesuaikan juga /etc/hosts"},
+  {no:14,m:"Network interface tidak dikonfigurasi",g:"Setelah reboot tidak ada koneksi internet; ip addr hanya tampilkan loopback (lo)",k:'network',f:'cukup-umum',s:"Konfigurasi /etc/network/interfaces atau: apt install network-manager; systemctl enable NetworkManager"},
+  {no:15,m:"initramfs tidak di-update sebelum reboot",g:"Boot gagal setelah perubahan kernel atau konfigurasi; initrd tidak terbaca atau usang",k:'bootloader',f:'cukup-umum',s:"update-initramfs -u -k all di dalam chroot sebelum keluar dan reboot"},
+  {no:16,m:"GRUB target tidak sesuai mode boot sistem",g:"grub-install error: the target platform does not support EFI atau sebaliknya",k:'bootloader',f:'cukup-umum',s:"Cek mode boot: ls /sys/firmware/efi → gunakan --target=x86_64-efi (UEFI) atau i386-pc (BIOS)"},
+  {no:17,m:"Partisi EFI tidak di-mount sebelum grub-install",g:"grub-install: cannot find EFI directory /boot/efi",k:'bootloader',f:'cukup-umum',s:"mount /dev/sdXY /boot/efi di dalam chroot sebelum menjalankan grub-install"},
+  {no:18,m:"APT sources.list kosong atau tidak dikonfigurasi",g:"apt update: Your list of sources is empty; W: No valid OpenPGP data found",k:'paket',f:'cukup-umum',s:"Edit /etc/apt/sources.list: deb http://deb.debian.org/debian bookworm main contrib non-free"},
+  {no:19,m:"Password root tidak diset di dalam chroot",g:"Login root gagal setelah reboot; akun root terkunci karena tidak ada password",k:'sistem',f:'cukup-umum',s:"Jalankan passwd di dalam chroot sebelum keluar"},
+  {no:20,m:"/etc/mtab bukan symlink ke /proc/mounts",g:"df dan mount menampilkan data tidak akurat; skrip sistem tertentu gagal parsing",k:'chroot',f:'jarang',s:"ln -sf /proc/mounts /etc/mtab di dalam chroot"},
+  {no:21,m:"Timezone tidak dikonfigurasi",g:"Waktu sistem salah; log sistem menggunakan UTC meski diharapkan waktu lokal",k:'sistem',f:'jarang',s:"dpkg-reconfigure tzdata atau: ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime"},
+  {no:22,m:"Swap tidak dikonfigurasi atau tidak aktif",g:"Sistem lambat atau OOM killer aktif pada RAM kecil; swapon -s kosong",k:'sistem',f:'jarang',s:"mkswap /dev/sdXY; swapon /dev/sdXY; tambahkan entry swap ke /etc/fstab"},
+  {no:23,m:"SSH server tidak terpasang",g:"Tidak bisa remote access ke sistem Debian setelah instalasi selesai",k:'network',f:'jarang',s:"apt install openssh-server; systemctl enable ssh di dalam chroot"},
+  {no:24,m:"Binary arsitektur salah tanpa qemu-user-static",g:"Exec format error atau segfault saat menjalankan binary Debian di host Arch lintas arsitektur",k:'chroot',f:'jarang',s:"pacman -S qemu-user-static dari Arch sebelum masuk chroot lintas arsitektur"},
+  {no:25,m:"Secure Boot memblokir GRUB",g:"Sistem boot ke menu UEFI; GRUB tidak dikenali; pesan: Verification Failed: Secureboot",k:'bootloader',f:'sangat-jarang',s:"Nonaktifkan Secure Boot di UEFI firmware, atau setup shim dan MOK Manager untuk signed bootloader"},
+  {no:26,m:"UUID disk berubah akibat format ulang partisi",g:"Boot panic: unable to find root device; GRUB menemukan entry tapi kernel gagal mount root",k:'sistem',f:'sangat-jarang',s:"Update /etc/fstab dengan UUID baru dari blkid; jalankan update-grub lalu reboot"},
+  {no:27,m:"GPG key apt kedaluwarsa",g:"apt update gagal: EXPKEYSIG atau The following signatures were invalid",k:'paket',f:'sangat-jarang',s:"apt install debian-archive-keyring atau apt-key adv --refresh-keys --keyserver keyserver.ubuntu.com"},
+  {no:28,m:"cgroup namespace conflict saat chroot aktif",g:"Proses systemd di dalam chroot bertabrakan dengan host Arch; service gagal start dengan error tak jelas",k:'chroot',f:'sangat-jarang',s:"Gunakan systemd-nspawn sebagai alternatif: systemd-nspawn -D /mnt/debian"}
+];
+
+const FS={
+  'sangat-umum':{bg:'var(--color-background-danger)',tc:'var(--color-text-danger)',lbl:'Sangat umum'},
+  'umum':{bg:'var(--color-background-warning)',tc:'var(--color-text-warning)',lbl:'Umum'},
+  'cukup-umum':{bg:'var(--color-background-info)',tc:'var(--color-text-info)',lbl:'Cukup umum'},
+  'jarang':{bg:'var(--color-background-success)',tc:'var(--color-text-success)',lbl:'Jarang'},
+  'sangat-jarang':{bg:'var(--color-background-secondary)',tc:'var(--color-text-secondary)',lbl:'Sangat jarang'}
+};
+const CL={chroot:'Chroot',path:'PATH / env',network:'Jaringan',bootloader:'Bootloader',paket:'Paket',sistem:'Sistem'};
+
+let aF='all', aC='all';
+
+function mkBtns(id, meta, active, setter) {
+  const el=document.getElementById(id);
+  el.innerHTML='';
+  meta.forEach(m=>{
+    const b=document.createElement('button');
+    b.textContent=m.l;
+    b.style.cssText='font-size:11px;padding:3px 9px;'+(m.v===active?'background:var(--color-background-secondary);':'');
+    b.onclick=()=>{setter(m.v);render();};
+    el.appendChild(b);
+  });
+}
+
+function render(){
+  mkBtns('freq-btns',FM,aF,v=>{aF=v;});
+  mkBtns('cat-btns',CM,aC,v=>{aC=v;});
+  const q=document.getElementById('srch').value.toLowerCase();
+  const out=DATA.filter(d=>{
+    if(aF!=='all'&&d.f!==aF)return false;
+    if(aC!=='all'&&d.k!==aC)return false;
+    if(q&&![d.m,d.g,d.s].join(' ').toLowerCase().includes(q))return false;
+    return true;
+  });
+  document.getElementById('stats').textContent='Menampilkan '+out.length+' dari '+DATA.length+' masalah';
+  const tb=document.getElementById('tbody');
+  tb.innerHTML='';
+  out.forEach((d,i)=>{
+    const fs=FS[d.f];
+    const tr=document.createElement('tr');
+    tr.style.cssText='border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;'+(i%2?'background:var(--color-background-secondary);':'');
+    tr.innerHTML=
+      '<td style="padding:10px 8px 10px 0;font-size:11px;color:var(--color-text-secondary);font-weight:500;">'+d.no+'</td>'+
+      '<td style="padding:10px 8px;">'+
+        '<div style="font-weight:500;font-size:13px;color:var(--color-text-primary);margin-bottom:4px;">'+d.m+'</div>'+
+        '<div style="font-size:11px;color:var(--color-text-secondary);font-family:var(--font-mono);margin-bottom:5px;line-height:1.5;">'+d.g+'</div>'+
+        '<div style="font-size:11px;color:var(--color-text-secondary);line-height:1.5;"><i class="ti ti-arrow-right" style="font-size:11px;vertical-align:-1px;margin-right:2px;" aria-hidden="true"></i>'+d.s+'</div>'+
+      '</td>'+
+      '<td style="padding:10px 8px;"><span style="font-size:11px;padding:2px 8px;border-radius:100px;background:var(--color-background-secondary);color:var(--color-text-secondary);white-space:nowrap;">'+CL[d.k]+'</span></td>'+
+      '<td style="padding:10px 0 10px 8px;"><span style="font-size:11px;padding:2px 8px;border-radius:100px;background:'+fs.bg+';color:'+fs.tc+';white-space:nowrap;">'+fs.lbl+'</span></td>';
+    tb.appendChild(tr);
+  });
+  document.getElementById('empty').style.display=out.length?'none':'block';
+  document.getElementById('tbl').style.display=out.length?'table':'none';
+}
+
+function initLegend(){
+  const pairs=[['leg-su','sangat-umum'],['leg-u','umum'],['leg-cu','cukup-umum'],['leg-j','jarang'],['leg-sj','sangat-jarang']];
+  pairs.forEach(([id,key])=>{
+    const el=document.getElementById(id);
+    const fs=FS[key];
+    el.style.background=fs.bg;
+    el.style.color=fs.tc;
+    el.textContent=fs.lbl;
+  });
+}
+
+initLegend();
+render();
+</script>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringkasan Distribusi Masalah</title>
+</head>
+<body>
+
+    <p>
+        Tabel interaktif sudah siap dengan <strong>28 masalah</strong> yang dapat
+        difilter secara dinamis. Berikut ringkasan distribusinya:
+    </p>
+
+    <ul>
+        <li>
+            <strong>Sangat umum (5 masalah)</strong> —
+            dialami hampir semua pemula:
+            <code>/dev/pts</code> tidak di-bind,
+            PATH salah,
+            DNS tidak bisa resolve,
+            bash tanpa <code>--login</code>,
+            dan paket GRUB belum terpasang.
+        </li>
+
+        <li>
+            <strong>Umum (6 masalah)</strong> —
+            termasuk <code>efivars</code> tidak di-bind untuk UEFI,
+            environment Arch yang ikut terbawa,
+            locale belum dikonfigurasi,
+            dan <code>debootstrap second stage</code> yang terlupakan.
+        </li>
+
+        <li>
+            <strong>Cukup umum (8 masalah)</strong> —
+            kernel belum terpasang,
+            <code>fstab</code> kosong,
+            target GRUB salah,
+            dan beberapa konfigurasi sistem post-install yang terlewat.
+        </li>
+
+        <li>
+            <strong>Jarang (5 masalah)</strong> —
+            timezone,
+            swap,
+            SSH,
+            dan kasus cross-architecture tanpa
+            <code>qemu-user-static</code>.
+        </li>
+
+        <li>
+            <strong>Sangat jarang (4 masalah)</strong> —
+            Secure Boot conflict,
+            UUID berubah,
+            GPG key kedaluwarsa,
+            dan cgroup namespace collision.
+        </li>
+    </ul>
+
+    <p>
+        Gunakan filter <strong>Frekuensi</strong> dan
+        <strong>Kategori</strong> di atas tabel untuk fokus pada area tertentu,
+        atau gunakan kolom pencarian untuk menemukan masalah spesifik
+        berdasarkan gejala atau perintah.
+    </p>
+
+</body>
+</html>
