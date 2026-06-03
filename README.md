@@ -533,6 +533,7 @@ Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas 
   - Partisi, UEFI, dan GRUB integration
   - [Konfigurasi bootloader bersama Arch Linux][bootloader]
   - [WinPe][winpe]
+  - [Recovery Windows Boot Manager pada Multi-Boot][recovery]
  
 - **📂 Struktur Direktori**
  
@@ -770,6 +771,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [debianpro]: ./sistem-operasi/linux/debian/debian_pro.md 
 [bootloader]: ./sistem-operasi/booting/README.md
 [filesystem]: ./sistem-operasi/linux/archlinux/filesystem/README.md
+[recovery]: ./sistem-operasi/windows/winpe/bcd.md
 [1]: ./sistem-operasi/linux/gnu/bagian-1/README.md
 [2]: ./sistem-operasi/linux/gnu/bagian-2/README.md
 [3]: ./sistem-operasi/linux/gnu/bagian-3/README.md
