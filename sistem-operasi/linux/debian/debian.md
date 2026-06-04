@@ -8,6 +8,18 @@ Berikut adalah panduan langkah demi langkah tingkat *superuser* untuk mengekseku
 
 ---
 
+## 🧩 Analisis Lingkungan Sistem Dan Persiapan Wajib Sebelum Mulai
+
+Sebelum melakukan instalasi, penting untuk memahami **lingkungan host** tempat proses berlangsung.
+Dalam konteks ini, Manjaro digunakan sebagai host dengan bootloader GRUB yang telah mengelola lebih dari satu sistem operasi mungkin seperti **Windows 11**, **Linux** dll. Perintah yang digunakan untuk memeriksa konfigurasi partisi dan filesystem adalah **Mencadangkan Data Penting** (dokumen, konfigurasi, snapshot Btrfs, atau image file ESP) jalankan berikut:
+
+   ```bash
+   sudo cp -a /boot/efi ~/backup-efi-$(date +%F).tar
+   sudo cp /etc/fstab ~/fstab.bak.$(date +%F)
+   ```
+
+---
+
 ### Fase 1: Pembuatan Partisi & Pemformatan (Di Arch Linux)
 
 Buka terminal Arch Linux Kita dan masuk sebagai root.
