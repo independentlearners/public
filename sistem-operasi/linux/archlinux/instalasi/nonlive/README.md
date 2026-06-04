@@ -506,10 +506,13 @@ Pastikan cukup ruang sebelum `pacstrap`. Tetapi dalam kasus ini semuanya sudah a
 
 5. **Bootstrap Arch (pacstrap)** — HANYA jika semua mount sudah benar:
 
+---
+
 ```bash
-sudo pacstrap /mnt base linux linux-firmware networkmanager
+ sudo pacstrap /mnt base linux linux-firmware iwd neovim sudo yazi
 ```
 
+* Paket `neovim`, `yazi` dan `sudo` ditambahkan agar tersedia langsung setelah masuk ke sistem baru. `iwd` menggantikan `networkmanager` sebagai stack jaringan minimal yang bekerja penuh melalui `iwctl`.
 * Jika sudah ada `arch-install-scripts` pada Manjaro (seharusnya terpasang), `pacstrap` akan mendownload paket Arch ke `/mnt`.
 * **Catatan penting:** Jangan pernah menjalankan `pacstrap` bila `/mnt` menunjuk ke ESP; periksa `mountpoint` dengan `lsblk -f` dan `df -h /mnt` sebelum lanjut.
 
@@ -542,6 +545,794 @@ sudo cat /mnt/etc/fstab
 * **Jika swap tidak aktif** setelah `swapon`: cek `dmesg` untuk pesan kernel, pastikan tidak terjadi I/O error pada device.
 
 ---
+
+## 🧩 3. Masuk ke Chroot dan Konfigurasi Dasar Sistem
+
+Setelah `genfstab` berhasil membuat `/mnt/etc/fstab`, langkah berikutnya adalah **masuk ke dalam sistem Arch** yang sedang dibangun menggunakan mekanisme `arch-chroot`. Di titik ini, semua perintah yang dijalankan bekerja *di dalam* konteks Arch Linux target — bukan lagi di Manjaro host.
+
+### 🔐 3.1 Masuk ke Lingkungan Chroot
+
+```bash
+sudo arch-chroot /mnt
+```
+
+`arch-chroot` adalah bagian dari paket `arch-install-scripts`. Ia melakukan:
+- Bind mount `/dev`, `/proc`, `/sys`, `/run` dari host ke sistem target.
+- Menetapkan `/mnt` sebagai root (`/`) untuk sesi tersebut.
+- Menjalankan shell default (`/bin/bash`) di dalam sistem target.
+
+Setelah perintah ini berhasil, prompt terminal akan berubah. Kamu sekarang **berada di dalam Arch Linux** — meskipun secara fisik berjalan di atas Manjaro.
+
+```bash
+# Verifikasi kita berada di dalam chroot:
+uname -a          # menampilkan info kernel (mungkin masih kernel Manjaro, itu normal)
+cat /etc/os-release # seharusnya menampilkan Arch Linux
+ls /               # struktur direktori root Arch yang baru
+```
+
+---
+
+### 🕐 3.2 Konfigurasi Zona Waktu
+
+```bash
+ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+hwclock --systohc
+```
+
+**Penjelasan:**
+- `ln -sf` membuat symbolic link dari timezone yang dipilih ke `/etc/localtime`.
+- `hwclock --systohc` menyinkronkan hardware clock (BIOS/UEFI clock) dengan waktu sistem, dan menulis konfigurasi ke `/etc/adjtime`.
+
+Zona waktu lain tersedia di `/usr/share/zoneinfo/`. Contoh untuk zona lain:
+```bash
+# Untuk WIB (Waktu Indonesia Barat) = Asia/Jakarta
+ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
+# Untuk WITA = Asia/Makassar
+ln -sf /usr/share/zoneinfo/Asia/Makassar /etc/localtime
+# Untuk WIT = Asia/Jayapura
+ln -sf /usr/share/zoneinfo/Asia/Jayapura /etc/localtime
+```
+
+Verifikasi:
+```bash
+date
+# Output contoh: Thu Oct  7 16:00:00 WIB 2025
+```
+
+---
+
+### 🌐 3.3 Lokalisasi (Locale)
+
+```bash
+# Buka file locale.gen dan hapus tanda komentar (#) pada locale yang diinginkan
+nano /etc/locale.gen
+```
+
+Cari dan hapus tanda `#` di depan baris berikut (pilih satu atau keduanya):
+```
+en_US.UTF-8 UTF-8
+id_ID.UTF-8 UTF-8
+```
+
+Kemudian generate locale:
+```bash
+locale-gen
+```
+
+Buat file konfigurasi locale sistem:
+```bash
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+```
+
+> Jika lebih memilih antarmuka dalam Bahasa Indonesia, gunakan `LANG=id_ID.UTF-8`.
+
+---
+
+### 🖥️ 3.4 Hostname dan File Hosts
+
+Tetapkan nama hostname untuk mesin Arch Linux baru:
+
+```bash
+echo "archbox" > /etc/hostname
+```
+
+Ganti `archbox` dengan nama mesin yang diinginkan. Nama ini akan muncul di prompt terminal setelah login.
+
+Kemudian konfigurasikan file `/etc/hosts`:
+
+```bash
+cat >> /etc/hosts << EOF
+127.0.0.1    localhost
+::1          localhost
+127.0.1.1    archbox.localdomain    archbox
+EOF
+```
+
+Verifikasi isi file:
+```bash
+cat /etc/hosts
+```
+
+Hasil yang diharapkan:
+```
+127.0.0.1    localhost
+::1          localhost
+127.0.1.1    archbox.localdomain    archbox
+```
+
+---
+
+### ⚙️ 3.5 Initramfs — Membuat Image Kernel Awal
+
+```bash
+mkinitcpio -P
+```
+
+`mkinitcpio` membuat **initial ramdisk image** (`initramfs`) yang dibutuhkan kernel saat pertama kali boot. Opsi `-P` berarti *build all presets* — membangun semua preset yang didefinisikan di `/etc/mkinitcpio.d/`.
+
+Untuk kernel standar `linux`, ini akan menghasilkan dua file:
+- `/boot/initramfs-linux.img` — initramfs utama
+- `/boot/initramfs-linux-fallback.img` — initramfs fallback (lebih lengkap, untuk recovery)
+
+Output yang diharapkan (disingkat):
+```
+==> Building image from preset: /etc/mkinitcpio.d/linux.preset: 'default'
+  -> -k /boot/vmlinuz-linux -c /etc/mkinitcpio.conf -g /boot/initramfs-linux.img
+==> Starting build: 6.xx.x-arch1-1
+...
+==> Image generation successful
+```
+
+Jika ada error `ERROR: module not found`, itu umumnya tidak kritis selama kernel berhasil dibangun.
+
+---
+
+### 🔑 3.6 Password Root
+
+Tetapkan password untuk akun `root`:
+
+```bash
+passwd
+```
+
+Terminal akan meminta kamu mengetik password dua kali untuk konfirmasi. Password ini adalah akses darurat ke sistem — simpan dengan baik. Tidak ada karakter yang ditampilkan saat mengetik (ini normal di Linux).
+
+---
+
+### 👤 3.7 Membuat User Baru dan Konfigurasi sudo
+
+Sistem Arch yang baru tidak memiliki user selain `root`. Direkomendasikan untuk **membuat user biasa** dan mengonfigurasi `sudo` agar pengguna bisa menjalankan perintah dengan hak administrator.
+
+**Langkah 1 — Buat user baru:**
+```bash
+useradd -m -G wheel -s /bin/bash namauser
+```
+
+Ganti `namauser` dengan nama pengguna yang diinginkan. Penjelasan opsi:
+- `-m` : Buat direktori home (`/home/namauser`) secara otomatis.
+- `-G wheel` : Masukkan user ke grup `wheel` (grup standar untuk akses sudo di Arch).
+- `-s /bin/bash` : Tetapkan bash sebagai shell default.
+
+**Langkah 2 — Tetapkan password untuk user baru:**
+```bash
+passwd namauser
+```
+
+**Langkah 3 — Aktifkan sudo untuk grup wheel:**
+```bash
+EDITOR=nano visudo
+```
+
+`visudo` adalah cara yang aman untuk mengedit `/etc/sudoers` karena melakukan validasi sintaks sebelum menyimpan. Cari baris berikut dan hapus tanda `#` di depannya:
+
+```
+# %wheel ALL=(ALL:ALL) ALL
+```
+
+Jadikan:
+```
+%wheel ALL=(ALL:ALL) ALL
+```
+
+Simpan dengan `Ctrl+O`, lalu keluar dengan `Ctrl+X`.
+
+**Verifikasi konfigurasi user:**
+```bash
+id namauser
+# Output yang diharapkan:
+# uid=1000(namauser) gid=1000(namauser) groups=1000(namauser),998(wheel)
+
+groups namauser
+# Output: namauser : namauser wheel
+```
+
+---
+
+## 🌐 4. Konfigurasi Jaringan dengan iwd
+
+Ini adalah salah satu bagian **paling kritis** dari dokumentasi ini. Tujuannya: ketika pengguna pertama kali boot ke Arch Linux yang baru diinstall, jaringan WiFi **langsung siap digunakan** hanya dengan menjalankan `iwctl` — tanpa konfigurasi tambahan apapun.
+
+### 📦 4.1 Instalasi iwd (jika belum ada di pacstrap)
+
+Jika saat `pacstrap` kamu belum memasukkan `iwd`, install sekarang dari dalam chroot:
+
+```bash
+pacman -S iwd
+```
+
+Paket `iwd` (*iNet Wireless Daemon*) dikembangkan oleh Intel sebagai daemon WiFi modern yang:
+- Memiliki dependensi minimal (tidak butuh `wpa_supplicant`, `dhcpcd`, atau `networkmanager`)
+- Mampu mengelola koneksi WiFi **sekaligus** assignment alamat IP (DHCP built-in)
+- Menyediakan antarmuka interaktif `iwctl` yang intuitif
+- Mendukung WPA2, WPA3, 802.1x, dan enterprise networks
+
+### 🗂️ 4.2 Konfigurasi main.conf (Wajib untuk DHCP Otomatis)
+
+Buat direktori dan file konfigurasi `iwd`:
+
+```bash
+mkdir -p /etc/iwd
+nano /etc/iwd/main.conf
+```
+
+Isi dengan konfigurasi berikut:
+
+```ini
+[General]
+# Aktifkan pengelolaan IP langsung oleh iwd (tanpa dhcpcd/networkmanager)
+EnableNetworkConfiguration=true
+
+[Network]
+# Aktifkan IPv6 (opsional, tapi direkomendasikan)
+EnableIPv6=true
+
+[Scan]
+# Aktifkan roaming otomatis antar access point dengan SSID yang sama
+DisablePeriodicScan=false
+```
+
+> ⚠️ **Catatan Kritis:** Tanpa `EnableNetworkConfiguration=true`, iwd hanya melakukan asosiasi WiFi (koneksi pada layer 2) tetapi **tidak** akan menugaskan alamat IP secara otomatis. Artinya kamu akan "terhubung ke WiFi" tetapi tidak bisa mengakses internet. Baris inilah yang memastikan DHCP bekerja secara built-in di dalam iwd.
+
+### ✅ 4.3 Aktifkan Service iwd
+
+Aktifkan iwd sebagai service systemd agar **berjalan otomatis setiap kali sistem boot**:
+
+```bash
+systemctl enable iwd.service
+```
+
+Output yang diharapkan:
+```
+Created symlink /etc/systemd/system/network.target.wants/iwd.service → /usr/lib/systemd/system/iwd.service.
+```
+
+Verifikasi bahwa symlink terbuat:
+```bash
+ls -la /etc/systemd/system/network.target.wants/ | grep iwd
+```
+
+### 📡 4.4 Cara Menggunakan iwctl Setelah Boot (Referensi Cepat)
+
+Setelah boot ke Arch Linux yang baru, cukup jalankan:
+
+```bash
+iwctl
+```
+
+Kamu akan masuk ke shell interaktif `[iwd]#`. Berikut perintah-perintah esensial:
+
+```bash
+# Lihat semua interface WiFi yang tersedia
+[iwd]# device list
+
+# Mulai scanning jaringan WiFi (ganti wlan0 sesuai nama interface-mu)
+[iwd]# station wlan0 scan
+
+# Tampilkan hasil scan (daftar SSID tersedia)
+[iwd]# station wlan0 get-networks
+
+# Hubungkan ke jaringan WiFi (akan diminta password jika ada)
+[iwd]# station wlan0 connect "NamaWiFi"
+
+# Cek status koneksi
+[iwd]# station wlan0 show
+
+# Keluar dari shell iwd
+[iwd]# quit
+```
+
+Setelah `connect` berhasil, iwd akan:
+1. Menyelesaikan handshake WPA2/WPA3
+2. Secara otomatis menjalankan DHCP dan mendapat alamat IP
+3. Menyimpan profil koneksi di `/var/lib/iwd/` — sehingga **booting berikutnya akan otomatis reconnect** ke jaringan yang sama tanpa perlu menjalankan `iwctl` lagi
+
+**Verifikasi koneksi dari luar iwd:**
+```bash
+# Cek alamat IP yang diterima
+ip addr show wlan0
+
+# Tes konektivitas
+ping -c 3 archlinux.org
+```
+
+---
+
+## 🥾 5. Bootloader — Dua Pendekatan
+
+Ini adalah bagian yang menentukan **bagaimana sistem Arch Linux dapat dimulai oleh firmware UEFI**. Ada dua skenario yang akan dibahas, masing-masing dengan kelebihan dan pertimbangan berbeda.
+
+---
+
+### 🅰️ Pendekatan 1 — Delegasikan Boot ke GRUB Manjaro (Tanpa Instalasi GRUB di Arch)
+
+**Kapan digunakan:** Kamu ingin instalasi yang lebih simpel dan tidak keberatan bahwa Arch Linux masih "bergantung" pada GRUB Manjaro untuk booting. Ini opsi yang aman dan lebih cepat.
+
+**Prinsip kerja:** Arch Linux tidak menginstall bootloader sendiri. GRUB Manjaro yang sudah ada akan dikonfigurasi ulang untuk mendeteksi Arch Linux melalui `os-prober`, dan menambahkan entry-nya ke menu GRUB.
+
+#### Langkah-langkah (dijalankan dari Manjaro host, SETELAH keluar dari chroot):
+
+**Step 1 — Keluar dari chroot terlebih dahulu:**
+```bash
+exit
+# Atau tekan Ctrl+D
+```
+
+**Step 2 — Pastikan partisi Arch ter-mount (untuk os-prober):**
+```bash
+# os-prober memerlukan partisi untuk di-mount agar bisa dideteksi
+# Biasanya sudah ter-mount dari sesi instalasi sebelumnya
+lsblk -f | grep nvme0n1p5
+```
+
+**Step 3 — Aktifkan os-prober di konfigurasi GRUB Manjaro:**
+```bash
+sudo nano /etc/default/grub
+```
+
+Cari baris ini dan pastikan nilainya `false` (artinya os-prober **diaktifkan**):
+```bash
+# Pastikan baris ini ada dan tidak dikomentari:
+GRUB_DISABLE_OS_PROBER=false
+```
+
+> Jika baris ini tidak ada, tambahkan di akhir file.
+
+**Step 4 — Uji deteksi os-prober secara manual:**
+```bash
+sudo os-prober
+```
+
+Output yang diharapkan:
+```
+/dev/nvme0n1p5@/boot/vmlinuz-linux:Arch Linux:Arch:linux
+```
+
+Jika Arch Linux terdeteksi, lanjutkan. Jika tidak, pastikan `/dev/nvme0n1p5` ter-mount dan kernel serta initramfs sudah terbuat.
+
+**Step 5 — Regenerate konfigurasi GRUB:**
+```bash
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+Output yang diharapkan (di antara baris lain):
+```
+Found Arch Linux on /dev/nvme0n1p5
+Found Windows Boot Manager on /dev/nvme0n1p1
+```
+
+**Step 6 — Verifikasi entry Arch di GRUB config:**
+```bash
+grep -i "arch" /boot/grub/grub.cfg
+```
+
+**Step 7 — Umount dan reboot:**
+```bash
+sudo umount -R /mnt
+sudo reboot
+```
+
+Saat layar GRUB muncul, pilih "Arch Linux" dari menu.
+
+**Kelebihan Pendekatan 1:**
+- Tidak ada konflik dua GRUB
+- Konfigurasi sederhana dan cepat
+- Windows, Manjaro, dan Arch semuanya tampil di satu menu GRUB
+
+**Kekurangan Pendekatan 1:**
+- Arch bergantung pada keberadaan Manjaro — jika partisi Manjaro rusak atau dihapus, Arch tidak bisa boot tanpa intervensi manual
+- Tidak sepenuhnya "independen"
+
+---
+
+### 🅱️ Pendekatan 2 — GRUB Mandiri Arch (Deteksi Semua OS Secara Independen)
+
+**Kapan digunakan:** Kamu ingin Arch Linux **sepenuhnya independen** dari Manjaro. GRUB Arch akan diinstall ke ESP dan mampu mendeteksi serta menampilkan semua OS yang ada (Windows, Manjaro, Arch) dalam satu menu.
+
+**Prinsip kerja:** Arch Linux menginstall GRUB-nya sendiri ke dalam ESP (`/boot/efi/EFI/ArchLinux/`). GRUB ini dikonfigurasi dengan `os-prober` aktif sehingga dapat mendeteksi Manjaro dan Windows secara otomatis.
+
+#### Langkah-langkah (dijalankan **di dalam** arch-chroot):
+
+Pastikan kamu masih berada di dalam `arch-chroot`. Jika sudah keluar, masuk kembali:
+```bash
+sudo arch-chroot /mnt
+```
+
+**Step 1 — Install paket yang dibutuhkan:**
+```bash
+pacman -S grub efibootmgr os-prober
+```
+
+- `grub` : Bootloader utama.
+- `efibootmgr` : Alat untuk memanipulasi NVRAM UEFI dan boot entries firmware.
+- `os-prober` : Utilitas pendeteksi OS lain yang terinstall di disk.
+
+**Step 2 — Aktifkan os-prober di konfigurasi GRUB:**
+```bash
+nano /etc/default/grub
+```
+
+Pastikan atau tambahkan baris berikut:
+```bash
+# Pastikan nilai ini ada persis seperti ini (false = os-prober AKTIF)
+GRUB_DISABLE_OS_PROBER=false
+
+# Opsional: atur timeout menu GRUB (dalam detik)
+GRUB_TIMEOUT=5
+
+# Opsional: tambahkan parameter kernel jika dibutuhkan
+# GRUB_CMDLINE_LINUX_DEFAULT="quiet loglevel=3"
+```
+
+**Step 3 — Install GRUB ke ESP:**
+```bash
+grub-install \
+  --target=x86_64-efi \
+  --efi-directory=/boot/efi \
+  --bootloader-id=ArchLinux \
+  --recheck
+```
+
+Penjelasan opsi:
+- `--target=x86_64-efi` : Target arsitektur UEFI 64-bit.
+- `--efi-directory=/boot/efi` : Lokasi mount ESP (yang telah kita mount sebelumnya).
+- `--bootloader-id=ArchLinux` : Nama folder di dalam ESP (`/boot/efi/EFI/ArchLinux/`).
+- `--recheck` : Paksa GRUB memverifikasi ulang disk geometry.
+
+Output yang diharapkan:
+```
+Installing for x86_64-efi platform.
+Installation finished. No error reported.
+```
+
+Verifikasi file GRUB terbuat:
+```bash
+ls /boot/efi/EFI/ArchLinux/
+# Output: grubx64.efi
+```
+
+**Step 4 — Verifikasi UEFI boot entry terdaftar:**
+```bash
+efibootmgr
+```
+
+Cari entry `ArchLinux` di daftar. Contoh output:
+```
+BootCurrent: 0002
+BootOrder: 0000,0002,0001
+Boot0000* ArchLinux    HD(1,...)File(\EFI\ArchLinux\grubx64.efi)
+Boot0001* Windows Boot Manager
+Boot0002* manjaro
+```
+
+> Jika `ArchLinux` tidak muncul di `BootOrder`, tambahkan secara manual:
+> ```bash
+> efibootmgr --create --disk /dev/nvme0n1 --part 3 \
+>   --label "ArchLinux" --loader /EFI/ArchLinux/grubx64.efi
+> ```
+
+**Step 5 — Mount partisi lain agar os-prober dapat mendeteksinya:**
+
+`os-prober` memerlukan partisi OS lain ter-mount untuk dideteksi. Dari dalam chroot, kita bisa lakukan:
+```bash
+# Buat titik mount sementara
+mkdir -p /mnt/detect
+
+# Mount root Manjaro (sesuaikan UUID atau nama device)
+# Karena Manjaro menggunakan LUKS, buka dulu:
+# Jika tidak ada enkripsi, mount langsung
+# mount /dev/nvme0n1p4 /mnt/detect  # Hanya jika plain ext4
+
+# Jalankan os-prober
+os-prober
+```
+
+> **Catatan untuk sistem LUKS (seperti kasus ini):** os-prober mungkin tidak dapat membuka volume terenkripsi secara otomatis dari dalam chroot. Dalam kasus ini, generate dulu konfigurasi GRUB dan os-prober akan menemukan yang bisa ia temukan, kemudian setelah pertama boot, jalankan `sudo grub-mkconfig -o /boot/grub/grub.cfg` dari dalam Arch Linux yang sudah berjalan.
+
+**Step 6 — Generate konfigurasi GRUB:**
+```bash
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+Output yang diharapkan:
+```
+Generating grub configuration file ...
+Found linux image: /boot/vmlinuz-linux
+Found initrd image(s): /boot/initramfs-linux.img
+Found fallback initrd image(s): /boot/initramfs-linux-fallback.img
+Found Manjaro Linux on /dev/nvme0n1p4  (jika terdeteksi)
+Found Windows Boot Manager on /dev/nvme0n1p1
+done
+```
+
+**Step 7 — Setelah boot ke Arch, update GRUB agar mendeteksi semua OS:**
+
+Setelah berhasil boot ke Arch Linux, jalankan perintah ini **satu kali** untuk memastikan Manjaro dan Windows juga terdeteksi:
+```bash
+sudo os-prober
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+**Kelebihan Pendekatan 2:**
+- Arch Linux sepenuhnya independen — tidak bergantung pada Manjaro
+- GRUB Arch bisa menjadi *single boot manager* untuk semua OS
+- Jika Manjaro dihapus, Arch tetap bisa boot
+- Lebih fleksibel untuk konfigurasi boot lanjutan
+
+**Kekurangan Pendekatan 2:**
+- Ada dua GRUB entry di UEFI firmware (ArchLinux dan Manjaro)
+- Perlu mengatur UEFI boot order agar GRUB Arch menjadi default
+- Sedikit lebih kompleks
+
+**Mengatur GRUB Arch sebagai default di UEFI:**
+```bash
+# Lihat BootOrder saat ini
+efibootmgr
+
+# Set ArchLinux sebagai entry pertama (misalnya BootNum = 0000)
+efibootmgr --bootorder 0000,0002,0001
+# Sesuaikan nomor sesuai output efibootmgr di mesinmu
+```
+
+---
+
+## 🏁 6. Finalisasi dan Reboot
+
+Setelah semua konfigurasi selesai (dari dalam chroot), lakukan langkah penutupan:
+
+```bash
+# Pastikan semua paket terbaru
+pacman -Syu
+
+# Keluar dari chroot
+exit
+```
+
+Kembali di Manjaro host, lakukan unmount semua partisi secara bersih:
+
+```bash
+# Unmount secara rekursif semua yang ter-mount di /mnt
+sudo umount -R /mnt
+
+# Verifikasi tidak ada yang tersisa
+lsblk -f | grep /mnt
+# Tidak boleh ada output
+
+# Reboot
+sudo reboot
+```
+
+Pastikan media instalasi (jika ada) sudah dilepas sebelum sistem restart.
+
+---
+
+## ✅ 7. Verifikasi First Boot — Arch Linux
+
+Saat GRUB menampilkan menu boot, pilih **Arch Linux**. Sistem akan memuat kernel dan menampilkan prompt login.
+
+### 7.1 Login ke Sistem
+
+Kamu akan disambut dengan prompt:
+```
+archbox login:
+```
+
+Masukkan username dan password yang telah dibuat pada langkah 3.7:
+```
+archbox login: namauser
+Password: ********
+```
+
+Jika login berhasil, shell bash akan aktif:
+```bash
+[namauser@archbox ~]$
+```
+
+Untuk login sebagai root (jika dibutuhkan):
+```
+archbox login: root
+Password: ********
+[root@archbox ~]#
+```
+
+### 7.2 Koneksi Internet dengan iwctl
+
+Karena `iwd.service` sudah diaktifkan (`systemctl enable iwd.service`) dan `main.conf` sudah dikonfigurasi dengan `EnableNetworkConfiguration=true`, cukup jalankan:
+
+```bash
+iwctl
+```
+
+Kamu akan masuk ke shell interaktif:
+```
+[iwd]#
+```
+
+Jalankan urutan perintah berikut:
+```bash
+# Lihat nama interface WiFi
+[iwd]# device list
+
+# Mulai scan WiFi
+[iwd]# station wlan0 scan
+
+# Tampilkan jaringan yang tersedia
+[iwd]# station wlan0 get-networks
+
+# Hubungkan ke jaringan (masukkan password jika diminta)
+[iwd]# station wlan0 connect "NamaWiFiKamu"
+
+# Keluar
+[iwd]# quit
+```
+
+Verifikasi koneksi berhasil:
+```bash
+# Cek alamat IP (harus sudah ada alamat dari DHCP)
+ip addr show wlan0
+
+# Tes internet
+ping -c 3 archlinux.org
+```
+
+**Pada boot berikutnya**, jika sudah pernah terhubung ke WiFi tersebut, iwd akan **otomatis reconnect** tanpa perlu menjalankan `iwctl` lagi — karena profil koneksi disimpan di `/var/lib/iwd/`.
+
+### 7.3 Update Sistem Pertama Kali
+
+```bash
+sudo pacman -Syu
+```
+
+Ini akan menyinkronkan database paket dan mengupdate semua paket ke versi terbaru.
+
+### 7.4 Verifikasi Sistem Berjalan Normal
+
+```bash
+# Cek status semua service
+systemctl status
+
+# Cek service iwd secara spesifik
+systemctl status iwd.service
+
+# Cek log boot untuk error kritis
+journalctl -b --priority=err
+
+# Verifikasi swap aktif
+swapon --show
+
+# Verifikasi fstab dimount dengan benar
+mount | grep nvme
+
+# Informasi sistem
+uname -r           # versi kernel
+cat /etc/os-release  # informasi OS
+hostnamectl        # hostname dan informasi sistem
+```
+
+---
+
+## 📋 Ringkasan Perintah Penting — Referensi Cepat
+
+Berikut adalah seluruh perintah esensial dalam urutan kronologis proses instalasi, beserta fungsi singkatnya:
+
+| # | Perintah | Konteks | Fungsi |
+|---|----------|---------|--------|
+| 1 | `lsblk -f` | Manjaro | Audit struktur disk dan partisi |
+| 2 | `sudo cfdisk /dev/nvme0n1` | Manjaro | Buat partisi baru secara interaktif |
+| 3 | `sudo partprobe /dev/nvme0n1` | Manjaro | Reload tabel partisi di kernel |
+| 4 | `sudo mkfs.ext4 /dev/nvme0n1p5` | Manjaro | Format partisi root Arch dengan ext4 |
+| 5 | `sudo mkswap /dev/nvme0n1p6` | Manjaro | Buat area swap |
+| 6 | `sudo mount /dev/nvme0n1p5 /mnt` | Manjaro | Mount root Arch ke /mnt |
+| 7 | `sudo mkdir -p /mnt/boot/efi` | Manjaro | Buat direktori ESP |
+| 8 | `sudo mount /dev/nvme0n1p3 /mnt/boot/efi` | Manjaro | Mount ESP ke /mnt/boot/efi |
+| 9 | `sudo swapon /dev/nvme0n1p6` | Manjaro | Aktifkan swap |
+| 10 | `sudo pacstrap /mnt base linux linux-firmware iwd nano sudo` | Manjaro | Install sistem dasar Arch |
+| 11 | `sudo genfstab -U /mnt \| sudo tee /mnt/etc/fstab` | Manjaro | Generate fstab berbasis UUID |
+| 12 | `sudo arch-chroot /mnt` | Manjaro | Masuk ke lingkungan Arch |
+| 13 | `ln -sf /usr/share/zoneinfo/Asia/Jakarta /etc/localtime` | Chroot | Set timezone |
+| 14 | `hwclock --systohc` | Chroot | Sinkron hardware clock |
+| 15 | `nano /etc/locale.gen` + `locale-gen` | Chroot | Konfigurasi dan generate locale |
+| 16 | `echo "LANG=en_US.UTF-8" > /etc/locale.conf` | Chroot | Set locale default |
+| 17 | `echo "archbox" > /etc/hostname` | Chroot | Set hostname |
+| 18 | Edit `/etc/hosts` | Chroot | Konfigurasi resolusi nama lokal |
+| 19 | `mkinitcpio -P` | Chroot | Build initramfs image |
+| 20 | `passwd` | Chroot | Set password root |
+| 21 | `useradd -m -G wheel -s /bin/bash namauser` | Chroot | Buat user baru |
+| 22 | `passwd namauser` | Chroot | Set password user |
+| 23 | `EDITOR=nano visudo` | Chroot | Aktifkan sudo untuk grup wheel |
+| 24 | `mkdir -p /etc/iwd && nano /etc/iwd/main.conf` | Chroot | Konfigurasi iwd |
+| 25 | `systemctl enable iwd.service` | Chroot | Aktifkan iwd otomatis saat boot |
+| **Pendekatan 1 — GRUB Manjaro** | | | |
+| 26A | `exit` | Chroot → Manjaro | Keluar dari chroot |
+| 27A | `sudo nano /etc/default/grub` | Manjaro | Aktifkan os-prober (GRUB_DISABLE_OS_PROBER=false) |
+| 28A | `sudo grub-mkconfig -o /boot/grub/grub.cfg` | Manjaro | Regenerate config GRUB Manjaro |
+| **Pendekatan 2 — GRUB Mandiri Arch** | | | |
+| 26B | `pacman -S grub efibootmgr os-prober` | Chroot | Install GRUB dan tools |
+| 27B | `nano /etc/default/grub` | Chroot | Aktifkan os-prober |
+| 28B | `grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ArchLinux --recheck` | Chroot | Install GRUB ke ESP |
+| 29B | `grub-mkconfig -o /boot/grub/grub.cfg` | Chroot | Generate config GRUB Arch |
+| 30B | `efibootmgr` | Chroot | Verifikasi dan atur UEFI boot order |
+| **Finalisasi** | | | |
+| 31 | `exit` | Chroot → Manjaro | Keluar dari chroot |
+| 32 | `sudo umount -R /mnt` | Manjaro | Unmount semua partisi |
+| 33 | `sudo reboot` | Manjaro | Restart sistem |
+| **Setelah Boot ke Arch** | | | |
+| 34 | `iwctl` | Arch | Buka shell iwd untuk koneksi WiFi |
+| 35 | `station wlan0 connect "SSID"` | iwd shell | Hubungkan ke jaringan WiFi |
+| 36 | `ping -c 3 archlinux.org` | Arch | Verifikasi koneksi internet |
+| 37 | `sudo pacman -Syu` | Arch | Update sistem pertama kali |
+
+---
+
+## 🔍 Troubleshooting Lanjutan
+
+### Arch tidak muncul di menu GRUB (Pendekatan 1)
+```bash
+# Dari Manjaro, pastikan os-prober dapat menemukan Arch:
+sudo os-prober
+# Jika hasilnya kosong, pastikan /dev/nvme0n1p5 bisa di-mount
+sudo mount /dev/nvme0n1p5 /tmp/testarch
+ls /tmp/testarch/boot/
+# Harus ada: vmlinuz-linux dan initramfs-linux.img
+sudo umount /tmp/testarch
+```
+
+### GRUB error: `no such partition` atau `unknown filesystem`
+```bash
+# Dari chroot, rebuild GRUB config:
+arch-chroot /mnt
+grub-mkconfig -o /boot/grub/grub.cfg
+# Verifikasi UUID di grub.cfg cocok dengan lsblk -f
+```
+
+### iwd tidak menemukan interface WiFi
+```bash
+# Cek apakah kernel mengenali hardware WiFi
+ip link show
+lspci | grep -i wireless
+dmesg | grep -i wifi
+
+# Jika driver tidak ada, install firmware:
+pacman -S linux-firmware
+```
+
+### iwd terhubung tapi tidak mendapat IP
+```bash
+# Pastikan EnableNetworkConfiguration=true di /etc/iwd/main.conf
+cat /etc/iwd/main.conf
+systemctl restart iwd.service
+# Cek log iwd
+journalctl -u iwd.service -f
+```
+
+### Login gagal setelah reboot
+```bash
+# Boot ke fallback initramfs, lalu mount dan chroot:
+# Dari GRUB, pilih "Arch Linux (fallback initramfs)"
+# Lalu chroot kembali dan reset password:
+arch-chroot /mnt
+passwd namauser
+```
+
 
 ## Ringkasan perintah penting dan beberpa opsional rekomended
 
