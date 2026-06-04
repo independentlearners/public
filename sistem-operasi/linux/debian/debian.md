@@ -96,19 +96,13 @@ sudo debootstrap --arch amd64 bookworm /mnt http://deb.debian.org/debian/
 ```bash
 sudo debootstrap --arch amd64 trixie /mnt http://deb.debian.org/debian/
 ```
-###### Dan Lanjutkan
+
+**4. Generate File `/etc/fstab`**
+Gunakan utilitas Arch untuk membuat mapping UUID partisi secara otomatis ke Debian:
 ```bash
 sudo genfstab -U /mnt | sudo tee -a /mnt/etc/fstab
 ```
 Proses ini akan langsung mengunduh paket-paket dasar minimal (seperti `apt`, `dpkg`, `bash`, dll.) langsung dari mirror resmi Debian ke dalam direktori `/mnt`.
-
-**4. Generate File `/etc/fstab`**
-Gunakan utilitas Arch untuk membuat mapping UUID partisi secara otomatis ke Debian:
-
-```bash
-sudo genfstab -U /mnt | sudo tee -a /mnt/etc/fstab
-
-```
 
 *Verifikasi fstab dengan `cat /mnt/etc/fstab` untuk memastikan partisi `/`, `/boot/efi`, dan `swap` Debian sudah terdaftar dengan benar.*
 
