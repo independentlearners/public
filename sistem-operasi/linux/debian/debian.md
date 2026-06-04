@@ -38,48 +38,21 @@ Di dalam prompt interaktif `fdisk`, lakukan langkah berikut secara berurutan:
 * Ubah tipe partisi swap: Ketik **`t`** $\rightarrow$ Masukkan nomor partisi **`9`** $\rightarrow$ Masukkan kode tipe partisi swap (Ketik **`19`** jika GPT, atau ketik `L` untuk list dan cari `Linux swap`).
 * Ketik **`w`** untuk menyimpan perubahan ke disk dan keluar.
 
-**2. Memformat Partisi Baru**
+**2. Jika tidak ada `fdisk` gunakan `cfdisk`:**
+
+```bash
+sudo cfdisk /dev/nvme0n1
+```
+
+**3. Memformat Partisi Baru**
 Format partisi root (`p8`) dengan filesystem `ext4` dan inisialisasi partisi swap (`p9`):
 
 ```bash
 sudo mkfs.ext4 /dev/nvme0n1p8
 sudo mkswap /dev/nvme0n1p9
-
 ```
 
-**3. Jika tidak ada `fdisk` gunakan `cfdisk`:**
-
-```bash
-lsblk -f
-NAME        FSTYPE      FSVER LABEL   UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
-sda
-└─sda1      exfat       1.0   data    7281-0BBC                             769.2G    17% /srv/data
-nvme0n1
-├─nvme0n1p1 ntfs                      ECA2E689A2E6581A
-├─nvme0n1p2 crypto_LUKS 1             d68f7470-bcc0-42b1-a992-472268831b1b
-├─nvme0n1p3 vfat        FAT32 EFIBOOT BC93-16D6
-├─nvme0n1p4 crypto_LUKS 1             1d5212de-280d-4ea9-9d72-9c6fc25a5427
-├─nvme0n1p5 ext4        1.0           6a72ac8a-12e1-432d-a716-744e666643f4   79.8G    32% /
-├─nvme0n1p6 swap        1             2783fd51-fead-43a5-87c7-a648f3627c91                [SWAP]
-└─nvme0n1p7 vfat        FAT32         4886-2E94
-sudo cfdisk /dev/nvme0n1
-Syncing disks.
-lsblk -f
-NAME        FSTYPE      FSVER LABEL   UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
-sda
-└─sda1      exfat       1.0   data    7281-0BBC                             769.2G    17% /srv/data
-nvme0n1
-├─nvme0n1p1 ntfs                      ECA2E689A2E6581A
-├─nvme0n1p2 crypto_LUKS 1             d68f7470-bcc0-42b1-a992-472268831b1b
-├─nvme0n1p3 vfat        FAT32 EFIBOOT BC93-16D6
-├─nvme0n1p4 crypto_LUKS 1             1d5212de-280d-4ea9-9d72-9c6fc25a5427
-├─nvme0n1p5 ext4        1.0           6a72ac8a-12e1-432d-a716-744e666643f4   79.8G    32% /
-├─nvme0n1p6 swap        1             2783fd51-fead-43a5-87c7-a648f3627c91                [SWAP]
-├─nvme0n1p7 vfat        FAT32         4886-2E94
-├─nvme0n1p8 ext4        1.0           c1239153-f408-4172-8e29-011d89398e16
-└─nvme0n1p9 swap        1             87c23d0d-5c7a-4d88-8a62-2a3e8381d4d8
-
-```
+Pembahasan lebih lanjut mengenai perbedaan tools `cfdisk/fdisk` dibandingkan `mkfs.ext4` atau `mkswap` ada [disini][3]
 
 ---
 
@@ -849,8 +822,10 @@ maka konfigurasi GRUB sudah benar.
 
 ###### Halaman
 [Daftar Masalah Umum Instalasi](./tabelmasalah.html)
-
+[Daftar Tools Sistem Operasi][4]
 <!-- Daftar Tautan -->
 
 [1]: ./satu.md
 [2]: ./manjaroluks.md
+[3]: ./../tools/cfdiskvsmkfs.md
+[4]: ./../tools/README.md

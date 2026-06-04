@@ -522,6 +522,8 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
  
   - Audit system, Fail2ban, AppArmor, SELinux
   
+    - [Daftar Tools Linux Sistem][tools-sistem]
+
 ## 🪟 **Windows**
  
 Sistem operasi umum dengan ekosistem grafis kaya, cocok untuk interoperabilitas dan uji lintas platform.
@@ -769,6 +771,7 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [instalasi]: ./sistem-operasi/linux/archlinux/instalasi/README.md
 [debian]: ./sistem-operasi/linux/debian/debian.md
 [debianpro]: ./sistem-operasi/linux/debian/debian_pro.md 
+[tools-sistem]: ./sistem-operasi/linux/tools/README.md
 [bootloader]: ./sistem-operasi/booting/README.md
 [filesystem]: ./sistem-operasi/linux/archlinux/filesystem/README.md
 [recovery]: ./sistem-operasi/windows/winpe/bcd.md
