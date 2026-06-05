@@ -423,10 +423,8 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
 - **Dasar instalasi tersedia untuk:**
 
   - **[Archlinux][instalasi]**
-  - **Debian Minimal**
+  - **[Debian Minimal][debian]**
   - Melalui terminal Arch tanpa perlu mengunduh file ISO (_Pengguna Advance_).
-  - [Versi Pemula][debian]
-  - [Versi Profesional][debianpro]
  
 - **🗜️ Instalasi Dasar**
  
@@ -450,6 +448,7 @@ Distribusi Linux minimalis berbasis KISS (Keep It Simple, Stupid) untuk pengguna
  
   - Konsep unit & target pada `systemd`
   - Membuat dan mengelola custom service
+  - [Memperbesar partisi sistem][resize]
  
 - **🧩 Kernel & Module**
  
@@ -770,8 +769,8 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 [archlinux]: ./sistem-operasi/linux/README.md
 [instalasi]: ./sistem-operasi/linux/archlinux/instalasi/README.md
 [debian]: ./sistem-operasi/linux/debian/debian.md
-[debianpro]: ./sistem-operasi/linux/debian/debian_pro.md 
 [tools-sistem]: ./sistem-operasi/linux/tools/README.md
+[resize]: ./sistem-operasi/others/resizefs.md
 [bootloader]: ./sistem-operasi/booting/README.md
 [filesystem]: ./sistem-operasi/linux/archlinux/filesystem/README.md
 [recovery]: ./sistem-operasi/windows/winpe/bcd.md
