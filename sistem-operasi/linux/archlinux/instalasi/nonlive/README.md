@@ -509,7 +509,7 @@ Pastikan cukup ruang sebelum `pacstrap`. Tetapi dalam kasus ini semuanya sudah a
 ---
 
 ```bash
- sudo pacstrap /mnt base linux linux-firmware iwd neovim sudo yazi
+sudo pacstrap /mnt base linux linux-firmware iwd neovim sudo yazi git tmux zsh cmus btop bluez bluez-utils ly
 ```
 
 * Paket `neovim`, `yazi` dan `sudo` ditambahkan agar tersedia langsung setelah masuk ke sistem baru. `iwd` menggantikan `networkmanager` sebagai stack jaringan minimal yang bekerja penuh melalui `iwctl`.
