@@ -71,6 +71,7 @@ instalasi/
 - **Terapkan pembelajaran aktif:** setelah tiap modul, berikan kuis singkat atau tugas lab (mis. siapkan sistem dengan EFI+LUKS dan buktikan dapat boot).  
 - **Checklist penilaian:** konfigurasi `fstab`, `crypttab` (jika ada), keberhasilan `mkinitcpio`, serta validitas entri bootloader.
 
+**[Archlinux TTY][archtty]**
 ---
 
 <!--## 📎 Referensi & Link Modul-->
@@ -79,3 +80,4 @@ instalasi/
 [2]: ./bagian-2/README.md  
 [3]: ./bagian-3/README.md
 [4]: ./nonlive/README.md
+[archtty]: ./../archlinux-cli-tty-toolkit.md
