@@ -76,7 +76,7 @@ Dokumen ini memetakan banyak bahasa / bahasa-domain ke dalam: **Level Abstraksi*
 | Python                                                       |                  High | Imperatif, OOP, scripting          | Scripting, data science                | CPython (C), PyPy, MicroPython                    | Python, C for CPython extensions, packaging (wheel)                   |
 | Ruby                                                         |                  High | OOP, metaprogramming               | Web (Rails)                            | MRI (C), JRuby (Java)                             | Ruby, C for MRI extensions, VM internals                              |
 | PHP                                                          |                  High | Imperatif, web scripting           | Web backend                            | PHP (C)                                           | PHP internals, SAPI, extension API                                    |
-| Lua                                                          |                  High | Embeddable, metaprogramming        | Game scripting, editors (Neovim)       | Lua ref impl (C), LuaJIT (C/ASM)                  | Lua C-API, stack model, embedding                                     |
+| [Lua][lua]                                                          |                  High | Embeddable, metaprogramming        | Game scripting, editors (Neovim)       | Lua ref impl (C), LuaJIT (C/ASM)                  | Lua C-API, stack model, embedding                                     |
 | GDScript (Godot)                                             |                  High | Imperatif (Python-like)            | Game dev (Godot)                       | Godot engine (C++)                                | GDScript, Godot internals, engine build                               |
 | Vala                                                         |              Mid/High | OOP (GObject)                      | GNOME apps                             | Vala compiler (C)                                 | GObject, C interop, valac build                                       |
 | Swift                                                        |              Mid/High | Protocol-oriented, OOP             | Apple ecosystem                        | swiftc (C++/Swift + LLVM)                         | Swift, SwiftPM, runtime/ABI                                           |
@@ -759,3 +759,4 @@ Hasil komprehensif ini mencakup **spektrum ekosistem perangkat lunak**, sehingga
 [go]: ./technology/go/README.md
 [promp]: ./technology/promp/README.md
 [dart]: ./technology/dart/README.md
+[lua]: ./technology/lua/README.md
