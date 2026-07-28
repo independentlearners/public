@@ -1,0 +1,159 @@
+
+<style>
+  .wrap { padding: 1.5rem 0; font-size: 14px; color: var(--color-text-primary); }
+  .section-title { font-size: 16px; font-weight: 500; margin-bottom: 1rem; }
+  .api-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; font-family: var(--font-mono); font-size: 13px; position: relative; }
+  .api-row { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 6px 10px; margin-bottom: 6px; }
+  .api-desc { font-family: var(--font-sans); color: var(--color-text-secondary); font-size: 13px; margin: 4px 0 8px; }
+  .api-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { font-family: var(--font-sans); font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .b-nosetter { background: #FAECE7; color: #993C1D; }
+  .b-inherited { background: #E6F1FB; color: #185FA5; }
+  .b-readonly { background: #EAF3DE; color: #3B6D11; }
+  .b-own { background: #EEEDFE; color: #534AB7; }
+  .annot { font-family: var(--font-sans); font-size: 12px; display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: var(--border-radius-md); margin-bottom: 8px; border-left: 3px solid; }
+  .a-name  { background: #EEEDFE22; border-color: #534AB7; }
+  .a-type  { background: #E1F5EE22; border-color: #1D9E75; }
+  .a-desc  { background: #E6F1FB22; border-color: #185FA5; }
+  .a-badge { background: #FAECE722; border-color: #D85A30; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+  .d-purple { background: #534AB7; }
+  .d-teal   { background: #1D9E75; }
+  .d-blue   { background: #185FA5; }
+  .d-coral  { background: #D85A30; }
+  .prop-name { color: #0C447C; font-weight: 500; }
+  .prop-arrow { color: var(--color-text-secondary); }
+  .prop-type { color: #3B6D11; }
+  .sep { height: 1px; background: var(--color-border-tertiary); margin: 1.5rem 0; }
+  .example-block { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 1rem 1.2rem; margin-top: 1rem; font-family: var(--font-mono); font-size: 12.5px; }
+  .ex-comment { color: var(--color-text-tertiary); }
+  .ex-kw { color: #534AB7; }
+  .ex-str { color: #1D9E75; }
+  .ex-var { color: #D85A30; }
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .info-card { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; }
+  .ic-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .ic-val { font-size: 13px; color: var(--color-text-primary); }
+</style>
+<div class="wrap">
+  <h2 style="font-size:17px;font-weight:500;margin-bottom:0.5rem">Cara membaca dokumentasi API Dart</h2>
+  <p style="color:var(--color-text-secondary);font-size:13px;margin-bottom:1.5rem">Bedah anatomi satu entri properti dari halaman <code>FutureOr</code></p>
+
+  <div class="section-title">📋 Contoh entri yang dimaksud</div>
+  <div class="api-box">
+    <div class="api-row">
+      <span class="prop-name">hashCode</span>
+      <span class="prop-arrow">→</span>
+      <span class="prop-type">int</span>
+    </div>
+    <div class="api-desc">The hash code for this object.</div>
+    <div class="api-badges">
+      <span class="badge b-nosetter">no setter</span>
+      <span class="badge b-inherited">inherited</span>
+    </div>
+  </div>
+
+  <div class="section-title">🔍 Arti setiap bagiannya</div>
+
+  <div class="annot a-name">
+    <div class="dot d-purple"></div>
+    <div>
+      <strong>hashCode</strong> — Nama properti.<br>
+      <span style="color:var(--color-text-secondary)">Ini adalah atribut yang bisa kamu akses dari objek kelas ini. Seperti membaca field pada sebuah objek.</span>
+    </div>
+  </div>
+
+  <div class="annot a-type">
+    <div class="dot d-teal"></div>
+    <div>
+      <strong>→ int</strong> — Tipe kembalian (return type).<br>
+      <span style="color:var(--color-text-secondary)">Tanda panah (→) menunjukkan "properti ini mengembalikan nilai bertipe...". Jadi saat kamu akses <code>objek.hashCode</code>, hasilnya adalah sebuah <code>int</code>.</span>
+    </div>
+  </div>
+
+  <div class="annot a-desc">
+    <div class="dot d-blue"></div>
+    <div>
+      <strong>"The hash code for this object."</strong> — Deskripsi fungsi.<br>
+      <span style="color:var(--color-text-secondary)">Penjelasan singkat apa kegunaan properti ini. Hash code adalah angka unik yang merepresentasikan objek, dipakai saat objek disimpan di Map, Set, dll.</span>
+    </div>
+  </div>
+
+  <div class="annot a-badge">
+    <div class="dot d-coral"></div>
+    <div>
+      <strong>no setter</strong> + <strong>inherited</strong> — Badge status.<br>
+      <span style="color:var(--color-text-secondary)">Inilah bagian yang paling sering membingungkan. Penjelasannya ada di bawah.</span>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="section-title">🏷️ Arti badge "no setter" dan "inherited"</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="ic-label">no setter</div>
+      <div class="ic-val">
+        Properti ini <strong>hanya bisa dibaca (read-only)</strong>.<br><br>
+        Kamu tidak bisa melakukan:<br>
+        <code style="color:#D85A30">obj.hashCode = 99;</code> ❌<br><br>
+        Tapi bisa:<br>
+        <code style="color:#1D9E75">print(obj.hashCode);</code> ✅
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-label">inherited</div>
+      <div class="ic-val">
+        Properti ini <strong>bukan didefinisikan di sini</strong>.<br><br>
+        Properti ini diwarisi dari kelas induk, yaitu kelas <strong>Object</strong> (semua kelas Dart mewarisi dari Object).<br><br>
+        FutureOr tidak mendefinisikan ulang <code>hashCode</code> — ia hanya mewarisinya.
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="section-title">💡 Ilustrasi dalam kode Dart</div>
+  <div class="example-block">
+    <span class="ex-comment">// Misalkan kamu punya Future sebagai FutureOr</span><br>
+    <span class="ex-kw">FutureOr</span>&lt;<span class="ex-kw">int</span>&gt; <span class="ex-var">nilai</span> = <span class="ex-str">42</span>;<br><br>
+    <span class="ex-comment">// ✅ Bisa: hashCode adalah getter (readable)</span><br>
+    <span class="ex-kw">print</span>(<span class="ex-var">nilai</span>.hashCode); <span class="ex-comment">// misal: 42</span><br><br>
+    <span class="ex-comment">// ❌ Error: tidak ada setter, tidak bisa di-assign</span><br>
+    <span style="color:#E24B4A">nilai.hashCode = 99;</span> <span class="ex-comment">// ← compile error!</span><br><br>
+    <span class="ex-comment">// "inherited" artinya hashCode berasal dari Object</span><br>
+    <span class="ex-comment">// Semua class Dart mewarisi Object, termasuk FutureOr</span>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="section-title">📐 Ringkasan pola umum di dokumentasi Dart API</div>
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--color-border-secondary)">
+          <th style="text-align:left;padding:8px 10px;color:var(--color-text-secondary);font-weight:500">Badge</th>
+          <th style="text-align:left;padding:8px 10px;color:var(--color-text-secondary);font-weight:500">Artinya</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+          <td style="padding:8px 10px"><span class="badge b-nosetter">no setter</span></td>
+          <td style="padding:8px 10px">Hanya bisa dibaca. Tidak bisa di-assign nilai baru.</td>
+        </tr>
+        <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+          <td style="padding:8px 10px"><span class="badge b-inherited">inherited</span></td>
+          <td style="padding:8px 10px">Diwarisi dari kelas induk (biasanya Object), bukan didefinisikan di kelas ini.</td>
+        </tr>
+        <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+          <td style="padding:8px 10px"><span class="badge b-readonly">read-only</span></td>
+          <td style="padding:8px 10px">Sama dengan no setter — properti tidak bisa diubah.</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 10px"><span class="badge b-own">override</span></td>
+          <td style="padding:8px 10px">Kelas ini mendefinisikan ulang properti/method dari induknya.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
