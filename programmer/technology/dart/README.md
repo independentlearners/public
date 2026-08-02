@@ -1633,7 +1633,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 - **[Dart CLI][dartcli]**
 - **[Dart TUI][tui]**
 - **[Cara Baca Docs APIs][api]**
-- **[Dafatr Kursus][kursus]**
+- **[Dafatr Saya][kursus]**
 
 </details>
 
@@ -1660,28 +1660,28 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 <!-- Module 2: Basic Syntax & Data Types -->
 
-<!-- [keywoard]: ../dart/kursus/materi/modul-2/keywoards/README.md -->
-<!-- [typing-system]: ../dart/kursus/materi/modul-2/bagian-4/README.md -->
-<!-- [syntax-fundamentals]: ../dart/kursus/materi/modul-2/bagian-1/README.md -->
-<!-- [variables-constants]: ../dart/kursus/materi/modul-2/bagian-2/README.md -->
-<!-- [null-safety-deep]: ../dart/kursus/materi/modul-2/bagian-5/README.md -->
-<!-- [late-variables]: ../dart/kursus/materi/modul-2/bagian-6/README.md -->
-<!-- [final-const]: ../dart/kursus/materi/modul-2/bagian-7/README.md -->
-<!-- [boolean-operations]: ../dart/kursus/materi/modul-2/bagian-8/README.md -->
-<!-- [number-system]: ../dart/kursus/materi/modul-2/bagian-9/README.md -->
-<!-- [string-fundamentals]: ../dart/kursus/materi/modul-2/bagian-10/README.md -->
-<!-- [string-interpolation]: ../dart/kursus/materi/modul-2/bagian-11/README.md -->
-<!-- [raw-strings]: ../dart/kursus/materi/modul-2/bagian-12/README.md -->
-<!-- [multi-line-strings]: ../dart/kursus/materi/modul-2/bagian-13/README.md -->
-<!-- [strin-methods]: ../dart/kursus/materi/modul-2/bagian-14/README.md -->
-<!-- [symbol-type]: ../dart/kursus/materi/modul-2/bagian-15/README.md -->
-<!-- [runes-and-unicode]: ../dart/kursus/materi/modul-2/bagian-16/README.md -->
-<!-- [type-system-mastery]: ../dart/kursus/materi/modul-2/bagian-17/README.md -->
-<!-- [type-inference]: ../dart/kursus/materi/modul-2/bagian-18/README.md -->
-<!-- [type-annotations]: ../dart/kursus/materi/modul-2/bagian-19/README.md -->
-<!-- [casting-and-conversion]: ../dart/kursus/materi/modul-2/bagian-20/README.md -->
-<!-- [runtime-type]: ../dart/kursus/materi/modul-2/bagian-21/README.md -->
-<!-- [comments]: ../dart/kursus/dasar/comentar/README.md -->
+[keywoard]: ../dart/kursus/materi/modul-2/keywoards/README.md
+[typing-system]: ../dart/kursus/materi/modul-2/bagian-4/README.md
+[syntax-fundamentals]: ../dart/kursus/materi/modul-2/bagian-1/README.md
+[variables-constants]: ../dart/kursus/materi/modul-2/bagian-2/README.md
+[null-safety-deep]: ../dart/kursus/materi/modul-2/bagian-5/README.md
+[late-variables]: ../dart/kursus/materi/modul-2/bagian-6/README.md
+[final-const]: ../dart/kursus/materi/modul-2/bagian-7/README.md
+[boolean-operations]: ../dart/kursus/materi/modul-2/bagian-8/README.md
+[number-system]: ../dart/kursus/materi/modul-2/bagian-9/README.md
+[string-fundamentals]: ../dart/kursus/materi/modul-2/bagian-10/README.md
+[string-interpolation]: ../dart/kursus/materi/modul-2/bagian-11/README.md
+[raw-strings]: ../dart/kursus/materi/modul-2/bagian-12/README.md
+[multi-line-strings]: ../dart/kursus/materi/modul-2/bagian-13/README.md
+[strin-methods]: ../dart/kursus/materi/modul-2/bagian-14/README.md
+[symbol-type]: ../dart/kursus/materi/modul-2/bagian-15/README.md
+[runes-and-unicode]: ../dart/kursus/materi/modul-2/bagian-16/README.md
+[type-system-mastery]: ../dart/kursus/materi/modul-2/bagian-17/README.md
+[type-inference]: ../dart/kursus/materi/modul-2/bagian-18/README.md
+[type-annotations]: ../dart/kursus/materi/modul-2/bagian-19/README.md
+[casting-and-conversion]: ../dart/kursus/materi/modul-2/bagian-20/README.md
+[runtime-type]: ../dart/kursus/materi/modul-2/bagian-21/README.md
+[comments]: ../dart/kursus/dasar/comentar/README.md
 
 <!-- Module 3: Operators & Expressions -->
 

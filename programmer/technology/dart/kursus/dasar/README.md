@@ -132,26 +132,3 @@ Dengan mengikuti langkah-langkah ini, seseorang akan memiliki pemahaman mendalam
 
 > [Chat](https://chatgpt.com/share/678cb445-782c-8006-97bd-8fb27ff40e90 "lihat pesan lebih lanjut") **GPT**
 
-[komentar][1]
-[kontrol][2]
-
-
-[0]: ../README.md
-[1]: ./comentar/README.md
-[2]: ./control-flow/README.md
-[3]: ./conversion/README.md
-[4]: ./custom/README.md
-[5]: ./function/README.md
-[6]: ./modifikator/README.md
-[7]: ./nullsafety/README.md
-[8]: ./operator/README.md
-[9]: ./other/generator/README.md
-[10]: ./other/late/README.md
-[11]: ./perulangan/perulangan.md
-[12]: ./
-[13]: ./
-[14]: ./
-[15]: ./
-[16]: ./
-[17]: ./
-[18]: ./
