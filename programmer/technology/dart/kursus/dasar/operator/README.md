@@ -24,3 +24,22 @@ void main() {
   print('\n' * 5);
 }
 ```
+
+[Aritmatika][1]
+
+[Logika][2]
+
+[Penugasan][3]
+
+[Perbandingan][4]
+
+[Ternary][5]
+
+[Type-test][6]
+
+[1]: ./aritmatika/README.md
+[2]: ./logika/README.md
+[3]: ./penugasan/README.md
+[4]: ./perbandingan/README.md
+[5]: ./ternary/README.md
+[6]: ./type-test/README.md

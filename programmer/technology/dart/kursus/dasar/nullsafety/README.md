@@ -66,3 +66,7 @@ $ Dalam kode diatas, fungsi `x` tidak mengembalikan nilai apa pun, sehingga fung
   print('\n' * 5);
 }
 ```
+
+[null][1]
+
+[1]: ./null/README.md

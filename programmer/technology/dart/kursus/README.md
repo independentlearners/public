@@ -1,46 +1,30 @@
-# [Dafrtar Kurusus][0]
+# Daftar Kursus Dart
+
+Dokumentasi kursus singkat dan terstruktur untuk mempelajari Dart dari level dasar hingga lanjutan. Di bawah tiap judul materi terdapat deskripsi singkat dan tautan ke sub-materi terkait.
 
 <details>
   <summary>
     <strong>Dasar</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Dasar sintaks dan variabel</i></div>
+    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Pengantar sintaks, tipe data, dan struktur dasar Dart</i></div>
   </summary>
-  <div style="padding-left: 25px; margin-top: 8px;">
+  <div style="padding-left:25px;margin-top:8px;">
 
-- **Dart Dasar**
+Deskripsi singkat: Materi ini membahas fondasi bahasa Dart—variabel, tipe data, kontrol alur, fungsi, koleksi, dan null safety—agar siap membangun program dan memahami konsep lanjutan.
 
----
-
-[komentar][1]
-
-[alur kontrol][2]
-
-[konversi][3]
-
-[fungsi][5]
-
-[modifikator][6]
-
-[nullsafety][7]
-
-[operator][8]
-
-[operator other][9]
-
-[late][10]
-
-[perulangan][11]
-
-[list][12]
-
-[map][13]
-
-[set][14]
-
-[tipe-data][15]
-
-[variabel][16]
-
+- Topik penting:
+  - [Komentar][1] — menulis dokumentasi dan catatan kode
+  - [Control flow][2] — if/else, switch
+  - [Konversi][3] — parsing & type conversions
+  - [Fungsi][5] — deklarasi, parameter, async
+  - [Modifikator][6] — final, const, dll.
+  - [Null Safety][7]
+  - [Operator][8]
+  - [Generator & Lainnya][9]
+  - [late][10]
+  - [Perulangan][11]
+  - [List][12], [Map][13], [Set][14]
+  - [Tipe Data][15]
+  - [Variabel][16]
 
   </div>
 </details>
@@ -48,11 +32,13 @@
 <details>
   <summary>
     <strong>OOP</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Object Orientied Programming</i></div>
+    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Dasar-dasar Pemrograman Berorientasi Objek</i></div>
   </summary>
-  <div style="padding-left: 25px; margin-top: 8px;">
+  <div style="padding-left:25px;margin-top:8px;">
 
-- **[Program berorientasi objek]**
+Deskripsi singkat: Memperkenalkan kelas, objek, enkapsulasi, inheritance, polymorphism, konstruktors, dan pattern OOP di Dart.
+
+- Subtopik (lihat folder `oop/`): class, constructor, inheritance, encapsulation, interface, method, polymorphism, operator overloading.
 
   </div>
 </details>
@@ -60,11 +46,13 @@
 <details>
   <summary>
     <strong>Generic</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Tingkat menengah</i></div>
+    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Generic types & error handling</i></div>
   </summary>
-  <div style="padding-left: 25px; margin-top: 8px;">
+  <div style="padding-left:25px;margin-top:8px;">
 
-- **[Dart tingkat lanjut]**
+Deskripsi singkat: Pelajari penggunaan generics untuk membuat fungsi/kelas yang type-safe dan alat bantu seperti `Expando`, serta penanganan error/exception.
+
+- Subtopik: generik pada class/func, Expando, contoh ArgumentError dan praktik penanganan exception.
 
   </div>
 </details>
@@ -72,11 +60,11 @@
 <details>
   <summary>
     <strong>Linter</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Tingkat lanjut</i></div>
+    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Aturan kualitas kode dan tooling</i></div>
   </summary>
-  <div style="padding-left: 25px; margin-top: 8px;">
+  <div style="padding-left:25px;margin-top:8px;">
 
-- **[Program berorientasi objek]**
+Deskripsi singkat: Memperkenalkan aturan linting Dart, konfigurasi, dan praktik terbaik untuk menjaga konsistensi dan kualitas kode (mis. aturan `always_declare_return_types`).
 
   </div>
 </details>
@@ -84,17 +72,18 @@
 <details>
   <summary>
     <strong>Advance</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Pengembangan</i></div>
+    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Materi lanjutan: arsitektur, concurrent, dan optimasi</i></div>
   </summary>
-  <div style="padding-left: 25px; margin-top: 8px;">
+  <div style="padding-left:25px;margin-top:8px;">
 
-- **[Program berorientasi objek]**
+Deskripsi singkat: Topik untuk pemahaman mendalam seperti mapping/transformasi data, isolates, performance tuning, dan pattern arsitektur aplikasi skala besar.
+
+- Subtopik: mapping (lihat `adnvace/mapping`), isolates, streams/async patterns.
 
   </div>
 </details>
 
-
-#
+# Navigasi
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
@@ -107,8 +96,7 @@
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 
-<!--Dasar-->
-
+<!-- Daftar link ke file yang ada -->
 [0]: ../README.md
 [1]: ./dasar/comentar/README.md
 [2]: ./dasar/control-flow/README.md
@@ -126,8 +114,9 @@
 [15]: ./dasar/tipe-data/README.md
 [16]: ./dasar/variabel/README.md
 
-<!--OOP-->
-[17]: ../
-[18]: ../
+<!-- OOP references (ke folder) -->
+[oop-root]: ./oop/README.md
+
+
 
 

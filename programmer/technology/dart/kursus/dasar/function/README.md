@@ -103,4 +103,9 @@ Rangkuman **seluruh keyword** yang hanya valid di dalam deklarasi atau body fung
 - **`native`** _(deprecated)_  
   Versi lama untuk link ke kode native; sekarang digantikan `external`.
 
-Sekarang sudah komplit—kompiler bakal protes kalau kamu pakai di luar konteks fungsi/metode! 🚀
+<!-- Sekarang sudah komplit—kompiler bakal protes kalau kamu pakai di luar konteks fungsi/metode! 🚀 -->
+
+[Functon parameter][1]
+[Functon parameter][1]
+
+[1]
