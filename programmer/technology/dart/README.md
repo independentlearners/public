@@ -203,21 +203,22 @@ Dart juga mendokumentasikan **linter rules** dan **analyzer plugins**, jadi Anda
 
 | Code | Topic               | Official Reference                                                                  |
 | ---- | ------------------- | ----------------------------------------------------------------------------------- |
-| 001  | Welcome to Dart     | [Dart Overview](https://dart.dev/overview)                                          |
-| 002  | Dart Philosophy     | [Why Dart?](https://dart.dev/overview#why-use-dart)                                 |
-| 003  | History & Evolution | [Dart History](<https://en.wikipedia.org/wiki/Dart_(programming_language)#History>) |
-| 004  | Why Dart Powers Dev | [Dart Use Cases](https://dart.dev/overview#platform)                                |
-| 005  | SDK Installation    | [Install Dart](https://dart.dev/get-dart)                                           |
-| 006  | DartPad             | [DartPad Online](https://dartpad.dev/)                                              |
-| 007  | IDE Setup           | [VS Code Setup](https://dart.dev/tools/vs-code)                                     |
-| 008  | CLI Tools           | [Dart CLI](https://dart.dev/tools/dart-tool)                                        |
-| 009  | Dart DevTools       | [DevTools Overview](https://dart.dev/tools/dart-devtools)                           |
-| 010  | pub Package Manager | [Pub Package Manager](https://dart.dev/tools/pub)                                   |
-| 011  | Project Structure   | [Package Layout](https://dart.dev/tools/pub/package-layout)                         |
-| 012  | Dart vs Others      | [Language Comparisons](https://dart.dev/overview#how-is-dart-different)             |
-| 013  | JIT vs AOT          | [Execution Modes](https://dart.dev/overview#platform)                               |
-| 014  | Null Safety         | [Sound Null Safety](https://dart.dev/null-safety)                                   |
-| 015  | Sound Type System   | [Type System](https://dart.dev/language/type-system)                                |
+| 001  | Welcome to Dart     | [Dart Overview][001]                                         |
+| 002  | Dart Philosophy     | [Why Dart?][002]                                |
+| 003  | History & Evolution | [Dart History][003] |
+| 004  | Why Dart Powers Dev | [Dart Use Cases][004]                                |
+| 005  | SDK Installation    | [Install Dart][005]                                           |
+| 006  | DartPad             | [DartPad Online][006]                                              |
+| 007  | IDE Setup           | [VS Code Setup][007]                                     |
+| 008  | CLI Tools           | [Dart CLI][008]                                        |
+| 009  | Dart DevTools       | [DevTools Overview][009]                           |
+| 010  | pub Package Manager | [Pub Package Manager][010]                                   |
+| 011  | Project Structure   | [Package Layout][011]                         |
+| 012  | Dart vs Others      | [Language Comparisons][012]             |
+| 013  | JIT vs AOT          | [Execution Modes][013]                               |
+| 014  | Null Safety         | [Sound Null Safety][014]                                   |
+| 015  | Sound Type System   | [Type System][015]                                |
+
 
 ---
 
@@ -1722,3 +1723,19 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [57]: ../dart/kursus/materi/modul-2/
 [58]: ../dart/kursus/materi/modul-2/
 [59]: ../dart/kursus/materi/modul-2/
+
+[001]: https://dart.dev/overview
+[002]: https://dart.dev/overview#why-use-dart
+[003]: https://en.wikipedia.org/wiki/Dart_(programming_language)#History
+[004]: https://dart.dev/overview#platform
+[005]: https://dart.dev/get-dart
+[006]: https://dartpad.dev
+[007]: https://dart.dev/tools/vs-code
+[008]: https://dart.dev/tools/dart-tool
+[009]: https://dart.dev/tools/dart-devtools
+[010]: https://dart.dev/tools/pub
+[011]: https://dart.dev/tools/pub/package-layout
+[012]: https://dart.dev/overview#how-is-dart-different
+[013]: https://dart.dev/overview#platform
+[014]: https://dart.dev/null-safety
+[015]: https://dart.dev/language/type-system
