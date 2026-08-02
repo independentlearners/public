@@ -1633,7 +1633,10 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 - **[Dart CLI][dartcli]**
 - **[Dart TUI][tui]**
+- **[Dart Imports-Export][die]**
 - **[Cara Baca Docs APIs][api]**
+- **[Saran Mental Logika][mental]**
+
 - **[Dafatr Saya][kursus]**
 
 </details>
@@ -1653,6 +1656,8 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [detailkurikulum]: ../dart/laporan-dart/README.md
 [sayadart]: ../../../saya/dart/README.md
 [kursus]: ./kursus/README.md
+[mental]: ../dart/other/mental_logic.md
+[die]: ./import_export/docs.md
 <!-- FOUNDATION LEVEL -->
 
 [1]: ../dart/kursus/materi/fondation/README.md
