@@ -1,4 +1,6 @@
 # Animated Container
+
+# Animated Container
 ```dart
 import 'dart:math';
 import 'package:flutter/material.dart';
