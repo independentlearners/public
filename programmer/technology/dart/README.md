@@ -1425,9 +1425,9 @@ Kurikulum ini dirancang untuk menghasilkan developer Dart yang tidak hanya mahir
 
 ### Roadmap Dart dan Flutter
 
-## [1. Pondasi Dart](../dart/kursus/materi/fondation/README.md)
+## [1. Pondasi Dart](../dart/materi/fondation/README.md)
 
-1. **[Sintaks Dasar & Tipe Data](../dart/kursus/dasar/tipe-data/README.md)(2–3 minggu)**
+1. **[Sintaks Dasar & Tipe Data](./dart/kursus/dasar/tipe-data/README.md)(2–3 minggu)**
 
    - [Variabel](../dart/kursus/dasar/variabel/README.md), tipe primitif ([`int`, `double`,](../dart/kursus/dasar/tipe-data/number/README.md) `String`, `bool`)
    - Koleksi (`List`, `Map`, `Set`)
@@ -1660,74 +1660,74 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [die]: ./import_export/docs.md
 <!-- FOUNDATION LEVEL -->
 
-[1]: ../dart/kursus/materi/fondation/README.md
-[2]: ../dart/kursus/materi/modul-2/README.md
-[3]: ../dart/kursus/materi/modul-3/README.md
+[1]: ../dart/materi/fondation/README.md
+[2]: ../dart/materi/modul-2/README.md
+[3]: ../dart/materi/modul-3/README.md
 
 <!-- Module 2: Basic Syntax & Data Types -->
 
-[keywoard]: ../dart/kursus/materi/modul-2/keywoards/README.md
-[typing-system]: ../dart/kursus/materi/modul-2/bagian-4/README.md
-[syntax-fundamentals]: ../dart/kursus/materi/modul-2/bagian-1/README.md
-[variables-constants]: ../dart/kursus/materi/modul-2/bagian-2/README.md
-[null-safety-deep]: ../dart/kursus/materi/modul-2/bagian-5/README.md
-[late-variables]: ../dart/kursus/materi/modul-2/bagian-6/README.md
-[final-const]: ../dart/kursus/materi/modul-2/bagian-7/README.md
-[boolean-operations]: ../dart/kursus/materi/modul-2/bagian-8/README.md
-[number-system]: ../dart/kursus/materi/modul-2/bagian-9/README.md
-[string-fundamentals]: ../dart/kursus/materi/modul-2/bagian-10/README.md
-[string-interpolation]: ../dart/kursus/materi/modul-2/bagian-11/README.md
-[raw-strings]: ../dart/kursus/materi/modul-2/bagian-12/README.md
-[multi-line-strings]: ../dart/kursus/materi/modul-2/bagian-13/README.md
-[strin-methods]: ../dart/kursus/materi/modul-2/bagian-14/README.md
-[symbol-type]: ../dart/kursus/materi/modul-2/bagian-15/README.md
-[runes-and-unicode]: ../dart/kursus/materi/modul-2/bagian-16/README.md
-[type-system-mastery]: ../dart/kursus/materi/modul-2/bagian-17/README.md
-[type-inference]: ../dart/kursus/materi/modul-2/bagian-18/README.md
-[type-annotations]: ../dart/kursus/materi/modul-2/bagian-19/README.md
-[casting-and-conversion]: ../dart/kursus/materi/modul-2/bagian-20/README.md
-[runtime-type]: ../dart/kursus/materi/modul-2/bagian-21/README.md
-[comments]: ../dart/kursus/dasar/comentar/README.md
+[keywoard]: ../dart/materi/modul-2/keywoards/README.md
+[typing-system]: ../dart/materi/modul-2/bagian-4/README.md
+[syntax-fundamentals]: ../dart/materi/modul-2/bagian-1/README.md
+[variables-constants]: ../dart/materi/modul-2/bagian-2/README.md
+[null-safety-deep]: ../dart/materi/modul-2/bagian-5/README.md
+[late-variables]: ../dart/materi/modul-2/bagian-6/README.md
+[final-const]: ../dart/materi/modul-2/bagian-7/README.md
+[boolean-operations]: ../dart/materi/modul-2/bagian-8/README.md
+[number-system]: ../dart/materi/modul-2/bagian-9/README.md
+[string-fundamentals]: ../dart/materi/modul-2/bagian-10/README.md
+[string-interpolation]: ../dart/materi/modul-2/bagian-11/README.md
+[raw-strings]: ../dart/materi/modul-2/bagian-12/README.md
+[multi-line-strings]: ../dart/materi/modul-2/bagian-13/README.md
+[strin-methods]: ../dart/materi/modul-2/bagian-14/README.md
+[symbol-type]: ../dart/materi/modul-2/bagian-15/README.md
+[runes-and-unicode]: ../dart/materi/modul-2/bagian-16/README.md
+[type-system-mastery]: ../dart/materi/modul-2/bagian-17/README.md
+[type-inference]: ../dart/materi/modul-2/bagian-18/README.md
+[type-annotations]: ../dart/materi/modul-2/bagian-19/README.md
+[casting-and-conversion]: ../dart/materi/modul-2/bagian-20/README.md
+[runtime-type]: ../dart/materi/modul-2/bagian-21/README.md
+[comments]: ../dart/dasar/comentar/README.md
 
 <!-- Module 3: Operators & Expressions -->
 
-[24]: ../dart/kursus/materi/modul-2/bagian-1/README.md
-[25]: ../dart/kursus/materi/modul-2/bagian-2/README.md
-[26]: ../dart/kursus/materi/modul-2/bagian-3/README.md
-[27]: ../dart/kursus/materi/modul-2/bagian-4/README.md
-[28]: ../dart/kursus/materi/modul-2/bagian-5/README.md
-[29]: ../dart/kursus/materi/modul-2/bagian-6/README.md
-[30]: ../dart/kursus/materi/modul-2/bagian-7/README.md
-[31]: ../dart/kursus/materi/modul-2/bagian-8/README.md
-[32]: ../dart/kursus/materi/modul-2/bagian-9/README.md
-[33]: ../dart/kursus/materi/modul-2/bagian-10/README.md
-[34]: ../dart/kursus/materi/modul-2/bagian-11/README.md
-[35]: ../dart/kursus/materi/modul-2/bagian-12/README.md
-[36]: ../dart/kursus/materi/modul-2/bagian-13/README.md
-[37]: ../dart/kursus/materi/modul-2/bagian-14/README.md
-[38]: ../dart/kursus/materi/modul-2/bagian-15/README.md
-[39]: ../dart/kursus/materi/modul-2/bagian-16/README.md
-[40]: ../dart/kursus/materi/modul-2/bagian-17/README.md
-[41]: ../dart/kursus/materi/modul-2/bagian-18/README.md
-[42]: ../dart/kursus/materi/modul-2/bagian-19/README.md
-[43]: ../dart/kursus/materi/modul-2/bagian-20/README.md
-[44]: ../dart/kursus/materi/modul-2/bagian-21/README.md
+[24]: ../dart/materi/modul-2/bagian-1/README.md
+[25]: ../dart/materi/modul-2/bagian-2/README.md
+[26]: ../dart/materi/modul-2/bagian-3/README.md
+[27]: ../dart/materi/modul-2/bagian-4/README.md
+[28]: ../dart/materi/modul-2/bagian-5/README.md
+[29]: ../dart/materi/modul-2/bagian-6/README.md
+[30]: ../dart/materi/modul-2/bagian-7/README.md
+[31]: ../dart/materi/modul-2/bagian-8/README.md
+[32]: ../dart/materi/modul-2/bagian-9/README.md
+[33]: ../dart/materi/modul-2/bagian-10/README.md
+[34]: ../dart/materi/modul-2/bagian-11/README.md
+[35]: ../dart/materi/modul-2/bagian-12/README.md
+[36]: ../dart/materi/modul-2/bagian-13/README.md
+[37]: ../dart/materi/modul-2/bagian-14/README.md
+[38]: ../dart/materi/modul-2/bagian-15/README.md
+[39]: ../dart/materi/modul-2/bagian-16/README.md
+[40]: ../dart/materi/modul-2/bagian-17/README.md
+[41]: ../dart/materi/modul-2/bagian-18/README.md
+[42]: ../dart/materi/modul-2/bagian-19/README.md
+[43]: ../dart/materi/modul-2/bagian-20/README.md
+[44]: ../dart/materi/modul-2/bagian-21/README.md
 
-[45]: ../dart/kursus/materi/modul-2/
-[46]: ../dart/kursus/materi/modul-2/
-[47]: ../dart/kursus/materi/modul-2/
-[48]: ../dart/kursus/materi/modul-2/
-[49]: ../dart/kursus/materi/modul-2/
-[50]: ../dart/kursus/materi/modul-2/
-[51]: ../dart/kursus/materi/modul-2/
-[52]: ../dart/kursus/materi/modul-2/
-[53]: ../dart/kursus/materi/modul-2/
-[54]: ../dart/kursus/materi/modul-2/
-[55]: ../dart/kursus/materi/modul-2/
-[56]: ../dart/kursus/materi/modul-2/
-[57]: ../dart/kursus/materi/modul-2/
-[58]: ../dart/kursus/materi/modul-2/
-[59]: ../dart/kursus/materi/modul-2/
+[45]: ../dart/materi/modul-2/
+[46]: ../dart/materi/modul-2/
+[47]: ../dart/materi/modul-2/
+[48]: ../dart/materi/modul-2/
+[49]: ../dart/materi/modul-2/
+[50]: ../dart/materi/modul-2/
+[51]: ../dart/materi/modul-2/
+[52]: ../dart/materi/modul-2/
+[53]: ../dart/materi/modul-2/
+[54]: ../dart/materi/modul-2/
+[55]: ../dart/materi/modul-2/
+[56]: ../dart/materi/modul-2/
+[57]: ../dart/materi/modul-2/
+[58]: ../dart/materi/modul-2/
+[59]: ../dart/materi/modul-2/
 
 [001]: https://dart.dev/overview
 [002]: https://dart.dev/overview#why-use-dart
