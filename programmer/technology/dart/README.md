@@ -1637,7 +1637,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 - **[Cara Baca Docs APIs][api]**
 - **[Saran Mental Logika][mental]**
 
-- **[Dafatr Saya][kursus]**
+- **[Kursus][kursus]**
 
 </details>
 

@@ -2,29 +2,34 @@
 
 Dokumentasi kursus singkat dan terstruktur untuk mempelajari Dart dari level dasar hingga lanjutan. Di bawah tiap judul materi terdapat deskripsi singkat dan tautan ke sub-materi terkait.
 
+> **Catatan struktur:** setiap bagian memiliki halaman *Ringkasan* (umumnya `README.md` pada folder topik) sebagai pusat penjelasan. Folder di dalamnya sebagian besar berisi contoh deklarasi dan implementasi kode, sementara beberapa file penjelasan menggunakan nama sesuai topiknya (mis. `inheritance.md`, `polymorphism.md`, `perulangan.md`).
+
 <details>
   <summary>
     <strong>Dasar</strong>
-    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Pengantar sintaks, tipe data, dan struktur dasar Dart</i></div>
+    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Sintaks, tipe data, kontrol alur, dan koleksi data dasar Dart</i></div>
   </summary>
   <div style="padding-left:25px;margin-top:8px;">
 
-Deskripsi singkat: Materi ini membahas fondasi bahasa Dart—variabel, tipe data, kontrol alur, fungsi, koleksi, dan null safety—agar siap membangun program dan memahami konsep lanjutan.
+Deskripsi singkat: Materi ini membahas fondasi bahasa Dart—variabel, tipe data, kontrol alur, fungsi, koleksi data, dan null safety—agar siap membangun program dan memahami konsep lanjutan.
 
-- Topik penting:
-  - [Komentar][1] — menulis dokumentasi dan catatan kode
-  - [Control flow][2] — if/else, switch
-  - [Konversi][3] — parsing & type conversions
-  - [Fungsi][5] — deklarasi, parameter, async
-  - [Modifikator][6] — final, const, dll.
-  - [Null Safety][7]
-  - [Operator][8]
-  - [Generator & Lainnya][9]
-  - [late][10]
-  - [Perulangan][11]
-  - [List][12], [Map][13], [Set][14]
-  - [Tipe Data][15]
-  - [Variabel][16]
+- [Ringkasan & Peta Materi Dasar][dasar] — halaman utama bagian Dasar
+- Topik penting (urutan belajar yang disarankan):
+  - [Variabel][variabel] — deklarasi dan penamaan variabel
+  - [Tipe Data][tipe-data] — number, string, boolean, dynamic, var, runes, symbol, bigint
+  - [Komentar][komentar] — menulis dokumentasi dan catatan kode
+  - [Null Safety][nullsafety] — penanganan nilai `null` yang aman pada sistem tipe Dart
+  - [Operator][operator] — aritmatika, logika, penugasan, perbandingan, ternary, type-test
+  - [Konversi][konversi] — parsing & type conversion, termasuk `toString`
+  - [Control Flow][control-flow] — if/else, switch-case
+  - [Perulangan][perulangan] — for, while, do-while, break, continue
+  - [Collection][collection] — Iterable, List, Set, Map, Queue, hingga membuat collection kustom
+    - Implementasi dasar: [List][collection-list] · [Map][collection-map] · [Set][collection-set]
+    - Implementasi menengah: [Linked List][collection-linked-list] · [Queue][collection-queue] · [Stack][collection-stack]
+  - [Fungsi][fungsi] — deklarasi, parameter, closure, higher-order & recursive function
+  - [Modifikator][modifikator] — final, const, dan runtime constant
+  - [Generator][generator] — evaluasi lambat (lazy) dengan generator function
+  - [late][late] — inisialisasi variabel yang ditunda
 
   </div>
 </details>
@@ -36,9 +41,21 @@ Deskripsi singkat: Materi ini membahas fondasi bahasa Dart—variabel, tipe data
   </summary>
   <div style="padding-left:25px;margin-top:8px;">
 
-Deskripsi singkat: Memperkenalkan kelas, objek, enkapsulasi, inheritance, polymorphism, konstruktors, dan pattern OOP di Dart.
+Deskripsi singkat: Memperkenalkan kelas, objek, enkapsulasi, inheritance, polymorphism, konstruktor, dan pattern OOP di Dart.
 
-- Subtopik (lihat folder `oop/`): class, constructor, inheritance, encapsulation, interface, method, polymorphism, operator overloading.
+- [Ringkasan & Peta Materi OOP][oop] — halaman utama bagian OOP
+- Topik penting:
+  - [Object & Class][oop-class] — dasar objek, class, field, dan sealed class
+  - [Constructor][oop-constructor] — constructor biasa, named, factory, dan const
+  - [Encapsulation][oop-encapsulation] — access modifier, getter, dan setter
+  - [Inheritance][oop-inheritance] — pewarisan class, override method & field
+  - [Interface][oop-interface] — kontrak antar class
+  - [Abstract][oop-abstract] — class dan method abstrak
+  - [Polymorphism][oop-polymorphism] — overriding, type check & cast
+  - [Method][oop-method] — deklarasi method dan expression body
+  - [Operator Overloading][oop-operator] — cascade notation dan custom operator
+  - [Import & Export][oop-import-export] — modularisasi kode antar file
+  - Struktur data lanjutan: [HashSet][oop-hashset] · [SplayTreeMap][oop-splaymap] · [SplayTreeSet][oop-splayset]
 
   </div>
 </details>
@@ -50,21 +67,13 @@ Deskripsi singkat: Memperkenalkan kelas, objek, enkapsulasi, inheritance, polymo
   </summary>
   <div style="padding-left:25px;margin-top:8px;">
 
-Deskripsi singkat: Pelajari penggunaan generics untuk membuat fungsi/kelas yang type-safe dan alat bantu seperti `Expando`, serta penanganan error/exception.
+Deskripsi singkat: Pelajari penggunaan generics untuk membuat fungsi/kelas yang type-safe, alat bantu seperti `Expando`, serta penanganan error/exception.
 
-- Subtopik: generik pada class/func, Expando, contoh ArgumentError dan praktik penanganan exception.
-
-  </div>
-</details>
-
-<details>
-  <summary>
-    <strong>Linter</strong>
-    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Aturan kualitas kode dan tooling</i></div>
-  </summary>
-  <div style="padding-left:25px;margin-top:8px;">
-
-Deskripsi singkat: Memperkenalkan aturan linting Dart, konfigurasi, dan praktik terbaik untuk menjaga konsistensi dan kualitas kode (mis. aturan `always_declare_return_types`).
+- [Ringkasan Generic (Class, Function & Type Parameter)][generik] — halaman utama & konsep dasar generics
+- Topik pendukung:
+  - [Expando][generik-expando] — menyimpan data tambahan tanpa mengubah objek asli
+  - [Data & Struktur Generik][generik-data] — contoh struktur data generik
+  - [ArgumentError][generik-argument-error] — praktik penanganan exception
 
   </div>
 </details>
@@ -72,13 +81,17 @@ Deskripsi singkat: Memperkenalkan aturan linting Dart, konfigurasi, dan praktik 
 <details>
   <summary>
     <strong>Advance</strong>
-    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Materi lanjutan: arsitektur, concurrent, dan optimasi</i></div>
+    <div style="font-size:11px;color:grey;margin-left:24px;"><i>Kualitas kode, tooling, dan transformasi data lanjutan</i></div>
   </summary>
   <div style="padding-left:25px;margin-top:8px;">
 
-Deskripsi singkat: Topik untuk pemahaman mendalam seperti mapping/transformasi data, isolates, performance tuning, dan pattern arsitektur aplikasi skala besar.
+Deskripsi singkat: Materi lanjutan untuk pemahaman mendalam—aturan linting untuk menjaga kualitas kode, serta transformasi/pemetaan (mapping) data. Bagian ini terbuka untuk topik arsitektur lanjutan lain (isolates, pattern async/stream, performance tuning) di masa depan.
 
-- Subtopik: mapping (lihat `adnvace/mapping`), isolates, streams/async patterns.
+- [Ringkasan & Peta Materi Advance][advance] — halaman utama bagian Advance
+- Topik penting:
+  - [Linter][advance-linter] — aturan kualitas kode dan konfigurasi `analysis_options`
+    - Contoh aturan: [always_declare_return_types][advance-linter-return-types]
+  - [Mapping][advance-mapping] — transformasi dan pemetaan data
 
   </div>
 </details>
@@ -96,27 +109,52 @@ Deskripsi singkat: Topik untuk pemahaman mendalam seperti mapping/transformasi d
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 
-<!-- Daftar link ke file yang ada -->
-[0]: ../README.md
-[1]: ./dasar/comentar/README.md
-[2]: ./dasar/control-flow/README.md
-[3]: ./dasar/conversion/README.md
-[5]: ./dasar/function/README.md
-[6]: ./dasar/modifikator/README.md
-[7]: ./dasar/nullsafety/README.md
-[8]: ./dasar/operator/README.md
-[9]: ./dasar/other/generator/README.md
-[10]: ./dasar/other/late/README.md
-[11]: ./dasar/perulangan/perulangan.md
-[12]: ./dasar/struktur-data/dasar/list/README.md
-[13]: ./dasar/struktur-data/dasar/map/README.md
-[14]: ./dasar/struktur-data/dasar/set/README.md
-[15]: ./dasar/tipe-data/README.md
-[16]: ./dasar/variabel/README.md
+<!-- Dasar -->
+[dasar]: ./dasar/README.md
+[variabel]: ./dasar/variabel/README.md
+[tipe-data]: ./dasar/tipe-data/README.md
+[komentar]: ./dasar/comentar/README.md
+[nullsafety]: ./dasar/nullsafety/README.md
+[operator]: ./dasar/operator/README.md
+[konversi]: ./dasar/conversion/README.md
+[control-flow]: ./dasar/control-flow/README.md
+[perulangan]: ./dasar/perulangan/perulangan.md
+[collection]: ./dasar/collection/00-panduan-dan-peta-belajar.md
+[collection-list]: ./dasar/collection/dasar/list/README.md
+[collection-map]: ./dasar/collection/dasar/map/README.md
+[collection-set]: ./dasar/collection/dasar/set/README.md
+[collection-linked-list]: ./dasar/collection/menengah/linked-list/README.md
+[collection-queue]: ./dasar/collection/menengah/queue/README.md
+[collection-stack]: ./dasar/collection/menengah/stack/README.md
+[fungsi]: ./dasar/function/README.md
+[modifikator]: ./dasar/modifikator/README.md
+[generator]: ./dasar/other/generator/README.md
+[late]: ./dasar/other/late/README.md
 
-<!-- OOP references (ke folder) -->
-[oop-root]: ./oop/README.md
+<!-- OOP -->
+[oop]: ./oop/README.md
+[oop-class]: ./oop/class/class-object/README.md
+[oop-constructor]: ./oop/constructor/constructor/README.md
+[oop-encapsulation]: ./oop/encapsulation/encapsulation.md
+[oop-inheritance]: ./oop/inheritance/inheritance.md
+[oop-interface]: ./oop/interface/README.md
+[oop-abstract]: ./oop/abstrac/README.md
+[oop-polymorphism]: ./oop/polymorphism/polymorphism.md
+[oop-method]: ./oop/method/method.md
+[oop-operator]: ./oop/operator/operator.md
+[oop-import-export]: ./oop/import_export/docs.md
+[oop-hashset]: ./oop/struktur-data/hash_set.md
+[oop-splaymap]: ./oop/struktur-data/splay_tree_map.md
+[oop-splayset]: ./oop/struktur-data/splay_tree_set.md
 
+<!-- Generic -->
+[generik]: ./generik/README.md
+[generik-expando]: ./generik/expando/README.md
+[generik-data]: ./generik/data/README.md
+[generik-argument-error]: ./generik/argument_error/README.md
 
-
-
+<!-- Advance -->
+[advance]: ./adnvace/README.md
+[advance-linter]: ./adnvace/linter/README.md
+[advance-linter-return-types]: ./adnvace/linter/always-declare-return-types/README.md
+[advance-mapping]: ./adnvace/mapping/README.md
