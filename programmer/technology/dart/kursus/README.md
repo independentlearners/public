@@ -102,6 +102,7 @@ Deskripsi singkat: Materi lanjutan untuk pemahaman mendalam—aturan linting unt
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
+> - **[Struktur Direktori][dir]**
 > - **[Domain Spesifik][domain]**
 
 [domain]: ../../../../../../README.md
@@ -158,3 +159,5 @@ Deskripsi singkat: Materi lanjutan untuk pemahaman mendalam—aturan linting unt
 [advance-linter]: ./adnvace/linter/README.md
 [advance-linter-return-types]: ./adnvace/linter/always-declare-return-types/README.md
 [advance-mapping]: ./adnvace/mapping/README.md
+
+[dir]: ./text.md
