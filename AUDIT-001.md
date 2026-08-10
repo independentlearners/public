@@ -62,6 +62,14 @@ Top-level saat ini mencakup:
 
 Belum ada dasar yang cukup untuk memindahkan semuanya. Langkah berikutnya adalah menentukan hubungan antardomain dan canonical location sebelum restrukturisasi.
 
+### 8. Root README memiliki indikasi referensi yang perlu disinkronkan dengan tree aktual
+
+Navigasi root menyebut sejumlah lokasi sebagai halaman pembelajaran. Karena repository terus berkembang, setiap target harus dibandingkan dengan tree aktual sebelum halaman dipertahankan sebagai canonical entry point. Pemeriksaan ini akan dilakukan sebelum restrukturisasi dan bukan berdasarkan asumsi nama direktori.
+
+### 9. Repository memiliki banyak README sehingga navigasi harus dibedakan dari materi
+
+Pencarian repository menunjukkan README tersebar pada banyak tingkat, dari domain utama hingga materi dan bagian-bagian kecil. Ini menguatkan kebutuhan untuk membedakan tiga fungsi: landing/index, materi pembelajaran, dan reference. Tidak semua direktori membutuhkan README baru.
+
 ## Keputusan Audit #001
 
 Belum ada pemindahan atau penghapusan konten publik pada tahap ini.
@@ -76,6 +84,31 @@ Prioritas berikutnya:
 6. Audit domain lainnya.
 7. Susun master map dan dependency map.
 8. Baru melakukan perubahan struktur P0.
+
+## Protokol Sinkronisasi Lokal
+
+Setiap checkpoint perubahan repository harus dapat direproduksi dari root repository privat beserta seluruh submodule. Gunakan urutan berikut dari root `file`:
+
+```bash
+git fetch --all --prune
+git pull --ff-only
+git submodule sync --recursive
+git submodule update --init --recursive
+git submodule foreach --recursive 'git fetch --all --prune'
+git status
+```
+
+Perintah tersebut memperbarui referensi root, menyelaraskan URL/path submodule, checkout commit submodule yang direferensikan root, dan mengambil referensi remote pada repository submodule. `git submodule update --init --recursive` adalah langkah yang menentukan isi working tree sesuai gitlink root; `foreach` hanya memperbarui referensi remote submodule dan tidak melakukan merge/pull pada branch submodule secara otomatis.
+
+Untuk verifikasi akhir checkpoint:
+
+```bash
+git status
+
+git submodule status --recursive
+```
+
+Targetnya adalah root `file` dan seluruh working tree submodule berada pada keadaan yang dapat direproduksi dari commit yang direferensikan, tanpa perubahan lokal yang tidak disengaja.
 
 ## Prinsip Perlindungan Konten
 
