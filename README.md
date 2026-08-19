@@ -631,7 +631,7 @@ Panduan administratif, eksperimen, dan istilah sistem.
 - **🧠 Log & Analisis Kesalahan**
 - **📜 Script Konfigurasi & Dotfiles**
 - **📦 Template Workflow Sistem**
-  
+- **[💻 Software][software]**
  <!--
 **Catatan:** Struktur ini menyamakan standar dokumentasi dengan *Programmer Hub* — hierarkis, berlapis, dan siap dikembangkan ke bentuk situs dokumentasi seperti *MkDocs* atau *mdBook*. Bagian Arch Linux menitikberatkan pada kendali penuh dan otomasi sistem, sedangkan bagian Windows fokus pada interoperabilitas dan sistem penunjang.
  
@@ -710,7 +710,6 @@ Apakah Anda ingin saya bantu ubah hasil ini langsung menjadi **template Markdown
 
   - **[📁 Filesystem Arch Linux](sistem-operasi/linux/archlinux/README.md)**
   - **[🗜 Instalasi Arch Linux](sistem-operasi/linux/archlinux/instalasi/README.md)**
-  - **[💻 Others]()**
   -->
   
  </div>
