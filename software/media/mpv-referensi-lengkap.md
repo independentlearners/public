@@ -29,11 +29,11 @@
 Sebelum masuk ke daftar, satu pemahaman ini akan menghemat banyak kebingungan di jalan: **mpv hanya punya satu bahasa perintah**, bukan dua sistem terpisah untuk "keybinding" dan "scripting".
 
 ```
-                     ┌─────────────────────────────────┐
-                     │      MPV CORE (C, libmpv)        │
-                     │  properties · commands · events  │
+                     ┌───────────────────────────────────┐
+                     │      MPV CORE (C, libmpv)         │
+                     │  properties · commands · events   │
                      └───────────────┬───────────────────┘
-                                      │  Client API (sama persis untuk semua)
+                                     │  Client API (sama persis untuk semua)
         ┌─────────────┬──────────────┼──────────────┬──────────────┐
         │             │              │              │              │
    input.conf     JSON IPC      Lua scripts     JavaScript      libmpv
