@@ -203,8 +203,8 @@ Kerjakan ketiganya — terutama poin 3, karena itu akan mengunci pemahaman bahwa
 
 [domain]: ./../../../../../README.md
 [kurikulum]: ./../../../README.md
-[sebelumnya]: ./bagian-4/README.md
-[selanjutnya]: ./bagian-6/README.md
+[sebelumnya]: ../bagian-4/README.md
+[selanjutnya]: ../bagian-6/README.md
 
 <!----------------------------------------------------->
 

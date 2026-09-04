@@ -177,8 +177,8 @@ Kerjakan ketiganya — terutama poin 3, karena itu bukti kamu sudah bisa **menya
 
 [domain]: ./../../../../../README.md
 [kurikulum]: ./../../../README.md
-[sebelumnya]: ./bagian-3/README.md
-[selanjutnya]: ./bagian-5/README.md
+[sebelumnya]: ../bagian-3/README.md
+[selanjutnya]: ../bagian-5/README.md
 
 <!----------------------------------------------------->
 

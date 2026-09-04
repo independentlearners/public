@@ -168,8 +168,8 @@ Kerjakan ketiganya, terutama poin 3 — pemahaman soal urutan redirection ini ak
 
 [domain]: ./../../../../../README.md
 [kurikulum]: ./../../../README.md
-[sebelumnya]: ./bagian-5/README.md
-[selanjutnya]: ./bagian-7/README.md
+[sebelumnya]: ../bagian-5/README.md
+[selanjutnya]: ../bagian-7/README.md
 
 <!----------------------------------------------------->
 
