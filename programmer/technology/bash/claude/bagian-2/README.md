@@ -1,8 +1,3 @@
-<!-- <details> -->
-<!--   <summary>📃 Daftar Isi</summary> -->
-<!---->
-<!-- </details> -->
-<!---->
 # Hari 2 — Variabel, Quoting, dan Ekspansi.
 
 Ini bagian yang menentukan apakah skrip kamu nanti robust atau penuh bug aneh, karena Bash melakukan ekspansi teks *sebelum* eksekusi — kalau kamu tidak paham urutan ini, hasil skrip jadi tidak terduga.

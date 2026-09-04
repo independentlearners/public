@@ -1,8 +1,3 @@
-<!-- <details> -->
-<!--   <summary>📃 Daftar Isi</summary> -->
-<!---->
-<!-- </details> -->
-
 # 1. Apa itu Shell, dan Apa itu Bash
 
 Shell adalah program yang menjembatani kamu dengan kernel Linux. Saat kamu mengetik perintah dan tekan Enter, shell yang membaca teks itu, memecahnya, mencari tahu program apa yang dimaksud, lalu meminta kernel menjalankannya.
