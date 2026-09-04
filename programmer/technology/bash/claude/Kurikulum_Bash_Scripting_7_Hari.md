@@ -48,7 +48,7 @@ Prinsip belajar minggu ini: **tidak ada satu baris kode pun yang boleh dijalanka
 
 ---
 
-## HARI 3 — Percabangan Logika (Conditional Logic)
+## [HARI 3 — Percabangan Logika (Conditional Logic)][3]
 
 **Tujuan mental:** ini adalah jantung logika program — mesin mengambil keputusan berdasarkan *exit status* (`$?`), bukan berdasarkan "benar/salah" seperti bahasa lain.
 
@@ -69,7 +69,7 @@ Prinsip belajar minggu ini: **tidak ada satu baris kode pun yang boleh dijalanka
 
 ---
 
-## HARI 4 — Perulangan (Loops) dan Kontrol Alur
+## [HARI 4 — Perulangan (Loops) dan Kontrol Alur][4]
 
 **Tujuan mental:** memahami iterasi sebagai mekanisme mengulang eksekusi berdasarkan kondisi — dasar dari otomatisasi sesungguhnya.
 
@@ -87,7 +87,7 @@ Prinsip belajar minggu ini: **tidak ada satu baris kode pun yang boleh dijalanka
 
 ---
 
-## HARI 5 — Fungsi, Array, dan String Manipulation
+## [HARI 5 — Fungsi, Array, dan String Manipulation][5]
 
 **Tujuan mental:** memodularkan logika — ini titik di mana skrip berubah dari "urutan perintah" menjadi "program" sungguhan.
 
@@ -109,7 +109,7 @@ Prinsip belajar minggu ini: **tidak ada satu baris kode pun yang boleh dijalanka
 
 ---
 
-## HARI 6 — I/O, Pipe, Redirection, dan Text Processing
+## [HARI 6 — I/O, Pipe, Redirection, dan Text Processing][6]
 
 **Tujuan mental:** memahami filosofi Unix — "banyak program kecil yang saling terhubung lewat aliran teks" adalah inti kekuatan Bash.
 
@@ -127,7 +127,7 @@ Prinsip belajar minggu ini: **tidak ada satu baris kode pun yang boleh dijalanka
 
 ---
 
-## HARI 7 — Skrip Robust: Error Handling, Debugging, dan Best Practice
+## [HARI 7 — Skrip Robust: Error Handling, Debugging, dan Best Practice][7]
 
 **Tujuan mental:** ini adalah lompatan dari "bisa jalan" menuju "layak produksi" — mentalitas insinyur, bukan sekadar pengguna terminal.
 
@@ -153,5 +153,65 @@ Prinsip belajar minggu ini: **tidak ada satu baris kode pun yang boleh dijalanka
 4. Jalankan `bash -x` pada tiap skrip latihan untuk melihat urutan eksekusi sesungguhnya
 5. Sebelum lanjut ke hari berikutnya, coba jelaskan materi hari itu ke orang lain (atau ke saya) tanpa melihat catatan — itu tanda pemahaman sudah jadi milikmu, bukan hafalan
 
+---
+
+## Materi Lanjutan (Pasca Hari 7) — Menuju Level Produksi Sungguhan
+
+Hari 1–7 membangun fondasi lengkap: sintaks, logika, dan disiplin robust. Di luar itu, ada area yang **sengaja hanya disinggung sekilas** tanpa dituntaskan (supaya tidak mengganggu alur inti tiap hari), dan ada area yang **sama sekali belum tersentuh**. Modul di bawah ini tidak berurutan seperti Hari 1–7 — masing-masing cukup independen, boleh dipelajari sesuai kebutuhan.
+
+### Modul A — Ekspansi Parameter Tingkat Lanjut
+*(perluasan Hari 2 & 5 — belum pernah disentuh)*
+`${var#pola}` / `${var##pola}` (hapus prefix, cocokkan terpendek/terpanjang), `${var%pola}` / `${var%%pola}` (hapus suffix), `${var^}` / `${var^^}` dan `${var,}` / `${var,,}` (ubah kapitalisasi), `${var:+alt}` (kebalikan `:-`), `${var:?pesan}` (error kustom per variabel — versi granular dari `set -u` Hari 7), indirect expansion `${!var}`. Menggantikan banyak pemanggilan `basename`/`dirname`/`sed` eksternal (Hari 6) dengan operasi native yang jauh lebih cepat.
+Referensi: https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion
+
+### Modul B — Parsing Argumen Profesional: `getopts`
+*(pengganti validasi manual `$1`/`case` Hari 3 & 7 — belum pernah disentuh)*
+Builtin standar untuk mem-parsing flag bergaya CLI sungguhan (`-v`, `-f value`, kombinasi `-vf`) — dipakai hampir semua tool command-line produksi, menggantikan pengecekan `$#`/`case` manual yang kita pakai sepanjang minggu ini.
+Referensi: https://www.gnu.org/software/bash/manual/bash.html#Bourne-Shell-Builtins
+
+### Modul C — Process Substitution & Command Grouping
+*(belum pernah disentuh)*
+`<(perintah)` dan `>(perintah)` memperlakukan output/input sebuah perintah seolah file — kebalikan masalah `xargs` Hari 6. Modul ini juga menuntaskan beda `( )` (subshell eksplisit, proses terpisah — Hari 1) vs `{ }` (group command, proses sama — Hari 5), dua konstruksi yang sengaja belum dibedah eksplisit.
+Referensi: https://www.gnu.org/software/bash/manual/bash.html#Process-Substitution dan https://www.gnu.org/software/bash/manual/bash.html#Command-Grouping
+
+### Modul D — Job Control & Proses Latar Belakang
+*(payoff dari `$!`, cuma disebut sekilas Hari 2 — belum pernah dipakai)*
+`&` untuk background, `jobs`/`fg`/`bg` untuk mengelolanya, `wait` untuk menunggu selesai, `kill` untuk kirim sinyal manual — bridge langsung ke `trap` Hari 7 (pengirim vs penerima sinyal).
+Referensi: https://www.gnu.org/software/bash/manual/bash.html#Job-Control-Basics
+
+### Modul E — Array Lanjutan & `mapfile`
+*(perluasan Hari 5 — belum pernah disentuh)*
+Slicing `${arr[@]:offset:length}`, hapus elemen dengan `unset arr[index]`, dan `mapfile`/`readarray` — baca file langsung jadi array tanpa loop manual, alternatif idiom `while IFS= read -r` Hari 4 untuk kasus tertentu.
+Referensi: https://www.gnu.org/software/bash/manual/bash.html#Arrays
+
+### Modul F — `printf` Sebagai Pengganti `echo`
+*(belum pernah disentuh — kita pakai `echo` sepanjang minggu ini)*
+`echo` punya perilaku tidak konsisten antar sistem. `printf` jauh lebih presisi dan predictable untuk output berformat — penting begitu skrip menghasilkan laporan/log terstruktur.
+Referensi: https://www.gnu.org/software/bash/manual/bash.html#Bash-Builtin-Commands
+
+### Modul G — Hardening Keamanan Skrip
+*(perluasan mentalitas Hari 7 — belum pernah dibahas)*
+Kenapa `eval` berbahaya (celah injection), `set -C` (noclobber, pasangan `set -euo pipefail` Hari 7), `--` untuk menegaskan akhir daftar opsi.
+Referensi: https://www.gnu.org/software/bash/manual/bash.html#The-Set-Builtin
+
+### Modul H — Automasi Terjadwal: Cron & Termux:Boot
+*(payoff dari catatan "Termux tak punya systemd" Hari 7 — solusinya belum dijelaskan)*
+Arch: `cron` klasik (paket `cronie`) atau `systemd timer`. Termux (tanpa `systemd`): add-on **Termux:Boot** untuk skrip saat perangkat restart.
+
+### Modul I — Networking dari Bash: `curl` & `jq`
+*(area sama sekali baru)*
+`curl`/`wget` memanggil API dari skrip, `jq` (companion tool) mem-parsing respons JSON di dalam pipeline — perluasan filosofi "banyak tool kecil tersambung" Hari 6, sekarang menyentuh jaringan.
+
+### Modul J — Testing & Distribusi Skrip
+*(pasangan `shellcheck` Hari 7 — linting vs testing)*
+`shellcheck` (Hari 7) mendeteksi bug statis sebelum dijalankan. **bats** (Bash Automated Testing System) menguji perilaku skrip lewat test case sungguhan — level tempat skrip individual berubah jadi proyek software yang bisa diverifikasi.
+
+**Prioritas kalau bingung mulai dari mana:** Modul A, B, dan F paling langsung terpakai sehari-hari — lanjutkan dari situ. Modul C, D, E soal arsitektur proses. Modul G, H, I, J baru relevan begitu skrip kamu dipakai orang lain atau berjalan tanpa pengawasan.
+
 [1]: ./bagian-1/README.md
 [2]: ./bagian-2/README.md
+[3]: ./bagian-3/README.md
+[4]: ./bagian-4/README.md
+[5]: ./bagian-5/README.md
+[6]: ./bagian-6/README.md
+[7]: ./bagian-7/README.md
