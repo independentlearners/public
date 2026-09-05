@@ -1,4 +1,4 @@
-# Kurikulum Bash Scripting: Dari Nol Menuju Ahli (7 Hari)
+# [Kurikulum Bash Scripting: Dari Nol Menuju Ahli (7 Hari)][0]
 
 **Host utama:** Arch Linux & Termux
 **Referensi wajib:**
@@ -208,6 +208,7 @@ Arch: `cron` klasik (paket `cronie`) atau `systemd timer`. Termux (tanpa `system
 
 **Prioritas kalau bingung mulai dari mana:** Modul A, B, dan F paling langsung terpakai sehari-hari — lanjutkan dari situ. Modul C, D, E soal arsitektur proses. Modul G, H, I, J baru relevan begitu skrip kamu dipakai orang lain atau berjalan tanpa pengawasan.
 
+[0]: ./../README.md
 [1]: ./bagian-1/README.md
 [2]: ./bagian-2/README.md
 [3]: ./bagian-3/README.md

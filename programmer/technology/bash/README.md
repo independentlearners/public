@@ -34,7 +34,7 @@ Kurikulum ini adalah peta jalan untuk menguasai inti dari seni otomasi di lingku
 
 ---
 
-### **[Fase 1: Fondasi – Berinteraksi dengan Shell (Tingkat Pemula)][1]**
+### **[Fase 1: Fondasi – Berinteraksi dengan Shell (Tingkat Pemula)][bag1]**
 
 **Tujuan Fase:** Membangun kenyamanan di baris perintah, memahami konsep fundamental interaksi dengan shell, dan menulis skrip pertama yang fungsional.
 
@@ -229,7 +229,7 @@ Setiap panah (`→`) di atas mewakili aliran data berbasis stream: teks, byte, a
 
 ---
 
-### **[Fase 2: Menengah – Struktur, Kontrol, dan Manipulasi Teks (Tingkat Menengah)][2]**
+### **[Fase 2: Menengah – Struktur, Kontrol, dan Manipulasi Teks (Tingkat Menengah)][bag2]**
 
 **Tujuan Fase:** Menguasai elemen-elemen pemrograman standar (kondisional, perulangan, fungsi) dan menggunakan alat bantu teks yang kuat untuk memproses data.
 
@@ -374,7 +374,7 @@ Setiap panah (`→`) di atas mewakili aliran data berbasis stream: teks, byte, a
 
 ---
 
-### **[Fase 3: Mahir – Skrip yang Andal dan Profesional (Tingkat Mahir)][3]**
+### **[Fase 3: Mahir – Skrip yang Andal dan Profesional (Tingkat Mahir)][bag3]**
 
 **Tujuan Fase:** Mengubah skrip sederhana menjadi alat yang kuat, aman, dan siap produksi dengan penanganan kesalahan yang baik, antarmuka pengguna yang layak, dan praktik terbaik.
 
@@ -494,7 +494,7 @@ Setiap panah (`→`) di atas mewakili aliran data berbasis stream: teks, byte, a
 
 ---
 
-### **[Fase 4: Pakar – Aplikasi Skala Enterprise dan Keamanan (Tingkat Pakar)][4]**
+### **[Fase 4: Pakar – Aplikasi Skala Enterprise dan Keamanan (Tingkat Pakar)][bag4]**
 
 **Tujuan Fase:** Menerapkan keterampilan scripting dalam skenario dunia nyata yang kompleks, dengan fokus kuat pada keamanan, interoperabilitas, dan kinerja.
 
@@ -772,23 +772,23 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 
 ---
 
-<!-- [1]: https://www.gnu.org/s/bash/manual/bash.html "Bash Reference Manual" -->
-<!-- [2]: https://archlinux.org/packages/core/x86_64/man-db "man-db 2.13.1-1 (x86_64)" -->
-<!-- [3]: https://man7.org/linux/man-pages/man1/bash.1.html "bash(1) - Linux manual page" -->
-<!-- [4]: https://man.archlinux.org/man/man.1.en "man(1) - Arch manual pages" -->
-<!-- [5]: https://tldp.org/LDP/abs/html "Advanced Bash-Scripting Guide" -->
-<!-- [6]: https://tldp.org/LDP/abs/abs-guide.pdf "Advanced Bash-Scripting Guide" -->
-<!-- [7]: https://pubs.opengroup.org/onlinepubs/9799919799 "The Open Group Base Specifications Issue 8" -->
-<!-- [8]: https://www.shellcheck.net "ShellCheck – shell script analysis tool" -->
-<!-- [9]: https://archlinux.org/packages/extra/x86_64/shellcheck "shellcheck 0.11.0-71 (x86_64)" -->
-<!-- [10]: https://www.gnu.org/s/coreutils/manual/coreutils.html "GNU Coreutils Manual" -->
-<!-- [11]: https://devdocs.io "DevDocs API Documentation" -->
-<!-- [12]: https://zealdocs.org "Zeal - Offline Documentation Browser" -->
-<!-- [13]: https://zealdocs.org/download.html "Download" -->
-<!-- [14]: https://man.archlinux.org "Arch manual pages - Arch Linux" -->
-<!-- [15]: https://savannah.gnu.org/git/?group=bash "The GNU Bourne-Again SHell - Git Repositories [Savannah]" -->
-<!-- [16]: https://books.google.com/books/about/Bash_Reference_Manual.html?id=fY2_rEP_pDYC "Bash Reference Manual" -->
-<!-- [17]: https://www.freecodecamp.org/news/bash-scripting-tutorial-linux-shell-script-and-command-line-for-beginners "Bash Scripting Tutorial – Linux Shell Script and Command ..." -->
+[1]: https://www.gnu.org/s/bash/manual/bash.html "Bash Reference Manual"
+[2]: https://archlinux.org/packages/core/x86_64/man-db "man-db 2.13.1-1 (x86_64)"
+[3]: https://man7.org/linux/man-pages/man1/bash.1.html "bash(1) - Linux manual page"
+[4]: https://man.archlinux.org/man/man.1.en "man(1) - Arch manual pages"
+[5]: https://tldp.org/LDP/abs/html "Advanced Bash-Scripting Guide"
+[6]: https://tldp.org/LDP/abs/abs-guide.pdf "Advanced Bash-Scripting Guide"
+[7]: https://pubs.opengroup.org/onlinepubs/9799919799 "The Open Group Base Specifications Issue 8"
+[8]: https://www.shellcheck.net "ShellCheck – shell script analysis tool"
+[9]: https://archlinux.org/packages/extra/x86_64/shellcheck "shellcheck 0.11.0-71 (x86_64)"
+[10]: https://www.gnu.org/s/coreutils/manual/coreutils.html "GNU Coreutils Manual"
+[11]: https://devdocs.io "DevDocs API Documentation"
+[12]: https://zealdocs.org "Zeal - Offline Documentation Browser"
+[13]: https://zealdocs.org/download.html "Download"
+[14]: https://man.archlinux.org "Arch manual pages - Arch Linux"
+[15]: https://savannah.gnu.org/git/?group=bash "The GNU Bourne-Again SHell - Git Repositories [Savannah]"
+[16]: https://books.google.com/books/about/Bash_Reference_Manual.html?id=fY2_rEP_pDYC "Bash Reference Manual"
+[17]: https://www.freecodecamp.org/news/bash-scripting-tutorial-linux-shell-script-and-command-line-for-beginners "Bash Scripting Tutorial – Linux Shell Script and Command ..."
 
 </details>
 
@@ -797,14 +797,15 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 - **[Metode 7 Hari Belajar Bash][claude]**
 - **[Home][domain-spesifik]**
 
-[domain-spesifik]: ./../README.md
+[domain-spesifik]: ../../README.md
 [0]: ./../../../CLI_TUI/perintah/README.md
-[1]:./bash/bagian-1/README.md
-[2]:./bash/bagian-2/README.md
-[3]:./bash/bagian-3/README.md
-[4]:./bash/bagian-4/README.md
-[5]:./bash/bagian-5/README.md
-[6]:./bash/nich/README.md
-[7]: ./bashscripting/README.md
+[bag1]:../bash/bagian-1/README.md
+[bag2]:../bash/bagian-2/README.md
+[bag3]:../bash/bagian-3/README.md
+[bag4]:../bash/bagian-4/README.md
+
+<!-- [bag5]:../bash/bagian-5/README.md -->
+<!-- [bag6]:../bash/nich/README.md -->
+<!-- [bag7]: ./bashscripting/README.md -->
 
 [claude]: ./claude/Kurikulum_Bash_Scripting_7_Hari.md
