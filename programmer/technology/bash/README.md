@@ -796,6 +796,7 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 
 - **[Metode 7 Hari Belajar Bash][claude]**
 - **[Home][domain-spesifik]**
+- **[Others][others]**
 
 [domain-spesifik]: ../../README.md
 [0]: ./../../../CLI_TUI/perintah/README.md
@@ -809,3 +810,4 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 <!-- [bag7]: ./bashscripting/README.md -->
 
 [claude]: ./claude/Kurikulum_Bash_Scripting_7_Hari.md
+[others]: ./others/others.md
