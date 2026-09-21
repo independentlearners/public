@@ -1,6 +1,9 @@
 # Pengaruh Fungsi Di Bash
 
-### > Apakah setiap [fungsi di bash mempengaruhi exit status][0] meskipun fungsi tersebut tidak ada kaitannya dengan logika pada baris tersebut
+## Pertanyaan:
+```
+Apakah setiap [fungsi di bash mempengaruhi exit status][0] meskipun fungsi tersebut tidak ada kaitannya dengan logika pada baris tersebut
+```
 
 Ya, tetapi perlu dibedakan antara **fungsi yang didefinisikan** dan **fungsi yang dipanggil**.
 
