@@ -1,12 +1,13 @@
-# Hal Lain Tentang Bash
+# Hal lain rentang scripting di **Bash**
 
-Bagian ini mungkin tidak dibahas dalam kurikulum maupun materi pembelajaran
+Bagian ini mungkin tidak dibahas dalam kurikulum maupun materi pembelajaran secara eksplisit.
 
-**Fungsi**
-  > [Pengaruh fungsi di bash pada exit status][0]
-  > [Karakter Escape][1]
-  > [Karakter Escape Sequence][2]
-  > [Karakter ANSI Escape Sequence][3]
+## **Fungsi**
+- [Pengaruh fungsi di bash pada exit status][0]
+## **Escape**
+- [Karakter Escape][1]
+- [Karakter Escape Sequence][2]
+- [Karakter ANSI Escape Sequence][3]
  
 [0]: ./fung.md
 [1]: ./escape_character.md
