@@ -1,5 +1,13 @@
 # Escaped character
 
+<details>
+  <summary>
+    <strong>⌨️ Gpt</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Model Standar.</i></div>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+
 Dalam konteks **Bash, shell, dan pemrograman**, **escape character** adalah karakter yang digunakan untuk memberi tahu shell atau program bahwa karakter setelahnya harus diperlakukan dengan **makna khusus** atau **tidak diperlakukan sebagai sintaks biasa**.
 
 Karakter escape yang paling umum adalah:
@@ -393,3 +401,104 @@ mengirim instruksi kepada terminal
 ```
 
 Untuk Bash scripting, memahami **escape → quoting → word splitting → expansion** adalah fondasi yang sangat penting. Keempat konsep ini saling berkaitan dan nantinya menjelaskan mengapa Bash bisa sangat sensitif terhadap `" "`, `' '`, `\`, `${...}`, `$()`, dan `$(...)`.
+  </div>
+</details>
+
+<details>
+  <summary>
+    <strong>⌨️ Gemini</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Model Pro Mendalam.</i></div>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+
+*Escape character* adalah sebuah karakter (hampir selalu berupa *backslash* atau garis miring terbalik `\`) yang memodifikasi interpretasi dari karakter yang mengikutinya. Karakter ini digunakan untuk dua tujuan utama: menyisipkan karakter yang tidak dapat diketik langsung (seperti baris baru atau tab) dan memerintahkan *interpreter* atau *compiler* untuk memperlakukan karakter khusus sebagai teks biasa (literal).
+
+Berikut adalah dokumentasi komprehensif mengenai penggunaan *escape character* di berbagai lingkungan.
+
+### 1. Escape Sequence Standar (C, Dart, Java, dll.)
+
+Sebagian besar bahasa pemrograman modern mengadopsi standar *escape sequence* dari bahasa C.
+
+* **`\n`** : *Newline* / Baris baru.
+* **`\t`** : *Horizontal Tab*.
+* **`\r`** : *Carriage Return* (sering dikombinasikan menjadi `\r\n` pada sistem Windows, atau menimpa baris saat ini di terminal).
+* **`\\`** : *Backslash* literal (mencetak simbol `\`).
+* **`\'`** : *Single quote* literal (berguna saat string diapit oleh tanda kutip tunggal).
+* **`\"`** : *Double quote* literal (berguna saat string diapit oleh tanda kutip ganda).
+* **`\0`** : *Null character* (menandai akhir dari sebuah string di memori pada beberapa bahasa).
+* **`\b`** : *Backspace* (menghapus satu karakter sebelumnya di output terminal).
+* **`\e` atau `\033**` : *Escape* (sangat sering digunakan dalam skrip Bash/TUI untuk kode warna ANSI).
+* **`\uXXXX`** : Representasi karakter Unicode heksadesimal (misalnya `\u00A9` untuk simbol ©).
+
+### 2. Implementasi di Shell / Bash Scripting
+
+Dalam lingkungan *command-line* Unix/Linux, *escape character* mencegah *shell* menerjemahkan karakter meta (seperti spasi, wildcard, atau variabel).
+
+* **Mencegah Ekspansi Variabel:**
+Jika Anda memiliki string ganda `" "`, Bash akan mengekspansi variabel. Gunakan `\` untuk mencegahnya.
+```bash
+echo "Biayanya adalah \$100" # Output: Biayanya adalah $100
+
+```
+
+
+* **Spasi pada Nama File:**
+Untuk memanipulasi file dengan spasi di terminal, spasi tersebut harus di-*escape*.
+```bash
+cat laporan\ keuangan.txt
+
+```
+
+
+* **Karakter Khusus Shell:**
+Karakter pengontrol alir seperti `&`, `|`, `<`, `>`, `*`, `?`, dan `!` memiliki fungsi khusus di shell.
+```bash
+echo "Cari file dengan ekstensi \* atau \?"
+
+```
+
+
+* **Pemecahan Baris (Line Continuation):**
+Di dalam skrip Bash yang panjang, `\` di akhir baris memberi tahu shell bahwa perintah berlanjut ke baris berikutnya.
+
+### 3. Implementasi Khusus (Dart & Flutter)
+
+Dalam pengembangan aplikasi dengan Dart, mekanisme *escape* memiliki beberapa sintaks tambahan yang relevan dengan ekosistemnya.
+
+* **Interpolasi String (`$`):**
+Dart menggunakan `$` untuk menyisipkan variabel langsung ke dalam string. Untuk mencetak simbol dolar secara literal, Anda harus menggunakan `\$`.
+```dart
+String harga = "Total tagihan: \$50.00 untuk ${user.name}";
+
+```
+
+
+* **Raw Strings (`r`):**
+Jika Anda berurusan dengan path direktori atau regex yang membutuhkan banyak *backslash*, Anda dapat mengawali string dengan huruf `r` (*raw string*). Dalam mode ini, *escape character* akan sepenuhnya diabaikan.
+```dart
+// Tanpa raw string (harus double escape)
+var path = 'C:\\Program Files\\Aplikasi';
+
+// Dengan raw string
+var rawPath = r'C:\Program Files\Aplikasi'; 
+
+```
+
+
+
+### 4. Escape Character dalam Regular Expressions (Regex)
+
+Saat menggunakan alat berbasis regex seperti `grep`, `ripgrep`, `jq`, atau fungsi regex di dalam kode, banyak karakter standar yang berubah menjadi metakarakter dengan fungsi pencarian spesifik.
+
+Karakter-karakter berikut ini **wajib** di-*escape* dengan `\` jika Anda ingin mencarinya sebagai teks biasa:
+`.` `*` `+` `?` `^` `$` `(` `)` `[` `]` `{` `}` `|` `\`
+
+**Contoh Kasus Regex:**
+Jika Anda ingin mencari alamat IP literal `192.168.1.1`, titik `.` harus di-*escape*, jika tidak regex akan menganggap titik sebagai "karakter apa pun".
+
+* Salah: `192.168.1.1` (akan cocok dengan `192a168b1c1`)
+* Benar: `192\.168\.1\.1`
+
+  </div>
+</details>

@@ -792,11 +792,9 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 
 </details>
 
-
-
-- **[Metode 7 Hari Belajar Bash][claude]**
+- **[Metode 7 Hari Belajar Bash][claude]** <span style="font-size: 11px; color: grey; margin-left: 24px;"><i>Nich Bash Scripting Khusus Konfigurasi Linux.</i></span>
 - **[Home][domain-spesifik]**
-- **[Others][others]**
+- **[Others][others]** <span style="font-size: 11px; color: grey; margin-left: 24px;"><i>Mungkin bersifat Opsional.</i></span>
 
 [domain-spesifik]: ../../README.md
 [0]: ./../../../CLI_TUI/perintah/README.md

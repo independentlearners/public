@@ -1,4 +1,4 @@
-# [Kurikulum Bash Scripting: Dari Nol Menuju Ahli (7 Hari)][0]
+# [Kurikulum Bash Scripting: Dari Nol Menuju Ahli (7 Hari)][0] <span style="font-size: 11px; color: grey; margin-left: 24px;"><i>Claude Model Maksimal.</i></span>
 
 **Host utama:** Arch Linux & Termux
 **Referensi wajib:**

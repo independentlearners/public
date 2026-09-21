@@ -1,4 +1,5 @@
 # Escape Sequence
+<div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Gemini Model Pro Mendalam.</i></div>
 
 ### 1. Escape Sequence Karakter (untuk `echo -e`, `printf`, dan String ANSI-C `$''`)
 
