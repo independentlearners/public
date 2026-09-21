@@ -23,7 +23,6 @@ Belum ada.
 - [shellcheck](./tools/shellcheck/README.md) — static analysis shell — Haskell
 - [shfmt](./tools/shfmt/README.md) — formatter shell — Go
 - [stylua](./tools/stylua/README.md) — formatter Lua — Rust
-- [btop](./tools/btop/README.md) — system monitor TUI — C++
 
 ## Prioritas
 
@@ -35,7 +34,6 @@ Belum ada.
 6. `zoxide`
 7. `shellcheck` + `shfmt`
 8. `stylua`
-9. `btop`
 
 Setiap tool memiliki README tersendiri yang menjelaskan fungsi, bahasa implementasi, kebutuhan untuk memodifikasi source, dan sumber resmi.
 
