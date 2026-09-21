@@ -1,8 +1,35 @@
-## Halaman Manual Git
+## Git
 
-### judul
+<details>
+  <summary>
+    <strong>⌨ Docs Tutorial</strong><br>
+    <span style="font-size: 11px; color: grey; margin-left: 24px; display: block;"><i>AI Random.</i></span>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
 
-git - pelacak konten bodoh
+# Perintah Eksplisit
+
+- [gagal terinstal][1]
+- [git-add][2]
+- [git-commit][3]
+- [gitignore][4]
+- [git-merge][5]
+- [git-tag][6]
+- [git-submodule][7]
+
+  </div>
+</details>
+
+
+
+<details>
+  <summary>
+    <strong>⌨️ Manual Git</strong><br>
+    <span style="font-size: 11px; color: grey; margin-left: 24px; display: block;"><i>Hasil Translit AI.</i></span>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+git - the stupid content tracker = pelacak konten yang bodoh
 
 **Sinopsis**
 
@@ -50,10 +77,10 @@ Opsi lain tersedia untuk mengendalikan cara halaman manual ditampilkan. Lihat gi
 karena git `--help` dikonversi secara internal menjadi git
 bantuan
 
-Jalankan seolah-olah git dimulai di <path> alih-alih direktori kerja
+Jalankan seolah-olah git dimulai di < path > alih-alih direktori kerja
 saat ini. Ketika opsi -C diberikan secara berganda, setiap
-non-absolut -C <path> berikutnya ditafsirkan relatif terhadap -C
-<path> sebelumnya. Jika <path> ada tetapi kosong, misalnya -C "", maka
+non-absolut -C < path > berikutnya ditafsirkan relatif terhadap -C
+< path > sebelumnya. Jika < path > ada tetapi kosong, misalnya -C "", maka
 direktori kerja saat ini tidak berubah.
 
 Opsi ini mempengaruhi opsi yang mengharapkan nama jalur seperti `--git-dir dan`
@@ -68,7 +95,7 @@ git --git-dir=c/a.git --work-tree=c/b status
 
 Luluskan parameter konfigurasi ke perintah. Nilai
 yang diberikan akan menimpa nilai dari file konfigurasi.
-<name> diharapkan dalam format yang sama seperti yang tercantum oleh
+< name > diharapkan dalam format yang sama seperti yang tercantum oleh
 git config (subkeys dipisahkan oleh titik).
 
 Catatan bahwa menghilangkan = dalam git -c foo.bar ... diizinkan dan mengatur
@@ -76,13 +103,13 @@ foo.bar ke nilai boolean true (sama seperti [foo]bar akan dalam
 file config). Termasuk sama tetapi dengan nilai kosong (seperti git -c
 foo.bar= ...) mengatur foo.bar ke string kosong yang git config
 --type=bool akan dikonversi menjadi false.
-Seperti -c <name>=<value>, berikan variabel konfigurasi
-<name> nilai, di mana <envvar> adalah nama
+Seperti -c < name >=< value >, berikan variabel konfigurasi
+< name > nilai, di mana < envvar > adalah nama
 variabel lingkungan dari mana untuk mengambil nilai. Tidak seperti
 -c tidak ada pintasan untuk langsung mengatur nilai ke string kosong, sebaliknya
-variabel lingkungan itu sendiri harus diatur ke string kosong. Ini adalah kesalahan jika <envvar> tidak ada
-di lingkungan. <envvar> mungkin tidak mengandung tanda sama
-untuk menghindari ambigu dengan <name> yang mengandung satu.
+variabel lingkungan itu sendiri harus diatur ke string kosong. Ini adalah kesalahan jika < envvar > tidak ada
+di lingkungan. < envvar > mungkin tidak mengandung tanda sama
+untuk menghindari ambigu dengan < name > yang mengandung satu.
 
 Ini berguna untuk kasus di mana Anda ingin melewati opsi konfigurasi sementara ke git, tetapi melakukan hal itu
 di sistem operasi di mana proses lain mungkin dapat membaca baris perintah Anda
@@ -92,7 +119,7 @@ Linux, tetapi mungkin tidak di sistem Anda.
 
 Catatan bahwa ini mungkin menambah keamanan untuk variabel seperti
 http.extraHeader di mana informasi sensitif adalah bagian dari
-nilai, tetapi bukan e.g. url.<base>.insteadOf di mana
+nilai, tetapi bukan e.g. url.< base >.insteadOf di mana
 informasi sensitif dapat menjadi bagian dari kunci.
 
 Jalur ke mana program inti Git Anda terinstal.
@@ -109,7 +136,7 @@ Cetak jalur di mana file Info yang mendokumentasikan
 versi Git ini terpasang dan keluar.
 
 Salurkan semua output ke less (atau jika diatur, $PAGER) jika output standar adalah
-terminal. Ini menimpa opsi pager.<cmd>
+terminal. Ini menimpa opsi pager.< cmd >
 (lihat bagian "Mechanisme Konfigurasi" di bawah).
 Jangan menyalurkan output Git ke pager.
 
@@ -124,10 +151,10 @@ atas-level pohon kerja ditemukan), dan memberitahu Git
 bahwa Anda berada di level atas pohon kerja. Jika Anda
 tidak berada di direktori level atas pohon kerja, Anda
 harus memberitahu Git di mana level atas pohon kerja,
-dengan opsi --work-tree=<path> (atau variabel lingkungan GIT_WORK_TREE)
+dengan opsi --work-tree=< path > (atau variabel lingkungan GIT_WORK_TREE)
 
-Jika Anda hanya ingin menjalankan git seolah-olah dimulai di <path> maka gunakan
-git -C <path>.
+Jika Anda hanya ingin menjalankan git seolah-olah dimulai di < path > maka gunakan
+git -C < path >.
 
 Atur jalur ke pohon kerja. Bisa
 jadi jalur absolut atau jalur relatif ke direktori kerja saat ini.
@@ -175,10 +202,10 @@ Daftar perintah berdasarkan kelompok. Ini adalah opsi internal/eksperimental
 dan mungkin berubah atau dihapus di masa depan. Kelompok yang didukung adalah: builtins, parseopt (builtin commands that use
 parse-options), main (all commands in libexec directory),
 others (all other commands in $PATH that have git- prefix),
-list-<category> (lihat kategori di command-list.txt),
+list-< category > (lihat kategori di command-list.txt),
 nohelpers (exclude helper commands), alias dan config
 (retrieve command list from config variable completion.commands)
-Baca gitattributes dari <tree-ish> alih-alih pohon kerja. Lihat
+Baca gitattributes dari < tree-ish > alih-alih pohon kerja. Lihat
 gitattributes(5). Ini setara dengan mengatur
 variabel lingkungan GIT_ATTR_SOURCE.
 
@@ -572,3 +599,15 @@ Antarmuka (input, output, set opsi dan semantik)
 untuk perintah tingkat rendah dimaksudkan untuk menjadi banyak lebih stabil
 daripada perintah tingkat Porcelain, karena perintah ini
 utama untuk penggunaan skrip.
+  </div>
+</details>
+
+---
+
+[1]: ./gagal-terinstal.md
+[2]: ./git-add.md
+[3]: ./gitcommit.md
+[4]: ./gitignore.md
+[5]: ./gitmerge.md
+[6]: ./git-tag.md
+[7]: ./submodule/README.md

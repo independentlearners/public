@@ -1,0 +1,6 @@
+- [ripgrep](./ripgrep/README.md) — pencarian teks/kode — Rust
+- [fd](./fd/README.md) — pencarian file — Rust
+- [fzf](./fzf/README.md) — fuzzy finder — Go
+- [bat](./bat/README.md) — file viewer/syntax highlighting — Rust
+- [yazi](./yazi/README.md) — file manager TUI — Rust
+- [zoxide](./zoxide/README.md) — navigasi direktori — Rust
