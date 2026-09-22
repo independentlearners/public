@@ -175,7 +175,7 @@ echo "${kosong:=default}"
 echo "$kosong"
 ```
 
-- `${#kalimat}` — prefix `#` yang sama persis dari `${#buah[@]}` barusan, sekarang pada string biasa: hasilnya **jumlah karakter** (`23`), bukan jumlah elemen, karena string bukan array.
+- `${#kalimat}` — prefix `#` yang sama persis dari `${#buah[@]}` barusan, sekarang pada string biasa: hasilnya **jumlah karakter** (`22`), bukan jumlah elemen, karena string bukan array.
 - `${kalimat:8:4}` — substring, format `${var:offset:length}`. `offset=8` posisi awal (dihitung dari `0`), `length=4` jumlah karakter diambil → hasil `Bash`.
 - `${kalimat/Bash/Shell}` — replace **kemunculan pertama** saja, format `${var/pola/pengganti}` → `Belajar Shell Scripting`.
 - `${kalimat//a/A}` — tanda `/` **dobel** = replace **semua** kemunculan, bukan cuma pertama → semua huruf `a` kecil jadi `A`.
