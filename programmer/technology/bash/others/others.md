@@ -12,11 +12,12 @@ Bagian ini mungkin menamabhkan penjelasan secara khusus atau yang tidak dibahas 
 - [Karakter ANSI Escape Sequence][3]
 ## **Others**
 - [Word Splitting][4]
-## ****
+## **Signal Handling**
+- [trap][5]
  
 [0]: ./fung.md
 [1]: ./escape_character.md
 [2]: ./escape_sequence.md
 [3]: ./ansi_escape_sequence.md
 [4]: ./word_splitting.md
-
+[5]: ./trap.md
