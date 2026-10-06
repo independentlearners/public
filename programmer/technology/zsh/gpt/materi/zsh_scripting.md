@@ -1,5 +1,7 @@
+> By GPT
 
 # **ZSH Scripting**
+
 Prinsip bahwa target akhirnya bukan sekadar bisa menulis `.zshrc`, tetapi mampu memahami mekanisme internal Zsh sehingga Anda dapat membangun fitur terminal sendiri.
 Kurikulum ini mengikuti jalur yang sudah kita tetapkan sebelumnya: fondasi Bash → Zsh language → options → interactive Zsh → configuration → internals → productivity engineering. Struktur tersebut juga sesuai dengan materi yang sudah kita tetapkan sebelumnya. 
 
