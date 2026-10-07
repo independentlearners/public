@@ -226,7 +226,8 @@ Seperti yang dibahas sebelumnya, `mount` adalah proses "menempelkan" sistem file
 
 ### **Terminologi Esensial & Penjelasan Detil**
 
-  * **ID Proses (PID):** Nomor unik yang diberikan oleh kernel untuk setiap proses yang berjalan.
+  * **[ID Proses (PID):][PID]** Nomor unik yang diberikan oleh kernel untuk setiap proses yang berjalan.
+
   * **Sistem File Virtual:** Sistem file yang tidak berada di disk fisik, melainkan ada dalam memori dan dibuat oleh kernel secara dinamis.
   * **`fstab`:** Singkatan dari **f**ile **s**ystem **tab**le, file di `/etc` yang mengatur *mount point* otomatis.
 
@@ -290,7 +291,7 @@ Seperti yang dibahas sebelumnya, `mount` adalah proses "menempelkan" sistem file
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
-
+[PID]: ./../../../../../CLI_TUI/konsep/pid/pid.md
 <!----------------------------------------------------->
 
 [0]: ../README.md

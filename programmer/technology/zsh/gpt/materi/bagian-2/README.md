@@ -1882,7 +1882,7 @@ Contoh yang sudah kita gunakan pada Lesson 00:
 $$
 ```
 
-yang merepresentasikan PID shell saat ini.
+yang merepresentasikan [PID] shell saat ini.
 
 Contoh lainnya yang nanti akan sering ditemui:
 
@@ -4652,6 +4652,7 @@ Jadi kita belum berpindah ke Lesson 02. **Lesson 01 masih berlangsung**, dan bag
 [kurikulum]: ../../../../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
+[PID]: ./../../../../../../CLI_TUI/konsep/pid/pid.md
 
 <!----------------------------------------------------->
 

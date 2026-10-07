@@ -1,48 +1,87 @@
-**Pseudo terminal** (atau *pty*, singkatan dari *pseudo-teletype*) adalah sepasang perangkat lunak virtual dalam sistem operasi (mirip Linux/Unix) yang berfungsi meniru perilaku terminal fisik asli. Jadi `pseudo-terminal` adalah → terminal semu, terminal virtual yang meniru terminal fisik. Bayangkan Anda ingin menjalankan *shell* (seperti bash) dan berinteraksi dengannya, tetapi Anda tidak terhubung ke monitor dan keyboard sungguhan (misalnya melalui SSH, terminal emulator seperti GNOME Terminal, atau aplikasi VS Code). Di sinilah pseudo terminal berperan.
+Istilah **"COMM"** di Arch Linux bisa merujuk pada beberapa hal yang berbeda, tergantung konteksnya. Berikut adalah tiga arti yang paling umum:
 
-Berikut penjelasan sederhananya:
+### 1. Perintah `comm` (Membandingkan File)
 
-### 1. Analogi Sederhana
-Terminal fisik dulu adalah monitor + keyboard yang terhubung langsung ke komputer. **Pseudo terminal** adalah "terminal palsu" yang dibuat oleh software. Ia memiliki dua ujung:
-- **Ujung Master (ptm)**: Digunakan oleh program (misalnya: terminal emulator, SSH server) untuk mengirim perintah dan membaca output.
-- **Ujung Slave (pts)**: Digunakan oleh program lain (misalnya: shell Bash, Python REPL) yang mengira dirinya sedang berjalan di terminal fisik.
+Ini adalah utilitas baris perintah standar dari paket **`coreutils`** yang sudah terpasang di sistem Arch Linux. Fungsinya adalah **membandingkan dua file yang sudah diurutkan (sorted) baris demi baris**.
 
-### 2. Cara Kerja
-1.  Anda membuka aplikasi **Terminal Emulator** (seperti `gnome-terminal`, `xterm`, atau `iTerm2`).
-2.  Aplikasi tersebut meminta kernel untuk membuat sebuah pseudo terminal.
-3.  Kernel membuat sepasang perangkat: `ptm` (master) dan `pts/123` (slave).
-4.  Terminal emulator memegang sisi master, lalu menjalankan shell (misal `bash`) dan mengarahkan shell tersebut ke sisi slave (`pts/123`).
-5.  Saat Anda mengetik `ls`, terminal emulator mengirim "ls" ke sisi master, kernel meneruskannya ke sisi slave, shell membaca perintah, menjalankannya, lalu mengirim hasilnya balik ke slave → master → tampil di layar Anda.
+**Cara kerja dasar:**
+Secara default, `comm` menghasilkan output tiga kolom:
+- **Kolom 1:** Baris yang hanya ada di file pertama.
+- **Kolom 2:** Baris yang hanya ada di file kedua.
+- **Kolom 3:** Baris yang sama di kedua file.
 
-### 3. Mengapa Pseudo Terminal Penting?
-Tanpa pty, semua hal modern berikut akan mustahil:
-- **SSH** (Anda login ke server jarak jauh dan mendapat prompt shell).
-- **Terminal di dalam GUI** (Terminator, Konsole, CMD/PowerShell modern di Windows via WSL).
-- **Multiplexer** seperti `screen` atau `tmux` (yang membuat sesi terminal tetap berjalan meskipun program induknya tertutup).
-- **Program yang membutuhkan TTY** (seperti `sudo`, `top`, `vim`, atau `ssh`) – mereka akan error jika tidak dijalankan di dalam pseudo terminal.
+**Opsi yang sering digunakan:**
+- `-1`: Sembunyikan kolom 1.
+- `-2`: Sembunyikan kolom 2.
+- `-3`: Sembunyikan kolom 3.
+- `-12`: Hanya tampilkan baris yang sama di kedua file.
 
-### 4. Perbedaan dengan Terminal Biasa
-| Fitur | Terminal Fisik (tty) | Pseudo Terminal (pty) |
-| :--- | :--- | :--- |
-| **Media** | Hardware nyata (port serial, monitor) | Software virtual (dalam kernel) |
-| **Contoh** | `/dev/ttyS0` (COM1) | `/dev/pts/2`, `/dev/ttyp0` |
-| **Penggunaan** | Konsol lokal, perangkat embedded | SSH, terminal emulator, aplikasi GUI |
-
-### 5. Melihatnya di Sistem Anda
-Coba jalankan perintah berikut di terminal Linux:
+**Contoh penggunaan di Arch Linux:**
+Perintah ini sangat berguna untuk membandingkan daftar paket. Misalnya, untuk melihat paket yang terinstal tapi tidak ada di grup `base`:
 ```bash
-tty
+comm -23 <(pacman -Qqe | sort) <(expac -l '\n' '%E' base | sort)
 ```
-Outputnya akan seperti: `/dev/pts/4` (itu berarti Anda sedang berada di dalam pseudo terminal).
+Perintah di atas akan menampilkan paket yang secara eksplisit Anda instal (`-Qqe`) namun bukan bagian dari grup `base`.
 
-Kemudian, di terminal lain, jalankan:
+> **Tips:** Jika Anda merasa sintaks `comm` sulit diingat, Arch Wiki menyarankan alternatif dari paket **`moreutils`** bernama **`combine`** yang memiliki sintaks lebih sederhana.
+
+### 2. Paket `python-comm` (Untuk Jupyter)
+
+Ini adalah paket Python yang tersedia di repositori resmi Arch Linux (`Extra`). Paket ini menyediakan implementasi **`comm` untuk protokol kernel Jupyter**. Ini adalah komponen yang memungkinkan komunikasi antara frontend (seperti Jupyter Notebook) dan kernel (proses yang menjalankan kode).
+
+Jika Anda menggunakan Jupyter di Arch Linux dan mengalami masalah komunikasi, memastikan paket `python-comm` terinstal bisa menjadi solusinya.
+
+### 3. Komunikasi Serial (COM Port) & Minicom
+
+Dalam konteks perangkat keras, "COMM" sering dikaitkan dengan **port serial (COM port)**. Arch Linux dapat dikonfigurasi untuk diakses melalui **serial console**, misalnya untuk mengelola server headless (tanpa monitor/keyboard).
+
+Untuk berkomunikasi melalui port serial, Anda bisa menggunakan program seperti **Minicom**. Minicom adalah program terminal emulator dan kontrol modem berbasis teks yang tersedia di repositori Arch Linux. Alat ini berguna untuk:
+- Mengakses komputer lain melalui kabel serial (misalnya saat jaringan LAN mati).
+- Berkomunikasi dengan perangkat seperti switch, router, atau Arduino.
+
+**Kesimpulan:** Jika yang Anda maksud adalah **perintah terminal**, maka `comm` adalah alat untuk membandingkan file. Jika terkait **pemrograman Jupyter**, itu adalah paket `python-comm`. Dan jika terkait **perangkat keras serial**, itu merujuk pada komunikasi via COM port yang bisa diakses dengan Minicom.
+
+Perintah:
+
 ```bash
-ps aux | grep bash
+ps -p $$ -o pid,ppid,comm,args
 ```
-Anda akan melihat setiap sesi bash terikat ke pts yang berbeda.
 
-### Kesimpulan
-**Pseudo terminal adalah fondasi dari semua interaksi baris perintah modern.** Ia menjebatani program antarmuka pengguna (terminal emulator, SSH client) dengan program baris perintah (shell, aplikasi CLI) tanpa memerlukan perangkat keras terminal sungguhan.
+Artinya: **tampilkan informasi proses untuk shell yang sedang menjalankan perintah ini**, dengan kolom PID, PPID, nama perintah, dan command line lengkapnya.
+
+Rinciannya:
+
+- `ps` → perintah untuk melihat daftar proses.
+- `-p $$` → pilih proses dengan PID sama dengan `$$`.
+  - `$$` adalah variabel khusus shell yang berisi **PID dari shell saat ini**.
+  - Jadi `ps -p $$` artinya “lihat proses shell yang sedang aktif ini”.
+- `-o pid,ppid,comm,args` → tentukan format output:
+  - `pid` → Process ID dari shell tersebut.
+  - `ppid` → Parent Process ID, yaitu PID proses induk yang menjalankan shell.
+  - `comm` → nama command/executable, misalnya `bash`, `zsh`, atau `fish`.
+  - `args` → command line lengkap beserta argumennya.
+
+Contoh output kira-kira:
+
+```text
+  PID  PPID COMMAND         COMMAND
+ 5678  1234 bash            bash
+```
+
+Atau jika shell dijalankan dengan argumen tertentu, kolom `args` bisa menunjukkan hal seperti:
+
+```text
+  PID  PPID COMMAND         COMMAND
+ 5678  1234 bash            /bin/bash script.sh
+```
+
+Jadi, maksud perintah itu adalah:
+
+> “Tampilkan PID, PPID, nama program, dan command line lengkap dari shell yang sedang saya gunakan sekarang.”
+
+Biasanya dipakai untuk debugging, misalnya ingin tahu PID shell, proses induknya, atau bagaimana shell tersebut dipanggil.
+
+# Lebih lanjut
 
 Sedang menjalankan percobaan di sandbox (Ubuntu + procps-ng) untuk memverifikasi perilaku `pid`, `ppid`, `comm`, dan `args` sebelum penjelasannya saya susun. Berikutnya: ronde pertama percobaan.Ronde pertama selesai dan hasilnya konsisten dengan teori. Sekarang ronde kedua: argumen, rename `comm`, proses yatim, zombie, parsing `/proc/PID/stat`, dan opsi `ps`.Semua hasil sesuai prediksi, dan ada satu temuan penting: `echo` menambahkan newline yang ikut tersimpan ke `comm`. Saya ulang dengan `printf`, lalu menguji opsi `ps` dan skrip silsilah.Ada dua verifikasi tambahan yang ingin saya pastikan sebelum menulis: konvensi `-` pada `argv[0]` (login shell) dan sumber field di `/proc/PID/status`.Empat kata ini adalah *keyword format* untuk `ps -o`. Masing-masing menjawab satu pertanyaan tentang sebuah proses: siapa saya, siapa yang melahirkan saya, nama pendek apa yang dicatat kernel untuk saya, dan bagaimana saya dipanggil. Memahami keempatnya sampai ke akar berarti memahami `fork`/`exec`, fondasi dari setiap perintah yang Anda jalankan di shell.
 
@@ -610,8 +649,3 @@ Jelaskan dengan kata-kata Anda sendiri, dan **prediksi sebelum menjalankan**:
 6. Buatlah zombie sendiri (E7), temukan induknya hanya dari `PPID`, lalu hapus zombie itu tanpa reboot.
 
 Kirimkan jawaban Anda, terutama nomor 1 dan 2, dan saya akan menguji dan meluruskan model mentalnya. Itulah cara tercepat membuat `fork` dan `exec` melekat sebagai naluri.
-[PID]
-
-[PID]: ./../pid/pid.md
-
-
