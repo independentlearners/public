@@ -1,4 +1,3 @@
-
 ## Perbedaan antara **shell** dan **terminal**, serta sejarah perkembangannya:
 
 ---

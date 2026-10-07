@@ -163,18 +163,10 @@ Jika Anda ingin **membangun** atau **memodifikasi** CLI, ini hal-hal yang perlu 
 - `cobra` (Go) — dokumentasi & proyek. 
  
 - Referensi konsep CLI & GUI (Wikipedia—ringkasan konsep). 
+
+---
  
-<!--
-Dokumen ini disusun agar langsung dapat dijadikan pedoman saat Anda merancang CLI baru atau menata opsi/argumen pada proyek saat ini. Jika Anda ingin, saya bisa:
-
-Menyusun template proyek CLI untuk Dart atau Lua (sesuai preferensi Anda), lengkap dengan contoh parsing argumen dan struktur subcommand; atau
-
-Membuat checklist teknis singkat untuk memastikan CLI Anda memenuhi konvensi POSIX dan dapat diuji/distribusikan.
-
-
-Saya siapkan langkah praktis berikutnya sesuai pilihan Anda.
-
-<!--
+# Identitas Tools
 
 * **Bahasa sumber utama** tempat tool tersebut ditulis.
 * **Tujuan dan manfaat utama**.
@@ -182,7 +174,7 @@ Saya siapkan langkah praktis berikutnya sesuai pilihan Anda.
 
 ---
 
-## 🧭 1. Dasar Sistem dan Navigasi
+
 
 | Tool                                               | Bahasa Sumber | Fungsi                                     | Syarat jika ingin memodifikasi        |
 | -------------------------------------------------- | ------------- | ------------------------------------------ | ------------------------------------- |
@@ -320,5 +312,6 @@ Saya siapkan langkah praktis berikutnya sesuai pilihan Anda.
 
 ---
 
--->
+[Membangun Fondasi Ahli CLI]
 
+[Membangun Fondasi Ahli CLI]: ./konsep/terminal/README.md

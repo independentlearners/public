@@ -134,7 +134,7 @@ Untuk benar-benar menguasai konfigurasi tmux level advanced:
 
 * Shell scripting
 * Terminal escape sequence ANSI
-* Pseudo terminal (PTY)
+* [Pseudo terminal (PTY)][pty]
 * Key table tmux
 * Vim motions
 * Event-driven terminal interaction
@@ -177,3 +177,5 @@ Konfigurasi sudah disusun ulang dengan struktur power-user modern:
 * copy-mode ala Vim/Neovim
 
 Struktur juga sudah dibuat scalable untuk workflow Linux/Arch/Sway/terminal-centric.
+
+[pty]: ./../../../../konsep/pty/README.md

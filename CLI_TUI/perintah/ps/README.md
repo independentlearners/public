@@ -685,3 +685,11 @@ Kombinasi `aux` pada perintah `ps` adalah **alat wajib** untuk:
 3. **Integrasi dengan pipeline Unix/Linux**.
 
 Meskipun tidak bisa digunakan tanpa `ps`, kombinasi opsi ini adalah **fondasi untuk memahami kinerja sistem** di Arch Linux atau distribusi lainnya. Untuk kontrol lebih lanjut, kombinasikan dengan utilitas seperti `grep`, `awk`, atau `systemctl`.
+
+[PID | Proses ID]
+
+[COMM]
+
+
+[PID | Proses ID]: ./../../konsep/pid/pid.md
+[COMM]: ./../../konsep/comm/comm.md

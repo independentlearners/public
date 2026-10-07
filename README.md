@@ -38,7 +38,7 @@
 
 > Menjelaskan perbedaan, konfigurasi, dan ekosistem shell.
 
-* **[🐚 Shell & Interpreter](./CLI_TUI/shell/README.md)**
+* **[🐚 Shell & Interpreter](./CLI_TUI/konsep/shell/README.md)**
 
   * Bash, Zsh, Fish, Dash: perbandingan dan keunggulan
   * Startup files (`.bashrc`, `.zshrc`, `.profile`, dll)
