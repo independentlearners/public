@@ -1,9 +1,1493 @@
-<details>
-  <summary>📃 Daftar Isi</summary>
+# Lesson 02 — Zsh Language
 
-</details>
+Lesson 01 sudah selesai. Sekarang kita masuk ke **Lesson 02 — Zsh Language**, sesuai urutan kurikulum asli.
 
-#
+```text
+00 — Prep / Mental Model
+✓ selesai
+
+01 — Zsh vs Bash
+✓ selesai
+
+02 — Zsh Language
+→ mulai sekarang
+```
+
+Pada Lesson 01 kita banyak menggunakan Bash sebagai pembanding. Mulai Lesson 02, fokus utama berubah:
+
+```text
+Lesson 01
+Bash → Zsh
+   ↓
+memahami perbedaan
+
+Lesson 02
+Zsh
+ ↓
+memahami bahasa Zsh itu sendiri
+```
+
+Tujuannya agar nantinya ketika melihat konfigurasi seperti:
+
+```zsh
+typeset -A config
+[[ -n "$commands[fzf]" ]]
+setopt EXTENDED_GLOB
+${(f)output}
+${(@)array}
+```
+
+Anda tidak lagi berpikir:
+
+> "Ini Bash versi apa?"
+
+melainkan:
+
+> "Apa aturan bahasa Zsh yang sedang digunakan?"
+
+---
+
+# 02.1 — Zsh sebagai Programming Language
+
+Zsh sering dipandang hanya sebagai shell interaktif.
+
+Untuk pembelajaran kita, pandangan itu terlalu sempit.
+
+Zsh memiliki:
+
+```text
+Zsh
+├── command execution
+├── parameter system
+├── expansion system
+├── arrays
+├── associative arrays
+├── conditional expressions
+├── functions
+├── arithmetic
+├── pattern matching
+├── modules
+└── interactive programming
+```
+
+Dengan kata lain, Zsh memiliki bahasa scripting yang cukup kaya.
+
+Model dasarnya:
+
+```text
+input
+  ↓
+Zsh parser
+  ↓
+expansion
+  ↓
+redirection
+  ↓
+command execution
+  ↓
+exit status
+```
+
+Anda sudah mempelajari sebagian model tersebut ketika membahas Bash.
+
+Sekarang kita akan mempelajari bagaimana Zsh memperluasnya.
+
+---
+
+# 02.2 — Syntax dasar Zsh
+
+Kita mulai dari konstruksi paling dasar.
+
+Sebuah command:
+
+```zsh
+print "Hello"
+```
+
+terdiri dari:
+
+```text
+print "Hello"
+│     │
+│     └── argument
+└── command
+```
+
+Beberapa command:
+
+```zsh
+print "one"
+print "two"
+print "three"
+```
+
+dieksekusi berurutan.
+
+Shell membaca input sebagai struktur syntax, bukan sekadar sebagai teks yang kemudian "dilempar" ke program.
+
+---
+
+# 02.3 — Statement dan command
+
+Dalam Zsh, sebagian besar operasi sehari-hari berbentuk command.
+
+Contoh:
+
+```zsh
+name="Amir"
+```
+
+merupakan assignment.
+
+Sedangkan:
+
+```zsh
+print "$name"
+```
+
+merupakan command invocation.
+
+Dan:
+
+```zsh
+if [[ -n "$name" ]]; then
+    print "$name"
+fi
+```
+
+merupakan struktur control flow.
+
+Jadi bahasa Zsh dapat kita lihat sebagai kombinasi:
+
+```text
+Zsh Language
+│
+├── commands
+├── assignments
+├── expansions
+├── conditionals
+├── loops
+├── functions
+└── operators
+```
+
+---
+
+# 02.4 — Assignment
+
+Assignment dasar:
+
+```zsh
+name="Amir"
+```
+
+Kemudian:
+
+```zsh
+print "$name"
+```
+
+menghasilkan:
+
+```text
+Amir
+```
+
+Berbeda dengan banyak bahasa pemrograman, shell assignment tidak menggunakan:
+
+```text
+name = "Amir"
+```
+
+Spasi di sekitar `=` memiliki arti penting.
+
+Benar:
+
+```zsh
+name="Amir"
+```
+
+Salah:
+
+```zsh
+name = "Amir"
+```
+
+Karena bentuk kedua akan dipahami sebagai command bernama `name`.
+
+Mental model:
+
+```text
+name="Amir"
+│ │     │
+│ │     └── value
+│ └──────── assignment operator
+└────────── parameter
+```
+
+---
+
+# 02.5 — Parameter adalah konsep sentral Zsh
+
+Di Lesson 01 kita menyebut "variable".
+
+Dalam dokumentasi dan terminology Zsh, istilah yang lebih tepat adalah:
+
+```text
+parameter
+```
+
+Contoh:
+
+```zsh
+name="Amir"
+```
+
+`name` adalah parameter.
+
+Parameter Zsh jauh lebih kaya daripada sekadar container string.
+
+Sebuah parameter dapat memiliki berbagai atribut:
+
+```text
+parameter
+│
+├── scalar
+├── array
+├── associative array
+├── integer
+├── readonly
+├── exported
+└── berbagai attribute lainnya
+```
+
+Contoh scalar:
+
+```zsh
+name="Amir"
+```
+
+Integer:
+
+```zsh
+typeset -i count=10
+```
+
+Array:
+
+```zsh
+typeset -a files
+```
+
+Associative array:
+
+```zsh
+typeset -A config
+```
+
+Ini menjadi salah satu perbedaan terbesar antara model:
+
+```text
+Bash variable
+```
+
+dan:
+
+```text
+Zsh parameter system
+```
+
+---
+
+# 02.6 — Scalar parameter
+
+Parameter biasa:
+
+```zsh
+name="Amir"
+```
+
+Nilainya dapat digunakan:
+
+```zsh
+print "$name"
+```
+
+atau:
+
+```zsh
+print "${name}"
+```
+
+Untuk sekarang:
+
+```text
+$name
+```
+
+dan:
+
+```text
+${name}
+```
+
+dapat dianggap sebagai dua bentuk dasar parameter expansion.
+
+Tetapi `${...}` adalah bentuk yang jauh lebih penting karena hampir seluruh kemampuan parameter expansion Zsh berkembang dari syntax tersebut.
+
+---
+
+# 02.7 — Parameter expansion
+
+Contoh paling dasar:
+
+```zsh
+name="Amir"
+print "$name"
+```
+
+Zsh melakukan expansion:
+
+```text
+"$name"
+   │
+   ▼
+"Amir"
+```
+
+Dengan braces:
+
+```zsh
+print "${name}"
+```
+
+juga menghasilkan:
+
+```text
+Amir
+```
+
+Namun braces memungkinkan kita menambahkan operasi.
+
+Misalnya:
+
+```zsh
+print "${name:u}"
+```
+
+dan:
+
+```zsh
+print "${name:l}"
+```
+
+Zsh dapat melakukan transformasi terhadap parameter secara langsung.
+
+Konsep ini akan menjadi salah satu materi terbesar dalam kurikulum:
+
+```text
+Lesson 03 — Parameter Expansion
+```
+
+Jadi sekarang kita hanya membangun fondasinya.
+
+---
+
+# 02.8 — Command substitution
+
+Zsh mendukung:
+
+```zsh
+result=$(command)
+```
+
+Contoh:
+
+```zsh
+current_dir=$(pwd)
+print "$current_dir"
+```
+
+Modelnya:
+
+```text
+$(pwd)
+  │
+  ▼
+jalankan command
+  │
+  ▼
+ambil stdout
+  │
+  ▼
+masukkan ke parameter
+```
+
+Ini sama secara fundamental dengan Bash.
+
+Tetapi nanti ketika kita masuk ke expansion system Zsh, kita akan melihat bahwa Zsh menyediakan banyak cara tambahan untuk memproses hasil command.
+
+---
+
+# 02.9 — Arithmetic expansion
+
+Zsh juga mendukung:
+
+```zsh
+result=$((10 + 20))
+```
+
+Kemudian:
+
+```zsh
+print "$result"
+```
+
+hasilnya:
+
+```text
+30
+```
+
+Zsh juga memiliki arithmetic context:
+
+```zsh
+(( result = 10 + 20 ))
+```
+
+Sehingga:
+
+```text
+$(( ... ))
+```
+
+dan:
+
+```text
+(( ... ))
+```
+
+harus mulai Anda bedakan.
+
+```text
+$(( expression ))
+      ↓
+menghasilkan nilai
+
+
+(( expression ))
+      ↓
+arithmetic evaluation context
+```
+
+Konsep ini akan kita dalami dalam bahasa Zsh, bukan sekadar sebagai kompatibilitas Bash.
+
+---
+
+# 02.10 — Quoting
+
+Tiga bentuk utama yang harus selalu Anda bedakan:
+
+```zsh
+'text'
+"text"
+text
+```
+
+### Single quotes
+
+```zsh
+print '$name'
+```
+
+menghasilkan literal:
+
+```text
+$name
+```
+
+Expansion tidak dilakukan di dalam single quotes.
+
+### Double quotes
+
+```zsh
+print "$name"
+```
+
+parameter expansion dilakukan.
+
+Jika:
+
+```zsh
+name="Amir"
+```
+
+hasilnya:
+
+```text
+Amir
+```
+
+### Unquoted
+
+```zsh
+print $name
+```
+
+di sinilah expansion dan word formation dapat memberikan efek berbeda.
+
+Dalam Zsh, perilaku array dan splitting juga berbeda dari Bash, sehingga:
+
+```text
+unquoted expansion
+```
+
+merupakan area yang harus dipahami dengan hati-hati.
+
+Kita tidak akan menyelesaikan seluruh detailnya sekarang karena itu masuk ke **Lesson 03 — Parameter Expansion**.
+
+---
+
+# 02.11 — Word dan expansion
+
+Salah satu mental model terpenting dalam shell:
+
+```text
+source text
+    ↓
+parsing
+    ↓
+expansion
+    ↓
+redirection
+    ↓
+execution
+```
+
+Misalnya:
+
+```zsh
+name="Amir"
+print "$name"
+```
+
+Zsh tidak langsung melihat `"Amir"` di source code.
+
+Ia terlebih dahulu menemukan:
+
+```text
+$name
+```
+
+kemudian melakukan parameter expansion:
+
+```text
+$name
+ ↓
+Amir
+```
+
+Barulah hasil tersebut digunakan dalam command.
+
+Karena itu ketika kita mempelajari Zsh secara mendalam, **expansion system** akan menjadi pusat perhatian.
+
+---
+
+# 02.12 — Zsh memiliki expansion flags
+
+Sekarang kita mulai melihat sesuatu yang sangat khas Zsh.
+
+Zsh memungkinkan modifier/flag digunakan di dalam parameter expansion.
+
+Contoh:
+
+```zsh
+value="one two three"
+print -r -- "${(f)value}"
+```
+
+Flag:
+
+```text
+(f)
+```
+
+memiliki fungsi tertentu dalam expansion.
+
+Jangan khawatir jika syntax tersebut terlihat asing.
+
+Justru ini salah satu tujuan Lesson 02:
+
+```text
+Bash:
+${parameter}
+
+Zsh:
+${(flag)parameter}
+```
+
+Zsh menambahkan sistem expansion yang sangat kuat.
+
+Namun detail semua flags **belum kita pelajari sekarang**.
+
+Itu akan menjadi inti:
+
+```text
+03 — Parameter Expansion
+```
+
+---
+
+# 02.13 — Zsh sebagai bahasa dengan expansion pipeline
+
+Sekarang kita bisa memperbaiki mental model kita:
+
+```text
+Zsh command
+│
+├── parsing
+│
+├── parameter expansion
+│
+├── command substitution
+│
+├── arithmetic expansion
+│
+├── filename generation
+│
+├── redirection
+│
+└── execution
+```
+
+Tidak semua command melewati setiap tahap dengan cara yang sama.
+
+Tetapi ketika Anda melihat konfigurasi Zsh yang kompleks, Anda harus mulai berpikir:
+
+> "Pada tahap expansion mana syntax ini bekerja?"
+
+Ini jauh lebih berguna daripada sekadar menghafalkan syntax.
+
+---
+
+# 02.14 — Kenapa Lesson 02 dimulai dari sini?
+
+Karena seluruh bagian besar Zsh berikutnya bergantung pada pemahaman ini:
+
+```text
+Zsh Language
+      │
+      ▼
+Parameter
+      │
+      ▼
+Parameter Expansion
+      │
+      ├── Arrays
+      ├── String manipulation
+      ├── Flags
+      ├── Pattern matching
+      ├── Command output processing
+      └── Data transformation
+```
+
+Kemudian:
+
+```text
+Parameter Expansion
+      ↓
+Configuration
+      ↓
+Functions
+      ↓
+Plugins
+```
+
+Jadi kita tidak langsung melompat ke `.zshrc`, plugin, atau ZLE.
+
+Fondasi bahasa harus kuat terlebih dahulu.
+
+---
+
+# Posisi Lesson 02
+
+Untuk menjaga kita tetap pada jalur kurikulum:
+
+```text
+02 — Zsh Language
+│
+├── → Syntax dasar Zsh
+├── → Parameter system
+├── → Expansion system
+├── → Quoting
+├── → Command substitution
+├── → Arithmetic
+├── → Conditional / control structures
+├── → Loops
+├── → Functions
+├── → Scope
+├── → Error / exit status
+└── → Advanced syntax
+```
+
+Bagian yang baru kita mulai adalah **syntax dasar + parameter/expansion foundation**. Kita belum masuk ke Lesson 03; parameter expansion mendalam tetap ditahan untuk tahap berikutnya sesuai kurikulum.
+
+Selanjutnya kita lanjutkan **02 — Zsh Language** secara berurutan ke struktur kontrol, operator, dan aturan syntax yang lebih khas Zsh sebelum masuk ke Lesson 03.
+
+## 02 — Zsh Language
+
+### 02.6 Conditional & Control Structures
+
+Karena kamu sudah mempelajari control flow di Bash, fokus kita di Zsh adalah memahami apa yang tetap sama dan bagian mana yang memiliki karakteristik Zsh.
+
+### 1. `if`
+
+Struktur dasarnya tetap familiar:
+
+```zsh
+if [[ condition ]]; then
+    command
+elif [[ condition ]]; then
+    command
+else
+    command
+fi
+```
+
+Contoh:
+
+```zsh
+name="Amir"
+
+if [[ -n "$name" ]]; then
+    print "Nama tersedia"
+else
+    print "Nama kosong"
+fi
+```
+
+Yang penting dipahami: `if` tidak secara langsung memeriksa apakah sebuah kondisi "benar" dalam pengertian boolean.
+
+Shell melihat exit status dari command/conditional expression.
+
+```text
+[[ -n "$name" ]]
+        │
+        ▼
+   exit status
+     │      │
+     0    != 0
+     │      │
+    true   false
+```
+
+Jadi:
+
+```zsh
+if [[ -n "$name" ]]; then
+```
+
+secara konseptual berarti:
+
+```text
+jalankan [[ ... ]]
+        ↓
+status = 0 ?
+   ├─ ya  → then
+   └─ tidak → else/elif
+```
+
+Ini merupakan konsep yang sama dengan Bash dan penting untuk dipertahankan sebagai mental model.
+
+---
+
+### 2. `case`
+
+Zsh juga memiliki `case`:
+
+```zsh
+case "$value" in
+    one)
+        print "Satu"
+        ;;
+    two)
+        print "Dua"
+        ;;
+    *)
+        print "Lainnya"
+        ;;
+esac
+```
+
+Misalnya:
+
+```zsh
+choice="start"
+
+case "$choice" in
+    start)
+        print "Memulai"
+        ;;
+    stop)
+        print "Menghentikan"
+        ;;
+    restart)
+        print "Memulai ulang"
+        ;;
+    *)
+        print "Pilihan tidak dikenal"
+        ;;
+esac
+```
+
+Mental model:
+
+```text
+case value
+   │
+   ├── pattern 1 → command
+   ├── pattern 2 → command
+   ├── pattern 3 → command
+   └── *          → fallback
+```
+
+`case` sangat berguna untuk konfigurasi dan command dispatcher karena menghindari rantai `if/elif` yang panjang.
+
+---
+
+### 3. `for`
+
+Bentuk yang paling penting dalam Zsh:
+
+```zsh
+for item in one two three; do
+    print "$item"
+done
+```
+
+Hasilnya:
+
+```text
+one
+two
+three
+```
+
+Dengan array:
+
+```zsh
+items=(one two three)
+
+for item in "${items[@]}"; do
+    print "$item"
+done
+```
+
+Namun, karena Zsh memiliki model array yang lebih kuat, nanti kita akan membahas cara idiomatik Zsh untuk iterasi array. Itu belum kita dalami sekarang karena berkaitan dengan Lesson 04.
+
+---
+
+### 4. `while`
+
+```zsh
+count=1
+
+while (( count <= 3 )); do
+    print "$count"
+    (( count++ ))
+done
+```
+
+Hasil:
+
+```text
+1
+2
+3
+```
+
+Di sini ada dua mekanisme berbeda:
+
+```zsh
+(( count <= 3 ))
+```
+
+adalah arithmetic conditional.
+
+Sedangkan:
+
+```zsh
+(( count++ ))
+```
+
+adalah arithmetic evaluation.
+
+Keduanya merupakan bagian penting dari bahasa shell, bukan command eksternal.
+
+---
+
+### 5. `until`
+
+Kebalikan konseptual `while`:
+
+```zsh
+count=1
+
+until (( count > 3 )); do
+    print "$count"
+    (( count++ ))
+done
+```
+
+Mental model:
+
+```text
+while condition
+→ ulangi SELAMA condition true
+
+until condition
+→ ulangi SAMPAI condition true
+```
+
+Secara praktis, `while` jauh lebih sering digunakan, tetapi `until` tetap bagian dari bahasa Zsh.
+
+---
+
+## 02.7 Operators
+
+Sekarang kita masuk ke operator karena control flow bergantung pada operator.
+
+Ada beberapa kelompok.
+
+### String
+
+```zsh
+[[ "$name" == "Amir" ]]
+[[ "$name" != "Amir" ]]
+[[ -n "$name" ]]
+[[ -z "$name" ]]
+```
+
+Maknanya:
+
+```text
+-n → string tidak kosong
+-z → string kosong
+== → cocok
+!= → tidak cocok
+```
+
+Contoh:
+
+```zsh
+name="Amir"
+
+if [[ "$name" == "Amir" ]]; then
+    print "Benar"
+fi
+```
+
+---
+
+### File
+
+```zsh
+[[ -f "$file" ]]
+[[ -d "$directory" ]]
+[[ -r "$file" ]]
+[[ -w "$file" ]]
+[[ -x "$file" ]]
+```
+
+Contoh:
+
+```zsh
+if [[ -f "$HOME/.zshrc" ]]; then
+    print ".zshrc ditemukan"
+fi
+```
+
+Ini penting untuk scripting konfigurasi karena nantinya banyak konfigurasi Zsh akan melakukan pemeriksaan seperti:
+
+```zsh
+if [[ -r "$file" ]]; then
+    source "$file"
+fi
+```
+
+---
+
+### Logical operators
+
+```zsh
+[[ condition1 && condition2 ]]
+[[ condition1 || condition2 ]]
+[[ ! condition ]]
+```
+
+Contoh:
+
+```zsh
+if [[ -f "$file" && -r "$file" ]]; then
+    print "File tersedia dan dapat dibaca"
+fi
+```
+
+Mental model:
+
+```text
+condition1 ──┐
+              ├── && → keduanya harus true
+condition2 ──┘
+```
+
+Sedangkan:
+
+```text
+condition1 ──┐
+              ├── || → salah satu cukup true
+condition2 ──┘
+```
+
+---
+
+## 02.8 Arithmetic
+
+Zsh memiliki arithmetic evaluation yang sangat terintegrasi.
+
+```zsh
+count=10
+
+(( count += 5 ))
+
+print "$count"
+```
+
+Hasil:
+
+```text
+15
+```
+
+Conditional:
+
+```zsh
+if (( count > 10 )); then
+    print "Lebih besar dari 10"
+fi
+```
+
+Tidak perlu:
+
+```zsh
+if [[ "$count" -gt 10 ]]; then
+```
+
+walaupun bentuk tersebut juga dikenal dari shell scripting.
+
+Untuk arithmetic, gunakan:
+
+```zsh
+(( ... ))
+```
+
+Mental model:
+
+```text
+[[ ... ]]
+→ conditional expression
+
+(( ... ))
+→ arithmetic evaluation / arithmetic condition
+```
+
+Contoh:
+
+```zsh
+a=10
+b=20
+
+(( result = a + b ))
+
+print "$result"
+```
+
+---
+
+## 02.9 Exit Status
+
+Ini harus benar-benar kuat sebelum masuk ke bagian berikutnya.
+
+Setiap command menghasilkan status.
+
+```zsh
+command
+print "$?"
+```
+
+Secara umum:
+
+```text
+0      → berhasil / true
+non-0  → gagal / false
+```
+
+Contoh:
+
+```zsh
+true
+print "$?"
+```
+
+menghasilkan:
+
+```text
+0
+```
+
+Sedangkan:
+
+```zsh
+false
+print "$?"
+```
+
+menghasilkan:
+
+```text
+1
+```
+
+Tetapi angka non-zero tidak selalu berarti hanya `1`. Program dapat menggunakan berbagai nilai non-zero untuk menunjukkan kondisi error yang berbeda.
+
+---
+
+### Exit status dalam `if`
+
+Ini menjelaskan kembali:
+
+```zsh
+if command; then
+    ...
+fi
+```
+
+sebenarnya:
+
+```text
+jalankan command
+       ↓
+ambil exit status
+       ↓
+0 ?
+├── ya → then
+└── tidak → else/elif
+```
+
+Contoh:
+
+```zsh
+if command -v git >/dev/null 2>&1; then
+    print "Git tersedia"
+else
+    print "Git tidak tersedia"
+fi
+```
+
+Ini merupakan pola yang sangat penting dalam konfigurasi shell.
+
+---
+
+## 02.10 `&&` dan `||` sebagai Control Flow
+
+Operator ini bukan hanya operator logical di `[[ ... ]]`.
+
+Mereka juga dapat menghubungkan command:
+
+```zsh
+command1 && command2
+```
+
+Artinya:
+
+```text
+jalankan command1
+       ↓
+berhasil?
+ ├─ ya → command2
+ └─ tidak → berhenti
+```
+
+Contoh:
+
+```zsh
+mkdir /tmp/example && print "Berhasil"
+```
+
+Sedangkan:
+
+```zsh
+command1 || command2
+```
+
+berarti:
+
+```text
+jalankan command1
+       ↓
+berhasil?
+ ├─ ya → selesai
+ └─ tidak → command2
+```
+
+Contoh:
+
+```zsh
+cd /directory || print "Gagal berpindah directory"
+```
+
+Ini sangat sering muncul dalam konfigurasi Zsh.
+
+Tetapi jangan langsung menganggap:
+
+```zsh
+command1 && command2 || command3
+```
+
+sebagai pengganti sempurna `if/else`. Ada persoalan precedence dan status dari `command2`.
+
+Untuk logika yang penting, `if` biasanya lebih jelas.
+
+---
+
+## 02.11 Functions dalam Zsh
+
+Kita sudah mengenalkan function pada Lesson 01. Sekarang kita lihat dari sudut bahasa.
+
+```zsh
+greet() {
+    print "Hello"
+}
+```
+
+Memanggil:
+
+```zsh
+greet
+```
+
+Parameter positional:
+
+```zsh
+greet() {
+    print "Hello $1"
+}
+
+greet "Amir"
+```
+
+Di dalam function:
+
+```text
+$1 → argument pertama
+$2 → argument kedua
+$# → jumlah argument
+```
+
+Contoh:
+
+```zsh
+greet() {
+    print "Jumlah argument: $#"
+    print "Argument pertama: $1"
+}
+```
+
+---
+
+## 02.12 Scope
+
+Ini bagian yang mulai membedakan cara berpikir antara scripting sederhana dan scripting konfigurasi.
+
+Misalnya:
+
+```zsh
+name="global"
+
+test_scope() {
+    name="local?"
+    print "$name"
+}
+
+test_scope
+print "$name"
+```
+
+Assignment biasa di dalam function tidak otomatis berarti "buat variable lokal".
+
+Untuk membuat parameter lokal, Zsh menggunakan `typeset`:
+
+```zsh
+name="global"
+
+test_scope() {
+    typeset name="local"
+    print "$name"
+}
+
+test_scope
+
+print "$name"
+```
+
+Mental model:
+
+```text
+global scope
+    │
+    │ name="global"
+    │
+    └── function
+          │
+          └── typeset name="local"
+                    │
+                    └── parameter lokal
+```
+
+Ini salah satu alasan `typeset` sangat penting dalam Zsh.
+
+Nanti ketika kita masuk ke konfigurasi modular, fungsi, plugin, dan autoload, pemahaman scope ini akan sangat penting.
+
+Untuk sekarang cukup pegang:
+
+```zsh
+typeset name="..."
+```
+
+dalam function digunakan ketika kita ingin mendeklarasikan parameter lokal dengan atribut tertentu.
+
+---
+
+## 02.13 `return`
+
+Function dapat mengembalikan exit status:
+
+```zsh
+check() {
+    return 0
+}
+```
+
+Kemudian:
+
+```zsh
+if check; then
+    print "Berhasil"
+fi
+```
+
+Atau:
+
+```zsh
+check
+print "$?"
+```
+
+Perhatikan perbedaan:
+
+```text
+return
+→ keluar dari function
+
+exit
+→ keluar dari shell/process
+```
+
+Ini sangat penting untuk konfigurasi `.zshrc`.
+
+Misalnya sebuah function:
+
+```zsh
+setup_feature() {
+    if [[ ! -d "$HOME/.something" ]]; then
+        return 1
+    fi
+
+    ...
+}
+```
+
+`return 1` hanya mengakhiri function.
+
+---
+
+## 02.14 `source` / `.`
+
+Zsh dapat menjalankan file dalam environment shell saat ini:
+
+```zsh
+source "$HOME/.config/zsh/module.zsh"
+```
+
+atau:
+
+```zsh
+. "$HOME/.config/zsh/module.zsh"
+```
+
+Perbedaan mental modelnya dengan menjalankan script:
+
+```text
+source file
+    ↓
+kode file masuk ke shell saat ini
+    ↓
+variable/function/options dapat memengaruhi shell sekarang
+```
+
+sedangkan:
+
+```zsh
+zsh file.zsh
+```
+
+membuat proses Zsh baru.
+
+Ini akan menjadi sangat penting pada Lesson 09 — Startup Architecture dan Lesson 17 — Modular Configuration.
+
+---
+
+## Posisi kita sekarang
+
+Lesson 02 sudah mencakup:
+
+```text
+02 — Zsh Language
+
+✓ syntax dasar
+✓ parameter dasar
+✓ assignment
+✓ command substitution
+✓ arithmetic dasar
+✓ quoting
+✓ expansion pipeline
+✓ conditional
+✓ case
+✓ for
+✓ while
+✓ until
+✓ operators
+✓ exit status
+✓ && / ||
+✓ functions dasar
+✓ scope dasar
+✓ return
+✓ source
+```
+
+Yang masih perlu kita selesaikan dalam Lesson 02 adalah bagian **advanced syntax yang masih merupakan bahasa Zsh**, terutama konstruksi yang akan sering kamu temui ketika membaca konfigurasi/plugin Zsh.
+
+Setelah bagian itu selesai, barulah kita tutup Lesson 02 dan masuk **Lesson 03 — Parameter Expansion**. Jadi kita belum berpindah lesson sekarang.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

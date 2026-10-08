@@ -1,45 +1,7 @@
-Istilah **"COMM"** di Arch Linux bisa merujuk pada beberapa hal yang berbeda, tergantung konteksnya. Berikut adalah tiga arti yang paling umum:
+# COMM
 
-### 1. Perintah `comm` (Membandingkan File)
-
-Ini adalah utilitas baris perintah standar dari paket **`coreutils`** yang sudah terpasang di sistem Arch Linux. Fungsinya adalah **membandingkan dua file yang sudah diurutkan (sorted) baris demi baris**.
-
-**Cara kerja dasar:**
-Secara default, `comm` menghasilkan output tiga kolom:
-- **Kolom 1:** Baris yang hanya ada di file pertama.
-- **Kolom 2:** Baris yang hanya ada di file kedua.
-- **Kolom 3:** Baris yang sama di kedua file.
-
-**Opsi yang sering digunakan:**
-- `-1`: Sembunyikan kolom 1.
-- `-2`: Sembunyikan kolom 2.
-- `-3`: Sembunyikan kolom 3.
-- `-12`: Hanya tampilkan baris yang sama di kedua file.
-
-**Contoh penggunaan di Arch Linux:**
-Perintah ini sangat berguna untuk membandingkan daftar paket. Misalnya, untuk melihat paket yang terinstal tapi tidak ada di grup `base`:
-```bash
-comm -23 <(pacman -Qqe | sort) <(expac -l '\n' '%E' base | sort)
-```
-Perintah di atas akan menampilkan paket yang secara eksplisit Anda instal (`-Qqe`) namun bukan bagian dari grup `base`.
-
-> **Tips:** Jika Anda merasa sintaks `comm` sulit diingat, Arch Wiki menyarankan alternatif dari paket **`moreutils`** bernama **`combine`** yang memiliki sintaks lebih sederhana.
-
-### 2. Paket `python-comm` (Untuk Jupyter)
-
-Ini adalah paket Python yang tersedia di repositori resmi Arch Linux (`Extra`). Paket ini menyediakan implementasi **`comm` untuk protokol kernel Jupyter**. Ini adalah komponen yang memungkinkan komunikasi antara frontend (seperti Jupyter Notebook) dan kernel (proses yang menjalankan kode).
-
-Jika Anda menggunakan Jupyter di Arch Linux dan mengalami masalah komunikasi, memastikan paket `python-comm` terinstal bisa menjadi solusinya.
-
-### 3. Komunikasi Serial (COM Port) & Minicom
-
-Dalam konteks perangkat keras, "COMM" sering dikaitkan dengan **port serial (COM port)**. Arch Linux dapat dikonfigurasi untuk diakses melalui **serial console**, misalnya untuk mengelola server headless (tanpa monitor/keyboard).
-
-Untuk berkomunikasi melalui port serial, Anda bisa menggunakan program seperti **Minicom**. Minicom adalah program terminal emulator dan kontrol modem berbasis teks yang tersedia di repositori Arch Linux. Alat ini berguna untuk:
-- Mengakses komputer lain melalui kabel serial (misalnya saat jaringan LAN mati).
-- Berkomunikasi dengan perangkat seperti switch, router, atau Arduino.
-
-**Kesimpulan:** Jika yang Anda maksud adalah **perintah terminal**, maka `comm` adalah alat untuk membandingkan file. Jika terkait **pemrograman Jupyter**, itu adalah paket `python-comm`. Dan jika terkait **perangkat keras serial**, itu merujuk pada komunikasi via COM port yang bisa diakses dengan Minicom.
+## COMM :
+ - **Perangkat keras serial**, komunikasi via COM port yang bisa diakses dengan Minicom.
 
 Perintah:
 
@@ -81,13 +43,13 @@ Jadi, maksud perintah itu adalah:
 
 Biasanya dipakai untuk debugging, misalnya ingin tahu PID shell, proses induknya, atau bagaimana shell tersebut dipanggil.
 
-# Lebih lanjut
+### Berikut percobaan di sandbox (Ubuntu + procps-ng) untuk memverifikasi perilaku `pid`, `ppid`, `comm`, dan `args`
 
-Sedang menjalankan percobaan di sandbox (Ubuntu + procps-ng) untuk memverifikasi perilaku `pid`, `ppid`, `comm`, dan `args` sebelum penjelasannya saya susun. Berikutnya: ronde pertama percobaan.Ronde pertama selesai dan hasilnya konsisten dengan teori. Sekarang ronde kedua: argumen, rename `comm`, proses yatim, zombie, parsing `/proc/PID/stat`, dan opsi `ps`.Semua hasil sesuai prediksi, dan ada satu temuan penting: `echo` menambahkan newline yang ikut tersimpan ke `comm`. Saya ulang dengan `printf`, lalu menguji opsi `ps` dan skrip silsilah.Ada dua verifikasi tambahan yang ingin saya pastikan sebelum menulis: konvensi `-` pada `argv[0]` (login shell) dan sumber field di `/proc/PID/status`.Empat kata ini adalah *keyword format* untuk `ps -o`. Masing-masing menjawab satu pertanyaan tentang sebuah proses: siapa saya, siapa yang melahirkan saya, nama pendek apa yang dicatat kernel untuk saya, dan bagaimana saya dipanggil. Memahami keempatnya sampai ke akar berarti memahami `fork`/`exec`, fondasi dari setiap perintah yang Anda jalankan di shell.
-
-**Metode.** Semua keluaran di bawah adalah hasil nyata dari percobaan di lingkungan uji saya (Ubuntu 24.04, procps-ng 4.0.4, Bash 5.2.21, kernel Linux 6.18). Angka PID di mesin Anda pasti berbeda, yang harus sama adalah polanya. Biasakan **prediksi dulu, jalankan kemudian**: otak yang menebak lalu dikoreksi kenyataan membangun model mental jauh lebih kokoh daripada yang hanya membaca.
-
-**Sumber.** Keempat keyword ini milik kernel Linux dan `ps` (procps-ng), bukan fitur Bash. Karena itu manual Bash saya tautkan untuk sisi Bash (`$$`, `$PPID`, `$BASHPID`, `$!`, `$0`, subshell, pipeline, `exec`), dan man page Arch untuk sisi kernel dan `ps`. Jangkar bagian manual saya verifikasi pada salinan [CWRU](https://tiswww.case.edu/php/chet/bash/bashref.html) (Bash 5.3). Strukturnya sama di versi [GNU](https://www.gnu.org/software/bash/manual/bash.html).
+<!-- Berikutnya: ronde pertama percobaan.Ronde pertama selesai dan hasilnya konsisten dengan teori. Sekarang ronde kedua: argumen, rename `comm`, proses yatim, zombie, parsing `/proc/PID/stat`, dan opsi `ps`.Semua hasil sesuai prediksi, dan ada satu temuan penting: `echo` menambahkan newline yang ikut tersimpan ke `comm`. Saya ulang dengan `printf`, lalu menguji opsi `ps` dan skrip silsilah.Ada dua verifikasi tambahan yang ingin saya pastikan sebelum menulis: konvensi `-` pada `argv[0]` (login shell) dan sumber field di `/proc/PID/status`.Empat kata ini adalah *keyword format* untuk `ps -o`. Masing-masing menjawab satu pertanyaan tentang sebuah proses: siapa saya, siapa yang melahirkan saya, nama pendek apa yang dicatat kernel untuk saya, dan bagaimana saya dipanggil. Memahami keempatnya sampai ke akar berarti memahami `fork`/`exec`, fondasi dari setiap perintah yang Anda jalankan di shell. -->
+<!---->
+<!-- **Metode.** Semua keluaran di bawah adalah hasil nyata dari percobaan di lingkungan uji saya (Ubuntu 24.04, procps-ng 4.0.4, Bash 5.2.21, kernel Linux 6.18). Angka PID di mesin Anda pasti berbeda, yang harus sama adalah polanya. Biasakan **prediksi dulu, jalankan kemudian**: otak yang menebak lalu dikoreksi kenyataan membangun model mental jauh lebih kokoh daripada yang hanya membaca. -->
+<!---->
+<!-- **Sumber.** Keempat keyword ini milik kernel Linux dan `ps` (procps-ng), bukan fitur Bash. Karena itu manual Bash saya tautkan untuk sisi Bash (`$$`, `$PPID`, `$BASHPID`, `$!`, `$0`, subshell, pipeline, `exec`), dan man page Arch untuk sisi kernel dan `ps`. Jangkar bagian manual saya verifikasi pada salinan [CWRU](https://tiswww.case.edu/php/chet/bash/bashref.html) (Bash 5.3). Strukturnya sama di versi [GNU](https://www.gnu.org/software/bash/manual/bash.html). -->
 
 ---
 

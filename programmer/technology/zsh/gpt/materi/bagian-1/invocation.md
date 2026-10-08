@@ -1,3 +1,5 @@
+# Invocation
+
 Dalam konteks `zsh`, istilah **invocation** berarti **mode pemanggilan shell**. Zsh tidak selalu dipanggil dengan cara yang sama, dan mode pemanggilannya menentukan file startup mana yang akan dieksekusi.
 
 Terdapat dua sumbu yang independen:

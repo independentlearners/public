@@ -4640,7 +4640,2414 @@ Karena itu, `autoload` sekarang cukup dipahami sebagai **konsep yang akan muncul
 └── → Completion system
 ```
 
-Jadi kita belum berpindah ke Lesson 02. **Lesson 01 masih berlangsung**, dan bagian berikutnya adalah **Redirection**, lalu **Process Substitution**, persis mengikuti urutan kurikulum.
+
+## 01.7 — Redirection
+
+Kita tetap berada di **Lesson 01 — Zsh vs Bash**. Tidak ada perpindahan ke Lesson 02.
+
+Posisinya sekarang:
+
+```text
+01 — Zsh vs Bash
+├── ✓ Mengapa Zsh bukan Bash++
+├── ✓ POSIX vs Zsh-specific extensions
+├── ✓ Syntax compatibility / incompatibility
+├── ✓ Parameter / expansion
+├── ✓ Arrays
+├── ✓ Globbing
+├── ✓ Conditional expressions
+├── ✓ Functions
+├── → Redirection          ← SEKARANG
+├── → Process substitution
+├── → Options
+├── → Builtins
+├── → Readline vs ZLE
+└── → Completion system
+```
+
+Redirection adalah salah satu bagian Bash yang sudah Anda pelajari. Jadi kita tidak mengulang konsep file descriptor dari awal. Fokusnya adalah memastikan mental model tersebut tetap benar di Zsh dan mengenali kemampuan Zsh yang nantinya sering muncul dalam konfigurasi.
+
+### 01.7.1 — Redirection dasar tetap berlaku
+
+Output standar:
+
+```zsh
+print "hello" > output.txt
+```
+
+Input dari file:
+
+```zsh
+command < input.txt
+```
+
+Append:
+
+```zsh
+print "hello" >> output.txt
+```
+
+Standard error:
+
+```zsh
+command 2> error.txt
+```
+
+Standard output dan error secara terpisah:
+
+```zsh
+command > output.txt 2> error.txt
+```
+
+Konsep file descriptor tetap:
+
+```text
+0 → stdin
+1 → stdout
+2 → stderr
+```
+
+Sehingga:
+
+```zsh
+command > file
+```
+
+secara konseptual adalah:
+
+```text
+stdout (1)
+    │
+    ▼
+file
+```
+
+Sedangkan:
+
+```zsh
+command 2> file
+```
+
+adalah:
+
+```text
+stderr (2)
+    │
+    ▼
+file
+```
+
+Ini tidak berubah hanya karena shell yang digunakan adalah Zsh.
+
+---
+
+### 01.7.2 — Redirection terjadi pada level shell
+
+Perhatikan:
+
+```zsh
+print "hello" > output.txt
+```
+
+`>` bukan argument untuk `print`.
+
+Ia merupakan bagian dari syntax shell.
+
+Mental model:
+
+```text
+print "hello" > output.txt
+│
+├── command: print
+├── argument: "hello"
+└── redirection:
+    stdout → output.txt
+```
+
+Hal ini penting ketika nanti membaca konfigurasi Zsh karena banyak perilaku shell sebenarnya berasal dari **expansion + parsing + redirection**, bukan dari command yang dipanggil.
+
+---
+
+### 01.7.3 — Redirecting stdout dan stderr
+
+Pola yang sudah Anda kenal:
+
+```zsh
+command >output.txt 2>error.txt
+```
+
+Atau menggabungkan keduanya:
+
+```zsh
+command >output.txt 2>&1
+```
+
+Modelnya:
+
+```text
+             ┌── stdout ──→ output.txt
+command ─────┤
+             └── stderr ──→ stdout
+```
+
+Urutan redirection penting.
+
+Misalnya:
+
+```zsh
+command >file 2>&1
+```
+
+berbeda secara konsep dari:
+
+```zsh
+command 2>&1 >file
+```
+
+karena redirection diproses berdasarkan urutannya.
+
+Ini adalah konsep file descriptor yang sudah Anda pelajari di Bash dan tetap relevan ketika bekerja dengan Zsh.
+
+---
+
+### 01.7.4 — Pipeline bukan redirection biasa
+
+Contoh:
+
+```zsh
+command1 | command2
+```
+
+berarti stdout `command1` diberikan sebagai stdin `command2`.
+
+```text
+command1
+   │
+ stdout
+   │
+   ▼
+ stdin
+command2
+```
+
+Pipeline juga tersedia di Zsh.
+
+Contoh:
+
+```zsh
+print -rl -- *.txt | grep config
+```
+
+Namun jangan mencampurkan:
+
+```text
+|
+```
+
+dengan:
+
+```text
+>
+```
+
+secara konseptual.
+
+```text
+|  → menghubungkan proses
+>  → mengarahkan file descriptor
+```
+
+Keduanya dapat digunakan bersama, tetapi mekanismenya berbeda.
+
+---
+
+## 01.7.5 — Redirection dan Zsh-specific features
+
+Di sinilah Zsh mulai memiliki kemampuan tambahan yang penting.
+
+Salah satu fitur yang akan sering Anda temui adalah bentuk redirection yang berhubungan dengan **multios**.
+
+Zsh dapat mengizinkan satu output diarahkan ke lebih dari satu tujuan.
+
+Contoh konseptual:
+
+```zsh
+print "hello" >one >two
+```
+
+Dengan mekanisme multios Zsh, output dapat diteruskan ke beberapa file.
+
+Secara mental:
+
+```text
+                 ┌──→ one
+stdout ──────────┤
+                 └──→ two
+```
+
+Ini berbeda dari asumsi Bash bahwa redirection terakhir semata-mata menggantikan tujuan sebelumnya.
+
+Fitur ini merupakan salah satu contoh nyata mengapa:
+
+```text
+syntax terlihat sama
+        ≠
+semantics selalu sama
+```
+
+yang sejak awal menjadi prinsip utama Lesson 01.
+
+---
+
+## 01.7.6 — `MULTIOS`
+
+Perilaku tersebut dikendalikan oleh option Zsh:
+
+```zsh
+MULTIOS
+```
+
+Nanti kita akan mempelajari option secara khusus, tetapi untuk sekarang cukup mengetahui hubungan:
+
+```text
+setopt MULTIOS
+       │
+       ▼
+Zsh dapat melakukan multiple redirections
+```
+
+Anda dapat melihat status option dengan mekanisme Zsh yang akan kita bahas lebih lanjut nanti.
+
+Jangan menghafalkan implementasinya sekarang. Yang penting adalah mengenali ketika Anda membaca konfigurasi:
+
+```zsh
+setopt MULTIOS
+```
+
+itu berkaitan dengan perilaku redirection Zsh.
+
+---
+
+# 01.7.7 — Redirection ke dan dari command
+
+Konsep lain yang penting adalah redirection yang tidak hanya menggunakan file.
+
+Misalnya process substitution:
+
+```zsh
+command < <(other_command)
+```
+
+Tetapi ini sudah masuk ke materi berikutnya.
+
+Untuk Lesson 01, kita pisahkan dengan jelas:
+
+```text
+Redirection
+└── file descriptor → file / stream
+
+Process substitution
+└── command → digunakan sebagai input/output
+```
+
+Dengan pemisahan ini kita tidak mencampurkan dua konsep yang berdekatan.
+
+---
+
+# 01.7.8 — `print` dan redirection
+
+Karena Zsh memiliki builtin `print`, Anda akan sering melihat:
+
+```zsh
+print -r -- "message" >file
+```
+
+Perhatikan bahwa:
+
+```text
+print
+```
+
+adalah command/builtin Zsh, sedangkan:
+
+```text
+>
+```
+
+adalah redirection shell.
+
+Jadi:
+
+```text
+print -r -- "message" >file
+│                  │
+│                  └── shell redirection
+└── Zsh builtin
+```
+
+Pemisahan ini penting ketika nanti kita mempelajari **Zsh builtins**.
+
+---
+
+# 01.7.9 — File descriptor tetap menjadi fondasi
+
+Karena Anda sudah mempelajari file descriptor di Bash, kita tidak perlu mengulang teori dasarnya.
+
+Yang perlu dipastikan:
+
+```text
+Zsh
+│
+├── stdin  = 0
+├── stdout = 1
+└── stderr = 2
+```
+
+dan operasi seperti:
+
+```zsh
+1>file
+2>file
+<file
+2>&1
+```
+
+tetap harus Anda pahami.
+
+Nantinya, ketika membuat function atau plugin Zsh, kemampuan ini digunakan untuk mengontrol:
+
+```text
+output function
+error message
+input
+pipeline
+command substitution
+temporary output
+```
+
+Jadi redirection bukan materi terpisah dari scripting; ia merupakan bagian dari execution model shell.
+
+---
+
+# 01.7.10 — Prinsip porting Bash → Zsh
+
+Ketika menemukan Bash:
+
+```bash
+command >output.txt 2>&1
+```
+
+Anda tidak perlu mencari "versi Zsh" secara otomatis.
+
+Pertama tanyakan:
+
+```text
+Apakah syntax ini merupakan shell concept umum?
+```
+
+Jika ya, kemungkinan besar konsepnya tetap berlaku.
+
+Kemudian tanyakan:
+
+```text
+Apakah Zsh memberikan semantic tambahan?
+```
+
+Untuk redirection, salah satu jawabannya adalah **multios**.
+
+Maka pendekatannya:
+
+```text
+Bash syntax
+    ↓
+identifikasi konsep
+    ↓
+uji di Zsh
+    ↓
+periksa semantic Zsh
+```
+
+Bukan:
+
+```text
+Bash syntax
+    ↓
+terjemahkan setiap karakter
+    ↓
+anggap selesai
+```
+
+---
+
+# 01.8 — Process Substitution
+
+Sekarang kita lanjut tepat ke item berikutnya dalam kurikulum.
+
+Process substitution adalah fitur shell yang mungkin sudah pernah Anda lihat di Bash:
+
+```zsh
+<(command)
+```
+
+atau:
+
+```zsh
+>(command)
+```
+
+Tujuannya adalah membuat output/input suatu command dapat digunakan seolah-olah berupa file.
+
+---
+
+## 01.8.1 — `<(command)`
+
+Contoh:
+
+```zsh
+diff <(command1) <(command2)
+```
+
+Mental model:
+
+```text
+command1 ──┐
+           │
+           ▼
+       pseudo-file
+           │
+           ▼
+         diff
+           ▲
+           │
+       pseudo-file
+           ▲
+           │
+command2 ──┘
+```
+
+Jadi `diff` tidak menerima:
+
+```text
+output command1
+output command2
+```
+
+sebagai argument string biasa.
+
+Ia menerima path-like input yang mewakili output kedua command.
+
+---
+
+## 01.8.2 — Mengapa process substitution berguna?
+
+Misalnya:
+
+```zsh
+diff <(sort file1) <(sort file2)
+```
+
+Daripada harus:
+
+```text
+sort file1 → temporary file
+sort file2 → temporary file
+diff temporary files
+hapus temporary files
+```
+
+process substitution memungkinkan shell menyediakan mekanisme perantara tersebut.
+
+Mental model:
+
+```text
+tanpa process substitution:
+
+command
+   ↓
+temporary file
+   ↓
+command berikutnya
+
+
+dengan process substitution:
+
+command
+   ↓
+<(command)
+   ↓
+command berikutnya
+```
+
+Ini sangat berguna dalam scripting.
+
+---
+
+## 01.8.3 — `>(command)`
+
+Arah sebaliknya:
+
+```zsh
+command > >(other_command)
+```
+
+Secara konseptual:
+
+```text
+command
+   │
+ stdout
+   │
+   ▼
+>(other_command)
+   │
+   ▼
+other_command
+```
+
+Jadi `>(...)` menyediakan endpoint yang dapat menerima data.
+
+Perhatikan perbedaan:
+
+```text
+<(command)
+    │
+    └── command menghasilkan input
+
+>(command)
+    │
+    └── command menerima output
+```
+
+---
+
+## 01.8.4 — Process substitution bukan pipeline
+
+Bandingkan:
+
+```zsh
+command1 | command2
+```
+
+dengan:
+
+```zsh
+command2 <(command1)
+```
+
+Pipeline:
+
+```text
+command1
+   │
+   ▼
+command2
+```
+
+Process substitution:
+
+```text
+command1
+   │
+   ▼
+pseudo-file
+   │
+   ▼
+command2
+```
+
+Ini memungkinkan command kedua menggunakan hasil command pertama melalui interface yang menyerupai file.
+
+Contoh:
+
+```zsh
+diff <(sort file1) <(sort file2)
+```
+
+`diff` secara natural bekerja dengan dua input file.
+
+Process substitution memungkinkan kita memberikan hasil command sebagai sumber input tersebut.
+
+---
+
+# 01.8.5 — Process substitution adalah fitur shell, bukan command eksternal
+
+Sama seperti:
+
+```text
+[[ ... ]]
+(( ... ))
+>
+|
+```
+
+syntax:
+
+```zsh
+<(command)
+```
+
+diproses oleh shell.
+
+Bukan berarti ada executable bernama `<`.
+
+Mental model:
+
+```text
+Zsh parser
+    │
+    ├── expansion
+    ├── redirection
+    ├── process substitution
+    └── execution
+```
+
+Ini mulai memperlihatkan mengapa pemahaman **shell expansion dan execution model** akan sangat penting untuk tahap Zsh yang lebih lanjut.
+
+---
+
+## 01.8.6 — Posisi Bash dan Zsh
+
+Process substitution tersedia di Bash dan Zsh.
+
+Jadi:
+
+```zsh
+<(command)
+>(command)
+```
+
+bukan sesuatu yang harus Anda pelajari ulang sebagai konsep baru.
+
+Yang perlu Anda kuasai dalam Lesson 01 adalah:
+
+```text
+Bash
+  │
+  └── process substitution
+          │
+          ▼
+Zsh
+  │
+  └── process substitution
+```
+
+dengan catatan bahwa masing-masing shell dapat memiliki detail semantic tambahan.
+
+---
+
+# 01.8.7 — Eksperimen kecil
+
+Untuk melihat perbedaannya dengan jelas:
+
+```zsh
+mkdir -p /tmp/zsh-redirection
+cd /tmp/zsh-redirection
+
+print -r -- "b" > one.txt
+print -r -- "a" > two.txt
+```
+
+Kemudian:
+
+```zsh
+diff <(sort one.txt) <(sort two.txt)
+```
+
+Bandingkan dengan:
+
+```zsh
+sort one.txt
+sort two.txt
+```
+
+Tujuan eksperimen ini bukan menghafalkan command, tetapi memahami struktur:
+
+```text
+diff
+├── input 1 ← hasil command
+└── input 2 ← hasil command
+```
+
+tanpa membuat temporary files secara manual.
+
+---
+
+## Posisi Lesson 01 sekarang
+
+```text
+01 — Zsh vs Bash
+│
+├── ✓ Mengapa Zsh bukan Bash++
+├── ✓ POSIX vs Zsh-specific extensions
+├── ✓ Syntax compatibility / incompatibility
+├── ✓ Parameter / expansion
+├── ✓ Arrays
+├── ✓ Globbing
+├── ✓ Conditional expressions
+├── ✓ Functions
+├── ✓ Redirection
+├── ✓ Process substitution
+│
+├── → Options
+├── → Builtins
+├── → Readline vs ZLE
+└── → Completion system
+```
+
+Urutan berikutnya tetap **Options — `setopt` vs `set -o`**, lalu **Builtins**, kemudian **Readline vs ZLE**, dan terakhir **Completion System**. Setelah seluruh cabang Lesson 01 tersebut selesai, barulah kita bergerak ke Lesson 02 sesuai kurikulum.
+
+## 01.9 — Options: `setopt` vs `set -o`
+
+Kita tetap mengikuti urutan **Lesson 01 — Zsh vs Bash**.
+
+```text
+01 — Zsh vs Bash
+├── ✓ Mengapa Zsh bukan Bash++
+├── ✓ POSIX vs Zsh-specific extensions
+├── ✓ Syntax compatibility / incompatibility
+├── ✓ Parameter / expansion
+├── ✓ Arrays
+├── ✓ Globbing
+├── ✓ Conditional expressions
+├── ✓ Functions
+├── ✓ Redirection
+├── ✓ Process substitution
+├── → Options          ← SEKARANG
+├── → Builtins
+├── → Readline vs ZLE
+└── → Completion system
+```
+
+### 01.9.1 — Apa itu shell option?
+
+Shell option adalah konfigurasi internal yang mengubah perilaku shell.
+
+Mental model sederhananya:
+
+```text
+Zsh
+│
+├── syntax
+├── parameters
+├── functions
+├── builtins
+└── options
+      │
+      └── mengubah perilaku shell
+```
+
+Misalnya sebelumnya kita sudah bertemu:
+
+```zsh
+setopt EXTENDED_GLOB
+```
+
+Option tersebut mengubah kemampuan pattern matching/globbing Zsh.
+
+Jadi:
+
+```text
+command
+   +
+shell option
+   ↓
+perilaku Zsh
+```
+
+Ini berbeda dari variable biasa.
+
+---
+
+## 01.9.2 — `setopt`
+
+Cara native Zsh untuk mengaktifkan option adalah:
+
+```zsh
+setopt OPTION_NAME
+```
+
+Contoh:
+
+```zsh
+setopt EXTENDED_GLOB
+```
+
+Untuk menonaktifkannya:
+
+```zsh
+unsetopt EXTENDED_GLOB
+```
+
+Mental model:
+
+```text
+setopt
+   ↓
+enable option
+
+unsetopt
+   ↓
+disable option
+```
+
+Contoh:
+
+```zsh
+setopt EXTENDED_GLOB
+unsetopt EXTENDED_GLOB
+```
+
+---
+
+## 01.9.3 — `set -o`
+
+Karena Zsh memiliki hubungan historis dan kompatibilitas dengan shell lain, Anda juga dapat menemukan:
+
+```zsh
+set -o
+```
+
+dan:
+
+```zsh
+set +o
+```
+
+Tetapi dalam konfigurasi Zsh, bentuk yang perlu Anda kenali sebagai idiom Zsh adalah:
+
+```zsh
+setopt
+unsetopt
+```
+
+Perbandingan mental:
+
+```text
+Bash
+└── set -o OPTION
+    set +o OPTION
+
+Zsh
+├── setopt OPTION
+└── unsetopt OPTION
+```
+
+Jangan menganggap keduanya sebagai syntax yang sama persis hanya karena memiliki tujuan serupa.
+
+---
+
+## 01.9.4 — Mengapa Zsh memiliki `setopt`?
+
+Zsh memiliki jumlah option yang jauh lebih besar dan option tersebut merupakan bagian penting dari identitas bahasa Zsh.
+
+Contoh yang akan sering Anda temui:
+
+```zsh
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt EXTENDED_GLOB
+setopt CORRECT
+setopt INTERACTIVE_COMMENTS
+```
+
+Masing-masing mengubah perilaku shell.
+
+Karena itu ketika membaca `.zshrc`, bagian seperti:
+
+```zsh
+setopt ...
+```
+
+bukan sekadar konfigurasi kosmetik.
+
+Ia dapat mengubah bagaimana Zsh:
+
+* memproses command,
+* melakukan globbing,
+* menangani directory,
+* melakukan history,
+* menangani expansion,
+* berinteraksi dengan user.
+
+---
+
+# 01.9.5 — `AUTO_CD`
+
+Contoh sederhana:
+
+```zsh
+setopt AUTO_CD
+```
+
+Dengan option tersebut, directory dapat digunakan sebagai command untuk berpindah ke directory tersebut.
+
+Misalnya:
+
+```text
+~/projects
+```
+
+Jika `AUTO_CD` aktif, mengetik:
+
+```zsh
+projects
+```
+
+dapat diperlakukan sebagai perpindahan directory ketika nama tersebut merupakan directory yang sesuai.
+
+Secara konseptual:
+
+```text
+tanpa AUTO_CD:
+
+projects
+   ↓
+command not found
+
+
+dengan AUTO_CD:
+
+projects
+   ↓
+cd projects
+```
+
+Ini contoh yang baik untuk memahami bahwa option dapat mengubah **bahasa interaktif Zsh**.
+
+---
+
+# 01.9.6 — `EXTENDED_GLOB`
+
+Ini sudah kita temui di bagian globbing:
+
+```zsh
+setopt EXTENDED_GLOB
+```
+
+Option tersebut mengaktifkan extended globbing.
+
+Jadi sekarang kita bisa melihat hubungan antar-materi:
+
+```text
+Lesson 01
+│
+├── Globbing
+│      │
+│      └── EXTENDED_GLOB
+│
+└── Options
+       │
+       └── setopt EXTENDED_GLOB
+```
+
+Materi tidak berdiri sendiri. Kita sengaja kembali ke contoh yang sudah dipelajari.
+
+---
+
+# 01.9.7 — Option bukan environment variable
+
+Jangan mencampurkan:
+
+```zsh
+setopt AUTO_CD
+```
+
+dengan:
+
+```zsh
+export AUTO_CD=1
+```
+
+Keduanya merupakan mekanisme yang berbeda.
+
+```text
+Shell option
+└── state internal Zsh
+
+Parameter/environment variable
+└── parameter shell
+```
+
+Misalnya:
+
+```zsh
+EDITOR=nvim
+```
+
+adalah parameter.
+
+Sedangkan:
+
+```zsh
+setopt AUTO_CD
+```
+
+mengubah option shell.
+
+Ini akan menjadi penting ketika nanti kita membangun konfigurasi `.zshrc`.
+
+---
+
+# 01.9.8 — Memeriksa option
+
+Zsh menyediakan mekanisme untuk melihat option yang aktif.
+
+Salah satu bentuk yang akan Anda temui:
+
+```zsh
+setopt
+```
+
+Tanpa argument, Zsh dapat menampilkan option yang sedang aktif.
+
+Anda juga akan menemukan:
+
+```zsh
+set -o
+```
+
+untuk melihat status option dalam format shell-option style.
+
+Untuk pembelajaran sekarang, jangan terlalu fokus pada format output. Yang penting:
+
+```text
+setopt
+   ↓
+mengubah / melihat konfigurasi option Zsh
+```
+
+Detail introspection option akan kita gunakan lagi pada materi konfigurasi dan debugging.
+
+---
+
+# 01.9.9 — Option dapat menjadi sumber perbedaan Bash/Zsh
+
+Ini sangat penting ketika melakukan porting.
+
+Misalnya sebuah script berjalan dengan perilaku tertentu di Bash.
+
+Ketika dijalankan di Zsh:
+
+```text
+source code sama
+       ↓
+shell berbeda
+       ↓
+default option berbeda
+       ↓
+behavior dapat berbeda
+```
+
+Jadi ketika sesuatu yang tampaknya "aneh" terjadi di Zsh, jangan hanya memeriksa:
+
+```text
+syntax
+```
+
+Periksa juga:
+
+```text
+shell options
+```
+
+Mental model porting kita sekarang menjadi:
+
+```text
+Bash → Zsh
+│
+├── syntax
+├── expansion
+├── arrays
+├── globbing
+├── conditional expressions
+├── functions
+├── redirection
+├── process substitution
+└── options
+```
+
+---
+
+# 01.9.10 — Option sangat penting dalam `.zshrc`
+
+Tujuan akhir kita adalah memahami konfigurasi Zsh.
+
+Contoh konfigurasi sederhana:
+
+```zsh
+# Globbing
+setopt EXTENDED_GLOB
+
+# Directory navigation
+setopt AUTO_CD
+setopt AUTO_PUSHD
+```
+
+Secara konseptual:
+
+```text
+.zshrc
+│
+├── parameter configuration
+├── option configuration
+├── function definitions
+├── keymap configuration
+├── completion configuration
+└── prompt configuration
+```
+
+Dengan demikian `setopt` akan menjadi salah satu konstruksi yang sangat sering Anda lihat dalam konfigurasi nyata.
+
+---
+
+# 01.9.11 — Hal yang belum kita pelajari sekarang
+
+Kita belum akan membahas seluruh option Zsh.
+
+Itu akan terlalu jauh dari posisi kita dalam kurikulum.
+
+Belum sekarang:
+
+```text
+❌ seluruh daftar option Zsh
+❌ kombinasi option kompleks
+❌ option inheritance
+❌ option behavior pada function
+❌ local option state
+❌ debugging option secara mendalam
+```
+
+Semua itu akan muncul ketika fondasi Zsh sudah lebih kuat.
+
+Untuk Lesson 01, targetnya hanya:
+
+```text
+Bash
+└── set -o
+
+Zsh
+├── setopt
+└── unsetopt
+```
+
+dan memahami bahwa **option merupakan bagian fundamental dari perilaku Zsh**.
+
+---
+
+# 01.10 — Builtins
+
+Sekarang kita masuk ke item berikutnya.
+
+Zsh memiliki sejumlah builtin yang sangat penting untuk konfigurasi dan scripting.
+
+Anda sudah mengenal builtin shell secara umum dari Bash. Yang perlu kita lakukan di sini adalah mengenali **builtin yang menjadi sangat penting dalam ekosistem Zsh**.
+
+---
+
+## 01.10.1 — Apa itu builtin?
+
+Builtin adalah command yang disediakan oleh shell itu sendiri.
+
+Misalnya:
+
+```zsh
+cd
+```
+
+tidak perlu menjalankan executable eksternal bernama `cd`.
+
+Shell menangani `cd` secara internal karena perubahan working directory harus terjadi pada shell yang sedang berjalan.
+
+Secara konseptual:
+
+```text
+command
+│
+├── external command
+│      └── executable
+│
+└── builtin
+       └── ditangani shell
+```
+
+---
+
+## 01.10.2 — `print`
+
+Salah satu builtin Zsh yang sangat penting:
+
+```zsh
+print
+```
+
+Contoh:
+
+```zsh
+print "Hello"
+```
+
+atau:
+
+```zsh
+print -r -- "$message"
+```
+
+Dalam konfigurasi Zsh Anda akan sangat sering menemukan `print`.
+
+Kenapa?
+
+Karena `print` memiliki interface yang cocok untuk berbagai kebutuhan output Zsh dan merupakan builtin native Zsh.
+
+Mental model:
+
+```text
+Bash
+└── printf sangat umum
+
+Zsh
+├── printf
+└── print
+      ↑
+      sangat penting dalam Zsh
+```
+
+Ini tidak berarti `printf` menjadi tidak valid di Zsh.
+
+Keduanya tersedia.
+
+---
+
+# 01.10.3 — `typeset`
+
+Kita sudah menyentuhnya ketika membahas function:
+
+```zsh
+typeset
+```
+
+Ini merupakan builtin yang sangat penting karena berkaitan langsung dengan parameter attributes.
+
+Contoh:
+
+```zsh
+typeset -a files
+```
+
+indexed array.
+
+```zsh
+typeset -A config
+```
+
+associative array.
+
+```zsh
+typeset -i count
+```
+
+integer parameter.
+
+Jadi:
+
+```text
+typeset
+│
+├── parameter
+├── array
+├── associative array
+├── integer
+└── parameter attributes
+```
+
+Ini merupakan salah satu alasan mengapa `typeset` akan muncul berkali-kali dalam kurikulum berikutnya.
+
+---
+
+# 01.10.4 — `autoload`
+
+Kita juga sudah mengenalnya:
+
+```zsh
+autoload
+```
+
+Fungsinya berkaitan dengan pemuatan function secara modular.
+
+```text
+autoload
+   ↓
+function definition
+   ↓
+available to shell
+```
+
+Untuk saat ini cukup kenali sebagai builtin penting Zsh.
+
+Pembahasan mendalam tetap ditunda ke **Lesson 08 — Functions & Autoload**.
+
+---
+
+# 01.10.5 — `whence`
+
+Salah satu builtin/introspection mechanism yang sangat berguna:
+
+```zsh
+whence
+```
+
+Contoh:
+
+```zsh
+whence -v ls
+```
+
+atau:
+
+```zsh
+whence -f my_function
+```
+
+Tujuannya adalah membantu mengetahui bagaimana Zsh menyelesaikan sebuah nama.
+
+Mental model:
+
+```text
+"nama ini sebenarnya apa?"
+          │
+          ▼
+       whence
+          │
+          ├── alias?
+          ├── builtin?
+          ├── function?
+          └── command?
+```
+
+Ini akan sangat berguna ketika nanti kita melakukan debugging konfigurasi dan plugin.
+
+---
+
+# 01.10.6 — `cd`, `pushd`, `popd`, `dirs`
+
+Zsh juga menyediakan mekanisme directory stack.
+
+Contoh:
+
+```zsh
+pushd /tmp
+```
+
+Kemudian:
+
+```zsh
+popd
+```
+
+dan:
+
+```zsh
+dirs
+```
+
+Secara konseptual:
+
+```text
+directory stack
+│
+├── current directory
+├── previous directory
+└── ...
+```
+
+Zsh kemudian menyediakan berbagai option yang berhubungan dengan directory stack.
+
+Ini nantinya bertemu dengan:
+
+```text
+AUTO_PUSHD
+PUSHD_IGNORE_DUPS
+```
+
+dan sebagainya.
+
+Untuk sekarang cukup kenali bahwa builtin dan option sering bekerja bersama.
+
+---
+
+# 01.10.7 — Mengapa builtin penting untuk Zsh configuration?
+
+Karena `.zshrc` bukan hanya sekumpulan command Linux.
+
+Ia berisi instruksi kepada **shell itu sendiri**.
+
+Contoh:
+
+```zsh
+setopt ...
+typeset ...
+autoload ...
+bindkey ...
+compinit ...
+```
+
+Semua ini berhubungan langsung dengan kemampuan internal Zsh.
+
+Mental model:
+
+```text
+.zshrc
+│
+├── external commands
+│
+└── Zsh builtins / shell constructs
+      │
+      ├── setopt
+      ├── typeset
+      ├── autoload
+      ├── print
+      ├── bindkey
+      └── ...
+```
+
+Dan semakin jauh kita masuk ke konfigurasi Zsh, semakin besar bagian kedua tersebut.
+
+---
+
+## Posisi kurikulum
+
+```text
+01 — Zsh vs Bash
+│
+├── ✓ Mengapa Zsh bukan Bash++
+├── ✓ POSIX vs Zsh-specific extensions
+├── ✓ Syntax compatibility / incompatibility
+├── ✓ Parameter / expansion
+├── ✓ Arrays
+├── ✓ Globbing
+├── ✓ Conditional expressions
+├── ✓ Functions
+├── ✓ Redirection
+├── ✓ Process substitution
+├── ✓ Options
+├── ✓ Builtins
+│
+├── → Readline vs ZLE
+└── → Completion system
+```
+
+Jadi masih ada **dua materi terakhir** dalam Lesson 01:
+
+1. **Readline vs ZLE**
+2. **Completion system**
+
+Setelah dua bagian itu selesai, kita akan melakukan **mini lab Bash vs Zsh side-by-side** sebagai penutup Lesson 01, kemudian baru bergerak ke **Lesson 02 — Zsh Language** sesuai urutan kurikulum.
+
+## 01.11 — Readline vs ZLE
+
+Kita tetap berada di **Lesson 01 — Zsh vs Bash**, tepat pada dua materi terakhir sebelum penutup Lesson 01.
+
+```text
+01 — Zsh vs Bash
+│
+├── ✓ Mengapa Zsh bukan Bash++
+├── ✓ POSIX vs Zsh-specific extensions
+├── ✓ Syntax compatibility / incompatibility
+├── ✓ Parameter / expansion
+├── ✓ Arrays
+├── ✓ Globbing
+├── ✓ Conditional expressions
+├── ✓ Functions
+├── ✓ Redirection
+├── ✓ Process substitution
+├── ✓ Options
+├── ✓ Builtins
+├── → Readline vs ZLE       ← SEKARANG
+└── → Completion system
+```
+
+Bagian ini penting karena mulai membawa kita dari **Zsh sebagai scripting language** menuju **Zsh sebagai interactive shell**.
+
+### 01.11.1 — Bash menggunakan Readline
+
+Ketika Anda menggunakan Bash secara interaktif:
+
+```text
+Terminal
+   │
+   ▼
+Bash
+   │
+   └── GNU Readline
+          │
+          ├── input editing
+          ├── cursor movement
+          ├── history navigation
+          └── key bindings
+```
+
+Readline adalah library yang menangani line editing untuk banyak program terminal, termasuk Bash.
+
+Contohnya ketika Anda menekan:
+
+```text
+↑
+```
+
+untuk mengambil command sebelumnya, atau:
+
+```text
+Ctrl+A
+Ctrl+E
+Ctrl+R
+```
+
+dan sebagainya, Anda sedang berinteraksi dengan sistem line editing.
+
+---
+
+# 01.11.2 — Zsh menggunakan ZLE
+
+Zsh memiliki sistem sendiri:
+
+```text
+ZLE
+```
+
+singkatan dari:
+
+```text
+Zsh Line Editor
+```
+
+Modelnya:
+
+```text
+Terminal
+   │
+   ▼
+Zsh
+   │
+   └── ZLE
+         │
+         ├── keymaps
+         ├── widgets
+         ├── editing
+         └── interactive behavior
+```
+
+Jadi perbandingan fundamentalnya:
+
+```text
+Bash
+└── Readline
+
+Zsh
+└── ZLE
+```
+
+Ini adalah salah satu perbedaan paling penting antara kedua shell ketika kita berbicara tentang **interactive shell customization**.
+
+---
+
+# 01.11.3 — Mengapa ZLE sangat penting untuk tujuan Anda?
+
+Karena tujuan Anda nantinya bukan hanya:
+
+```text
+menulis script Zsh
+```
+
+tetapi:
+
+```text
+membuat fitur produktivitas terminal
+```
+
+Untuk itu Anda perlu memahami:
+
+```text
+keyboard input
+      ↓
+keymap
+      ↓
+widget
+      ↓
+function
+      ↓
+shell action
+```
+
+Misalnya Anda ingin membuat shortcut:
+
+```text
+Ctrl+X
+   ↓
+menjalankan custom action
+```
+
+Mekanismenya di Zsh bukan sekadar:
+
+```text
+alias Ctrl+X=...
+```
+
+Melainkan melalui sistem ZLE.
+
+---
+
+# 01.11.4 — Widget
+
+Konsep penting dalam ZLE adalah **widget**.
+
+Widget merupakan unit aksi yang dapat dijalankan oleh ZLE.
+
+Contoh built-in widget:
+
+```text
+accept-line
+backward-char
+forward-char
+beginning-of-line
+end-of-line
+kill-line
+```
+
+Secara konseptual:
+
+```text
+keyboard
+   │
+   ▼
+key binding
+   │
+   ▼
+widget
+   │
+   ▼
+action
+```
+
+Misalnya Enter secara konseptual terhubung dengan:
+
+```text
+accept-line
+```
+
+yang kemudian menyebabkan command line diproses.
+
+---
+
+# 01.11.5 — Keymap
+
+ZLE tidak hanya memiliki widget.
+
+Ada pula:
+
+```text
+keymap
+```
+
+Keymap menentukan hubungan antara:
+
+```text
+key sequence
+       ↓
+widget
+```
+
+Contoh mental model:
+
+```text
+"^A"
+  │
+  ▼
+beginning-of-line
+```
+
+dan:
+
+```text
+"^E"
+  │
+  ▼
+end-of-line
+```
+
+Jadi:
+
+```text
+Keymap
+│
+├── Ctrl+A → beginning-of-line
+├── Ctrl+E → end-of-line
+└── ...
+```
+
+Ini berbeda dari alias.
+
+---
+
+# 01.11.6 — `bindkey`
+
+Builtin Zsh yang akan sangat sering Anda lihat:
+
+```zsh
+bindkey
+```
+
+Contoh:
+
+```zsh
+bindkey -v
+```
+
+Ini relevan langsung dengan konfigurasi Anda karena Anda memang menggunakan **vi keymap** pada Zsh.
+
+Secara konseptual:
+
+```zsh
+bindkey -v
+```
+
+mengubah mode editing ZLE menjadi model vi.
+
+Sedangkan:
+
+```zsh
+bindkey -e
+```
+
+menggunakan gaya emacs.
+
+Mental model:
+
+```text
+ZLE
+│
+└── keymap
+     │
+     ├── emacs
+     └── vi
+```
+
+Jadi ketika Anda menemukan:
+
+```zsh
+bindkey -v
+```
+
+di `.zshrc`, sekarang Anda seharusnya mengenal bahwa command tersebut berkaitan dengan:
+
+```text
+Zsh
+ └── ZLE
+      └── keymap
+```
+
+bukan sekadar "mengaktifkan shortcut keyboard".
+
+---
+
+# 01.11.7 — Function dapat menjadi widget
+
+Di sinilah Zsh mulai menarik untuk tujuan akhir kita.
+
+Function Zsh dapat digunakan untuk membuat custom widget.
+
+Secara konseptual:
+
+```text
+Zsh function
+      ↓
+zle widget
+      ↓
+key binding
+      ↓
+keyboard shortcut
+```
+
+Contohnya nanti kita dapat membuat function:
+
+```zsh
+my_widget() {
+    ...
+}
+```
+
+kemudian menjadikannya widget dan menghubungkannya dengan key.
+
+Tetapi mekanisme detailnya **belum dipelajari sekarang**.
+
+Itu akan menjadi bagian dari materi **ZLE** pada tahap interactive Zsh.
+
+Untuk Lesson 01, cukup pahami arsitekturnya.
+
+---
+
+# 01.11.8 — Mengapa ZLE lebih dari sekadar line editing?
+
+Karena ZLE dapat diprogram.
+
+Model sederhananya:
+
+```text
+Readline
+└── line editing system
+
+ZLE
+├── line editing
+├── keymaps
+├── widgets
+├── programmable actions
+└── integration dengan function Zsh
+```
+
+Ini salah satu alasan Zsh sangat cocok untuk konfigurasi interactive shell yang kompleks.
+
+Nantinya Anda dapat membuat fitur seperti:
+
+```text
+Ctrl+G
+   ↓
+custom widget
+   ↓
+ambil data
+   ↓
+olah data
+   ↓
+ubah command line
+```
+
+Tanpa harus membuat program terminal terpisah untuk setiap fitur.
+
+---
+
+# 01.11.9 — Jangan mencampurkan ZLE dengan completion
+
+Keduanya sama-sama berada di interactive Zsh, tetapi mekanismenya berbeda.
+
+```text
+Interactive Zsh
+│
+├── ZLE
+│    ├── keyboard
+│    ├── keymap
+│    └── widgets
+│
+└── Completion
+     ├── candidate generation
+     ├── completion functions
+     └── selection
+```
+
+Jadi:
+
+```text
+bindkey
+```
+
+berhubungan terutama dengan:
+
+```text
+ZLE / keymap
+```
+
+sedangkan:
+
+```text
+compinit
+```
+
+berhubungan dengan:
+
+```text
+completion system
+```
+
+Ini akan menjadi sangat penting ketika kita membaca `.zshrc`.
+
+---
+
+# 01.12 — Completion System
+
+Ini adalah materi terakhir dalam daftar utama Lesson 01.
+
+```text
+01 — Zsh vs Bash
+│
+└── Completion system ← SEKARANG
+```
+
+### 01.12.1 — Apa itu shell completion?
+
+Ketika Anda mengetik:
+
+```zsh
+cd /u<Tab>
+```
+
+shell dapat membantu melengkapi:
+
+```text
+/usr/
+```
+
+atau ketika:
+
+```zsh
+git che<Tab>
+```
+
+shell dapat menawarkan:
+
+```text
+checkout
+cherry-pick
+...
+```
+
+Ini disebut:
+
+```text
+completion
+```
+
+Bash dan Zsh sama-sama memiliki programmable completion, tetapi arsitekturnya berbeda.
+
+---
+
+# 01.12.2 — Bash completion
+
+Bash memiliki sistem completion yang biasanya menggunakan:
+
+```bash
+complete
+```
+
+Contoh konseptual:
+
+```bash
+complete -F _my_function mycommand
+```
+
+Artinya sebuah completion function dikaitkan dengan command tertentu.
+
+Mental model:
+
+```text
+Bash
+│
+└── complete
+      │
+      └── completion function
+```
+
+---
+
+# 01.12.3 — Zsh completion
+
+Zsh memiliki completion framework yang jauh lebih terintegrasi.
+
+Entry point yang sangat sering Anda lihat:
+
+```zsh
+autoload -Uz compinit
+compinit
+```
+
+Sekarang Anda dapat melihat beberapa materi sebelumnya bertemu:
+
+```text
+autoload
+   ↓
+completion function
+   ↓
+compinit
+   ↓
+Zsh completion system
+```
+
+Ini bukan kebetulan.
+
+---
+
+# 01.12.4 — `compinit`
+
+`compinit` menginisialisasi sistem completion Zsh.
+
+Contoh konfigurasi yang sangat umum:
+
+```zsh
+autoload -Uz compinit
+compinit
+```
+
+Strukturnya:
+
+```text
+autoload -Uz compinit
+        │
+        ▼
+function compinit tersedia
+        │
+        ▼
+compinit
+        │
+        ▼
+completion system initialized
+```
+
+Untuk sekarang, jangan masuk ke detail implementasi `compinit`.
+
+Nanti akan ada materi khusus **Completion System** yang membahas:
+
+```text
+completion functions
+compdef
+compsys
+styles
+tags
+contexts
+widgets
+```
+
+---
+
+# 01.12.5 — `compdef`
+
+Salah satu konsep yang nantinya akan sangat penting adalah:
+
+```zsh
+compdef
+```
+
+Secara konseptual:
+
+```text
+command
+   │
+   ▼
+completion function
+```
+
+Contoh bentuk yang mungkin Anda temukan:
+
+```zsh
+compdef _mycommand mycommand
+```
+
+Artinya completion system mengetahui bahwa:
+
+```text
+mycommand
+    ↓
+_mycommand
+```
+
+digunakan untuk menyediakan completion.
+
+Perhatikan konvensi:
+
+```text
+_mycommand
+```
+
+Nama dengan underscore seperti ini sangat umum dalam completion system Zsh.
+
+---
+
+# 01.12.6 — Perbedaan arsitektur Bash dan Zsh
+
+Mental model sederhana:
+
+```text
+Bash
+│
+└── programmable completion
+      │
+      └── complete / completion functions
+
+
+Zsh
+│
+└── Completion System
+      │
+      ├── compinit
+      ├── compdef
+      ├── completion functions
+      ├── tags
+      ├── styles
+      └── contexts
+```
+
+Zsh completion bukan sekadar:
+
+```text
+"versi Bash completion yang syntax-nya berbeda"
+```
+
+Ia merupakan sistem yang lebih besar.
+
+---
+
+# 01.12.7 — Mengapa completion sangat penting untuk tujuan akhir?
+
+Karena completion merupakan salah satu bagian terbesar dari kemampuan interactive Zsh.
+
+Nantinya Anda dapat membuat:
+
+```text
+mycommand <Tab>
+```
+
+menghasilkan:
+
+```text
+subcommands
+files
+directories
+options
+arguments
+dynamic candidates
+```
+
+Bahkan completion dapat mengambil data dari program lain.
+
+Secara konseptual:
+
+```text
+User
+ │
+ └── mycommand <Tab>
+          │
+          ▼
+       Zsh
+          │
+          ▼
+    completion system
+          │
+          ├── context
+          ├── tags
+          ├── function
+          └── candidates
+          │
+          ▼
+       suggestions
+```
+
+Ini merupakan salah satu fondasi utama ketika nanti Anda membuat fitur produktivitas Zsh.
+
+---
+
+# 01.12.8 — Hubungan completion dengan `autoload`
+
+Kita sekarang bisa melihat mengapa `autoload` tadi sengaja diperkenalkan tanpa dibahas terlalu dalam.
+
+```text
+Zsh completion
+       │
+       ▼
+completion functions
+       │
+       ▼
+autoload
+       │
+       ▼
+function loading
+```
+
+Dengan demikian materi Lesson 01 sebenarnya sudah mulai membangun hubungan antar-konsep:
+
+```text
+Functions
+    │
+    ├── autoload
+    │
+    └── ZLE widgets
+           │
+           └── key bindings
+
+Completion
+    │
+    ├── compinit
+    ├── compdef
+    └── completion functions
+```
+
+Namun detail masing-masing tetap akan dipelajari pada lesson yang sesuai.
+
+---
+
+# Penutup Lesson 01 — Mini Lab Bash vs Zsh
+
+Sekarang seluruh materi utama Lesson 01 sudah kita lewati.
+
+Mini lab ini bukan untuk menguji Anda sekarang, melainkan untuk mengikat semua materi menjadi satu eksperimen.
+
+Buat dua shell secara berdampingan.
+
+```text
+/tmp/zsh-bash-lab/
+├── bash/
+└── zsh/
+```
+
+Di masing-masing shell, bandingkan:
+
+```text
+1. parameter
+2. array
+3. globbing
+4. conditional
+5. function
+6. redirection
+7. process substitution
+8. option
+9. builtin
+10. interactive behavior
+11. completion
+```
+
+Beberapa eksperimen yang relevan:
+
+```zsh
+print -r -- "$ZSH_VERSION"
+```
+
+bandingkan dengan Bash:
+
+```bash
+printf '%s\n' "$BASH_VERSION"
+```
+
+Array:
+
+```zsh
+arr=(one two three)
+print -r -- "$arr[1]"
+```
+
+Bandingkan dengan indeks Bash.
+
+Globbing:
+
+```zsh
+print -rl -- **/*.txt
+```
+
+Conditional:
+
+```zsh
+[[ -f "$file" ]]
+```
+
+Function:
+
+```zsh
+hello() {
+    print "hello"
+}
+```
+
+Redirection:
+
+```zsh
+print "hello" > output.txt
+```
+
+Process substitution:
+
+```zsh
+diff <(sort one.txt) <(sort two.txt)
+```
+
+Option:
+
+```zsh
+setopt EXTENDED_GLOB
+```
+
+Builtin:
+
+```zsh
+whence -v print
+whence -v typeset
+```
+
+Interactive:
+
+```zsh
+bindkey -v
+```
+
+Completion:
+
+```zsh
+autoload -Uz compinit
+compinit
+```
+
+Tujuan lab bukan menghafalkan command-command tersebut. Tujuannya adalah membentuk kemampuan berikut:
+
+```text
+Melihat kode Zsh
+      │
+      ▼
+mengenali apakah konsepnya berasal dari
+shell umum atau fitur Zsh
+      │
+      ▼
+memahami semantic-nya
+      │
+      ▼
+mampu membaca konfigurasi Zsh
+```
+
+---
+
+# Lesson 01 selesai
+
+Sekarang status kurikulum:
+
+```text
+00 — Prep / Mental Model
+✓ SELESAI
+
+01 — Zsh vs Bash
+✓ SELESAI
+
+02 — Zsh Language
+→ BERIKUTNYA
+```
+
+Dan **Lesson 01 tidak kita perluas lagi dengan materi dari Lesson 02**.
+
+Urutan utama yang sudah diselesaikan:
+
+```text
+01 — Zsh vs Bash
+│
+├── ✓ Mengapa Zsh bukan Bash++
+├── ✓ POSIX vs Zsh-specific extensions
+├── ✓ Syntax compatibility / incompatibility
+├── ✓ Parameter / expansion differences
+├── ✓ Arrays
+├── ✓ Globbing
+├── ✓ Conditional expressions
+├── ✓ Functions
+├── ✓ Redirection
+├── ✓ Process substitution
+├── ✓ Options (`setopt` vs `set -o`)
+├── ✓ Builtins
+├── ✓ Readline vs ZLE
+├── ✓ Completion systems
+└── ✓ Mini lab Bash vs Zsh
+        │
+        ▼
+02 — Zsh Language
+```
+
+Tahap berikutnya adalah **Lesson 02 — Zsh Language**. Di sana kita mulai meninggalkan perbandingan Bash sebagai fokus utama dan mempelajari **bahasa Zsh itu sendiri secara sistematis**.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**

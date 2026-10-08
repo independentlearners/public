@@ -191,6 +191,8 @@ Nanti kita akan sampai pada:
 
 dan tidak semua file tersebut dibaca pada kondisi yang sama. Materi kurikulum kita memang menempatkan startup architecture sebagai tahap khusus setelah fondasi bahasa dan options. 
 
+[Lebih lanjut tentang invocation | login + interactive, dll][invocation]
+
 ---
 
 # 5. Jangan ubah default shell dulu
@@ -491,7 +493,6 @@ NON-LOGIN
 
 Dalam praktik desktop Linux modern, mekanisme session manager/display manager/terminal emulator dapat membuat kombinasi yang berbeda. Karena itu kita tidak boleh menebak jenis shell hanya berdasarkan fakta bahwa kita melihat prompt.
 
-[Lebih lanjut][invocation]
 ---
 
 # 3. Mengapa Zsh peduli terhadap perbedaan ini?

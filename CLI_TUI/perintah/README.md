@@ -16,6 +16,8 @@ Berikut adalah daftar **perintah dasar terminal Linux** yang penting untuk dipel
 | [**`touch`**](touch/README.md) | `touch file.txt`             | Membuat file kosong.             |
 | [**`cat`**]()                  | `cat file.txt`               | Menampilkan isi file.            |
 | **`nano`/`vim`**               | `nano file.txt`              | Editor teks terminal.            |
+| **`nano`/`vim`**               | `nano file.txt`              | Editor teks terminal.            |
+|[**`comm`**](comm/comm.md)                      |`comm <(sort file1.txt) <(sort file2.txt)` |Membandingkan dua file yang isinya sudah diurutkan.| 
 | **`chmod`**                    | `chmod 755 script.sh`        | Mengubah izin file.              |
 | **`chown`**                    | `sudo chown user:file.txt`   | Mengubah kepemilikan file.       |
 | **`find`**                     | `find / -name "file.txt"`    | Mencari file berdasarkan nama.   |
