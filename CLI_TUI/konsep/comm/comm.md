@@ -1,7 +1,6 @@
 # COMM
 
-## COMM :
- - **Perangkat keras serial**, komunikasi via COM port yang bisa diakses dengan Minicom.
+### **Perangkat keras serial**, komunikasi via COM port yang bisa diakses dengan Minicom.
 
 Perintah:
 

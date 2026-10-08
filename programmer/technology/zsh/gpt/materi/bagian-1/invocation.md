@@ -57,3 +57,7 @@ Anda dapat memverifikasi mode shell saat ini dengan perintah:
 if [[ -o login ]]; then echo "Mode: Login"; else echo "Mode: Non-Login"; fi
 if [[ -o interactive ]]; then echo "Mode: Interactive"; else echo "Mode: Non-Interactive"; fi
 ```
+
+[Lebih Lanjut Tentang Prilaku Shell](./more.md)
+
+

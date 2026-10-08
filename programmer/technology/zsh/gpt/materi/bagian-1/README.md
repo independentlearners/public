@@ -104,7 +104,7 @@ Contohnya Anda membuka terminal dan mendapatkan:
 
 Kemudian mengetik:
 
-```zsh
+```bash
 ls
 ```
 
@@ -134,7 +134,7 @@ Nanti kita akan masuk sangat dalam ke bagian sebelum execution tersebut.
 
 Misalnya:
 
-```zsh
+```bash
 echo **/*.lua
 ```
 
@@ -213,19 +213,19 @@ Sekarang Anda berada di Zsh sebagai child process.
 
 Periksa:
 
-```zsh
+```python
 print -r -- "$ZSH_VERSION"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print -r -- "$ZSH_NAME"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print -r -- "$SHELL"
 ```
 
@@ -247,7 +247,7 @@ Ini akan menjadi latihan pertama kita dalam memahami **environment variable vs s
 
 Gunakan:
 
-```zsh
+```bash
 ps -p $$
 ```
 
@@ -261,11 +261,17 @@ adalah PID shell saat ini.
 
 Kemudian:
 
-```zsh
+```bash
 ps -p $$ -o pid,ppid,comm,args
+
+   PID    PPID COMMAND         COMMAND
+   1652   1089 zsh             -zsh
 ```
 
+> Baca lebih lanjut tentang perintah ini [disini]
+
 Perhatikan hasilnya.
+
 
 Secara konseptual:
 
@@ -279,7 +285,7 @@ PID
 
 Kemudian keluar:
 
-```zsh
+```bash
 exit
 ```
 
@@ -313,7 +319,7 @@ zsh
 
 Jalankan satu per satu:
 
-```zsh
+```bash
 print -r -- "$ZSH_VERSION"
 print -r -- "$ZSH_NAME"
 print -r -- "$SHELL"
@@ -323,15 +329,17 @@ ps -p $$ -o pid,ppid,comm,args
 
 Kemudian:
 
-```zsh
+```bash
 echo $-
 ```
 
 Perhatikan hasilnya.
 
-`$-` berisi option flags dari shell yang sedang berjalan. Ini konsep shell yang sudah Anda temui di Bash, tetapi nanti kita akan membahas bagaimana Zsh memiliki sistem option yang jauh lebih besar melalui:
+`$-` berisi option flags dari shell yang sedang berjalan. Ini konsep shell yang mungkin sudah Anda temui di Bash, jika tidak anda bisa melihatnya [disini](./options.md).
 
-```zsh
+Nantinya kita akan membahas bagaimana Zsh memiliki sistem option yang jauh lebih besar melalui:
+
+```bash
 setopt
 unsetopt
 ```
@@ -340,7 +348,7 @@ Sistem option tersebut merupakan salah satu fondasi utama konfigurasi Zsh.
 
 Terakhir:
 
-```zsh
+```bash
 exit
 ```
 
@@ -362,7 +370,7 @@ tidak otomatis membuat Zsh menjadi shell login/default Anda?
 
 3. Apa fungsi:
 
-```zsh
+```bash
 $$
 ```
 
@@ -380,18 +388,16 @@ dan:
 login shell
 ```
 
-5. Jika `$SHELL` masih menunjukkan `/bin/bash` setelah Anda menjalankan `zsh`, apakah berarti Anda sebenarnya masih menggunakan Bash? Jelaskan alasannya.
+5. Jika `$SHELL` masih menunjukkan `/bin/bash` setelah Anda menjalankan `zsh`, apakah berarti Anda sebenarnya masih menggunakan Bash? Anda harus paham prinsip fundamental ini sebelum nantinya akan membahas sesuatu yang lebih jauh.
 
-6. Jalankan:
+6. Coba jalankan berikut untuk mengingat kembali materi sebelumnya:
 
-```zsh
+```bash
 print -r -- "$ZSH_VERSION"
 print -r -- "$ZSH_NAME"
 print -r -- "$SHELL"
 ps -p $$ -o pid,ppid,comm,args
 ```
-
-
 
 ## Lesson 00.2 — Login Shell, Interactive Shell, dan Arsitektur Startup Zsh
 
@@ -431,7 +437,7 @@ Kemudian Anda mendapatkan prompt:
 
 dan dapat mengetik:
 
-```zsh
+```bash
 ls
 pwd
 cd ~/Documents
@@ -572,7 +578,7 @@ Karena itu `.zshenv` harus diperlakukan dengan hati-hati.
 
 Misalnya Anda memiliki:
 
-```zsh
+```bash
 export EDITOR=nvim
 ```
 
@@ -582,7 +588,7 @@ Namun jangan menjadikan `.zshenv` sebagai tempat semua konfigurasi.
 
 Misalnya jangan langsung memasukkan:
 
-```zsh
+```bash
 compinit
 ```
 
@@ -628,7 +634,7 @@ Tempat ini cocok untuk konfigurasi yang memang berhubungan dengan login/session 
 
 Contoh konseptual:
 
-```zsh
+```bash
 export SOME_LOGIN_ENV=value
 ```
 
@@ -664,19 +670,19 @@ integration
 
 Misalnya nanti:
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
 atau:
 
-```zsh
+```bash
 bindkey -v
 ```
 
 atau:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
@@ -818,7 +824,7 @@ Tetapi Zsh secara tradisional mencari startup files berdasarkan `$ZDOTDIR`.
 
 Jadi nanti kita akan belajar:
 
-```zsh
+```bash
 print -r -- "$ZDOTDIR"
 ```
 
@@ -846,7 +852,7 @@ zsh
 
 Kemudian:
 
-```zsh
+```bash
 print -r -- "$ZSH_VERSION"
 print -r -- "$ZSH_NAME"
 print -r -- "$ZDOTDIR"
@@ -855,13 +861,13 @@ print -r -- "$-"
 
 Kemudian periksa apakah shell interactive:
 
-```zsh
+```bash
 [[ -o interactive ]] && print "interactive" || print "non-interactive"
 ```
 
 Perhatikan bahwa kita menggunakan:
 
-```zsh
+```bash
 [[ -o interactive ]]
 ```
 
@@ -873,7 +879,7 @@ Ini sekaligus menjadi preview kecil dari sistem option Zsh yang akan kita pelaja
 
 Dari shell Anda saat ini, jalankan:
 
-```zsh
+```bash
 zsh -l
 ```
 
@@ -881,7 +887,7 @@ zsh -l
 
 Kemudian:
 
-```zsh
+```bash
 [[ -o login ]] && print "login" || print "non-login"
 ```
 
@@ -897,7 +903,7 @@ shell pertama
 
 Keluar dua kali:
 
-```zsh
+```bash
 exit
 exit
 ```
@@ -916,14 +922,14 @@ zsh -i
 
 Kemudian:
 
-```zsh
+```bash
 [[ -o interactive ]] && print "interactive" || print "non-interactive"
 [[ -o login ]] && print "login" || print "non-login"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 exit
 ```
 
@@ -942,7 +948,7 @@ Ini menggabungkan:
 
 Periksa lagi:
 
-```zsh
+```bash
 [[ -o login ]] && print "login" || print "non-login"
 [[ -o interactive ]] && print "interactive" || print "non-interactive"
 ```
@@ -1035,7 +1041,7 @@ zsh -li
 
 Di masing-masing shell jalankan:
 
-```zsh
+```bash
 print -r -- "interactive: $([[ -o interactive ]] && print yes || print no)"
 print -r -- "login:       $([[ -o login ]] && print yes || print no)"
 print -r -- "PID:         $$"
@@ -1159,7 +1165,7 @@ cat /tmp/zsh-lab/.zshenv
 
 akan menghasilkan:
 
-```zsh
+```bash
 print ".zshenv"
 ```
 
@@ -1171,7 +1177,7 @@ Sekarang kita menggunakan konsep yang baru saja kita bahas.
 
 Zsh menggunakan:
 
-```zsh
+```bash
 $ZDOTDIR
 ```
 
@@ -1200,7 +1206,7 @@ Anda seharusnya mendapatkan:
 
 Kemudian:
 
-```zsh
+```bash
 exit
 ```
 
@@ -1252,7 +1258,7 @@ Secara umum Anda akan melihat:
 
 Kemudian:
 
-```zsh
+```bash
 exit
 ```
 
@@ -1302,7 +1308,7 @@ Maka kita mengharapkan:
 
 Setelah:
 
-```zsh
+```bash
 exit
 ```
 
@@ -1392,31 +1398,31 @@ Daripada hanya melihat nama file, kita dapat memberikan timestamp atau informasi
 
 Ubah `.zshenv` menjadi:
 
-```zsh
+```bash
 print -- "STARTUP: .zshenv PID=$$"
 ```
 
 `.zprofile`:
 
-```zsh
+```bash
 print -- "STARTUP: .zprofile PID=$$"
 ```
 
 `.zshrc`:
 
-```zsh
+```bash
 print -- "STARTUP: .zshrc PID=$$"
 ```
 
 `.zlogin`:
 
-```zsh
+```bash
 print -- "STARTUP: .zlogin PID=$$"
 ```
 
 `.zlogout`:
 
-```zsh
+```bash
 print -- "STARTUP: .zlogout PID=$$"
 ```
 
@@ -1439,7 +1445,7 @@ STARTUP: .zlogin PID=12345
 
 Setelah:
 
-```zsh
+```bash
 exit
 ```
 
@@ -1459,7 +1465,7 @@ Ini konsep yang sangat penting.
 
 Misalnya `.zshrc` berisi:
 
-```zsh
+```bash
 MY_VARIABLE="hello"
 ```
 
@@ -1483,7 +1489,7 @@ zsh process
 
 Ini berbeda dari konsep:
 
-```zsh
+```bash
 ./some-script.zsh
 ```
 
@@ -1499,7 +1505,7 @@ Sekarang kita buktikan bahwa startup file dapat memengaruhi shell berikutnya.
 
 Masukkan ke `.zshenv`:
 
-```zsh
+```bash
 ZSH_LAB="hello-from-zshenv"
 ```
 
@@ -1517,7 +1523,7 @@ hello-from-zshenv
 
 Sekarang masukkan variable yang sama ke `.zshrc`:
 
-```zsh
+```bash
 ZSH_LAB="hello-from-zshrc"
 ```
 
@@ -1581,20 +1587,20 @@ Kita akan membuat keputusan tersebut setelah memahami semua mekanismenya.
 
 Nanti Anda akan menemukan konfigurasi seperti:
 
-```zsh
+```bash
 [[ -o interactive ]] || return
 ```
 
 atau:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
 
 atau:
 
-```zsh
+```bash
 if [[ -r "$file" ]]; then
     source "$file"
 fi
@@ -1686,3 +1692,4 @@ Setelah itu jawab:
 [17]: ./
 [18]: ./
 
+[disini]: ./../../../../../../CLI_TUI/konsep/comm/comm.md
