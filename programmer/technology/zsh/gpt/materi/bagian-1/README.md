@@ -491,6 +491,7 @@ NON-LOGIN
 
 Dalam praktik desktop Linux modern, mekanisme session manager/display manager/terminal emulator dapat membuat kombinasi yang berbeda. Karena itu kita tidak boleh menebak jenis shell hanya berdasarkan fakta bahwa kita melihat prompt.
 
+[Lebih lanjut][invocation]
 ---
 
 # 3. Mengapa Zsh peduli terhadap perbedaan ini?
@@ -1660,6 +1661,7 @@ Setelah itu jawab:
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
+[invocation]: ./invocation.md
 
 <!----------------------------------------------------->
 
