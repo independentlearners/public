@@ -1487,7 +1487,704 @@ Lesson 02 sudah mencakup:
 
 Yang masih perlu kita selesaikan dalam Lesson 02 adalah bagian **advanced syntax yang masih merupakan bahasa Zsh**, terutama konstruksi yang akan sering kamu temui ketika membaca konfigurasi/plugin Zsh.
 
-Setelah bagian itu selesai, barulah kita tutup Lesson 02 dan masuk **Lesson 03 — Parameter Expansion**. Jadi kita belum berpindah lesson sekarang.
+Sekarang kita menyelesaikan bagian **advanced syntax** yang masih termasuk bahasa Zsh. Fokusnya bukan menghafal fitur, tetapi mengenali konstruksi yang nanti akan muncul ketika membaca `.zshrc`, plugin, dan framework.
+
+## 02.15 `[[ ... ]]` sebagai konstruksi bahasa
+
+Sebelumnya kita sudah menggunakan:
+
+```zsh
+if [[ -f "$file" ]]; then
+    print "File ditemukan"
+fi
+```
+
+Penting untuk membedakan:
+
+```zsh
+[[ ... ]]
+```
+
+dari:
+
+```zsh
+[ ... ]
+```
+
+dan dari command eksternal.
+
+`[[ ... ]]` merupakan konstruksi conditional yang dipahami langsung oleh shell.
+
+Contoh:
+
+```zsh
+if [[ "$SHELL" == */zsh ]]; then
+    print "Menggunakan Zsh"
+fi
+```
+
+Mental modelnya:
+
+```text
+[[ expression ]]
+       │
+       ▼
+evaluasi oleh Zsh
+       │
+       ▼
+exit status
+       │
+   ┌───┴───┐
+   0      != 0
+   │        │
+ true      false
+```
+
+Ini merupakan salah satu konstruksi yang akan sangat sering kamu lihat di konfigurasi Zsh.
+
+---
+
+# 02.16 Grouping dengan `{ ... }`
+
+Zsh dapat mengelompokkan beberapa command:
+
+```zsh
+{
+    print "Satu"
+    print "Dua"
+    print "Tiga"
+}
+```
+
+Ketiganya dijalankan dalam shell yang sama.
+
+Grouping ini juga dapat dikombinasikan dengan redirection:
+
+```zsh
+{
+    print "Satu"
+    print "Dua"
+} > output.txt
+```
+
+Mental model:
+
+```text
+{
+    command 1
+    command 2
+}
+      │
+      ▼
+  satu kelompok
+      │
+      ▼
+  redirection
+```
+
+Ini berguna ketika beberapa command harus diperlakukan sebagai satu unit.
+
+---
+
+# 02.17 Subshell dengan `( ... )`
+
+Berbeda dengan `{ ... }`, bentuk:
+
+```zsh
+(
+    command1
+    command2
+)
+```
+
+menjalankan kelompok tersebut dalam subshell.
+
+Contoh:
+
+```zsh
+pwd
+
+(
+    cd /tmp
+    pwd
+)
+
+pwd
+```
+
+Secara konsep:
+
+```text
+shell utama
+    │
+    ├── pwd
+    │
+    └── subshell
+          │
+          ├── cd /tmp
+          └── pwd
+    │
+    └── pwd
+```
+
+Perubahan directory di subshell tidak mengubah directory shell utama.
+
+Ini sangat berguna untuk memahami konfigurasi yang menjalankan operasi sementara tanpa ingin mengubah state shell utama.
+
+Perbedaan penting:
+
+```zsh
+{
+    ...
+}
+```
+
+→ grouping dalam shell saat ini.
+
+```zsh
+(
+    ...
+)
+```
+
+→ grouping dalam subshell.
+
+---
+
+# 02.18 Anonymous function
+
+Zsh memiliki konstruksi function yang dapat dibuat dan langsung dijalankan.
+
+Bentuknya:
+
+```zsh
+() {
+    print "Hello"
+}
+```
+
+Kemudian block tersebut langsung dieksekusi.
+
+Contoh:
+
+```zsh
+() {
+    print "Current directory: $PWD"
+}
+```
+
+Mental model:
+
+```text
+function
+   ↓
+dibuat
+   ↓
+langsung dijalankan
+   ↓
+selesai
+```
+
+Ini mungkin terlihat aneh jika baru mengenal Zsh, tetapi konstruksi seperti ini dapat ditemukan dalam konfigurasi Zsh yang menggunakan scope sementara.
+
+Untuk sekarang cukup kenali sintaksnya. Kita belum perlu menggunakannya sebagai pola desain konfigurasi.
+
+---
+
+# 02.19 `emulate`
+
+Ini merupakan fitur yang sangat penting ketika nanti membaca plugin atau konfigurasi Zsh.
+
+Zsh memiliki banyak option yang dapat mengubah perilaku shell.
+
+Karena itu sebuah fungsi atau plugin kadang ingin menjalankan dirinya dengan lingkungan perilaku Zsh yang terkontrol.
+
+Salah satu mekanismenya adalah:
+
+```zsh
+emulate
+```
+
+Contoh:
+
+```zsh
+emulate -L zsh
+```
+
+Mental model:
+
+```text
+emulate -L zsh
+       │
+       ├── gunakan perilaku Zsh
+       └── scope option dibuat lokal
+```
+
+Ini bukan sekadar command biasa yang kebetulan bernama `emulate`. Ini adalah bagian penting dari cara Zsh mengisolasi perilaku sebuah function.
+
+Contoh yang akan sering kamu temui ketika membaca kode Zsh:
+
+```zsh
+some_function() {
+    emulate -L zsh
+
+    ...
+}
+```
+
+Untuk tahap sekarang, cukup pahami fungsi konseptualnya:
+
+> Function menetapkan lingkungan perilaku Zsh yang lebih terkontrol sebelum menjalankan logic-nya.
+
+Pembahasan mendalam tentang option dan `emulate` akan lebih tepat ketika kita mencapai **Lesson 06 — Zsh Options**.
+
+---
+
+# 02.20 `noglob`
+
+Zsh mempunyai kemampuan untuk menonaktifkan filename generation untuk invocation tertentu.
+
+Contoh:
+
+```zsh
+noglob command '*.txt'
+```
+
+Biasanya shell dapat melakukan filename generation terhadap pattern tertentu.
+
+Dengan `noglob`, pattern tersebut diteruskan ke command tanpa globbing biasa.
+
+Mental model:
+
+```text
+normal:
+
+command *.txt
+       │
+       ▼
+filename generation
+       │
+       ▼
+command file1.txt file2.txt ...
+
+
+noglob:
+
+noglob command *.txt
+              │
+              ▼
+       tidak dilakukan
+       filename generation
+              │
+              ▼
+       command menerima *.txt
+```
+
+Ini merupakan salah satu karakteristik yang akan membuat kode Zsh terlihat berbeda ketika dibandingkan dengan Bash.
+
+Namun detail filename generation secara keseluruhan memang milik **Lesson 05**, jadi kita tidak membahas globbing lebih jauh di sini.
+
+---
+
+# 02.21 `eval`
+
+Zsh juga memiliki:
+
+```zsh
+eval
+```
+
+Misalnya:
+
+```zsh
+command="print Hello"
+
+eval "$command"
+```
+
+`eval` menyebabkan string diproses kembali sebagai shell code.
+
+Mental model:
+
+```text
+string
+  ↓
+eval
+  ↓
+diparse kembali
+  ↓
+shell syntax
+  ↓
+execution
+```
+
+Karena itu `eval` harus digunakan dengan sangat hati-hati.
+
+Contoh konseptual:
+
+```zsh
+value="$user_input"
+eval "$value"
+```
+
+Jika `user_input` berasal dari sumber yang tidak dipercaya, isinya dapat menjadi shell code.
+
+Jadi untuk tahap ini, aturan pentingnya:
+
+> Jangan menggunakan `eval` hanya karena ingin menjalankan isi sebuah variable sebagai command.
+
+Biasanya ada mekanisme yang lebih aman.
+
+---
+
+# 02.22 `command`, `builtin`, dan `functions`
+
+Ketika membaca konfigurasi Zsh, kamu akan sering menemukan:
+
+```zsh
+command git
+```
+
+atau:
+
+```zsh
+builtin cd
+```
+
+atau:
+
+```zsh
+functions
+```
+
+Masing-masing memiliki tujuan berbeda.
+
+### `command`
+
+```zsh
+command git
+```
+
+meminta shell menjalankan `git` sebagai command, dengan menghindari penggunaan function bernama `git` sebagai mekanisme pemanggilan.
+
+Misalnya:
+
+```zsh
+git() {
+    print "custom git"
+}
+```
+
+Kemudian:
+
+```zsh
+git
+```
+
+akan memanggil function tersebut.
+
+Sedangkan:
+
+```zsh
+command git
+```
+
+meminta command resolution untuk command tersebut.
+
+Ini sangat relevan ketika membuat wrapper function.
+
+---
+
+### `builtin`
+
+```zsh
+builtin cd /tmp
+```
+
+secara eksplisit meminta builtin `cd`.
+
+Ini berguna ketika terdapat function dengan nama yang sama:
+
+```zsh
+cd() {
+    print "custom cd"
+}
+```
+
+Kemudian:
+
+```zsh
+builtin cd /tmp
+```
+
+memanggil builtin asli.
+
+---
+
+### `functions`
+
+Zsh mempunyai mekanisme untuk melihat function yang didefinisikan:
+
+```zsh
+functions
+```
+
+Untuk melihat definisi function tertentu:
+
+```zsh
+functions my_function
+```
+
+Dan sebelumnya kita juga telah mengenal:
+
+```zsh
+whence -f my_function
+```
+
+Ini akan sangat berguna nanti ketika kita mulai **membaca plugin Zsh**.
+
+---
+
+# 02.23 `autoload` — hanya konsep dasar
+
+Kita sudah beberapa kali menyebut:
+
+```zsh
+autoload -Uz function_name
+```
+
+Sekarang kita perlu memasukkannya ke bahasa Zsh, tetapi belum membahas sistem autoload secara mendalam.
+
+Konsep dasarnya:
+
+```text
+function definition
+       │
+       ▼
+file function
+       │
+       ▼
+autoload
+       │
+       ▼
+function tersedia ketika dibutuhkan
+```
+
+Contoh yang sangat terkenal:
+
+```zsh
+autoload -Uz compinit
+compinit
+```
+
+Tetapi `autoload`, function directories, `fpath`, dan mekanisme lazy loading akan menjadi materi utama **Lesson 08 — Functions & Autoload**.
+
+Jadi pada Lesson 02 kita hanya perlu mengenali sintaks dan konsepnya.
+
+---
+
+# 02.24 `trap`
+
+Kamu sudah memiliki dasar Bash mengenai `trap`, sehingga tidak perlu mengulang konsep shell signal secara panjang.
+
+Dalam Zsh juga terdapat:
+
+```zsh
+trap 'command' SIGNAL
+```
+
+Contoh:
+
+```zsh
+trap 'print "Received INT"' INT
+```
+
+Konsepnya tetap:
+
+```text
+signal
+   ↓
+trap
+   ↓
+shell menjalankan handler
+```
+
+Namun Zsh mempunyai mekanisme lain yang lebih khas untuk konfigurasi interaktif, terutama **hooks**.
+
+Hooks tersebut baru akan kita pelajari pada:
+
+```text
+Lesson 15 — Hooks
+```
+
+Jadi jangan mencampurkan `trap` dengan hook Zsh.
+
+```text
+trap
+└── mekanisme signal
+
+hook
+└── mekanisme event/function Zsh
+```
+
+---
+
+# 02.25 Error dan `set -e`
+
+Karena kamu sudah mempelajari error handling Bash, kita hanya perlu memahami posisi Zsh.
+
+Zsh juga mempunyai mekanisme option yang memengaruhi bagaimana shell menangani status gagal.
+
+Misalnya:
+
+```zsh
+setopt ERR_EXIT
+```
+
+Konsepnya berkaitan dengan penghentian shell/function ketika command tertentu menghasilkan status non-zero.
+
+Tetapi Zsh mempunyai aturan yang cukup kompleks mengenai konteks ketika error dianggap fatal atau tidak.
+
+Karena itu kita **tidak akan menjadikan `set -e`/`ERR_EXIT` sebagai fokus Lesson 02**.
+
+Yang perlu dibawa dari sini:
+
+```text
+exit status
+    ↓
+control flow
+    ↓
+option dapat mengubah bagaimana
+status tersebut diperlakukan
+```
+
+Pembahasan option secara sistematis tetap berada di:
+
+**Lesson 06 — Zsh Options.**
+
+---
+
+# 02.26 Mental model bahasa Zsh
+
+Sekarang kumpulkan seluruh bagian Lesson 02 yang telah kita pelajari.
+
+```text
+ZSH LANGUAGE
+│
+├── Syntax
+│
+├── Parameters
+│   └── basic parameter usage
+│
+├── Assignment
+│
+├── Quoting
+│   ├── single quote
+│   ├── double quote
+│   └── unquoted
+│
+├── Expansion
+│   └── basic expansion model
+│
+├── Command substitution
+│
+├── Arithmetic
+│   └── (( ... ))
+│
+├── Conditional
+│   ├── [[ ... ]]
+│   └── if / elif / else
+│
+├── Pattern dispatch
+│   └── case
+│
+├── Loops
+│   ├── for
+│   ├── while
+│   └── until
+│
+├── Operators
+│   ├── logical
+│   ├── comparison
+│   └── arithmetic
+│
+├── Functions
+│   ├── arguments
+│   ├── return
+│   └── scope
+│
+├── Grouping
+│   ├── { ... }
+│   └── ( ... )
+│
+├── Advanced constructs
+│   ├── anonymous function
+│   ├── emulate
+│   ├── noglob
+│   ├── command
+│   ├── builtin
+│   └── eval
+│
+├── Function loading
+│   └── autoload (intro)
+│
+└── Error / signal
+    └── trap (intro)
+```
+
+Yang **sengaja belum kita dalami**:
+
+```text
+Parameter Expansion       → Lesson 03
+Arrays                    → Lesson 04
+Glob                      → Lesson 05
+Options                   → Lesson 06
+Functions & Autoload      → Lesson 08
+Startup Architecture      → Lesson 09
+Completion                → Lesson 13
+ZLE                       → Lesson 14
+Hooks                     → Lesson 15
+Modules                   → Lesson 16
+Plugin Architecture      → Lesson 18+
+```
+
+Itu penting supaya materi tidak saling tumpang tindih.
+
+### Status Lesson 02
+
+Secara materi inti, **Lesson 02 — Zsh Language sekarang sudah selesai**.
+
+Kita sudah bergerak dari:
+
+```text
+Bash foundation
+      ↓
+Lesson 01
+Zsh vs Bash
+      ↓
+Lesson 02
+Zsh Language
+      ↓
+```
+
+Langkah berikutnya sesuai kurikulum adalah:
+
+**Lesson 03 — Parameter Expansion**
+
+Dan di sinilah kita mulai membedah salah satu bagian paling penting dari Zsh, bukan sekadar `${name}`, tetapi bagaimana Zsh dapat melakukan manipulasi data melalui expansion:
+
+```zsh
+${parameter}
+${parameter:-default}
+${parameter##pattern}
+${parameter%%pattern}
+${(flags)parameter}
+```
+
+Termasuk nanti bagaimana expansion tersebut menjadi fondasi untuk scripting Zsh yang jauh lebih ringkas dan kuat.
+
+**Kita belum masuk Lesson 03 pada penjelasan ini; perpindahan dilakukan pada sesi berikutnya.**
+
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
