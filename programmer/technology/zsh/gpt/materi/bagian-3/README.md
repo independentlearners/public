@@ -1,18 +1,5 @@
 # Lesson 02 — Zsh Language
 
-Lesson 01 sudah selesai. Sekarang kita masuk ke **Lesson 02 — Zsh Language**, sesuai urutan kurikulum asli.
-
-```text
-00 — Prep / Mental Model
-✓ selesai
-
-01 — Zsh vs Bash
-✓ selesai
-
-02 — Zsh Language
-→ mulai sekarang
-```
-
 Pada Lesson 01 kita banyak menggunakan Bash sebagai pembanding. Mulai Lesson 02, fokus utama berubah:
 
 ```text

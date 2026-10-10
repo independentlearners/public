@@ -1,184 +1,412 @@
-# Lesson 05 — Glob / Filename Generation
+# Lesson 04 — Associative Arrays
 
-Kita masuk ke materi berikutnya dalam kurikulum Zsh. Dokumen Beralih Ke Zsh.txt mencantumkan contoh glob `*.txt`, `**/*.lua`, dan `^*.bak`. Kita mulai dari dasar agar Anda memahami bagaimana Zsh mencocokkan nama file sebelum mempelajari pola yang lebih kompleks.
+## 1. Mengapa associative array diperlukan?
 
-## 05.1 — Apa itu glob?
+Array biasa menggunakan indeks numerik:
 
-Glob adalah pola yang digunakan shell untuk mencocokkan nama file atau direktori. Dalam Zsh, proses pencocokan ini disebut filename generation.
+Zsh
 
-Misalnya, direktori Anda berisi:
+```bash
+tools=(git fzf neovim)
 
-```
-project/
-├── main.zsh
-├── setup.zsh
-├── README.md
-├── notes.txt
-└── backup.txt
+print -r -- "${tools[1]}"
 ```
 
-Jika Anda menjalankan:
+Output:
+
+```bash
+git
+```
+
+Anda harus mengetahui indeks untuk mengambil elemen. Namun, jika data memiliki nama atau kategori, kunci teks bisa lebih mudah dipahami.
+
+Misalnya, kita ingin menyimpan informasi tentang beberapa program:
+
+```bash
+editor  → neovim
+search  → fzf
+files   → yazi
+```
+
+Associative array memungkinkan kita mengambil nilai menggunakan kunci seperti `editor`, bukan angka `1`.
+
+## 2. Membuat associative array
+
+Dalam Zsh, gunakan `typeset -A` untuk mendeklarasikan associative array.
+
+```bash
+typeset -A tools
+
+tools=(
+    editor neovim
+    search fzf
+    files  yazi
+)
+```
+
+Penjelasan:
+
+* `typeset` adalah builtin Zsh untuk mendeklarasikan atau mengatur atribut parameter.
+
+* `-A` menetapkan parameter sebagai associative array.
+
+* `tools` adalah nama array.
+
+* Setiap kunci dipasangkan dengan sebuah nilai.
+
+Susunan tersebut merupakan pasangan kunci–nilai (key–value pairs).
+
+## 3. Mengakses nilai berdasarkan kunci
+
+Gunakan kunci di dalam subscript:
+
+```bash
+print -r -- "${tools[editor]}"
+print -r -- "${tools[search]}"
+print -r -- "${tools[files]}"
+```
+
+Output:
+
+```
+neovim
+fzf
+yazi
+```
+
+Perhatikan perbedaan berikut:
+
+```bash
+# Array numerik
+print -r -- "${tools[1]}"
+
+# Associative array
+print -r -- "${tools[editor]}"
+```
+
+Pada array numerik, `1` berarti indeks pertama. Pada associative array, `editor` adalah kunci yang dicari.
+
+Jangan menggunakan nama array yang sama untuk kedua contoh sekaligus dalam satu shell karena keduanya memiliki jenis deklarasi berbeda. Contoh di atas hanya untuk membandingkan sintaksnya.
+
+## 4. Menambah dan memperbarui nilai
+
+Anda bisa menambahkan pasangan kunci–nilai setelah deklarasi:
 
 Zsh
 
 ```
-print -r -- *.zsh
+typeset -A tools
+
+tools=(
+    editor neovim
+    search fzf
+)
+
+tools[files]=yazi
+tools[terminal]=foot
 ```
 
-Zsh mencocokkan pola `*.zsh` dengan nama file yang sesuai di direktori saat ini.
-
-Hasilnya:
-
-```
-main.zsh setup.zsh
-```
-
-Zsh melakukan pencocokan tersebut sebelum menjalankan `print`. Dengan demikian, `print` menerima nama file hasil pencocokan, bukan pola `*.zsh` itu sendiri.
-
-Alur sederhananya:
-
-```
-Perintah yang ditulis
-        ↓
-Zsh memproses ekspansi
-        ↓
-Glob mencocokkan nama file
-        ↓
-Perintah menerima hasil pencocokan
-```
-
-## 05.2 — Wildcard dasar
-
-Ada tiga pola yang perlu dipahami terlebih dahulu.
-
-| Pola    | Makna                                                |
-| ------- | ---------------------------------------------------- |
-| `*`     | Mencocokkan nol atau lebih karakter                  |
-| `?`     | Mencocokkan tepat satu karakter                      |
-| `[abc]` | Mencocokkan satu karakter dari pilihan yang tersedia |
-
-Contoh berikut mengasumsikan file-file tersebut memang tersedia di direktori saat ini.
+Jika kunci sudah ada, pemberian nilai baru akan memperbarui nilai tersebut:
 
 Zsh
 
 ```
-print -r -- *.txt
+tools[editor]=helix
+
+print -r -- "${tools[editor]}"
 ```
 
-Mencocokkan semua nama yang berakhiran `.txt`.
+Output:
+
+```
+helix
+```
+
+Jadi, penugasan pada kunci yang sudah ada tidak membuat kunci baru; nilai yang tersimpan pada kunci tersebut diganti.
+
+## 5. Mengambil semua kunci dan semua nilai
+
+Untuk mengambil semua kunci, gunakan ekspansi `(k)`:
 
 Zsh
 
 ```
-print -r -- file?.txt
+print -r -- "${(k)tools}"
 ```
 
-Mencocokkan nama seperti `file1.txt` atau `fileA.txt`, tetapi bukan `file10.txt`, karena `?` hanya mencocokkan satu karakter.
+Untuk mengambil semua nilai, gunakan ekspansi `(v)`:
 
 Zsh
 
 ```
-print -r -- file[12].txt
+print -r -- "${(v)tools}"
 ```
 
-Mencocokkan `file1.txt` dan `file2.txt`, tetapi bukan `file3.txt`.
+Di sini `(k)` berarti keys, sedangkan `(v)` berarti values.
 
-Penting: glob bukan regular expression (regex). Walaupun ada karakter yang tampak serupa, aturan pencocokannya berbeda.
+Urutan keluaran associative array tidak boleh diasumsikan sebagai urutan deklarasi. Jika program memerlukan urutan tertentu, urutkan kuncinya secara eksplisit atau simpan urutan tersebut di array numerik terpisah.
 
-## 05.3 — Glob tidak selalu mencari ke subdirektori
+## 6. Memeriksa apakah suatu kunci tersedia
 
-Pola berikut:
+Gunakan operator pemeriksaan parameter `${+...}`:
 
 Zsh
 
 ```
-print -r -- *.lua
+if (( ${+tools[editor]} )); then
+    print -r -- "Kunci editor tersedia"
+else
+    print -r -- "Kunci editor tidak tersedia"
+fi
 ```
 
-mencari nama yang cocok di direktori saat ini. Pola tersebut tidak secara otomatis menelusuri seluruh subdirektori.
+`1` berarti parameter atau elemen dengan kunci tersebut tersedia; `0` berarti tidak tersedia.
+
+Pemeriksaan ini berbeda dari sekadar mengecek apakah nilainya tidak kosong. Sebuah kunci bisa tersedia meskipun nilainya berupa string kosong.
+
+## 7. Menghapus satu kunci
+
+Gunakan `unset` dengan ekspresi kunci yang dikutip:
+
+Zsh
+
+```
+unset 'tools[search]'
+```
+
+Setelah itu, kunci `search` tidak lagi menjadi bagian dari associative array.
+
+Mengutip ekspresi tersebut membantu memastikan sintaks subscript diteruskan secara utuh ke `unset`.
+
+---
+
+<details>
+  <summary>
+    <strong>📝 Latihan 04</strong>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Kumpulan Jawaban</i></div>
+  </summary>
+  <div style="padding-left: 25px; margin-top: 8px;">
+
+---
+
+Tuliskan prediksi output atau jelaskan perilaku setiap potongan kode berikut.
+
+Soal 1 — Mengakses nilai
+
+Zsh
+
+```
+typeset -A apps
+apps=(editor neovim terminal foot)
+print -r -- "${apps[terminal]}"
+```
+
+Soal 2 — Memperbarui nilai
+
+Zsh
+
+```
+typeset -A apps
+apps=(editor neovim)
+apps[editor]=helix
+print -r -- "${apps[editor]}"
+```
+
+Soal 3 — Memeriksa kunci
+
+Zsh
+
+```
+typeset -A apps
+apps=(editor neovim)
+if (( ${+apps[terminal]} )); then
+    print -r -- "ada"
+else
+    print -r -- "tidak ada"
+fi
+```
+
+  </div>
+</details>
+
+Setelah associative arrays, kita akan menuntaskan operasi dan pemrosesan data array yang diperlukan, sebelum berpindah ke Lesson 05 — Glob / Filename Generation.
+
+## 04.10 — Iterasi array
+
+Iterasi berarti mengunjungi setiap elemen array secara berurutan, biasanya menggunakan `for`.
+
+Zsh
+
+```
+tools=(git fzf neovim yazi)
+
+for tool in "${tools[@]}"; do
+    print -r -- "$tool"
+done
+```
+
+Output:
+
+```
+git
+fzf
+neovim
+yazi
+```
+
+Mekanismenya:
+
+1. `"${tools[@]}"` menghasilkan elemen array sebagai kata-kata terpisah.
+
+2. `for tool in ...` mengambil setiap elemen secara bergantian.
+
+3. Variabel `tool` berisi elemen yang sedang diproses.
+
+4. `print -r -- "$tool"` mencetak nilainya tanpa interpretasi tambahan terhadap backslash.
+
+Mengapa ekspansi array dikutip? Karena sebuah elemen bisa mengandung spasi.
+
+Zsh
+
+```
+tools=("GNU Stow" git neovim)
+
+for tool in "${tools[@]}"; do
+    print -r -- "$tool"
+done
+```
+
+Output tetap terdiri dari tiga elemen, bukan empat kata terpisah.
+
+## 04.11 — Memproses associative array
+
+Associative array juga dapat diproses menggunakan `for`, tetapi kita perlu memilih apakah akan mengiterasi kunci atau nilai.
+
+Zsh
+
+```
+typeset -A apps
+
+apps=(
+    editor neovim
+    search fzf
+    files  yazi
+)
+
+for key in "${(k)apps}"; do
+    print -r -- "$key"
+done
+```
+
+`(k)` meminta kunci-kunci associative array.
+
+Jika kita ingin mengambil nilai berdasarkan setiap kunci:
+
+Zsh
+
+```
+for key in "${(k)apps}"; do
+    print -r -- "$key: ${apps[$key]}"
+done
+```
+
+Contoh hasil:
+
+```
+editor: neovim
+search: fzf
+files: yazi
+```
+
+Urutan kunci tidak dijamin. Jika urutan tertentu penting, jangan bergantung pada urutan iterasi associative array.
+
+## 04.12 — Membuat array dari hasil perintah
+
+Anda mungkin ingin menyimpan hasil suatu perintah ke dalam array. Di Zsh, ada perbedaan penting antara command substitution biasa dan menangkap baris keluaran sebagai elemen array.
 
 Misalnya:
 
+Zsh
+
 ```
-project/
-├── main.lua
-└── modules/
-    └── helper.lua
+output=$(print -r -- $'git\nfzf\nyazi')
 ```
 
-`*.lua` mencocokkan `main.lua`, tetapi tidak mencocokkan `modules/helper.lua`.
+`output` adalah parameter scalar yang menyimpan teks, termasuk baris baru.
 
-Untuk penelusuran rekursif, Zsh menyediakan pola:
+Untuk memecah teks berdasarkan baris menjadi elemen array, gunakan flag ekspansi `(f)`:
 
 Zsh
 
 ```
-print -r -- **/*.lua
+output=$(print -r -- $'git\nfzf\nyazi')
+items=("${(@f)output}")
+
+print -r -- "${items[1]}"
+print -r -- "${items[2]}"
+print -r -- "${items[3]}"
 ```
 
-Pola `**/` dapat mencocokkan direktori bertingkat, sehingga file Lua di dalam subdirektori juga dapat ditemukan.
-
-Namun, hasil pastinya bergantung pada struktur direktori dan aturan glob yang aktif. Jika pola tidak menemukan kecocokan, perilaku default Zsh berbeda dari Bash: Zsh biasanya melaporkan `no matches found` alih-alih meneruskan pola mentah ke perintah.
-
-Jangan mengaktifkan opsi untuk mengubah perilaku tersebut dahulu; kita akan mempelajari Zsh options pada tahap kurikulum yang sesuai.
-
-## 05.4 — Mengecualikan pola dengan `^`
-
-Dokumen kurikulum Anda juga memberikan contoh:
-
-Zsh
+Output:
 
 ```
-^*.bak
+git
+fzf
+yazi
 ```
 
-Dalam Zsh, pola negasi seperti ini memerlukan opsi `EXTENDED_GLOB`.
+Penjelasan dua flag:
 
-Contoh:
+* `(f)` memecah teks berdasarkan karakter baris baru.
 
-Zsh
+* `(@)` mempertahankan hasil ekspansi array sebagai elemen-elemen terpisah ketika ekspansi dikutip.
 
-```
-setopt EXTENDED_GLOB
-print -r -- ^*.bak
-```
+Teknik ini berguna untuk mengolah keluaran perintah yang memang menghasilkan satu item per baris. Namun, jangan menggunakannya untuk keluaran arbitrer yang mungkin mengandung baris baru di dalam nama atau data sebuah item.
 
-Secara konseptual, pola tersebut berarti mencocokkan nama yang tidak berakhiran `.bak`.
+## 04.13 — Ringkasan konsep array
 
-Misalnya, di direktori terdapat:
+| Kebutuhan                         | Sintaks                    |
+| --------------------------------- | -------------------------- |
+| Membuat array numerik             | `items=(alpha beta gamma)` |
+| Mengakses elemen                  | `${items[1]}`              |
+| Mengambil rentang indeks          | `${items[2,3]}`            |
+| Mengakses dari belakang           | `${items[-1]}`             |
+| Menghitung jumlah elemen          | `${#items}`                |
+| Mengambil seluruh elemen          | `"${items[@]}"`            |
+| Menambah elemen                   | `items+=(delta)`           |
+| Mengubah elemen                   | `items[2]=new_value`       |
+| Menghapus elemen                  | `unset 'items[2]'`         |
+| Mendeklarasikan associative array | `typeset -A data`          |
+| Mengambil kunci associative array | `${(k)data}`               |
+| Mengambil nilai associative array | `${(v)data}`               |
+| Memeriksa keberadaan kunci        | `${+data[key]}`            |
 
-```
-main.zsh
-notes.txt
-backup.bak
-```
+Perlu dibedakan bahwa `${items[2,3]}` adalah bentuk subscript Zsh untuk mengambil rentang indeks, sedangkan ekspansi seperti `${items[@]:offset:length}` memiliki aturan tersendiri. Untuk sekarang, prioritaskan bentuk subscript Zsh yang sudah dipelajari.
 
-Pola `^*.bak` dapat mencocokkan `main.zsh` dan `notes.txt`, tetapi mengecualikan `backup.bak`.
-
-Opsi ini mengubah cara Zsh menafsirkan pola tertentu. Karena itu, kita akan membahas `setopt` dan `EXTENDED_GLOB` lebih sistematis pada Lesson 06. Untuk saat ini, cukup pahami bahwa `^` bukan operator negasi glob yang selalu aktif secara default.
-
+---
 
 <details>
-  <summary>📃  Latihan 05.1</summary>
+  <summary>📃 Latihan penutup Lesson 04</summary>
 
+Buat sebuah script Zsh yang melakukan hal-hal berikut. Tujuannya adalah menggabungkan konsep, bukan sekadar menghafal sintaks:
 
+- 1. Menyimpan `git`, `fzf`, dan `yazi` dalam array numerik bernama `tools`.
 
-Soal 1 — Wildcard
+- 2. Menambahkan `neovim` ke array tersebut.
 
-Anggap direktori berisi `main.zsh`, `test.zsh`, `notes.txt`, dan `file1.txt`. Nama mana yang cocok dengan `*.zsh`?
+- 3. Mencetak jumlah elemennya.
 
-Soal 2 — Satu karakter
+- 4. Mengiterasi seluruh elemen dan mencetak setiap nama program.
 
-Dari nama `file1.txt`, `file2.txt`, dan `file10.txt`, mana yang cocok dengan `file?.txt`?
+- 5. Membuat associative array bernama `commands` yang memetakan `editor` ke `neovim` dan `files` ke `yazi`.
 
-Soal 3 — Rekursi
+- 6. Mencetak nilai yang terkait dengan kunci `editor`.
 
-Apa perbedaan utama antara `*.lua` dan `**/*.lua`?
+---
 
 </details>
 
-Posisi kurikulum: Lesson 05 — Glob / Filename Generation, bagian dasar. Berikutnya kita akan mempelajari pencocokan pola yang lebih spesifik, termasuk rentang karakter, pola rekursif, dan negasi glob, sebelum berpindah ke materi berikutnya.
-#
+Setelah array numerik, slicing, associative array, dan iterasi dasar ini, kita siap berpindah ke Lesson 05 — Glob / Filename Generation, yaitu mekanisme khas Zsh untuk mencocokkan nama file dan direktori.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
