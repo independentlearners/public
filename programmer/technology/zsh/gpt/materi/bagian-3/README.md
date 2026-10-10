@@ -2189,11 +2189,11 @@ Termasuk nanti bagaimana expansion tersebut menjadi fondasi untuk scripting Zsh 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
-> - **[Kurikulum][kurikulum]**
+> - **[Daftar Teknologi][tekno]**
 > - **[Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[tekno]: ../../../../../README.md
 [sebelumnya]: ../bagian-2/README.md
 [selanjutnya]: ../bagian-4/README.md
 

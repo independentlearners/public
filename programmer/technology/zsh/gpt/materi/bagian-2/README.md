@@ -7052,11 +7052,11 @@ Tahap berikutnya adalah **Lesson 02 — Zsh Language**. Di sana kita mulai menin
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
-> - **[Kurikulum][kurikulum]**
-> - **[Home][domain]**
+> - **[Daftar Teknologi][tekno]**
+> - **[Home][home]**
 
-[domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[home]: ./../../../../../../README.md
+[tekno]: ../../../../../README.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 [PID]: ./../../../../../../CLI_TUI/konsep/pid/pid.md

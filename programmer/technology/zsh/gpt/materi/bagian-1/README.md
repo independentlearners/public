@@ -1662,11 +1662,11 @@ Setelah itu jawab:
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
-> - **[Kurikulum][kurikulum]**
-> - **[Home][domain]**
+> - **[Daftar Teknologi][tekno]**
+> - **[Home][home]**
 
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[tekno]: ../../../../../README.md
+[home]: ./../../../../../../README.md
 [selanjutnya]: ../bagian-2/README.md
 [invocation]: ./invocation.md
 
