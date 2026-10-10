@@ -696,30 +696,7 @@ Fondasi bahasa harus kuat terlebih dahulu.
 
 ---
 
-# Posisi Lesson 02
-
-Untuk menjaga kita tetap pada jalur kurikulum:
-
-```text
-02 — Zsh Language
-│
-├── → Syntax dasar Zsh
-├── → Parameter system
-├── → Expansion system
-├── → Quoting
-├── → Command substitution
-├── → Arithmetic
-├── → Conditional / control structures
-├── → Loops
-├── → Functions
-├── → Scope
-├── → Error / exit status
-└── → Advanced syntax
-```
-
-Bagian yang baru kita mulai adalah **syntax dasar + parameter/expansion foundation**. Kita belum masuk ke Lesson 03; parameter expansion mendalam tetap ditahan untuk tahap berikutnya sesuai kurikulum.
-
-Selanjutnya kita lanjutkan **02 — Zsh Language** secara berurutan ke struktur kontrol, operator, dan aturan syntax yang lebih khas Zsh sebelum masuk ke Lesson 03.
+Bagian yang baru kita mulai adalah **syntax dasar + parameter/expansion foundation**. Selanjutnya struktur kontrol, operator, dan aturan syntax yang lebih khas Zsh sebelum masuk ke Lesson 03.
 
 ## 02 — Zsh Language
 
