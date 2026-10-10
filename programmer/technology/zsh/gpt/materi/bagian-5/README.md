@@ -413,9 +413,11 @@ Setelah array numerik, slicing, associative array, dan iterasi dasar ini, kita s
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
+> - **[Daftar Teknologi][tekno]**
 
+[tekno]: ../../../../../README.md
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../zsh_scripting.md
 [sebelumnya]: ../bagian-4/README.md
 [selanjutnya]: ../bagian-6/README.md
 

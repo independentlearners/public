@@ -3889,8 +3889,10 @@ Berikutnya adalah **Lesson 04**, associative arrays, yaitu array yang menggunaka
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Daftar Teknologi][tekno]**
+> - **[Kurikulum][kurikulum]**
 > - **[Home]**
 
+[kurikulum]: ../zsh_scripting.md
 [tekno]: ../../../../../README.md
 [Home]: ./../../../../../../README.md
 [sebelumnya]: ../bagian-3/README.md

@@ -444,9 +444,11 @@ Setelah bagian ini, cakupan utama Lesson 06 dari kurikulum sudah dibahas: `setop
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
+> - **[Daftar Teknologi][tekno]**
 
+[tekno]: ../../../../../README.md
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../zsh_scripting.md
 [sebelumnya]: ../bagian-6/README.md
 [selanjutnya]: ../bagian-8/README.md
 

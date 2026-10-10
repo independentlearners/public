@@ -1664,7 +1664,9 @@ Setelah itu jawab:
 > - **[Selanjutnya][selanjutnya]**
 > - **[Daftar Teknologi][tekno]**
 > - **[Home][home]**
+> - **[Daftar Teknologi][tekno]**
 
+[tekno]: ../../../../../README.md
 [tekno]: ../../../../../README.md
 [home]: ./../../../../../../README.md
 [selanjutnya]: ../bagian-2/README.md

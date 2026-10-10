@@ -11,9 +11,11 @@
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
+> - **[Daftar Teknologi][tekno]**
 
+[tekno]: ../../../../../README.md
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../zsh_scripting.md
 [sebelumnya]: ../bagian-14/README.md
 
 <!-- [selanjutnya]: ../bagian-3/README.md -->

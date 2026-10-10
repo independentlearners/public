@@ -502,9 +502,11 @@ Mencocokkan nama file yang mengandung angka 1 sampai 3 di posisi mana pun
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
+> - **[Daftar Teknologi][tekno]**
 
+[tekno]: ../../../../../README.md
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../zsh_scripting.md
 [sebelumnya]: ../bagian-5/README.md
 [selanjutnya]: ../bagian-7/README.md
 

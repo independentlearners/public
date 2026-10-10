@@ -163,29 +163,467 @@ Menampilkan teks literal `$HOME` tanpa ekspansi variabel
 
 Mengubah nilai variabel `HOME`
 
-Periksa jawaban
 
+</details>
+
+---
+
+Materi selanjutnya dalam Lesson 07 — Builtins & Native Features adalah builtin pengelolaan parameter dan fungsi, termasuk penggunaan `typeset`, `functions`, `autoload`, serta pengenalan direktori kerja dan direktori bertumpuk melalui `cd`, `pushd`, `popd`, dan `dirs`. Tujuannya adalah mengenali mekanismenya sebelum nanti mempelajari fungsi dan `autoload` secara lebih mendalam.
+
+---
+
+## Builtins & Native Features (lanjutan)
+
+Bagian ini membahas bagaimana Zsh menyediakan fitur internal untuk mengelola parameter, memeriksa fungsi, memuat fungsi secara otomatis, dan berpindah direktori. 
+
+### 07.6 — `typeset`: mengelola parameter
+
+`typeset` adalah builtin Zsh untuk mendeklarasikan parameter dan menentukan atributnya. Parameter di sini mencakup variabel biasa, array, dan associative array.
+
+```
+typeset username="user"
+typeset -i count=10
+typeset -a tools=(git fzf nvim)
+typeset -A editor=(name nvim type terminal)
+```
+
+Arti setiap deklarasi:
+
+| Kode                      | Fungsi                            |
+| ------------------------- | --------------------------------- |
+| `typeset username="user"` | Mendeklarasikan parameter biasa   |
+| `typeset -i count=10`     | Memberi atribut integer           |
+| `typeset -a tools=(...)`  | Mendeklarasikan indexed array     |
+| `typeset -A editor=(...)` | Mendeklarasikan associative array |
+
+Contoh atribut integer:
+
+```
+typeset -i count=10
+count=count+5
+
+print -r -- "$count"
+```
+
+Hasil:
+
+```
+15
+```
+
+Karena `count` memiliki atribut integer, Zsh memperlakukan nilainya sebagai bilangan dalam operasi aritmetika.
+
+`typeset` juga berkaitan dengan cakupan variabel. Di dalam fungsi, deklarasi `local` merupakan cara yang lazim untuk membuat variabel lokal:
+
+```
+show_message() {
+    local message="Halo dari fungsi"
+    print -r -- "$message"
+}
+
+show_message
+```
+
+Variabel `message` berlaku lokal di dalam fungsi tersebut, bukan sebagai variabel global biasa.
+
+Konsep utama: `typeset` bukan sekadar cara lain menulis `name=value`. Ia juga mengatur bagaimana parameter diperlakukan oleh Zsh. Kita akan menggunakan konsep ini lagi ketika menyusun fungsi dan konfigurasi modular.
+
+### 07.7 — `functions`: memeriksa definisi fungsi
+
+Zsh memiliki builtin `functions` yang dapat digunakan untuk menampilkan definisi fungsi yang sudah dikenal oleh shell.
+
+```
+my_greeting() {
+    print -r -- "Halo"
+}
+```
+
+Setelah fungsi didefinisikan, jalankan:
+
+```
+functions my_greeting
+```
+
+Zsh akan menampilkan definisi fungsi tersebut.
+
+Untuk memeriksa apakah suatu nama dikenali sebagai fungsi, gunakan:
+
+```
+whence -w my_greeting
+```
+
+Keduanya memiliki tujuan berbeda:
+
+- `functions my_greeting` — menampilkan isi definisi fungsi.
+- `whence -w my_greeting` — memeriksa jenis perintah yang dikenali dengan nama tersebut.
+
+Kemampuan membaca definisi fungsi akan berguna ketika Anda mulai memeriksa plugin Zsh dan mencari tahu bagaimana sebuah fitur diimplementasikan.
+
+### 07.8 — `autoload`: memuat fungsi saat dibutuhkan
+
+Biasanya, fungsi harus didefinisikan atau dimuat sebelum digunakan. `autoload` memungkinkan Zsh menandai fungsi agar definisinya dimuat ketika fungsi tersebut pertama kali dipanggil.
+
+Alurnya:
+
+File fungsi berada di direktori `$fpath`
+
+`autoload -Uz nama_fungsi`
+
+Fungsi dipanggil
+
+Zsh mencari dan memuat definisinya
+
+Kita bisa menguji mekanisme ini dalam direktori sementara.
+
+Pertama, buat direktori untuk menyimpan fungsi:
+
+```
+mkdir -p ~/zsh-functions
+```
+
+Buat file `~/zsh-functions/hello_zsh` dengan isi berikut:
+
+```
+print -r -- "Fungsi autoload berhasil dipanggil"
+```
+
+Pada format native Zsh yang digunakan contoh ini, file tersebut berisi isi fungsi secara langsung, tanpa pembungkus `hello_zsh() { ... }`.
+
+Kemudian, di sesi Zsh yang sama:
+
+```
+fpath=(~/zsh-functions $fpath)
+autoload -Uz hello_zsh
+hello_zsh
+```
+
+Hasilnya:
+
+```
+Fungsi autoload berhasil dipanggil
+```
+
+Penjelasan setiap perintah:
+
+- `fpath` — array direktori tempat Zsh mencari fungsi yang dapat dimuat.
+- `autoload` — menandai `hello_zsh` sebagai fungsi autoload.
+- `-U` — mencegah ekspansi alias saat definisi fungsi dimuat.
+- `-z` — memilih gaya autoload native Zsh.
+- `hello_zsh` — memanggil fungsi sehingga Zsh memuat definisinya.
+
+Perubahan `fpath` di atas hanya berlaku pada sesi saat ini. Belum ada konfigurasi permanen yang diubah.
+
+Mengapa ini penting untuk konfigurasi Zsh? Fungsi dapat disimpan dalam file terpisah dan dimuat sesuai kebutuhan, alih-alih mendefinisikan semua fungsi sekaligus di `.zshrc`. Mekanisme ini akan dibahas lebih mendalam pada bagian fungsi dan autoload dalam kurikulum.
+
+### 07.9 — `cd`, `pushd`, `popd`, dan `dirs`
+
+Keempat builtin ini berhubungan dengan direktori kerja, tetapi tidak memiliki fungsi yang sama.
+
+| Builtin | Kegunaan                                                                |
+| ------- | ----------------------------------------------------------------------- |
+| `cd`    | Berpindah direktori                                                     |
+| `pushd` | Berpindah direktori sambil menyimpan direktori dalam directory stack    |
+| `popd`  | Menghapus entri teratas stack sekaligus berpindah ke direktori tersebut |
+| `dirs`  | Menampilkan directory stack                                             |
+
+Coba urutan berikut:
+
+```
+cd ~
+pushd /tmp
+dirs -v
+popd
+```
+
+Mekanismenya:
+
+1. `cd ~` berpindah ke direktori home.
+2. `pushd /tmp` berpindah ke `/tmp` dan menyimpan direktori sebelumnya dalam directory stack.
+3. `dirs -v` menampilkan isi stack dengan nomor indeks.
+4. `popd` menghapus entri teratas stack dan kembali ke direktori yang tersimpan di sana.
+
+Directory stack berguna ketika Anda perlu berpindah di antara beberapa direktori tanpa harus mengetik seluruh path berulang kali.
+
+Perhatikan perbedaannya dengan variabel `$PWD`: `$PWD` menunjukkan direktori kerja saat ini, sedangkan directory stack menyimpan daftar direktori untuk navigasi.
+
+<details>
+  <summary>📃 Latihan</summary>
+
+---
+
+Coba jawab berdasarkan pemahaman Anda. Tidak perlu menjalankan semua perintah terlebih dahulu.
+
+- #### **1. Apa perbedaan utama `typeset -a` dan `typeset -A`?**
+
+
+`-a` untuk indexed array, `-A` untuk associative array
+
+`-a` untuk alias, `-A` untuk array biasa
+
+Keduanya sama
+
+- #### **2. Apa peran `$fpath` ketika menggunakan `autoload`?**
+
+Menyimpan riwayat perintah
+
+Menentukan direktori pencarian file fungsi
+
+Menyimpan direktori kerja saat ini
+
+- #### **3. Apa yang dilakukan `popd`?**
+
+**Menghapus semua fungsi**
+
+Menghapus entri teratas directory stack dan berpindah ke direktori tersebut
+
+Hanya menampilkan directory stack
+
+- #### **4. Perintah mana yang menampilkan definisi fungsi `my_greeting`?**
+
+`functions my_greeting`
+
+`dirs my_greeting`
+
+`autoload -Uz my_greeting`
 
 
 </details>
 
-Materi selanjutnya dalam Lesson 07 — Builtins & Native Features adalah builtin pengelolaan parameter dan fungsi, termasuk penggunaan `typeset`, `functions`, `autoload`, serta pengenalan direktori kerja dan direktori bertumpuk melalui `cd`, `pushd`, `popd`, dan `dirs`. Kita tetap berada pada Lesson 07 sampai cakupan utamanya selesai.
+---
+
+## Builtins & Native Features (Penyempurnaan)
+
+### 07.10 — `read`: menerima input
+
+`read` adalah builtin yang membaca input, biasanya dari standard input, lalu menyimpan hasilnya ke parameter.
+
+Contoh:
+
+```
+read -r username
+print -r -- "Nama: $username"
+```
+
+Saat dijalankan, Zsh menunggu Anda memasukkan teks. Setelah menekan Enter, teks tersebut disimpan ke `username`.
+
+Opsi `-r` membuat `read` memperlakukan backslash sebagai karakter biasa, bukan sebagai karakter escape.
+
+Agar pengguna mendapat petunjuk sebelum memasukkan input, Anda dapat menggunakan `-p` pada Zsh:
+
+```
+read -r "username?Masukkan nama: "
+print -r -- "Nama: $username"
+```
+
+Perhatikan perbedaan sintaksnya: format `read -r "parameter?prompt"` merupakan bentuk khusus Zsh, bukan sintaks portabel untuk semua shell.
+
+Untuk membaca input dengan batas waktu:
+
+```
+if read -r -t 5 "answer?Jawab dalam 5 detik: "; then
+    print -r -- "Input: $answer"
+else
+    print -r -- "Input tidak diterima tepat waktu."
+fi
+```
+
+`-t 5` membatasi waktu tunggu hingga lima detik. Nilai status keluarnya menentukan apakah pembacaan berhasil, sehingga dapat digunakan dalam `if`.
+
+### 07.11 — `source` dan `.`: menjalankan file dalam shell saat ini
+
+Keduanya digunakan untuk membaca dan menjalankan isi file dalam lingkungan shell yang sedang berjalan.
+
+Misalnya, file `settings.zsh` berisi:
+
+```
+MY_EDITOR="nvim"
+```
+
+Anda dapat memuatnya dengan:
+
+```
+source ./settings.zsh
+print -r -- "$MY_EDITOR"
+```
+
+Hasilnya:
+
+```
+nvim
+```
+
+Zsh juga mendukung bentuk berikut:
+
+```
+. ./settings.zsh
+```
+
+Mengapa ini penting? File konfigurasi modular sering dimuat dari `.zshrc` menggunakan `source`. Variabel, fungsi, dan perubahan opsi dari file tersebut berlaku pada shell yang memuatnya.
+
+Jangan menyamakan `source` dengan menjalankan file sebagai proses terpisah. Ketika file dijalankan melalui `source`, perubahan pada lingkungan shell dapat tetap berlaku setelah file selesai dibaca.
+
+### 07.12 — `zmodload`: memuat modul Zsh
+
+Zsh memiliki sistem modul yang dapat menyediakan fitur tambahan bagi shell. `zmodload` merupakan builtin untuk memuat atau memeriksa modul tersebut.
+
+Untuk melihat modul yang telah dimuat:
+
+```
+zmodload
+```
+
+Untuk memuat modul tertentu, sintaks umumnya:
+
+```
+zmodload nama_modul
+```
+
+Nama modul harus benar-benar tersedia pada instalasi Zsh Anda. Jangan menganggap semua modul terpasang atau sudah dimuat secara otomatis.
+
+Modul merupakan salah satu mekanisme native yang akan relevan saat mempelajari fitur internal Zsh. Untuk sekarang, cukup pahami pembagian ini:
+
+- Builtin adalah perintah yang disediakan langsung oleh shell, seperti `read`, `source`, dan `zmodload`.
+- Modul adalah komponen yang dapat dimuat untuk menyediakan kemampuan tertentu.
+- Fungsi autoload adalah fungsi yang definisinya dapat dimuat ketika dibutuhkan.
+
+Detail modul dan pemanfaatannya akan dipelajari pada bagian internals, sesuai urutan kurikulum.
+
+
+<details>
+  <summary>📃 Latihan lanjutan</summary>
+
+---
+
+Coba jelaskan dengan kata-kata Anda sendiri:
+
+**1. Mengapa `source settings.zsh` dapat membuat variabel dari file tersebut tersedia pada shell saat ini?**
+**2. Apa perbedaan peran `read` dan `print`?**
+**3. Apa hubungan antara `zmodload` dan modul Zsh?**
+**4. Mengapa fungsi yang dimuat melalui `autoload` berbeda dari perintah eksternal seperti `ls`?**
+
+
+</details>
+
+---
+
+## Builtins & Native Features (Penyelesaian)
+
+### 07.13 — `command`, `builtin`, dan `exec`
+
+Ketiganya memengaruhi cara Zsh menjalankan perintah, tetapi mekanismenya berbeda.
+
+1\. `command` — melewati pencarian fungsi shell
+
+Misalnya Anda membuat fungsi bernama `ls`:
+
+```
+ls() {
+    print -r -- "Ini fungsi ls"
+}
+```
+
+Saat menjalankan:
+
+```
+ls
+```
+
+Zsh memanggil fungsi tersebut. Untuk meminta Zsh mencari perintah eksternal bernama `ls` tanpa memanggil fungsi `ls` itu, gunakan:
+
+```
+command ls
+```
+
+Catatan: `command` tidak dengan sendirinya menonaktifkan ekspansi alias. Jika nama perintah memiliki alias aktif, alias tetap perlu diperhitungkan.
+
+2\. `builtin` — memaksa pemanggilan builtin
+
+```
+cd /tmp
+builtin cd ~
+```
+
+`builtin cd ~` secara eksplisit memanggil builtin `cd`, bukan fungsi shell yang kebetulan bernama `cd`.
+
+3\. `exec` — mengganti proses shell
+
+```
+exec program
+```
+
+Dalam penggunaan normal, `exec` mengganti proses shell saat ini dengan `program`, alih-alih membuat shell tetap berjalan setelah program selesai. Karena itu, jangan mencoba perintah ini secara sembarangan pada sesi terminal utama jika Anda masih ingin mempertahankan shell tersebut.
+
+Perbedaan intinya:
+
+| Perintah       | Tujuan                                                            |
+| -------------- | ----------------------------------------------------------------- |
+| `command nama` | Menjalankan perintah tanpa memanggil fungsi shell dengan nama itu |
+| `builtin nama` | Memanggil builtin Zsh secara eksplisit                            |
+| `exec nama`    | Mengganti proses shell dengan program yang dijalankan             |
+
+### 07.14 — `eval`: mengevaluasi teks sebagai kode shell
+
+`eval` meminta shell mem-parsing dan menjalankan teks sebagai perintah shell.
+
+```
+name="Zsh"
+eval 'print -r -- "$name"'
+```
+
+Hasil:
+
+```
+Zsh
+```
+
+Perhatikan bahwa teks yang diteruskan ke `eval` diproses sebagai kode shell. Ini berbeda dari `print`, yang sekadar menampilkan teks.
+
+Contoh berisiko:
+
+```
+eval "$user_input"
+```
+
+Jika `user_input` berisi teks dari sumber yang tidak tepercaya, teks itu dapat dijalankan sebagai perintah. Karena itu, hindari `eval` jika kebutuhan Anda bisa diselesaikan menggunakan array, parameter expansion, atau pemanggilan perintah biasa.
+
+Untuk tujuan mempelajari konfigurasi Zsh, Anda perlu mengenali `eval` ketika membaca plugin, tetapi tidak perlu menjadikannya solusi default.
 
 ---
 
 <details>
-  <summary>📃 Latihan Lesson 07.1</summary>
+  <summary>📃 Ringkasan Lesson 07 dengan sedikit latihan akhir</summary>
+
+### Pada bagian ini, Anda telah mempelajari kelompok builtin dan mekanisme native berikut:
+
+- `whence` untuk memeriksa jenis perintah.
+- `print` dan `read` untuk output dan input.
+- `typeset` untuk parameter dan atributnya.
+- `functions` dan `autoload` untuk definisi serta pemuatan fungsi.
+- `cd`, `pushd`, `popd`, dan `dirs` untuk navigasi direktori.
+- `source` untuk memuat konfigurasi ke shell saat ini.
+- `zmodload` untuk mekanisme modul.
+- `command`, `builtin`, `exec`, dan `eval` untuk memahami cara perintah dijalankan.
+
+Daftar tersebut merupakan pengenalan konsep penting, bukan seluruh builtin Zsh. Referensi lengkapnya adalah manual `zshbuiltins(1)`.
+
+### Latihan akhir: tanpa menjalankan kode, jelaskan perbedaan `command ls`, `builtin cd /tmp`, dan `exec ls`. Jelaskan juga mengapa `eval "$user_input"` berisiko.
 
 </details>
+
+---
+
+Setelah latihan ini, kita dapat melanjutkan ke bagian berikutnya **Lesson 08 — Functions & Autoload,** dengan fokus lebih dalam pada definisi fungsi, parameter fungsi, cakupan variabel, dan cara Zsh memuat fungsi dari file.
 
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
+> - **[Daftar Teknologi][tekno]**
 
+[tekno]: ../../../../../README.md
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../zsh_scripting.md
 [sebelumnya]: ../bagian-7/README.md
 [selanjutnya]: ../bagian-9/README.md
 
