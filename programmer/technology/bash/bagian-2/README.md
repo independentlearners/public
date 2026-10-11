@@ -8,7 +8,7 @@
 - [2. Urutan Ekspansi Shell (Kerangka Utama)](#2-urutan-ekspansi-shell-kerangka-utama)
 - [3. Word Splitting (Mendalam)](#3-word-splitting-mendalam)
 - [4. Pathname Expansion / Globbing (Mendalam)](#4-pathname-expansion--globbing-mendalam)
-- [5. Pattern Matching (Lebih Luas dari Globbing)](#5-pattern-matching-lebih-luas-dari-globbing))
+- [5. Pattern Matching (Lebih Luas dari Globbing)](#5-pattern-matching-lebih-luas-dari-globbing)
 - [6. Short-Circuiting](#6-short-circuiting)
 - [7. Kontrol Alur: Kondisional, Perulangan, Fungsi](#7-kontrol-alur-kondisional-perulangan-fungsi)
 - [8. Array dan Manipulasi Teks](#8-array-dan-manipulasi-teks)
