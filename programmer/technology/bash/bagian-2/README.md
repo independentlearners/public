@@ -4,17 +4,17 @@
 
 ## **Daftar Isi**
 
-1. Pengantar & Peta Konsep
-2. Urutan Ekspansi Shell (Kerangka Utama)
-3. Word Splitting (Mendalam)
-4. Pathname Expansion / Globbing (Mendalam)
-5. Pattern Matching (Lebih Luas dari Globbing)
-6. Short-Circuiting
-7. Kontrol Alur: Kondisional, Perulangan, Fungsi
-8. Array dan Manipulasi Teks
-9. Praktik Terbaik, Kesalahan Umum, dan Debugging
-10. Studi Kasus Terpadu
-11. Referensi
+- [1. Pengantar & Peta Konsep](#--1--pengantar-&-peta-konsep)
+- [2. Urutan Ekspansi Shell (Kerangka Utama)](#2-urutan-ekspansi-shell-kerangka-utama)
+- [3. Word Splitting (Mendalam)](#3-word-splitting-mendalam)
+- [4. Pathname Expansion / Globbing (Mendalam)](#4-pathname-expansion--globbing-mendalam)
+- [5. Pattern Matching (Lebih Luas dari Globbing)](#5-pattern-matching-lebih-luas-dari-globbing))
+- [6. Short-Circuiting](#6-short-circuiting)
+- [7. Kontrol Alur: Kondisional, Perulangan, Fungsi](#7-kontrol-alur-kondisional-perulangan-fungsi)
+- [8. Array dan Manipulasi Teks](#8-array-dan-manipulasi-teks)
+- [9. Praktik Terbaik, Kesalahan Umum, dan Debugging](#9-praktik-terbaik-kesalahan-umum-dan-debugging)
+- [10. Studi Kasus Terpadu](#10-studi-kasus-terpadu)
+- [11. Referensi](#11-referensi)
 
 ---
 
