@@ -6,14 +6,17 @@
 
 ## **Modul 3.1: Penanganan Kesalahan (Error Handling)**
 
-### **Struktur Pembelajaran Internal (Struktur Daftar Isi):**
+### **Struktur Pembelajaran Internal:**
 
 1. Filosofi "Fail-Fast" dan Keandalan Skrip
 2. Mode "Unofficial Strict Mode": `set -euo pipefail`
-3. Menangkap Sinyal dengan `trap` untuk Pembersihan (Cleanup)
+3. Menangkap Sinyal dengan `trap` untuk Pembersihan
 4. Menulis Pesan Error ke `stderr`
 5. Strategi Penanganan Error yang Dapat Diprediksi
-6. Potensi Penambahan Materi: `errexit` pada fungsi, *Conditional Execution* dengan `||` untuk *Error Handling*
+6. Alat Bantu Debugging: `set -x`, `bash -n`, dan `shellcheck`
+7. `PIPESTATUS`, `trap ... ERR`, dan `set -o errtrace`
+8. File Sementara yang Aman dengan `mktemp`
+9. Validasi Variabel dengan `${VAR:?}`
 
 ### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
 
@@ -32,106 +35,98 @@ Inti dari penanganan kesalahan yang baik adalah filosofi "fail-fast" (gagal cepa
   * **Deteksi Dini:** Kesalahan terdeteksi lebih cepat, mempermudah *debugging*.
   * **Keandalan:** Skrip menjadi lebih dapat diprediksi dan diandalkan dalam lingkungan otomatis.
 
-#### **2.2. Integritas dan Idempoten (Idealisme):**
+#### **2.2. Integritas dan Idempoten:**
 
-Dalam konteks penanganan kesalahan, idealnya skrip harus berusaha untuk bersifat **idempoten**; yaitu, menjalankan skrip berkali-kali akan menghasilkan hasil yang sama seolah-olah hanya dijalankan sekali. Meskipun sulit dicapai sepenuhnya di Bash, penanganan kesalahan yang kuat membantu mendekati ideal ini dengan memastikan pembersihan sumber daya dan status yang konsisten.
+Dalam konteks penanganan kesalahan, idealnya skrip harus berusaha untuk bersifat **idempoten**; yaitu, menjalankan skrip berkali-kali akan menghasilkan hasil yang sama seolah-olah hanya dijalankan sekali. Penanganan kesalahan yang kuat membantu mendekati ideal ini dengan memastikan pembersihan sumber daya dan status yang konsisten. Contoh praktis: sebelum membuat direktori, periksa dulu apakah direktori sudah ada (`mkdir -p`), dan sebelum menulis file, gunakan pola tulis-ke-temp-lalu-rename untuk menghindari file setengah jadi.
 
 #### **2.3. Sinyal Sistem dan Interupsi:**
 
-Sistem operasi Unix berkomunikasi dengan proses melalui **sinyal**. Sinyal seperti `INT` (Interrupt, biasanya dari `Ctrl+C`), `TERM` (Terminate, sinyal untuk mengakhiri proses), atau `EXIT` (sinyal yang dikirim saat proses berakhir, baik sukses maupun gagal) adalah mekanisme yang dapat Anda "tangkap" menggunakan perintah `trap` untuk melakukan tindakan pembersihan sebelum skrip benar-benar berhenti. Ini adalah bagian penting dari "fail-fast" dan pembersihan yang bertanggung jawab.
+Sistem operasi Unix berkomunikasi dengan proses melalui **sinyal**. Sinyal seperti `INT` (Interrupt, biasanya dari `Ctrl+C`), `TERM` (Terminate, sinyal untuk mengakhiri proses), atau `EXIT` (sinyal yang dikirim saat proses berakhir, baik sukses maupun gagal) adalah mekanisme yang dapat Anda "tangkap" menggunakan perintah `trap` untuk melakukan tindakan pembersihan sebelum skrip benar-benar berhenti.
 
 #### **2.4. *Exit Status* sebagai Bahasa Kesuksesan/Kegagalan:**
 
-Seperti yang telah dibahas di Modul 2.1, *exit status* (nilai `$?`) adalah cara standar setiap perintah Unix mengkomunikasikan hasil eksekusinya. Penanganan kesalahan sangat bergantung pada pemeriksaan *exit status* ini, baik secara implisit melalui `set -e` maupun secara eksplisit melalui pernyataan `if`.
+*Exit status* (nilai `$?`) adalah cara standar setiap perintah Unix mengkomunikasikan hasil eksekusinya. Nilai `0` berarti sukses, non-nol berarti gagal. Penanganan kesalahan sangat bergantung pada pemeriksaan *exit status* ini, baik secara implisit melalui `set -e` maupun secara eksplisit melalui pernyataan `if`.
 
 ### **3. Sintaks Dasar / Contoh Implementasi Inti:**
 
 #### **3.1. Mode "Unofficial Strict Mode": `set -euo pipefail`:**
 
-Ini adalah set opsi yang sangat direkomendasikan untuk hampir semua skrip Bash non-trivial. Mereka memaksa skrip untuk bertindak lebih seperti program tradisional yang gagal dengan jelas saat menghadapi kondisi tak terduga.
-
-* **`set -e` atau `set -o errexit`:**
-
-  * **Perilaku:** Segera keluar dari skrip jika ada perintah yang gagal (yaitu, mengembalikan *exit status* non-nol).
-  * **Pentingnya:** Mencegah skrip melanjutkan dengan hasil perintah yang gagal, yang dapat menyebabkan kesalahan berantai.
-  * **Pengecualian:** `set -e` tidak akan keluar jika perintah yang gagal berada di dalam kondisi `if`, `while`, `until`, `&&`, `||`, atau *subshell* dalam *command substitution* yang *output*-nya tidak ditangkap. Ini dirancang untuk memungkinkan Anda memeriksa kegagalan secara eksplisit.
-
-    <!-- end list -->
-
-    ```bash
-    #!/bin/bash
-
-    echo "=== Contoh set -e ==="
-    set -e
-
-    echo "Perintah 1: Membuat direktori"
-    mkdir test_dir_e
-
-    echo "Perintah 2: Mencoba membuat direktori yang sudah ada (akan gagal)"
-    mkdir test_dir_e # Ini akan menyebabkan skrip berhenti karena set -e
-
-    echo "Baris ini tidak akan pernah dijalankan."
-    ```
-
-  * **Untuk menjalankan contoh ini:** Buat dan jalankan skripnya. Anda akan melihat `mkdir` kedua menyebabkan skrip berhenti tiba-tiba. Setelah dijalankan, hapus `test_dir_e` (`rmdir test_dir_e`) untuk percobaan selanjutnya.
-
-* **`set -u` atau `set -o nounset`:**
-
-  * **Perilaku:** Segera keluar dari skrip jika mencoba menggunakan variabel yang belum didefinisikan (kecuali jika variabel tersebut diuji keberadaannya secara khusus, misalnya dengan `${VAR:-default_val}`).
-  * **Pentingnya:** Mencegah *bug* umum akibat *typo* pada nama variabel atau asumsi yang salah tentang ketersediaan variabel.
-
-    <!-- end list -->
-
-    ```bash
-    #!/bin/bash
-
-    echo "=== Contoh set -u ==="
-    set -u
-
-    # echo "Menggunakan variabel yang belum didefinisikan: $UNDEFINED_VAR" # Ini akan menyebabkan skrip berhenti
-
-    # Cara aman menggunakan variabel yang mungkin belum didefinisikan:
-    echo "Menggunakan variabel yang didefinisikan: $DEFINED_VAR" # Ini akan berhasil jika DEFIND_VAR sudah ada
-    echo "Menggunakan variabel yang mungkin tidak ada, dengan default: ${MAYBE_VAR:-'nilai default'}"
-    ```
-
-  * **Untuk menjalankan contoh ini:** Hapus tanda komentar pada baris yang menggunakan `$UNDEFINED_VAR`.
-
-* **`set -o pipefail`:**
-
-  * **Perilaku:** Mengatur *exit status* dari sebuah *pipeline* (serangkaian perintah yang dihubungkan dengan `|`) menjadi *exit status* dari perintah yang gagal pertama (dari kiri ke kanan), bukan hanya *exit status* dari perintah terakhir.
-  * **Pentingnya:** Tanpa ini, jika perintah di tengah *pipeline* gagal, tetapi perintah terakhir berhasil, seluruh *pipeline* akan dianggap berhasil oleh Bash. Ini adalah sumber *bug* yang sangat sulit dideteksi.
-
-    <!-- end list -->
-
-    ```bash
-    #!/bin/bash
-
-    echo "=== Contoh set -o pipefail ==="
-    # set -e harus disertakan juga untuk menghentikan skrip jika pipefail terjadi
-    set -euo pipefail
-
-    echo "Mencoba memproses data dari perintah yang gagal di pipe..."
-    # Contoh pipe: Perintah 'false' akan gagal (exit 1), tapi 'wc -l' akan berhasil (exit 0)
-    # Tanpa pipefail, skrip akan mengira pipe ini berhasil.
-    # Dengan pipefail, skrip akan melihat kegagalan 'false' dan berhenti.
-    false | wc -l
-
-    echo "Baris ini tidak akan pernah dijalankan karena 'pipefail'."
-    ```
-
-  * **Untuk menjalankan contoh ini:** Anda akan melihat skrip berhenti karena `false` mengembalikan *exit status* 1, dan `pipefail` menangkapnya.
-
-**Rekomendasi Mutlak:** Mulai setiap skrip Bash Anda dengan baris berikut (atau varian lengkapnya):
+**Rekomendasi Mutlak:** Mulai setiap skrip Bash non-trivial Anda dengan baris berikut:
 
 ```bash
 #!/bin/bash
 set -euo pipefail # Unofficial Bash Strict Mode
 ```
 
-### **3.2. Menangkap Sinyal dengan `trap` untuk Pembersihan (Cleanup):**
+* **`set -e` atau `set -o errexit`:**
 
-Perintah `trap` memungkinkan Anda untuk menangkap sinyal yang dikirim ke skrip dan menjalankan perintah atau fungsi sebagai respons. Ini sangat berguna untuk membersihkan file sementara, mematikan proses latar belakang, atau mereset konfigurasi sebelum skrip keluar (baik secara normal maupun karena kesalahan).
+  * **Perilaku:** Segera keluar dari skrip jika ada perintah yang gagal (mengembalikan *exit status* non-nol).
+  * **Pengecualian:** `set -e` **tidak** akan keluar jika perintah yang gagal berada di dalam kondisi `if`, `while`, `until`, `&&`, `||`, tanda `!` (negasi), atau *subshell* dalam *command substitution* yang *output*-nya tidak ditangkap.
+
+    ```bash
+    #!/bin/bash
+    echo "=== Contoh set -e ==="
+    set -e
+
+    echo "Perintah 1: Membuat direktori"
+    mkdir -p test_dir_e   # -p membuat idempoten: tidak error jika sudah ada
+
+    echo "Perintah 2: Mencoba membuat direktori yang sudah ada (akan gagal)"
+    mkdir test_dir_e      # Ini akan menyebabkan skrip berhenti karena set -e
+
+    echo "Baris ini tidak akan pernah dijalankan."
+    ```
+
+  * **Cara menjalankan:** Simpan sebagai `contoh_e.sh`, lalu:
+    ```bash
+    chmod +x contoh_e.sh
+    ./contoh_e.sh
+    ```
+  * **Output yang diharapkan:** Pesan "Perintah 1..." dan "Perintah 2...", lalu skrip berhenti dengan pesan error dari `mkdir` (`mkdir: cannot create directory 'test_dir_e': File exists`). Baris terakhir tidak tercetak.
+  * **Bersihkan:** `rmdir test_dir_e`
+
+* **`set -u` atau `set -o nounset`:**
+
+  * **Perilaku:** Segera keluar jika mencoba menggunakan variabel yang belum didefinisikan. Gunakan `${VAR:-default}` untuk memberikan nilai *default*, `${VAR:=default}` untuk mengisi sekaligus, atau `${VAR:?pesan}` untuk memaksa error dengan pesan kustom.
+
+    ```bash
+    #!/bin/bash
+    echo "=== Contoh set -u ==="
+    set -u
+
+    DEFINED_VAR="nilai yang sudah didefinisikan"
+    echo "Variabel terdefinisi: $DEFINED_VAR"
+
+    # Aman untuk variabel yang mungkin belum ada:
+    echo "Dengan default: ${MAYBE_VAR:-'nilai default'}"
+
+    # Memaksa error dengan pesan kustom:
+    # echo "Wajib: ${WAJIB_VAR:?'WAJIB_VAR harus diisi!'}"
+
+    # Baris berikut akan menyebabkan skrip berhenti karena set -u:
+    # echo "Variabel belum didefinisikan: $UNDEFINED_VAR"
+    ```
+
+  * **Cara menjalankan:** Hapus tanda komentar pada baris `$UNDEFINED_VAR` untuk melihat efeknya. Output yang diharapkan saat error: `contoh_u.sh: line N: UNDEFINED_VAR: unbound variable`.
+
+* **`set -o pipefail`:**
+
+  * **Perilaku:** Mengatur *exit status* dari sebuah *pipeline* menjadi *exit status* dari perintah yang gagal pertama (dari kiri ke kanan), bukan hanya *exit status* dari perintah terakhir.
+
+    ```bash
+    #!/bin/bash
+    echo "=== Contoh set -o pipefail ==="
+    set -euo pipefail
+
+    echo "Mencoba memproses data dari perintah yang gagal di pipe..."
+    false | wc -l   # false gagal (exit 1), wc sukses (exit 0)
+
+    echo "Baris ini tidak akan pernah dijalankan karena pipefail."
+    ```
+
+  * **Output yang diharapkan:** Skrip berhenti setelah `false | wc -l`. Tanpa `pipefail`, skrip akan melanjutkan karena `wc` mengembalikan 0.
+
+#### **3.2. Menangkap Sinyal dengan `trap` untuk Pembersihan:**
 
 **Sintaks Umum:**
 
@@ -139,63 +134,57 @@ Perintah `trap` memungkinkan Anda untuk menangkap sinyal yang dikirim ke skrip d
 trap 'PERINTAH_ATAU_FUNGSI' SINYAL1 SINYAL2 ...
 ```
 
-**Contoh Template Skrip Robust:**
+**Template Skrip Robust (Diperbaiki):**
 
 ```bash
 #!/bin/bash
-
-# --- The Robust Script Template ---
-# 1. Unofficial Bash Strict Mode: Segera keluar jika ada kesalahan.
 set -euo pipefail
 
-# 2. Fungsi pembersihan: akan dijalankan saat skrip berakhir.
+# Variabel untuk menghindari cleanup ganda
+CLEANUP_DONE=0
+
 cleanup() {
-  echo "--- Menjalankan pembersihan ---"
-  if [[ -f "/tmp/myapp_temp_file.$$" ]]; then # $$ adalah PID skrip saat ini
-    echo "Menghapus file sementara: /tmp/myapp_temp_file.$$"
-    rm -f "/tmp/myapp_temp_file.$$"
+  # Hindari cleanup ganda saat INT/TERM memicu EXIT
+  if (( CLEANUP_DONE )); then
+    return
   fi
-  echo "Pembersihan selesai."
+  CLEANUP_DONE=1
+
+  echo "--- Menjalankan pembersihan ---" >&2
+  # Hapus file/direktori sementara jika ada
+  if [[ -n "${TEMP_DIR:-}" && -d "$TEMP_DIR" ]]; then
+    echo "Menghapus direktori sementara: $TEMP_DIR" >&2
+    rm -rf "$TEMP_DIR"
+  fi
+  echo "Pembersihan selesai." >&2
 }
 
-# 3. Menangkap sinyal: panggil fungsi cleanup pada EXIT, INT (Ctrl+C), TERM.
-trap cleanup EXIT INT TERM
+# Tangkap EXIT (selalu), INT (Ctrl+C), TERM (kill)
+trap cleanup EXIT
+trap 'exit 130' INT    # 130 = 128 + 2 (SIGINT)
+trap 'exit 143' TERM   # 143 = 128 + 15 (SIGTERM)
 
-echo "--- Skrip dimulai ---"
+# Buat direktori sementara yang aman
+TEMP_DIR="$(mktemp -d -t myapp.XXXXXX)"
+echo "--- Skrip dimulai. TEMP_DIR=$TEMP_DIR ---"
 
-echo "Membuat file sementara: /tmp/myapp_temp_file.$$"
-touch "/tmp/myapp_temp_file.$$"
+touch "$TEMP_DIR/data.tmp"
+echo "Melakukan pekerjaan..."
+sleep 1
 
-# Simulasikan pekerjaan skrip
-echo "Melakukan beberapa pekerjaan..."
-sleep 2
+echo "Simulasi kegagalan..."
+ls /direktori/palsu_yang_tidak_ada   # set -e akan menghentikan skrip
 
-# Simulasikan kondisi kesalahan (akan memicu set -e dan trap EXIT)
-echo "Simulasi kegagalan: mencoba listing direktori yang tidak ada..."
-ls /direktori/palsu_yang_tidak_ada # Ini akan menyebabkan set -e menghentikan skrip
-
-echo "Baris ini tidak akan pernah tercapai jika ada kesalahan." # Karena set -e
-
-echo "--- Skrip selesai dengan sukses (jika tanpa error) ---"
+echo "Baris ini tidak akan tercapai."
 ```
 
-* **Penjelasan `trap cleanup EXIT INT TERM`:**
-  * `cleanup`: Nama fungsi yang akan dipanggil.
-  * `EXIT`: Sinyal yang selalu dikirim saat skrip keluar, tidak peduli apakah berhasil atau gagal. Ini memastikan `cleanup` selalu dijalankan.
-  * `INT`: Sinyal *interrupt* yang dikirim saat pengguna menekan `Ctrl+C`.
-  * `TERM`: Sinyal *terminate* yang dikirim, biasanya oleh `kill` command.
-* **Pentingnya `$$`:** `$$` adalah variabel khusus di Bash yang berisi Process ID (PID) dari skrip yang sedang berjalan. Menggunakannya dalam nama file sementara (`/tmp/myapp_temp_file.$$`) memastikan bahwa file sementara Anda unik untuk setiap *instance* skrip, mencegah konflik dan menjaga kebersihan.
+* **Penjelasan:**
+  * `trap cleanup EXIT` memastikan `cleanup` **selalu** dipanggil saat skrip keluar (sukses maupun gagal).
+  * `trap 'exit 130' INT` dan `trap 'exit 143' TERM` memaksa skrip keluar dengan *exit code* standar Unix, sehingga `EXIT` kemudian memicu `cleanup`. Ini menghindari cleanup ganda.
+  * `CLEANUP_DONE` sebagai pengaman kedua.
+  * `mktemp -d` lebih aman daripada `/tmp/nama_file.$$` karena membuat nama unik yang tidak dapat diprediksi (mencegah serangan symlink).
 
-### **3.3. Menulis Pesan Error ke `stderr`:**
-
-Ketika skrip Anda mendeteksi kesalahan atau perlu memberikan informasi diagnostik yang penting, selalu cetak pesan tersebut ke **Standard Error (stderr)**, bukan Standard Output (stdout).
-
-* **Mengapa?**
-  * **Pemindahan *output* yang Bersih:** *Output* standar (`stdout`) biasanya dimaksudkan untuk data yang dihasilkan skrip (misalnya, hasil dari suatu perhitungan, daftar file). Jika Anda mengalihkan `stdout` skrip ke file, Anda tidak ingin pesan error juga masuk ke file data tersebut.
-  * **Pesan Error Terpisah:** `stderr` dirancang khusus untuk pesan error, peringatan, atau diagnostik. Ini memungkinkan pengguna untuk menangkap dan memproses pesan error secara terpisah dari data normal.
-  * **Standar Unix:** Ini adalah konvensi dasar dalam sistem Unix/Linux.
-
-**Sintaks:**
+#### **3.3. Menulis Pesan Error ke `stderr`:**
 
 ```bash
 echo "Pesan error atau peringatan" >&2
@@ -208,225 +197,287 @@ echo "Pesan error atau peringatan" >&2
 set -euo pipefail
 
 validate_input() {
-  local USER_INPUT="$1"
+  local USER_INPUT="${1:-}"
   if [[ -z "$USER_INPUT" ]]; then
-    echo "Error: Input tidak boleh kosong." >&2 # Pesan error ke stderr
+    echo "Error: Input tidak boleh kosong." >&2
     return 1
   fi
   if [[ "$USER_INPUT" == "admin" ]]; then
-    echo "Peringatan: Pengguna 'admin' memiliki hak istimewa." >&2 # Peringatan ke stderr
+    echo "Peringatan: Pengguna 'admin' memiliki hak istimewa." >&2
   fi
-  echo "Input diterima: $USER_INPUT" # Output data ke stdout
+  echo "Input diterima: $USER_INPUT"
   return 0
 }
 
-# Contoh penggunaan
-validate_input "JohnDoe" # Output ke stdout
-validate_input ""        # Error ke stderr, skrip keluar karena set -e
+validate_input "JohnDoe"     # Output ke stdout
+validate_input "" || exit 1  # Error ke stderr, keluar dengan status 1
 ```
 
-### **3.4. Strategi Penanganan Error yang Dapat Diprediksi:**
+* **Cara menjalankan & memisahkan stream:**
+  ```bash
+  chmod +x script.sh
+  ./script.sh 2>errors.log 1>output.log
+  ```
 
-Selain `set -euo pipefail` dan `trap`, ada beberapa strategi lain untuk membuat penanganan kesalahan lebih spesifik dan prediktif:
+#### **3.4. Strategi Penanganan Error yang Dapat Diprediksi:**
 
-* **Pengecekan Explicit `if` `$?`:** Meskipun `set -e` menangani banyak kasus, terkadang Anda ingin menangani kegagalan secara spesifik tanpa menghentikan skrip.
+* **Pengecekan Eksplisit yang Aman terhadap `set -e`:**
 
-    ```bash
-    #!/bin/bash
-    set -euo pipefail # Tetap gunakan strict mode secara default
+  ```bash
+  #!/bin/bash
+  set -euo pipefail
 
-    download_file() {
-      local URL="$1"
-      local OUTPUT_FILE="$2"
+  download_file() {
+    local URL="$1"
+    local OUTPUT_FILE="$2"
 
-      echo "Mencoba mengunduh '$URL' ke '$OUTPUT_FILE'..."
-      wget -q -O "$OUTPUT_FILE" "$URL" # -q: quiet, -O: output file
-      if [[ $? -ne 0 ]]; then # Periksa exit status secara eksplisit
-        echo "Error: Gagal mengunduh file dari $URL." >&2
-        return 1
-      fi
-      echo "File berhasil diunduh."
-      return 0
-    }
-
-    # Contoh penggunaan
-    if download_file "http://invalid.url/nonexistent.txt" "downloaded_file.txt"; then
-      echo "Lanjutkan pemrosesan file..."
-      # Lanjutkan logika skrip
-    else
-      echo "Operasi pengunduhan gagal, tidak melanjutkan."
-      exit 1 # Keluar dari skrip jika pengunduhan adalah langkah kritis
+    echo "Mencoba mengunduh '$URL' ke '$OUTPUT_FILE'..."
+    # Gunakan 'if !' agar set -e tidak mematikan skrip di sini
+    if ! wget -q -O "$OUTPUT_FILE" "$URL"; then
+      echo "Error: Gagal mengunduh file dari $URL." >&2
+      return 1
     fi
-    ```
+    echo "File berhasil diunduh."
+    return 0
+  }
 
-* **Eksekusi Kondisional dengan `||` (OR) untuk Error Handling:** Ini adalah cara singkat untuk menjalankan perintah lain jika perintah pertama gagal.
+  if download_file "http://invalid.url/nonexistent.txt" "downloaded_file.txt"; then
+    echo "Lanjutkan pemrosesan file..."
+  else
+    echo "Operasi pengunduhan gagal, tidak melanjutkan." >&2
+    exit 1
+  fi
+  ```
 
-    ```bash
-    #!/bin/bash
-    # set -euo pipefail # Bisa dihidupkan atau tidak, tergantung apakah Anda ingin keluar total atau hanya menjalankan default
+* **Eksekusi Kondisional dengan `||`:**
 
-    echo "--- Contoh OR (||) untuk Error Handling ---"
-    # Coba buat direktori; jika gagal, cetak pesan error dan keluar
-    mkdir my_new_directory || { echo "Error: Gagal membuat direktori 'my_new_directory'." >&2; exit 1; }
+  ```bash
+  #!/bin/bash
+  set -euo pipefail
 
-    echo "Direktori berhasil dibuat atau sudah ada."
+  # Fungsi harus didefinisikan SEBELUM dipanggil
+  download_from_primary() {
+    echo "Mencoba sumber utama..."
+    return 1  # Simulasi gagal
+  }
 
-    # Coba unduh file; jika gagal, jalankan fungsi fallback
-    download_data_from_primary_source || download_data_from_backup_source || { echo "Semua sumber gagal!" >&2; exit 1; }
+  download_from_backup() {
+    echo "Mencoba sumber cadangan..."
+    return 0  # Simulasi sukses
+  }
 
-    function download_data_from_primary_source() {
-        echo "Mencoba sumber utama..."
-        # Simulasikan kegagalan
-        return 1
-    }
+  # Gunakan fungsi setelah didefinisikan
+  download_from_primary || download_from_backup || {
+    echo "Semua sumber gagal!" >&2
+    exit 1
+  }
+  ```
 
-    function download_data_from_backup_source() {
-        echo "Mencoba sumber cadangan..."
-        # Simulasikan keberhasilan
-        return 0
-    }
-    ```
+  * **Catatan:** Blok `{ ... }` memerlukan spasi di sekitar kurung kurawal dan titik koma sebelum kurung penutup.
 
-  * **Catatan:** Blok `{ ... }` memerlukan spasi di sekitar kurung kurawal dan titik koma (`;`) sebelum kurung kurawal penutup.
+#### **3.5. Alat Bantu Debugging: `set -x`, `bash -n`, dan `shellcheck`:**
 
-### **4. Terminologi Kunci:**
+* **`set -x`:** Mencetak setiap perintah yang dieksekusi ke `stderr` dengan prefiks `+`. Berguna untuk melacak alur skrip.
+  ```bash
+  # Aktifkan hanya di bagian yang dicurigai
+  set -x
+  cp "$SRC" "$DST"
+  set +x
+  ```
 
-* **Penanganan Kesalahan (Error Handling):** Proses mengidentifikasi, merespons, dan mengelola kondisi kesalahan atau pengecualian yang terjadi selama eksekusi skrip.
-* **Filosofi "Fail-Fast":** Prinsip desain di mana program (atau skrip) akan segera menghentikan eksekusinya saat mendeteksi kondisi kesalahan, daripada mencoba melanjutkan dengan asumsi yang salah.
-* **`set` options:** Perintah bawaan Bash yang digunakan untuk mengubah perilaku *shell*.
-  * **`set -e` (atau `set -o errexit`):** Menyebabkan skrip keluar segera jika ada perintah yang gagal (mengembalikan *exit status* non-nol).
-  * **`set -u` (atau `set -o nounset`):** Menyebabkan skrip keluar segera jika mencoba menggunakan variabel yang belum didefinisikan.
-  * **`set -o pipefail`:** Menyebabkan *exit status* dari sebuah *pipeline* menjadi *exit status* dari perintah yang gagal pertama dalam *pipeline* tersebut.
-* **`trap`:** Perintah bawaan Bash untuk "menangkap" sinyal sistem atau kondisi khusus (`EXIT`) dan menjalankan perintah atau fungsi yang ditentukan sebagai respons.
-* **Sinyal (Signal):** Komunikasi asinkron yang dikirim ke suatu proses untuk memberi tahu tentang suatu peristiwa (misalnya, `INT` dari `Ctrl+C`, `TERM` untuk mengakhiri, `KILL` untuk menghentikan paksa).
-* **Standard Error (`stderr`):** Salah satu dari tiga *standard stream* I/O di Unix/Linux, digunakan khusus untuk *output* pesan error dan diagnostik. Dilambangkan dengan *file descriptor* `2`.
-* **`$$`:** Variabel khusus Bash yang berisi Process ID (PID) dari *shell* saat ini (skrip yang sedang berjalan). Berguna untuk membuat file sementara unik.
+* **`bash -n`:** Memeriksa sintaks skrip tanpa mengeksekusinya (dry-run sintaks).
+  ```bash
+  bash -n myscript.sh
+  ```
 
-### **5. Rekomendasi Visualisasi (Jika Diperlukan):**
+* **`shellcheck`:** Linter statis untuk skrip shell yang mendeteksi ratusan pola kesalahan umum.
+  ```bash
+  shellcheck myscript.sh
+  ```
 
-* **Diagram Alur dengan `set -e`:** *Flowchart* yang menunjukkan panah keluar dari alur utama setiap kali ada perintah yang gagal, langsung ke *exit* skrip.
-* **Diagram Alur *Pipeline* dengan `pipefail`:** Ilustrasi *pipeline* dengan beberapa perintah. Tunjukkan panah *exit status* yang mengalir ke belakang dari setiap perintah ke awal *pipeline*, dan bagaimana `pipefail` "menangkap" kegagalan pertama.
-* **Diagram Sinyal dan `trap`:** Gambar skrip di tengah eksekusi, dengan panah sinyal (`Ctrl+C`, `kill`) masuk ke skrip yang kemudian mengaktifkan fungsi `trap` untuk pembersihan sebelum skrip berhenti.
+* **`set -v`:** Mencetak baris skrip saat dibaca (bukan saat dieksekusi).
 
-### **6. Hubungan dengan Modul Lain:**
+#### **3.6. `PIPESTATUS`, `trap ... ERR`, dan `set -o errtrace`:**
 
-Modul ini secara fundamental terhubung dengan **Modul 2.1 (Struktur Kondisional)**, karena penanganan kesalahan bergantung pada pemeriksaan *exit status* (`$?`) dan membuat keputusan berdasarkan keberhasilan atau kegagalan. Ini juga terkait erat dengan **Modul 2.3 (Fungsi)**, karena fungsi harus dirancang untuk mengembalikan *exit status* yang bermakna, dan fungsi `cleanup` yang digunakan dengan `trap` adalah contoh penerapan fungsi. Konsep *exit status* yang diperkenalkan sejak Fase 1 menjadi sangat penting di sini. Penanganan kesalahan yang kokoh adalah prasyarat untuk menulis skrip yang akan mem-parsing argumen (Modul 3.2), berinteraksi dengan Regex (Modul 3.3), dan mengelola data yang sensitif di Fase 4.
+* **`PIPESTATUS`:** Array berisi *exit status* setiap perintah dalam *pipeline* terakhir.
+  ```bash
+  #!/bin/bash
+  set -uo pipefail
+  # Tanpa set -e, agar kita bisa memeriksa PIPESTATUS
 
-### **7. Sumber Referensi Lengkap:**
+  false | true | false
+  echo "Status setiap perintah: ${PIPESTATUS[@]}"   # Output: 1 0 1
+  ```
 
-* **Unofficial Bash Strict Mode:** [http://redsymbol.net/articles/unofficial-bash-strict-mode/](http://redsymbol.net/articles/unofficial-bash-strict-mode/)
-  * **Detail:** Artikel klasik dan sangat direkomendasikan yang menjelaskan secara mendalam mengapa `set -euo pipefail` harus digunakan dalam skrip Bash.
-* **Bash Trap Command (Linuxize):** [https://linuxize.com/post/bash-trap-command/](https://linuxize.com/post/bash-trap-command/)
-  * **Detail:** Tutorial yang jelas dan ringkas tentang penggunaan perintah `trap` untuk menangkap sinyal dan menjalankan tindakan pembersihan.
-* **Bash Manual: The Set Builtin:** [https://www.gnu.org/software/bash/manual/html\_node/The-Set-Builtin.html](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)
-  * **Detail Tambahan (opsional):** Dokumentasi resmi Bash untuk perintah `set`, menjelaskan semua opsi yang tersedia.
-* **Bash Manual: Signals:** [https://www.gnu.org/software/bash/manual/html\_node/Signals.html](https://www.gnu.org/software/bash/manual/html_node/Signals.html)
-  * **Detail Tambahan (opsional):** Bagian dari manual Bash yang menjelaskan bagaimana Bash menangani sinyal.
-* **Error Handling in Bash (Stack Abuse):** [https://stackabuse.com/error-handling-in-bash/](https://stackabuse.com/error-handling-in-bash/)
-  * **Detail:** Sebuah artikel komprehensif yang membahas berbagai teknik penanganan kesalahan di Bash.
+* **`trap ... ERR`:** Dijalankan setiap kali perintah gagal, bukan hanya pada `EXIT`.
+  ```bash
+  #!/bin/bash
+  set -eE  # -E = errtrace: agar trap ERR diwariskan ke fungsi/subshell
 
-### **8. Tips dan Praktik Terbaik:**
+  on_error() {
+    local exit_code=$?
+    local line_no=${1:-?}
+    echo "Error di baris $line_no, exit code $exit_code" >&2
+  }
+  trap 'on_error $LINENO' ERR
+  ```
 
-* **Mulai dengan "Strict Mode":** Selalu masukkan `set -euo pipefail` di awal setiap skrip Bash Anda (setelah shebang `#!/bin/bash`). Ini adalah kebiasaan yang akan menghemat banyak waktu *debugging*.
-* **Gunakan `trap cleanup EXIT`:** Ini adalah cara terbaik untuk memastikan sumber daya (file sementara, proses latar belakang) selalu dibersihkan, bahkan jika skrip mengalami kegagalan tak terduga.
-* **Pesan Error ke `stderr`:** Konsistenlah dalam mengarahkan semua pesan error, peringatan, atau diagnostik ke `stderr` (`>&2`). Ini memisahkan *output* program dari pesan informasi.
-* **Berikan Pesan Error yang Jelas:** Ketika skrip Anda gagal, pastikan pesan errornya informatif: sebutkan apa yang gagal, mengapa gagal (jika mungkin), dan bagaimana pengguna dapat memperbaikinya.
-* **Gunakan `exit N`:** Setelah mencetak pesan error, gunakan `exit 1` (atau nilai non-nol lainnya) untuk secara eksplisit menghentikan skrip dengan *exit status* kegagalan. Ini memberitahu lingkungan pemanggil bahwa skrip tidak berhasil diselesaikan.
-* **Logging:** Untuk skrip produksi, pertimbangkan untuk menerapkan sistem *logging* yang lebih canggih (misalnya, menulis log ke file) daripada hanya mencetak ke `stderr`.
+* **`set -o errtrace` (`-E`):** Memastikan `trap ERR` juga aktif di dalam fungsi dan *subshell*.
 
-### **9. Potensi Kesalahan Umum & Solusi:**
+#### **3.7. File Sementara yang Aman dengan `mktemp`:**
 
-* **Kesalahan:** Mengandalkan `$?` setelah `set -e`.
-  * **Penyebab:** Jika `set -e` aktif, skrip akan keluar segera setelah perintah gagal, jadi Anda mungkin tidak memiliki kesempatan untuk memeriksa `$?` secara eksplisit setelah kegagalan terjadi, kecuali Anda menempatkannya dalam kondisi `if` atau `||`.
-  * **Solusi:** `set -e` dimaksudkan untuk *fail-fast*. Jika Anda perlu menangani kegagalan secara spesifik, letakkan perintah dalam `if` (`if ! perintah; then ...`) atau gunakan `||` (`perintah || { echo "Error"; exit 1; }`).
-* **Kesalahan:** Tidak mengutip argumen pada `trap`.
-  * **Penyebab:** `trap cleanup EXIT` akan memanggil fungsi `cleanup`. Namun, `trap "echo Cleanup..." EXIT` akan mengevaluasi "echo Cleanup..." saat `trap` didefinisikan, bukan saat sinyal diterima. Untuk menjalankan perintah saat sinyal diterima, perintah harus di dalam kutipan tunggal atau menjadi nama fungsi.
-  * **Solusi:** `trap 'echo "Melakukan pembersihan..."' EXIT` (gunakan kutipan tunggal untuk perintah literal) atau `trap nama_fungsi EXIT`.
-* **Kesalahan:** File sementara tidak dihapus saat skrip dihentikan paksa (misal, `kill -9`).
-  * **Penyebab:** Sinyal `KILL` (sinyal 9) adalah sinyal yang tidak dapat ditangkap oleh `trap`. Ini mengakhiri proses secara paksa.
-  * **Solusi:** Tidak ada cara untuk menangkap `KILL`. Desain skrip Anda agar idempoten dan dapat mengatasi sisa-sisa eksekusi sebelumnya, atau gunakan sistem file temporer yang dikelola secara otomatis oleh OS (`mktemp`).
-* **Kesalahan:** Pesan error bercampur dengan *output* data.
-  * **Penyebab:** Menggunakan `echo` tanpa `>&2` untuk pesan error.
-  * **Solusi:** Selalu tambahkan `>&2` untuk pesan diagnostik atau error.
-* **Kesalahan:** Variabel `pipefail` tidak berlaku karena `set -e` tidak aktif.
-  * **Penyebab:** `pipefail` hanya memodifikasi *exit status* dari *pipeline*. Agar skrip benar-benar berhenti karena kegagalan di tengah *pipeline*, `set -e` juga harus aktif.
-  * **Solusi:** Selalu gunakan `set -euo pipefail` bersamaan.
-
------
-
-Dengan penjelasan mendalam ini untuk Modul 3.1, Anda sekarang memiliki pemahaman yang kuat tentang penanganan kesalahan di Bash dan bagaimana membuat skrip Anda jauh lebih andal dan profesional.
-
-Modul berikut ini akan mengajarkan Anda bagaimana membuat skrip Anda lebih fleksibel dan mudah digunakan dengan menerima input sebagai opsi dan argumen baris perintah.
-
------
-
-**Tujuan Fase:** Mengubah skrip sederhana menjadi alat yang kuat, aman, dan siap produksi dengan penanganan kesalahan yang baik, antarmuka pengguna yang layak, dan praktik terbaik.
-
------
-
-## **Modul 3.2: Mem-parsing Argumen Baris Perintah**
-
-### **Struktur Pembelajaran Internal (Struktur Daftar Isi):**
-
-1. Filosofi Antarmuka Baris Perintah (CLI) yang Baik
-2. Argumen Posisi Sederhana (`$1`, `$@`, `$*`)
-3. Menggunakan `getopts` untuk Parsing Opsi Singkat (`-a`, `-b`)
-4. Menangani Opsi dengan dan tanpa Argumen (pada `getopts`)
-5. Menulis Fungsi `usage()` atau `help()`
-6. Melewatkan Argumen Sisa (Non-Opsi)
-7. Potensi Penambahan Materi: Perbedaan antara `getopts` (bawaan) dan `getopt` (eksternal GNU)
-
-### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
-
-Dalam modul ini, Anda akan belajar bagaimana merancang skrip Anda agar dapat menerima instruksi dan konfigurasi dari pengguna melalui baris perintah, mirip dengan bagaimana perintah standar Linux seperti `ls -l` atau `cp -r sumber tujuan` bekerja. Anda akan belajar membedakan antara **opsi (options)** yang diawali tanda hubung (misalnya `-v` untuk *verbose*) dan **argumen (arguments)** yang merupakan nilai atau file yang diproses skrip. Anda akan fokus pada penggunaan `getopts`, sebuah perintah bawaan Bash yang efisien untuk mem-parsing opsi singkat.
-
-Peran modul ini adalah untuk meningkatkan **usability** dan **professionalisme** skrip Anda. Skrip yang hanya bekerja dengan nilai *hardcoded* atau input interaktif terbatas kurang fleksibel. Dengan mem-parsing argumen baris perintah, Anda membuat skrip Anda dapat digunakan secara non-interaktif, dapat diintegrasikan dengan skrip lain (misalnya dalam *pipeline* atau *cron job*), dan lebih mudah diotomatisasi. Ini adalah bagian integral dari membangun "alat" baris perintah yang sebenarnya, mirip dengan aplikasi Flutter yang menerima argumen saat diluncurkan atau konfigurasi awal.
-
-### **2. Konsep Kunci & Filosofi Mendalam:**
-
-#### **2.1. Desain Antarmuka Baris Perintah (CLI):**
-
-CLI yang baik adalah seperti *User Interface* (UI) lainnya—ia harus intuitif, konsisten, dan dapat diprediksi. Ini berarti:
-
-* **Konsistensi:** Mengikuti konvensi umum Unix (misalnya, `-v` untuk *verbose*, `-h` untuk *help*, `-f` untuk *file*).
-* **Jelas:** Opsi dan argumen harus memiliki makna yang jelas.
-* **Prediktif:** Pengguna harus dapat menebak bagaimana menggunakan skrip Anda berdasarkan nama opsi.
-* **Fleksibilitas:** Memungkinkan pengguna untuk mengontrol perilaku skrip tanpa harus mengedit kode.
-
-#### **2.2. Pemisahan Konfigurasi dari Logika:**
-
-Melewatkan konfigurasi melalui argumen baris perintah memisahkan data konfigurasi dari logika inti skrip Anda. Ini membuat skrip lebih modular, lebih mudah untuk di-*debug*, dan lebih fleksibel karena perilaku dapat diubah tanpa memodifikasi kode.
-
-#### **2.3. Opsi vs. Argumen Posisi:**
-
-Penting untuk memahami perbedaan:
-
-* **Opsi (Options/Flags):** Mengubah *perilaku* skrip. Mereka diawali dengan satu atau dua tanda hubung (misalnya `-v`, `--verbose`).
-* **Argumen Posisi (Positional Arguments):** Adalah *data* yang akan dioperasikan oleh skrip (misalnya, `file.txt` dalam `cat file.txt`).
-
-#### **2.4. Pentingnya Fungsi `usage()`:**
-
-Setiap alat baris perintah yang baik harus menyediakan cara bagi pengguna untuk mengetahui cara menggunakannya. Fungsi `usage()` atau `help()` yang mencetak deskripsi singkat tentang cara memanggil skrip Anda, opsi yang tersedia, dan contoh penggunaan adalah praktik standar yang sangat penting.
-
-### **3. Sintaks Dasar / Contoh Implementasi Inti:**
-
-#### **3.1. Argumen Posisi Sederhana (`$1`, `$@`, `$*`):**
-
-Ini adalah cara paling dasar untuk mengakses argumen baris perintah. Anda sudah familiar dengan ini dari **Modul 1.3 (Variabel dan Ekspansi)** dan **Modul 2.3 (Fungsi)**, di mana mereka digunakan untuk argumen fungsi.
-
-* `$0`: Nama skrip yang sedang dieksekusi.
-* `$1`, `$2`, `$3`, ...: Argumen posisi pertama, kedua, ketiga, dan seterusnya.
-* `$#`: Jumlah total argumen posisi.
-* `$@`: Mengembangkan ke setiap argumen sebagai string terpisah yang dikutip secara individual. **Direkomendasikan.**
-* `$*`: Mengembangkan ke semua argumen sebagai satu string tunggal. **Hindari, karena masalah spasi.**
-
-**Contoh:**
+Selalu gunakan `mktemp` untuk file atau direktori sementara. Ini menghindari tabrakan nama dan kerentanan symlink.
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 
-echo "Nama skrip ini adalah: $0"
+TMPFILE="$(mktemp)"              # File sementara
+TMPDIR="$(mktemp -d)"            # Direktori sementara
+
+cleanup() {
+  rm -f "$TMPFILE"
+  rm -rf "$TMPDIR"
+}
+trap cleanup EXIT
+
+echo "data" > "$TMPFILE"
+echo "File temp: $TMPFILE"
+echo "Dir temp:  $TMPDIR"
+```
+
+#### **3.8. Validasi Variabel dengan `${VAR:?}`:**
+
+Memaksa error dengan pesan kustom jika variabel kosong atau tidak didefinisikan.
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+: "${API_KEY:?API_KEY wajib diisi sebelum menjalankan skrip ini.}"
+echo "API_KEY terisi, panjang: ${#API_KEY}"
+```
+
+### **4. Terminologi Kunci:**
+
+* **Penanganan Kesalahan (Error Handling):** Proses mengidentifikasi, merespons, dan mengelola kondisi kesalahan selama eksekusi skrip.
+* **Filosofi "Fail-Fast":** Prinsip desain agar program segera berhenti saat mendeteksi kondisi kesalahan.
+* **`set` options:** Perintah bawaan Bash untuk mengubah perilaku *shell*.
+  * `set -e` (`errexit`): Keluar segera saat perintah gagal.
+  * `set -u` (`nounset`): Keluar saat menggunakan variabel yang belum didefinisikan.
+  * `set -o pipefail`: *Exit status* pipeline = status perintah gagal pertama.
+  * `set -x` (`xtrace`): Cetak perintah yang dieksekusi.
+  * `set -E` (`errtrace`): Warisi `trap ERR` ke fungsi/subshell.
+  * `set -v` (`verbose`): Cetak baris skrip saat dibaca.
+* **`trap`:** Menangkap sinyal (`EXIT`, `INT`, `TERM`, `ERR`, dll.) dan menjalankan fungsi/perintah sebagai respons.
+* **Sinyal (Signal):** Komunikasi asinkron ke proses (`INT`, `TERM`, `KILL`, `HUP`).
+* **`stderr`:** *File descriptor* 2, untuk pesan error dan diagnostik.
+* **`PIPESTATUS`:** Array *exit status* setiap perintah dalam pipeline terakhir.
+* **`mktemp`:** Membuat file/direktori sementara dengan nama unik dan aman.
+* **`shellcheck`:** Linter statis untuk skrip shell.
+* **Idempoten:** Operasi yang hasilnya sama meski dijalankan berulang kali.
+* **`$$`:** PID dari shell saat ini (kurang aman untuk nama file, gunakan `mktemp`).
+* **`${VAR:?pesan}`:** Memaksa error dengan pesan kustom jika `VAR` kosong/tidak terdefinisi.
+
+### **5. Rekomendasi Visualisasi:**
+
+* **Diagram Alur dengan `set -e`:** *Flowchart* dengan panah keluar setiap kali perintah gagal.
+* **Diagram Pipeline dengan `pipefail`:** Ilustrasi *exit status* yang mengalir ke belakang dari setiap perintah ke awal pipeline.
+* **Diagram Sinyal dan `trap`:** Skrip dengan panah sinyal (`Ctrl+C`, `kill`) masuk, memicu `trap`, lalu pembersihan, baru exit.
+* **Diagram Siklus Hidup `mktemp` + `trap cleanup EXIT`:** Buat → pakai → bersihkan.
+
+### **6. Hubungan dengan Modul Lain:**
+
+Terhubung erat dengan **Modul 2.1 (Struktur Kondisional)** untuk pemeriksaan `$?`, dan **Modul 2.3 (Fungsi)** untuk fungsi `cleanup` dan nilai balik bermakna. Penanganan kesalahan kokoh adalah prasyarat untuk **Modul 3.2 (Argumen)** dan **Modul 3.3 (Regex)**, serta untuk **Modul 4.x (Skala Enterprise)**.
+
+### **7. Sumber Referensi Lengkap:**
+
+* **Unofficial Bash Strict Mode:** <http://redsymbol.net/articles/unofficial-bash-strict-mode/>
+* **Bash Trap Command (Linuxize):** <https://linuxize.com/post/bash-trap-command/>
+* **Bash Manual: The Set Builtin:** <https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html>
+* **Bash Manual: Signals:** <https://www.gnu.org/software/bash/manual/html_node/Signals.html>
+* **ShellCheck:** <https://www.shellcheck.net/>
+* **Google Shell Style Guide:** <https://google.github.io/styleguide/shellguide.html>
+* **Error Handling in Bash (Stack Abuse):** <https://stackabuse.com/error-handling-in-bash/>
+
+### **8. Tips dan Praktik Terbaik:**
+
+* Mulai setiap skrip dengan `set -euo pipefail`.
+* Gunakan `trap cleanup EXIT` untuk pembersihan. Tambahkan `trap 'exit N' INT TERM` untuk *exit code* standar.
+* Selalu gunakan `mktemp` untuk file/direktori sementara.
+* Kirim semua diagnostik ke `stderr` (`>&2`).
+* Berikan pesan error informatif: apa, mengapa, dan bagaimana memperbaiki.
+* Gunakan `exit N` dengan `N` non-nol setelah error.
+* Jalankan `shellcheck` dan `bash -n` sebelum *commit*.
+* Untuk skrip produksi, gunakan *logging* terstruktur (JSON, `logger`, atau `journalctl`).
+
+### **9. Potensi Kesalahan Umum & Solusi:**
+
+* **Mengandalkan `$?` setelah `set -e`:** Gunakan `if ! perintah; then ...` atau `perintah || { ... }`.
+* **Lupa mengutip perintah `trap`:** Gunakan kutipan tunggal: `trap 'echo pembersihan' EXIT` atau nama fungsi: `trap cleanup EXIT`.
+* **Cleanup ganda dari `INT`/`TERM`:** Paksa `exit` di handler sinyal.
+* **File sementara tidak dibersihkan pada `kill -9`:** Tidak dapat ditangkap. Gunakan `mktemp` dan desain idempoten.
+* **Pesan error bercampur dengan output data:** Selalu `>&2`.
+* **`pipefail` tanpa `set -e`:** Tidak akan menghentikan skrip. Gunakan bersamaan.
+* **Menggunakan `$$` untuk nama file sementara:** Rentan symlink attack. Gunakan `mktemp`.
+
+### **10. Latihan:**
+
+1. Buat skrip yang membuat direktori `/tmp/latihan3_1.$$`, menulis file di dalamnya, lalu membersihkannya dengan `trap`. Uji dengan `Ctrl+C`.
+2. Modifikasi agar skrip gagal dengan pesan kustom jika `$1` kosong (`${1:?...}`), dan panggil melalui `mktemp` untuk nama file sementara.
+3. Gunakan `PIPESTATUS` untuk memeriksa status setiap perintah pada `grep pola file | sort | uniq -c` dan cetak mana yang gagal.
+4. Jalankan `shellcheck` pada salah satu skrip lama Anda, perbaiki minimal 3 peringatan.
+
+-----
+
+## **Modul 3.2: Mem-parsing Argumen Baris Perintah**
+
+### **Struktur Pembelajaran Internal:**
+
+1. Filosofi Antarmuka Baris Perintah (CLI) yang Baik
+2. Argumen Posisi Sederhana (`$1`, `$@`, `$*`, `shift`)
+3. Menggunakan `getopts` untuk Parsing Opsi Singkat
+4. Menangani Opsi dengan dan tanpa Argumen
+5. Opsi Panjang (`--verbose`) dengan `getopt` GNU
+6. Fungsi `usage()` atau `help()`
+7. Akhiri Parsing Opsi dengan `--`
+8. Validasi Argumen yang Ketat
+9. Potensi Penambahan Materi: Parsing Manual untuk Kasus Khusus
+
+### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
+
+Anda akan belajar merancang skrip agar menerima instruksi dan konfigurasi dari pengguna melalui baris perintah, seperti `ls -l` atau `cp -r sumber tujuan`. Anda akan membedakan **opsi** (diawali `-`) dan **argumen posisi** (data yang diproses). Fokus pada `getopts` (bawaan Bash) dan `getopt` (GNU, untuk opsi panjang).
+
+Peran modul: meningkatkan **usability** dan **profesionalisme**. Skrip yang hanya bekerja dengan nilai *hardcoded* kurang fleksibel. Dengan mem-parsing argumen, skrip dapat digunakan non-interaktif, diintegrasikan dalam *pipeline* atau *cron*, dan diotomatisasi.
+
+### **2. Konsep Kunci & Filosofi Mendalam:**
+
+#### **2.1. Desain CLI yang Baik:**
+Konsisten dengan konvensi Unix (`-v` untuk *verbose*, `-h` untuk *help*), jelas, prediktif, dan fleksibel.
+
+#### **2.2. Pemisahan Konfigurasi dari Logika:**
+Konfigurasi lewat argumen memisahkan *data* dari *logika*, membuat skrip modular dan mudah di-*debug*.
+
+#### **2.3. Opsi vs. Argumen Posisi:**
+Opsi **mengubah perilaku**; argumen posisi adalah **data** yang dioperasikan.
+
+#### **2.4. Pentingnya `usage()`:**
+Setiap CLI harus menyediakan cara bagi pengguna untuk mengetahui cara menggunakannya, biasanya melalui `-h`/`--help` yang mencetak ke `stderr` dan `exit 1` (atau `0` jika diminta eksplisit).
+
+### **3. Sintaks Dasar / Contoh Implementasi Inti:**
+
+#### **3.1. Argumen Posisi Sederhana:**
+
+* `$0`: Nama skrip. `$1..$N`: Argumen posisi. `$#`: Jumlah argumen.
+* `$@`: Semua argumen sebagai string terpisah. **Direkomendasikan.**
+* `$*`: Semua argumen sebagai satu string. **Hindari** (masalah spasi).
+* `shift N`: Menggeser argumen posisi ke kiri sebanyak N.
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+echo "Nama skrip: $0"
 echo "Jumlah argumen: $#"
 
 if [[ $# -lt 2 ]]; then
@@ -436,7 +487,6 @@ fi
 
 NAMA_DEPAN="$1"
 NAMA_BELAKANG="$2"
-
 echo "Halo, $NAMA_DEPAN $NAMA_BELAKANG!"
 
 echo "Semua argumen (menggunakan \$@):"
@@ -444,496 +494,612 @@ for ARG in "$@"; do
   echo "  - $ARG"
 done
 
-# Contoh: Simulasikan memproses beberapa file
-shift 2 # Menghapus dua argumen pertama (nama depan dan belakang)
-echo "Argumen tersisa (setelah shift):"
+shift 2
+echo "Argumen tersisa setelah shift 2:"
 for FILE in "$@"; do
-  echo "Memproses file: $FILE"
+  echo "Memproses: $FILE"
 done
 ```
 
-* **`shift N`:** Perintah ini "menggeser" argumen posisi ke kiri. `shift 1` akan menghapus `$1` dan membuat `$2` menjadi `$1`, `$3` menjadi `$2`, dan seterusnya. `shift 2` akan menghapus dua argumen pertama. Ini berguna setelah memproses argumen posisi awal atau opsi.
+#### **3.2. Menggunakan `getopts` untuk Opsi Singkat:**
 
-#### **3.2. Menggunakan `getopts` untuk Parsing Opsi:**
-
-`getopts` adalah perintah bawaan Bash yang dirancang khusus untuk mem-parsing opsi singkat (satu karakter, diawali satu tanda hubung, misal `-a`, `-b`, `-c`). Ini adalah cara **yang direkomendasikan** untuk menangani opsi di skrip Bash karena ini *POSIX-compliant* dan kuat.
-
-**Sintaks Umum `getopts`:**
+**Sintaks:**
 
 ```bash
-while getopts "DAFTAR_OPSI" VAR_OPSI; do
+while getopts ":DAFTAR_OPSI" VAR_OPSI; do
   case "${VAR_OPSI}" in
-    opsi1)
-      # Kode untuk opsi1
-      ;;
-    opsi2)
-      # Kode untuk opsi2
-      ;;
-    :) # Menangani opsi yang membutuhkan argumen tetapi tidak diberi
-      echo "Error: Opsi -${OPTARG} memerlukan argumen." >&2
-      usage # Panggil fungsi usage
-      ;;
-    ?) # Menangani opsi yang tidak valid
-      echo "Error: Opsi tidak valid: -${OPTARG}." >&2
-      usage # Panggil fungsi usage
-      ;;
+    a) ... ;;
+    b) ... ; VARIABEL="${OPTARG}" ;;
+    :) echo "Error: Opsi -${OPTARG} butuh argumen." >&2; usage ;;
+    \?) echo "Error: Opsi tidak valid: -${OPTARG}." >&2; usage ;;
   esac
 done
+shift $((OPTIND - 1))
 ```
 
-**Penjelasan `DAFTAR_OPSI`:**
+* Titik dua di awal (`:`): mode *silent error reporting*.
+* Titik dua setelah huruf (mis. `o:`): opsi membutuhkan argumen.
+* `OPTARG`: Nilai argumen opsi.
+* `OPTIND`: Indeks argumen berikutnya (untuk `shift`).
 
-* Setiap huruf dalam `DAFTAR_OPSI` mewakili sebuah opsi yang valid (misalnya, `ab:c` berarti `-a`, `-b`, `-c`).
-* Jika sebuah huruf diikuti oleh titik dua (`:`), itu berarti opsi tersebut **membutuhkan argumen**. Contoh: `b:` berarti `-b nilai`.
-* Jika daftar opsi dimulai dengan titik dua (`:`), seperti `:ab:c`, ini mengubah perilaku `getopts` ke "silent error reporting". Ini memungkinkan kita untuk menangani error secara manual menggunakan `case` untuk `:)` dan `?)`. Ini adalah **praktik terbaik**.
-
-**Variabel Khusus `getopts`:**
-
-* `OPTIND`: Indeks dari argumen baris perintah berikutnya yang akan diproses. Berguna setelah `getopts` selesai untuk menemukan argumen posisi yang tersisa.
-* `OPTARG`: Berisi argumen yang diberikan ke opsi (jika opsi membutuhkan argumen).
-* `VAR_OPSI`: Variabel yang Anda tentukan sendiri dalam `while getopts`, yang akan berisi opsi yang ditemukan (`a`, `b`, `c`, dll.) dalam setiap iterasi.
-
-**Contoh Utama:**
+**Contoh Lengkap dengan `-h`, `--`, dan Validasi:**
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 
-# Fungsi usage untuk menampilkan bantuan
-usage() {
-  echo "Penggunaan: $0 [-v] [-o FILE_OUTPUT] <file_input>"
-  echo "  -v            : Mode verbose (menampilkan lebih banyak detail)."
-  echo "  -o FILE_OUTPUT: Tentukan file output (default: output.txt)."
-  echo "  <file_input>  : File input yang wajib diproses."
-  exit 1
-}
-
-# Inisialisasi variabel default
 VERBOSE=0
 OUTPUT_FILE="output.txt"
-INPUT_FILE="" # Ini akan menjadi argumen posisi setelah opsi
+INPUT_FILE=""
 
-# Parsing opsi menggunakan getopts. Titik dua di awal untuk penanganan error kustom.
-while getopts ":vo:" opt; do
+usage() {
+  cat >&2 <<EOF
+Penggunaan: $0 [-v] [-h] [-o FILE_OUTPUT] [--] <file_input>...
+
+  -v              Mode verbose.
+  -h              Tampilkan bantuan ini.
+  -o FILE_OUTPUT  File output (default: output.txt).
+  --              Akhiri parsing opsi (untuk file yang diawali '-').
+  <file_input>    Satu atau lebih file input (wajib).
+
+Contoh:
+  $0 -v -o hasil.log data1.txt data2.txt
+  $0 -- -file_yang_diawali_dash.txt
+EOF
+  exit "${1:-1}"
+}
+
+while getopts ":vho:" opt; do
   case "${opt}" in
-    v)
-      VERBOSE=1
-      ;;
-    o)
-      OUTPUT_FILE="${OPTARG}"
-      ;;
+    v) VERBOSE=1 ;;
+    h) usage 0 ;;
+    o) OUTPUT_FILE="${OPTARG}" ;;
     :)
       echo "Error: Opsi -${OPTARG} memerlukan argumen." >&2
       usage
       ;;
-    ?)
+    \?)
       echo "Error: Opsi tidak valid: -${OPTARG}." >&2
       usage
       ;;
   esac
 done
-
-# 'shift' argumen posisi sebanyak opsi yang telah diproses oleh getopts.
-# Ini akan membuat argumen posisi yang tersisa dimulai dari $1 lagi.
 shift $((OPTIND - 1))
 
-# Argumen posisi pertama yang tersisa adalah INPUT_FILE
-INPUT_FILE="${1:-}" # Gunakan ${1:-} untuk menghindari error jika tidak ada argumen
-
-# Validasi input_file wajib
-if [[ -z "$INPUT_FILE" ]]; then
-  echo "Error: File input wajib ditentukan." >&2
+# '--' sudah ditangani getopts secara otomatis (argumen setelah '--' tetap ada)
+if [[ $# -lt 1 ]]; then
+  echo "Error: Minimal satu file input wajib ditentukan." >&2
   usage
 fi
 
-# Tampilkan hasil parsing
 if [[ "$VERBOSE" -eq 1 ]]; then
-  echo "Mode Verbose: Aktif"
+  echo "Mode verbose aktif." >&2
 fi
-echo "File Input: $INPUT_FILE"
-echo "File Output: $OUTPUT_FILE"
 
-# Simulasikan pekerjaan
-echo "Memproses data dari '$INPUT_FILE' dan menulis ke '$OUTPUT_FILE'..."
-echo "Ini adalah contoh output." > "$OUTPUT_FILE"
-echo "Selesai."
+for INPUT_FILE in "$@"; do
+  if [[ ! -r "$INPUT_FILE" ]]; then
+    echo "Error: File '$INPUT_FILE' tidak dapat dibaca." >&2
+    exit 1
+  fi
+  echo "Memproses: $INPUT_FILE"
+done
+
+echo "Menulis output ke: $OUTPUT_FILE"
+: > "$OUTPUT_FILE"   # Contoh: kosongkan file output
 ```
 
-* **Cara Menjalankan Contoh:**
-  * `./script.sh` (akan error karena `-z "$INPUT_FILE"`)
-  * `./script.sh my_data.txt`
-  * `./script.sh -v my_data.txt`
-  * `./script.sh -o result.log my_data.txt`
-  * `./script.sh -v -o result.log my_data.txt`
-  * `./script.sh my_data.txt -v -o result.log` (urutan opsi tidak masalah dengan `getopts`)
-  * `./script.sh -o my_data.txt` (akan error karena -o membutuhkan argumen)
-  * `./script.sh -x my_data.txt` (akan error karena -x bukan opsi valid)
+* **Cara menjalankan (uji semua skenario):**
+  ```bash
+  chmod +x script.sh
+  ./script.sh -h
+  ./script.sh file.txt
+  ./script.sh -v file.txt
+  ./script.sh -o hasil.log file.txt
+  ./script.sh -x file.txt                 # Error: opsi tidak valid
+  ./script.sh -o                          # Error: opsi butuh argumen
+  ./script.sh -- -file.txt                # Memproses file yang diawali '-'
+  ```
 
-#### **3.3. Menulis Fungsi `usage()` atau `help()`:**
+#### **3.3. Opsi Panjang dengan `getopt` GNU:**
 
-Fungsi ini adalah standar untuk memberikan informasi bantuan kepada pengguna. Ia harus mencetak *string* penggunaan (bagaimana skrip dipanggil dan opsi apa yang tersedia) ke `stderr` dan kemudian keluar dengan status error (misal `exit 1`).
+`getopts` tidak mendukung opsi panjang. Untuk `--verbose`, gunakan `getopt` GNU (perhatikan tanpa `s`).
 
-* Lihat contoh di atas untuk implementasi lengkap dari fungsi `usage()`.
-* Penting: Gunakan `>&2` untuk mengarahkan *output* `usage` ke *stderr*.
+**Sintaks `getopt`:**
 
-### **5. Terminologi Kunci:**
+```bash
+getopt -o vo:h --long verbose,output:,help -n "$0" -- "$@"
+```
 
-* **Argumen Baris Perintah (Command-Line Arguments):** Informasi yang dilewatkan ke skrip saat dieksekusi dari terminal.
-* **Opsi (Option/Flag):** Argumen yang diawali dengan tanda hubung (`-` atau `--`) yang mengubah perilaku skrip.
-* **Argumen (Argument):** Nilai yang diberikan ke sebuah opsi (misal, nama file setelah `-f`) atau argumen posisi.
-* **Argumen Posisi (Positional Argument):** Argumen yang posisinya menentukan maknanya (misal, `$1`, `$2`).
-* **`getopts`:** Perintah bawaan Bash untuk mem-parsing opsi baris perintah (`-a`, `-b val`). Cocok untuk opsi karakter tunggal.
-* **`OPTIND`:** Variabel khusus yang dikelola oleh `getopts`. Berisi indeks dari argumen berikutnya yang akan diproses di `ARGV` (array argumen internal Bash).
-* **`OPTARG`:** Variabel khusus yang dikelola oleh `getopts`. Berisi argumen yang diberikan ke opsi yang membutuhkan nilai (misalnya, `filename` jika opsi adalah `-f filename`).
-* **`usage()` / `help()` function:** Fungsi umum dalam skrip yang mencetak pesan tentang cara menggunakan skrip (opsi, argumen) dan kemudian keluar.
-* **`shift`:** Perintah bawaan Bash yang menggeser argumen posisi ke kiri (misalnya, `$2` menjadi `$1`). Berguna untuk menghapus opsi yang sudah diproses agar argumen posisi non-opsi dapat diakses sebagai `$1`, `$2`, dst.
-* **POSIX-compliant:** Mengikuti standar Portable Operating System Interface. Perintah atau fitur yang *POSIX-compliant* akan bekerja di berbagai *shell* yang berbeda (Bash, Zsh, Dash) dan sistem Unix.
+* `-o vo:h`: opsi singkat (`v`, `o:`, `h`).
+* `--long verbose,output:,help`: opsi panjang (`output:` butuh argumen).
+* `-n "$0"`: nama program untuk pesan error.
+* `-- "$@"`: pemisah dan argumen.
+* `eval set --` untuk mengatur ulang argumen posisi.
+
+**Contoh:**
+
+```bash
+#!/bin/bash
+set -euo pipefail
+
+VERBOSE=0
+OUTPUT_FILE="output.txt"
+
+usage() {
+  cat >&2 <<EOF
+Penggunaan: $0 [-v|--verbose] [-h|--help] [-o FILE|--output FILE] [--] <file>...
+EOF
+  exit 1
+}
+
+# Parsing dengan getopt GNU
+PARSED=$(getopt -o vho: --long verbose,help,output: -n "$0" -- "$@") || {
+  echo "Error: parsing argumen gagal." >&2
+  usage
+}
+eval set -- "$PARSED"
+
+while true; do
+  case "$1" in
+    -v|--verbose) VERBOSE=1; shift ;;
+    -h|--help)    usage ;;
+    -o|--output)  OUTPUT_FILE="$2"; shift 2 ;;
+    --)           shift; break ;;
+    *)
+      echo "Error: opsi tidak terduga: $1" >&2
+      usage
+      ;;
+  esac
+done
+
+if [[ $# -lt 1 ]]; then
+  echo "Error: minimal satu file input." >&2
+  usage
+fi
+
+echo "Verbose: $VERBOSE, Output: $OUTPUT_FILE"
+for f in "$@"; do
+  echo "File: $f"
+done
+```
+
+* **Catatan:** `getopt` GNU tidak tersedia secara *default* di macOS. Di sana, gunakan `getopts` atau parsing manual.
+
+#### **3.4. Validasi Argumen yang Ketat:**
+
+```bash
+validate_file() {
+  local f="$1"
+  if [[ ! -e "$f" ]]; then
+    echo "Error: '$f' tidak ada." >&2
+    return 1
+  fi
+  if [[ ! -f "$f" ]]; then
+    echo "Error: '$f' bukan file reguler." >&2
+    return 1
+  fi
+  if [[ ! -r "$f" ]]; then
+    echo "Error: '$f' tidak dapat dibaca." >&2
+    return 1
+  fi
+  return 0
+}
+```
+
+### **4. Terminologi Kunci:**
+
+* **Argumen Baris Perintah:** Informasi yang dilewatkan ke skrip saat eksekusi.
+* **Opsi (Option/Flag):** Argumen dengan awalan `-`/`--` yang mengubah perilaku.
+* **Argumen Posisi:** Argumen yang maknanya ditentukan posisinya.
+* **`getopts`:** Bawaan Bash untuk opsi singkat, POSIX-compliant.
+* **`getopt`:** Program eksternal (GNU) yang mendukung opsi panjang dan penggabungan.
+* **`OPTIND`, `OPTARG`:** Variabel khusus `getopts`.
+* **`usage()`/`help()`:** Fungsi untuk mencetak cara pakai.
+* **`shift`:** Menggeser argumen posisi ke kiri.
+* **`--`:** Penanda akhir parsing opsi.
+* **POSIX-compliant:** Mengikuti standar POSIX (portabel antar shell Unix).
+
+### **5. Rekomendasi Visualisasi:**
+
+* **Diagram Alur Parsing:** Skrip menerima `$@` → `getopts` mengiterasi → setiap opsi disimpan dalam variabel → `shift $((OPTIND-1))` → argumen posisi diproses.
+* **Tabel Perbandingan `getopts` vs `getopt`.**
 
 ### **6. Hubungan dengan Modul Lain:**
 
-Modul ini secara langsung membangun di atas **Modul 1.3 (Variabel dan Ekspansi)** untuk mengakses argumen posisi dan **Modul 2.3 (Fungsi)** untuk mengimplementasikan fungsi `usage()`. Penerapan **Modul 3.1 (Penanganan Kesalahan)** sangat penting di sini, karena Anda perlu memvalidasi argumen yang diterima dan keluar dengan status error jika argumen tidak valid atau ada yang hilang. Mem-parsing argumen adalah fondasi untuk skrip yang lebih kompleks di Fase 3 dan 4 yang memerlukan input dari pengguna, seperti skrip *backup* yang menerima direktori sumber dan tujuan, atau skrip *deploy* yang menerima nama lingkungan.
+Membangun di atas **Modul 1.3 (Variabel & Ekspansi)** dan **Modul 2.3 (Fungsi)**. **Modul 3.1 (Error Handling)** sangat penting untuk memvalidasi argumen. Fondasi untuk skrip kompleks di **Fase 3–4** (backup, deploy, parsing data).
 
 ### **7. Sumber Referensi Lengkap:**
 
-* **Parsing command-line arguments in Bash (Stack Abuse):** [https://stackabuse.com/how-to-parse-command-line-arguments-in-bash/](https://stackabuse.com/how-to-parse-command-line-arguments-in-bash/)
-  * **Detail:** Menyediakan ikhtisar yang baik tentang argumen posisi dan penggunaan `getopts` dengan contoh yang jelas.
-* **Greg's Wiki - BashFAQ/035 (getopts):** [https://mywiki.wooledge.org/BashFAQ/035](https://mywiki.wooledge.org/BashFAQ/035)
-  * **Detail:** Sumber daya yang sangat direkomendasikan yang membahas penggunaan `getopts` secara mendalam, termasuk praktik terbaik dan penanganan kasus-kasus khusus.
-* **Bash Manual: getopts:** [https://www.gnu.org/software/bash/manual/bash.html\#getopts](https://www.gnu.org/software/bash/manual/bash.html%23getopts)
-  * **Detail Tambahan (opsional):** Dokumentasi resmi Bash untuk perintah `getopts`.
-* **Bash Manual: Shell Parameters:** [https://www.gnu.org/software/bash/manual/bash.html\#Shell-Parameters](https://www.gnu.org/software/bash/manual/bash.html%23Shell-Parameters)
-  * **Detail Tambahan (opsional):** Bagian dari manual Bash yang menjelaskan variabel parameter *shell* (termasuk `$1`, `$@`, `$#`, dll.).
+* **Parsing command-line arguments in Bash (Stack Abuse):** <https://stackabuse.com/how-to-parse-command-line-arguments-in-bash/>
+* **Greg's Wiki - BashFAQ/035:** <https://mywiki.wooledge.org/BashFAQ/035>
+* **Bash Manual: getopts:** <https://www.gnu.org/software/bash/manual/bash.html#getopts>
+* **Bash Manual: Shell Parameters:** <https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameters>
+* **util-linux getopt(1):** <https://man7.org/linux/man-pages/man1/getopt.1.html>
 
 ### **8. Tips dan Praktik Terbaik:**
 
-* **Prioritaskan `getopts`:** Untuk opsi karakter tunggal, `getopts` adalah pilihan terbaik karena merupakan bawaan Bash (tidak memerlukan program eksternal) dan *POSIX-compliant*.
-* **Gunakan `shift` Setelah `getopts`:** Setelah perulangan `while getopts` selesai, gunakan `shift $((OPTIND - 1))` untuk menghapus semua opsi dan argumennya dari daftar argumen posisi (`$@`). Ini akan membuat argumen posisi yang tersisa (misalnya, nama file input) menjadi `$1`, `$2`, dst., yang lebih mudah diakses.
-* **Implementasikan `usage()`:** Selalu sertakan fungsi `usage()` atau `help()` yang jelas. Panggil fungsi ini jika pengguna memberikan opsi tidak valid, melewatkan argumen wajib, atau meminta bantuan (`-h`). Pastikan *output*-nya ke `stderr`.
-* **Validasi Argumen:** Jangan berasumsi argumen valid. Selalu validasi input pengguna (misalnya, apakah file ada, apakah angka benar). Ini sangat penting untuk keamanan dan keandalan skrip.
-* **Kutip Variabel:** Selalu kutip ganda variabel yang berisi argumen (`"$OPTARG"`, `"$1"`) untuk menghindari masalah dengan spasi atau karakter khusus.
+* Prioritaskan `getopts` untuk opsi singkat; gunakan `getopt` GNU hanya jika butuh opsi panjang dan Anda dapat mengandalkan keberadaannya.
+* Selalu `shift $((OPTIND - 1))` setelah `getopts`.
+* Implementasikan `usage()` yang jelas, panggil dari `-h` dan dari kondisi error.
+* Validasi setiap argumen: keberadaan, tipe (file/direktori), izin.
+* Kutip ganda variabel argumen (`"$OPTARG"`, `"$1"`, `"$@"`).
+* Gunakan `--` untuk mengakhiri opsi.
+* Berikan pesan error ke `stderr` dan `exit` dengan kode non-nol.
 
 ### **9. Potensi Kesalahan Umum & Solusi:**
 
-* **Kesalahan:** Menggunakan `getopts` tanpa `shift $((OPTIND - 1))`.
-  * **Penyebab:** Setelah `getopts` selesai memproses opsi, variabel posisi (`$1`, `$2`, dst.) masih akan menunjuk ke opsi dan argumennya. Ini membuat sulit untuk mengakses argumen posisi yang sebenarnya (non-opsi) setelahnya.
-  * **Solusi:** Selalu tambahkan `shift $((OPTIND - 1))` setelah blok `while getopts` selesai. Ini akan memindahkan `OPTIND-1` posisi ke kiri, sehingga argumen non-opsi pertama menjadi `$1`.
-* **Kesalahan:** Lupa titik dua di awal daftar opsi `getopts` (`while getopts "vo:" ...`).
-  * **Penyebab:** Tanpa titik dua di awal, `getopts` akan mencetak pesan errornya sendiri ke `stderr` dan `VAR_OPSI` akan berisi `?` untuk opsi tidak valid atau `.` untuk opsi yang membutuhkan argumen tapi tidak diberi. Ini membuat penanganan error kustom dalam `case` tidak berfungsi seperti yang diharapkan.
-  * **Solusi:** Selalu mulai daftar opsi `getopts` dengan titik dua (`:`) seperti `while getopts ":vo:" opt; do`. Ini mengaktifkan mode *silent error reporting* dan memungkinkan Anda mengendalikan pesan error.
-* **Kesalahan:** Menggunakan `getopt` (dengan satu `t`) daripada `getopts` (dengan `ts`).
-  * **Penyebab:** `getopt` adalah program eksternal (seringkali versi GNU), sedangkan `getopts` adalah bawaan Bash. Mereka memiliki sintaks dan perilaku yang berbeda. `getopt` lebih kompleks tetapi mendukung opsi panjang (`--verbose`).
-  * **Solusi:** Untuk modul ini, fokuslah pada `getopts`. Jika Anda benar-benar membutuhkan opsi panjang, Anda perlu mempelajari `getopt` atau parsing manual (yang lebih rumit).
-* **Kesalahan:** Tidak menangani argumen wajib.
-  * **Penyebab:** Skrip tidak memverifikasi apakah semua argumen atau opsi wajib telah disediakan.
-  * **Solusi:** Setelah parsing `getopts` dan `shift`, periksa apakah variabel untuk argumen wajib kosong atau tidak (misal, `if [[ -z "$INPUT_FILE" ]]; then usage; fi`).
+* **Lupa `shift $((OPTIND - 1))`:** Argumen posisi masih berisi opsi. Tambahkan setelah loop `getopts`.
+* **Lupa titik dua di awal daftar opsi `getopts`:** Gunakan `":vo:"` untuk penanganan error kustom.
+* **Keliru `getopt` vs `getopts`:** `getopt` (GNU) untuk opsi panjang; `getopts` bawaan untuk singkat.
+* **Tidak memvalidasi argumen wajib:** Periksa setelah `shift`.
+* **Menggunakan `getopt` di sistem non-GNU:** Sediakan fallback.
+* **Tidak menangani `--`:** Argumen yang diawali `-` gagal diproses.
 
------
+### **10. Latihan:**
 
-Anda kini telah menguasai cara mem-parsing argumen baris perintah, sebuah kemampuan penting untuk membuat skrip Bash Anda lebih interaktif dan profesional.
-
-Modul berikut ini akan membuka pintu untuk kemampuan manipulasi teks yang sangat kuat, esensial dalam lingkungan Unix/Linux.
-
------
-
-**Tujuan Fase:** Mengubah skrip sederhana menjadi alat yang kuat, aman, dan siap produksi dengan penanganan kesalahan yang baik, antarmuka pengguna yang layak, dan praktik terbaik.
+1. Buat skrip `ganti_nama.sh` yang menerima `-d DIREKTORI`, `-p POLA`, dan `-v` untuk verbose. Wajib ada argumen posisi berupa nama file target.
+2. Tambahkan `--help` dan `--verbose` menggunakan `getopt` GNU.
+3. Uji bahwa `./ganti_nama.sh -- -file-aneh.txt` tetap memproses `-file-aneh.txt` dengan benar.
 
 -----
 
 ## **Modul 3.3: Ekspresi Reguler (Regex) dan Manipulasi Teks Tingkat Lanjut**
 
-### **Struktur Pembelajaran Internal (Struktur Daftar Isi):**
+### **Struktur Pembelajaran Internal:**
 
 1. Filosofi "Teks adalah Antarmuka Universal"
-2. Pengenalan Ekspresi Reguler (Regex)
-3. Alat Baris Perintah untuk Regex: `grep`, `sed`, `awk`
-4. Pola Dasar Regex: Karakter Literal, Metacharacter, Kuantifier
-5. Kelompok (Groups) dan Referensi Balik (Backreferences)
-6. Manipulasi Teks Tingkat Lanjut dengan `sed` dan `awk`
-7. Potensi Penambahan Materi: PCRE (Perl Compatible Regular Expressions), *Lookarounds*
+2. Pengenalan Regex: BRE, ERE, PCRE
+3. Pola Dasar: Literal, Metacharacter, Kuantifier, Kelas Karakter POSIX
+4. `grep` Mendalam: `-o`, `-c`, `-q`, `-A/-B/-C`, `-P`, `-z`
+5. `sed` Mendalam: `-i`, alamat, `c`/`i`/`a`, sintaks portabel
+6. `awk` Mendalam: Array Asosiatif, `printf`, Kontrol Alur
+7. Kelompok, Referensi Balik, dan `[[ =~ ]]`
+8. Toolkit Manipulasi Teks: `cut`, `sort`, `uniq`, `tr`, `xargs`, `find -print0`
+9. Potensi Penambahan Materi: `lookarounds`, PCRE, `ripgrep`
 
 ### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
 
-Modul ini adalah tentang menguasai seni dan ilmu **Ekspresi Reguler (Regex)**, sebuah bahasa mini untuk pencocokan dan manipulasi pola teks yang sangat kuat. Anda akan belajar bagaimana menggunakan Regex dengan alat-alat baris perintah klasik Unix seperti `grep` (untuk mencari), `sed` (untuk mengedit), dan `awk` (untuk pemrosesan teks berbasis kolom). Ini adalah keterampilan kunci yang diperlukan untuk analisis log, *parsing* *output*, ekstraksi data, dan transformasi format teks.
+Modul ini tentang seni **Ekspresi Reguler (Regex)** dan alat manipulasi teks klasik Unix (`grep`, `sed`, `awk`) plus toolkit pendukung (`cut`, `sort`, `uniq`, `tr`, `xargs`). Ini adalah keterampilan inti untuk analisis log, *parsing* output, ekstraksi data, dan transformasi format.
 
-Peran modul ini sangat sentral dalam shell scripting. Ingat "Unix Philosophy" dari Modul 1.1: "Tulis program untuk menangani aliran teks, karena itu adalah antarmuka universal." Regex adalah jembatan yang memungkinkan Anda untuk benar-benar memanfaatkan filosofi ini. Banyak data yang akan Anda proses di lingkungan server, *log* sistem, *output* perintah, dan bahkan kode sumber, semuanya adalah teks. Menguasai Regex memungkinkan Anda untuk mengekstrak informasi spesifik, memfilter data, atau mengubahnya ke format yang diinginkan dengan presisi dan efisiensi yang luar biasa. Dalam konteks pemrograman, kemampuan ini mirip dengan penanganan *string* yang canggih di Dart atau bahasa lain, tetapi dilakukan langsung di baris perintah.
+Filosofi Unix: "Tulis program untuk menangani aliran teks, karena itu adalah antarmuka universal." Regex adalah jembatan untuk memanfaatkan filosofi ini.
 
 ### **2. Konsep Kunci & Filosofi Mendalam:**
 
 #### **2.1. Teks sebagai Antarmuka Universal:**
-
-Ini adalah salah satu pilar filosofi Unix. Hampir semua *output* program di Unix/Linux adalah teks. Ini memungkinkan Anda untuk "merangkai" program bersama-sama menggunakan *pipes* dan menggunakan alat-alat standar yang bekerja dengan teks untuk memproses data dari berbagai sumber. Regex adalah kunci untuk membuka potensi penuh dari antarmuka teks ini.
+Hampir semua output program Unix adalah teks, memungkinkan penggabungan via *pipe*.
 
 #### **2.2. Pola, Bukan Pencarian Literal:**
+Regex mendefinisikan *struktur*, bukan *string* spesifik.
 
-Regex bukan hanya tentang mencari *string* yang sama persis. Ini tentang mendefinisikan *pola* yang cocok dengan banyak *string* yang berbeda tetapi memiliki struktur yang sama. Misalnya, Anda bisa mencari semua alamat IP, semua tanggal dalam format tertentu, atau semua baris yang dimulai dengan kata tertentu dan diakhiri dengan angka. Ini memberikan kekuatan dan fleksibilitas yang luar biasa dalam memproses data yang tidak terstruktur atau semi-terstruktur.
+#### **2.3. Tiga Rasa Regex:**
+* **BRE (Basic Regular Expression):** Default `grep` dan `sed`. Meta `+`, `?`, `|`, `()`, `{}` harus di-*escape*.
+* **ERE (Extended Regular Expression):** `grep -E`, `sed -E`. Meta di atas aktif secara langsung. **Direkomendasikan.**
+* **PCRE (Perl Compatible Regular Expression):** `grep -P`, `ripgrep`. Mendukung *lookaround*, *backreference* di dalam pola, `\d`, `\w`, dll.
 
-#### **2.3. Efisiensi dan Otomasi:**
-
-Meskipun Regex bisa terlihat kompleks pada awalnya, begitu Anda menguasainya, Anda dapat menyelesaikan tugas manipulasi teks yang rumit dalam satu baris perintah (atau beberapa baris dalam skrip) yang akan membutuhkan banyak baris kode di bahasa pemrograman lain. Ini sangat meningkatkan efisiensi dan mempercepat proses otomasi.
-
-#### **2.4. `grep`, `sed`, dan `awk`: Tiga Pilar Manipulasi Teks:**
-
-Ketiga alat ini adalah *workhorse* di dunia Unix:
-
-* **`grep`:** Dirancang untuk *mencari* baris yang cocok dengan pola Regex dan menampilkannya. (Filter)
-* **`sed`:** Dirancang untuk *mengedit* aliran teks baris per baris. Paling sering digunakan untuk substitusi (mengganti satu pola dengan pola lain). (Editor Stream)
-* **`awk`:** Lebih dari sekadar editor, `awk` adalah bahasa pemrograman kecil yang dirancang untuk *memproses teks berbasis kolom* atau bidang. Sangat kuat untuk ekstraksi dan pelaporan data. (Prosesor Berorientasi Kolom)
+#### **2.4. `grep`, `sed`, `awk` — Tiga Pilar:**
+* `grep`: *filter* baris.
+* `sed`: *editor* aliran baris-per-baris.
+* `awk`: *prosesor* berbasis kolom dan bahasa pemrograman mini.
 
 ### **3. Sintaks Dasar / Contoh Implementasi Inti:**
 
-#### **3.1. Pengenalan Ekspresi Reguler (Regex):**
+#### **3.1. Metacharacter dan Kelas POSIX:**
 
-Regex adalah urutan karakter yang membentuk pola pencarian.
+* `.` : sembarang karakter (kecuali newline)
+* `*` : 0 atau lebih
+* `+` : 1 atau lebih (ERE)
+* `?` : 0 atau 1 (ERE)
+* `^`, `$`: awal/akhir baris
+* `[]`: kelas karakter; `[^...]`: negasi
+* `|` : OR (ERE)
+* `()`: grup (ERE)
+* `\` : escape
 
-* **Karakter Literal:** Cocok dengan dirinya sendiri (misal, `a` cocok dengan `a`).
-* **Metacharacter:** Karakter dengan makna khusus.
-  * `.` (titik): Cocok dengan karakter tunggal apa pun (kecuali *newline*).
-  * `*` (asterisk): Cocok dengan 0 atau lebih dari karakter/grup sebelumnya.
-  * `+` (plus): Cocok dengan 1 atau lebih dari karakter/grup sebelumnya.
-  * `?` (tanda tanya): Cocok dengan 0 atau 1 dari karakter/grup sebelumnya.
-  * `^` (caret): Cocok dengan awal baris.
-  * `$` (dollar): Cocok dengan akhir baris.
-  * `[ ]` (kurung siku): Cocok dengan salah satu karakter di dalamnya (misal, `[abc]` cocok dengan `a`, `b`, atau `c`).
-    * `[a-z]`: Rentang huruf kecil.
-    * `[0-9]`: Rentang digit.
-    * `[^...]`: Negasi (cocok dengan karakter apa pun *kecuali* yang ada di dalamnya).
-  * `|` (pipa): OR logis (misal, `apel|jeruk` cocok dengan `apel` atau `jeruk`).
-  * `(` `)` (kurung): Mengelompokkan pola.
-  * `\` (backslash): Meng-escape metacharacter (misal, `\.` cocok dengan titik literal).
+**Kelas POSIX:**
 
-**Contoh Umum:**
+| Kelas | Padanan |
+|---|---|
+| `[[:digit:]]` | `[0-9]` |
+| `[[:alpha:]]` | `[A-Za-z]` |
+| `[[:alnum:]]` | `[A-Za-z0-9]` |
+| `[[:space:]]` | spasi, tab, newline |
+| `[[:upper:]]`, `[[:lower:]]` | huruf besar/kecil |
+| `[[:punct:]]` | tanda baca |
+| `[[:xdigit:]]` | digit heksadesimal |
 
-* `^From`: Baris yang dimulai dengan "From".
-* `[0-9]{3}-[0-9]{3}-[0-9]{4}`: Pola nomor telepon (misal, `123-456-7890`).
-* `[A-Za-z]+`: Satu atau lebih huruf.
-* `.*`: Cocok dengan semua karakter hingga akhir baris.
+Kelas POSIX bersifat *locale-aware*, jadi lebih aman daripada rentang eksplisit.
 
-#### **3.2. Menggunakan Regex dengan `grep`:**
+#### **3.2. `grep` Mendalam:**
 
-`grep` (Global Regular Expression Print) mencari baris yang cocok dengan pola.
+```bash
+#!/bin/bash
+set -euo pipefail
+LOG=/tmp/latihan_grep.log
+
+cat > "$LOG" <<'EOF'
+2024-01-01 INFO  User login: alice
+2024-01-01 ERROR Koneksi ke database gagal
+2024-01-02 INFO  User login: bob
+2024-01-02 WARN  Memori rendah
+2024-01-03 ERROR Timeout pada request
+2024-01-03 INFO  Proses selesai
+EOF
+
+echo "1) -c: hitung baris ERROR"
+grep -c 'ERROR' "$LOG"          # Output: 2
+
+echo "2) -o: cetak hanya yang cocok"
+grep -oE '[A-Z]+' "$LOG"        # INFO, ERROR, ...
+
+echo "3) -q: silent (exit status saja)"
+if grep -q 'CRITICAL' "$LOG"; then
+  echo "Ada CRITICAL"
+else
+  echo "Tidak ada CRITICAL (exit $?)"   # Output: Tidak ada CRITICAL (exit 1)
+fi
+
+echo "4) -A/-B/-C: konteks"
+grep -B1 -A1 'WARN' "$LOG"
+
+echo "5) -P (PCRE): lookbehind"
+grep -oP '(?<=User login: )\w+' "$LOG"   # alice, bob
+
+echo "6) -r: rekursif"
+# grep -rn 'TODO' ./src
+
+echo "7) -z: null-separated (untuk file dengan newline dalam nama)"
+# find . -print0 | grep -z 'pola'
+
+rm -f "$LOG"
+```
+
+* **Opsi penting lain:** `-i` (case-insensitive), `-v` (invert), `-n` (nomor baris), `-l` (nama file saja), `-L` (nama file yang tidak cocok), `-w` (whole word), `-x` (whole line).
+
+#### **3.3. `sed` Mendalam:**
+
+```bash
+#!/bin/bash
+set -euo pipefail
+F=/tmp/latihan_sed.txt
+cat > "$F" <<'EOF'
+apel,jeruk,mangga
+anggur,pisang
+apel,anggur
+EOF
+
+echo "1) substitusi global: koma -> spasi"
+sed 's/,/ /g' "$F"
+
+echo "2) hapus baris berisi 'anggur'"
+sed '/anggur/d' "$F"
+
+echo "3) -i: edit in-place dengan backup .bak"
+cp "$F" "$F.orig"
+sed -i.bak 's/apel/APEL/g' "$F"
+cat "$F"
+# Sekarang $F sudah berubah, $F.bak berisi versi lama
+
+echo "4) -n dan p: cetak hanya baris yang cocok"
+sed -n '/jeruk/p' "$F.orig"
+
+echo "5) ganti seluruh baris (c)"
+sed '/^apel/c Baris APEL diganti' "$F.orig"
+
+echo "6) sisipkan sebelum (i) dan setelah (a) - sintaks portabel GNU"
+sed '/^anggur/i\--- Sebelum anggur ---' "$F.orig"
+sed '/^anggur/a\--- Setelah anggur ---' "$F.orig"
+
+echo "7) referensi balik: tukar dua kolom"
+sed -E 's/^([^,]+),([^,]+)/\2,\1/' "$F.orig"
+
+rm -f "$F" "$F.orig" "$F.bak"
+```
+
+* **Catatan Portabilitas:** Sintaks `i\`, `a\`, dan `c\` berbeda antara GNU `sed` (Linux) dan BSD `sed` (macOS). Di BSD/macOS, biasanya `sed -i ''` dan sintaks `i\` harus diikuti newline literal. Untuk skrip portabel, gunakan pendekatan berbasis `awk` atau `perl`.
+* **`-i` pada macOS:** Gunakan `sed -i '' 's/a/b/'` (perhatikan argumen kosong).
+
+#### **3.4. `awk` Mendalam:**
+
+```bash
+#!/bin/bash
+set -euo pipefail
+DATA=/tmp/latihan_awk.csv
+cat > "$DATA" <<'EOF'
+nama,usia,kota
+Andi,30,Jakarta
+Budi,25,Bandung
+Citra,35,Surabaya
+Dewi,28,Jakarta
+EOF
+
+echo "1) Filter kolom: usia > 28"
+awk -F',' 'NR>1 && $2>28 { print $1, $2 }' "$DATA"
+
+echo "2) printf untuk format rapi"
+awk -F',' 'NR>1 { printf "%-8s %3d %s\n", $1, $2, $3 }' "$DATA"
+
+echo "3) Array asosiatif: hitung per kota"
+awk -F',' 'NR>1 { kota[$3]++ }
+           END { for (k in kota) printf "%s: %d\n", k, kota[k] }' "$DATA"
+
+echo "4) Kontrol alur dan fungsi"
+awk -F',' 'NR>1 {
+  if ($2 > 30) kategori="senior"; else kategori="junior";
+  print $1, "=>", kategori
+}' "$DATA"
+
+echo "5) Total dan rata-rata"
+awk -F',' 'NR>1 { sum+=$2; n++ }
+           END { printf "Total=%d Rata-rata=%.2f\n", sum, sum/n }' "$DATA"
+
+echo "6) Ganti delimiter output dengan -v OFS"
+awk -F',' -v OFS='|' 'NR>1 { print $3, $1 }' "$DATA"
+
+rm -f "$DATA"
+```
+
+* **Variabel khusus:** `$0` (baris), `$1..$NF` (kolom), `NF` (jumlah kolom), `NR` (nomor baris), `FNR` (baris dalam file saat ini), `FS`, `OFS`, `RS`, `ORS`.
+* **Blok:** `BEGIN`, `END`, `pattern { action }`.
+
+#### **3.5. Kelompok, Referensi Balik, dan `[[ =~ ]]`:**
+
+Bash mendukung pencocokan regex dengan `[[ ... =~ ... ]]`:
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 
-echo "=== Contoh Grep ==="
-echo "Ini adalah baris pertama." > example.txt
-echo "Baris kedua dengan kata kunci." >> example.txt
-echo "Baris ketiga tanpa kata." >> example.txt
-echo "Kata kunci muncul lagi." >> example.txt
+EMAIL="user@example.com"
+if [[ "$EMAIL" =~ ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]]; then
+  echo "Email valid"
+else
+  echo "Email tidak valid"
+fi
 
-echo "Mencari 'kata kunci':"
-grep "kata kunci" example.txt
-
-echo "Mencari baris yang dimulai dengan 'Baris' (dengan -E untuk extended regex):"
-grep -E "^Baris" example.txt
-
-echo "Mencari angka (dengan -E):"
-echo "Produk A: 123" >> example.txt
-echo "Produk B: 45" >> example.txt
-grep -E "[0-9]+" example.txt
-
-rm example.txt # Bersihkan
+# Grup tangkapan tersedia di BASH_REMATCH
+TANGGAL="2024-03-15"
+if [[ "$TANGGAL" =~ ^([0-9]{4})-([0-9]{2})-([0-9]{2})$ ]]; then
+  echo "Tahun: ${BASH_REMATCH[1]}"
+  echo "Bulan: ${BASH_REMATCH[2]}"
+  echo "Hari:  ${BASH_REMATCH[3]}"
+fi
 ```
 
-* **Opsi `grep` yang Penting:**
-  * `-E` (atau `egrep`): Menggunakan *extended regular expressions* (EREs), yang mendukung `+`, `?`, `|`, `()` tanpa perlu di-*escape*. **Direkomendasikan.**
-  * `-F` (atau `fgrep`): Mencari *string* literal (non-regex). Cepat untuk pencarian eksak.
-  * `-i`: Abaikan kasus (case-insensitive).
-  * `-v`: Invert match (tampilkan baris yang *tidak* cocok).
-  * `-n`: Tampilkan nomor baris.
-  * `-r`: Rekursif (cari di subdirektori).
-
-#### **3.3. Menggunakan Regex dengan `sed`:**
-
-`sed` (Stream Editor) digunakan untuk transformasi teks. Perintah `s` (substitusi) adalah yang paling umum.
-
-**Sintaks `sed` substitusi:** `s/pola_regex/string_pengganti/flags`
+* **Penting:** Jangan kutip pola `=~` jika menggunakan regex; kutip variabelnya.
+* **`sed` referensi balik:**
 
 ```bash
-#!/bin/bash
-set -euo pipefail
-
-echo "=== Contoh Sed ==="
-echo "apel,jeruk,mangga" > fruits.txt
-echo "anggur,pisang" >> fruits.txt
-
-echo "Mengganti koma dengan spasi (g = global, semua kemunculan):"
-sed 's/,/ /g' fruits.txt
-
-echo "Menghapus baris yang mengandung 'anggur':"
-sed '/anggur/d' fruits.txt # d = delete
-
-echo "Mengganti baris yang dimulai dengan 'apel' dengan 'Ini adalah apel':"
-sed '/^apel/c Ini adalah apel' fruits.txt # c = change (ganti seluruh baris)
-
-echo "Menambahkan baris di atas setiap baris yang mengandung 'mangga':"
-sed '/mangga/i\--- Baris Baru ---' fruits.txt # i = insert
-
-rm fruits.txt # Bersihkan
+echo "Nama: John Doe, ID: 12345" | \
+  sed -E 's/Nama: ([^,]+), ID: ([0-9]+)/ID \2 (Nama \1)/'
+# Output: ID 12345 (Nama John Doe)
 ```
 
-* **Bendera (`flags`) `sed` yang Penting:**
-  * `g`: Global (ganti semua kemunculan pola di setiap baris, bukan hanya yang pertama).
-  * `i`: Case-insensitive (GNU sed).
-  * `I`: Case-insensitive (BSD sed, termasuk macOS).
-  * `p`: Print (cetak baris yang dimodifikasi, sering digunakan dengan `-n`).
-  * `d`: Delete (hapus baris yang cocok).
-  * `i`: Insert (sisipkan baris sebelum baris yang cocok).
-  * `a`: Append (sisipkan baris setelah baris yang cocok).
+#### **3.6. Toolkit Manipulasi Teks:**
 
-#### **3.4. Menggunakan Regex dengan `awk`:**
+* **`cut`:** Ambil kolom/karakter.
+  ```bash
+  echo "a:b:c" | cut -d':' -f2        # b
+  echo "abcdef" | cut -c1-3           # abc
+  ```
+* **`sort`:** Urutkan.
+  ```bash
+  sort file.txt
+  sort -n -k2,2 file.txt              # numerik pada kolom 2
+  sort -u file.txt                    # unik
+  ```
+* **`uniq`:** Deduplikasi (butuh input terurut).
+  ```bash
+  sort file.txt | uniq -c             # hitung frekuensi
+  sort file.txt | uniq -d             # hanya yang duplikat
+  ```
+* **`tr`:** Translasi/hapus karakter.
+  ```bash
+  echo "abc" | tr 'a-z' 'A-Z'         # ABC
+  echo "a b c" | tr -d ' '            # abc
+  echo "a\nb" | tr -s '\n'            # squeeze newline
+  ```
+* **`xargs`:** Bangun argumen dari stdin.
+  ```bash
+  find . -name '*.tmp' -print0 | xargs -0 rm -f
+  echo "a b c" | xargs -n1 echo       # satu per baris
+  ```
+* **`find -print0` + `xargs -0`:** Aman terhadap nama file dengan spasi/newline.
 
-`awk` adalah bahasa yang kuat untuk pemrosesan teks berbasis kolom. Secara *default*, `awk` memisahkan setiap baris menjadi "bidang" atau "kolom" berdasarkan spasi atau tab.
+  ```bash
+  # SALAH: rusak jika nama file mengandung spasi
+  for f in $(ls *.txt); do ...; done
 
-**Sintaks `awk`:** `awk 'pola { tindakan }' file`
+  # BENAR 1: glob expansion (aman untuk spasi, tidak untuk newline)
+  for f in *.txt; do ...; done
 
-```bash
-#!/bin/bash
-set -euo pipefail
+  # BENAR 2: find + null-separator
+  find . -name '*.txt' -print0 | while IFS= read -r -d '' f; do
+    echo "Memproses: $f"
+  done
+  ```
 
-echo "=== Contoh Awk ==="
-echo "Nama,Usia,Kota" > data.csv
-echo "Andi,30,Jakarta" >> data.csv
-echo "Budi,25,Bandung" >> data.csv
-echo "Citra,35,Surabaya" >> data.csv
+### **4. Terminologi Kunci:**
 
-echo "Mencetak kolom kedua (Usia) untuk setiap baris:"
-awk -F',' '{ print $2 }' data.csv # -F',': delimiter adalah koma
+* **Regex:** Pola untuk pencocokan string.
+* **BRE, ERE, PCRE:** Tiga varian regex.
+* **`grep`/`sed`/`awk`:** Filter/editor/prosesor teks.
+* **Metacharacter:** Karakter dengan makna khusus (`.`, `*`, `+`, `?`, `[]`, `()`, `|`, `^`, `$`, `\`).
+* **Kuantifier:** `*`, `+`, `?`, `{n}`, `{n,}`, `{n,m}`.
+* **Kelas Karakter POSIX:** `[[:digit:]]`, `[[:alpha:]]`, dll.
+* **Anchor:** `^`, `$`, `\b`, `\B`.
+* **Grup Penangkapan:** `(...)`, diakses via `\1`, `\2`, atau `BASH_REMATCH`.
+* **Referensi Balik:** `\1`, `\2`, ...
+* **`BASH_REMATCH`:** Array grup tangkapan setelah `[[ =~ ]]`.
+* **Delimiter:** Pemisah kolom (`-F` di awk, `-d` di cut).
+* **Locale-aware:** Beradaptasi dengan pengaturan lokal.
 
-echo "Mencetak baris yang usianya lebih dari 30:"
-awk -F',' '$2 > 30 { print $0 }' data.csv # $0 = seluruh baris
+### **5. Rekomendasi Visualisasi:**
 
-echo "Mencetak nama dan usia dari baris yang mengandung 'Jakarta':"
-awk -F',' '/Jakarta/ { print $1, $2 }' data.csv
-
-echo "Menghitung total usia:"
-awk -F',' 'BEGIN {sum=0} {sum+=$2} END {print "Total Usia:", sum}' data.csv
-
-rm data.csv # Bersihkan
-```
-
-* **Pola `awk`:**
-  * `BEGIN { ... }`: Kode yang dijalankan sebelum memproses file.
-  * `END { ... }`: Kode yang dijalankan setelah memproses file.
-  * `/regex/`: Mencocokkan baris dengan pola regex.
-  * `kondisi`: Kondisi numerik atau string (misal, `$2 > 30`).
-* **Variabel Khusus `awk`:**
-  * `$0`: Seluruh baris saat ini.
-  * `$1`, `$2`, ...: Bidang pertama, kedua, dan seterusnya.
-  * `NF`: Jumlah bidang di baris saat ini.
-  * `NR`: Nomor baris saat ini.
-  * `FS`: Field Separator (sama dengan opsi `-F`).
-  * `RS`: Record Separator (delimiter antar baris, default newline).
-  * `OFS`: Output Field Separator (delimiter saat `print` dengan koma).
-  * `ORS`: Output Record Separator.
-
-#### **3.5. Kelompok (Groups) dan Referensi Balik (Backreferences):**
-
-* **Kelompok `()`:** Mengelompokkan bagian dari pola regex.
-* **Referensi Balik `\1`, `\2`, ...:** Digunakan dalam string pengganti (pada `sed`) untuk merujuk pada teks yang cocok dengan kelompok tertentu dalam pola.
-
-<!-- end list -->
-
-```bash
-#!/bin/bash
-set -euo pipefail
-
-echo "=== Contoh Groups dan Backreferences ==="
-echo "Nama: John Doe, ID: 12345" > id_list.txt
-echo "Nama: Jane Smith, ID: 67890" >> id_list.txt
-
-echo "Mengganti format 'Nama: X, ID: Y' menjadi 'ID Y (Nama X)':"
-sed -E 's/Nama: ([^,]+), ID: ([0-9]+)/ID \2 (Nama \1)/' id_list.txt
-
-rm id_list.txt # Bersihkan
-```
-
-* **Penjelasan Regex:**
-  * `([^\,]+)`: Kelompok pertama. `[^,]` berarti cocok dengan karakter apa pun kecuali koma, `+` berarti satu atau lebih. Ini akan menangkap nama.
-  * `([0-9]+)`: Kelompok kedua. `[0-9]` berarti digit, `+` berarti satu atau lebih. Ini akan menangkap ID.
-  * `\1` dan `\2`: Dalam string pengganti, merujuk pada teks yang cocok dengan kelompok pertama dan kedua.
-
-### **4. Terminologi Kunci & Penjelasan Detil:**
-
-* **Ekspresi Reguler (Regular Expression / Regex / Regexp):** Urutan karakter yang mendefinisikan pola pencarian, digunakan untuk pencocokan dan manipulasi *string*.
-* **`grep`:** Perintah baris perintah Unix untuk mencari baris yang cocok dengan pola ekspresi reguler.
-* **`sed` (Stream Editor):** Editor aliran teks yang dapat melakukan operasi seperti pencarian, penggantian, penyisipan, dan penghapusan baris berdasarkan pola.
-* **`awk`:** Bahasa pemrograman dan alat baris perintah yang dirancang khusus untuk memproses data berbasis teks (seringkali kolom atau bidang).
-* **Metacharacter:** Karakter dalam Regex yang memiliki makna khusus (misal, `.`, `*`, `^`, `$`).
-* **Kuantifier:** Karakter Regex yang menentukan berapa kali elemen sebelumnya dapat muncul (misal, `*`, `+`, `?`, `{n}`, `{n,}`, `{n,m}`).
-* **Kelas Karakter (`[]`):** Pola dalam Regex yang cocok dengan salah satu karakter dalam daftar (misal, `[aeiou]`). Juga bisa berupa rentang (`[a-z]`) atau negasi (`[^0-9]`).
-* **Anchor:** Metacharacter yang cocok dengan posisi, bukan karakter (misal, `^` untuk awal baris, `$` untuk akhir baris).
-* **Kelompok Penangkapan (Capturing Groups):** Bagian dari pola Regex yang diapit kurung `()` yang "menangkap" teks yang cocok untuk digunakan kembali (misal, dalam referensi balik).
-* **Referensi Balik (Backreferences):** Dalam string pengganti atau pola Regex, merujuk pada teks yang ditangkap oleh kelompok sebelumnya (misal, `\1`, `\2`).
-* **Standard Input (stdin), Output (stdout), Error (stderr):** Aliran data dasar yang digunakan program Unix. Regex alat sering membaca dari `stdin` dan menulis ke `stdout`.
-* **Delimiter:** Karakter pemisah yang digunakan oleh `sed` atau `awk` untuk memisahkan bidang atau pola. Untuk `sed` biasanya `/`, untuk `awk` biasanya spasi/tab secara *default* atau ditentukan dengan `-F`.
-
-### **5. Rekomendasi Visualisasi (Jika Diperlukan):**
-
-* **Infografis Karakter Regex:** Bagan visual yang menunjukkan setiap metacharacter Regex dengan contoh sederhana.
-* **Alur `grep`, `sed`, `awk`:** Diagram yang menunjukkan bagaimana teks mengalir dari satu perintah ke perintah berikutnya melalui *pipe*, dengan setiap alat (grep, sed, awk) digambarkan sebagai "filter" atau "transformator" yang bekerja pada aliran teks.
-* **Diagram Kerja `sed` `s///`:** Ilustrasi *string* asli, pola Regex yang cocok, dan bagaimana *string* pengganti menggunakan referensi balik untuk membentuk *output*.
-* **Tabel `awk` Kolom:** Visualisasi file teks sebagai tabel, dengan panah yang menunjuk ke `$1`, `$2`, `$NF`, `$0` untuk menjelaskan konsep bidang.
+* **Infografis Metacharacter dan Kelas POSIX.**
+* **Diagram Alir Pipeline:** `cat file | grep ... | sed ... | awk ... | sort | uniq -c`.
+* **Tabel Perbandingan BRE vs ERE vs PCRE.**
+* **Diagram `find -print0` + `xargs -0`.**
 
 ### **6. Hubungan dengan Modul Lain:**
 
-Modul ini secara langsung merupakan kelanjutan dari **Modul 1.2 (I/O Redirection)**, karena alat-alat Regex sering digunakan dalam *pipeline* untuk memproses aliran data. Pemahaman **Variabel dan Ekspansi (Modul 1.3)** sangat penting untuk menyimpan hasil manipulasi teks. Hasil dari perintah Regex (seperti *exit status* dari `grep` untuk kecocokan) dapat digunakan dalam **Struktur Kondisional (Modul 2.1)** untuk pengambilan keputusan dalam skrip. Penggunaan fungsi (**Modul 2.3**) dapat membungkus operasi Regex yang kompleks menjadi unit yang dapat digunakan kembali. Terakhir, Regex akan menjadi alat utama yang Anda gunakan dalam **Otomatisasi Tugas Administrasi Sistem (Modul 4.1)** untuk analisis log, dan **Keamanan (Modul 4.2)** untuk validasi input dan deteksi pola yang mencurigakan, serta **Interoperabilitas (Modul 4.3)** untuk mem-parsing data.
+Melanjutkan **Modul 1.2 (I/O Redirection)** dan **1.3 (Variabel)**. Terkait **2.1 (Kondisional)** untuk pemeriksaan hasil `grep`. Menjadi fondasi **Modul 4.x** untuk analisis log, keamanan, dan interoperabilitas.
 
 ### **7. Sumber Referensi Lengkap:**
 
-* **RegexOne - Learn Regex with interactive, in-browser exercises:** [https://regexone.com/](https://regexone.com/)
-  * **Detail:** Sumber daya interaktif yang sangat baik untuk mempelajari dasar-dasar Regex dengan latihan langsung.
-* **The Linux Documentation Project - Advanced Bash-Scripting Guide: Regular Expressions:** [https://tldp.org/LDP/abs/html/regexp.html](https://tldp.org/LDP/abs/html/regexp.html)
-  * **Detail:** Penjelasan mendalam tentang Regex dalam konteks Bash, termasuk perbedaan antara *basic* dan *extended* Regex.
-* **Ryan's Tutorials - Grep, Sed, Awk:** [https://ryanstutorials.net/linuxtutorial/grep.php](https://ryanstutorials.net/linuxtutorial/grep.php) [https://ryanstutorials.net/linuxtutorial/sed.php](https://ryanstutorials.net/linuxtutorial/sed.php) [https://ryanstutorials.net/linuxtutorial/awk.php](https://ryanstutorials.net/linuxtutorial/awk.php)
-  * **Detail:** Tutorial yang jelas dan praktis untuk setiap alat, dengan banyak contoh.
-* **Greg's Wiki - Why you shouldn't parse ls:** [https://mywiki.wooledge.org/ParsingLs](https://mywiki.wooledge.org/ParsingLs)
-  * **Detail (Penting untuk Modul 4.2):** Meskipun ini tentang parsing `ls`, ini menekankan masalah fundamental dalam memproses *output* teks yang tidak dirancang untuk diproses mesin, yang sering melibatkan Regex.
-* **Regular-Expressions.info:** [https://www.regular-expressions.info/](https://www.regular-expressions.info/)
-  * **Detail:** Sumber daya paling komprehensif untuk Regex, mencakup berbagai *flavour* (PCRE, POSIX, dll.) dan konsep tingkat lanjut.
+* **RegexOne (interaktif):** <https://regexone.com/>
+* **Regular-Expressions.info:** <https://www.regular-expressions.info/>
+* **TLDP ABS Guide - Regular Expressions:** <https://tldp.org/LDP/abs/html/regexp.html>
+* **Ryan's Tutorials - Grep/Sed/Awk:** <https://ryanstutorials.net/linuxtutorial/>
+* **Greg's Wiki - ParsingLs:** <https://mywiki.wooledge.org/ParsingLs>
+* **GNU Grep Manual:** <https://www.gnu.org/software/grep/manual/>
+* **GNU Sed Manual:** <https://www.gnu.org/software/sed/manual/>
+* **GNU Awk Manual:** <https://www.gnu.org/software/gawk/manual/>
+* **ripgrep:** <https://github.com/BurntSushi/ripgrep>
 
 ### **8. Tips dan Praktik Terbaik:**
 
-* **Mulai dari Sederhana:** Jangan mencoba membangun Regex yang sangat kompleks sekaligus. Mulailah dengan pola kecil, uji, lalu tambahkan kompleksitas.
-* **Gunakan `-E` untuk `grep` dan `sed` (jika tersedia):** *Extended Regular Expressions* lebih mudah dibaca dan ditulis karena Anda tidak perlu meng-*escape* metacharacter umum seperti `+`, `?`, `|`, `()`.
-* **Pengujian Iteratif:** Uji Regex Anda secara iteratif pada *sample data* kecil. Gunakan `grep` terlebih dahulu untuk melihat kecocokan, lalu `sed` atau `awk` untuk transformasi.
-* **Gunakan Alat Online:** Ada banyak situs web (misal, `regex101.com`, `regexr.com`) yang memungkinkan Anda menguji Regex secara interaktif dan memberikan penjelasan rinci. Manfaatkan ini\!
-* **Pahami Perbedaan `grep`, `sed`, `awk`:** Masing-masing alat memiliki kekuatan spesifiknya. Pilih alat yang tepat untuk tugas yang tepat (filter, edit, proses kolom).
-* **Gunakan Kutipan Tunggal (`'...'`) untuk Pola Regex:** Ini mencegah shell dari melakukan ekspansi pada karakter dalam pola Regex sebelum pola diteruskan ke alat (misal, `$` dan `*` akan diinterpretasikan oleh shell jika Anda menggunakan kutipan ganda).
+* Mulai dari pola sederhana, uji, baru tambahkan kompleksitas.
+* Gunakan `-E` untuk ERE di `grep`/`sed` (lebih mudah dibaca).
+* Selalu uji regex pada sample kecil dengan `regex101.com` atau `regexr.com`.
+* Gunakan kutipan tunggal (`'...'`) untuk pola regex agar shell tidak mengekspansi karakter.
+* Pilih alat yang tepat: `grep` untuk filter, `sed` untuk edit, `awk` untuk kolom/logika.
+* Untuk nama file yang tidak aman, gunakan `find -print0 | xargs -0` atau `while IFS= read -r -d ''`.
+* Hindari mem-parsing `ls`; gunakan glob atau `find`.
+* Prefer `ripgrep` (`rg`) jika tersedia untuk performa dan fitur.
 
 ### **9. Potensi Kesalahan Umum & Solusi:**
 
-* **Kesalahan:** Lupa meng-*escape* metacharacter.
-  * **Penyebab:** Karakter seperti `.`, `*`, `+`, `?`, `(`, `)`, `[`, `]`, `|`, `^`, `$` memiliki makna khusus dalam Regex. Jika Anda ingin mencocokkan karakter literalnya, Anda harus meng-*escape*-nya dengan `\`.
-  * **Solusi:** `\.`, `\*`, `\+`, `\?`, `\(`, `\)`, `\[`, `\]`, `\|`, `\^`, `\$`. Atau, gunakan `grep -F` jika Anda hanya mencari *string* literal tanpa Regex.
-* **Kesalahan:** Tidak menggunakan kutipan tunggal (`'...'`) pada pola Regex.
-  * **Penyebab:** Jika Anda menggunakan kutipan ganda (`"..."`) atau tidak ada kutipan sama sekali, shell mungkin akan menginterpretasikan beberapa metacharacter (`$`, `*`, `?`, `[]`) sebelum pola Regex diteruskan ke `grep`, `sed`, atau `awk`, menyebabkan hasil yang tidak terduga.
-  * **Solusi:** Selalu gunakan kutipan tunggal untuk pola Regex Anda: `grep 'pola' file`.
-* **Kesalahan:** Menggunakan *Basic Regular Expressions* (BRE) dan lupa meng-*escape* metacharacter Extended Regex.
-  * **Penyebab:** Secara *default*, `grep` dan `sed` menggunakan BRE, di mana karakter seperti `(`, `)`, `{`, `}`, `|`, `+`, `?` harus di-*escape* untuk memiliki makna khusus Regex.
-  * **Solusi:** Gunakan opsi `-E` (atau perintah `egrep`) untuk `grep` dan `sed` jika Anda ingin menggunakan *Extended Regular Expressions* (EREs). Ini adalah praktik yang jauh lebih umum dan lebih mudah.
-* **Kesalahan:** `sed` hanya mengganti kemunculan pertama pada setiap baris.
-  * **Penyebab:** Secara *default*, perintah `s` di `sed` hanya mengganti kemunculan pertama pola pada setiap baris.
-  * **Solusi:** Gunakan bendera `g` (global) di akhir perintah `s`: `sed 's/pola/pengganti/g'`.
-* **Kesalahan:** Mem-parsing *output* `ls`.
-  * **Penyebab:** *Output* `ls` tidak dirancang untuk diproses oleh program lain. Nama file bisa mengandung spasi, *newline*, atau karakter khusus lainnya yang akan merusak *parsing*.
-  * **Solusi:** Gunakan `find -print0` dengan `xargs -0`, atau *globbing* sederhana (`*.txt`) jika memungkinkan, atau *array* Bash. Hindari mem-parsing `ls`\!
+* **Lupa escape metacharacter:** Gunakan `\.`, `\*`, dst, atau `grep -F`.
+* **Tidak mengutip pola:** Selalu kutip tunggal: `grep 'pola'`.
+* **Memakai BRE tapi mengandalkan ERE:** Gunakan `-E`.
+* **`sed` hanya mengganti kemunculan pertama:** Tambahkan bendera `g`: `sed 's/a/b/g'`.
+* **Mem-parsing `ls`:** Gunakan `find -print0` atau glob.
+* **`sed -i` di macOS vs Linux:** Perbedaan sintaks; sediakan cabang `case "$(uname)"` atau gunakan `perl -i` untuk portabilitas.
+* **Lupa `NR>1` di `awk` untuk melewati header.**
+* **Memakai `[[ =~ ]]` dengan pola yang dikutip:** Jangan kutip polanya; kutip variabelnya.
+* **Mengabaikan return code `grep` di bawah `set -e`:** `grep` mengembalikan 1 jika tidak ada kecocokan. Gunakan `if grep -q ...; then`.
+
+### **10. Latihan:**
+
+1. Dari file `/var/log/syslog`, ekstrak semua alamat IP unik dan hitung frekuensinya dengan `grep -oE`, `sort`, dan `uniq -c`.
+2. Buat skrip yang menerima file CSV, menggunakan `awk` untuk menghitung rata-rata kolom numerik, dan mencetak hasilnya dengan `printf`.
+3. Gunakan `[[ =~ ]]` untuk memvalidasi apakah argumen `$1` adalah IPv4 yang valid.
+4. Ganti semua ekstensi `.jpeg` menjadi `.jpg` pada semua file di direktori saat ini secara aman (uji dengan `find -print0` + `while read`).
+5. Bandingkan hasil `grep 'ERROR' log` dengan `grep -E 'ERROR|WARN' log`, dan jelaskan perbedaannya.
 
 -----
 
-**Selamat!** Anda telah mempelajari Ekspresi Reguler dan alat-alat manipulasi teks tingkat lanjut (`grep`, `sed`, `awk`). Ini adalah salah satu set keterampilan paling kuat yang dapat Anda miliki dalam shell scripting.
+**Selamat!** Anda telah menyelesaikan **Fase 3: Mahir – Skrip yang Andal dan Profesional** secara lengkap, dengan penanganan kesalahan yang kokoh, parsing argumen yang profesional, serta kemampuan manipulasi teks tingkat lanjut. Anda siap masuk ke **Fase 4: Pakar – Aplikasi Skala Enterprise dan Keamanan**.
 
-Dengan ini, Anda telah menyelesaikan **Fase 3: Mahir – Skrip yang Andal dan Profesional**. Kita akan segera masuk ke **Fase 4: Pakar – Aplikasi Skala Enterprise dan Keamanan (Tingkat Pakar)**.
+-----
 
-> * **[Ke Atas](#)**
-> * **[Selanjutnya][selanjutnya]**
-> * **[Sebelumnya][sebelumnya]**
-> * **[Kurikulum][kurikulum]**
-> * **[Domain Spesifik][domain]**
+> ⬆️ **[Ke Atas](#)**
+> ➡️ **[Modul Berikutnya (Fase 4)][selanjutnya]**
+> 📘 **[Kurikulum]**
+> 🌐 **[Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ./../README.md
 [sebelumnya]: ../bagian-2/README.md
 [selanjutnya]: ../bagian-4/README.md
 
