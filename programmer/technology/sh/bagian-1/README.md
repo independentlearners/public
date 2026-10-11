@@ -1,7 +1,7 @@
 # Level 1 – Fondasi  
 ## Materi 1: Pengenalan Shell & POSIX
 
-> **Catatan:** Sesuai permintaan, saya tidak akan membahas seluruh kurikulum sekaligus. Ini adalah **materi pertama**. Setelah Anda selesai membaca dan berlatih, kita akan lanjut ke **Materi 2: Terminal & Lingkungan**. Setiap perintah dan kode akan dijelaskan kata demi kata agar pemahaman Anda benar-benar matang.
+> **Catatan:** Ini adalah **materi pertama**. Setelah Anda selesai membaca dan berlatih, kita akan lanjut ke **Materi 2: Terminal & Lingkungan**. Setiap perintah dan kode akan dijelaskan kata demi kata agar pemahaman Anda benar-benar matang.
 
 ---
 
