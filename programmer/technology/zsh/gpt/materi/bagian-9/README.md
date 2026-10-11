@@ -430,6 +430,364 @@ Autoload membantu menghindari pemuatan seluruh implementasi fungsi pada startup.
 ---
 
 Tahap berikutnya dalam kurikulum adalah Pelajaran 09 — Startup Architecture: memahami urutan pemuatan `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, dan `.zlogout`, serta menentukan tempat yang tepat untuk variabel lingkungan, konfigurasi interaktif, dan pemuatan fungsi.
+
+# Functions & Autoload (lanjutan)
+
+Bagian ini masih membahas fungsi Zsh sebelum berpindah ke arsitektur startup dan konfigurasi modular. Fokusnya adalah bagaimana fungsi menerima argumen, mempertahankan status kegagalan, mengisolasi perilaku melalui options, dan diorganisasi sebagai fungsi autoload.
+
+## 08.7 Meneruskan argumen dengan benar
+
+Dalam fungsi Zsh, `$1`, `$2`, dan seterusnya mengacu pada argumen individual. `$#` menyatakan jumlah argumen. Untuk meneruskan seluruh argumen, gunakan `"$@"`.
+
+Perhatikan contoh berikut:
+
+```bash
+show_args() {
+    print -r -- "Argumen pertama: $1"
+    print -r -- "Jumlah argumen: $#"
+}
+
+show_args git status
+```
+
+Hasilnya:
+
+```
+Argumen pertama: git
+Jumlah argumen: 2
+```
+
+Sekarang perhatikan fungsi pembungkus berikut:
+
+```bash
+run_command() {
+    command "$@"
+}
+
+run_command ls -l /tmp
+```
+
+Fungsi tersebut meneruskan setiap argumen kepada perintah eksternal yang dijalankan. `command` meminta Zsh menjalankan perintah tanpa memilih fungsi shell bernama sama.
+
+### Perbedaan `"$@"` dan `"$*"`
+
+Misalnya fungsi dipanggil dengan tiga argumen:
+
+```bash
+inspect_args() {
+    print -r -- "Jumlah argumen: $#"
+
+    for arg in "$@"; do
+        print -r -- "Argumen: [$arg]"
+    done
+}
+
+inspect_args alpha "dua kata" gamma
+```
+
+Hasilnya:
+
+```
+Jumlah argumen: 3
+Argumen: [alpha]
+Argumen: [dua kata]
+Argumen: [gamma]
+```
+
+`"$@"` mempertahankan setiap argumen sebagai elemen terpisah, termasuk argumen yang mengandung spasi.
+
+Sebaliknya, `"$*"` menggabungkan seluruh argumen menjadi satu kata setelah ekspansi dalam konteks kutip ganda. Karena itu, untuk meneruskan argumen fungsi atau membangun perulangan atas argumen, pilih `"$@"` sebagai kebiasaan utama.
+
+Tanpa kutip, seperti `$@` atau `$*`, hasilnya dapat mengalami pemisahan kata dan ekspansi glob. Itu berisiko mengubah argumen yang diterima fungsi.
+
+## 08.8 Membedakan output dan exit status
+
+Fungsi shell dapat menghasilkan dua hal yang berbeda:
+
+1. Output, yaitu teks atau data yang ditulis ke stdout.
+2. Exit status, yaitu angka yang menunjukkan keberhasilan atau kegagalan.
+
+Contoh:
+
+```bash
+get_project_name() {
+    print -r -- "zsh-tools"
+    return 0
+}
+
+name=$(get_project_name)
+status=$?
+
+print -r -- "Nama: $name"
+print -r -- "Status: $status"
+```
+
+`name` menerima output fungsi, sedangkan `status` menerima exit status-nya.
+
+Namun, ada satu detail penting: `status=$?` harus dijalankan segera setelah fungsi selesai jika Anda ingin menyimpan status fungsi tersebut. Perintah lain yang dijalankan sebelumnya dapat menggantinya.
+
+Untuk fungsi yang memeriksa kondisi, biasanya tidak perlu mencetak `true` atau `false`. Cukup gunakan exit status:
+
+```bash
+is_directory() {
+    [[ -d "$1" ]]
+}
+
+if is_directory /tmp; then
+    print -r -- "Direktori tersedia"
+else
+    print -r -- "Direktori tidak tersedia"
+fi
+```
+
+Di sini, ekspresi `[[ -d "$1" ]]` menentukan status fungsi. Status `0` berarti kondisi benar; status bukan nol berarti kondisi salah.
+
+Prinsipnya: gunakan stdout untuk data dan exit status untuk hasil operasi. Pemisahan ini memudahkan fungsi digunakan kembali oleh fungsi lain, kondisi `if`, maupun command substitution.
+
+## 08.9 Menangani kegagalan tanpa menyembunyikannya
+
+Salah satu kesalahan umum saat menulis fungsi adalah mengabaikan status kegagalan dari perintah di dalamnya.
+
+Contoh yang kurang baik:
+
+```bash
+create_project() {
+    command mkdir -- "$1"
+    print -r -- "Proyek berhasil dibuat"
+}
+```
+
+Jika `mkdir` gagal, fungsi tetap menjalankan `print` dan memberi pesan seolah-olah operasi berhasil.
+
+Versi yang lebih baik:
+
+```bash
+create_project() {
+    if (( $# != 1 )); then
+        print -u2 -r -- "Penggunaan: create_project NAMA_DIREKTORI"
+        return 2
+    fi
+
+    command mkdir -- "$1" || return
+    print -r -- "Proyek berhasil dibuat"
+}
+```
+
+Ada beberapa mekanisme yang perlu dipahami:
+
+- `(( $# != 1 ))` memeriksa apakah jumlah argumen bukan satu.
+- `print -u2` mengirim pesan ke stderr, bukan stdout.
+- `return 2` menghentikan fungsi dengan status yang menunjukkan penggunaan fungsi tidak sesuai.
+- `command mkdir -- "$1" || return` menghentikan fungsi jika `mkdir` gagal. Bentuk `return` tanpa angka meneruskan status perintah sebelumnya.
+
+Angka `2` di sini merupakan konvensi untuk kesalahan penggunaan, bukan aturan yang diwajibkan Zsh. Yang penting adalah mendokumentasikan arti status yang digunakan oleh fungsi.
+
+### Mengapa tidak selalu memakai `setopt ERR_EXIT`?
+
+Jangan mengandalkan `ERR_EXIT` atau `set -e` sebagai pengganti desain penanganan error yang jelas. Perilakunya bergantung pada konteks eksekusi, seperti kondisi `if`, daftar `&&`/`||`, dan fungsi yang dipanggil dari konteks tertentu.
+
+Untuk fungsi yang nantinya menjadi bagian dari konfigurasi Zsh atau plugin, pola yang lebih mudah dianalisis adalah:
+
+1. Validasi argumen.
+2. Jalankan operasi.
+3. Periksa status operasi.
+4. Kembalikan status kegagalan jika perlu.
+5. Tampilkan pesan sukses hanya setelah operasi berhasil.
+
+## 08.10 `emulate -L zsh`: menjaga perilaku fungsi
+
+Zsh memiliki banyak options yang dapat mengubah cara perintah dan ekspansi bekerja. Fungsi yang berjalan dalam sesi interaktif dapat dipengaruhi oleh options yang diaktifkan di `.zshrc` atau oleh konfigurasi plugin lain.
+
+Contoh:
+
+```bash
+my_function() {
+    emulate -L zsh
+
+    # Isi fungsi diletakkan di sini.
+}
+```
+
+`emulate -L zsh` melakukan dua hal penting:
+
+- Menetapkan perilaku emulasi Zsh untuk fungsi tersebut.
+- Melokalkan perubahan options agar tidak menjadi perubahan permanen pada lingkungan pemanggil setelah fungsi selesai.
+
+Dengan demikian, fungsi dapat lebih konsisten ketika dipanggil dari sesi yang memiliki konfigurasi berbeda. Ini sangat berguna saat mengembangkan fungsi mandiri atau plugin.
+
+Perlu dibedakan: `emulate -L zsh` tidak mengisolasi seluruh lingkungan fungsi. Ia bukan sandbox, dan tidak otomatis membatalkan perubahan filesystem, variabel global yang sengaja diubah, atau efek eksternal dari perintah yang dijalankan.
+
+Contoh yang mengubah option secara lokal:
+
+```bash
+show_glob_behavior() {
+    emulate -L zsh
+    setopt EXTENDED_GLOB
+
+    print -r -- "Extended glob aktif di fungsi ini"
+}
+```
+
+Di sini, perubahan option dilokalkan. Setelah fungsi kembali, keadaan option pada pemanggil dipulihkan.
+
+## 08.11 Praktik fungsi yang baik: contoh `mkcd`
+
+Fungsi `mkcd` membuat direktori, lalu berpindah ke direktori tersebut. Kita dapat menggabungkan beberapa konsep sebelumnya menjadi satu contoh.
+
+```bash
+mkcd() {
+    emulate -L zsh
+
+    if (( $# != 1 )); then
+        print -u2 -r -- "Penggunaan: mkcd DIREKTORI"
+        return 2
+    fi
+
+    command mkdir -p -- "$1" || return
+    builtin cd -- "$1"
+}
+```
+
+Pemakaian:
+
+```bash
+mkcd proyek-baru
+```
+
+Alurnya:
+
+1. `emulate -L zsh` menjaga perilaku options fungsi tetap terlokalisasi.
+2. Pemeriksaan `$#` memastikan hanya satu argumen yang diberikan.
+3. `mkdir -p` membuat direktori beserta direktori induk yang belum ada.
+4. `|| return` menghentikan fungsi jika pembuatan direktori gagal.
+5. `builtin cd` menggunakan builtin Zsh untuk berpindah direktori di dalam shell saat ini.
+
+Mengapa menggunakan `builtin cd`, bukan menjalankan program eksternal `cd`? Karena direktori kerja merupakan keadaan proses shell. Program eksternal yang berjalan sebagai proses terpisah tidak dapat mengubah direktori kerja shell pemanggil.
+
+Mengapa memakai `--`? Itu menandai akhir opsi perintah. Dengan demikian, argumen seperti `-nama-direktori` tidak langsung ditafsirkan sebagai opsi oleh `mkdir` atau `cd`.
+
+Catatan: `mkdir -p` tidak menghapus isi direktori yang sudah ada. Jika direktori tujuan telah tersedia, fungsi tetap mencoba berpindah ke sana.
+
+## 08.12 Memindahkan fungsi ke sistem autoload
+
+Setelah fungsi bekerja, kita dapat memisahkan definisinya dari file utama konfigurasi. Inilah salah satu alasan `autoload` berguna.
+
+Struktur direktori:
+
+```bash
+~/.config/zsh/
+├── zshrc
+└── functions/
+    └── mkcd
+```
+
+Isi `~/.config/zsh/functions/mkcd`:
+
+```bash
+emulate -L zsh
+
+if (( $# != 1 )); then
+    print -u2 -r -- "Penggunaan: mkcd DIREKTORI"
+    return 2
+fi
+
+command mkdir -p -- "$1" || return
+builtin cd -- "$1"
+```
+
+Perhatikan bahwa file tersebut berisi badan fungsi, bukan pembungkus `mkcd() { ... }`. Ini merupakan format autoload native Zsh yang digunakan pada contoh ini.
+
+Agar Zsh dapat menemukannya, tambahkan direktori fungsi ke `fpath` dan daftarkan fungsi tersebut:
+
+```bash
+fpath=("$HOME/.config/zsh/functions" $fpath)
+autoload -Uz mkcd
+```
+
+Setelah itu:
+
+```bash
+mkcd proyek-baru
+```
+
+Zsh akan memuat definisi fungsi ketika fungsi tersebut pertama kali dipanggil.
+
+Makna opsi `autoload -Uz`:
+
+- `-U`: mencegah ekspansi alias ketika definisi fungsi dimuat.
+- `-z`: menggunakan gaya autoload native Zsh.
+
+`fpath` adalah array direktori tempat Zsh mencari fungsi autoload. Urutannya penting: direktori yang berada lebih awal diperiksa lebih dahulu.
+
+### Apa yang sebenarnya ditunda oleh autoload?
+
+Perintah berikut:
+
+```bash
+autoload -Uz mkcd
+```
+
+tidak langsung menjalankan badan fungsi `mkcd`. Perintah itu mendaftarkan nama fungsi agar Zsh dapat memuat definisinya ketika dibutuhkan.
+
+Ini berbeda dari:
+
+```bash
+source "$HOME/.config/zsh/functions/mkcd"
+```
+
+`source` membaca dan menjalankan file saat itu juga dalam shell saat ini. File `mkcd` pada contoh kita tidak ditulis sebagai deklarasi fungsi biasa, sehingga `source` file itu secara langsung bukan pengganti yang tepat untuk mekanisme autoload tersebut.
+
+Autoload juga bukan berarti fungsi akan selalu dimuat ulang setiap kali dipanggil. Setelah definisinya dimuat, Zsh biasanya menggunakan fungsi yang sudah tersedia dalam sesi itu.
+
+## 08.13 Memeriksa fungsi autoload
+
+Ketika mengembangkan konfigurasi, Anda perlu membedakan tiga hal: apakah direktori pencarian sudah benar, apakah nama fungsi sudah didaftarkan, dan apakah definisinya sudah dimuat.
+
+Gunakan perintah berikut untuk memeriksa keadaan tersebut.
+
+| Perintah              | Tujuan                                             |
+| --------------------- | -------------------------------------------------- |
+| `print -rl -- $fpath` | Menampilkan direktori pencarian fungsi             |
+| `whence -w mkcd`      | Memeriksa jenis perintah atau fungsi yang dikenali |
+| `whence -v mkcd`      | Menampilkan informasi tentang nama tersebut        |
+| `functions mkcd`      | Menampilkan definisi fungsi yang tersedia          |
+
+Untuk melihat apakah Zsh dapat menemukan file fungsi, periksa lokasi yang sesuai:
+
+```bash
+print -r -- "$HOME/.config/zsh/functions/mkcd"
+[[ -r "$HOME/.config/zsh/functions/mkcd" ]] \
+    && print -r -- "File dapat dibaca"
+```
+
+Pemeriksaan ini memastikan file dapat dibaca, tetapi belum membuktikan bahwa `fpath` dan deklarasi autoload sudah benar. Periksa keduanya secara terpisah saat melakukan debugging.
+
+## 08.14 Ringkasan alur kerja fungsi Zsh
+
+- 1. Tentukan antarmuka fungsi
+
+Argumen, output, dan arti exit status
+
+- 2. Validasi input
+
+Periksa jumlah argumen dan kondisi awal
+
+- 3. Jalankan operasi
+
+Pertahankan argumen dengan quoting dan periksa kegagalan
+
+- 4. Pisahkan dan organisasikan
+
+Gunakan autoload jika fungsi layak ditempatkan pada file terpisah
+
+Pola ini menjadi fondasi untuk membaca fungsi dalam plugin Zsh: identifikasi inputnya, ikuti alur eksekusinya, cari cara menangani kegagalan, lalu periksa bagaimana fungsi dimuat dan dipanggil.
+
+## Status Pelajaran 08
+
+Materi utama Functions & Autoload telah mencakup definisi fungsi, argumen, cakupan variabel, `return`, penanganan kegagalan, `emulate -L zsh`, serta organisasi fungsi melalui `fpath` dan `autoload`.
+
+Tahap berikutnya sesuai urutan kurikulum adalah Pelajaran 09 — Startup Architecture. Di sana kita akan mempelajari kapan `.zshenv`, `.zprofile`, `.zshrc`, `.zlogin`, dan `.zlogout` dijalankan, bagaimana membedakan shell login dengan shell interaktif, dan bagaimana alur startup memengaruhi pemuatan konfigurasi. Setelah memahami urutan tersebut, barulah konfigurasi modular dibangun di atas fondasi yang benar.
+
 > - **[Ke Atas](#)**
 > - **[Selanjutnya][selanjutnya]**
 > - **[Sebelumnya][sebelumnya]**
