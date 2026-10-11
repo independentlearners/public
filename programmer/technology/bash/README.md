@@ -796,6 +796,7 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 - **[Home][domain-spesifik]**
 - **[Others][others]** <span style="font-size: 11px; color: grey; margin-left: 24px;"><i>Mungkin bersifat Opsional.</i></span>
 - **[ZSH][zsh]**
+- **[SH][sh]**
 
 [domain-spesifik]: ../../README.md
 [0]: ./../../../CLI_TUI/perintah/README.md
@@ -811,3 +812,4 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 [claude]: ./claude/Kurikulum_Bash_Scripting_7_Hari.md
 [others]: ./others/others.md
 [zsh]: ./../zsh/zsh.md
+[sh]: ./../sh/sh.md

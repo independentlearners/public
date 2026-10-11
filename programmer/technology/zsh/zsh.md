@@ -5,6 +5,7 @@
 -  [Deepseek][2]
 -  [Others][3]
 -  [Zsh][3]
+-  [Sh][3]
 
 [1]: ./gpt/materi/zsh_scripting.md
 [1.1]: ./gpt/others.md
@@ -12,3 +13,4 @@
 [2]: ./deepseek/zsh.md
 [3]: ./others.md
 [4]: ./../bash/README.md
+[3]: ./../sh/sh.md
