@@ -74,6 +74,8 @@ Skrip yang mematuhi POSIX dapat dijalankan di semua *POSIX-compliant shell*, sep
 +---------------------------------------------------+
 ```
 
+[Lebih Lanjut Mengenai Klasifikasi, Karakteristik, dan Kaitannya dengan Standar POSIX dan Lembaga IEEE][posix]
+
 ---
 
 ### **Penjelasan Lapisan**
@@ -1298,6 +1300,7 @@ Dengan penjelasan mendalam ini untuk Modul 1.3, yang mencakup pembuatan skrip pe
 > * **[Kurikulum][kurikulum]**
 > * **[Domain Spesifik][domain]**
 
+[posix]: ./posix.md
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md

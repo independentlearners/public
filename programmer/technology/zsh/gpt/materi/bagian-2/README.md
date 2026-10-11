@@ -97,7 +97,7 @@ tetap relevan di Zsh.
 
 Misalnya:
 
-```zsh
+```bash
 name="Amir"
 
 if [[ -n "$name" ]]; then
@@ -121,7 +121,7 @@ echo "Hello"
 
 Di Zsh Anda akan sering menemukan:
 
-```zsh
+```bash
 print "Hello"
 ```
 
@@ -549,6 +549,8 @@ Ia juga menyediakan lingkungan pemrograman untuk **interactive shell**.
 
 # 01.12 — Bash Readline vs Zsh ZLE
 
+> [Readline Bash][readline]
+
 Ketika Anda menekan:
 
 ```text
@@ -562,13 +564,13 @@ shell membutuhkan mekanisme untuk menangani input keyboard.
 
 Pada Bash, komponen utamanya adalah:
 
-```text
+```bash
 Readline
 ```
 
 Pada Zsh:
 
-```text
+```bash
 ZLE
 Zsh Line Editor
 ```
@@ -589,7 +591,7 @@ Keyboard
 
 Contoh:
 
-```zsh
+```bash
 bindkey
 ```
 
@@ -597,7 +599,7 @@ akan menjadi sangat penting.
 
 Dan nanti Anda dapat membuat widget sendiri:
 
-```zsh
+```bash
 my_widget() {
     ...
 }
@@ -757,13 +759,13 @@ zsh
 
 Kemudian:
 
-```zsh
+```bash
 arr=(one two three)
 ```
 
 Lalu:
 
-```zsh
+```bash
 print "$arr[1]"
 print "$arr[2]"
 print "$arr[3]"
@@ -771,7 +773,7 @@ print "$arr[3]"
 
 Kemudian:
 
-```zsh
+```bash
 print "$arr[0]"
 ```
 
@@ -783,25 +785,25 @@ Perhatikan apa yang terjadi.
 
 Di Zsh:
 
-```zsh
+```bash
 print "Hello"
 ```
 
 Bandingkan:
 
-```zsh
+```text
 printf '%s\n' "Hello"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print -r -- 'Hello\nWorld'
 ```
 
 Bandingkan dengan:
 
-```zsh
+```bash
 printf '%s\n' 'Hello\nWorld'
 ```
 
@@ -809,7 +811,7 @@ Tujuan eksperimen ini bukan mempelajari semua option `print`.
 
 Tujuannya adalah mengenali bahwa Zsh memiliki builtin native yang sering muncul dalam konfigurasi:
 
-```text
+```bash
 print
 typeset
 setopt
@@ -827,7 +829,7 @@ Kelak keenam nama ini akan sangat sering Anda temui.
 
 Di direktori latihan:
 
-```zsh
+```bash
 mkdir -p /tmp/zsh-glob/a/b
 touch /tmp/zsh-glob/a/one.txt
 touch /tmp/zsh-glob/a/b/two.txt
@@ -842,13 +844,13 @@ cd /tmp/zsh-glob
 
 Coba:
 
-```zsh
+```bash
 print -rl -- *.txt
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print -rl -- **/*.txt
 ```
 
@@ -856,11 +858,11 @@ Perhatikan perbedaannya.
 
 Lalu aktifkan:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
-Untuk sekarang cukup lihat bahwa Zsh memiliki sistem filename generation yang dapat diperluas melalui options.
+Untuk sekarang cukup lihat bahwa Zsh memiliki sistem filename generation yang dapat diperluas melalui options. Untuk lebih lanjut memahami materi sejauh ini, anda bisa mengunjungi halaman [berikut] yang ditujukan untuk sepenuhnya terisolasi dari lingkungan shell utama anda sehingga anda dapat melihat lebih nyata bagaimana konfig zsh sebenarnya bekerja ketika shell utama benar-benar menggunakan konfig terisolasi yang ditujukan sebagai latiha.
 
 ---
 
@@ -868,7 +870,7 @@ Untuk sekarang cukup lihat bahwa Zsh memiliki sistem filename generation yang da
 
 Jangan langsung menghafalkan:
 
-```text
+```bash
 setopt
 unsetopt
 typeset
@@ -917,12 +919,14 @@ Jelaskan model yang menurut Anda lebih tepat.
 **2.** Apa perbedaan indexing array berikut?
 
 ```bash
+# bash 
 arr=(A B C)
 ```
 
 dan:
 
-```zsh
+```bash
+# zsh 
 arr=(A B C)
 ```
 
@@ -7060,7 +7064,8 @@ Tahap berikutnya adalah **Lesson 02 — Zsh Language**. Di sana kita mulai menin
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 [PID]: ./../../../../../../CLI_TUI/konsep/pid/pid.md
-
+[berikut]: ./latihan.md
+[readline]: ./readline.md
 <!----------------------------------------------------->
 
 [0]: ./README.md
