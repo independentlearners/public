@@ -649,7 +649,7 @@ Ini akan menjadi dasar untuk membuat automation dalam interactive shell.
 
 ---
 
-## [16 — Zsh Modules][015]
+## [16 — Zsh Modules][016]
 
 Kemudian:
 
@@ -670,7 +670,7 @@ Ini membawa kita lebih dekat ke pemahaman internal Zsh.
 
 ---
 
-## [17 — Modular Configuration][015]
+## [17 — Modular Configuration][017]
 
 Sekarang kita mulai membangun konfigurasi nyata:
 
@@ -694,7 +694,7 @@ Kita akan menentukan apa yang seharusnya berada di masing-masing file.
 
 ---
 
-## [18 — Plugin Architecture][015]
+## [18 — Plugin Architecture][018]
 
 Baru setelah mekanisme Zsh dipahami, kita membahas:
 
@@ -720,7 +720,7 @@ tanpa memahami isinya.
 
 ---
 
-## [19 — Terminal Integration][015]
+## [19 — Terminal Integration][019]
 Baru kita integrasikan lingkungan Anda:
 
 ```text
@@ -749,7 +749,7 @@ interactive workflow
 
 ---
 
-## [20 — Custom Productivity Features][015]
+## [20 — Custom Productivity Features][020]
 Sekarang mulai membuat fitur sendiri.
 
 Contoh:
@@ -958,4 +958,9 @@ Setelah itu kita masuk ke **Lesson 00.2: interactive shell vs login shell**, kar
 [012]: ./bagian-13/README.md
 [013]: ./bagian-14/README.md
 [014]: ./bagian-15/README.md
+[015]: ./bagian-16/README.md
+[016]: ./bagian-17/README.md
+[017]: ./bagian-18/README.md
+[018]: ./bagian-19/README.md
+[019]: ./bagian-20/README.md
 
