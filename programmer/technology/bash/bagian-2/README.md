@@ -1,1163 +1,1215 @@
-# **[Fase 2: Menengah – Struktur, Kontrol, dan Manipulasi Teks (Tingkat Menengah)][1]**
+# **Panduan Lengkap: Pattern Matching, Ekspansi Shell, Kontrol Alur, dan Manipulasi Teks di Bash**
 
-**Tujuan Fase:** Menguasai elemen-elemen pemrograman standar (kondisional, perulangan, fungsi) dan menggunakan alat bantu teks yang kuat untuk memproses data. Fase ini akan membawa Anda dari penulis skrip dasar menjadi pengembang skrip yang mampu membuat keputusan, mengotomatiskan tugas berulang, dan mengelola kode secara modular.
-
------
-
-## **Modul 2.1: Struktur Kondisional**
-
-### **Struktur Pembelajaran Internal (Struktur Daftar Isi):**
-
-1. Memahami Exit Codes (`$?`) secara Mendalam
-2. Struktur `if ... then ... fi`
-3. Menggunakan `test` (`[ ... ]`) vs. `[[ ... ]]`
-4. Operator Perbandingan String, Angka, dan File
-5. Menggabungkan Kondisi (AND `&&`, OR `||`)
-6. Struktur `case ... esac` untuk Pencocokan Pola
-7. Potensi Penambahan Materi: Ternary Operator (`?:`)
-
-### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
-
-Dalam modul ini, Anda akan belajar seni membuat skrip Anda "berpikir" dan "memutuskan". Struktur kondisional adalah fondasi logika dalam pemrograman apa pun. Ini memungkinkan skrip Anda untuk mengambil jalur eksekusi yang berbeda berdasarkan kondisi tertentu—apakah itu nilai variabel, keberadaan sebuah file, atau hasil dari perintah sebelumnya. Daripada hanya menjalankan serangkaian perintah secara linier, skrip Anda akan menjadi lebih adaptif, fleksibel, dan "cerdas".
-
-Peran modul ini sangat vital. Tanpa kemampuan untuk membuat keputusan, skrip Anda hanya akan menjadi daftar tugas statis. Dengan kondisional, Anda dapat membuat skrip yang bereaksi terhadap kesalahan, memproses berbagai jenis input, mengelola konfigurasi yang berbeda, atau bahkan berinteraksi dengan pengguna secara dinamis. Ini adalah langkah maju yang signifikan dari Modul 1.3, yang berfokus pada eksekusi linier dan dasar variabel. Dalam konteks pengembangan Dart/Flutter, logika kondisional adalah bagian tak terpisahkan dari setiap aplikasi, dari menampilkan *widget* tertentu berdasarkan status hingga menangani berbagai skenario data.
-
-### **2. Konsep Kunci & Filosofi Mendalam:**
-
-#### **2.1. Logika Boolean (Benar/Salah):**
-
-Inti dari setiap struktur kondisional adalah evaluasi sebuah ekspresi yang menghasilkan nilai `Benar` (True) atau `Salah` (False). Dalam Bash, "kebenaran" atau "kegagalan" ini sering kali direpresentasikan oleh **status keluar (exit status)** dari sebuah perintah atau ekspresi.
-
-#### **2.2. Determinisme dan Fleksibilitas:**
-
-* **Determinisme:** Tanpa kondisional, skrip selalu melakukan hal yang sama. Ini deterministik, tetapi kurang fleksibel.
-* **Fleksibilitas:** Dengan kondisional, skrip menjadi non-deterministik, dalam artian perilakunya dapat berubah tergantung pada kondisi saat skrip dijalankan. Ini adalah kekuatan utama dalam otomasi karena memungkinkan skrip beradaptasi dengan lingkungan atau input yang bervariasi.
-
-#### **2.3. Filosofi Unix dan Status Keluar (The "Return 0 is Success" Mantra):**
-
-Dalam filosofi Unix, setiap program dirancang untuk melakukan satu hal dengan baik, dan hasilnya dikomunikasikan melalui *exit status* setelah eksekusi selesai. Status `0` secara universal berarti "sukses" atau "tidak ada kesalahan," sementara nilai non-nol (biasanya `1` hingga `255`) menunjukkan adanya suatu jenis kesalahan atau kondisi kegagalan.
-
-* **Implikasi:** Ini adalah antarmuka yang sangat sederhana namun kuat. Daripada harus mem-*parse* *output* teks untuk mencari tahu apakah sebuah perintah berhasil, Anda cukup memeriksa *exit status*-nya. Ini adalah fondasi dari *error handling* dalam *shell scripting*.
-* **Konsistensi:** Hampir semua perintah Unix/Linux mengikuti konvensi ini. Memahami hal ini akan memungkinkan Anda menulis skrip yang dapat berinteraksi dengan perintah apa pun dan bereaksi secara tepat terhadap keberhasilan atau kegagalannya.
-
-#### **2.4. `test` Command dan Ekspresi Kondisional:**
-
-Perintah `test` (atau aliasnya `[` dan `[[`) adalah tulang punggung dari semua kondisional di Bash. Mereka mengevaluasi ekspresi dan mengembalikan *exit status* 0 (Benar) atau 1 (Salah). Struktur `if` kemudian bereaksi terhadap *exit status* ini. Ini adalah contoh sempurna bagaimana Bash menggunakan *exit status* secara internal untuk mengendalikan alur program.
-
-### **3. Sintaks Dasar / Contoh Implementasi Inti:**
-
-#### **3.1. Memahami Exit Codes (`$?`) secara Mendalam:**
-
-Seperti yang disinggung di Modul 1.3, `$?` adalah variabel khusus yang menyimpan *exit status* dari perintah terakhir yang dieksekusi. Ini adalah cara utama Bash untuk mengevaluasi "kebenaran" suatu kondisi.
-
-```bash
-#!/bin/bash
-
-# Contoh 1: Perintah yang berhasil (exit status 0)
-echo "Ini adalah pesan sukses"
-echo "Exit status dari 'echo': $?" # Output: 0
-
-# Contoh 2: Perintah yang gagal (exit status non-0)
-ls /direktori/yang/tidak/ada 2>/dev/null # Redirect stderr to /dev/null agar tidak mengganggu output
-echo "Exit status dari 'ls /direktori/yang/tidak/ada': $?" # Output: 2 (atau nilai non-0 lain tergantung sistem)
-
-# Contoh 3: Menggunakan 'true' dan 'false' (perintah bawaan Bash)
-true # Perintah yang selalu mengembalikan exit status 0
-echo "Exit status dari 'true': $?" # Output: 0
-
-false # Perintah yang selalu mengembalikan exit status 1
-echo "Exit status dari 'false': $?" # Output: 1
-```
-
-* **Penjelasan `2>/dev/null`:** Ini adalah *redirection* yang mengalihkan `stderr` (file descriptor 2) ke `/dev/null`, sebuah "lubang hitam" virtual di mana semua data yang dialihkan ke sana akan dibuang. Ini berguna untuk menekan pesan error yang tidak ingin ditampilkan ke pengguna di terminal.
-
-#### **3.2. Struktur `if ... then ... fi`:**
-
-Ini adalah bentuk kondisional paling dasar.
-
-```bash
-#!/bin/bash
-
-# Sintaks Dasar:
-# if perintah_atau_ekspresi_kondisional; then
-#   # Kode yang dijalankan jika perintah_atau_ekspresi_kondisional sukses (exit status 0)
-# fi
-
-# Contoh Sederhana: Mengecek keberhasilan perintah
-if mkdir folder_baru_saya; then
-  echo "Folder 'folder_baru_saya' berhasil dibuat."
-else
-  echo "Gagal membuat folder 'folder_baru_saya'."
-fi
-```
-
-* **Penjelasan:**
-  * `if`: Kata kunci yang memulai blok kondisional.
-  * `mkdir folder_baru_saya`: Ini adalah perintah yang akan dievaluasi. Jika `mkdir` berhasil (direktori berhasil dibuat dan mengembalikan `0`), blok `then` akan dieksekusi. Jika gagal (misalnya, direktori sudah ada dan mengembalikan nilai non-nol), blok `else` akan dieksekusi.
-  * `then`: Menandai awal blok kode yang akan dijalankan jika kondisi benar.
-  * `else`: (Opsional) Menandai awal blok kode yang akan dijalankan jika kondisi salah.
-  * `fi`: Menutup blok `if`. `fi` adalah `if` yang dibalik, sebuah konvensi umum di Bash.
-
-#### **3.3. Menggunakan `test` (`[ ... ]`) vs. `[[ ... ]]`:**
-
-Ini adalah dua cara utama untuk mengevaluasi ekspresi kondisional dalam Bash.
-
-* **`test` atau `[ ... ]` (Perintah Tradisional):**
-
-  * `[` sebenarnya adalah *alias* untuk perintah `test`.
-  * Ini adalah perintah eksternal yang mengevaluasi argumennya dan mengembalikan *exit status*.
-  * **Keterbatasan:** Memerlukan kutipan yang hati-hati untuk variabel dan tidak mendukung *[globbing][3]* atau *regular expressions* tingkat lanjut secara langsung.
-
-    <!-- end list -->
-
-    ```bash
-    #!/bin/bash
-
-    NAMA_USER="Admin"
-
-    # Perbandingan string menggunakan [ ]
-    if [ "$NAMA_USER" == "Admin" ]; then
-      echo "Selamat datang, Administrator!"
-    fi
-
-    # Penting: Spasi di sekitar '[' dan ']' sangat WAJIB.
-    # [ "$NAMA_USER" == "Admin" ] <--- Benar
-    # [ "$NAMA_USER"=="Admin" ] <--- Salah, akan menjadi error
-    ```
-
-* **`[[ ... ]]` (Bash Keyword - Modern dan Lebih Kuat):**
-
-  * `[[ ... ]]` bukanlah perintah, melainkan **kata kunci (keyword)** bawaan Bash.
-  * **Keunggulan:**
-    * Tidak memerlukan kutipan yang ketat untuk variabel (`[[ $NAMA_USER == "Admin" ]]` juga akan berfungsi, meskipun kutipan ganda tetap direkomendasikan).
-    * Mendukung operator perbandingan string yang lebih intuitif (`==`, `!=`).
-    * Mendukung *pattern matching* (globbing) dengan operator `==` dan `!=` tanpa perlu `grep` atau `case`.
-    * Mendukung *regular expressions* dengan operator `=~`.
-    * Mendukung operator boolean `&&` dan `||` secara langsung di dalamnya (lihat bagian "Menggabungkan Kondisi").
-    * Tidak rentan terhadap *[word splitting][4]* atau *pathname expansion* yang tidak diinginkan.
-
-    <!-- end list -->
-
-    ```bash
-    #!/bin/bash
-
-    NAMA_USER="Admin"
-    JENIS_FILE="dokumen.txt"
-
-    # Perbandingan string menggunakan [[ ]]
-    if [[ "$NAMA_USER" == "Admin" ]]; then
-      echo "Selamat datang, Administrator!"
-    fi
-
-    # Pattern matching (globbing) dengan [[ ]]
-    if [[ "$JENIS_FILE" == *.txt ]]; then
-      echo "Ini adalah file teks."
-    fi
-
-    # Regular Expression matching dengan [[ ]] (regex dasar)
-    if [[ "$JENIS_FILE" =~ ^[a-z]+\.txt$ ]]; then
-      echo "Nama file teks valid."
-    fi
-    ```
-
-* **Rekomendasi:** Selalu gunakan `[[ ... ]]` untuk ekspresi kondisional baru di Bash, kecuali Anda memiliki alasan kuat untuk menggunakan `[ ... ]` (misalnya, untuk kompatibilitas dengan *shell* yang lebih lama atau POSIX `sh`).
-
-#### **3.4. Operator Perbandingan String, Angka, dan File:**
-
-**a. Perbandingan String (dalam `[ ]` atau `[[ ]]`):**
-
-| Operator | Arti              | Contoh (dalam `[[ ... ]]`)          |
-| :------- | :---------------- | :---------------------------------- |
-| `==`     | Sama dengan       | `[[ "$VAR" == "nilai" ]]`           |
-| `!=`     | Tidak sama dengan | `[[ "$VAR" != "nilai" ]]`           |
-| `<`      | Kurang dari       | `[[ "$VAR1" < "$VAR2" ]]` (Lexicographical) |
-| `>`      | Lebih dari        | `[[ "$VAR1" > "$VAR2" ]]` (Lexicographical) |
-| `-z`     | String kosong     | `[[ -z "$VAR" ]]` (True jika panjang 0) |
-| `-n`     | String tidak kosong | `[[ -n "$VAR" ]]` (True jika panjang \> 0) |
-| `=~`     | Regex match       | `[[ "$VAR" =~ "pattern" ]]` (Hanya di `[[ ]]`) |
-
-**b. Perbandingan Angka (dalam `(( ))` atau `[ ]` / `test` dengan operator numerik):**
-
-* **Cara Paling Disarankan: Arithmetic Expansion `(( ... ))`:**
-
-  * Ini adalah ekspresi aritmatika Bash. Mengembalikan `0` (true) jika ekspresi bernilai bukan nol, dan `1` (false) jika ekspresi bernilai nol. Mirip dengan bagaimana bahasa C menangani boolean.
-  * **Keunggulan:** Mendukung operator matematika standar (`+`, `-`, `*`, `/`, `%`), dan perbandingan numerik yang intuitif.
-
-    <!-- end list -->
-
-    ```bash
-    #!/bin/bash
-
-    ANGKA1=10
-    ANGKA2=5
-
-    if (( ANGKA1 > ANGKA2 )); then
-      echo "$ANGKA1 lebih besar dari $ANGKA2"
-    fi
-
-    if (( ANGKA1 % ANGKA2 == 0 )); then
-      echo "$ANGKA1 adalah kelipatan dari $ANGKA2"
-    fi
-    ```
-
-* **Cara Alternatif: Operator Numerik dalam `[ ]` atau `[[ ]]`:**
-
-  * Gunakan `-eq`, `-ne`, `-gt`, `-ge`, `-lt`, `-le`.
-
-    | Operator | Arti              | Contoh (dalam `[[ ... ]]`)    |
-    | :------- | :---------------- | :---------------------------- |
-    | `-eq`    | Sama dengan       | `[[ "$ANGKA1" -eq "$ANGKA2" ]]` |
-    | `-ne`    | Tidak sama dengan | `[[ "$ANGKA1" -ne "$ANGKA2" ]]` |
-    | `-gt`    | Lebih besar dari  | `[[ "$ANGKA1" -gt "$ANGKA2" ]]` |
-    | `-ge`    | Lebih besar atau sama dengan | `[[ "$ANGKA1" -ge "$ANGKA2" ]]` |
-    | `-lt`    | Kurang dari       | `[[ "$ANGKA1" -lt "$ANGKA2" ]]` |
-    | `-le`    | Kurang dari atau sama dengan | `[[ "$ANGKA1" -le "$ANGKA2" ]]` |
-
-**c. Pengujian File (dalam `[ ]` atau `[[ ]]`):**
-
-| Operator | Arti                              | Contoh (dalam `[[ ... ]]`)       |
-| :------- | :-------------------------------- | :------------------------------- |
-| `-a file` | File ada (`-e` lebih modern)      | `[[ -e "/path/to/file" ]]`     |
-| `-f file` | File ada dan merupakan file biasa | `[[ -f "/path/to/file.txt" ]]` |
-| `-d dir` | File ada dan merupakan direktori  | `[[ -d "/path/to/directory" ]]` |
-| `-s file` | File ada dan ukurannya \> 0        | `[[ -s "/path/to/file" ]]`     |
-| `-r file` | File ada dan dapat dibaca         | `[[ -r "/path/to/file" ]]`     |
-| `-w file` | File ada dan dapat ditulis        | `[[ -w "/path/to/file" ]]`     |
-| `-x file` | File ada dan dapat dieksekusi     | `[[ -x "/path/to/script.sh" ]]` |
-
-#### **3.5. Menggabungkan Kondisi (AND `&&`, OR `||`):**
-
-Anda dapat menggabungkan beberapa kondisi menggunakan operator boolean.
-
-* **Operator `&&` (AND):** Kondisi keseluruhan benar hanya jika **kedua** sisi `&&` benar (exit status 0). Jika sisi kiri gagal, sisi kanan tidak dievaluasi [(short-circuiting)][2].
-* **Operator `||` (OR):** Kondisi keseluruhan benar jika **salah satu** sisi `||` benar (exit status 0). Jika sisi kiri berhasil, sisi kanan tidak dievaluasi (short-circuiting).
-
-<!-- end list -->
-
-```bash
-#!/bin/bash
-
-# Contoh 1: Menggabungkan kondisi dengan AND (&&)
-# Membuat direktori HANYA JIKA TIDAK ADA dan file_config.txt ADA
-if [[ ! -d "log_files" ]] && [[ -f "file_config.txt" ]]; then
-  echo "Membuat direktori 'log_files'..."
-  mkdir log_files
-else
-  echo "Kondisi tidak terpenuhi: direktori 'log_files' mungkin sudah ada atau 'file_config.txt' tidak ada."
-fi
-
-echo "---------------------"
-
-# Contoh 2: Menggabungkan kondisi dengan OR (||)
-# Jika user adalah 'root' ATAU grup adalah 'admin'
-USER_CHECK="user1"
-GROUP_CHECK="developers"
-
-if [[ "$USER_CHECK" == "root" ]] || [[ "$GROUP_CHECK" == "admin" ]]; then
-  echo "Akses diberikan sebagai pengguna istimewa atau anggota grup admin."
-else
-  echo "Akses ditolak."
-fi
-```
-
-* **Penjelasan `[[ ! -d "log_files" ]]`:** Tanda seru `!` membalikkan hasil evaluasi. Jadi, `! -d "log_files"` berarti "jika TIDAK direktori log\_files ada".
+> **Catatan revisi:** Dokumen ini menggantikan enam file terpisah (`globbing.md`, `pattern-matching.md`, `wildcard.md`, `word-splitting.md`, `short-circuiting.md`, dan `README.md` Fase 2). Semua materi telah digabung menjadi satu penjelasan utuh, dengan koreksi kesalahan faktual, penambahan materi yang hilang, serta penataan ulang alur belajar dari fondasi ke aplikasi.
 
 ---
 
-### **Tambahan `else-if` dan Struktur Dasar**
+## **Daftar Isi**
 
-```bash
-if KONDISI; then
-    # kode dijalankan jika kondisi BENAR
-elif KONDISI_LAIN; then
-    # kode dijalankan jika kondisi pertama SALAH dan kondisi ini BENAR
-else
-    # kode dijalankan jika semua kondisi SALAH
-fi
+1. Pengantar & Peta Konsep
+2. Urutan Ekspansi Shell (Kerangka Utama)
+3. Word Splitting (Mendalam)
+4. Pathname Expansion / Globbing (Mendalam)
+5. Pattern Matching (Lebih Luas dari Globbing)
+6. Short-Circuiting
+7. Kontrol Alur: Kondisional, Perulangan, Fungsi
+8. Array dan Manipulasi Teks
+9. Praktik Terbaik, Kesalahan Umum, dan Debugging
+10. Studi Kasus Terpadu
+11. Referensi
+
+---
+
+## **1. Pengantar & Peta Konsep**
+
+Bash (dan shell POSIX lain) memiliki beberapa lapisan pemrosesan teks yang sering membingungkan karena namanya mirip:
+
+| Istilah | Dilakukan oleh | Lingkup | Contoh |
+|---|---|---|---|
+| **Ekspansi Shell** | Shell | Umum (semua tahap) | `~`, `$var`, `$(cmd)` |
+| **Brace Expansion** | Shell | Menghasilkan string | `{a,b}.txt` → `a.txt b.txt` |
+| **Word Splitting** | Shell | Memecah string jadi kata | `$var` → beberapa argumen |
+| **Pathname Expansion (Globbing)** | Shell | Nama file di filesystem | `*.txt` → `a.txt b.txt` |
+| **Pattern Matching** | Shell / bahasa | String (tanpa filesystem) | `[[ $x == *.txt ]]` |
+| **Regex** | Program / shell | String (kompleks) | `[[ $x =~ ^[a-z]+$ ]]` |
+| **Short-Circuiting** | Shell / bahasa | Evaluasi logika | `cmd1 && cmd2` |
+
+**Ide kunci yang harus dipegang:**
+
+- **Globbing ≠ regex ≠ brace expansion.** Ketiganya sering disalahartikan sebagai satu hal.
+- **Brace expansion** terjadi **sebelum** word splitting dan **bukan** pencarian file.
+- **Globbing** terjadi **setelah** word splitting, dan **hanya jika** hasil ekspansi tidak dikutip.
+- **Pattern matching** di `[[ ]]` dan `case` mirip globbing, tetapi **tidak menyentuh filesystem**.
+- **Regex** di `[[ =~ ]]` punya sintaks sendiri, tidak sama dengan globbing.
+
+---
+
+## **2. Urutan Ekspansi Shell (Kerangka Utama)**
+
+Bash memproses baris perintah melalui tahap-tahap berikut **secara berurutan**. Memahami urutan ini adalah kunci untuk memahami semua materi berikutnya.
+
+```
++----------------------+
+|  1. Brace Expansion  |   {a,b} → a b
++----------+-----------+
+           |
+           v
++----------------------+
+|  2. Tilde Expansion  |   ~ → /home/user
++----------+-----------+
+           |
+           v
++------------------------------+
+|  3. Parameter Expansion      |   $var → value
+|     (Variable Substitution)  |
++----------+-------------------+
+           |
+           v
++------------------------------+
+|  4. Command Substitution     |   $(cmd) → output cmd
++----------+-------------------+
+           |
+           v
++------------------------------+
+|  5. Arithmetic Expansion     |   $((1+2)) → 3
++----------+-------------------+
+           |
+           v
++==============================+
+||  6. WORD SPLITTING          ||   berdasarkan IFS
++==============================+
+           |
+           v
++------------------------------+
+|  7. Pathname Expansion       |   *.txt → file1.txt file2.txt
+|     (Globbing)               |
++----------+-------------------+
+           |
+           v
++----------------------+
+|  Final Arguments     |
+|  dikirim ke program  |
++----------------------+
 ```
 
+**Tips mengingat:** *"Brace, Tilde, Param, Cmd, Math → Split → Glob → Run"*.
+
+**Poin penting yang sering terlewat:**
+
+- **Quoting** mempengaruhi tahap 6 dan 7. Jika hasil ekspansi dikutip ganda (`"$var"`), word splitting dan globbing **tidak terjadi**.
+- **Assignment** (`var=value`) tidak melalui word splitting atau globbing.
+- **`[[ ... ]]`** dan `case` tidak melalui globbing filesystem; mereka melakukan pattern matching pada string.
+- **Brace expansion** terjadi paling awal, bahkan sebelum `$var` diekspansi.
+
 ---
 
-## **Poin Penting**
+## **3. Word Splitting (Mendalam)**
 
-1. **`if`** memulai blok pemeriksaan kondisi.
-2. **`then`** menandai awal kode yang dijalankan jika kondisi bernilai *true* (exit status 0).
-3. **`elif`** (`else if`) menambahkan percabangan baru, dicek hanya jika kondisi sebelumnya *false*.
-4. **`else`** dijalankan hanya jika semua kondisi *false*.
-5. **`fi`** menutup blok `if` — dibaca sebagai `if` terbalik.
+### 3.1 Definisi
 
----
+**Word splitting** adalah proses shell memecah string menjadi kata-kata terpisah berdasarkan nilai `IFS` (*Internal Field Separator*), **setelah** parameter expansion, command substitution, dan arithmetic expansion selesai.
 
-## **Contoh Singkat**
+> **Aturan emas:** Word splitting **hanya terjadi jika hasil ekspansi tidak dikutip ganda**.
+
+### 3.2 Mekanisme `IFS`
+
+- **Default `IFS`** = spasi, tab, newline (`$' \t\n'`).
+- Shell memotong string di setiap karakter yang ada di `IFS`.
+- Karakter `IFS` berurutan digabung menjadi satu pemisah.
+- **`unset IFS`** mengembalikan ke default.
+- **`IFS=`** (kosong) menonaktifkan word splitting sepenuhnya.
+
+### 3.3 Contoh
 
 ```bash
-#!/bin/bash
+# Default IFS
+var="a b   c"
+echo $var       # a b c   ← tiga argumen: a, b, c
+echo "$var"     # a b   c ← satu argumen utuh
 
-NAMA="Budi"
+# Mengubah IFS secara lokal
+IFS=: read -r user pass uid <<< "budi:secret:1000"
+echo "$user | $pass | $uid"   # budi | secret | 1000
 
-if [[ "$NAMA" == "Andi" ]]; then
-    echo "Halo Andi!"
-elif [[ "$NAMA" == "Budi" ]]; then
-    echo "Hai Budi!"
-else
-    echo "Saya tidak kenal kamu."
-fi
+# IFS global (hindari, gunakan lokal)
+old_ifs="$IFS"
+IFS=:
+data="user:pass:123"
+echo $data      # user pass 123
+IFS="$old_ifs"
 ```
 
----
+### 3.4 Kapan Word Splitting **Tidak** Terjadi
 
-## **Tips Praktis**
+1. Di dalam tanda kutip ganda: `"$var"`.
+2. Di dalam assignment: `var=$other` (tidak di-split).
+3. Di dalam `[[ ... ]]`: `[[ $x == $y ]]` (tidak di-split).
+4. Di dalam `case "$var" in`.
 
-* **Jangan lupa untuk selalu beri spasi** di dalam `[ ]` atau `[[ ]]`.
-* Gunakan `[[ ... ]]` untuk skrip Bash modern karena lebih aman dan fleksibel.
-* Kutip variabel (`"$VAR"`) untuk menghindari masalah jika variabel kosong atau mengandung spasi.
-* Ingat bahwa Bash menganggap **exit status 0** sebagai *true*.
-
----
-
-#### **3.6. Struktur `case ... esac` untuk Pencocokan Pola:**
-
-Struktur `case` sangat berguna ketika Anda perlu membandingkan satu variabel atau ekspresi dengan beberapa pola yang berbeda. Ini adalah alternatif yang lebih bersih dan seringkali lebih efisien daripada serangkaian `if/elif/else` yang panjang.
+### 3.5 `$@` vs `$*` — Perbedaan Krusial
 
 ```bash
-#!/bin/bash
+set -- "a b" c d
 
-# Contoh: Skrip sederhana untuk mengelola layanan (start/stop/restart)
-ACTION="$1" # Ambil argumen pertama sebagai aksi
+for x in "$@"; do echo "[$x]"; done   # [a b] [c] [d]
+for x in $@;   do echo "[$x]"; done   # [a] [b] [c] [d]  ← salah
+for x in "$*"; do echo "[$x]"; done   # [a b c d]        ← satu string
+for x in $*;   do echo "[$x]"; done   # [a] [b] [c] [d]
+```
 
-case "$ACTION" in
-  start)
-    echo "Memulai layanan..."
-    # Lakukan perintah untuk memulai layanan
-    ;;
-  stop)
-    echo "Menghentikan layanan..."
-    # Lakukan perintah untuk menghentikan layanan
-    ;;
-  restart)
-    echo "Melakukan restart layanan..."
-    # Lakukan perintah untuk restart layanan
-    ;;
-  *) # Default case: jika tidak ada pola yang cocok
-    echo "Penggunaan: $0 {start|stop|restart}"
-    exit 1
-    ;;
+**Aturan:** Selalu gunakan `"$@"` untuk meneruskan argumen; `"$*"` hanya jika Anda memang ingin menggabungkan.
+
+### 3.6 Bahaya Umum dan Solusinya
+
+| Bahaya | Contoh Buruk | Solusi |
+|---|---|---|
+| Nama file berisi spasi | `for f in $(ls)` | `for f in *; do ...` atau `find . -print0 \| while IFS= read -r -d '' f` |
+| Variabel user | `rm $file` | `rm "$file"` |
+| Daftar dinamis | `files=$(ls)` | `mapfile -t files < <(ls)` atau langsung `files=(*)` |
+| Argumen fungsi | `func $args` | `func "$@"` |
+
+### 3.7 Contoh Benar Membaca File Baris demi Baris
+
+```bash
+# ✅ BENAR: while di shell yang sama, IFS dilokalisasi
+while IFS= read -r line; do
+  printf 'Baris: %s\n' "$line"
+done < "$file"
+
+# ✅ BENAR: baca ke array
+mapfile -t lines < "$file"
+
+# ❌ SALAH: while di subshell, variabel hilang
+cat "$file" | while read -r line; do
+  count=$((count + 1))   # perubahan tidak terlihat di luar
+done
+echo "$count"            # kosong
+```
+
+### 3.8 Visualisasi Tahap Ekspansi (Script Aman)
+
+Berikut versi yang **tidak menggunakan `eval` berulang** (yang berbahaya). Kita hanya mendemonstrasikan tahap secara manual:
+
+```bash
+#!/usr/bin/env bash
+# shell-expansion-demo.sh
+# Menampilkan urutan ekspansi shell dengan contoh terbatas (aman).
+
+GREEN=$'\033[1;32m'
+RED=$'\033[1;31m'
+CYAN=$'\033[1;36m'
+NC=$'\033[0m'
+
+step() { echo -e "$1"; sleep 0.6; }
+
+clear
+echo "Demo urutan ekspansi shell (contoh terbatas, aman):"
+echo
+
+step "${GREEN}[1] Brace Expansion${NC}: {a,b}.txt → a.txt b.txt"
+step "${GREEN}[2] Tilde Expansion${NC}: ~ → $HOME"
+step "${GREEN}[3] Parameter Expansion${NC}: \$USER → $USER"
+step "${GREEN}[4] Command Substitution${NC}: \$(date +%Y) → $(date +%Y)"
+step "${GREEN}[5] Arithmetic Expansion${NC}: \$((2+3)) → $((2+3))"
+step "${RED}[6] Word Splitting${NC}: var='a b c'; \$var → 3 argumen"
+step "${CYAN}[7] Pathname Expansion${NC}: *.sh → $(echo *.sh 2>/dev/null | head -c 60)..."
+echo
+echo "Final: argumen dikirim ke program."
+```
+
+> **Peringatan:** Jangan gunakan `eval echo "$CMD"` berulang untuk “mensimulasikan” tahap ekspansi. Itu mengeksekusi ulang command substitution dan bisa menjadi celah keamanan.
+
+---
+
+## **4. Pathname Expansion / Globbing (Mendalam)**
+
+### 4.1 Definisi
+
+**Globbing** (atau *pathname expansion*) adalah proses **shell** mencocokkan nama file atau path menggunakan pola (*glob patterns*) **sebelum** perintah dijalankan. Hasilnya adalah daftar nama file yang cocok, diurutkan secara leksikografis.
+
+> Penting: Globbing **bukan regex**, dan **bukan** brace expansion. Globbing menyentuh filesystem.
+
+### 4.2 Wildcard Dasar
+
+| Pola | Arti | Contoh | Cocok dengan |
+|---|---|---|---|
+| `*` | 0 atau lebih karakter (kecuali `/` dan leading `.`) | `*.txt` | `a.txt`, `b.txt` |
+| `?` | Tepat 1 karakter (kecuali `/`) | `file?.sh` | `file1.sh`, `fileA.sh` |
+| `[abc]` | 1 karakter dari set | `file[12].txt` | `file1.txt`, `file2.txt` |
+| `[a-z]` | 1 karakter dari range | `[a-z]*.sh` | `app.sh`, `run.sh` |
+| `[!abc]` | 1 karakter **bukan** dari set (POSIX) | `file[!0-9].txt` | `fileA.txt` |
+| `[^abc]` | Sama seperti `[!abc]`, **non-POSIX** | `file[^0-9].txt` | `fileA.txt` |
+| `[[:alpha:]]` | POSIX character class | `[[:digit:]]*.log` | `1.log`, `2.log` |
+
+**Catatan POSIX:** Hanya `[!...]` yang standar. `[^...]` didukung Bash/Zsh, tapi hindari jika portabilitas penting.
+
+### 4.3 Extended Globbing (Bash & Zsh)
+
+Aktifkan di Bash:
+
+```bash
+shopt -s extglob
+```
+
+Di Zsh, extended glob aktif secara default atau dengan:
+
+```zsh
+setopt extendedglob
+```
+
+| Pola | Arti | Contoh |
+|---|---|---|
+| `?(pattern-list)` | 0 atau 1 kemunculan | `?(foo)` → ``, `foo` |
+| `*(pattern-list)` | 0 atau lebih kemunculan | `*(foo bar)` |
+| `+(pattern-list)` | 1 atau lebih kemunculan | `+(jpg\|png)` |
+| `@(pattern-list)` | Tepat satu pilihan | `@(jpg\|png)` |
+| `!(pattern-list)` | Tidak cocok dengan pola | `!(tmp\|bak)` |
+
+Contoh:
+
+```bash
+shopt -s extglob
+echo !(*.bak|*.tmp)     # semua file kecuali .bak dan .tmp
+```
+
+> **Perhatian:** Brace expansion `{a,b}` **bukan** bagian dari extended globbing. Ia adalah tahap ekspansi terpisah.
+
+### 4.4 Opsi Shell yang Mempengaruhi Globbing
+
+| Opsi | Efek |
+|---|---|
+| `shopt -s dotglob` | `*` juga cocok dengan file berawalan `.` |
+| `shopt -s nullglob` | Jika tidak ada match, pola dihapus (jadi array kosong) |
+| `shopt -s failglob` | Jika tidak ada match, Bash error dan hentikan perintah |
+| `shopt -s globstar` | Aktifkan `**` untuk match rekursif |
+| `shopt -s nocaseglob` | Globbing case-insensitive |
+| `shopt -s extglob` | Aktifkan extended globbing |
+| `shopt -s globasciiranges` | Range `[a-z]` mengikuti ASCII |
+| `set -f` / `set -o noglob` | Nonaktifkan globbing sepenuhnya |
+| `GLOBIGNORE` | Daftar pola yang dikecualikan dari hasil glob |
+
+Contoh:
+
+```bash
+# Default: jika tidak ada file .zzz, pola tetap
+echo *.zzz              # *.zzz
+
+shopt -s nullglob
+echo *.zzz              # (kosong)
+
+shopt -s failglob
+echo *.zzz              # bash: no match: *.zzz  (error)
+```
+
+### 4.5 Dotfiles
+
+Secara default, `*` dan `?` **tidak** cocok dengan file yang diawali titik (`.bashrc`, `.git`). Untuk memasukkannya:
+
+```bash
+shopt -s dotglob
+echo *
+```
+
+Pola `.??*` cocok dengan dotfile minimal 3 karakter (kecuali `.` dan `..`).
+
+### 4.6 Quoting Menonaktifkan Globbing
+
+Ini krusial dan sering terlewat:
+
+```bash
+echo *.txt      # globbing aktif
+echo "*.txt"    # literal "*.txt"
+echo '*.txt'    # literal "*.txt"
+echo \*.txt     # literal "*.txt"
+```
+
+### 4.7 Batas Argumen (`ARG_MAX`)
+
+Jika glob menghasilkan terlalu banyak file, shell bisa gagal dengan error `Argument list too long`. Solusi:
+
+```bash
+find . -name '*.log' -print0 | xargs -0 rm
+# atau
+find . -name '*.log' -exec rm {} +
+```
+
+### 4.8 Globbing Lintas Platform
+
+| Pola | Bash/Zsh | PowerShell | CMD (Windows) |
+|---|---|---|---|
+| `*` | 0+ karakter, kecuali `/` dan leading `.` | 0+ karakter | 0+ karakter |
+| `?` | Tepat 1 karakter | Tepat 1 karakter | Tepat 1 karakter |
+| `[abc]` | Ya | Ya | Ya |
+| `[a-z]` | Ya | Ya | Ya |
+| `[!abc]` | Ya | Ya | Ya |
+| `{a,b}` | Brace expansion (bukan glob) | Tidak ada | Tidak ada |
+| `**` rekursif | Ya, dengan `globstar` | Tidak ada; gunakan `-Recurse` | Tidak ada; gunakan `dir /s` |
+| `!(pattern)` | Ya, dengan `extglob` | Tidak ada; gunakan `-notlike` | Tidak ada |
+
+**PowerShell — koreksi penting:** `**` **bukan** wildcard di PowerShell. Rekursi dilakukan dengan parameter:
+
+```powershell
+Get-ChildItem -Recurse -Filter *.txt
+```
+
+**CMD:** `dir /s *.txt` untuk rekursif.
+
+---
+
+## **5. Pattern Matching (Lebih Luas dari Globbing)**
+
+### 5.1 Definisi
+
+**Pattern matching** adalah konsep umum: mencocokkan data (string, angka, struktur) terhadap suatu pola. Globbing adalah **salah satu** bentuk pattern matching (khusus nama file). Ada juga:
+
+- Pattern matching **string** di `[[ ]]` dan `case`.
+- **Regex** di `[[ =~ ]]`, `grep`, `sed`, dll.
+- **Structural pattern matching** di Python, Rust, Dart 3+.
+
+### 5.2 Pattern Matching di Bash: `[[ ]]` dan `case`
+
+Di dalam `[[ ]]`, operator `==`, `!=` melakukan **pattern matching gaya globbing** pada string **tanpa menyentuh filesystem**:
+
+```bash
+name="report.txt"
+[[ $name == *.txt ]] && echo "File teks"
+```
+
+**Aturan quoting:**
+
+```bash
+pattern="*.txt"
+[[ $name == $pattern ]]     # pattern matching ✅
+[[ $name == "$pattern" ]]   # literal, bukan pattern ✅ (perilaku berbeda!)
+```
+
+**Case statement** menggunakan pattern matching gaya globbing:
+
+```bash
+case "$name" in
+  *.txt|*.md)  echo "Teks" ;;
+  *.jpg|*.png) echo "Gambar" ;;
+  *)           echo "Lainnya" ;;
 esac
-
-echo "Proses selesai."
 ```
 
-* **Penjelasan `case ... esac`:**
-  * `case "$ACTION" in`: Memulai blok `case` dan menentukan variabel yang akan dicocokkan (`$ACTION`).
-  * `start)`: Ini adalah sebuah "pola". Jika nilai `$ACTION` cocok dengan "start", blok kode di bawahnya akan dieksekusi.
-  * `*)`: Ini adalah pola *wildcard* yang cocok dengan apa pun. Ini berfungsi sebagai `default` atau `else` dalam blok `case`.
-  * `;;`: Mengakhiri blok kode untuk setiap pola dan mencegah "fall-through" ke pola berikutnya (seperti `break` di bahasa C/Java).
-  * `esac`: Menutup blok `case`. `esac` adalah `case` yang dibalik.
+**Bash 4+ `case` fall-through:**
 
-### **4. Terminologi Esensial & Penjelasan Detil:**
+- `;;` — akhiri blok (default).
+- `;&` — lanjut ke blok berikutnya **tanpa** mengecek pola (fall-through).
+- `;;&` — lanjut mengecek pola berikutnya.
 
-* **Kondisional (Conditional):** Struktur kontrol dalam pemrograman yang memungkinkan alur eksekusi program berubah berdasarkan evaluasi suatu kondisi (benar atau salah).
-* **`if/then/elif/else/fi`:** Kata kunci yang membentuk blok kondisional `if`.
-  * `if`: Memulai pernyataan kondisional.
-  * `then`: Menjalankan blok kode jika kondisi `if` benar.
-  * `elif` (else if): Menguji kondisi tambahan jika kondisi `if` sebelumnya salah.
-  * `else`: Menjalankan blok kode jika tidak ada kondisi `if` atau `elif` yang benar.
-  * `fi`: Menandai akhir dari pernyataan `if`.
-* **`test` / `[`:** Perintah eksternal yang digunakan untuk mengevaluasi ekspresi kondisional.
-* **`[[ ... ]]`:** Kata kunci internal Bash yang lebih modern dan disarankan untuk evaluasi ekspresi kondisional, menawarkan fitur yang lebih kaya dan penanganan yang lebih aman.
-* **Operator Perbandingan:** Simbol atau kata kunci yang digunakan untuk membandingkan nilai:
-  * **String:** `==` (sama), `!=` (tidak sama), `<` (kurang dari secara leksikografis), `>` (lebih dari secara leksikografis), `-z` (string kosong), `-n` (string tidak kosong).
-  * **Angka:** `-eq` (sama), `-ne` (tidak sama), `-gt` (lebih besar), `-ge` (lebih besar atau sama), `-lt` (kurang dari), `-le` (kurang dari atau sama).
-  * **File:** `-f` (file biasa), `-d` (direktori), `-e` (ada), `-s` (ukuran \> 0), `-r` (dapat dibaca), `-w` (dapat ditulis), `-x` (dapat dieksekusi).
-* **`&&` (AND):** Operator logika boolean yang memerlukan kedua kondisi di kedua sisinya agar benar.
-* **`||` (OR):** Operator logika boolean yang memerlukan setidaknya satu kondisi di kedua sisinya agar benar.
-* **`case ... esac`:** Struktur kontrol yang digunakan untuk mencocokkan satu nilai dengan beberapa pola yang berbeda, menyediakan alur kontrol yang lebih bersih daripada serangkaian `if/elif` yang panjang.
-* **Pola (Pattern) dalam `case`:** String atau *wildcard* yang digunakan untuk mencocokkan nilai variabel dalam pernyataan `case`.
-* **Short-circuiting:** Perilaku operator `&&` dan `||` di mana evaluasi kondisi di sisi kanan dihentikan jika hasil akhir sudah dapat ditentukan dari sisi kiri (misalnya, jika sisi kiri `&&` gagal, tidak perlu mengevaluasi sisi kanan).
+### 5.3 Regex di Bash: `[[ =~ ]]`
 
-### **5. Rekomendasi Visualisasi (Jika Diperlukan):**
-
-* **Diagram Alur `if/else/elif`:** Sebuah *flowchart* yang menunjukkan alur eksekusi berdasarkan kondisi yang dievaluasi (misalnya, berbentuk *diamond* untuk keputusan).
-* **Tabel Perbandingan Operator:** Tabel ringkas yang membandingkan operator string, numerik, dan file untuk `[ ]` dan `[[ ]]` akan sangat membantu referensi cepat.
-* **Diagram Alur `case` Statement:** Sebuah *flowchart* yang menggambarkan bagaimana nilai dicocokkan dengan pola dan alur eksekusi bercabang.
-
-### **6. Hubungan dengan Modul Lain:**
-
-Modul ini adalah batu loncatan yang esensial. Konsep *exit codes* yang didalami di sini akan menjadi fondasi utama untuk Modul 3.1 (Penanganan Kesalahan) di mana Anda akan belajar bagaimana merancang skrip yang robust terhadap kegagalan. Logika kondisional ini juga mutlak diperlukan untuk Modul 2.2 (Perulangan) karena Anda akan sering menggunakan kondisi untuk mengontrol kapan perulangan harus berhenti atau berlanjut. Selain itu, dalam Modul 2.3 (Fungsi), Anda akan menerapkan kondisional di dalam fungsi untuk memvalidasi input atau mengontrol perilaku fungsi. Logika pengambilan keputusan ini akan menjadi bagian integral dari setiap skrip yang lebih kompleks di Fase 3 dan 4.
-
-### **7. Sumber Referensi Lengkap:**
-
-* **Bash Conditional Expressions (Bash Manual):** [https://www.gnu.org/software/bash/manual/html\_node/Bash-Conditional-Expressions.html](https://www.gnu.org/software/bash/manual/html_node/Bash-Conditional-Expressions.html)
-  * **Detail:** Sumber resmi dan definitif. Ini menjelaskan secara teknis semua operator dan sintaks untuk ekspresi kondisional di Bash. Mungkin agak padat, tetapi sangat akurat.
-* **Greg's Wiki - BashFAQ/031 (if/test):** [https://mywiki.wooledge.org/BashFAQ/031](https://mywiki.wooledge.org/BashFAQ/031)
-  * **Detail:** Sebuah wiki yang sangat dihargai di komunitas Bash. Artikel ini membahas perbedaan dan praktik terbaik antara `[` dan `[[`, serta alasan di balik rekomendasi penggunaan `[[ ]]`. Wajib dibaca.
-* **Bash Conditional Statements (Linuxize):** [https://linuxize.com/howto/bash-if-else/](https://linuxize.com/howto/bash-if-else/)
-  * **Detail:** Tutorial yang lebih ramah pemula dengan banyak contoh praktis untuk `if/else/elif`.
-* **Bash Case Statement (Linuxize):** [https://linuxize.com/howto/bash-case-statement/](https://linuxize.com/howto/bash-case-statement/)
-  * **Detail:** Tutorial yang baik untuk memahami dan menguasai penggunaan pernyataan `case`.
-* **Bash Arithmetic Expansion (Bash Manual):** [https://www.gnu.org/software/bash/manual/html\_node/Arithmetic-Expansion.html](https://www.gnu.org/software/bash/manual/html_node/Arithmetic-Expansion.html)
-  * **Detail Tambahan (opsional):** Bagian dari manual Bash yang menjelaskan `((...))` secara mendalam, termasuk operator yang didukung dan perilakunya.
-
-### **8. Tips dan Praktik Terbaik:**
-
-* **Pilih `[[ ... ]]`:** Untuk skrip Bash modern, `[[ ... ]]` adalah pilihan yang lebih aman dan kuat dibandingkan `[ ... ]`.
-* **Gunakan Kutipan Ganda:** Selalu kutip ganda variabel Anda dalam ekspresi kondisional (misalnya, `[[ "$VARIABEL" == "nilai" ]]`) untuk mencegah masalah *word splitting* atau *globbing* yang tidak diinginkan, terutama jika variabel mungkin berisi spasi atau karakter khusus.
-* **Periksa Status Keluar:** Biasakan untuk memeriksa `$?` setelah perintah penting, terutama dalam skrip yang lebih besar, atau gunakan `if` untuk membungkus perintah yang bisa gagal.
-* **Prioritaskan `case` untuk Multiple Options:** Jika Anda memiliki banyak cabang `if/elif` yang membandingkan satu variabel dengan banyak nilai, `case` seringkali adalah solusi yang lebih bersih dan lebih mudah dibaca.
-* **Berikan Pesan Error yang Informatif:** Ketika skrip Anda mengalami kondisi yang tidak valid, berikan pesan error yang jelas kepada pengguna (seringkali ke `stderr` menggunakan `>&2`) dan keluar dengan *exit status* non-nol (`exit 1`).
-
-### **9. Potensi Kesalahan Umum & Solusi:**
-
-* **Kesalahan:** Lupa spasi di sekitar kurung siku `[` dan `]`.
-  * **Contoh:** `if ["$VAR" == "val"]` (salah)
-  * **Solusi:** Harus ada spasi di dalam kurung siku: `if [ "$VAR" == "val" ]`. Ini karena `[` sebenarnya adalah perintah.
-* **Kesalahan:** Menggunakan operator perbandingan string (`==`, `!=`) untuk angka dalam `[ ]` atau `[[ ]]` alih-alih operator numerik (`-eq`, `-gt`).
-  * **Contoh:** `if [[ $ANGKA == 10 ]]` (secara teknis akan berfungsi jika angka adalah string yang mewakili angka, tetapi ini adalah perbandingan *string*, bukan numerik).
-  * **Solusi:** Gunakan `if (( $ANGKA == 10 ))` atau `if [[ $ANGKA -eq 10 ]]`. Perbandingan string `==` akan membandingkan "10" dan "2" sebagai string, sehingga "10" mungkin dianggap "lebih kecil" dari "2" secara leksikografis (seperti dalam kamus), yang salah secara numerik.
-* **Kesalahan:** Tidak mengutip ganda variabel dalam kondisional, menyebabkan masalah dengan spasi atau *wildcard*.
-  * **Contoh:** `if [ $FILE == *.txt ]` (akan gagal jika `$FILE` berisi spasi atau *wildcard* tidak ditangani dengan benar).
-  * **Solusi:** Selalu kutip ganda: `if [[ "$FILE" == *.txt ]]` (dalam `[[ ]]` *pattern matching* sudah didukung) atau `if [ -f "$FILE" ]` untuk memeriksa keberadaan file.
-* **Kesalahan:** Lupa `;;` di setiap kasus dalam pernyataan `case`.
-  * **Solusi:** Ini akan menyebabkan "fall-through", di mana kode dari pola berikutnya juga dieksekusi. Selalu pastikan ada `;;` untuk mengakhiri setiap blok kasus.
-* **Kesalahan:** Menggunakan operator `&&` atau `||` di luar `[[ ... ]]` atau tanpa memahami *short-circuiting*.
-  * **Contoh:** `if [ kondisi1 && kondisi2 ]` (salah, `&&` bukanlah operator yang dikenali oleh `[`).
-  * **Solusi:** Gunakan `if [[ kondisi1 && kondisi2 ]]` (disarankan) atau `if kondisi1 && kondisi2; then ...` (jika kondisi adalah perintah). Pahami bahwa `&&` dan `||` di luar `[[ ]]` bertindak sebagai operator kontrol eksekusi perintah (jalankan perintah berikutnya hanya jika yang ini berhasil/gagal), bukan operator boolean untuk ekspresi tunggal.
-
------
-
-Dengan penjelasan mendalam ini untuk Modul 2.1, saya harap Anda mendapatkan pemahaman yang sangat komprehensif tentang struktur kondisional di Bash. Modul berikut ini akan mengajarkan Anda bagaimana mengotomatiskan tugas-tugas berulang, sebuah konsep inti dalam *shell scripting* dan pemrograman secara umum.
-
------
-
-**Tujuan Fase:** Menguasai elemen-elemen pemrograman standar (kondisional, perulangan, fungsi) dan menggunakan alat bantu teks yang kuat untuk memproses data.
-
------
-
-## **Modul 2.2: Perulangan (Loops)**
-
-### **Struktur Pembelajaran Internal (Struktur Daftar Isi):**
-
-1. Filosofi Otomasi Berulang
-2. Perulangan `for` (Berbasis Daftar)
-3. Perulangan `for` (Gaya C: `for ((i=0; i<5; i++))`)
-4. Perulangan `while`
-5. Perulangan `until`
-6. Pola yang Benar untuk Membaca File Baris demi Baris
-7. Mengontrol Perulangan: `break` dan `continue`
-8. Potensi Penambahan Materi: `select` loop (untuk menu interaktif sederhana)
-
-### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
-
-Modul ini adalah tentang bagaimana Anda dapat menginstruksikan skrip Anda untuk mengulang serangkaian perintah berkali-kali. Bayangkan Anda memiliki 100 file log yang perlu diproses, atau Anda perlu terus memantau suatu kondisi sampai terpenuhi. Di sinilah perulangan berperan. Anda akan mempelajari berbagai jenis perulangan: `for` untuk iterasi melalui daftar item, dan `while`/`until` untuk mengulang berdasarkan suatu kondisi.
-
-Perulangan adalah pilar fundamental otomasi. Daripada menjalankan perintah yang sama secara manual berulang kali, Anda dapat menginstruksikan shell untuk melakukannya untuk Anda, menghemat waktu, mengurangi kesalahan manusia, dan meningkatkan efisiensi. Ini adalah salah satu konsep terpenting yang akan Anda pelajari dalam *shell scripting*, memungkinkan Anda untuk menulis skrip yang jauh lebih kuat dan scalable. Dalam pengembangan Dart/Flutter, konsep perulangan digunakan secara ekstensif untuk memproses daftar data, membangun antarmuka pengguna secara dinamis, atau mengelola siklus hidup suatu proses. Memahami bagaimana perulangan bekerja di Bash akan memperkuat pemahaman Anda tentang prinsip-prinsip umum ini.
-
-### **2. Konsep Kunci & Filosofi Mendalam:**
-
-#### **2.1. DRY (Don't Repeat Yourself) Principle:**
-
-Prinsip "Jangan Mengulang Diri Sendiri" adalah filosofi inti di balik perulangan. Jika Anda menemukan diri Anda menulis kode yang sama berulang kali dengan sedikit variasi, itu adalah tanda bahwa perulangan atau fungsi (Modul 2.3) mungkin diperlukan. Perulangan memungkinkan Anda untuk menulis logika sekali dan menerapkannya ke banyak item atau selama kondisi tertentu.
-
-#### **2.2. Iterasi vs. Kondisi:**
-
-* **Perulangan Iteratif (`for`):** Dirancang untuk mengulang melalui kumpulan item yang sudah diketahui atau dapat dihitung (misalnya, daftar file, baris dalam file, angka dalam rentang). Fokusnya adalah pada setiap "item" dalam koleksi.
-* **Perulangan Kondisional (`while`, `until`):** Dirancang untuk mengulang selama atau sampai suatu kondisi terpenuhi. Fokusnya adalah pada kondisi "true" atau "false". Ini berguna untuk menunggu sesuatu terjadi, membaca input terus-menerus, atau menjalankan tugas secara berkala.
-
-#### **2.3. Aliran Kontrol yang Dinamis:**
-
-Perulangan, bersama dengan kondisional dari Modul 2.1, membentuk inti dari "aliran kontrol" dalam skrip Anda. Mereka memungkinkan skrip Anda untuk tidak hanya membuat keputusan, tetapi juga untuk melakukan tindakan berulang berdasarkan keputusan tersebut. Ini mengubah skrip dari sekumpulan perintah statis menjadi program yang dinamis dan interaktif.
-
-#### **2.4. Pentingnya `IFS` (Internal Field Separator):**
-
-Ketika Bash membaca input (terutama dalam perulangan `while` atau ketika memisahkan kata), ia menggunakan variabel lingkungan khusus bernama `IFS`. Secara *default*, `IFS` berisi spasi, tab, dan *newline*. Memahami dan kadang-kadang memanipulasi `IFS` sangat penting untuk membaca data dengan benar, terutama dari file CSV atau file dengan nama yang mengandung spasi.
-
-### **3. Sintaks Dasar / Contoh Implementasi Inti:**
-
-#### **3.1. Perulangan `for` (Berbasis Daftar):**
-
-Perulangan `for` adalah cara yang paling umum untuk mengulang melalui daftar item (kata-kata, file, string, dll.).
-
-**Sintaks Umum:**
+Bash mendukung regex ERE dengan operator `=~`:
 
 ```bash
-for VAR_NAME in item1 item2 "item dengan spasi" itemN; do
-  # Perintah yang akan dijalankan untuk setiap item
-  # VAR_NAME akan berisi item saat ini dalam setiap iterasi
+if [[ "$name" =~ ^[a-z]+\.(txt|md)$ ]]; then
+  echo "Cocok"
+fi
+
+# Capture group via BASH_REMATCH
+[[ "2024-01-15" =~ ([0-9]{4})-([0-9]{2})-([0-9]{2}) ]]
+echo "${BASH_REMATCH[1]}"   # 2024
+echo "${BASH_REMATCH[2]}"   # 01
+echo "${BASH_REMATCH[3]}"   # 15
+```
+
+**Penting:**
+
+- Regex di Bash adalah **ERE** (Extended Regular Expression), bukan PCRE.
+- Jangan mengutip regex, kecuali bagian yang literal: `[[ $x =~ "^abc" ]]` mencari literal `^abc`.
+- Untuk case-insensitive: `shopt -s nocasematch`.
+
+### 5.4 Extglob di `[[ ]]`
+
+Jika `extglob` aktif, Anda bisa memakai `?(...)`, `*(...)`, `+(...)`, `@(...)`, `!(...)` di dalam `[[ ]]` juga:
+
+```bash
+shopt -s extglob
+[[ $name == +(foo|bar).txt ]] && echo "cocok"
+```
+
+### 5.5 Pattern Matching Lintas Bahasa
+
+| Bahasa | Sintaks | Tipe Pola | Contoh |
+|---|---|---|---|
+| **Bash** | `[[ s == pat ]]`, `case` | Wildcard glob | `[[ $f == *.txt ]]` |
+| **Bash (regex)** | `[[ s =~ re ]]` | ERE | `[[ $f =~ ^[a-z]+\.txt$ ]]` |
+| **Zsh** | `[[ s == pat ]]`, `^pat`, `~pat` | Wildcard + extended | `[[ $f == ^*.jpg ]]` |
+| **PowerShell** | `-like`, `-match` | Wildcard .NET / Regex | `"a.txt" -like "*.txt"` |
+| **Dart 3+** | `switch`/`if-case` | Literal, destructuring, guard | `case String s when s.endsWith('.txt'):` |
+| **Lua** | `string.match`, `string.find` | Lua patterns | `string.match(f, "%.txt$")` |
+| **Python** | `match/case`, `re` | Struktural / Regex | `case [x, y]:` |
+
+**Lua patterns** bukan regex penuh: tidak ada alternasi `|`, tidak ada quantifier `{n,m}`, `%` untuk escape.
+
+### 5.6 Perbandingan Globbing vs Pattern Matching vs Regex
+
+| Fitur | Globbing | Pattern Matching (`[[ ]]`) | Regex (`=~`) |
+|---|---|---|---|
+| Eksekusi | Shell, sebelum perintah | Shell, tanpa filesystem | Shell atau program |
+| Lingkup | Nama file/path | String | String |
+| Simbol | `*`, `?`, `[...]`, `{...}` (brace expansion terpisah) | Sama | `^`, `$`, `.`, `*`, `+`, `?`, `{n,m}`, `(...)` |
+| Kekuatan | Sederhana | Sedang | Paling fleksibel |
+| Akses filesystem | Ya | Tidak | Tidak |
+
+---
+
+## **6. Short-Circuiting**
+
+### 6.1 Definisi
+
+**Short-circuiting** adalah mekanisme evaluasi logika di mana ekspresi berhenti dievaluasi lebih awal begitu hasilnya bisa ditentukan.
+
+### 6.2 Operator dan Perilaku
+
+| Operator | Nama | Perilaku |
+|---|---|---|
+| `&&` | AND | Jika kiri false → kanan **tidak** dievaluasi |
+| `\|\|` | OR | Jika kiri true → kanan **tidak** dievaluasi |
+
+### 6.3 Dua Konteks Berbeda di Bash
+
+**Konteks 1 — Command list (di luar `[[ ]]`):** Berdasarkan **exit status**.
+
+```bash
+mkdir -p dir && cd dir && touch file
+# cd hanya jalan jika mkdir sukses
+```
+
+**Konteks 2 — Logical operator di dalam `[[ ]]`:** Berdasarkan **boolean**.
+
+```bash
+[[ -f file && -r file ]] && echo "Ada dan bisa dibaca"
+```
+
+**Perbedaan krusial:** Jangan campur! `[ -f file && -r file ]` **salah** — `&&` tidak dikenal oleh `[`.
+
+### 6.4 Precedence
+
+Di Bash, `&&` dan `||` memiliki **precedence sama** dan **left-associative**:
+
+```bash
+cmd1 || cmd2 && cmd3
+# Dievaluasi sebagai: (cmd1 || cmd2) && cmd3
+```
+
+Untuk kejelasan, gunakan `{ ...; }` atau `( ... )`:
+
+```bash
+{ cmd1 || cmd2; } && cmd3
+```
+
+### 6.5 Interaksi dengan `set -e`
+
+Dengan `set -e`, skrip berhenti saat ada perintah gagal. Namun:
+
+```bash
+set -e
+cmd1 && cmd2    # jika cmd1 gagal, skrip TIDAK berhenti (bagian dari &&)
+```
+
+### 6.6 Contoh Lintas Bahasa
+
+| Bahasa | AND | OR | Perilaku |
+|---|---|---|---|
+| Bash | `&&` | `\|\|` | Exit status |
+| Zsh | `&&` | `\|\|` | Exit status |
+| PowerShell | `-and` | `-or` | Boolean murni |
+| Dart/JS | `&&` | `\|\|` | Boolean (Dart) / operand (JS) |
+| Lua | `and` | `or` | Mengembalikan operand |
+
+**Lua mengembalikan operand, bukan boolean:**
+
+```lua
+local x = false and print("tidak jalan")   -- x = false
+local y = "a" or "b"                       -- y = "a"
+```
+
+**JavaScript juga:**
+
+```javascript
+const x = null && foo();   // x = null, foo() tidak dipanggil
+const y = "a" || "b";      // y = "a"
+```
+
+### 6.7 Pola Guard Clause
+
+```bash
+# Bash: source config hanya jika ada
+[[ -f "$config" ]] && source "$config"
+
+# Dart: null-safe
+user != null && user.isLoggedIn
+
+# Lua: null-safe
+user and user.loggedIn
+
+# PowerShell
+if ($user -and $user.IsLoggedIn) { ... }
+```
+
+### 6.8 Null-Coalescing dan Optional Chaining (Referensi Lintas Bahasa)
+
+- **Dart/JS:** `??`, `?.`
+- **PowerShell:** `??` (PS 7+)
+- **Lua:** `a or default` (idiom)
+- **Bash:** `${var:-default}`, `${var:=default}`
+
+---
+
+## **7. Kontrol Alur: Kondisional, Perulangan, Fungsi**
+
+### **7.1 Struktur Kondisional**
+
+#### 7.1.1 Exit Codes (`$?`)
+
+Setiap perintah mengembalikan **exit status**: `0` = sukses, non-nol = gagal.
+
+```bash
+echo "hi"
+echo "Exit: $?"        # 0
+
+ls /tidak/ada 2>/dev/null
+echo "Exit: $?"        # 2 (atau non-nol)
+```
+
+#### 7.1.2 `if ... then ... fi`
+
+```bash
+if perintah; then
+  # dijalankan jika perintah sukses
+elif perintah_lain; then
+  # jika kondisi pertama gagal dan ini sukses
+else
+  # jika semua gagal
+fi
+```
+
+#### 7.1.3 `[ ]` vs `[[ ]]`
+
+| Aspek | `[ ]` (test) | `[[ ]]` (keyword) |
+|---|---|---|
+| Tipe | Perintah eksternal | Keyword Bash |
+| Quoting | Wajib hati-hati | Tidak wajib |
+| Pattern matching | Tidak | Ya (`==`, `!=`) |
+| Regex | Tidak | Ya (`=~`) |
+| `&&`, `\|\|` di dalam | Tidak | Ya |
+| Word splitting | Rentan | Aman |
+| Rekomendasi | Hanya untuk POSIX | **Gunakan ini di Bash** |
+
+**Perhatian `<` dan `>` di `[ ]`:** Harus di-escape (`\>`), jika tidak dianggap redirection.
+
+```bash
+[ "$a" \> "$b" ]    # benar
+[[ "$a" > "$b" ]]   # benar (tanpa escape)
+```
+
+#### 7.1.4 Operator Perbandingan
+
+**String:**
+
+| Operator | Arti |
+|---|---|
+| `==` | Sama |
+| `!=` | Tidak sama |
+| `<`, `>` | Leksikografis |
+| `-z` | Kosong |
+| `-n` | Tidak kosong |
+| `=~` | Regex (hanya `[[ ]]`) |
+
+**Angka (disarankan pakai `(( ))`):**
+
+```bash
+if (( a > b )); then ...
+```
+
+Atau dengan operator numerik:
+
+| Operator | Arti |
+|---|---|
+| `-eq` | Sama |
+| `-ne` | Tidak sama |
+| `-gt` | Lebih besar |
+| `-ge` | Lebih besar atau sama |
+| `-lt` | Kurang |
+| `-le` | Kurang atau sama |
+
+**File:**
+
+| Operator | Arti |
+|---|---|
+| `-e` | Ada |
+| `-f` | File biasa |
+| `-d` | Direktori |
+| `-s` | Ukuran > 0 |
+| `-r` | Bisa dibaca |
+| `-w` | Bisa ditulis |
+| `-x` | Bisa dieksekusi |
+| `-L` | Symlink |
+| `-v` | Variabel terdefinisi (Bash 4.2+) |
+
+#### 7.1.5 Menggabungkan Kondisi
+
+```bash
+# Cara 1: di dalam [[ ]]
+if [[ -f "$f" && -r "$f" ]]; then ...
+
+# Cara 2: command list
+if [ -f "$f" ] && [ -r "$f" ]; then ...
+
+# Cara 3: OR
+if [[ "$u" == "root" || "$g" == "admin" ]]; then ...
+```
+
+#### 7.1.6 `case ... esac`
+
+```bash
+case "$aksi" in
+  start)   echo "Memulai..." ;;
+  stop)    echo "Menghentikan..." ;;
+  restart) echo "Restart..." ;;
+  *)       echo "Penggunaan: $0 {start|stop|restart}"; exit 1 ;;
+esac
+```
+
+**Fall-through (Bash 4+):**
+
+```bash
+case "$x" in
+  a) echo "a" ;&     # lanjut ke blok berikutnya tanpa cek pola
+  b) echo "b" ;;&    # lanjut cek pola berikutnya
+  c) echo "c" ;;
+esac
+```
+
+#### 7.1.7 Ternary di Bash
+
+Bash tidak punya operator ternary seperti `?:` di C. Namun:
+
+```bash
+# Arithmetic ternary
+result=$(( a > b ? a : b ))
+
+# Idiom short-circuit
+[[ $x -gt 0 ]] && echo "positif" || echo "non-positif"
+```
+
+#### 7.1.8 `set -euo pipefail` — Praktik Robust
+
+```bash
+set -e          # berhenti pada error
+set -u          # error jika variabel belum didefinisikan
+set -o pipefail # pipe gagal jika salah satu komponen gagal
+```
+
+Atau digabung: `set -euo pipefail`.
+
+**Peringatan:** `set -e` tidak berlaku di dalam kondisi `if`, `&&`, `||`, `!`. Gunakan `trap` untuk cleanup.
+
+---
+
+### **7.2 Perulangan**
+
+#### 7.2.1 `for` Berbasis Daftar
+
+```bash
+for buah in apel jeruk mangga; do
+  echo "Suka $buah"
+done
+
+# Dari glob (aman untuk nama dengan spasi)
+for f in *.txt; do
+  [[ -f "$f" ]] || continue
+  cp "$f" "$f.bak"
 done
 ```
 
-**Contoh 1: Iterasi pada Daftar String:**
+#### 7.2.2 `for` Gaya C
 
 ```bash
-#!/bin/bash
-
-echo "Daftar Buah:"
-for BUAH in apel jeruk mangga pisang; do
-  echo "Saya suka $BUAH"
-done
-
-echo "-------------------"
-
-# Contoh 2: Iterasi pada File di Direktori Saat Ini
-# Ini adalah cara yang umum dan sangat berguna untuk memproses banyak file.
-echo "Memproses file teks di direktori ini:"
-for FILE in *.txt; do
-  if [[ -f "$FILE" ]]; then # Pastikan itu benar-benar file
-    echo "Mencadangkan file: $FILE"
-    cp "$FILE" "$FILE.bak"
-  else
-    echo "Tidak ada file .txt ditemukan atau $FILE bukan file biasa."
-  fi
-done
-
-echo "-------------------"
-
-# Contoh 3: Iterasi pada Output Perintah (menggunakan Command Substitution)
-echo "Daftar pengguna sistem:"
-for USERNAME in $(cut -d: -f1 /etc/passwd); do
-  echo "Pengguna: $USERNAME"
+for (( i=0; i<5; i++ )); do
+  echo "$i"
 done
 ```
 
-* **Penjelasan:**
-  * `for BUAH in apel jeruk mangga pisang;`: Mendefinisikan perulangan. `BUAH` adalah nama variabel yang akan mengambil nilai setiap item dari daftar `apel jeruk mangga pisang` secara berurutan.
-  * `do`: Menandai awal blok kode perulangan.
-  * `done`: Menandai akhir blok kode perulangan.
-  * `$(cut -d: -f1 /etc/passwd)`: Ini adalah *command substitution* (Modul 1.3). *Output* dari perintah `cut` (yang mengekstrak nama pengguna dari `/etc/passwd`) akan dipecah menjadi kata-kata (berdasarkan `IFS`) dan digunakan sebagai daftar untuk perulangan `for`.
-
-#### **3.2. Perulangan `for` (Gaya C: `for ((i=0; i<5; i++))`):**
-
-Bash mendukung perulangan `for` bergaya C yang akrab bagi programmer dari bahasa C, Java, JavaScript, atau Dart. Ini sangat berguna untuk iterasi berbasis angka.
-
-**Sintaks Umum:**
+> **Koreksi penting:** Variabel `i` **bukan lokal** secara implisit. Ia tetap ada setelah loop:
 
 ```bash
-for (( INISIALISASI; KONDISI; PENINGKATAN )); do
-  # Perintah yang akan dijalankan
+for (( i=0; i<3; i++ )); do :; done
+echo "$i"   # Output: 3
+```
+
+Untuk membuatnya lokal, gunakan `local i` di dalam fungsi.
+
+#### 7.2.3 `while` dan `until`
+
+```bash
+# while: selama kondisi benar
+while [[ ! -f "$file" ]]; do
+  echo "Menunggu..."
+  sleep 5
+done
+
+# until: sampai kondisi benar
+until grep -q "READY" "$log"; do
+  sleep 2
 done
 ```
 
-**Contoh:**
+#### 7.2.4 Membaca File Baris demi Baris
 
 ```bash
-#!/bin/bash
+# Cara aman
+while IFS= read -r line; do
+  printf '%s\n' "$line"
+done < "$file"
 
-echo "Menghitung mundur dari 5:"
-for (( I=5; I>=0; I-- )); do
-  echo "Hitungan: $I"
-done
+# Baca ke array
+mapfile -t lines < "$file"
 
-echo "-------------------"
-
-echo "Mencetak angka genap dari 0 hingga 10:"
-for (( J=0; J<=10; J+=2 )); do
-  echo "Angka genap: $J"
-done
+# CSV sederhana
+while IFS=, read -r nama usia kota; do
+  echo "$nama | $usia | $kota"
+done < data.csv
 ```
 
-* **Penjelasan:**
-  * `(( I=5; I>=0; I-- ))`: Bagian aritmatika.
-    * `I=5`: Inisialisasi variabel `I` menjadi 5.
-    * `I>=0`: Kondisi yang harus benar agar perulangan berlanjut.
-    * `I--`: Ekspresi peningkatan (decrement) yang dijalankan setelah setiap iterasi.
-  * **Penting:** Variabel dalam perulangan gaya C tidak perlu diawali dengan `$`, meskipun Anda bisa menggunakannya (`$I`) di dalam blok `do...done` untuk mengakses nilainya.
+> **Catatan:** `IFS=, read` tidak menangani quoted field seperti `"Smith, John"`. Untuk CSV kompleks, gunakan tool khusus (mis. `csvkit`, `python`).
 
-#### **3.3. Perulangan `while`:**
-
-Perulangan `while` terus berjalan selama kondisi tertentu bernilai benar (exit status 0).
-
-**Sintaks Umum:**
+#### 7.2.5 `break` dan `continue` (termasuk `n`)
 
 ```bash
-while kondisi; do
-  # Perintah yang akan dijalankan selama kondisi benar
+for i in {1..10}; do
+  [[ $i -eq 5 ]] && break
+  [[ $((i % 2)) -eq 0 ]] && continue
+  echo "$i"
 done
-```
 
-**Contoh 1: Mengulang sampai suatu file ada:**
-
-```bash
-#!/bin/bash
-
-FILE_YANG_DITUNGGU="data_yang_siap.txt"
-
-echo "Menunggu file '$FILE_YANG_DITUNGGU' muncul..."
-while [[ ! -f "$FILE_YANG_DITUNGGU" ]]; do
-  echo "File belum ada, menunggu 5 detik..."
-  sleep 5 # Menunggu selama 5 detik
-done
-echo "File '$FILE_YANG_DITUNGGU' ditemukan! Melanjutkan skrip..."
-```
-
-* **Penjelasan:**
-  * `while [[ ! -f "$FILE_YANG_DITUNGGU" ]];`: Kondisi di sini menggunakan tes file dari Modul 2.1. Perulangan akan terus berjalan selama file `data_yang_siap.txt` TIDAK ADA (`! -f`).
-  * `sleep 5`: Perintah untuk menunda eksekusi skrip selama 5 detik.
-
-**Contoh 2: Mengulang selama input pengguna tidak valid:**
-
-```bash
-#!/bin/bash
-
-VALID_INPUT="false"
-
-while [[ "$VALID_INPUT" == "false" ]]; do
-  read -p "Masukkan 'ya' atau 'tidak': " RESPON
-  if [[ "$RESPON" == "ya" ]] || [[ "$RESPON" == "tidak" ]]; then
-    VALID_INPUT="true"
-    echo "Input Anda valid: $RESPON"
-  else
-    echo "Input tidak valid. Silakan coba lagi."
-  fi
+# Untuk nested loop
+for i in 1 2 3; do
+  for j in a b c; do
+    [[ $j == b ]] && break 2   # keluar dari kedua loop
+  done
 done
 ```
 
-* **Penjelasan `read -p "Prompt: " VAR`:** Perintah `read` membaca baris dari *standard input* dan menyimpannya ke variabel `VAR`. Opsi `-p` menampilkan *prompt* sebelum membaca input.
-
-#### **3.4. Perulangan `until`:**
-
-Perulangan `until` adalah kebalikan dari `while`. Ini terus berjalan selama kondisi tertentu bernilai **salah** (exit status non-0).
-
-**Sintaks Umum:**
+#### 7.2.6 `select` — Menu Interaktif
 
 ```bash
-until kondisi; do
-  # Perintah yang akan dijalankan selama kondisi salah
+select pilihan in "start" "stop" "keluar"; do
+  case "$pilihan" in
+    start)   echo "Memulai..." ;;
+    stop)    echo "Menghentikan..." ;;
+    keluar)  break ;;
+    *)       echo "Pilihan tidak valid" ;;
+  esac
 done
 ```
 
-**Contoh:**
+#### 7.2.7 Pitfall Loop
+
+| Pitfall | Solusi |
+|---|---|
+| `for f in $(ls)` | `for f in *` |
+| `cat file \| while read` (subshell) | `while read ... done < file` |
+| Infinite loop | Pastikan kondisi bisa berubah; tambahkan `break` |
+| Variabel di loop tidak terlihat | Hindari subshell, atau gunakan `mapfile` |
+
+---
+
+### **7.3 Fungsi dan Scoping**
+
+#### 7.3.1 Sintaks
 
 ```bash
-#!/bin/bash
+# Sintaks 1 (umum)
+nama_fungsi() {
+  ...
+}
 
-# Contoh yang sama dengan while, tapi dengan until
-KONTEN_PENTING="Laporan Akhir"
-FILE_LAPORAN="laporan.txt"
-
-echo "Menunggu file '$FILE_LAPORAN' berisi '$KONTEN_PENTING'..."
-until grep -q "$KONTEN_PENTING" "$FILE_LAPORAN"; do
-  echo "Konten belum ditemukan, menunggu 10 detik..."
-  sleep 10
-done
-echo "Konten ditemukan di '$FILE_LAPORAN'! Melanjutkan proses..."
-```
-
-* **Penjelasan:**
-  * `until grep -q "$KONTEN_PENTING" "$FILE_LAPORAN";`: Perulangan ini akan terus berjalan `until` (sampai) perintah `grep` berhasil menemukan string `$KONTEN_PENTING` dalam `$FILE_LAPORAN`. Opsi `-q` pada `grep` berarti "quiet", yaitu tidak mencetak baris yang cocok, hanya mengembalikan *exit status* (0 jika ditemukan, 1 jika tidak ditemukan).
-
-#### **3.5. Pola yang Benar untuk Membaca File Baris demi Baris:**
-
-Membaca file baris demi baris adalah tugas umum, dan ada cara yang benar dan salah. Cara yang paling aman dan efisien adalah menggunakan perulangan `while read` yang dialihkan inputnya dari file. Ini penting karena mengatasi masalah spasi dalam nama file atau baris, serta efisiensi.
-
-**Sintaks Umum:**
-
-```bash
-while IFS= read -r VAR_BARIS; do
-  # Perintah yang akan dijalankan untuk setiap baris
-  # VAR_BARIS akan berisi isi baris saat ini
-done < nama_file.txt
-```
-
-**Contoh:**
-
-Misalkan Anda memiliki file `data.csv` dengan konten:
-
-```
-Nama Lengkap,Usia,Kota
-Alice Smith,30,New York
-Bob Johnson,25,London
-Charlie Brown,35,Paris,France
-```
-
-```bash
-#!/bin/bash
-
-FILE_CSV="data.csv"
-
-echo "Membaca file CSV baris demi baris:"
-# Menggunakan IFS untuk memisahkan kolom berdasarkan koma, dan read -r untuk mencegah backslash interpretation
-# read -a array_name bisa digunakan untuk array
-while IFS=',' read -r NAMA USIA KOTA SISA; do
-  # Lewati baris header jika ada
-  if [[ "$NAMA" == "Nama Lengkap" ]]; then
-    continue # Lanjutkan ke iterasi berikutnya
-  fi
-  echo "Nama: $NAMA, Usia: $USIA, Kota: $KOTA"
-  if [[ -n "$SISA" ]]; then # Jika ada sisa kolom
-      echo "  (Ada data sisa: $SISA)"
-  fi
-done < "$FILE_CSV"
-```
-
-* **Penjelasan `while IFS= read -r VAR_BARIS; do ... done < FILE`:**
-  * `while`: Memulai perulangan.
-  * `IFS=`: Menyetel `IFS` ke string kosong **hanya untuk perintah `read` ini**. Ini mencegah Bash memecah baris berdasarkan spasi atau tab, sehingga seluruh baris (termasuk spasi di dalamnya) dibaca ke `VAR_BARIS`. Ini sangat krusial saat baris berisi spasi.
-  * `read -r VAR_BARIS`: Perintah `read` akan membaca satu baris dari *standard input* dan menyimpannya ke variabel `VAR_BARIS`. Opsi `-r` (raw) mencegah interpretasi *backslash escape sequences*, memastikan baris dibaca secara literal. Anda juga bisa menyediakan beberapa nama variabel (misal: `read -r NAMA USIA`) dan `read` akan memecah baris berdasarkan `IFS` untuk mengisi variabel-variabel tersebut.
-  * `done < "$FILE_CSV"`: Ini adalah *input redirection* (Modul 1.2) yang mengarahkan konten `$FILE_CSV` sebagai *standard input* untuk perulangan `while` secara keseluruhan. Ini lebih efisien daripada `cat "$FILE_CSV" | while read ...` karena menghindari proses `cat` terpisah dan *subshell* yang kadang tidak diinginkan.
-
-#### **3.6. Mengontrol Perulangan: `break` dan `continue`:**
-
-* **`break`:** Menghentikan eksekusi perulangan secara keseluruhan dan melompat ke perintah pertama setelah blok `done` (atau `esac` untuk `case`).
-
-    ```bash
-    #!/bin/bash
-
-    for I in 1 2 3 4 5 6 7 8 9 10; do
-      if (( I == 5 )); then
-        echo "Angka 5 ditemukan, menghentikan perulangan."
-        break
-      fi
-      echo "Memproses angka: $I"
-    done
-    echo "Perulangan selesai."
-    ```
-
-* **`continue`:** Melewatkan sisa iterasi saat ini dan melompat ke awal iterasi berikutnya.
-
-    ```bash
-    #!/bin/bash
-
-    for I in 1 2 3 4 5 6 7 8 9 10; do
-      if (( I % 2 != 0 )); then # Jika angka ganjil
-        echo "Melewatkan angka ganjil: $I"
-        continue # Lewati sisa kode untuk iterasi ini
-      fi
-      echo "Memproses angka genap: $I"
-    done
-    echo "Perulangan selesai."
-    ```
-
-### **4. Terminologi Esensial & Penjelasan Detil:**
-
-* **Perulangan (Loop):** Struktur kontrol yang memungkinkan serangkaian perintah dieksekusi berulang kali.
-* **`for` loop:** Perulangan yang mengulang melalui daftar item yang telah ditentukan atau pada rentang numerik (gaya C).
-* **`while` loop:** Perulangan yang terus berjalan selama kondisi tertentu bernilai benar (exit status 0).
-* **`until` loop:** Perulangan yang terus berjalan selama kondisi tertentu bernilai salah (exit status non-0).
-* **Iterasi:** Satu siklus eksekusi dari blok kode dalam sebuah perulangan.
-* **`IFS` (Internal Field Separator):** Variabel lingkungan khusus yang digunakan Bash untuk menentukan bagaimana string dipecah menjadi kata-kata (misalnya, untuk perulangan `for` tanpa kutipan, atau perintah `read`). Secara *default* berisi spasi, tab, dan *newline*.
-* **`read`:** Perintah Bash yang membaca satu baris dari *standard input* dan menyimpannya ke satu atau lebih variabel.
-  * `-r`: Opsi pada `read` yang mencegah *backslash escapes* agar string dibaca secara literal.
-  * `-p`: Opsi pada `read` untuk menampilkan *prompt* sebelum membaca input.
-* **`sleep`:** Perintah untuk menunda eksekusi skrip selama sejumlah detik yang ditentukan.
-* **`break`:** Perintah yang digunakan di dalam perulangan untuk segera menghentikan eksekusi perulangan dan melanjutkan ke perintah setelah perulangan.
-* **`continue`:** Perintah yang digunakan di dalam perulangan untuk melewati sisa iterasi saat ini dan melompat ke awal iterasi berikutnya.
-
-### **5. Rekomendasi Visualisasi (Jika Diperlukan):**
-
-* **Diagram Alur Perulangan `for` (Daftar):** Tunjukkan bagaimana setiap item dari daftar diambil satu per satu dan diproses dalam blok perulangan.
-* **Diagram Alur Perulangan `while`/`until`:** Sebuah *flowchart* dengan kotak kondisi di awal perulangan, menunjukkan panah kembali ke kondisi jika benar (untuk `while`) atau salah (untuk `until`).
-* **Visualisasi `IFS`:** Diagram yang menunjukkan bagaimana string "Kata dengan Spasi" dipecah menjadi "Kata", "dengan", "Spasi" jika `IFS` adalah spasi, dan bagaimana `IFS=` menjaga string tetap utuh.
-
-### **6. Hubungan dengan Modul Lain:**
-
-Modul perulangan ini secara langsung membangun di atas **Modul 1.3 (Variabel dan Ekspansi)** karena perulangan seringkali memanipulasi dan memproses variabel, serta menggunakan *command substitution* untuk membuat daftar iterasi. Koneksinya dengan **Modul 2.1 (Struktur Kondisional)** sangat kuat; kondisi seringkali digunakan sebagai pengendali utama untuk perulangan `while` dan `until`, dan pernyataan `if` sering ditemukan di dalam perulangan untuk membuat keputusan pada setiap iterasi. Pemahaman yang kuat tentang perulangan akan menjadi prasyarat untuk **Modul 2.3 (Fungsi)**, di mana fungsi mungkin berisi perulangan, dan untuk semua skrip otomasi yang lebih kompleks di Fase 3 dan 4, seperti memproses file log, manajemen pengguna, atau *deployment* otomatis.
-
-### **7. Sumber Referensi Lengkap:**
-
-* **Bash Loops (ryanstutorials.net):** [https://ryanstutorials.net/bash-scripting-tutorial/bash-loops.php](https://ryanstutorials.net/bash-scripting-tutorial/bash-loops.php)
-  * **Detail:** Tutorial yang sangat baik untuk pemula, menjelaskan berbagai jenis perulangan dengan contoh-contoh yang jelas dan mudah dipahami.
-* **Greg's Wiki - BashFAQ/001 (Reading a file line-by-line):** [https://mywiki.wooledge.org/BashFAQ/001](https://mywiki.wooledge.org/BashFAQ/001)
-  * **Detail:** Sumber daya kritis yang menjelaskan cara terbaik (dan cara yang salah) untuk membaca file baris demi baris di Bash, termasuk detail tentang `IFS` dan `read -r`. Wajib dibaca untuk menghindari masalah umum.
-* **The Linux Command Line: A Complete Introduction (William E. Shotts, Jr.):** [http://linuxcommand.org/tlcl.php](http://linuxcommand.org/tlcl.php)
-  * **Detail:** Buku gratis yang sangat direkomendasikan. Bab tentang perulangan menyediakan penjelasan yang solid dan latihan praktis.
-* **Advanced Bash-Scripting Guide (Mendel Cooper):** [https://tldp.org/LDP/abs/html/loops.html](https://tldp.org/LDP/abs/html/loops.html)
-  * **Detail:** Bagian tentang perulangan dari panduan Bash yang lebih mendalam. Ini mencakup detail teknis dan contoh yang lebih kompleks.
-* **Bash Manual: Loop Commands:** [https://www.gnu.org/software/bash/manual/bash.html\#Loop-Commands](https://www.gnu.org/software/bash/manual/bash.html%23Loop-Commands)
-  * **Detail Tambahan (opsional):** Dokumentasi resmi Bash tentang perintah perulangan. Referensi definitif untuk semua opsi dan perilaku.
-
-### **8. Tips dan Praktik Terbaik:**
-
-* **Selalu Kutip Ganda Variabel:** Saat menggunakan variabel dalam daftar `for` atau dalam kondisi `while`/`until`, selalu kutip ganda variabel Anda (`"$VAR"`) untuk mencegah *word splitting* atau *pathname expansion* yang tidak diinginkan, terutama jika variabel mungkin berisi spasi atau karakter khusus.
-* **Gunakan `read -r` untuk Keandalan:** Saat membaca dari file, selalu gunakan `read -r` untuk mencegah Bash menafsirkan *backslash* dalam data Anda.
-* **Pahami `IFS`:** Jika Anda memproses data yang dipisahkan oleh karakter selain spasi, tab, atau *newline* (misalnya, CSV), manipulasi `IFS` secara lokal untuk perintah `read` (contoh `IFS=',' read -r ...`) adalah praktik terbaik.
-* **Hindari `ls | while read`:** Pola `for FILE in $(ls)` atau `ls | while read FILE` seringkali bermasalah jika nama file mengandung spasi atau karakter khusus. Lebih baik gunakan `for FILE in *` (jika hanya file di direktori saat ini) atau `find ... -print0 | xargs -0` untuk kasus yang lebih kompleks (akan dibahas di modul manipulasi teks).
-* **Gunakan `sleep` untuk Polling:** Jika Anda menunggu suatu kondisi terpenuhi (misalnya, file muncul), gunakan `sleep` di dalam perulangan untuk menghindari *busy-waiting* yang membebani CPU.
-
-### **9. Potensi Kesalahan Umum & Solusi:**
-
-* **Kesalahan:** Menggunakan `for FILE in $(ls)` atau ` for FILE in `ls\`\`.
-  * **Masalah:** Ini akan gagal jika nama file memiliki spasi atau karakter *globbing* (misal `*`, `?`, `[`). *Output* `ls` dipecah oleh `IFS`, sehingga nama file seperti "My Document.txt" akan menjadi "My" dan "Document.txt".
-  * **Solusi:**
-    * Untuk file di direktori saat ini: `for FILE in *; do ... "$FILE" ...; done`.
-    * Untuk mencari file secara rekursif: `find . -print0 | while IFS= read -r -d $'\0' FILE; do ... "$FILE" ...; done`. (Ini lebih kompleks, akan dibahas mendalam di modul manipulasi teks).
-* **Kesalahan:** Lupa `do` atau `done` dalam perulangan.
-  * **Solusi:** Bash akan menampilkan kesalahan sintaks. Pastikan struktur `for ... do ... done`, `while ... do ... done`, dan `until ... do ... done` lengkap.
-* **Kesalahan:** Perulangan tak terbatas (Infinite Loop).
-  * **Penyebab:** Kondisi `while` selalu benar, atau kondisi `until` selalu salah, dan tidak ada mekanisme untuk mengubahnya di dalam perulangan.
-  * **Contoh:** `while true; do echo "Hello"; done` (tanpa `break` atau cara `true` menjadi `false`).
-  * **Solusi:** Selalu pastikan ada cara bagi kondisi untuk akhirnya terpenuhi atau gagal, atau gunakan `break` untuk keluar secara kondisional. Tekan `Ctrl+C` di terminal untuk menghentikan perulangan tak terbatas secara manual.
-* **Kesalahan:** Tidak mengutip variabel yang digunakan dalam kondisi perulangan (terutama string).
-  * **Penyebab:** Jika variabel kosong atau berisi spasi, ini dapat menyebabkan kesalahan sintaks atau perilaku tak terduga dalam evaluasi kondisi.
-  * **Solusi:** Selalu gunakan kutipan ganda: `while [[ "$COUNT" -lt 10 ]]` atau `while [[ -n "$INPUT_VAR" ]]`.
-* **Kesalahan:** Variabel yang didefinisikan di dalam `while read` tidak terlihat di luar perulangan.
-  * **Penyebab:** Jika Anda menggunakan `cat file | while read ...`, perulangan `while` berjalan di *subshell* terpisah. Variabel yang dimodifikasi di *subshell* tidak akan memengaruhi *shell* induk.
-  * **Solusi:** Gunakan *input redirection* langsung ke perulangan `while`: `while IFS= read -r VAR; do ... done < file.txt`. Ini membuat `while` berjalan di *shell* yang sama.
-
------
-
-Dengan penjelasan mendalam ini untuk Modul 2.2, Anda sekarang memiliki pemahaman yang kuat tentang berbagai jenis perulangan dan bagaimana menggunakannya untuk otomasi tugas berulang.
-
-Modul berikut ini adalah tentang bagaimana Anda dapat mengorganisir kode Anda agar lebih mudah dikelola, digunakan kembali, dan di-*debug*.
-
------
-
-# **Fase 2: Menengah – Struktur, Kontrol, dan Manipulasi Teks (Tingkat Menengah)**
-
-**Tujuan Fase:** Menguasai elemen-elemen pemrograman standar (kondisional, perulangan, fungsi) dan menggunakan alat bantu teks yang kuat untuk memproses data.
-
------
-
-## **Modul 2.3: Fungsi dan Cakupan (Scoping)**
-
-### **Struktur Pembelajaran Internal (Struktur Daftar Isi):**
-
-1. Filosofi DRY (Don't Repeat Yourself)
-2. Sintaks Deklarasi Fungsi
-3. Melewatkan Argumen ke Fungsi (Positional Parameters)
-4. Mengembalikan Nilai dari Fungsi (Melalui Exit Codes dan `stdout`)
-5. Cakupan Variabel: Global vs. Lokal (`local`)
-6. Membuat Pustaka Fungsi (Sourcing Scripts)
-7. Potensi Penambahan Materi: Exporting Functions (`export -f`)
-
-### **1. Deskripsi Konkret & Peran dalam Kurikulum:**
-
-Dalam modul ini, Anda akan belajar bagaimana mengemas serangkaian perintah ke dalam unit-unit yang diberi nama yang disebut **fungsi**. Fungsi seperti "mini-skrip" dalam skrip Anda; mereka melakukan tugas tertentu dan dapat dipanggil berkali-kali dari berbagai tempat. Anda juga akan memahami konsep **cakupan (scoping)**, yaitu di mana variabel dapat diakses—apakah di seluruh skrip (global) atau hanya di dalam fungsi (lokal).
-
-Peran modul ini sangat krusial untuk membuat skrip Anda menjadi lebih terstruktur, mudah dibaca, di-*debug*, dan yang terpenting, mudah digunakan kembali. Alih-alih menulis ulang blok kode yang sama berulang kali (melanggar prinsip DRY), Anda akan mendefinisikannya sekali sebagai fungsi. Ini adalah langkah maju yang signifikan dari perulangan (Modul 2.2) dan kondisional (Modul 2.1), karena sekarang Anda dapat mengelompokkan logika-logika tersebut ke dalam unit modular. Dalam konteks pengembangan Dart/Flutter, penggunaan fungsi dan pemahaman cakupan variabel adalah inti dari setiap aplikasi modern, dari *method* pada *class* hingga fungsi *utility* sederhana.
-
-### **2. Konsep Kunci & Filosofi Mendalam:**
-
-#### **2.1. Prinsip DRY (Don't Repeat Yourself):**
-
-Ini adalah prinsip fundamental dalam rekayasa perangkat lunak. Jika Anda menulis blok kode yang sama lebih dari satu kali, Anda harus mempertimbangkan untuk mengubahnya menjadi fungsi. Manfaatnya:
-
-* **Maintainability:** Perubahan atau perbaikan bug hanya perlu dilakukan di satu tempat (fungsi).
-* **Readability:** Kode menjadi lebih bersih dan lebih mudah dipahami karena tugas-tugas kompleks dipecah menjadi unit-unit yang lebih kecil dan diberi nama yang jelas.
-* **Reusability:** Fungsi yang ditulis dengan baik dapat digunakan kembali di skrip lain atau dalam bagian skrip yang berbeda.
-
-#### **2.2. Modularitas dan Abstraksi:**
-
-Fungsi memungkinkan Anda untuk memecah masalah besar menjadi masalah-masalah yang lebih kecil dan lebih mudah dikelola. Setiap fungsi dapat berfokus pada satu tugas spesifik. Ini adalah bentuk **modularitas**. Selain itu, fungsi menyediakan tingkat **abstraksi**: pengguna fungsi (atau bagian lain dari skrip) tidak perlu tahu bagaimana fungsi tersebut bekerja secara internal, hanya perlu tahu apa yang dilakukannya dan bagaimana cara menggunakannya.
-
-#### **2.3. Cakupan Variabel: Membatasi Risiko Side Effects:**
-
-Memahami cakupan variabel adalah kritis untuk menulis skrip yang stabil dan bebas bug. Variabel global dapat secara tidak sengaja diubah oleh bagian lain dari skrip, menyebabkan *bug* yang sulit dilacak. Variabel lokal, di sisi lain, terbatas pada konteks fungsi tempat mereka didefinisikan, mengurangi risiko "efek samping" yang tidak diinginkan. Ini adalah konsep universal dalam pemrograman.
-
-#### **2.4. Fungsi sebagai Perintah:**
-
-Di Bash, fungsi pada dasarnya bertindak seperti perintah internal. Anda dapat memanggilnya dengan nama mereka, dan mereka menerima argumen posisi dan mengembalikan *exit status* sama seperti perintah eksternal.
-
-### **3. Sintaks Dasar / Contoh Implementasi Inti:**
-
-#### **3.1. Sintaks Deklarasi Fungsi:**
-
-Ada dua cara untuk mendeklarasikan fungsi di Bash, keduanya memiliki fungsionalitas yang sama.
-
-**Sintaks 1 (Direkomendasikan - Lebih Umum):**
-
-```bash
+# Sintaks 2 (POSIX)
 function nama_fungsi {
-  # Blok kode fungsi
-  # Perintah-perintah yang akan dieksekusi saat fungsi dipanggil
+  ...
 }
 ```
 
-**Sintaks 2 (Alternatif - Kompatibel POSIX sh):**
+#### 7.3.2 Argumen
+
+Fungsi menerima argumen lewat `$1`, `$2`, `$@`, `$#`, seperti skrip:
 
 ```bash
-nama_fungsi () {
-  # Blok kode fungsi
+greet() {
+  local nama="$1"
+  echo "Halo, $nama"
+}
+greet "Budi"
+```
+
+**`shift`** untuk memproses argumen:
+
+```bash
+sum() {
+  local total=0
+  while [[ $# -gt 0 ]]; do
+    total=$(( total + $1 ))
+    shift
+  done
+  echo "$total"
 }
 ```
 
-**Contoh Sederhana:**
+#### 7.3.3 Return: Exit Code dan `stdout`
+
+Bash **tidak** mengembalikan nilai via `return` seperti bahasa lain. `return N` hanya mengembalikan **exit status** (0–255). Untuk mengembalikan data, cetak ke `stdout` dan tangkap dengan `$()`:
 
 ```bash
-#!/bin/bash
-
-# Deklarasi fungsi sederhana
-pesan_selamat_datang() {
-  echo "Selamat datang di skrip otomasi saya!"
-  echo "Semoga hari Anda menyenangkan."
+dapatkan_tanggal() {
+  date +%Y-%m-%d
 }
-
-# Memanggil fungsi
-pesan_selamat_datang
-echo "---"
-pesan_selamat_datang # Bisa dipanggil berulang kali
+hari_ini=$(dapatkan_tanggal)
 ```
 
-* **Penjelasan:**
-  * `pesan_selamat_datang()`: Mendefinisikan fungsi bernama `pesan_selamat_datang`. Tanda kurung kosong `()` menunjukkan bahwa ini adalah deklarasi fungsi.
-  * `{ ... }`: Melingkupi blok kode yang merupakan tubuh fungsi.
-  * Untuk memanggil fungsi, cukup ketik nama fungsinya.
-
-#### **3.2. Melewatkan Argumen ke Fungsi (Positional Parameters):**
-
-Fungsi dapat menerima argumen dengan cara yang sama seperti skrip menerima argumen baris perintah, yaitu melalui *variabel posisi* (`$1`, `$2`, `$@`, `$*`, `$#`).
+**Penting:** Pisahkan pesan diagnostik (ke `stderr`) dari data (ke `stdout`):
 
 ```bash
-#!/bin/bash
-
-# Fungsi untuk membuat dan mengelola direktori
-buat_direktori_log() {
-  local DIR_NAME="$1" # Argumen pertama adalah nama direktori
-  local LOG_FILE="$2" # Argumen kedua adalah nama file log
-
-  if [[ -z "$DIR_NAME" ]]; then
-    echo "Error: Nama direktori diperlukan." >&2
-    return 1 # Keluar dari fungsi dengan status error
-  fi
-
-  if mkdir -p "$DIR_NAME"; then
-    echo "Direktori '$DIR_NAME' berhasil dibuat atau sudah ada."
-    if [[ -n "$LOG_FILE" ]]; then
-      touch "$DIR_NAME/$LOG_FILE"
-      echo "File log '$LOG_FILE' dibuat di '$DIR_NAME'."
-    fi
-    return 0
-  else
-    echo "Gagal membuat direktori '$DIR_NAME'." >&2
-    return 1
-  fi
-}
-
-# Memanggil fungsi dengan argumen
-buat_direktori_log "aplikasi_log" "error.log"
-echo "Status keluar dari panggilan fungsi 1: $?"
-
-echo "---"
-
-buat_direktori_log "data_temp"
-echo "Status keluar dari panggilan fungsi 2: $?"
-
-echo "---"
-
-buat_direktori_log # Memanggil tanpa argumen (akan gagal)
-echo "Status keluar dari panggilan fungsi 3: $?"
+log_info() { echo "[INFO] $*" >&2; }
+get_value() { echo "42"; }   # stdout
 ```
 
-* **Penjelasan:**
-  * `local DIR_NAME="$1"`: Di dalam fungsi, `$1` mengacu pada argumen pertama yang dilewatkan **ke fungsi tersebut** (bukan ke skrip induk). Sama halnya dengan `$2`, `$3`, `$@`, `$*`, `$#` yang akan mengacu pada argumen fungsi.
-
-#### **3.3. Mengembalikan Nilai dari Fungsi (Melalui Exit Codes dan `stdout`):**
-
-Fungsi di Bash tidak "mengembalikan" nilai dalam arti yang sama seperti bahasa pemrograman lain (misalnya, `return` pada Dart/C++). Sebaliknya, mereka berkomunikasi hasil melalui:
-
-* **Status Keluar (Exit Code):** Ini adalah cara utama untuk mengindikasikan keberhasilan (0) atau kegagalan (non-nol) suatu fungsi.
-
-  * Menggunakan `return N` di mana `N` adalah angka 0-255. Jika tidak ada `return` eksplisit, *exit status* dari perintah terakhir di fungsi akan menjadi *exit status* fungsi.
-  * Nilai ini dapat diperiksa menggunakan `$?` setelah fungsi dipanggil.
-
-    <!-- end list -->
-
-    ```bash
-    #!/bin/bash
-
-    validasi_angka() {
-      local ANGKA="$1"
-      if [[ "$ANGKA" =~ ^[0-9]+$ ]]; then
-        echo "Validasi: Angka '$ANGKA' valid."
-        return 0 # Sukses
-      else
-        echo "Validasi: Angka '$ANGKA' TIDAK valid." >&2
-        return 1 # Gagal
-      fi
-    }
-
-    validasi_angka "123"
-    if [[ $? -eq 0 ]]; then
-      echo "Angka valid."
-    else
-      echo "Angka tidak valid, tolong periksa."
-    fi
-
-    validasi_angka "abc"
-    if [[ $? -eq 0 ]]; then
-      echo "Angka valid."
-    else
-      echo "Angka tidak valid, tolong periksa."
-    fi
-    ```
-
-* **Standard Output (`stdout`):** Jika fungsi menghasilkan data yang ingin Anda gunakan, cetak data tersebut ke `stdout`. Anda kemudian dapat menangkap *output* ini menggunakan *command substitution* (`$(nama_fungsi)`) dan menyimpannya ke variabel.
-
-    ```bash
-    #!/bin/bash
-
-    dapatkan_nama_file_temp() {
-      local TIMESTAMP=$(date +%Y%m%d%H%M%S)
-      echo "temp_file_$TIMESTAMP.tmp"
-      return 0 # Opsional, jika sudah mencetak ke stdout, biasanya return 0
-    }
-
-    # Tangkap output fungsi ke variabel
-    FILE_TEMPORARY=$(dapatkan_nama_file_temp)
-    echo "Nama file sementara yang dihasilkan: $FILE_TEMPORARY"
-
-    touch "$FILE_TEMPORARY"
-    echo "File sementara berhasil dibuat."
-    ```
-
-* **Penting:** Jangan mencampur pesan diagnostik/informasi dengan data yang dimaksudkan untuk ditangkap sebagai *output*. Jika fungsi harus mencetak pesan ke pengguna, alihkan pesan tersebut ke `stderr` (`echo "Pesan" >&2`) agar tidak bercampur dengan *output* yang ditangkap.
-
-#### **3.4. Cakupan Variabel: Global vs. Lokal (`local`):**
-
-Secara *default*, variabel yang didefinisikan dalam fungsi adalah **global**, artinya mereka dapat diakses dan diubah dari mana saja dalam skrip, termasuk di luar fungsi, dan dapat menimpa variabel dengan nama yang sama di luar fungsi. Ini adalah sumber *bug* yang umum.
-
-Untuk mencegah hal ini, selalu gunakan kata kunci `local` untuk mendeklarasikan variabel yang cakupannya terbatas **hanya di dalam fungsi**.
+#### 7.3.4 Cakupan Variabel: `local` vs Global
 
 ```bash
-#!/bin/bash
+global_var="global"
 
-GLOBAL_VAR="Saya adalah variabel global awal"
-
-contoh_scoping() {
-  local LOCAL_VAR="Saya adalah variabel lokal" # Variabel lokal
-  GLOBAL_VAR="Saya adalah variabel global yang diubah di dalam fungsi" # Mengubah global var
-
-  echo "Di dalam fungsi:"
-  echo "  Variabel Lokal: $LOCAL_VAR"
-  echo "  Variabel Global: $GLOBAL_VAR"
+contoh() {
+  local lokal_var="lokal"
+  global_var="diubah"       # menimpa global
+  echo "$lokal_var / $global_var"
 }
 
-echo "Sebelum memanggil fungsi:"
-echo "  Variabel Global: $GLOBAL_VAR" # Output: Saya adalah variabel global awal
+contoh
+echo "$global_var"     # "diubah"
+echo "$lokal_var"      # kosong (di luar scope)
+```
 
-contoh_scoping
+> **Koreksi:** Variabel loop `for (( i=0; ... ))` **tetap global**. Untuk melokalkannya, deklarasikan `local i` di dalam fungsi.
 
-echo "Setelah memanggil fungsi:"
-echo "  Variabel Lokal: $LOCAL_VAR"   # Output: (kosong, karena tidak bisa diakses dari luar)
-echo "  Variabel Global: $GLOBAL_VAR" # Output: Saya adalah variabel global yang diubah di dalam fungsi
+#### 7.3.5 Pustaka Fungsi (Sourcing)
 
-# Contoh: Variabel i di loop for (gaya C) juga lokal secara implisit
-for (( i=0; i<3; i++ )); do
-  echo "Loop i: $i"
+**`utils.sh`:**
+
+```bash
+log_info()  { echo "[INFO] $(date +%T) - $*"; }
+log_error() { echo "[ERROR] $(date +%T) - $*" >&2; }
+```
+
+**`main.sh`:**
+
+```bash
+#!/usr/bin/env bash
+source ./utils.sh     # atau: . ./utils.sh
+
+log_info "Mulai"
+log_error "Ada masalah"
+```
+
+**Perbedaan `source` vs eksekusi:**
+
+| Cara | Efek |
+|---|---|
+| `source file.sh` | Dijalankan di shell saat ini; fungsi/variabel tersedia |
+| `./file.sh` | Dijalankan di subshell; tidak mempengaruhi shell induk |
+
+#### 7.3.6 `export -f` — Ekspor Fungsi
+
+Fungsi bisa diekspor ke subshell:
+
+```bash
+my_func() { echo "hi"; }
+export -f my_func
+bash -c 'my_func'   # hi
+```
+
+#### 7.3.7 Debugging Fungsi
+
+- `declare -f nama_fungsi` — tampilkan definisi fungsi.
+- `unset -f nama_fungsi` — hapus fungsi.
+- `command nama_perintah` — bypass fungsi dengan nama sama.
+- `FUNCNAME`, `BASH_SOURCE`, `BASH_LINENO` — variabel debugging.
+
+---
+
+## **8. Array dan Manipulasi Teks**
+
+### **8.1 Array**
+
+```bash
+# Indexed array
+arr=(satu dua tiga)
+echo "${arr[0]}"        # satu
+echo "${arr[@]}"        # semua elemen
+echo "${#arr[@]}"       # jumlah elemen
+arr+=(empat)            # tambah
+
+# Iterasi
+for x in "${arr[@]}"; do echo "$x"; done
+
+# Slice
+echo "${arr[@]:1:2}"    # dua tiga
+```
+
+### **8.2 Associative Array (Bash 4+)**
+
+```bash
+declare -A umur
+umur[budi]=25
+umur[ani]=30
+for k in "${!umur[@]}"; do
+  echo "$k → ${umur[$k]}"
 done
-echo "Nilai i di luar loop: $i" # Output: (kosong, karena i hanya ada dalam konteks loop)
 ```
 
-* **Pentingnya `local`:** Menggunakan `local` adalah **praktik terbaik yang sangat direkomendasikan** untuk semua variabel yang hanya perlu ada di dalam fungsi. Ini mencegah *side effects* yang tidak disengaja dan membuat fungsi Anda lebih independen dan dapat digunakan kembali.
+### **8.3 `mapfile` / `readarray`**
 
-#### **3.5. Membuat Pustaka Fungsi (Sourcing Scripts):**
+```bash
+mapfile -t lines < file.txt    # -t menghapus trailing newline
+```
 
-Anda dapat mengorganisir fungsi-fungsi Anda ke dalam file terpisah (mirip dengan modul atau library di Dart/Python) dan kemudian "mengambil" (sourcing) file-file tersebut ke dalam skrip utama Anda. Ini memungkinkan Anda untuk membangun pustaka fungsi yang dapat digunakan di banyak skrip berbeda.
+### **8.4 Alat Manipulasi Teks**
 
-* **Sintaks:** `source nama_file_fungsi.sh` atau `.` `nama_file_fungsi.sh` (ada spasi setelah titik).
+| Tool | Fungsi | Contoh |
+|---|---|---|
+| `grep` | Cari pola | `grep -E 'error\|warn' log.txt` |
+| `sed` | Edit stream | `sed 's/foo/bar/g' file` |
+| `awk` | Proses kolom | `awk -F: '{print $1}' /etc/passwd` |
+| `cut` | Potong kolom | `cut -d: -f1 /etc/passwd` |
+| `sort` | Urutkan | `sort -n -k2 file` |
+| `uniq` | Hapus duplikat | `sort file \| uniq -c` |
+| `tr` | Translasi karakter | `tr 'a-z' 'A-Z'` |
+| `find` | Cari file | `find . -name '*.log' -mtime -7` |
+| `xargs` | Bangun argumen | `find . -print0 \| xargs -0 rm` |
+| `head`/`tail` | Baris awal/akhir | `tail -f log.txt` |
 
-**Contoh:**
+**Contoh gabungan:**
 
-1. Buat file `utils.sh`:
+```bash
+# 10 IP paling sering muncul di access.log
+awk '{print $1}' access.log | sort | uniq -c | sort -rn | head -10
 
-    ```bash
-    # utils.sh
-    # Pustaka fungsi utility umum
+# Cari file .log lebih dari 7 hari, hapus
+find /var/log -name '*.log' -mtime +7 -print0 | xargs -0 rm
+```
 
-    log_info() {
-      echo "[INFO] $(date +%H:%M:%S) - $1"
-    }
+### **8.5 `getopts` — Parsing Opsi**
 
-    log_error() {
-      echo "[ERROR] $(date +%H:%M:%S) - $1" >&2
-    }
+```bash
+while getopts ":hv:f:" opt; do
+  case "$opt" in
+    h) usage; exit 0 ;;
+    v) verbose="$OPTARG" ;;
+    f) file="$OPTARG" ;;
+    \?) echo "Opsi tidak dikenal: -$OPTARG" >&2; exit 1 ;;
+    :)  echo "Opsi -$OPTARG butuh argumen" >&2; exit 1 ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+```
 
-    cek_file_ada() {
-      if [[ -f "$1" ]]; then
-        return 0 # File ada
-      else
-        return 1 # File tidak ada
-      fi
-    }
-    ```
+---
 
-2. Buat file `main_script.sh`:
+## **9. Praktik Terbaik, Kesalahan Umum, dan Debugging**
 
-    ```bash
-    #!/bin/bash
+### 9.1 Praktik Terbaik
 
-    # Source pustaka fungsi
-    source ./utils.sh # Atau: . ./utils.sh
+1. **Selalu kutip ganda** variabel: `"$var"`, `"$@"`.
+2. **Gunakan `[[ ]]`** untuk kondisional di Bash.
+3. **Gunakan `local`** di dalam fungsi.
+4. **`set -euo pipefail`** untuk skrip robust.
+5. **Gunakan `read -r`** untuk membaca input mentah.
+6. **Lokalkan `IFS`** saat mengubahnya.
+7. **Hindari `eval`** kecuali sangat terpaksa.
+8. **Pisahkan `stdout` (data) dan `stderr` (pesan)**.
+9. **Gunakan `printf`** alih-alih `echo` untuk output yang dapat diprediksi.
+10. **Gunakan `trap`** untuk cleanup:
 
-    log_info "Memulai skrip utama..."
+```bash
+trap 'rm -f "$tmpfile"' EXIT
+```
 
-    FILE_TO_CHECK="konfigurasi.cfg"
-    if cek_file_ada "$FILE_TO_CHECK"; then
-      log_info "File '$FILE_TO_CHECK' ditemukan."
-    else
-      log_error "File '$FILE_TO_CHECK' tidak ditemukan. Harap periksa konfigurasi."
-      exit 1
+### 9.2 Kesalahan Umum
+
+| Kesalahan | Penyebab | Solusi |
+|---|---|---|
+| Lupa spasi di `[ ]` | `["$x"=="y"]` | `[ "$x" == "y" ]` |
+| Pakai `==` untuk angka | Perbandingan string | `(( a == b ))` atau `-eq` |
+| `for f in $(ls)` | Word splitting | `for f in *` |
+| `cat file \| while read` | Subshell | `while read ... done < file` |
+| Variabel di `for (( ))` dianggap lokal | Salah paham | Gunakan `local` |
+| `eval` berulang | Bahaya injection | Hindari |
+| `echo $var` tanpa kutip | Word splitting/glob | `echo "$var"` |
+| Lupa `;;` di `case` | Fall-through | Tambahkan `;;` |
+
+### 9.3 Debugging
+
+```bash
+set -x          # tampilkan perintah yang dijalankan
+set -v          # tampilkan input mentah
+PS4='+${BASH_SOURCE}:${LINENO}: '   # prompt trace informatif
+bash -n script.sh    # cek sintaks tanpa eksekusi
+shellcheck script.sh # linter (sangat direkomendasikan)
+```
+
+**Contoh `trap` untuk cleanup:**
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+tmpdir=$(mktemp -d)
+trap 'rm -rf "$tmpdir"' EXIT
+
+echo "Bekerja di $tmpdir"
+# ... kerja ...
+```
+
+---
+
+## **10. Studi Kasus Terpadu**
+
+### Studi Kasus 1: Pembersih File Log
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly LOG_DIR="${1:-/var/log}"
+readonly MAX_AGE=7
+readonly DRY_RUN="${DRY_RUN:-false}"
+
+shopt -s nullglob
+
+hapus_file() {
+  local f="$1"
+  if [[ "$DRY_RUN" == "true" ]]; then
+    printf '[DRY] rm %s\n' "$f"
+  else
+    rm -f -- "$f"
+    printf '[DEL] %s\n' "$f"
+  fi
+}
+
+main() {
+  local f
+  for f in "$LOG_DIR"/*.log; do
+    [[ -f "$f" ]] || continue
+    if [[ $(find "$f" -mtime +$MAX_AGE 2>/dev/null) ]]; then
+      hapus_file "$f"
     fi
+  done
+}
 
-    log_info "Skrip utama selesai."
-    ```
+main "$@"
+```
 
-<!-- end list -->
+**Konsep yang dipakai:**
+- `set -euo pipefail`, `readonly`, parameter default `${1:-...}`.
+- `shopt -s nullglob`.
+- Fungsi dengan `local`.
+- `printf` alih-alih `echo`.
+- `--` pada `rm` untuk keamanan.
 
-* **Penjelasan `source`:** Perintah `source` (atau `.` ) membaca dan mengeksekusi perintah-perintah dari file yang diberikan **dalam shell saat ini**. Ini berarti fungsi dan variabel yang didefinisikan dalam `utils.sh` akan tersedia di `main_script.sh` seolah-olah mereka didefinisikan langsung di sana. Ini berbeda dengan menjalankan skrip (`./utils.sh`), yang akan menjalankan skrip di *subshell* terpisah.
+### Studi Kasus 2: Pemroses CSV dan Laporan
 
-### **4. Terminologi Esensial & Penjelasan Detil:**
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-* **Fungsi (Function):** Blok kode yang diberi nama dan dapat dipanggil/dieksekusi berulang kali dari berbagai tempat dalam skrip atau dari skrip lain (jika di-source).
-* **Prinsip DRY (Don't Repeat Yourself):** Filosofi pemrograman yang menyarankan untuk menghindari duplikasi kode dengan menggunakan fungsi atau struktur modular lainnya.
-* **Modularitas:** Konsep membagi sistem menjadi komponen-komponen independen dan dapat dipertukarkan (modul atau fungsi), yang masing-masing melakukan satu tugas spesifik.
-* **Abstraksi:** Menyembunyikan detail implementasi internal dari sebuah fungsi, sehingga pengguna fungsi hanya perlu tahu apa yang dilakukannya, bukan bagaimana ia bekerja.
-* **Argumen Posisi (Positional Parameters):** Variabel khusus (`$1`, `$2`, `$@`, `$*`, `$#`) yang digunakan di dalam fungsi untuk mengakses argumen yang dilewatkan saat fungsi dipanggil.
-* **Status Keluar (Exit Status / Exit Code):** Angka (`0` untuk sukses, non-nol untuk gagal) yang dikembalikan oleh fungsi untuk mengindikasikan hasil eksekusinya. Diakses melalui `$?`.
-* **Cakupan (Scope):** Konteks di mana sebuah variabel didefinisikan dan dapat diakses.
-* **Variabel Global:** Variabel yang didefinisikan di level teratas skrip (di luar fungsi mana pun) atau tanpa kata kunci `local` di dalam fungsi, dan dapat diakses dari mana saja dalam skrip.
-* **Variabel Lokal (`local`):** Variabel yang didefinisikan di dalam fungsi menggunakan kata kunci `local`, dan hanya dapat diakses di dalam fungsi tersebut dan fungsi yang dipanggil dari dalamnya. Ini adalah praktik terbaik untuk menghindari konflik nama dan *side effects*.
-* **Sourcing (Source / `.`):** Proses membaca dan mengeksekusi konten file skrip lain di lingkungan *shell* yang sama. Ini membuat fungsi dan variabel dari file yang di-source tersedia di *shell* saat ini.
+readonly INPUT="${1:?Usage: $0 <file.csv>}"
 
-### **5. Rekomendasi Visualisasi (Jika Diperlukan):**
+declare -A total_per_kota
 
-* **Diagram Alur Panggilan Fungsi:** Ilustrasi yang menunjukkan bagaimana kontrol program beralih ke fungsi saat dipanggil dan kembali ke titik panggilan setelah fungsi selesai.
-* **Visualisasi Cakupan Variabel:** Diagram berlapis yang menunjukkan "lingkaran" atau "kotak" cakupan: satu kotak untuk cakupan global, dan kotak-kotak yang lebih kecil di dalamnya untuk setiap fungsi, dengan panah yang menunjukkan variabel mana yang dapat diakses di setiap lapisan. Ini sangat efektif untuk menjelaskan konsep `local`.
-* **Diagram Sourcing vs. Eksekusi Subshell:** Perbandingan visual antara `source script.sh` (garis putus-putus ke dalam *shell* yang sama) dan `./script.sh` (kotak *subshell* baru).
+while IFS=, read -r nama usia kota; do
+  [[ "$nama" == "Nama" ]] && continue   # skip header
+  [[ -z "$nama" ]] && continue
+  total_per_kota["$kota"]=$(( ${total_per_kota["$kota"]:-0} + 1 ))
+done < "$INPUT"
 
-### **6. Hubungan dengan Modul Lain:**
+printf '%-15s %s\n' "Kota" "Jumlah"
+for k in "${!total_per_kota[@]}"; do
+  printf '%-15s %s\n' "$k" "${total_per_kota[$k]}"
+done | sort -k2 -rn
+```
 
-Fungsi adalah puncak dari fondasi yang dibangun di Fase 1 dan modul sebelumnya di Fase 2. Mereka akan sering berisi **kondisional (Modul 2.1)** untuk pengambilan keputusan dan **perulangan (Modul 2.2)** untuk otomasi berulang. Pemahaman tentang **variabel dan ekspansi (Modul 1.3)** adalah prasyarat untuk bekerja dengan argumen fungsi dan variabel lokal. Penggunaan *exit status* dari fungsi adalah dasar dari **Modul 3.1 (Penanganan Kesalahan)**. Fungsi yang dirancang dengan baik akan menjadi unit bangunan utama untuk skrip-skrip kompleks dan pustaka utilitas yang akan Anda kembangkan di Fase 3 dan 4.
+**Konsep yang dipakai:**
+- Associative array, default parameter `${var:-0}`.
+- IFS lokal untuk `read`.
+- Pattern matching `==` di dalam `[[ ]]`.
+- `sort` untuk laporan.
 
-### **7. Sumber Referensi Lengkap:**
+### Studi Kasus 3: Menu Interaktif dengan `select`
 
-* **Bash Functions (The Linux Documentation Project):** [https://tldp.org/LDP/abs/html/functions.html](https://tldp.org/LDP/abs/html/functions.html)
-  * **Detail:** Bagian dari "Advanced Bash-Scripting Guide" ini memberikan penjelasan mendalam tentang fungsi di Bash, termasuk sintaks, argumen, dan beberapa fitur lanjutan.
-* **Greg's Wiki - BashFAQ/053 (Variable Scope):** [https://mywiki.wooledge.org/BashFAQ/053](https://mywiki.wooledge.org/BashFAQ/053)
-  * **Detail:** Sumber daya yang sangat direkomendasikan untuk memahami konsep cakupan variabel di Bash, menjelaskan perbedaan antara variabel global dan lokal serta pentingnya `local`.
-* **Bash Functions (ryanstutorials.net):** [https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php](https://ryanstutorials.net/bash-scripting-tutorial/bash-functions.php)
-  * **Detail:** Tutorial yang lebih ramah pemula dengan contoh-contoh praktis tentang cara membuat dan menggunakan fungsi.
-* **Bash Manual: Functions:** [https://www.gnu.org/software/bash/manual/bash.html\#Functions](https://www.gnu.org/software/bash/manual/bash.html%23Functions)
-  * **Detail Tambahan (opsional):** Dokumentasi resmi Bash tentang fungsi. Ini adalah referensi definitif untuk semua detail teknis.
-* **Bash Manual: Shell Builtin Commands (source):** [https://www.gnu.org/software/bash/manual/bash.html\#index-source](https://www.gnu.org/software/bash/manual/bash.html%23index-source)
-  * **Detail Tambahan (opsional):** Penjelasan resmi tentang perintah `source` dan mengapa penting untuk menggunakannya untuk pustaka fungsi.
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-### **8. Tips dan Praktik Terbaik:**
+pilih() {
+  select opt in "Lihat tanggal" "Lihat user" "Keluar"; do
+    case "$opt" in
+      "Lihat tanggal") date ;;
+      "Lihat user")    whoami ;;
+      "Keluar")        return 0 ;;
+      *)               echo "Pilihan tidak valid" >&2 ;;
+    esac
+  done
+}
 
-* **Gunakan `local` Secara Konsisten:** Jadikan kebiasaan untuk mendeklarasikan semua variabel di dalam fungsi Anda dengan kata kunci `local`, kecuali Anda memiliki alasan yang sangat kuat untuk membuatnya global. Ini akan mencegah *side effects* yang tidak disengaja.
-* **Nama Fungsi yang Deskriptif:** Berikan nama fungsi yang jelas dan deskriptif tentang apa yang mereka lakukan (misalnya, `buat_cadangan`, `validasi_input`, `kirim_notifikasi`).
-* **Fokus Satu Tugas per Fungsi:** Usahakan setiap fungsi melakukan satu tugas spesifik dengan baik. Ini meningkatkan modularitas dan kemudahan pengujian.
-* **Tangani Error di Fungsi:** Gunakan `return N` untuk mengembalikan *exit status* yang sesuai dari fungsi, dan biarkan pemanggil fungsi menanganinya menggunakan `if [[ $? -ne 0 ]]`.
-* **Cetak Output ke `stdout` untuk Data, `stderr` untuk Pesan:** Jika fungsi perlu menghasilkan data yang akan ditangkap oleh *command substitution*, pastikan data tersebut dicetak ke `stdout`. Pesan informasi atau kesalahan lainnya harus dialihkan ke `stderr` (`echo "Pesan error" >&2`).
-* **Komentari Fungsi:** Sertakan komentar singkat di awal setiap fungsi yang menjelaskan tujuannya, argumen yang diterima, dan nilai yang dikembalikan (melalui *exit status* atau *stdout*).
+pilih
+```
 
-### **9. Potensi Kesalahan Umum & Solusi:**
+---
 
-* **Kesalahan:** Variabel global yang tidak sengaja ditimpa oleh fungsi.
-  * **Penyebab:** Variabel dalam fungsi didefinisikan tanpa `local`, sehingga menjadi global dan menimpa variabel di luar fungsi dengan nama yang sama.
-  * **Solusi:** Selalu gunakan `local` untuk variabel di dalam fungsi.
-* **Kesalahan:** Berpikir `return` mengembalikan nilai seperti di bahasa lain.
-  * **Penyebab:** Di Bash, `return` hanya mengembalikan *exit status* (angka 0-255). Untuk mengembalikan data string, Anda harus mencetaknya ke `stdout` dan menangkapnya dengan *command substitution*.
-  * **Solusi:** Pahami perbedaan antara `return` (untuk *exit status*) dan `echo` (untuk *output* yang dapat ditangkap).
-* **Kesalahan:** Variabel yang dimodifikasi di dalam perulangan `while` yang di-*pipe* tidak terlihat di luar perulangan.
-  * **Penyebab:** `cat file | while read ...` menjalankan `while` dalam *subshell*. Perubahan variabel di *subshell* tidak akan memengaruhi *shell* induk.
-  * **Solusi:** Gunakan *input redirection* langsung: `while IFS= read -r BARIS; do ... done < file.txt`. Ini membuat `while` berjalan di *shell* yang sama.
-* **Kesalahan:** Salah memanggil fungsi karena kurangnya izin eksekusi.
-  * **Penyebab:** Fungsi yang di-source (`source script.sh`) tidak memerlukan izin eksekusi pada file sumbernya, tetapi jika Anda mencoba menjalankan file tersebut sebagai skrip (`./script.sh`), itu memang membutuhkan izin eksekusi.
-  * **Solusi:** Pastikan Anda menggunakan `source` atau `.` untuk pustaka fungsi Anda, atau berikan izin eksekusi jika Anda memang berniat menjalankannya sebagai skrip terpisah.
+## **11. Referensi**
 
------
+### Dokumentasi Resmi
 
-**Selamat!** Anda telah menyelesaikan **Fase 2: Menengah – Struktur, Kontrol, dan Manipulasi Teks**. Anda kini memiliki pemahaman yang solid tentang kondisional, perulangan, dan fungsi, yang merupakan inti dari setiap bahasa pemrograman dan esensial untuk menulis skrip Bash yang kuat dan terorganisir.
+- **Bash Manual — Shell Expansions:** <https://www.gnu.org/software/bash/manual/html_node/Shell-Expansions.html>
+- **Bash Manual — Conditional Expressions:** <https://www.gnu.org/software/bash/manual/html_node/Bash-Conditional-Expressions.html>
+- **Bash Manual — Loop Commands:** <https://www.gnu.org/software/bash/manual/html_node/Loop-Commands.html>
+- **Bash Manual — Functions:** <https://www.gnu.org/software/bash/manual/html_node/Shell-Functions.html>
+- **POSIX Shell Command Language:** <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html>
+
+### Wiki Komunitas
+
+- **Greg's Wiki — BashFAQ/031 (if/test):** <https://mywiki.wooledge.org/BashFAQ/031>
+- **Greg's Wiki — BashFAQ/001 (Read file line by line):** <https://mywiki.wooledge.org/BashFAQ/001>
+- **Greg's Wiki — BashFAQ/053 (Variable Scope):** <https://mywiki.wooledge.org/BashFAQ/053>
+- **Greg's Wiki — BashPitfalls:** <https://mywiki.wooledge.org/BashPitfalls>
+
+### Tutorial & Buku
+
+- **The Linux Command Line** (William Shotts) — <http://linuxcommand.org/tlcl.php>
+- **Advanced Bash-Scripting Guide** (Mendel Cooper) — <https://tldp.org/LDP/abs/html/>
+- **ryanstutorials.net — Bash Scripting:** <https://ryanstutorials.net/bash-scripting-tutorial/>
+- **Linuxize — Bash if/else, case, loops:** <https://linuxize.com/>
+
+### Tooling
+
+- **shellcheck:** <https://www.shellcheck.net/>
+- **explainshell:** <https://explainshell.com/>
+
+---
+
+## **Penutup**
+
+Dokumen ini menyatukan enam file terpisah menjadi satu penjelasan utuh, dengan:
+
+- **Koreksi kesalahan faktual:** brace expansion dipisahkan dari globbing; `i` di `for ((...))` tidak lokal; PowerShell tidak punya wildcard `**`; script `eval` berulang dihapus.
+- **Penambahan materi yang hilang:** quoting, opsi shell (`dotglob`, `nullglob`, `failglob`, `globstar`, `extglob`, `nocaseglob`, `GLOBIGNORE`), array, associative array, `mapfile`, `getopts`, `trap`, `set -euo pipefail`, text processing, studi kasus.
+- **Penataan ulang alur belajar:** dari ekspansi shell → word splitting → globbing → pattern matching → short-circuiting → kontrol alur → array & teks → praktik terbaik → studi kasus.
+- **Integrasi antar-topik:** setiap konsep dikaitkan dengan konsep lain (misalnya, bagaimana quoting mempengaruhi word splitting dan globbing, bagaimana `IFS` mempengaruhi `read` dan loop).
+
+<!-- Dengan struktur ini, dokumen dapat dibaca secara linear sebagai kurikulum, atau dijadikan referensi cepat lewat daftar isi dan tabel perbandingan. -->
 
 > * **[Ke Atas](#)**
 > * **[Selanjutnya][selanjutnya]**
@@ -1172,6 +1224,6 @@ Fungsi adalah puncak dari fondasi yang dibangun di Fase 1 dan modul sebelumnya d
 
 <!----------------------------------------------------->
 [1]:../README.md
-[2]:../bagian-2/short-circuiting/README.md
-[3]:../bagian-2/globbing/README.md
-[4]:../bagian-2/word-splitting/README.md
+[2]:./short-circuiting.md
+[3]:./globbing.md
+[4]:./word-splitting.md
