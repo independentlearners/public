@@ -52,6 +52,7 @@ Evolusi shell:
 | 2005 | Fish (`fish`) | **Bukan** POSIX, sintaks berbeda |
 
 Shell modern seperti **Bash**, **Zsh**, dan **Ksh** adalah **turunan** atau **pengembangan** dari standar POSIX. **Fish bukan turunan POSIX** dan tidak dapat dijalankan dalam mode POSIX.
+> [RINGKASAN TEKNIS: PENGENALAN SHELL PADA SISTEM UNIX-LIKE - sh, Bash, Dash, dan Zsh](./posix.md)
 
 ---
 
@@ -1625,7 +1626,7 @@ Anda kini memiliki fondasi:
 
 <!-- Referensi internal -->
 [1]: ../README.md
-[posix]: ./posix.md
+
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md

@@ -1,11 +1,9 @@
 <details>
   <summary>📃 Daftar Kurikulum</summary>
 
-> **[Belajar CLI/Terminal Baris Perintah][0]**
-
-> **[71 Istilah dalam scripting][5]**
-
-> **[Books Scripting][6]**
+- **[Belajar CLI/Terminal Baris Perintah][0]**
+- **[71 Istilah dalam scripting][5]**
+- **[Books Scripting][6]**
 
 # **Kurikulum Komprehensif: Menguasai Shell Scripting (Bash)**
 

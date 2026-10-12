@@ -1,4 +1,4 @@
-# DOKUMEN TEKNIS: PENGENALAN SHELL PADA SISTEM UNIX-LIKE - sh, Bash, Dash, dan Zsh
+# RINGKASAN TEKNIS: PENGENALAN SHELL PADA SISTEM UNIX-LIKE - sh, Bash, Dash, dan Zsh
 
 **Klasifikasi, Karakteristik, dan Kaitannya dengan Standar POSIX dan Lembaga IEEE**  
 <!-- Tanggal: 11 Oktober 2026 | Lokasi: Malang, Jawa Timur -->
