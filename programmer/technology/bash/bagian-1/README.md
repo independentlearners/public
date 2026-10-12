@@ -84,7 +84,7 @@ Misalkan Anda mengetik `ls -l /home`:
 2. Shell melakukan **parsing**: memecah menjadi kata (`ls`, `-l`, `/home`).
 3. Shell melakukan **ekspansi** (variabel, glob, command substitution).
 4. Shell mencari program `ls` di direktori yang ada di `$PATH`.
-5. Shell meminta kernel mengeksekusi `ls` dengan argumen `-l` dengan nilainya `/home`.
+5. Shell meminta kernel mengeksekusi `ls` dengan argumen `-l` lalu nilainya `/home`.
 6. Kernel menjalankan proses, output dikirim kembali ke shell.
 7. Shell menampilkan output ke terminal dan menunggu perintah berikutnya.
 
