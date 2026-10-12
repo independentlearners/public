@@ -212,6 +212,9 @@ command -v zsh
    s (socket), b (block), c (character), p (pipe)
 ```
 
+> - [Lebih lanjut tentang][long] `ls -l`
+
+
 ---
 
 ### 1.1.6 Mendapatkan Bantuan
@@ -1631,3 +1634,4 @@ Anda kini memiliki fondasi:
 [kurikulum]: ../../README.md
 [selanjutnya]: ../bagian-2/README.md
 
+[long]: ./../../../../CLI_TUI/perintah/ls/long_format.md

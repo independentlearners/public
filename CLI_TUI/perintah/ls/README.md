@@ -33,6 +33,7 @@ Perintah `ls` (list) digunakan untuk menampilkan daftar file dan direktori dalam
 
 - **`ls -l`**  
   Menampilkan informasi detail (long format): izin, pemilik, ukuran, waktu modifikasi.
+  > [Lebih Lanjut](./long_format.md)
 
   ```bash
   ls -l
