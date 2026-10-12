@@ -65,14 +65,14 @@ Nama dan pembagian file ini merupakan rancangan yang bisa Anda sesuaikan, bukan 
 
 Contoh file `options.zsh`:
 
-```
+```bash
 setopt AUTO_CD
 setopt EXTENDED_GLOB
 ```
 
 Kemudian, di file `zshrc`:
 
-```
+```bash
 source "$HOME/.config/zsh/options.zsh"
 ```
 
@@ -84,7 +84,7 @@ Hal penting: `source` bukan proses shell baru. Ia tidak secara otomatis mengisol
 
 Untuk menguji apakah sebuah file dapat dibaca sebelum memuatnya, Anda dapat menggunakan:
 
-```
+```bash
 local_config="$HOME/.config/zsh/options.zsh"
 
 if [[ -r "$local_config" ]]; then
@@ -100,7 +100,7 @@ File utama sebaiknya bertindak sebagai pengatur pemuatan konfigurasi, bukan temp
 
 Contoh sederhana:
 
-```
+```bash
 # ~/.config/zsh/zshrc
 
 ZSH_CONFIG="$HOME/.config/zsh"
@@ -114,7 +114,7 @@ Ini menunjukkan pola dasarnya, tetapi masih memiliki keterbatasan: jika salah sa
 
 Untuk konfigurasi yang lebih tahan terhadap file opsional, buat fungsi pemuat:
 
-```
+```bash
 # ~/.config/zsh/zshrc
 
 ZSH_CONFIG="$HOME/.config/zsh"
@@ -158,14 +158,14 @@ Misalnya, jika Anda memiliki 30 fungsi tetapi hanya menggunakan lima di antarany
 
 Pola autoload:
 
-```
+```bash
 fpath=("$HOME/.config/zsh/functions" $fpath)
 autoload -Uz mkcd
 ```
 
 Sebaliknya, jika Anda ingin mengaktifkan alias pada setiap startup interaktif, file alias dapat di-source:
 
-```
+```bash
 source "$HOME/.config/zsh/aliases.zsh"
 ```
 
@@ -177,7 +177,7 @@ Contoh pembagian isi file:
 
 `options.zsh`
 
-```
+```bash
 setopt AUTO_CD
 setopt EXTENDED_GLOB
 setopt HIST_IGNORE_DUPS
@@ -185,14 +185,14 @@ setopt HIST_IGNORE_DUPS
 
 `aliases.zsh`
 
-```
+```bash
 alias ll='ls -lh'
 alias la='ls -A'
 ```
 
 `history.zsh`
 
-```
+```bash
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
@@ -200,7 +200,7 @@ SAVEHIST=10000
 
 `integrations/git.zsh`
 
-```
+```bash
 if (( $+commands[git] )); then
     alias gs='git status'
 fi
@@ -216,7 +216,7 @@ Konfigurasi modular tetap memiliki urutan eksekusi. Pemisahan file tidak otomati
 
 Misalnya:
 
-```
+```bash
 zshrc
   │
   ├── options.zsh
@@ -242,7 +242,7 @@ Dua pertanyaan ini juga berguna ketika Anda membaca konfigurasi plugin pihak ket
 
 Sebelum mengubah konfigurasi utama, Anda dapat menguji konsep modular di direktori sementara:
 
-```
+```bash
 mkdir -p /tmp/zsh-modular-test
 
 print -r -- 'setopt AUTO_CD' \
@@ -258,7 +258,7 @@ Latihan ini membuat direktori dan file uji di `/tmp`, bukan mengubah konfigurasi
 
 Setelah selesai, Anda dapat menghapus direktori latihan secara eksplisit:
 
-```
+```bash
 rm -r -- /tmp/zsh-modular-test
 ```
 

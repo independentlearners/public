@@ -46,7 +46,7 @@ Dalam konteks kurikulum keseluruhan, Modul 1.1 berperan sebagai **peta konseptua
 
 Bayangkan sistem operasi seperti sebuah **restoran**:
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                    ESTORAN (Sistem Komputer)                │
 │                                                             │
@@ -79,7 +79,7 @@ Bayangkan sistem operasi seperti sebuah **restoran**:
 
 **Alur eksekusi perintah `ls -la`:**
 
-```
+```bash
 Pengguna mengetik: "ls -la" + [Enter]
          │
          ▼
@@ -608,7 +608,7 @@ Dalam konteks kurikulum keseluruhan, Modul 1.2 adalah jembatan antara teori (Mod
 
 Sistem file Unix adalah **pohon terbalik** yang dimulai dari root (`/`). Semua file dan direktori berada di bawah root. Tidak ada drive letter seperti di Windows (`C:\`, `D:\`). Jika ada disk tambahan, mereka "dipasang" (mount) ke direktori tertentu di dalam pohon.
 
-```
+```bash
 /                           ← Root directory (akar)
 ├── bin/                    ← Binary essential (ls, cp, mv)
 ├── boot/                   ← File boot loader
@@ -765,7 +765,7 @@ ls -d */               # Hanya direktori
 
 **Output `ls -la` dan artinya:**
 
-```
+```bash
 drwxr-xr-x  5 budi budi 4096 Jan 10 10:30 proyek
 -rw-r--r--  1 budi budi  220 Jan 10 09:15 .zshrc
 lrwxrwxrwx  1 budi budi   12 Jan 10 08:00 link -> /home/budi/proyek
@@ -961,7 +961,7 @@ find . -name "*.txt" -exec grep -l "error" {} \;  # Cari file .txt yang mengandu
 
 **Alur kerja `find`:**
 
-```
+```bash
 Mulai dari direktori awal
         │
         ▼
@@ -1076,7 +1076,7 @@ readlink link-proyek                  # Baca target symlink
 
 Setiap file memiliki 3 set permission: **owner**, **group**, **others**. Setiap set memiliki **read (r)**, **write (w)**, **execute (x)**.
 
-```
+```bash
 rwx r-x r-x
 │   │   │
 │   │   └── others: read + execute
@@ -1458,7 +1458,7 @@ x="sekarang saya string"
 
 Ketika Anda mengetik perintah dan menekan Enter, shell melakukan **banyak ekspansi** secara berurutan. Urutan ini penting dan sering menjadi sumber kebingungan.
 
-```
+```bash
 Input mentah: echo "Halo $nama, hari ini $(date +%A), file: *.txt"
        │
        ▼

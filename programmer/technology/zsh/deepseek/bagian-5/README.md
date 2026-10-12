@@ -13,7 +13,7 @@ Completion system Zsh disebut **compsys**. Ia adalah kumpulan fungsi, mekanisme,
 
 ### 5.1.1 compinit
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
@@ -30,7 +30,7 @@ Penjelasan kata demi kata:
 
 ### 5.1.2 fpath
 
-```zsh
+```bash
 fpath=($ZDOTDIR/completion $fpath)
 ```
 
@@ -46,7 +46,7 @@ Penjelasan:
 
 `zstyle` adalah cara mengonfigurasi completion. Ia menggunakan pola hierarkis.
 
-```zsh
+```bash
 zstyle ':completion:*' menu select
 ```
 
@@ -61,7 +61,7 @@ Penjelasan kata demi kata:
 
 Style lain:
 
-```zsh
+```bash
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 ```
 
@@ -70,7 +70,7 @@ Penjelasan:
 - `matcher-list` — style untuk pencocokan.
 - `'m:{a-zA-Z}={A-Za-z}'` — matcher. `m:` berarti matcher. `{a-zA-Z}` dan `{A-Za-z}` adalah kelas karakter. Ini membuat completion case-insensitive.
 
-```zsh
+```bash
 zstyle ':completion:*' list-colors ''
 ```
 
@@ -83,7 +83,7 @@ Penjelasan:
 
 Tags adalah kategori kandidat completion. Contoh: `files`, `directories`, `options`, `commands`, `parameters`.
 
-```zsh
+```bash
 zstyle ':completion:*:descriptions' format '%F{yellow}%d%f'
 ```
 
@@ -99,7 +99,7 @@ Penjelasan:
 
 Completer adalah fungsi yang menghasilkan kandidat. Contoh: `_complete`, `_approximate`, `_expand`, `_history`.
 
-```zsh
+```bash
 zstyle ':completion:*' completer _complete _approximate
 ```
 
@@ -113,7 +113,7 @@ Penjelasan:
 
 Buat file `~/.config/zsh/completion/_hello`:
 
-```zsh
+```bash
 #compdef hello
 
 _hello() {
@@ -144,7 +144,7 @@ Setelah file ini ada di `$fpath`, jalankan `compinit` ulang. Ketik `hello <Tab>`
 
 ### 5.1.7 compdef
 
-```zsh
+```bash
 compdef _hello hello
 ```
 
@@ -165,7 +165,7 @@ ZLE adalah **Zsh Line Editor**. Ia menangani input keyboard di prompt. Memahami 
 
 ### 5.2.1 Arsitektur ZLE
 
-```text
+```bash
 Keyboard
    ↓
 Keymap
@@ -195,7 +195,7 @@ Di dalam widget, Anda bisa mengakses variabel khusus:
 
 Contoh:
 
-```zsh
+```bash
 my_widget() {
     echo "BUFFER=$BUFFER" >&2
     echo "CURSOR=$CURSOR" >&2
@@ -214,7 +214,7 @@ Penjelasan:
 
 ### 5.2.3 zle Builtin
 
-```zsh
+```bash
 zle -N my_widget
 ```
 
@@ -235,7 +235,7 @@ Opsi lain:
 
 Contoh memanggil widget bawaan:
 
-```zsh
+```bash
 my_widget() {
     zle accept-line
 }
@@ -247,7 +247,7 @@ Penjelasan:
 
 ### 5.2.4 Widget Kustom Lengkap
 
-```zsh
+```bash
 insert_date() {
     LBUFFER="${LBUFFER}$(date +%Y-%m-%d)"
     zle reset-prompt
@@ -299,7 +299,7 @@ Widget adalah unit aksi di ZLE. Ada dua jenis: bawaan dan kustom.
 
 ### 5.3.2 Widget yang Memanipulasi Buffer
 
-```zsh
+```bash
 uppercase_word() {
     local word
     word="${LBUFFER##* }"
@@ -323,7 +323,7 @@ Penjelasan:
 
 ### 5.3.3 Widget yang Menggunakan History
 
-```zsh
+```bash
 last_command() {
     BUFFER="${history[1]}"
     CURSOR=${#BUFFER}
@@ -348,7 +348,7 @@ Hook adalah fungsi yang dipanggil otomatis pada momen tertentu. Di Zsh, hook ada
 
 ### 5.4.1 preexec
 
-```zsh
+```bash
 preexec() {
     echo "Menjalankan: $1" >&2
 }
@@ -364,7 +364,7 @@ Penjelasan:
 
 ### 5.4.2 precmd
 
-```zsh
+```bash
 precmd() {
     echo "Siap menerima perintah" >&2
 }
@@ -377,7 +377,7 @@ Penjelasan:
 
 ### 5.4.3 chpwd
 
-```zsh
+```bash
 chpwd() {
     echo "Direktori: $PWD" >&2
 }
@@ -390,7 +390,7 @@ Penjelasan:
 
 ### 5.4.4 zshaddhistory
 
-```zsh
+```bash
 zshaddhistory() {
     local cmd="$1"
     [[ "$cmd" == *secret* ]] && return 1
@@ -408,7 +408,7 @@ Penjelasan:
 
 ### 5.4.5 period
 
-```zsh
+```bash
 TMOUT=60
 period() {
     echo "Idle 60 detik" >&2
@@ -426,7 +426,7 @@ Penjelasan:
 
 Autoload memuat fungsi dari file saat pertama dipanggil.
 
-```zsh
+```bash
 fpath=(~/.config/zsh/functions $fpath)
 autoload -Uz myfunc
 ```
@@ -440,13 +440,13 @@ Penjelasan:
 
 File `~/.config/zsh/functions/myfunc` berisi isi fungsi:
 
-```zsh
+```bash
 echo "Hello dari autoload"
 ```
 
 Bukan:
 
-```zsh
+```bash
 myfunc() {
     echo "Hello"
 }
@@ -458,13 +458,13 @@ Perbedaan ini penting. File autoload adalah **tubuh fungsi**, bukan definisi.
 
 File `greet`:
 
-```zsh
+```bash
 echo "Hello, $1"
 ```
 
 Setelah `autoload -Uz greet`, panggil:
 
-```zsh
+```bash
 greet "Cendekiawan"
 ```
 
@@ -474,7 +474,7 @@ Output: `Hello, Cendekiawan`.
 
 Semua fungsi completion adalah file autoload. Contoh `_git` di `$fpath`.
 
-```zsh
+```bash
 autoload -Uz _git
 ```
 
@@ -491,7 +491,7 @@ Penjelasan:
 
 ### 5.6.1 Melihat Modul
 
-```zsh
+```bash
 zmodload -l
 ```
 
@@ -500,7 +500,7 @@ Penjelasan:
 - `zmodload` — builtin.
 - `-l` — list. Menampilkan modul yang tersedia.
 
-```zsh
+```bash
 zmodload -L
 ```
 
@@ -510,7 +510,7 @@ Penjelasan:
 
 ### 5.6.2 Memuat Modul
 
-```zsh
+```bash
 zmodload zsh/zprof
 ```
 
@@ -519,7 +519,7 @@ Penjelasan:
 - `zmodload` — builtin.
 - `zsh/zprof` — nama modul. Profiler untuk mengukur waktu eksekusi fungsi.
 
-```zsh
+```bash
 zmodload zsh/datetime
 ```
 
@@ -528,7 +528,7 @@ Penjelasan:
 - `zsh/datetime` — modul untuk mengakses waktu dengan presisi tinggi.
 - Menyediakan variabel `EPOCHSECONDS`, `EPOCHREALTIME`, dan fungsi `strftime`.
 
-```zsh
+```bash
 zmodload zsh/system
 ```
 
@@ -537,7 +537,7 @@ Penjelasan:
 - `zsh/system` — modul untuk akses sistem tingkat rendah.
 - Menyediakan `sysread`, `syswrite`, `sysopen`, `sysseek`.
 
-```zsh
+```bash
 zmodload zsh/parameter
 ```
 
@@ -546,7 +546,7 @@ Penjelasan:
 - `zsh/parameter` — modul untuk mengakses parameter internal Zsh.
 - Menyediakan `$functions`, `$commands`, `$options`, `$aliases`, `$builtins`.
 
-```zsh
+```bash
 zmodload zsh/complist
 ```
 
@@ -555,7 +555,7 @@ Penjelasan:
 - `zsh/complist` — modul untuk kontrol daftar completion.
 - Memungkinkan navigasi menu completion dengan tombol.
 
-```zsh
+```bash
 zmodload zsh/zutil
 ```
 
@@ -566,7 +566,7 @@ Penjelasan:
 
 ### 5.6.3 Contoh zsh/parameter
 
-```zsh
+```bash
 zmodload zsh/parameter
 print -l ${(k)options} | grep GLOB
 ```
@@ -580,7 +580,7 @@ Penjelasan:
 
 ### 5.6.4 Contoh zsh/datetime
 
-```zsh
+```bash
 zmodload zsh/datetime
 echo $EPOCHSECONDS
 echo $EPOCHREALTIME
@@ -627,7 +627,7 @@ Contoh modul penting:
 
 ### 5.7.1 Contoh zsh/mathfunc
 
-```zsh
+```bash
 zmodload zsh/mathfunc
 echo $(( sqrt(16) ))
 ```
@@ -640,7 +640,7 @@ Penjelasan:
 
 ### 5.7.2 Contoh zsh/stat
 
-```zsh
+```bash
 zmodload zsh/stat
 stat -s size -- file.txt
 ```
@@ -659,7 +659,7 @@ Penjelasan:
 
 Ini adalah alur berpikir yang harus Anda bangun.
 
-```text
+```bash
 plugin
    ↓
 source code
@@ -679,19 +679,19 @@ Langkah:
 
 1. Cari file plugin:
 
-```zsh
+```bash
 ls ~/.config/zsh/plugins/zsh-autosuggestions
 ```
 
 2. Baca file utama:
 
-```zsh
+```bash
 less ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 ```
 
 3. Cari mekanisme Zsh yang dipakai:
 
-```zsh
+```bash
 grep -n 'zle -N' zsh-autosuggestions.zsh
 grep -n 'bindkey' zsh-autosuggestions.zsh
 grep -n 'add-zle-hook-widget' zsh-autosuggestions.zsh
@@ -724,7 +724,7 @@ Penjelasan:
 
 ### 5.8.2 Contoh: Meniru Autosuggestion Sederhana
 
-```zsh
+```bash
 autosuggest() {
     local last="${history[1]}"
     if [[ -n "$last" && "$BUFFER" == "${last:0:${#BUFFER}}" ]]; then

@@ -10,7 +10,7 @@ Topik ini adalah fondasi di balik banyak kasus "kok PATH/alias saya ada di termi
 
 Cek status shell yang sedang berjalan:
 
-```zsh
+```bash
 [[ -o login ]]       && echo login       || echo non-login
 [[ -o interactive ]] && echo interactive || echo non-interactive
 ps -p $$ -o args=     # tampil "-zsh" atau "zsh -l" bila login shell
@@ -23,7 +23,7 @@ echo $SHLVL           # kedalaman shell bersarang
 
 zsh memakai tiga "gerbang" yang independen:
 
-```
+```bash
 SELALU          : /etc/zsh/zshenv   → ~/.zshenv
 bila login      : /etc/zsh/zprofile → ~/.zprofile
 bila interaktif : /etc/zsh/zshrc    → ~/.zshrc
@@ -118,7 +118,7 @@ login shell keluar: ~/.zlogout → /etc/zsh/zlogout
 
 ## 4. Alur environment (contoh: Wayland dimulai dari TTY)
 
-```
+```bash
 getty@tty1 → login (PAM) → -zsh                       [1: login + interaktif]
                              │ zshenv → zprofile (+/etc/profile)
                              │ zprofile: export …; exec sway
@@ -141,14 +141,14 @@ getty@tty1 → login (PAM) → -zsh                       [1: login + interaktif
 | `~/.zlogin` | 1, 2 | Jarang dipakai; untuk hal yang butuh `.zshrc` sudah termuat |
 | `~/.zlogout` | login shell | Pembersihan saat keluar |
 
-```zsh
+```bash
 # ~/.zshenv: dibaca SEMUA mode, jadi jaga kecil dan tanpa output
 export XDG_CONFIG_HOME="$HOME/.config"
 typeset -U path PATH                 # cegah entri ganda (shell bersarang/tmux)
 path=("$HOME/.local/bin" $path)
 ```
 
-```zsh
+```bash
 # ~/.zprofile: hanya login shell (sesuaikan: sway / Hyprland / niri)
 if [[ -o interactive && -z $WAYLAND_DISPLAY && ${XDG_VTNR:-0} -eq 1 ]]; then
   exec sway
@@ -159,7 +159,7 @@ fi
 
 Mensimulasikan keempat mode lewat flag:
 
-```zsh
+```bash
 probe='[[ -o login ]] && L=login || L=non-login; [[ -o interactive ]] && I=interactive || I=non-interactive; print "$L + $I"'
 zsh -l -i -c "$probe"   # login + interactive
 zsh -l    -c "$probe"   # login + non-interactive
@@ -169,14 +169,14 @@ zsh       -c "$probe"   # non-login + non-interactive
 
 Melihat file apa saja yang benar-benar dibaca:
 
-```zsh
+```bash
 zsh -o SOURCE_TRACE -l -i -c exit      # zsh mencetak nama tiap file yang di-source
 strace -f -e trace=openat zsh -l -i -c exit 2>&1 | grep -E '/etc/zsh/|\.z(shenv|profile|shrc|login|logout)'
 ```
 
 `strace` (`pacman -S strace`) juga menampilkan file yang dicari tetapi tidak ada (`ENOENT`). Untuk menguji dari environment nyaris kosong:
 
-```zsh
+```bash
 env -i HOME="$HOME" TERM="$TERM" zsh -l -i       # simulasi sesi login bersih
 env -i HOME="$HOME" zsh -c 'print -r -- $PATH'   # yang dilihat skrip non-interaktif
 ```

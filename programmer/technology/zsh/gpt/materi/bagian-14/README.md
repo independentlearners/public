@@ -24,7 +24,7 @@ Prompt tambahan yang ditampilkan di sisi kanan jika terminal mendukung ruang yan
 
 Coba di terminal Zsh:
 
-```
+```bash
 PROMPT='%n@%m %~ %# '
 ```
 
@@ -37,7 +37,7 @@ Komponen tersebut memiliki arti:
 
 Kemudian coba:
 
-```
+```bash
 RPROMPT='%*'
 ```
 
@@ -63,13 +63,13 @@ Berikut beberapa sequence yang sering digunakan:
 
 Contoh prompt yang lebih informatif:
 
-```
+```bash
 PROMPT='[%D] %n@%m:%~ %# '
 ```
 
 Contoh tampilan konseptual:
 
-```
+```bash
 [26-10-11] user@arch:~/dotfiles ❯
 ```
 
@@ -77,13 +77,13 @@ Nilai aktual bergantung pada pengguna, hostname, direktori, dan konfigurasi term
 
 Perhatikan perbedaan ini:
 
-```
+```bash
 PROMPT='$HOME %# '
 ```
 
 dan:
 
-```
+```bash
 PROMPT='%~ %# '
 ```
 
@@ -93,7 +93,7 @@ Pada contoh pertama, `$HOME` berada dalam tanda kutip tunggal sehingga nilainya 
 
 Zsh memiliki sequence format untuk mengatur warna serta gaya teks prompt.
 
-```
+```bash
 PROMPT='%F{green}%n%f %F{blue}%~%f %# '
 ```
 
@@ -107,7 +107,7 @@ Sequence yang digunakan:
 
 Contoh dengan teks tebal:
 
-```
+```bash
 PROMPT='%B%n%b %F{cyan}%~%f %# '
 ```
 
@@ -119,13 +119,13 @@ Untuk sekarang, gunakan sequence bawaan Zsh ini daripada menambahkan kode warna 
 
 Sequence `%?` dapat menampilkan status keluar dari perintah sebelumnya. Status `0` biasanya berarti berhasil, sedangkan nilai bukan nol biasanya menandakan kegagalan.
 
-```
+```bash
 PROMPT='[%?] %~ %# '
 ```
 
 Coba jalankan:
 
-```
+```bash
 true
 false
 ```
@@ -142,7 +142,7 @@ Zsh memiliki opsi `PROMPT_SUBST` yang mengaktifkan ekspansi parameter, substitus
 
 Contoh eksperimental:
 
-```
+```bash
 setopt PROMPT_SUBST
 PROMPT='$(date +%H:%M:%S) %# '
 ```
@@ -159,14 +159,14 @@ Karena konfigurasi Anda menggunakan struktur `~/.config/zsh/`, pengaturan prompt
 
 Contoh isi file tersebut:
 
-```
+```bash
 PROMPT='%F{green}%n%f %F{blue}%~%f %# '
 RPROMPT='[%?]'
 ```
 
 Lalu muat file itu dari `zshrc`:
 
-```
+```bash
 if [[ -r "$HOME/.config/zsh/prompt.zsh" ]]; then
     source "$HOME/.config/zsh/prompt.zsh"
 fi
@@ -180,25 +180,25 @@ Jika konfigurasi Anda sudah menggunakan Starship, file tersebut mungkin menginis
 
 Jalankan setiap percobaan secara terpisah di terminal:
 
-```
+```bash
 PROMPT='%n@%m:%~ %# '
 ```
 
 Kemudian:
 
-```
+```bash
 RPROMPT='%D %*'
 ```
 
 Terakhir:
 
-```
+```bash
 PROMPT='[%?] %F{cyan}%~%f %# '
 ```
 
 Amati perubahan yang terjadi. Untuk mengembalikan prompt sederhana:
 
-```
+```bash
 PROMPT='%~ %# '
 RPROMPT=''
 ```

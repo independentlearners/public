@@ -11,7 +11,7 @@ Tetap di jalur kurikulum. Kita belum masuk ke Zsh internals untuk customization 
 
 Zsh memiliki lima file startup utama. Masing-masing dibaca pada momen yang berbeda.
 
-```text
+```bash
 ~/.zshenv
 ~/.zprofile
 ~/.zshrc
@@ -21,25 +21,25 @@ Zsh memiliki lima file startup utama. Masing-masing dibaca pada momen yang berbe
 
 Urutan pembacaan untuk shell interaktif login:
 
-```text
+```bash
 .zshenv → .zprofile → .zshrc → .zlogin
 ```
 
 Urutan pembacaan untuk shell interaktif non-login:
 
-```text
+```bash
 .zshenv → .zshrc
 ```
 
 Urutan pembacaan untuk shell non-interaktif:
 
-```text
+```bash
 .zshenv
 ```
 
 Saat logout dari shell login:
 
-```text
+```bash
 .zlogout
 ```
 
@@ -51,7 +51,7 @@ Pemahaman urutan ini adalah fondasi. Jika Anda salah menaruh konfigurasi, ia mun
 
 `.zshenv` adalah file pertama yang dibaca, **selalu**, untuk semua jenis shell: login, non-login, interaktif, non-interaktif.
 
-```zsh
+```bash
 # ~/.zshenv
 export EDITOR=nvim
 export PAGER=less
@@ -80,7 +80,7 @@ Penjelasan kata demi kata:
 
 Jika `$ZDOTDIR` diset, Zsh akan mencari `.zshenv` di `$ZDOTDIR` alih-alih `$HOME`.
 
-```zsh
+```bash
 ZDOTDIR=~/.config/zsh
 ```
 
@@ -97,7 +97,7 @@ Jika Anda ingin semua file startup berada di `~/.config/zsh/`, set `ZDOTDIR` di 
 
 `.zprofile` dibaca setelah `.zshenv` untuk **login shell**.
 
-```zsh
+```bash
 # ~/.zprofile
 export PATH="$HOME/.local/bin:$PATH"
 ```
@@ -131,7 +131,7 @@ Karena itu, jangan bergantung pada `.zprofile` untuk hal-hal penting. Taruh envi
 
 `.zshrc` adalah file yang paling sering Anda sentuh. Ia dibaca untuk **setiap shell interaktif**, baik login maupun non-login.
 
-```zsh
+```bash
 # ~/.zshrc
 setopt AUTO_CD
 setopt EXTENDED_GLOB
@@ -166,7 +166,7 @@ Penjelasan:
 
 `.zlogin` dibaca setelah `.zshrc`, hanya untuk login shell.
 
-```zsh
+```bash
 # ~/.zlogin
 echo "Selamat datang, $USER"
 ```
@@ -195,7 +195,7 @@ Penjelasan:
 
 `.zlogout` dibaca saat login shell keluar.
 
-```zsh
+```bash
 # ~/.zlogout
 echo "Sampai jumpa"
 ```
@@ -239,7 +239,7 @@ Menaruh semua konfigurasi di `.zshrc` akan membuat file itu panjang dan sulit di
 
 ### Konsep Source
 
-```zsh
+```bash
 source ~/.config/zsh/options.zsh
 ```
 
@@ -251,7 +251,7 @@ Penjelasan kata demi kata:
 
 Bentuk alternatif:
 
-```zsh
+```bash
 . ~/.config/zsh/options.zsh
 ```
 
@@ -261,7 +261,7 @@ Penjelasan:
 
 ### Struktur Direktori
 
-```text
+```bash
 ~/.config/zsh/
 ├── zshrc
 ├── aliases.zsh
@@ -300,7 +300,7 @@ Zsh secara default mencari `.zshrc` di `$HOME`. Untuk memindahkannya ke `~/.conf
 
 Cara paling bersih: buat file `~/.zshenv` yang berisi:
 
-```zsh
+```bash
 ZDOTDIR=$HOME/.config/zsh
 ```
 
@@ -317,7 +317,7 @@ Ini adalah pola yang sangat umum di dotfiles modern.
 
 File `~/.config/zsh/.zshrc` (atau `~/.config/zsh/zshrc` jika Anda mengikuti konvensi tanpa titik) berisi:
 
-```zsh
+```bash
 # ~/.config/zsh/.zshrc
 
 # Sumber semua modul
@@ -351,7 +351,7 @@ Penjelasan:
 
 ### File `options.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/options.zsh
 
 setopt AUTO_CD
@@ -370,7 +370,7 @@ Penjelasan:
 
 ### File `history.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/history.zsh
 
 HISTFILE=$ZDOTDIR/.zsh_history
@@ -392,7 +392,7 @@ Penjelasan:
 
 ### File `aliases.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/aliases.zsh
 
 alias ll='ls -la'
@@ -411,7 +411,7 @@ Penjelasan:
 
 ### File `functions.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/functions.zsh
 
 mkcd() {
@@ -447,7 +447,7 @@ Penjelasan:
 
 ### File `keybinds.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/keybinds.zsh
 
 bindkey -e
@@ -468,7 +468,7 @@ Penjelasan:
 
 ### File `completion.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/completion.zsh
 
 fpath=($ZDOTDIR/completion $fpath)
@@ -490,7 +490,7 @@ Penjelasan:
 
 ### File `prompt.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/prompt.zsh
 
 autoload -Uz promptinit
@@ -525,7 +525,7 @@ Penjelasan:
 
 ### File `integrations/git.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/integrations/git.zsh
 
 autoload -Uz vcs_info
@@ -550,7 +550,7 @@ Penjelasan:
 
 ### File `integrations/fzf.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/integrations/fzf.zsh
 
 if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
@@ -572,7 +572,7 @@ Penjelasan:
 
 ### File `integrations/zoxide.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/integrations/zoxide.zsh
 
 if command -v zoxide >/dev/null 2>&1; then
@@ -588,7 +588,7 @@ Penjelasan:
 
 ### File `integrations/yazi.zsh`
 
-```zsh
+```bash
 # ~/.config/zsh/integrations/yazi.zsh
 
 y() {
@@ -618,7 +618,7 @@ Plugin adalah kumpulan fungsi, alias, completion, dan widget yang bisa Anda muat
 
 ### Cara Manual
 
-```zsh
+```bash
 source ~/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ```
@@ -641,7 +641,7 @@ Beberapa plugin manager populer:
 
 Contoh dengan `zinit`:
 
-```zsh
+```bash
 source ~/.config/zsh/plugins/zinit/zinit.zsh
 
 zinit light zsh-users/zsh-autosuggestions
@@ -669,7 +669,7 @@ Environment adalah kumpulan variabel yang memengaruhi perilaku program.
 
 ### Variabel Environment Umum
 
-```zsh
+```bash
 export EDITOR=nvim
 export VISUAL=nvim
 export PAGER=less
@@ -689,7 +689,7 @@ Penjelasan:
 
 ### PATH
 
-```zsh
+```bash
 export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
 ```
 
@@ -702,7 +702,7 @@ Penjelasan:
 
 Untuk menghindari duplikasi, gunakan fungsi:
 
-```zsh
+```bash
 path_append() {
     [[ ":$PATH:" != *":$1:"* ]] && PATH="$PATH:$1"
 }
@@ -726,7 +726,7 @@ Zsh startup bisa lambat jika konfigurasi Anda berat. Berikut cara mengukurnya da
 
 ### Mengukur Waktu Startup
 
-```zsh
+```bash
 time zsh -i -c exit
 ```
 
@@ -740,7 +740,7 @@ Penjelasan:
 
 ### Profiling dengan `zprof`
 
-```zsh
+```bash
 # Di awal .zshrc
 zmodload zsh/zprof
 
@@ -761,7 +761,7 @@ Penjelasan:
 - Jangan `source` file yang tidak perlu.
 - Hindari `eval` yang tidak perlu.
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit -C
 ```

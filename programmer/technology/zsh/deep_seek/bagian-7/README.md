@@ -100,7 +100,7 @@ Bayangkan shell sebagai ruang kerja fisik:
 
 ## 4. Sintaks Dasar / Contoh Implementasi Inti
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # TOOLKIT MODUL 7.1 — Perintah yang akan digunakan
 # ═══════════════════════════════════════════════════════════
@@ -170,7 +170,7 @@ type cd
 
 **Jawaban:**
 
-```zsh
+```bash
 # (a) Siapa saya
 whoami
 # Output: nusantara
@@ -203,7 +203,7 @@ ls -la
 
 **Jawaban:**
 
-```zsh
+```bash
 # 1. Navigasi ke projects
 cd /home/nusantara/projects
 
@@ -243,7 +243,7 @@ cd -
 
 **Jawaban:**
 
-```zsh
+```bash
 # Menggunakan find untuk melihat struktur
 find /home/nusantara/projects -maxdepth 2 -type d | sort > /home/nusantara/struktur.txt
 
@@ -253,7 +253,7 @@ cat /home/nusantara/struktur.txt
 
 **Alternatif menggunakan `tree` (jika terinstall):**
 
-```zsh
+```bash
 tree -L 2 /home/nusantara/projects > /home/nusantara/struktur.txt
 ```
 
@@ -273,7 +273,7 @@ tree -L 2 /home/nusantara/projects > /home/nusantara/struktur.txt
 
 **Jawaban:**
 
-```zsh
+```bash
 # Definisikan variabel
 PROJECTS_DIR="/home/nusantara/projects"
 CONFIG_DIR="/etc/nusantara"
@@ -296,7 +296,7 @@ echo "════════════════════════�
 
 **Pertanyaan lanjutan:** Bagaimana jika `CONFIG_DIR` tidak ada? Tampilkan pesan error yang jelas.
 
-```zsh
+```bash
 if [[ ! -d "$CONFIG_DIR" ]]; then
     echo "⚠️  Warning: $CONFIG_DIR tidak ditemukan" >&2
 else
@@ -312,7 +312,7 @@ fi
 
 **Jawaban:**
 
-```zsh
+```bash
 # (a) Lihat semua file
 ls -la /home/nusantara/projects/
 
@@ -339,7 +339,7 @@ Di Zsh, cukup dengan **glob qualifier**:
 
 **Pertanyaan reflektif:** Apa yang terjadi jika direktori kosong? Bagaimana Anda menanganinya?
 
-```zsh
+```bash
 # Solusi robust: gunakan null_glob
 files=(/home/nusantara/projects/**/*.conf(Nom[1,5]))
 if [[ ${#files[@]} -eq 0 ]]; then
@@ -359,7 +359,7 @@ fi
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # laporan_onboarding.zsh — Generate laporan onboarding
 
@@ -421,7 +421,7 @@ echo "✅ Laporan tersimpan di /home/nusantara/laporan_onboarding.md"
 
 **Pertanyaan reflektif:** Apa yang terjadi jika `/home/nusantara/` tidak writable? Bagaimana Anda menangani?
 
-```zsh
+```bash
 if [[ ! -w /home/nusantara ]]; then
     echo "❌ Tidak bisa menulis ke /home/nusantara" >&2
     exit 1
@@ -436,7 +436,7 @@ fi
 
 **Jawaban:**
 
-```zsh
+```bash
 # ❌ SALAH — akan gagal karena spasi
 # mv Laporan Q4 2026.pdf arsip/
 
@@ -474,7 +474,7 @@ cp "arsip/$FILE" "arsip/${FILE}.bak"
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 
 # Definisikan array (Zsh: index mulai dari 1)
@@ -730,7 +730,7 @@ Setiap script harus **bisa diobservasi** — Anda harus bisa tahu apa yang terja
 
 ## 4. Sintaks Dasar / Contoh Implementasi Inti
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # TOOLKIT MODUL 7.2 — Elemen Script Profesional
 # ═══════════════════════════════════════════════════════════
@@ -848,7 +848,7 @@ esac
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # backup.zsh — Script backup dasar
 
@@ -896,7 +896,7 @@ log_info "Log file: $LOG_FILE"
 - `-o pipefail`: Pipe (`|`) dianggap gagal jika **salah satu** perintah di dalamnya gagal
 
 **Mengapa ini penting?** Tanpa `pipefail`, perintah ini akan "sukses" meskipun bagian pertama gagal:
-```zsh
+```bash
 # ❌ TANPA pipefail: command gagal tapi pipe tetap "sukses"
 gagal_command | tee output.log
 
@@ -927,7 +927,7 @@ Selalu gunakan `"$@"` untuk meneruskan argumen.
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 
@@ -1004,7 +1004,7 @@ Di dunia Unix, exit code **memiliki makna**:
 - `128+N` = signal N (misalnya 130 = Ctrl+C)
 
 **Mengapa exit code berbeda?** Agar caller (script lain yang memanggil script Anda) bisa **membedakan jenis kegagalan**:
-```zsh
+```bash
 # Caller bisa membedakan:
 ./backup.zsh /src /dst
 case $? in
@@ -1037,7 +1037,7 @@ esac
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 
@@ -1079,7 +1079,7 @@ backup_files() {
 **Mengapa `*.conf(N)` bukan `*.conf`?**
 
 Tanpa `(N)`, jika tidak ada file `.conf`, glob akan **gagal** dan dengan `set -e`, script akan berhenti:
-```zsh
+```bash
 # ❌ Tanpa (N): script error jika tidak ada .conf
 set -e
 for file in *.conf; do
@@ -1089,7 +1089,7 @@ done
 ```
 
 Dengan `(N)` (**null_glob**), array akan kosong dan loop tidak jalan:
-```zsh
+```bash
 # ✅ Dengan (N): aman meskipun tidak ada file
 for file in *.conf(N); do
     # Tidak dieksekusi jika tidak ada file
@@ -1104,7 +1104,7 @@ done
 - **Penting:** Jika `count` bernilai 0, `(( count++ ))` akan mengembalikan **exit code 1** (karena nilai sebelum increment adalah 0). Dengan `set -e`, ini akan **menghentikan script**!
 
 **Solusi:** Gunakan `(( count++ )) || true` atau `(( ++count ))`:
-```zsh
+```bash
 # ❌ Bahaya dengan set -e:
 (( count++ ))  # Jika count=0, ini return exit code 1 → script exit!
 
@@ -1131,7 +1131,7 @@ Ini adalah **jebakan klasik** yang sering menimpa pemula.
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 
@@ -1212,7 +1212,7 @@ find "$log_dir" -name "*.log" -type f -mtime +7 -exec mv {} {}.$(date +%Y%m%d) \
 ```
 
 Dengan Zsh:
-```zsh
+```bash
 # Zsh: satu baris, jelas
 for log in "$log_dir"/*.log(m+7); do
     mv "$log" "${log}.$(date +%Y%m%d)"
@@ -1224,7 +1224,7 @@ done
 - **BSD/macOS:** `date -r file +format` untuk membaca waktu modifikasi file
 - **Linux:** `stat -c '%y' file` untuk format waktu
 - Solusi portabel: coba `date -r`, fallback ke `stat`:
-```zsh
+```bash
 local date_suffix
 if date_suffix=$(date -r "$log" '+%Y%m%d' 2>/dev/null); then
     : # berhasil dengan date -r (BSD/macOS)
@@ -1248,7 +1248,7 @@ Jika Anda compress dulu lalu rotate, file aktif juga akan terkompres — tidak d
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 
@@ -1330,7 +1330,7 @@ echo "🎉 Selesai!"
 
 **Penting — Simpan `$?` di awal cleanup:**
 
-```zsh
+```bash
 # ❌ SALAH: exit code sudah hilang
 cleanup() {
     echo "Bersihkan..."
@@ -1364,7 +1364,7 @@ cleanup() {
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 
@@ -1438,13 +1438,13 @@ DEBUG=1 ./backup.zsh /etc/nusantara /home/nusantara/backups 2>debug.log
 **Penjelasan Mental — `set -x` (xtrace):**
 
 **Apa yang terjadi:**
-```zsh
+```bash
 set -x
 name="Budi"
 echo "Halo, $name"
 ```
 **Output:**
-```
+```bash
 +name=Budi
 +echo 'Halo, Budi'
 Halo, Budi
@@ -1464,7 +1464,7 @@ Default `PS4` adalah `+ `. Anda bisa mengubahnya untuk debugging yang lebih info
 | `%D` | Tanggal/waktu |
 
 **Contoh PS4 yang berguna:**
-```zsh
+```bash
 export PS4='+[${LINENO}] ${funcfiletrace[1]}: '
 # Output: +[42] backup.zsh:12: echo 'test'
 ```
@@ -1477,13 +1477,13 @@ Ini memungkinkan Anda **langsung tahu di baris mana dan fungsi mana** trace terj
 - `set -v` (**verbose**): Tampilkan **sebelum ekspansi** — menunjukkan baris asli
 
 Contoh:
-```zsh
+```bash
 set -v
 name="Budi"
 echo "$name"
 ```
 Output:
-```
+```bash
 name="Budi"        # Baris asli
 echo "$name"       # Baris asli (belum di-ekspansi)
 Budi               # Hasil
@@ -1505,7 +1505,7 @@ Budi               # Hasil
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # ═══════════════════════════════════════════════════════════
 # backup.zsh — Script backup enterprise dengan log rotation
@@ -1739,7 +1739,7 @@ DEBUG=1 ./backup.zsh full
 
 Script ini mengikuti **pola dispatcher**:
 
-```
+```bash
 main() 
   └── case "$command" in
         backup)  do_backup "$@"   ← Argumen diteruskan
@@ -1756,7 +1756,7 @@ main()
 
 **`"${1:?Error: ...}"` — Parameter Expansion dengan Error:**
 
-```zsh
+```bash
 local src="${1:?Error: source tidak diberikan}"
 ```
 
@@ -1766,7 +1766,7 @@ Ini adalah **ekspansi dengan validasi**:
 
 Ini adalah cara ringkas untuk validasi argumen wajib:
 
-```zsh
+```bash
 # Panjang:
 if [[ -z "${1:-}" ]]; then
     echo "Error: source tidak diberikan" >&2
@@ -1868,7 +1868,7 @@ HOME=/home/nusantara
 
 **Lapis 3: Buat script wrapper yang setup environment**
 
-```zsh
+```bash
 #!/bin/zsh
 # /home/nusantara/bin/cron-backup-wrapper.zsh
 # Wrapper untuk cron — setup environment yang diperlukan
@@ -1933,7 +1933,7 @@ env -i HOME=$HOME PATH=/usr/bin:/bin /bin/zsh -c '/path/to/backup.zsh full'
 ```
 
 4. **Gunakan `logger` untuk syslog:**
-```zsh
+```bash
 # Di dalam script
 logger -t backup "Backup dimulai"
 ```
@@ -2189,7 +2189,7 @@ Jika konfigurasi gagal, default harus aman:
 
 ## 4. Sintaks Dasar / Contoh Implementasi Inti
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # TOOLKIT MODUL 7.3 — Globbing, Completion, Konfigurasi
 # ═══════════════════════════════════════════════════════════
@@ -2274,7 +2274,7 @@ done
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # audit-zsh.zsh — Audit konfigurasi Zsh developer
 
@@ -2436,7 +2436,7 @@ Tulis perintah Zsh untuk setiap kriteria (gunakan glob qualifier, bukan `find`).
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 
@@ -2562,14 +2562,14 @@ Ini mencegah symlink yang executable (yang mungkin menunjuk ke luar proyek) ikut
 ### Pertanyaan 3: Membangun Completion untuk Tools Internal
 
 **Tantangan:** Nusantara Tech punya tools internal `nt-deploy` dengan sintaks:
-```
+```bash
 nt-deploy <environment> [--service <name>] [--version <tag>] [--dry-run]
 ```
 Di mana `<environment>` adalah `staging`, `production`, atau `dev`. Buat completion function Zsh untuk tool ini.
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # _nt-deploy — Completion untuk nt-deploy
 # Letakkan di: ~/.config/zsh/functions/_nt-deploy
@@ -2654,7 +2654,7 @@ Baris `#compdef nt-deploy` memberitahu sistem completion bahwa file ini adalah c
 
 Ini adalah fungsi helper yang paling powerful di Zsh completion. Ia mem-parsing argumen berdasarkan spesifikasi:
 
-```
+```bash
 '1:environment:->env'
  │ │            │
  │ │            └── State untuk case di bawah
@@ -2662,7 +2662,7 @@ Ini adalah fungsi helper yang paling powerful di Zsh completion. Ia mem-parsing 
  └── Posisi argumen ke-1
 ```
 
-```
+```bash
 '--service=[Service name]:service:->service'
  │         │              │        │
  │         │              │        └── State
@@ -2673,7 +2673,7 @@ Ini adalah fungsi helper yang paling powerful di Zsh completion. Ia mem-parsing 
 
 **3. `_describe` — Tampilkan dengan Deskripsi:**
 
-```zsh
+```bash
 _describe -t environments 'environment' environments
 ```
 
@@ -2682,7 +2682,7 @@ _describe -t environments 'environment' environments
 - `environments` = array nama (dengan format `name:description`)
 
 Output:
-```
+```bash
 staging      -- Staging environment
 production   -- Production environment (requires approval)
 dev          -- Development environment
@@ -2699,7 +2699,7 @@ Opsi `-C` memungkinkan `_arguments` untuk memodifikasi `$state` dan `$words` ber
 **Studi Kasus: Bagaimana Completion Bekerja?**
 
 Ketika user mengetik:
-```
+```bash
 nt-deploy sta<TAB>
 ```
 
@@ -2711,7 +2711,7 @@ nt-deploy sta<TAB>
 6. Saran: `staging`
 
 Ketika user mengetik:
-```
+```bash
 nt-deploy staging --service <TAB>
 ```
 
@@ -2722,7 +2722,7 @@ nt-deploy staging --service <TAB>
 
 **Integrasi ke fpath:**
 
-```zsh
+```bash
 # ~/.config/zsh/.zshrc
 fpath=("$ZDOTDIR/functions" $fpath)
 
@@ -2757,7 +2757,7 @@ Tulis setiap file dan mekanisme loading-nya.
 
 **Struktur Direktori:**
 
-```
+```bash
 ~/.config/zsh/
 ├── .zshenv
 ├── .zshrc
@@ -2775,7 +2775,7 @@ Tulis setiap file dan mekanisme loading-nya.
 
 **`.zshrc` — Entry Point:**
 
-```zsh
+```bash
 # ~/.config/zsh/.zshrc — Entry point konfigurasi
 
 # ═══════════════════════════════════════════════════════════
@@ -2800,7 +2800,7 @@ fi
 
 **`00-base.zsh` — Fondasi:**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/00-base.zsh — Fondasi
 # Tanggung jawab: PATH, locale, umask, editor
 
@@ -2837,7 +2837,7 @@ SAVEHIST=50000
 
 **`10-security.zsh` — Keamanan:**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/10-security.zsh — Keamanan
 # Tanggung jawab: history policy, timeout, alias aman
 
@@ -2865,7 +2865,7 @@ alias chown='chown --preserve-root'
 
 **`20-tools.zsh` — Tools Internal:**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/20-tools.zsh — Tools internal Nusantara Tech
 
 # ─── Kubernetes ───
@@ -2913,7 +2913,7 @@ alias gl='git log --oneline --graph --decorate'
 
 **`30-completion.zsh` — Completion:**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/30-completion.zsh — Completion system
 
 # ─── fpath ───
@@ -2958,7 +2958,7 @@ compdef _nt-db nt-db
 
 **`40-prompt.zsh` — Prompt:**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/40-prompt.zsh — Prompt standar
 # Opsional: developer bisa skip jika ingin prompt sendiri
 
@@ -2988,7 +2988,7 @@ PS3='%F{cyan}?%f '
 
 **`99-local.zsh` — Override Pribadi:**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/99-local.zsh — Override pribadi
 # File ini di-load TERAKHIR, bisa menimpa semua konfigurasi sebelumnya
 # Developer bisa mengubah file ini tanpa mempengaruhi tim
@@ -3068,7 +3068,7 @@ conf.d/99-local.zsh
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # migrate-zsh.zsh — Migrasi konfigurasi ke struktur Nusantara Tech
 
@@ -3332,7 +3332,7 @@ Pola lain (fungsi, loop, kondisional) membutuhkan analisis sintaksis yang lebih 
 
 **Struktur Repository:**
 
-```
+```bash
 nusantara-dotfiles/
 ├── README.md
 ├── LICENSE
@@ -3359,7 +3359,7 @@ nusantara-dotfiles/
 
 **`install.sh` — Script Instalasi:**
 
-```zsh
+```bash
 #!/bin/zsh
 # install.sh — Instalasi dotfiles Nusantara Tech
 
@@ -3508,7 +3508,7 @@ main "$@"
 
 **`verify.sh` — Script Verifikasi:**
 
-```zsh
+```bash
 #!/bin/zsh
 # verify.sh — Verifikasi konfigurasi Zsh
 
@@ -3583,9 +3583,9 @@ echo "════════════════════════�
 
 ## Quick Start
 
-```bash
-curl -fsSL https://git.nusantara.tech/dotfiles/install.sh | zsh
 ```
+curl -fsSL https://git.nusantara.tech/dotfiles/install.sh | zsh
+```bash
 
 ## Apa yang terjadi?
 
@@ -3619,7 +3619,7 @@ Script `install.sh`:
 └── functions/
     ├── _nt-deploy
     └── _nt-db
-```
+```bash
 
 ## Kustomisasi
 
@@ -3627,34 +3627,34 @@ Script `install.sh`:
 
 Edit `~/.config/zsh/conf.d/99-local.zsh`:
 
-```zsh
-alias myalias='command here'
 ```
+alias myalias='command here'
+```bash
 
 ### Mengganti Prompt
 
 Edit `99-local.zsh`:
 
-```zsh
-PS1='%F{red}%n%f $ '
 ```
+PS1='%F{red}%n%f $ '
+```bash
 
 ### Menambah PATH
 
 Edit `99-local.zsh`:
 
-```zsh
-path=("$HOME/.cargo/bin" $path)
 ```
+path=("$HOME/.cargo/bin" $path)
+```bash
 
 ## Update
 
-```bash
+```
 cd ~/.nusantara-dotfiles
 git pull
 # Jika ada file baru, restow:
 stow -R -t ~ zsh
-```
+```bash
 
 ## Troubleshooting
 
@@ -3713,7 +3713,7 @@ Karena:
 
 **Diagnosis:**
 
-```zsh
+```
 # Ukur startup time
 time zsh -i -c exit
 
@@ -3721,7 +3721,7 @@ time zsh -i -c exit
 zmodload zsh/zprof
 # ... konfigurasi ...
 zprof | head -20
-```
+```bash
 
 **Penyebab Umum:**
 
@@ -3734,12 +3734,12 @@ zprof | head -20
 
 **Solusi Cepat:**
 
-```zsh
+```
 # Compile .zshrc dan conf.d
 for f in ~/.config/zsh/.zshrc ~/.config/zsh/conf.d/*.zsh; do
     zcompile "$f"
 done
-```
+```bash
 
 ## 2. Completion Tidak Muncul
 
@@ -3747,7 +3747,7 @@ done
 
 **Diagnosis:**
 
-```zsh
+```
 # Cek apakah compinit sudah jalan
 whence -w compinit
 # Output: compinit: function
@@ -3757,7 +3757,7 @@ echo $fpath | tr ' ' '\n' | head -10
 
 # Cek apakah completion function di-load
 whence -w _nt-deploy
-```
+```bash
 
 **Penyebab Umum:**
 
@@ -3770,11 +3770,11 @@ whence -w _nt-deploy
 
 **Solusi Cepat:**
 
-```zsh
+```
 # Rebuild completion cache
 rm -f ~/.config/zsh/.zcompdump
 exec zsh
-```
+```bash
 
 ## 3. `nt-deploy` Tidak Ditemukan
 
@@ -3782,29 +3782,29 @@ exec zsh
 
 **Diagnosis:**
 
-```zsh
+```
 # Cek PATH
 echo $PATH | tr ':' '\n' | grep -i nusantara
 
 # Cek apakah file ada
 ls -la /usr/local/bin/nt-*
 ls -la ~/.local/bin/nt-*
-```
+```bash
 
 **Solusi:**
 
 1. Pastikan `nt-cli` terinstall
 2. Pastikan PATH include direktori tools:
-```zsh
+```
 # Di 99-local.zsh:
 path=("/opt/nusantara/bin" $path)
-```
-3. Jika manual, install dari repository internal:
 ```bash
+3. Jika manual, install dari repository internal:
+```
 git clone git@git.nusantara.tech:tools/nt-cli.git
 cd nt-cli
 ./install.sh
-```
+```bash
 
 ## 4. Prompt Berantakan
 
@@ -3812,13 +3812,13 @@ cd nt-cli
 
 **Diagnosis:**
 
-```zsh
+```
 # Cek PS1
 echo $PS1
 
 # Cek apakah PROMPT_SUBST aktif
 setopt | grep prompt_subst
-```
+```bash
 
 **Penyebab:**
 
@@ -3831,14 +3831,14 @@ setopt | grep prompt_subst
 
 **Solusi Cepat:**
 
-```zsh
+```
 # Sementara: prompt minimal
 PS1='%n@%m:%~%# '
 
 # Cek apakah masalah di 40-prompt.zsh
 mv ~/.config/zsh/conf.d/40-prompt.zsh ~/.config/zsh/conf.d/40-prompt.zsh.disabled
 exec zsh
-```
+```bash
 
 ## 5. Konflik Alias
 
@@ -3846,7 +3846,7 @@ exec zsh
 
 **Diagnosis:**
 
-```zsh
+```
 # Cek alias
 alias gs
 
@@ -3855,7 +3855,7 @@ grep -rn "alias gs" ~/.config/zsh/
 
 # Cek urutan loading
 zsh -xvs 2>&1 | grep "alias gs"
-```
+```bash
 
 **Penyebab:**
 
@@ -3867,14 +3867,14 @@ Alias didefinisikan **dua kali**:
 
 1. **Jangan definisikan alias di `99-local.zsh`** jika sudah ada di `conf.d/`
 2. **Gunakan `unalias`** jika perlu override:
-```zsh
+```
 # Di 99-local.zsh:
 unalias gs 2>/dev/null
 alias gs='git stash'
-```
+```bash
 
 3. **Gunakan fungsi**, bukan alias:
-```zsh
+```
 # Fungsi bisa memanggil command yang sama
 gs() {
     if [[ $# -eq 0 ]]; then
@@ -3883,16 +3883,16 @@ gs() {
         git stash "$@"
     fi
 }
-```
+```bash
 
 **Cek Konflik:**
 
-```zsh
+```
 # Script untuk mendeteksi alias duplikat
 grep -h "^alias " ~/.config/zsh/conf.d/*.zsh | \
     awk '{print $2}' | \
     sort | uniq -d
-```
+```bash
 
 Jika output ada, ada alias duplikat.
 ```
@@ -3931,7 +3931,7 @@ Troubleshooting yang baik mengikuti **metode ilmiah**:
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # evaluate.zsh — Evaluasi sistem konfigurasi
 
@@ -4083,7 +4083,7 @@ cat "$REPORT"
 
 Sistem konfigurasi bukan produk sekali jadi. Ia memerlukan **iterasi**:
 
-```
+```bash
 Build → Deploy → Observe → Learn → Improve → Build (lagi)
 ```
 
@@ -4356,7 +4356,7 @@ Tetapkan **budget** untuk startup time: misalnya <200ms. Setiap plugin, setiap b
 
 ## 4. Sintaks Dasar / Contoh Implementasi Inti
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # TOOLKIT MODUL 7.4 — Profiling, Keamanan, Plugin
 # ═══════════════════════════════════════════════════════════
@@ -4449,7 +4449,7 @@ zprof | grep -E "^\s*[0-9]+\s+[0-9.]+.*zinit|antidote|omz" | head
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # profile-startup.zsh — Profiling startup time untuk audit
 
@@ -4586,7 +4586,7 @@ main "$@"
 
 Ketika Anda menjalankan `zprof`, ia menghasilkan output seperti:
 
-```
+```bash
 num  calls                time                       self            name
 -----------------------------------------------------------------------------------
  1)    1          86.14    86.14   62.47%     86.14    86.14   62.47%  nvm_load
@@ -4639,7 +4639,7 @@ Untuk optimasi, gunakan `zprof`. Untuk debugging, gunakan `set -x`.
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # conf.d/25-lazy-tools.zsh — Lazy loading untuk tools berat
 
@@ -4791,7 +4791,7 @@ Cocok untuk: syntax highlighting, autosuggestions, tools yang tidak dibutuhkan u
 
 **Jawaban:**
 
-```zsh
+```bash
 # conf.d/30-completion.zsh — Completion dengan optimasi
 
 # ═══════════════════════════════════════════════════════════
@@ -4886,7 +4886,7 @@ Setelah pertama kali, `compinit` akan menggunakan cache. Ia hanya rebuild jika:
 
 **Aturan enterprise:**
 
-```zsh
+```bash
 # Multi-user server: JANGAN pakai -C
 compinit -d "$compdump"
 
@@ -4905,7 +4905,7 @@ fi
 
 Setiap direktori di fpath diperiksa oleh `compinit`. Direktori yang berisi banyak file bisa memakan waktu:
 
-```zsh
+```bash
 # Cek ukuran fpath
 for dir in $fpath; do
     [[ -d "$dir" ]] || continue
@@ -4920,7 +4920,7 @@ Direktori dengan ribuan file (misalnya `/usr/share/zsh/functions/Completion`) ad
 
 Daripada include seluruh `/usr/share/zsh/functions/Completion/`, ambil hanya subdirektori yang benar-benar digunakan:
 
-```zsh
+```bash
 # ❌ Lambat: seluruh direktori
 fpath+=(/usr/share/zsh/functions/Completion)
 
@@ -4947,7 +4947,7 @@ Untuk enterprise, **95% completion** dengan startup **2x lebih cepat** adalah tr
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # security-audit.zsh — Audit keamanan konfigurasi Zsh
 
@@ -5247,7 +5247,7 @@ main "$@"
 
 **Pola Grep yang Digunakan:**
 
-```zsh
+```bash
 '(api[_-]?key|apikey|access[_-]?key|...)[[:space:]]*='
 ```
 
@@ -5258,13 +5258,13 @@ main "$@"
 **Filtering False Positives:**
 
 Tidak semua `TOKEN=` adalah secret. Placeholder seperti:
-```zsh
+```bash
 export API_KEY="your-key-here"
 export GITHUB_TOKEN="<placeholder>"
 ```
 
 Bukan secret asli. Kita filter dengan regex:
-```zsh
+```bash
 '=(your|xxx|placeholder|changeme|foo|bar|<.*>)'
 ```
 
@@ -5280,7 +5280,7 @@ Command ini tersimpan di `.zsh_history` dalam plaintext. Siapapun yang bisa memb
 
 **Solusi — `HIST_IGNORE_SPACE`:**
 
-```zsh
+```bash
 setopt HIST_IGNORE_SPACE
 ```
 
@@ -5317,7 +5317,7 @@ File dengan permission `666` atau `777` bisa dimodifikasi siapapun. Ini berbahay
 **Audit `eval` dan `source` Berbahaya:**
 
 `eval` adalah **fungsi paling berbahaya** di shell:
-```zsh
+```bash
 # ❌ Jika $USER_INPUT berisi "; rm -rf /", ini akan menghapus file system!
 eval "echo $USER_INPUT"
 
@@ -5326,7 +5326,7 @@ printf '%s\n' "$USER_INPUT"
 ```
 
 `source` dengan path dari variabel juga berbahaya:
-```zsh
+```bash
 # ❌ Jika $CONFIG_DIR bisa dikontrol attacker, bisa source malicious file
 source "$CONFIG_DIR/helper.zsh"
 
@@ -5350,7 +5350,7 @@ Ini mencegah attacker (user lain) meletakkan file yang akan di-source.
 
 **Jawaban:**
 
-```zsh
+```bash
 # conf.d/15-secrets.zsh — Manajemen secrets yang aman
 
 # ═══════════════════════════════════════════════════════════
@@ -5473,7 +5473,7 @@ prompt_for_secret() {
 **Level 0: NO SECRETS IN FILES (Prinsip Dasar)**
 
 Jangan pernah:
-```zsh
+```bash
 # ❌ JANGAN
 export API_KEY="sk-1234567890"
 export DB_PASSWORD="secret123"
@@ -5481,7 +5481,7 @@ export DB_PASSWORD="secret123"
 
 **Level 1: Environment Variable dari Parent Process**
 
-```zsh
+```bash
 # Set di wrapper script sebelum launch shell
 # (misalnya di .desktop file atau wrapper .sh)
 # Zsh hanya membaca, tidak menyimpan
@@ -5490,7 +5490,7 @@ echo "API_KEY dari parent: $API_KEY"
 
 **Level 2: Secret Manager dengan CLI**
 
-```zsh
+```bash
 # Fetch saat dibutuhkan (lazy)
 get_secret() {
     op read "op://vault/api-key"
@@ -5499,14 +5499,14 @@ get_secret() {
 
 **Level 3: Encrypted File (SOPS, Ansible Vault)**
 
-```zsh
+```bash
 # File terenkripsi di disk, decrypt saat load
 sops_load "$ZDOTDIR/secrets.enc.yaml"
 ```
 
 **Level 4: Hardware-backed (YubiKey, TPM)**
 
-```zsh
+```bash
 # Lebih kompleks, untuk high-security environment
 # Contoh: gpg-agent dengan YubiKey
 ```
@@ -5530,7 +5530,7 @@ Untuk secrets, **`op read`** lebih cepat dan straightforward.
 **`vault kv get -field`:**
 
 Vault CLI mendukung `-field` untuk ekstrak satu field:
-```zsh
+```bash
 # Ambil hanya password, bukan seluruh JSON
 PASSWORD=$(vault kv get -field=password secret/db/prod)
 ```
@@ -5556,14 +5556,14 @@ database:
 
 **`eval` dengan SOPS — Trade-off:**
 
-```zsh
+```bash
 eval "$(sops -d --output-type dotenv file | sed 's/^/export /')"
 ```
 
 Ini adalah **`eval` terkontrol** — file sudah diverifikasi (encrypted dengan kunci yang diketahui). Tetap ada risiko, tapi **minimal**.
 
 Alternatif yang lebih aman:
-```zsh
+```bash
 # Baca line-by-line
 while IFS='=' read -r key value; do
     [[ -z "$key" || "$key" =~ ^# ]] && continue
@@ -5575,7 +5575,7 @@ done < <(sops -d --output-type dotenv file)
 
 Untuk developer baru yang belum setup secret manager, berikan fallback prompt:
 
-```zsh
+```bash
 if [[ -z "${GITHUB_TOKEN:-}" ]] && [[ -o interactive ]]; then
     echo "⚠️  GITHUB_TOKEN belum di-set."
     echo "   Setup: security add-generic-password ... (macOS)"
@@ -5593,7 +5593,7 @@ fi
 
 **Jawaban:**
 
-```zsh
+```bash
 # conf.d/40-prompt.zsh — Prompt standar Nusantara Tech
 
 # ═══════════════════════════════════════════════════════════
@@ -5676,7 +5676,7 @@ show_prompt_time() {
 
 **Masalah dengan "manual git status":**
 
-```zsh
+```bash
 # ❌ LAMBAT: setiap prompt, jalankan git status
 PS1='$(git branch --show-current) $ '
 ```
@@ -5694,7 +5694,7 @@ Hasil: **<5ms** per prompt.
 
 **`precmd` hook — Dijalankan Sebelum Prompt:**
 
-```
+```bash
 [shell idle] → user tekan Enter → [command runs] → precmd → PS1 ditampilkan → [shell idle]
 ```
 
@@ -5705,7 +5705,7 @@ Hasil: **<5ms** per prompt.
 
 **`add-zsh-hook` vs override `precmd`:**
 
-```zsh
+```bash
 # ❌ Override — konflik dengan plugin lain
 precmd() {
     vcs_info
@@ -5721,7 +5721,7 @@ add-zsh-hook precmd log_command
 
 **Conditional Prompt — Exit Code:**
 
-```zsh
+```bash
 %(?.%F{green}❯%f.%F{red}❯%f)
 ```
 
@@ -5743,7 +5743,7 @@ Untuk enterprise, **`%2~`** biasanya pilihan terbaik — cukup konteks tapi tida
 
 **Performance Measurement:**
 
-```zsh
+```bash
 # Ukur waktu prompt rendering
 time (vcs_info; echo "$PS1") > /dev/null
 
@@ -5761,7 +5761,7 @@ Untuk 30 developer, Anda perlu:
 - **Standar default** — di `40-prompt.zsh`
 - **Override yang mudah** — di `99-local.zsh`
 
-```zsh
+```bash
 # 99-local.zsh (developer boleh ubah)
 # Override prompt
 PS1='%F{cyan}❯%f '   # Minimal
@@ -5801,7 +5801,7 @@ PS1='%F{cyan}❯%f '   # Minimal
 
 **Strategi Migrasi (2 minggu):**
 
-```zsh
+```bash
 #!/bin/zsh
 # migrate-plugins.zsh — Migrasi ke Antidote
 
@@ -5992,12 +5992,12 @@ Untuk enterprise, **reliabilitas > kecepatan**. Static loading:
 **Migrasi dari Oh My Zsh:**
 
 Oh My Zsh menggunakan format:
-```zsh
+```bash
 plugins=(git docker kubectl aws)
 ```
 
 Antidote menggunakan:
-```
+```bash
 ohmyzsh/ohmyzsh path:plugins/git
 ohmyzsh/ohmyzsh path:plugins/docker
 ```
@@ -6017,7 +6017,7 @@ Ketiganya harus ada untuk UX standar.
 **Plugin Internal (`git.nusantara.tech/dotfiles/plugins/nt-tools`):**
 
 Untuk tools internal, buat plugin sendiri:
-```
+```bash
 nt-tools/
 ├── nt-tools.plugin.zsh
 ├── functions/
@@ -6027,7 +6027,7 @@ nt-tools/
 ```
 
 Lalu tambahkan ke `.zsh_plugins.txt`:
-```
+```bash
 git.nusantara.tech/dotfiles/plugins/nt-tools
 ```
 
@@ -6035,7 +6035,7 @@ Antidote akan clone dan load otomatis.
 
 **Bundle Option (Performance Boost):**
 
-```zsh
+```bash
 # Setelah plugin list stabil, "bundle" ke file tunggal
 antidote bundle < "$ZDOTDIR/.zsh_plugins.txt" > "$ZDOTDIR/.zsh_plugins.zsh"
 ```
@@ -6092,7 +6092,7 @@ Untuk 30 developer, jangan migrasi sekaligus:
 
 **Jawaban:**
 
-```zsh
+```bash
 #!/bin/zsh
 # monitor-zsh.zsh — Monitoring Zsh berkelanjutan
 
@@ -6292,7 +6292,7 @@ Untuk Zsh, kita fokus pada **metrics** dan **logs**.
 **Format JSONL — JSON Lines:**
 
 Setiap baris adalah JSON valid:
-```
+```bash
 {"timestamp":"2026-10-12T09:00:00Z","startup_ms":85,"plugin_count":12}
 {"timestamp":"2026-10-13T09:00:00Z","startup_ms":82,"plugin_count":12}
 {"timestamp":"2026-10-14T09:00:00Z","startup_ms":120,"plugin_count":13}
@@ -6308,7 +6308,7 @@ Setiap baris adalah JSON valid:
 
 File metrics bisa tumbuh besar (10MB = ~50,000 entries untuk 30 user). Rotasi mencegah file terlalu besar:
 
-```zsh
+```bash
 if [[ $size -gt $MAX_FILE_SIZE ]]; then
     mv "$METRICS_FILE" "${METRICS_FILE}.$(date +%Y%m%d)"
 fi
@@ -6316,7 +6316,7 @@ fi
 
 **`jq` untuk Parsing JSON:**
 
-```zsh
+```bash
 # Ambil satu field
 jq -r '.startup_ms' < metrics.jsonl
 
@@ -6333,7 +6333,7 @@ jq -s 'map(.startup_ms) | add / length' < metrics.jsonl
 
 **Analisis Trend:**
 
-```zsh
+```bash
 # Compare first 50 (baseline) vs last 50 (current)
 first=$(head -50 file | jq -r '.startup_ms' | awk '{sum+=$1} END {print sum/NR}')
 last=$(tail -50 file | jq -r '.startup_ms' | awk '{sum+=$1} END {print sum/NR}')
@@ -6347,14 +6347,14 @@ fi
 **Anomaly Detection Sederhana:**
 
 Threshold-based:
-```zsh
+```bash
 if [[ $startup -gt 500 ]]; then
     echo "ANOMALY: $startup > 500ms"
 fi
 ```
 
 Statistik (lebih sophisticated):
-```zsh
+```bash
 # Deteksi jika current > mean + 2*stddev
 mean=$(tail -100 file | jq -r '.startup_ms' | awk '{sum+=$1} END {print sum/NR}')
 stddev=$(tail -100 file | jq -r '.startup_ms' | awk -v m="$mean" '{sum+=($1-m)^2} END {print sqrt(sum/NR)}')
@@ -6681,7 +6681,7 @@ CLI tool yang baik **gagal cepat** dan **memberi tahu dengan jelas**:
 
 **Filosofi "Composition over Inheritance" (Unix style):**
 
-```
+```bash
 nt status → jq '.services[] | select(.status=="down")' → nt notify
 ```
 
@@ -6689,7 +6689,7 @@ Setiap subcommand adalah **komponen yang bisa digabungkan** dengan tools Unix la
 
 ## 4. Sintaks Dasar / Contoh Implementasi Inti
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # TOOLKIT MODUL 7.5 — Fungsi Lanjutan, Testing, Integrasi
 # ═══════════════════════════════════════════════════════════
@@ -6793,7 +6793,7 @@ psql -U user -d db --csv -c "SELECT * FROM users"
 
 **Struktur Direktori:**
 
-```
+```bash
 nt/
 ├── bin/
 │   └── nt                          # Entry point (executable)
@@ -6837,7 +6837,7 @@ nt/
 
 **`bin/nt` — Entry Point:**
 
-```zsh
+```bash
 #!/bin/zsh
 # ═══════════════════════════════════════════════════════════
 # nt — Nusantara Toolkit
@@ -6901,7 +6901,7 @@ nt_dispatch "$@"
 
 **`lib/core.zsh` — Core Functions:**
 
-```zsh
+```bash
 # lib/core.zsh — Core functions untuk semua subcommand
 
 # ═══════════════════════════════════════════════════════════
@@ -7019,7 +7019,7 @@ EOF
 
 **`lib/commands/status.zsh` — Contoh Subcommand:**
 
-```zsh
+```bash
 # lib/commands/status.zsh — Subcommand: nt status
 
 nt_cmd_status() {
@@ -7087,7 +7087,7 @@ EOF
 
 CLI tool mengikuti **pola dispatcher**:
 
-```
+```bash
 nt status --json
 │  │      │
 │  │      └── Argumen (diteruskan ke subcommand)
@@ -7112,14 +7112,14 @@ Karena Zsh memiliki **namespace** terbatas. Dengan prefix `nt_cmd_`:
 
 **Standard `$0` Handling:**
 
-```zsh
+```bash
 0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
 0="${${(M)0:#/*}:-$PWD/$0}"
 ```
 
 Ini terlihat rumit, tapi esensial. Mari kita pecah:
 
-```zsh
+```bash
 # Bagian 1: Coba berbagai cara untuk tahu path script
 ${ZERO:-}           # Jika $ZERO di-set, gunakan
 ${0:#$ZSH_ARGZERO}  # Jika $0 = ZSH_ARGZERO (path zsh binary), jangan pakai
@@ -7147,7 +7147,7 @@ Dengan `readonly NT_ROOT="${0:A:h:h}"`, kita naik 2 level: `nt/bin/nt` → `nt/`
 
 **Loop Loading Commands:**
 
-```zsh
+```bash
 for cmd_file in "$NT_LIB/commands"/*.zsh(N); do
     local cmd_name="${cmd_file:t:r}"  # basename tanpa .zsh
     source "$cmd_file"
@@ -7164,7 +7164,7 @@ done
 
 **`$+functions[$func]` — Cek fungsi:**
 
-```zsh
+```bash
 if (( $+functions[$func] )); then
     "$func" "$@"
 fi
@@ -7182,7 +7182,7 @@ Ini lebih cepat dan lebih aman dari `whence -w` atau `type`.
 
 **Jawaban:**
 
-```zsh
+```bash
 # lib/core.zsh — Fungsi lanjutan
 
 # ═══════════════════════════════════════════════════════════
@@ -7263,7 +7263,7 @@ nt_cmd_debug() {
 **Penjelasan Mental — Anonymous Function:**
 
 **Sintaks:**
-```zsh
+```bash
 () {
     # Blok kode
     echo "argumen: $@"
@@ -7299,7 +7299,7 @@ Hook adalah **callback** yang dipanggil pada event tertentu. Zsh punya beberapa:
 
 **`add-zsh-hook` — Best Practice:**
 
-```zsh
+```bash
 # ❌ Override (buruk):
 chpwd() { my_hook; }
 
@@ -7308,14 +7308,14 @@ add-zsh-hook chpwd my_hook
 ```
 
 `add-zsh-hook` memungkinkan **multiple hooks** tanpa konflik:
-```zsh
+```bash
 add-zsh-hook chpwd hook_1
 add-zsh-hook chpwd hook_2
 # Keduanya dipanggil saat chpwd
 ```
 
 Untuk melepas:
-```zsh
+```bash
 add-zsh-hook -d chpwd my_hook
 ```
 
@@ -7324,12 +7324,12 @@ add-zsh-hook -d chpwd my_hook
 Autoload adalah fitur Zsh yang memungkinkan fungsi **tidak di-load sampai dibutuhkan**:
 
 1. **Setup fpath:**
-   ```zsh
+   ```bash
    fpath=("$NT_LIB/commands" $fpath)
    ```
 
 2. **Autoload fungsi:**
-   ```zsh
+   ```bash
    autoload -Uz nt_cmd_debug
    ```
 
@@ -7367,7 +7367,7 @@ Untuk enterprise, autoload **bisa** menghemat ~13ms — worth it jika fungsi tid
 
 **Jawaban:**
 
-```zsh
+```bash
 # tests/spec/status_spec.sh — Test untuk nt status
 
 # ═══════════════════════════════════════════════════════════
@@ -7512,7 +7512,7 @@ shellspec --kcov
 
 **Output yang Diharapkan:**
 
-```
+```bash
 Running: /bin/zsh [zsh 5.9]
 
 nt status
@@ -7544,7 +7544,7 @@ nt_validate_environment
 
 **Struktur:**
 
-```
+```bash
 Describe 'subject'
     Context 'when condition'
         It 'does something'
@@ -7577,7 +7577,7 @@ End
 
 **Mocking:**
 
-```zsh
+```bash
 Mock kubectl
     echo "api: running"
 End
@@ -7587,7 +7587,7 @@ Setelah `Mock kubectl`, setiap pemanggilan `kubectl` di test akan mengembalikan 
 
 **Parameters — Test Data-Driven:**
 
-```zsh
+```bash
 Parameters
     "dev"    success
     "prod"   success
@@ -7617,7 +7617,7 @@ Target: **>80% coverage** untuk production code.
 - `BeforeAll` — dijalankan **sekali** sebelum semua test di block
 - `Before` — dijalankan **sebelum setiap test**
 
-```zsh
+```bash
 Describe 'my function'
     BeforeAll 'setup_database'  # Sekali
     Before 'clear_cache'         # Setiap test
@@ -7632,7 +7632,7 @@ End
 
 **Jawaban:**
 
-```zsh
+```bash
 # lib/commands/report.zsh — Subcommand: nt report
 
 nt_cmd_report() {
@@ -7857,7 +7857,7 @@ print('═' * 50)
 
 **Pola yang Digunakan:**
 
-```
+```bash
 Zsh script
     ↓ (pass data via argument)
 Python heredoc (<<'PYEOF')
@@ -7884,7 +7884,7 @@ Final output
 
 **Heredoc `<<'PYEOF'` vs `<<PYEOF`:**
 
-```zsh
+```bash
 # ❌ Without quotes — variabel Zsh akan di-expand
 cat <<PYEOF
 print("$USER")  # Zsh akan replace $USER
@@ -7900,7 +7900,7 @@ Untuk Python code, **selalu gunakan quotes** `<<'PYEOF'` agar `$` tidak di-expan
 
 **Argumen ke Python:**
 
-```zsh
+```bash
 python3 - "$metrics_file" "$period" <<'PYEOF'
 import sys
 metrics_file = sys.argv[1]
@@ -7914,7 +7914,7 @@ PYEOF
 
 **Capture Output:**
 
-```zsh
+```bash
 analysis=$(python3 - "$metrics_file" "$period" <<'PYEOF'
 ...
 PYEOF
@@ -7927,7 +7927,7 @@ PYEOF
 
 Setelah mendapat JSON dari Python pertama, kita pipe ke Python kedua untuk formatting:
 
-```zsh
+```bash
 echo "$analysis" | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
@@ -7940,7 +7940,7 @@ Ini memisahkan **logic** (analisis) dari **presentation** (formatting) — prins
 **Alternatif dengan jq:**
 
 Untuk formatting sederhana, `jq` lebih cepat:
-```zsh
+```bash
 echo "$analysis" | jq -r '
     "Mean: \(.startup_ms.mean)ms",
     "P95: \(.startup_ms.p95)ms"
@@ -7951,7 +7951,7 @@ Untuk logika kompleks (kondisional, iterasi), Python lebih baik.
 
 **Exit Code Propagation:**
 
-```zsh
+```bash
 local analysis
 if ! analysis=$(python3 ...); then
     nt_error "Python script failed"
@@ -7977,7 +7977,7 @@ Jika Python exit non-zero, Zsh akan menangkap dengan `if !`.
 
 **Jawaban:**
 
-```zsh
+```bash
 # lib/integrations/kubernetes.zsh — Integrasi Kubernetes
 
 # ═══════════════════════════════════════════════════════════
@@ -8219,7 +8219,7 @@ nt_k8s_switch() {
 
 **Connection Check:**
 
-```zsh
+```bash
 if ! timeout 5 kubectl cluster-info &>/dev/null; then
     nt_error "Tidak bisa koneksi"
     return 1
@@ -8232,7 +8232,7 @@ fi
 
 **Exponential Backoff:**
 
-```
+```bash
 Attempt 1: gagal → sleep 2s
 Attempt 2: gagal → sleep 4s
 Attempt 3: gagal → sleep 8s → give up
@@ -8242,7 +8242,7 @@ Attempt 3: gagal → sleep 8s → give up
 
 **Caching Pattern:**
 
-```zsh
+```bash
 # 1. Cek cache dulu
 if cached=$(k8s_cache_get "$key"); then
     echo "$cached"
@@ -8261,7 +8261,7 @@ echo "$result"
 
 **Cache TTL:**
 
-```zsh
+```bash
 local age=$(( $(date +%s) - $(stat -c '%Y' "$cache_file") ))
 if [[ $age -lt $K8S_CACHE_TTL ]]; then
     cat "$cache_file"
@@ -8282,7 +8282,7 @@ Cache harus di-invalidate ketika:
 
 **Retry dengan `command` Array:**
 
-```zsh
+```bash
 local -a cmd=(kubectl)
 cmd+=(--context="$context")
 cmd+=(-n "$namespace" get pods -o json)
@@ -8297,7 +8297,7 @@ Menggunakan array untuk command memiliki keunggulan:
 
 **Versus command string:**
 
-```zsh
+```bash
 # ❌ Tidak aman jika ada spasi di nilai
 local cmd="kubectl -n $namespace get pods"
 $cmd  # Word splitting!
@@ -8309,7 +8309,7 @@ local -a cmd=(kubectl -n "$namespace" get pods)
 
 **JSON Parsing dengan `jq`:**
 
-```zsh
+```bash
 echo "$result" | jq -r '
     .items[] | 
     [.metadata.name, .status.phase, .spec.nodeName] | 
@@ -8324,7 +8324,7 @@ echo "$result" | jq -r '
 
 **Table Formatting:**
 
-```zsh
+```bash
 | column -t -s$'\t' | {
     printf '%-40s %-12s %s\n' "NAME" "STATUS" "NODE"
     printf '%-40s %-12s %s\n' "────" "──────" "────"
@@ -8338,7 +8338,7 @@ echo "$result" | jq -r '
 
 **Cache Directory:**
 
-```zsh
+```bash
 readonly NT_CACHE_DIR="${NT_CACHE_DIR:-$HOME/.cache/nt}"
 mkdir -p "$NT_CACHE_DIR"
 ```
@@ -8350,7 +8350,7 @@ Mengikuti XDG Base Directory:
 
 **Cleanup Cache:**
 
-```zsh
+```bash
 # Hapus cache lebih tua dari 7 hari
 find "$NT_CACHE_DIR" -type f -mtime +7 -delete
 ```
@@ -8365,7 +8365,7 @@ Ini bisa dijalankan di cron atau saat startup.
 
 **Jawaban:**
 
-```zsh
+```bash
 # completions/_nt — Completion untuk nt
 
 #compdef nt
@@ -8650,7 +8650,7 @@ _nt "$@"
 
 **Struktur `_arguments`:**
 
-```
+```bash
 '1:subcommand:->subcommand'
  │ │          │
  │ │          └── State untuk case
@@ -8667,7 +8667,7 @@ Ketika user mengetik `nt deploy dev <TAB>`, Zsh memanggil:
 
 **Dynamic Completion — Ambil dari Config:**
 
-```zsh
+```bash
 if [[ -f "$HOME/.nt/services.conf" ]]; then
     services=(${(f)"$(grep -v '^#' "$HOME/.nt/services.conf" | grep -v '^$')"})
 fi
@@ -8679,7 +8679,7 @@ fi
 
 **Versions dari Git Tags:**
 
-```zsh
+```bash
 versions=(${(f)"$(git tag --sort=-v:refname | head -20)"})
 ```
 
@@ -8688,7 +8688,7 @@ versions=(${(f)"$(git tag --sort=-v:refname | head -20)"})
 
 **Completion untuk K8s Context — Dinamis:**
 
-```zsh
+```bash
 _nt_k8s_contexts() {
     local -a contexts
     contexts=(${(f)"$(kubectl config get-contexts -o name 2>/dev/null)"})
@@ -8700,7 +8700,7 @@ Setiap kali user mengetik `--context=<TAB>`, Zsh memanggil `kubectl` untuk menda
 
 **Extract `--context` dari Command Line:**
 
-```zsh
+```bash
 for (( i = 1; i <= ${#words}; i++ )); do
     if [[ "${words[i]}" == --context=* ]]; then
         context="${words[i]#--context=}"
@@ -8954,7 +8954,7 @@ build: lint test
 
 **`install.sh` — Install Script:**
 
-```zsh
+```bash
 #!/bin/zsh
 # install.sh — Install nt CLI tool
 
@@ -9124,7 +9124,7 @@ Format:
 - `%h` — short hash
 
 Output:
-```
+```bash
 - Fix bug in deploy (#abc123)
 - Add retry logic for k8s (#def456)
 ```
@@ -9162,7 +9162,7 @@ Unit test tidak cukup karena:
 
 Piramida test:
 
-```
+```bash
         E2E (Integration)
        /                \
       /                  \
@@ -9196,21 +9196,21 @@ CLI tool internal untuk tim DevOps Nusantara Tech.
 
 ### User
 
-```bash
-curl -fsSL https://git.nusantara.tech/tools/nt/raw/main/install.sh | zsh
 ```
+curl -fsSL https://git.nusantara.tech/tools/nt/raw/main/install.sh | zsh
+```bash
 
 ### Developer
 
-```bash
+```
 git clone git@git.nusantara.tech:tools/nt.git
 cd nt
 make install
-```
+```bash
 
 ## Quick Start
 
-```bash
+```
 # Cek status service
 nt status
 
@@ -9222,7 +9222,7 @@ nt k8s pods
 
 # Generate laporan
 nt report weekly --format=markdown
-```
+```bash
 
 ## Commands
 
@@ -9277,7 +9277,7 @@ Internal — Nusantara Tech
        ├──► lib/commands/report.zsh
        ├──► lib/commands/debug.zsh
        └──► lib/commands/help.zsh
-```
+```bash
 
 ## Struktur Direktori
 
@@ -9333,7 +9333,7 @@ Terima kasih atas kontribusi Anda!
 
 ## Setup Development
 
-```bash
+```
 # Clone
 git clone git@git.nusantara.tech:tools/nt.git
 cd nt
@@ -9348,40 +9348,40 @@ make install
 # Verify
 nt --version
 make test
-```
+```bash
 
 ## Alur Development
 
 1. **Buat branch** dari `main`
-   ```bash
-   git checkout -b feat/my-feature
    ```
+   git checkout -b feat/my-feature
+   ```bash
 
 2. **Tulis test dulu** (TDD)
-   ```bash
-   vim tests/spec/my_feature_spec.sh
    ```
+   vim tests/spec/my_feature_spec.sh
+   ```bash
 
 3. **Implementasi**
-   ```bash
-   vim lib/commands/my_feature.zsh
    ```
+   vim lib/commands/my_feature.zsh
+   ```bash
 
 4. **Test lokal**
-   ```bash
+   ```
    make test
    make lint
-   ```
+   ```bash
 
 5. **Commit dengan pesan jelas**
-   ```bash
-   git commit -m "feat: add my-feature command"
    ```
+   git commit -m "feat: add my-feature command"
+   ```bash
 
 6. **Push dan buat PR**
-   ```bash
-   git push origin feat/my-feature
    ```
+   git push origin feat/my-feature
+   ```bash
 
 ## Panduan Kode
 
@@ -9393,7 +9393,7 @@ make test
 
 ### Error Handling
 
-```zsh
+```
 # ✅ Baik
 if ! command -v kubectl &>/dev/null; then
     nt_error "kubectl tidak terinstall"
@@ -9402,23 +9402,23 @@ fi
 
 # ❌ Buruk
 kubectl get pods  # Akan fail jika kubectl tidak ada
-```
+```bash
 
 ### Logging
 
-```zsh
+```
 nt_info "Starting operation..."      # Info ke user
 nt_debug "Fetching $url"             # Hanya dengan NT_DEBUG=1
 nt_warn "Retrying..."                # Warning
 nt_error "Failed: $reason"           # Error ke stderr
 nt_ok "Success!"                     # Success
-```
+```bash
 
 ### Testing
 
 Setiap fungsi publik harus punya test:
 
-```zsh
+```
 Describe 'nt_cmd_myfeature'
     It 'returns success'
         When call nt_cmd_myfeature
@@ -9431,7 +9431,7 @@ Describe 'nt_cmd_myfeature'
         The stderr should include "invalid"
     End
 End
-```
+```bash
 
 ## Checklist PR
 
@@ -9453,7 +9453,7 @@ End
 
 Template:
 
-```zsh
+```
 # lib/commands/mycommand.zsh
 
 nt_cmd_mycommand() {
@@ -9485,11 +9485,11 @@ nt_mycommand_do() {
     # Implementasi
     nt_ok "Done"
 }
-```
+```bash
 
 Test:
 
-```zsh
+```
 # tests/spec/mycommand_spec.sh
 Describe 'nt mycommand'
     It 'menampilkan help'
@@ -9503,11 +9503,11 @@ Describe 'nt mycommand'
         The output should include "Done"
     End
 End
-```
+```bash
 
 Completion:
 
-```zsh
+```
 # Di completions/_nt
 _nt_mycommand() {
     local -a actions
@@ -9520,7 +9520,7 @@ _nt_mycommand() {
         action) _describe 'action' actions ;;
     esac
 }
-```
+```bash
 ```
 
 **Penjelasan Mental — Dokumentasi sebagai Onboarding:**
@@ -9559,7 +9559,7 @@ nt deploy staging api --version v1.2.3
 
 Anda bisa menambahkan **doctest** — test yang menjalankan contoh dari dokumentasi:
 
-```zsh
+```bash
 # tests/spec/docs_spec.sh
 Describe 'README examples'
     It 'nt status berjalan'
@@ -9934,7 +9934,7 @@ Arsitektur yang baik: **fondasi kuat + spesialisasi per tim**.
 
 ## 4. Sintaks Dasar / Contoh Implementasi Inti
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # TOOLKIT MODUL 7.6 — Enterprise & Kontribusi
 # ═══════════════════════════════════════════════════════════
@@ -10012,7 +10012,7 @@ fd --type f --exec bat {} --paging=never | fzf --preview 'bat {}'
 
 **Arsitektur Enterprise:**
 
-```
+```bash
 ┌────────────────────────────────────────────────────────────────────┐
 │                ENTERPRISE SHELL ARCHITECTURE                        │
 │                     Nusantara Tech                                  │
@@ -10055,7 +10055,7 @@ fd --type f --exec bat {} --paging=never | fzf --preview 'bat {}'
 
 **Repository Structure:**
 
-```
+```bash
 nusantara-dotfiles/
 ├── README.md
 ├── LICENSE
@@ -10155,7 +10155,7 @@ nusantara-dotfiles/
 
 **Layer 1 — Foundation (`/etc/zsh/`):**
 
-```zsh
+```bash
 # /etc/zsh/conf.d/00-base.zsh — Fondasi
 # Di-manage oleh IT, read-only untuk user
 
@@ -10197,7 +10197,7 @@ alias chown='chown --preserve-root'
 
 **Layer 2 — Team (`~/.config/zsh/teams/<team>/`):**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/15-team.zsh — Load team config
 # Di-set oleh installer berdasarkan tim developer
 
@@ -10217,7 +10217,7 @@ fi
 
 **Layer 3 — Personal (`~/.config/zsh/local.zsh`):**
 
-```zsh
+```bash
 # ~/.config/zsh/local.zsh — Override pribadi
 # TIDAK di-track di Git
 
@@ -10777,7 +10777,7 @@ log_path = /var/log/ansible/ansible.log
 ```
 
 Format log:
-```
+```bash
 2026-10-12 10:30:45 p=1234 u=admin n=ansible | PLAY [Deploy Zsh Foundation]
 2026-10-12 10:30:46 p=1234 u=admin n=ansible | TASK [zsh-foundation : Deploy zshrc]
 2026-10-12 10:30:47 p=1234 u=admin n=ansible | ok: [dev-laptop-001]
@@ -10809,7 +10809,7 @@ Ini adalah **audit trail** yang dibutuhkan SOC 2.
 
 **Compliance Report Script:**
 
-```zsh
+```bash
 #!/bin/zsh
 # scripts/compliance-report.zsh — Generate compliance evidence
 
@@ -11154,7 +11154,7 @@ Panduan penting:
 
 **Step 4: Fix Bug**
 
-```zsh
+```bash
 # Completion/Unix/Command/_kubectl — Fix bug
 
 # Sebelum:
@@ -11179,7 +11179,7 @@ _arguments \
 
 **Step 5: Add Test**
 
-```zsh
+```bash
 # Test/Completion/compctl.ztst (atau Test/Completion/...)
 
 # Tambah test untuk kubectl completion
@@ -11197,7 +11197,7 @@ comptest 'kubectl --namespace' \
 
 **Step 6: Update ChangeLog**
 
-```
+```bash
 2026-10-12  Your Name  <your.email@example.com>
 
     * Completion/Unix/Command/_kubectl: Add missing options
@@ -11242,7 +11242,7 @@ git send-email \
 
 Atau manual via email client:
 
-```
+```bash
 To: zsh-workers@zsh.org
 Subject: [PATCH] Fix kubectl completion missing options
 
@@ -11268,7 +11268,7 @@ Your Name
 
 **Step 10: Iterasi dengan Feedback**
 
-```
+```bash
 [Setelah beberapa hari, Anda menerima feedback:]
 
 From: Maintainer <maintainer@example.com>
@@ -11288,7 +11288,7 @@ Maintainer
 
 **Revisi patch:**
 
-```zsh
+```bash
 # Fix 1: Token tidak di-complete (untuk keamanan)
 '--token=[Bearer token]:' \
 
@@ -11307,7 +11307,7 @@ git send-email --to=zsh-workers@zsh.org 0001-*.patch
 
 **Step 11: Patch Diterima**
 
-```
+```bash
 From: Maintainer <maintainer@example.com>
 Subject: Re: [PATCH v2] Fix kubectl completion missing options
 
@@ -11434,7 +11434,7 @@ index abc1234..def5678 100644
 
 **Track Structure:**
 
-```
+```bash
 teams/devops/
 ├── README.md                    # Overview
 ├── conf.d/                      # Zsh configuration
@@ -11459,7 +11459,7 @@ teams/devops/
 
 **`teams/devops/conf.d/20-k8s.zsh`:**
 
-```zsh
+```bash
 # 20-k8s.zsh — Kubernetes helpers untuk DevOps team
 
 # ═══════════════════════════════════════════════════════════
@@ -11577,7 +11577,7 @@ fi
 
 **`teams/devops/conf.d/21-aws.zsh`:**
 
-```zsh
+```bash
 # 21-aws.zsh — AWS helpers
 
 # ═══════════════════════════════════════════════════════════
@@ -11665,7 +11665,7 @@ s3-ls() {
 
 **`teams/devops/conf.d/22-terraform.zsh`:**
 
-```zsh
+```bash
 # 22-terraform.zsh — Terraform helpers
 
 alias tf='terraform'
@@ -11751,7 +11751,7 @@ tf-plan-apply() {
 
 ## Zsh Integration
 
-```zsh
+```
 # List EC2 instances
 aws ec2 describe-instances \
     --query 'Reservations[].Instances[].[InstanceId,State.Name,InstanceType]' \
@@ -11763,7 +11763,7 @@ aws ec2 describe-instances | \
 
 # Switch profile
 awsp production
-```
+```bash
 
 ## Latihan
 
@@ -11780,7 +11780,7 @@ awsp production
 
 **Capstone Project — `teams/devops/projects/deploy-pipeline/`:**
 
-```zsh
+```bash
 #!/bin/zsh
 # deploy-pipeline.zsh — Full deployment pipeline
 
@@ -11868,7 +11868,7 @@ echo "✅ Deployment successful!"
 
 **Struktur track:**
 
-```
+```bash
 teams/<name>/
 ├── README.md          # Overview
 ├── conf.d/            # Zsh configuration
@@ -11906,7 +11906,7 @@ teams/<name>/
 
 **`teams/data/conf.d/20-python.zsh`:**
 
-```zsh
+```bash
 # 20-python.zsh — Python helpers untuk Data team
 
 # ═══════════════════════════════════════════════════════════
@@ -11992,7 +11992,7 @@ alias pyclean='find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null ||
 
 **`teams/data/conf.d/21-data-tools.zsh`:**
 
-```zsh
+```bash
 # 21-data-tools.zsh — Data processing helpers
 
 # ═══════════════════════════════════════════════════════════
@@ -12140,7 +12140,7 @@ log-requests-per-minute() {
 
 ## Extract
 
-```zsh
+```
 # Dari API
 curl -s https://api.example.com/data | jq '.items' > raw.json
 
@@ -12149,11 +12149,11 @@ psql -U user -d db --csv -c "SELECT * FROM users" > users.csv
 
 # Dari file
 cat data.csv
-```
+```bash
 
 ## Transform
 
-```zsh
+```
 # Dengan jq
 jq '[.items[] | select(.status == "active")]' raw.json > active.json
 
@@ -12168,11 +12168,11 @@ with open('raw.json') as f:
 result = [d for d in data if d['age'] > 18]
 print(json.dumps(result))
 "
-```
+```bash
 
 ## Load
 
-```zsh
+```
 # Ke database
 cat result.json | jq -r '.[] | [.id, .name] | @csv' | \
     psql -U user -d db -c "COPY users FROM STDIN CSV"
@@ -12182,11 +12182,11 @@ echo "$result" > output.json
 
 # Ke S3
 aws s3 cp output.json s3://bucket/output/
-```
+```bash
 
 ## Contoh Pipeline Lengkap
 
-```zsh
+```
 #!/bin/zsh
 set -euo pipefail
 
@@ -12210,12 +12210,12 @@ aws s3 cp /tmp/active_users.json s3://nusantara-data/users/
 rm /tmp/users.json /tmp/active_users.json
 
 echo "✅ Pipeline complete"
-```
+```bash
 ```
 
 **Capstone — `teams/data/projects/etl-pipeline/`:**
 
-```zsh
+```bash
 #!/bin/zsh
 # etl-pipeline.zsh — Full ETL pipeline dengan monitoring
 
@@ -12357,7 +12357,7 @@ main "$@"
 
 **Pola ETL:**
 
-```
+```bash
 Extract → Validate → Transform → Enrich → Aggregate → Load → Verify
 ```
 
@@ -12382,7 +12382,7 @@ Extract → Validate → Transform → Enrich → Aggregate → Load → Verify
 
 **`teams/tooling/conf.d/20-modern-cli.zsh`:**
 
-```zsh
+```bash
 # 20-modern-cli.zsh — Modern CLI tools
 
 # ═══════════════════════════════════════════════════════════
@@ -12455,7 +12455,7 @@ fi
 
 **`teams/tooling/conf.d/21-fzf.zsh`:**
 
-```zsh
+```bash
 # 21-fzf.zsh — FZF integration
 
 # ═══════════════════════════════════════════════════════════
@@ -12539,7 +12539,7 @@ bindkey -s '\es' 'fzf-search-content\n'
 
 **`teams/tooling/conf.d/22-editor.zsh`:**
 
-```zsh
+```bash
 # 22-editor.zsh — Editor integration
 
 export EDITOR="${EDITOR:-nvim}"
@@ -12632,17 +12632,17 @@ Dengan preview, pencarian menjadi visual.
 
 ## Contoh Penggunaan
 
-```zsh
+```
 # Cari file dan buka
 fd --type f | fzf --preview 'bat {}' | xargs nvim
 
 # Cari konten dan buka
 rg "function" | fzf | ...
-```
+```bash
 
 ## Install
 
-```bash
+```
 # macOS
 brew install bat eza ripgrep fd zoxide fzf delta
 
@@ -12651,12 +12651,12 @@ sudo apt install bat fd-find ripgrep fzf
 
 # Cargo (universal)
 cargo install bat eza ripgrep fd-find zoxide
-```
+```bash
 ```
 
 **Capstone — `teams/tooling/projects/dev-toolbox/`:**
 
-```zsh
+```bash
 #!/bin/zsh
 # dev-toolbox.zsh — Interactive developer toolbox
 
@@ -12882,7 +12882,7 @@ echo "👋 Bye!"
 
 **Struktur Plugin:**
 
-```
+```bash
 zsh-clipboard-history/
 ├── zsh-clipboard-history.plugin.zsh    # Entry point
 ├── functions/
@@ -12902,7 +12902,7 @@ zsh-clipboard-history/
 
 **`zsh-clipboard-history.plugin.zsh`:**
 
-```zsh
+```bash
 # zsh-clipboard-history.plugin.zsh — Entry point
 
 # ═══════════════════════════════════════════════════════════
@@ -13074,7 +13074,7 @@ typeset -ga _zch_functions=(
 
 **`completions/_zch`:**
 
-```zsh
+```bash
 #compdef zch zch-pick zch-save zch-list zch-clear zch-stats
 
 _zch() {
@@ -13103,7 +13103,7 @@ _zch "$@"
 
 **`tests/spec/clipboard_spec.sh`:**
 
-```zsh
+```bash
 # tests/spec/clipboard_spec.sh
 
 Include zsh-clipboard-history.plugin.zsh
@@ -13180,30 +13180,30 @@ Clipboard history untuk Zsh dengan FZF integration.
 
 ### Antidote
 
-```bash
+```
 # Tambahkan ke ~/.zsh_plugins.txt
 yourusername/zsh-clipboard-history
-```
+```bash
 
 ### Oh My Zsh
 
-```bash
+```
 git clone https://github.com/yourusername/zsh-clipboard-history \
     ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-clipboard-history
 
 # Tambahkan ke plugins=() di .zshrc
 plugins=(... zsh-clipboard-history)
-```
+```bash
 
 ### Manual
 
-```bash
+```
 git clone https://github.com/yourusername/zsh-clipboard-history \
     ~/.zsh/plugins/zsh-clipboard-history
 
 # Source di .zshrc
 source ~/.zsh/plugins/zsh-clipboard-history/zsh-clipboard-history.plugin.zsh
-```
+```bash
 
 ## Usage
 
@@ -13213,23 +13213,23 @@ source ~/.zsh/plugins/zsh-clipboard-history/zsh-clipboard-history.plugin.zsh
 
 ### Commands
 
-```bash
+```
 zch-pick     # Interactive picker
 zch-list     # List semua history
 zch-save     # Simpan manual
 zch-clear    # Hapus history
 zch-stats    # Statistik
-```
+```bash
 
 ## Konfigurasi
 
 Set di `.zshrc` sebelum sourcing plugin:
 
-```zsh
+```
 export ZCH_HISTORY_FILE="$HOME/.cache/zsh-clipboard-history"
 export ZCH_MAX_ENTRIES=1000
 export ZCH_KEYBIND="^Y"  # Ctrl+Y
-```
+```bash
 
 ## Requirements
 
@@ -13240,7 +13240,7 @@ export ZCH_KEYBIND="^Y"  # Ctrl+Y
 
 ## Development
 
-```bash
+```
 git clone https://github.com/yourusername/zsh-clipboard-history
 cd zsh-clipboard-history
 
@@ -13252,7 +13252,7 @@ shellspec
 
 # Lint
 shellcheck zsh-clipboard-history.plugin.zsh
-```
+```bash
 
 ## License
 
@@ -13660,7 +13660,7 @@ Angka tidak berbohong, tapi juga tidak bercerita. Anda perlu **konteks**:
 
 ## 4. Sintaks Dasar / Contoh Implementasi Inti
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # TOOLKIT MODUL 7.7 — Portfolio & Handover
 # ═══════════════════════════════════════════════════════════
@@ -13745,7 +13745,7 @@ agg demo.cast demo.gif
 
 **Struktur Handover Document:**
 
-```
+```bash
 handover/
 ├── README.md                       # Overview + quick start
 ├── 01-architecture.md              # Sistem dan komponen
@@ -13879,7 +13879,7 @@ Infrastruktur shell Nusantara Tech terdiri dari **3 layer** yang di-deploy ke **
 │  System-wide, read-only                                   │
 │  /etc/zsh/                                                │
 └──────────────────────────────────────────────────────────┘
-```
+```bash
 
 ## Komponen Utama
 
@@ -14021,7 +14021,7 @@ nusantara-dotfiles/
 ├── docs/             # Documentation
 ├── scripts/          # Utility scripts
 └── install.sh        # Quick install
-```
+```bash
 
 ## Contacts
 
@@ -14341,7 +14341,7 @@ Oct 2025 ██████                   200
 Feb 2026 ████                     130
 Jun 2026 ███                      110
 Oct 2026 ███                      95
-```
+```bash
 
 ## 2. Onboarding
 
@@ -14467,7 +14467,7 @@ Survey results (N=95):
 ROI = (Return - Investment) / Investment × 100%
     = (9.13M - 1.5M) / 1.5M × 100%
     = 508%
-```
+```bash
 
 **Payback period:** ~2 bulan.
 
@@ -14502,7 +14502,7 @@ Honest assessment of metrics:
 
 **`handover/diagrams/roi-breakdown.excalidraw` — visual:**
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                ROI BREAKDOWN — SHELL INFRASTRUCTURE          │
 ├─────────────────────────────────────────────────────────────┤
@@ -14541,7 +14541,7 @@ Honest assessment of metrics:
 
 **Konversi Technical → Business:**
 
-```zsh
+```bash
 # Technical
 startup_time_saved = 705ms
 
@@ -14906,7 +14906,7 @@ Oct 2025 ██████                   200ms
 Feb 2026 ████                     130ms
 Jun 2026 ███                      110ms
 Oct 2026 ███                       95ms
-```
+```bash
 
 ### Adoption
 
@@ -14918,7 +14918,7 @@ Q4 2025 ████████░░ 75%
 Q1 2026 █████████░ 85%
 Q2 2026 ██████████ 88%
 Q3 2026 ██████████ 85%
-```
+```bash
 
 ---
 
@@ -14966,7 +14966,7 @@ metrics.nusantara.tech/shell
 
 **Struktur Narrative:**
 
-```
+```bash
 1. Hook — The Challenge (empati)
 2. Setup — Our Approach (visi)
 3. Journey — Investment (what it took)
@@ -15050,28 +15050,28 @@ Untuk setiap slide, siapkan:
 
 > "Mari kita lihat bagaimana developer baru setup environment mereka. Ini laptop fresh, tanpa setup apa pun."
 
-```zsh
+```
 # Show no Zsh config
 ls -la ~/.zshrc 2>/dev/null || echo "Tidak ada config"
-```
+```bash
 
 **[Output: "Tidak ada config"]**
 
 > "Sekarang, Budi clone repository dan jalankan satu perintah."
 
-```zsh
+```
 # Run onboarding
 curl -fsSL https://git.nusantara.tech/infra/shell-dotfiles/raw/main/install.sh | zsh
-```
+```bash
 
 **[Show installation output — ~30 seconds]**
 
 > "Itu saja. 30 detik. Sekarang Budi buka terminal baru."
 
-```zsh
+```
 # Open new terminal
 exec zsh
-```
+```bash
 
 **[Show new prompt with all features]**
 
@@ -15081,46 +15081,46 @@ exec zsh
 
 > "Sekarang mari kita lihat CLI tool internal yang kami bangun."
 
-```zsh
+```
 # Show help
 nt help
-```
+```bash
 
 **[Show help output]**
 
 > "Tool ini menggantikan puluhan command yang dulu harus diingat."
 
-```zsh
+```
 # Check service status
 nt status
-```
+```bash
 
 **[Show service status table]**
 
 > "Sebelumnya, untuk cek status 15 service, developer harus SSH ke 3 server dan menjalankan 15 perintah berbeda. Sekarang: satu perintah."
 
-```zsh
+```
 # Deploy to staging
 nt deploy staging api --version v2.1.0 --dry-run
-```
+```bash
 
 **[Show dry-run output]**
 
 > "Deploy aman dengan dry-run. Dalam production, ada konfirmasi."
 
-```zsh
+```
 # Kubernetes interaction
 nt k8s pods --context staging
-```
+```bash
 
 **[Show pods]**
 
 > "FZF integration untuk pemilihan interaktif. Developer tidak perlu ingat nama pod."
 
-```zsh
+```
 # Interactive debug
 nt debug api
-```
+```bash
 
 **[Show interactive picker]**
 
@@ -15130,28 +15130,28 @@ nt debug api
 
 > "Sekarang bagian yang penting: keamanan."
 
-```zsh
+```
 # Show no secrets in config
 grep -rE '(password|token|api_key)\s*=' ~/.config/zsh/ 2>/dev/null | head
-```
+```bash
 
 **[Output: empty]**
 
 > "Zero secrets in config. Semua secrets di 1Password."
 
-```zsh
+```
 # Show secret management
 op account list
-```
+```bash
 
 **[Show 1Password account]**
 
 > "Satu source of truth. Rotasi mudah. Audit trail otomatis."
 
-```zsh
+```
 # Show audit trail
 cat /var/log/zsh_history/$(whoami)_$(hostname) | tail -5
-```
+```bash
 
 **[Show history with timestamps]**
 
@@ -15161,12 +15161,12 @@ cat /var/log/zsh_history/$(whoami)_$(hostname) | tail -5
 
 > "Terakhir, performa."
 
-```zsh
+```
 # Measure startup time
 for i in {1..5}; do
     /usr/bin/time -p zsh -i -c exit 2>&1 | grep real
 done
-```
+```bash
 
 **[Show ~95ms consistently]**
 
@@ -15251,7 +15251,7 @@ Anticipate these questions:
 
 **`portfolio/demo/record-demo.sh` — Script untuk merekam demo:**
 
-```zsh
+```bash
 #!/bin/zsh
 # record-demo.sh — Rekam demo sebagai backup
 
@@ -15296,7 +15296,7 @@ echo "  asciinema play demo.cast"
 
 **Formula Demo yang Efektif:**
 
-```
+```bash
 Problem (10%) → Solution (80%) → Result (10%)
 ```
 
@@ -15323,7 +15323,7 @@ Demo live bisa gagal karena:
 
 **Struktur Demo:**
 
-```
+```bash
 Setup (30s) → Onboarding (3m) → CLI (4m) → Security (2m) → Perf (1m) → Close (30s)
 = 11 menit total
 ```
@@ -15639,7 +15639,7 @@ Setup (30s) → Onboarding (3m) → CLI (4m) → Security (2m) → Perf (1m) →
 
 **RICE Example:**
 
-```
+```bash
 Milestone: ISO 27001
 Reach: 120 developers (all)
 Impact: 3 (massive — enables enterprise deals)
@@ -15951,7 +15951,7 @@ Dengan ROI ~100x, ini adalah salah satu investasi terbaik yang bisa dilakukan pe
 
 **ROI Open Source:**
 
-```
+```bash
 Investment:
 - Time: 20% of 3 engineers = 0.6 FTE
 - Conferences: $20K/year
@@ -16537,7 +16537,7 @@ Jangan pernah bluff. **Honesty > bluff.**
 
 **Formula Presentasi:**
 
-```
+```bash
 Hook (10%) → Story (30%) → Data (40%) → Call (20%)
 ```
 

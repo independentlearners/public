@@ -74,7 +74,7 @@ Filosofi penting Zsh: **fungsi adalah warga kelas satu (first-class citizen)**. 
 
 **Tiga gaya mendeklarasikan fungsi di Zsh:**
 
-```zsh
+```bash
 # Gaya 1: Paling umum (POSIX-compatible)
 nama_fungsi() {
     echo "Halo dari fungsi"
@@ -109,7 +109,7 @@ function nama_fungsi() {
 
 Ini **krusial** dan sering jadi sumber bug.
 
-```zsh
+```bash
 global_var="aku global"
 
 contoh_scope() {
@@ -131,7 +131,7 @@ echo "$dalam_var"       # Output: (kosong) — variabel lokal sudah hilang
 
 **Variasi `local` lanjutan:**
 
-```zsh
+```bash
 local -a arr          # array lokal
 local -A map          # associative array lokal
 local -i angka=10     # integer lokal (aritmetika otomatis)
@@ -142,7 +142,7 @@ local -h              # 'hide' — tidak muncul di `typeset` output (jarang dipa
 
 ### Parameter Posisi
 
-```zsh
+```bash
 tampilkan_args() {
     echo "Jumlah argumen: $#"
     echo "Argumen 1: $1"
@@ -166,7 +166,7 @@ tampilkan_args apel jeruk mangga
 
 **Praktik terbaik:** Selalu pakai `"$@"` untuk meneruskan argumen.
 
-```zsh
+```bash
 panggil_ulang() {
     perintah_lain "$@"   # Aman meski argumen ada spasi
 }
@@ -176,7 +176,7 @@ panggil_ulang() {
 
 Kesalahan umum pemula: mengira `return` mengembalikan string seperti di Python.
 
-```zsh
+```bash
 # SALAH (pemahaman keliru)
 hitung() {
     return "5"   # return hanya menerima ANGKA (0-255)
@@ -258,7 +258,7 @@ Filosofinya:
 
 ### Sintaks Dasar
 
-```zsh
+```bash
 # Bentuk paling dasar
 () {
     echo "Aku dieksekusi langsung"
@@ -292,7 +292,7 @@ echo "Sekarang di: $PWD"   # Kembali ke direktori semula
 
 Kasus nyata: Anda ingin meng-clone repo, build, lalu copy hasilnya — tanpa meninggalkan direktori kerja berubah.
 
-```zsh
+```bash
 #!/bin/zsh
 set -e
 
@@ -311,7 +311,7 @@ build_project https://github.com/user/repo.git
 ```
 
 **Alur kerja:**
-```
+```bash
 [Shell utama]
     │
     ├─► Panggil build_project
@@ -395,7 +395,7 @@ Filosofi:
 
 **Sintaks:**
 
-```zsh
+```bash
 chpwd() {
     echo "📁 Pindah ke: $PWD"
     # Contoh nyata: auto-activate virtualenv
@@ -419,7 +419,7 @@ chpwd() {
 
 **Contoh studi kasus nyata:** Auto-switch Node version dengan `nvm` saat masuk direktori proyek.
 
-```zsh
+```bash
 chpwd() {
     if [[ -f .nvmrc ]]; then
         local node_version=$(cat .nvmrc)
@@ -434,7 +434,7 @@ chpwd() {
 
 **Sintaks:**
 
-```zsh
+```bash
 precmd() {
     # Tampilkan waktu
     echo "⏰ $(date +%H:%M:%S)"
@@ -467,7 +467,7 @@ precmd() {
 
 **Sintaks:**
 
-```zsh
+```bash
 preexec() {
     # $1 = perintah asli (string utuh)
     # $2 = perintah setelah alias expansion
@@ -495,7 +495,7 @@ preexec() {
 
 **Kombinasi `preexec` + `precmd` untuk timer perintah:**
 
-```zsh
+```bash
 preexec() {
     _cmd_start=$EPOCHSECONDS
 }
@@ -515,7 +515,7 @@ Ini bagian **opsional** yang jarang muncul di tutorial, tetapi penting untuk pen
 
 **a) `periodic`** — dipanggil setiap `$PERIOD` detik (default 60).
 
-```zsh
+```bash
 periodic() {
     echo "Cek berkala: $(date)"
 }
@@ -524,7 +524,7 @@ PERIOD=30   # Setiap 30 detik
 
 **b) `zshexit`** — dipanggil saat shell akan keluar.
 
-```zsh
+```bash
 zshexit() {
     echo "Membersihkan file sementara..."
     rm -rf /tmp/zsh_temp_$$
@@ -533,7 +533,7 @@ zshexit() {
 
 **c) `TRAPDEBUG`** — dipanggil sebelum **setiap** perintah sederhana (sangat verbose).
 
-```zsh
+```bash
 TRAPDEBUG() {
     echo "DEBUG: akan menjalankan: $ZSH_DEBUG_CMD"
 }
@@ -541,7 +541,7 @@ TRAPDEBUG() {
 
 **d) `TRAPEXIT`** — mirip `zshexit` tapi bisa di-set per fungsi.
 
-```zsh
+```bash
 contoh() {
     trap 'echo "Fungsi selesai"' EXIT
     echo "Kerja..."
@@ -550,7 +550,7 @@ contoh() {
 
 **e) `zsh_directory_name`** — untuk named directory (`~nama`).
 
-```zsh
+```bash
 zsh_directory_name() {
     if [[ "$1" == "d" && "$2" == "proyek" ]]; then
         reply=(/home/user/proyek)
@@ -585,7 +585,7 @@ zsh_directory_name() {
 
 Jika Anda punya banyak plugin (oh-my-zsh, prezto) yang mendefinisikan `chpwd`, hanya yang terakhir bertahan. Solusi: gunakan `add-zsh-hook`.
 
-```zsh
+```bash
 autoload -Uz add-zsh-hook
 
 my_chpwd() {
@@ -652,7 +652,7 @@ Filosofi:
 
 `fpath` adalah **array direktori** tempat Zsh mencari fungsi yang di-autoload. Mirip `$PATH` untuk executable, tapi untuk fungsi.
 
-```zsh
+```bash
 echo $fpath
 # Output contoh:
 # /usr/share/zsh/functions
@@ -662,7 +662,7 @@ echo $fpath
 
 **Menambah direktori:**
 
-```zsh
+```bash
 fpath=(~/.zsh/functions $fpath)
 ```
 
@@ -674,7 +674,7 @@ fpath=(~/.zsh/functions $fpath)
 
 ### 5.1.3.2 — `autoload -Uz`
 
-```zsh
+```bash
 autoload -Uz nama_fungsi
 ```
 
@@ -693,7 +693,7 @@ autoload -Uz nama_fungsi
 
 **Struktur direktori:**
 
-```
+```bash
 ~/.zsh/
 ├── functions/
 │   ├── git-status
@@ -705,7 +705,7 @@ autoload -Uz nama_fungsi
 
 **Isi file `~/.zsh/functions/mkcd`:**
 
-```zsh
+```bash
 # Fungsi: mkcd — buat direktori lalu masuk ke dalamnya
 mkcd() {
     mkdir -p "$1" && cd "$1"
@@ -714,7 +714,7 @@ mkcd() {
 
 **Isi file `~/.zsh/functions/extract`:**
 
-```zsh
+```bash
 # Fungsi: extract — ekstrak berbagai format arsip
 extract() {
     if [[ ! -f "$1" ]]; then
@@ -733,7 +733,7 @@ extract() {
 
 **Di `.zshrc`:**
 
-```zsh
+```bash
 fpath=(~/.zsh/functions $fpath)
 autoload -Uz mkcd extract git-status backup
 ```
@@ -753,7 +753,7 @@ autoload -Uz mkcd extract git-status backup
 
 ### Contoh Studi Kasus: Library Fungsi Pribadi
 
-```zsh
+```bash
 # ~/.zshrc
 fpath=(~/.zsh/functions $fpath)
 
@@ -789,7 +789,7 @@ done
 
 Zsh bisa meng-compile fungsi jadi bytecode (`.zwc`) untuk load lebih cepat.
 
-```zsh
+```bash
 # Compile semua fungsi di direktori
 autoload -Uz zrecompile
 zrecompile -p ~/.zsh/functions/*
@@ -853,7 +853,7 @@ Filosofi:
 
 **Bentuk umum:**
 
-```zsh
+```bash
 ${(flag)variable}
 ${(flag1)(flag2)variable}
 ```
@@ -868,7 +868,7 @@ ${(flag1)(flag2)variable}
 
 **`(j:sep:)` — Join array jadi string**
 
-```zsh
+```bash
 local -a arr=(satu dua tiga)
 echo ${(j:,:)arr}       # satu,dua,tiga
 echo ${(j: - :)arr}     # satu - dua - tiga
@@ -883,7 +883,7 @@ echo ${(j::)arr}        # satuduatiga
 
 **`(s:sep:)` — Split string jadi array**
 
-```zsh
+```bash
 local str="satu,dua,tiga"
 local -a arr=(${(s:,:)str})
 echo $arr[1]   # satu
@@ -892,7 +892,7 @@ echo $arr[2]   # dua
 
 **`(k)` — Keys dari associative array**
 
-```zsh
+```bash
 local -A map
 map=(apel merah jeruk oranye)
 echo ${(k)map}    # apel jeruk (keys)
@@ -900,7 +900,7 @@ echo ${(k)map}    # apel jeruk (keys)
 
 **`(v)` — Values dari associative array**
 
-```zsh
+```bash
 echo ${(v)map}    # merah oranye
 ```
 
@@ -908,39 +908,39 @@ echo ${(v)map}    # merah oranye
 
 **`(q)` — Quote untuk shell**
 
-```zsh
+```bash
 local str="hello world"
 echo ${(q)str}    # 'hello world' (siap di-eval)
 ```
 
 **`(Q)` — Unquote**
 
-```zsh
+```bash
 local quoted="'hello world'"
 echo ${(Q)quoted}  # hello world
 ```
 
 **`(L)` — Lowercase**
 
-```zsh
+```bash
 echo ${(L)var}    # huruf kecil
 ```
 
 **`(U)` — Uppercase**
 
-```zsh
+```bash
 echo ${(U)var}    # HURUF BESAR
 ```
 
 **`(C)` — Capitalize**
 
-```zsh
+```bash
 echo ${(C)var}    # Huruf Awal Kapital
 ```
 
 **`(z)` — Split seperti shell parsing**
 
-```zsh
+```bash
 local cmd="ls -la /tmp"
 local -a parts=(${(z)cmd})
 echo $parts[1]   # ls
@@ -949,7 +949,7 @@ echo $parts[2]   # -la
 
 **`(f)` — Split per baris**
 
-```zsh
+```bash
 local multiline=$'baris1\nbaris2\nbaris3'
 local -a lines=(${(f)multiline})
 echo $lines[1]   # baris1
@@ -957,34 +957,34 @@ echo $lines[1]   # baris1
 
 **`(o)` — Sort ascending**
 
-```zsh
+```bash
 local -a arr=(c a b)
 echo ${(o)arr}   # a b c
 ```
 
 **`(O)` — Sort descending**
 
-```zsh
+```bash
 echo ${(O)arr}   # c b a
 ```
 
 **`(u)` — Unique**
 
-```zsh
+```bash
 local -a arr=(a b a c b)
 echo ${(u)arr}   # a b c
 ```
 
 **`(n)` — Numeric sort**
 
-```zsh
+```bash
 local -a arr=(10 2 30 1)
 echo ${(on)arr}  # 1 2 10 30
 ```
 
 **Kombinasi flag:**
 
-```zsh
+```bash
 local -a arr=(B a C b A c)
 echo ${(ou)arr}      # a b c (sort + unique)
 echo ${(Oa)arr}      # c b a C B A (sort descending, case-sensitive)
@@ -993,7 +993,7 @@ echo ${(L)${(j:,:)arr}}  # b,a,c,b,a,c (lowercase + join)
 
 ### Contoh Studi Kasus: Parse CSV Sederhana
 
-```zsh
+```bash
 #!/bin/zsh
 parse_csv() {
     local line="$1"
@@ -1007,7 +1007,7 @@ parse_csv "Budi,25,Jakarta,Programmer"
 ```
 
 **Output:**
-```
+```bash
 Field 1: Budi
 Field 2: 25
 Field 3: Jakarta
@@ -1082,7 +1082,7 @@ Array Zsh seperti **deretan kotak bernomor yang dimulai dari 1**. Kotak 0 = nama
 
 ### Sintaks Dasar
 
-```zsh
+```bash
 # Deklarasi
 local -a arr
 arr=(satu dua tiga empat lima)
@@ -1109,7 +1109,7 @@ arr[2,0]=(baru)    # sisipkan 'baru' di posisi 2
 
 **Filter dengan glob:**
 
-```zsh
+```bash
 local -a files=(*.txt)
 echo ${(M)files:#*.md}   # hanya yang match *.md
 echo ${files:#*.txt}     # hapus yang match *.txt
@@ -1121,7 +1121,7 @@ echo ${files:#*.txt}     # hapus yang match *.txt
 
 **Map/filter dengan `(#b)` dan backreference:**
 
-```zsh
+```bash
 local -a arr=(a1 b2 c3 d4)
 for item in $arr; do
     if [[ $item =~ '([a-z])([0-9])' ]]; then
@@ -1136,7 +1136,7 @@ done
 
 **Iterasi aman:**
 
-```zsh
+```bash
 # Cara 1: for-in
 for item in "${arr[@]}"; do
     echo "$item"
@@ -1157,7 +1157,7 @@ done
 
 ### Contoh Studi Kasus: Deduplikasi & Sort
 
-```zsh
+```bash
 #!/bin/zsh
 local -a log_lines=(
     "2024-01-01 ERROR foo"
@@ -1237,7 +1237,7 @@ Bayangkan **buku telepon**: Anda cari nomor berdasarkan nama. Associative array 
 
 ### Sintaks Dasar
 
-```zsh
+```bash
 # Deklarasi
 local -A map
 map=(apel merah jeruk oranye mangga hijau)
@@ -1265,7 +1265,7 @@ echo ${(kv)map}      # keys dan values bergantian
 
 ### Iterasi
 
-```zsh
+```bash
 # Iterasi key
 for key in ${(k)map}; do
     echo "$key → $map[$key]"
@@ -1288,7 +1288,7 @@ done
 
 ### Contoh Studi Kasus: Konfigurasi
 
-```zsh
+```bash
 #!/bin/zsh
 typeset -A config
 config=(
@@ -1322,7 +1322,7 @@ echo "$conn"
 
 ### Sort Keys
 
-```zsh
+```bash
 for key in ${(ok)map}; do
     echo "$key = $map[$key]"
 done
@@ -1367,7 +1367,7 @@ done
 
 ### Sintaks Dasar
 
-```zsh
+```bash
 # Di paling atas ~/.zshrc
 zmodload zsh/zprof
 
@@ -1378,7 +1378,7 @@ zprof
 ```
 
 **Output contoh:**
-```
+```bash
 num  calls                time                       self            name
  1)    1          45.20    45.20   30.15%     45.20    45.20   30.15%  compinit
  2)    1          20.10    20.10   13.40%     20.10    20.10   13.40%  nvm_load
@@ -1526,7 +1526,7 @@ Bagian ini **tidak ada di kurikulum asli** Anda, tetapi saya tambahkan sebagai p
 
 **Contoh script tanpa test — berbahaya:**
 
-```zsh
+```bash
 #!/bin/zsh
 # backup.sh — tanpa test
 backup() {
@@ -1545,7 +1545,7 @@ backup() {
 
 **Dengan test, semua pertanyaan itu dijawab:**
 
-```zsh
+```bash
 # spec/backup_spec.sh
 Describe 'backup'
     It 'gagal jika source tidak ada'
@@ -1615,7 +1615,7 @@ Testing manual = menulis `if` yang memeriksa apakah output/exit code sesuai hara
 
 **Pola test manual paling sederhana:**
 
-```zsh
+```bash
 #!/bin/zsh
 
 # Fungsi yang akan diuji
@@ -1651,7 +1651,7 @@ test_tambah
 
 **Test manual untuk exit code:**
 
-```zsh
+```bash
 cek_file() {
     [[ -f "$1" ]] && return 0 || return 1
 }
@@ -1677,7 +1677,7 @@ test_cek_file_tidak_ada() {
 
 **Test manual untuk stderr:**
 
-```zsh
+```bash
 fungsi_error() {
     echo "pesan error" >&2
     return 1
@@ -1700,7 +1700,7 @@ test_error_message() {
 
 ### Contoh Studi Kasus: Test Suite Manual
 
-```zsh
+```bash
 #!/bin/zsh
 # test_suite.sh — tanpa framework
 
@@ -1805,7 +1805,7 @@ ShellSpec adalah **framework testing BDD (Behavior-Driven Development)** untuk s
 
 ### 5.2.2.1 — Instalasi & Setup
 
-```zsh
+```bash
 # Metode 1: Install script (universal)
 curl -fsSL https://git.io/shellspec | sh
 
@@ -1819,14 +1819,14 @@ export PATH="$HOME/.shellspec:$PATH"
 
 **Verifikasi:**
 
-```zsh
+```bash
 shellspec --version
 # Output: ShellSpec 0.28.1
 ```
 
 **Struktur proyek:**
 
-```
+```bash
 proyek/
 ├── lib/
 │   └── kalkulator.sh        # kode yang diuji
@@ -1840,7 +1840,7 @@ proyek/
 
 **Sintaks lengkap:**
 
-```zsh
+```bash
 #!/usr/bin/env shellspec
 # spec/kalkulator_spec.sh
 
@@ -1887,7 +1887,7 @@ End
 
 **Cara menjalankan:**
 
-```zsh
+```bash
 # Jalankan semua test
 shellspec
 
@@ -1903,7 +1903,7 @@ shellspec --example 'menjumlahkan'
 
 **Output contoh:**
 
-```
+```bash
 kalkulator
   tambah
     ✓ menjumlahkan dua angka positif
@@ -1935,7 +1935,7 @@ kalkulator
 
 **Contoh penggunaan lanjutan:**
 
-```zsh
+```bash
 It 'output adalah angka'
     When call hitung 10 20
     The output should match '[0-9]+'
@@ -1951,7 +1951,7 @@ End
 
 **Mocking:** Mengganti fungsi/command dengan versi palsu untuk test.
 
-```zsh
+```bash
 Describe 'kirim_email'
     # Mock curl
     curl() {
@@ -1969,7 +1969,7 @@ End
 
 **Stubbing dengan `Before`:**
 
-```zsh
+```bash
 Describe 'proses_data'
     setup() {
         # Buat file sementara
@@ -2000,7 +2000,7 @@ End
 
 ShellSpec punya dukungan native untuk code coverage via `kcov`.
 
-```zsh
+```bash
 # Install kcov dulu (Linux)
 sudo apt install kcov
 
@@ -2012,7 +2012,7 @@ shellspec --kcov
 
 **Konfigurasi `.shellspec`:**
 
-```zsh
+```bash
 --kcov
 --kcov-options "--include-path=lib/,bin/"
 ```
@@ -2138,7 +2138,7 @@ ZUnit lebih **minimalis** dari ShellSpec. Tidak ada sintaks BDD (`Describe`/`It`
 
 **File test harus punya shebang:**
 
-```zsh
+```bash
 #!/usr/bin/env zunit
 # tests/kalkulator.zunit
 ```
@@ -2147,7 +2147,7 @@ ZUnit lebih **minimalis** dari ShellSpec. Tidak ada sintaks BDD (`Describe`/`It`
 
 **Struktur test:**
 
-```zsh
+```bash
 #!/usr/bin/env zunit
 
 @setup {
@@ -2191,7 +2191,7 @@ ZUnit lebih **minimalis** dari ShellSpec. Tidak ada sintaks BDD (`Describe`/`It`
 
 **Cara menjalankan:**
 
-```zsh
+```bash
 # Jalankan semua test
 zunit
 
@@ -2201,7 +2201,7 @@ zunit tests/kalkulator.zunit
 
 **Output:**
 
-```
+```bash
 Running tests/kalkulator.zunit
  ✓ tambah menjumlahkan dua angka
  ✓ tambah menangani negatif
@@ -2287,19 +2287,19 @@ Artinya: Anda menulis assertion dengan `[[ ]]` biasa, dan ztr hanya **menjalanka
 
 **Instalasi:**
 
-```zsh
+```bash
 brew install olets/tap/zsh-test-runner
 ```
 
 Atau manual:
 
-```zsh
+```bash
 git clone https://github.com/olets/zsh-test-runner
 ```
 
 **Test inline:**
 
-```zsh
+```bash
 ztr test 'tambah 2+3' {
     local result=$(tambah 2 3)
     [[ "$result" == "5" ]]
@@ -2313,7 +2313,7 @@ ztr test 'tambah 2+3' {
 
 **Test suite file:**
 
-```zsh
+```bash
 #!/usr/bin/env zsh
 # tests/kalkulator.ztr.zsh
 
@@ -2336,13 +2336,13 @@ ztr test 'bagi 10/0 gagal' {
 
 **Menjalankan:**
 
-```zsh
+```bash
 ztr run tests/kalkulator.ztr.zsh
 ```
 
 **Coverage:**
 
-```zsh
+```bash
 ztr coverage tests/kalkulator.ztr.zsh
 ```
 
@@ -2406,7 +2406,7 @@ ztr coverage tests/kalkulator.ztr.zsh
 
 **Instalasi:**
 
-```zsh
+```bash
 # Debian/Ubuntu
 sudo apt install kcov
 
@@ -2416,7 +2416,7 @@ brew install kcov
 
 **Penggunaan dasar:**
 
-```zsh
+```bash
 kcov coverage-dir script.sh arg1 arg2
 ```
 
@@ -2427,13 +2427,13 @@ kcov coverage-dir script.sh arg1 arg2
 
 **Dengan ShellSpec:**
 
-```zsh
+```bash
 shellspec --kcov
 ```
 
 **Dengan opsi include/exclude:**
 
-```zsh
+```bash
 kcov --include-path=lib/,bin/ --exclude-path=tests/ coverage-dir shellspec
 ```
 
@@ -2494,7 +2494,7 @@ Piramida testing adalah **model mental** untuk membagi test ke tiga level. Ini *
 
 ### Konsep Kunci & Filosofi Mendalam
 
-```
+```bash
         /\
        /  \
       / E2E \        ← Sedikit, lambat, mahal
@@ -2519,7 +2519,7 @@ Piramida testing adalah **model mental** untuk membagi test ke tiga level. Ini *
 
 **Unit test:**
 
-```zsh
+```bash
 It 'tambah 2+3 = 5'
     When call tambah 2 3
     The output should eq 5
@@ -2528,7 +2528,7 @@ End
 
 **Integration test:**
 
-```zsh
+```bash
 It 'backup membuat file tar.gz'
     When call backup /tmp/src /tmp/dest
     The file /tmp/dest/backup-*.tar.gz should be exist
@@ -2537,7 +2537,7 @@ End
 
 **E2E test:**
 
-```zsh
+```bash
 It 'deploy.sh berhasil deploy ke staging'
     When run script deploy.sh staging
     The status should be success
@@ -2841,7 +2841,7 @@ Bagian ini **tidak ada di kurikulum asli** Anda, tetapi saya tambahkan sebagai p
 
 **Sebelum integrasi (semua di shell):**
 
-```zsh
+```bash
 # Parsing JSON dengan sed/awk — rapuh
 response='{"nama":"Budi","umur":25}'
 nama=$(echo "$response" | sed -n 's/.*"nama":"\([^"]*\)".*/\1/p')
@@ -2849,7 +2849,7 @@ nama=$(echo "$response" | sed -n 's/.*"nama":"\([^"]*\)".*/\1/p')
 
 **Setelah integrasi (dengan `jq`):**
 
-```zsh
+```bash
 # Parsing JSON dengan jq — andal
 nama=$(echo "$response" | jq -r '.nama')
 ```
@@ -2898,7 +2898,7 @@ Bagian ini mengajarkan cara **memanggil interpreter bahasa lain** dari dalam scr
 
 **Python inline:**
 
-```zsh
+```bash
 # Satu ekspresi
 python3 -c "print(2 + 3)"                    # Output: 5
 
@@ -2917,7 +2917,7 @@ print(json.dumps(data))
 
 **Node inline:**
 
-```zsh
+```bash
 node -e "console.log(process.platform)"
 node -e "
 const os = require('os');
@@ -2927,7 +2927,7 @@ console.log(os.cpus().length);
 
 **Ruby inline:**
 
-```zsh
+```bash
 ruby -e "puts 2 + 3"
 ruby -e "
 require 'json'
@@ -2940,21 +2940,21 @@ puts data.to_json
 
 **Menangkap stdout:**
 
-```zsh
+```bash
 hasil=$(python3 -c "print('hello')")
 echo "Hasil: $hasil"   # Hasil: hello
 ```
 
 **Menangkap exit code:**
 
-```zsh
+```bash
 python3 -c "import sys; sys.exit(1)"
 echo "Exit: $?"   # Exit: 1
 ```
 
 **Menangkap stderr:**
 
-```zsh
+```bash
 error=$(python3 -c "import sys; print('error', file=sys.stderr)" 2>&1)
 echo "$error"   # error
 ```
@@ -2966,7 +2966,7 @@ echo "$error"   # error
 
 **Menangkap stdout & stderr terpisah:**
 
-```zsh
+```bash
 stdout=$(python3 -c "
 import sys
 print('ke stdout')
@@ -2981,7 +2981,7 @@ stderr=$(cat /tmp/err)
 
 **Gunakan `command -v` untuk cek ketersediaan:**
 
-```zsh
+```bash
 if command -v python3 &>/dev/null; then
     PY=python3
 elif command -v python &>/dev/null; then
@@ -3001,7 +3001,7 @@ $PY -c "print('ok')"
 
 **Fallback berantai:**
 
-```zsh
+```bash
 run_script() {
     local interpreter
     for interpreter in python3 python; do
@@ -3021,7 +3021,7 @@ run_script "print('hello')"
 
 **Sintaks heredoc:**
 
-```zsh
+```bash
 python3 <<'EOF'
 import json
 data = {'nama': 'Budi', 'umur': 25}
@@ -3036,7 +3036,7 @@ EOF
 
 **Dengan ekspansi shell:**
 
-```zsh
+```bash
 nama="Budi"
 python3 <<EOF
 print("Halo, $nama")
@@ -3048,7 +3048,7 @@ EOF
 
 **Node dengan heredoc:**
 
-```zsh
+```bash
 node <<'EOF'
 const data = { nama: 'Budi', umur: 25 };
 console.log(JSON.stringify(data));
@@ -3057,7 +3057,7 @@ EOF
 
 ### Contoh Studi Kasus: Analisis Data Sederhana
 
-```zsh
+```bash
 #!/bin/zsh
 
 analisis_log() {
@@ -3163,7 +3163,7 @@ analisis_log "/var/log/app.log"
 
 **Instalasi:**
 
-```zsh
+```bash
 # macOS
 brew install jq
 
@@ -3176,7 +3176,7 @@ jq --version
 
 **Sintaks dasar:**
 
-```zsh
+```bash
 echo '{"nama":"Budi","umur":25}' | jq '.'
 # Output: objek terformat
 
@@ -3198,7 +3198,7 @@ echo '{"nama":"Budi","umur":25}' | jq -r '.nama'
 
 **Akses field:**
 
-```zsh
+```bash
 echo '{"user":{"nama":"Budi"}}' | jq '.user.nama'
 # "Budi"
 
@@ -3208,7 +3208,7 @@ echo '{"user":{"nama":"Budi"}}' | jq '.user.nama | length'
 
 **Iterasi array:**
 
-```zsh
+```bash
 echo '[1,2,3,4,5]' | jq '.[]'
 # 1
 # 2
@@ -3223,7 +3223,7 @@ echo '[{"id":1},{"id":2}]' | jq '.[].id'
 
 **`map`: transformasi setiap elemen:**
 
-```zsh
+```bash
 echo '[{"harga":100},{"harga":200}]' | jq 'map(.harga)'
 # [100, 200]
 
@@ -3233,7 +3233,7 @@ echo '[{"harga":100},{"harga":200}]' | jq 'map(.harga) | add'
 
 **`select`: filter berdasarkan kondisi:**
 
-```zsh
+```bash
 echo '[{"nama":"Budi","umur":25},{"nama":"Ani","umur":17}]' \
     | jq '.[] | select(.umur >= 18) | .nama'
 # "Budi"
@@ -3241,7 +3241,7 @@ echo '[{"nama":"Budi","umur":25},{"nama":"Ani","umur":17}]' \
 
 **`map(select(...))`:**
 
-```zsh
+```bash
 echo '[{"aktif":true,"nama":"A"},{"aktif":false,"nama":"B"}]' \
     | jq 'map(select(.aktif)) | .[].nama'
 # "A"
@@ -3251,21 +3251,21 @@ echo '[{"aktif":true,"nama":"A"},{"aktif":false,"nama":"B"}]' \
 
 **Membuat objek baru:**
 
-```zsh
+```bash
 echo '{"nama":"Budi","umur":25}' | jq '{nama: .nama, usia: .umur}'
 # {"nama":"Budi","usia":25}
 ```
 
 **Array construction:**
 
-```zsh
+```bash
 echo '{"a":1,"b":2}' | jq '[.a, .b]'
 # [1,2]
 ```
 
 **String interpolation:**
 
-```zsh
+```bash
 echo '{"nama":"Budi","umur":25}' | jq '"\(.nama) berumur \(.umur) tahun"'
 # "Budi berumur 25 tahun"
 ```
@@ -3274,7 +3274,7 @@ echo '{"nama":"Budi","umur":25}' | jq '"\(.nama) berumur \(.umur) tahun"'
 
 **Group by:**
 
-```zsh
+```bash
 echo '[{"kategori":"A","nilai":1},{"kategori":"A","nilai":2},{"kategori":"B","nilai":3}]' \
     | jq 'group_by(.kategori) | map({kategori: .[0].kategori, total: map(.nilai) | add})'
 # [{"kategori":"A","total":3},{"kategori":"B","total":3}]
@@ -3284,7 +3284,7 @@ echo '[{"kategori":"A","nilai":1},{"kategori":"A","nilai":2},{"kategori":"B","ni
 
 **Pola umum:**
 
-```zsh
+```bash
 # Ambil nama user dari GitHub API
 curl -s https://api.github.com/users/octocat | jq -r '.name'
 
@@ -3307,7 +3307,7 @@ curl -s https://api.github.com/users/octocat/repos \
 
 **Contoh dengan `--arg`:**
 
-```zsh
+```bash
 # Kirim variabel shell ke jq
 nama="Budi"
 echo '{"users":[{"nama":"Budi"},{"nama":"Ani"}]}' \
@@ -3322,7 +3322,7 @@ echo '{"users":[{"nama":"Budi"},{"nama":"Ani"}]}' \
 
 **1. Python `json.tool`:**
 
-```zsh
+```bash
 echo '{"nama":"Budi"}' | python3 -m json.tool
 # {
 #     "nama": "Budi"
@@ -3334,7 +3334,7 @@ echo '{"nama":"Budi"}' | python3 -c "import sys,json; print(json.load(sys.stdin)
 
 **2. Node:**
 
-```zsh
+```bash
 echo '{"nama":"Budi"}' | node -e "
 let data = '';
 process.stdin.on('data', c => data += c);
@@ -3346,13 +3346,13 @@ process.stdin.on('end', () => {
 
 **3. `json_pp` (Perl):**
 
-```zsh
+```bash
 echo '{"nama":"Budi"}' | json_pp
 ```
 
 **4. Zsh native (terbatas):**
 
-```zsh
+```bash
 # Untuk JSON sederhana, bisa pakai parameter expansion
 response='{"nama":"Budi","umur":25}'
 nama=${response#*\"nama\":\"}
@@ -3367,7 +3367,7 @@ echo "$nama"   # Budi
 
 ### Contoh Studi Kasus: Pipeline API → CSV
 
-```zsh
+```bash
 #!/bin/zsh
 
 fetch_users() {
@@ -3460,7 +3460,7 @@ Bagian ini mengajarkan **memanggil REST API** dari Zsh menggunakan `curl`, terma
 
 **GET request:**
 
-```zsh
+```bash
 curl -s https://api.example.com/resource
 ```
 
@@ -3475,7 +3475,7 @@ curl -s https://api.example.com/resource
 
 **Headers:**
 
-```zsh
+```bash
 curl -s -H "Authorization: Bearer $TOKEN" \
      -H "Accept: application/json" \
      https://api.example.com/resource
@@ -3483,7 +3483,7 @@ curl -s -H "Authorization: Bearer $TOKEN" \
 
 **POST dengan JSON:**
 
-```zsh
+```bash
 curl -s -X POST \
      -H "Content-Type: application/json" \
      -d '{"nama":"Budi","umur":25}' \
@@ -3492,7 +3492,7 @@ curl -s -X POST \
 
 **POST dari file:**
 
-```zsh
+```bash
 curl -s -X POST \
      -H "Content-Type: application/json" \
      -d @data.json \
@@ -3503,7 +3503,7 @@ curl -s -X POST \
 
 **PUT & DELETE:**
 
-```zsh
+```bash
 curl -s -X PUT -H "Content-Type: application/json" \
      -d '{"nama":"Budi Baru"}' \
      https://api.example.com/users/1
@@ -3515,7 +3515,7 @@ curl -s -X DELETE https://api.example.com/users/1
 
 **`--fail` untuk HTTP error:**
 
-```zsh
+```bash
 if curl -sf https://api.example.com/resource -o response.json; then
     echo "Sukses"
 else
@@ -3529,7 +3529,7 @@ fi
 
 **Retry otomatis:**
 
-```zsh
+```bash
 curl -s --retry 3 --retry-delay 2 --retry-connrefused \
      https://api.example.com/resource
 ```
@@ -3542,7 +3542,7 @@ curl -s --retry 3 --retry-delay 2 --retry-connrefused \
 
 **Retry hanya pada 5xx:**
 
-```zsh
+```bash
 curl -s --retry 3 --retry-all-errors \
      https://api.example.com/resource
 ```
@@ -3551,7 +3551,7 @@ curl -s --retry 3 --retry-all-errors \
 
 **Gabung `--fail` + `--retry`:**
 
-```zsh
+```bash
 curl -sf --retry 3 --retry-delay 1 \
      https://api.example.com/resource
 ```
@@ -3560,7 +3560,7 @@ curl -sf --retry 3 --retry-delay 1 \
 
 **Mendapatkan status code:**
 
-```zsh
+```bash
 status=$(curl -s -o /dev/null -w "%{http_code}" https://api.example.com/resource)
 echo "Status: $status"
 ```
@@ -3572,7 +3572,7 @@ echo "Status: $status"
 
 **Switch berdasarkan status:**
 
-```zsh
+```bash
 status=$(curl -s -o response.json -w "%{http_code}" https://api.example.com/resource)
 case "$status" in
     200) echo "OK" ;;
@@ -3588,14 +3588,14 @@ esac
 
 **Bearer token:**
 
-```zsh
+```bash
 TOKEN="your_token_here"
 curl -s -H "Authorization: Bearer $TOKEN" https://api.example.com/resource
 ```
 
 **Basic auth:**
 
-```zsh
+```bash
 curl -s -u "user:password" https://api.example.com/resource
 ```
 
@@ -3603,19 +3603,19 @@ curl -s -u "user:password" https://api.example.com/resource
 
 **API key di query:**
 
-```zsh
+```bash
 curl -s "https://api.example.com/resource?api_key=$API_KEY"
 ```
 
 **API key di header:**
 
-```zsh
+```bash
 curl -s -H "X-API-Key: $API_KEY" https://api.example.com/resource
 ```
 
 **OAuth2 client credentials:**
 
-```zsh
+```bash
 # 1. Dapatkan token
 TOKEN=$(curl -s -X POST \
     -d "grant_type=client_credentials" \
@@ -3631,14 +3631,14 @@ curl -s -H "Authorization: Bearer $TOKEN" https://api.example.com/resource
 
 **Deteksi rate limit:**
 
-```zsh
+```bash
 # Cek header rate limit
 curl -sI https://api.example.com/resource | grep -i 'x-ratelimit'
 ```
 
 **Backoff manual:**
 
-```zsh
+```bash
 call_api() {
     local url="$1"
     local max_retries=3
@@ -3671,7 +3671,7 @@ call_api() {
 
 ### Contoh Studi Kasus: Fungsi API Reusable
 
-```zsh
+```bash
 #!/bin/zsh
 
 api_call() {
@@ -3783,7 +3783,7 @@ Bagian ini mengajarkan **berinteraksi dengan database** dari Zsh: PostgreSQL (`p
 
 **Koneksi:**
 
-```zsh
+```bash
 psql -h localhost -U user -d dbname
 ```
 
@@ -3795,13 +3795,13 @@ psql -h localhost -U user -d dbname
 
 **Batch query:**
 
-```zsh
+```bash
 psql -h localhost -U user -d db -c "SELECT * FROM users;"
 ```
 
 **CSV output:**
 
-```zsh
+```bash
 psql -h localhost -U user -d db --csv -c "SELECT * FROM users;"
 ```
 
@@ -3809,7 +3809,7 @@ psql -h localhost -U user -d db --csv -c "SELECT * FROM users;"
 
 **Alternatif format:**
 
-```zsh
+```bash
 psql -t -A -F"," -c "SELECT id, nama FROM users;"
 ```
 
@@ -3820,13 +3820,13 @@ psql -t -A -F"," -c "SELECT id, nama FROM users;"
 
 **Dari file:**
 
-```zsh
+```bash
 psql -h localhost -U user -d db -f script.sql
 ```
 
 **Dengan environment variable:**
 
-```zsh
+```bash
 export PGHOST=localhost
 export PGUSER=user
 export PGDATABASE=db
@@ -3841,13 +3841,13 @@ psql -c "SELECT 1"
 
 **Koneksi:**
 
-```zsh
+```bash
 mysql -h localhost -u user -p dbname
 ```
 
 **Batch query:**
 
-```zsh
+```bash
 mysql -h localhost -u user -psecret db -e "SELECT * FROM users;"
 ```
 
@@ -3855,7 +3855,7 @@ mysql -h localhost -u user -psecret db -e "SELECT * FROM users;"
 
 **Output tab-separated:**
 
-```zsh
+```bash
 mysql -h localhost -u user -p db -e "SELECT * FROM users;" -B
 ```
 
@@ -3863,7 +3863,7 @@ mysql -h localhost -u user -p db -e "SELECT * FROM users;" -B
 
 **Dari file:**
 
-```zsh
+```bash
 mysql -h localhost -u user -p db < script.sql
 ```
 
@@ -3878,7 +3878,7 @@ password=mypass
 database=mydb
 ```
 
-```zsh
+```bash
 mysql -e "SELECT 1"   # Otomatis baca ~/.my.cnf
 ```
 
@@ -3886,7 +3886,7 @@ mysql -e "SELECT 1"   # Otomatis baca ~/.my.cnf
 
 **Koneksi:**
 
-```zsh
+```bash
 sqlite3 db.sqlite
 ```
 
@@ -3894,31 +3894,31 @@ sqlite3 db.sqlite
 
 **Batch query:**
 
-```zsh
+```bash
 sqlite3 db.sqlite "SELECT * FROM users;"
 ```
 
 **Output CSV:**
 
-```zsh
+```bash
 sqlite3 -csv db.sqlite "SELECT * FROM users;"
 ```
 
 **Output header:**
 
-```zsh
+```bash
 sqlite3 -header -csv db.sqlite "SELECT * FROM users;"
 ```
 
 **Dari file:**
 
-```zsh
+```bash
 sqlite3 db.sqlite < script.sql
 ```
 
 **Perintah dot (meta-command):**
 
-```zsh
+```bash
 sqlite3 db.sqlite <<'EOF'
 .mode csv
 .headers on
@@ -3936,7 +3936,7 @@ EOF
 
 **CSV → array Zsh:**
 
-```zsh
+```bash
 # Ambil data sebagai CSV
 csv=$(psql --csv -t -c "SELECT id, nama FROM users;")
 
@@ -3953,7 +3953,7 @@ done <<< "$csv"
 
 **JSON output (PostgreSQL):**
 
-```zsh
+```bash
 psql -t -A -c "SELECT json_agg(t) FROM (SELECT * FROM users) t;"
 ```
 
@@ -3961,7 +3961,7 @@ psql -t -A -c "SELECT json_agg(t) FROM (SELECT * FROM users) t;"
 
 ### Contoh Studi Kasus: Migrasi Data
 
-```zsh
+```bash
 #!/bin/zsh
 
 migrasi() {
@@ -4059,21 +4059,21 @@ Bagian ini mengajarkan **mengelola environment variable** untuk konfigurasi dan 
 
 **Set sementara:**
 
-```zsh
+```bash
 export API_URL="https://api.example.com"
 curl "$API_URL/users"
 ```
 
 **Set permanen (`~/.zshrc`):**
 
-```zsh
+```bash
 export EDITOR="nvim"
 export PATH="$HOME/bin:$PATH"
 ```
 
 **Reload:**
 
-```zsh
+```bash
 source ~/.zshrc
 ```
 
@@ -4083,14 +4083,14 @@ source ~/.zshrc
 
 **Untuk script non-interaktif, gunakan `.zshenv`:**
 
-```zsh
+```bash
 # ~/.zshenv
 export API_URL="https://api.example.com"
 ```
 
 **Baca `.env` file:**
 
-```zsh
+```bash
 # .env
 API_URL=https://api.example.com
 API_KEY=secret123
@@ -4115,7 +4115,7 @@ set +a
 
 **`.gitignore`:**
 
-```
+```bash
 .env
 *.key
 *.pem
@@ -4124,13 +4124,13 @@ secrets/
 
 **Cek secret di git history:**
 
-```zsh
+```bash
 git log -p | grep -i 'password\|api_key\|secret'
 ```
 
 **Gunakan password manager:**
 
-```zsh
+```bash
 # 1Password CLI
 export API_KEY=$(op read "op://Vault/Item/field")
 
@@ -4143,7 +4143,7 @@ export API_KEY=$(bw get password api-key)
 
 **`direnv` — auto-load per direktori:**
 
-```zsh
+```bash
 # Install
 brew install direnv
 
@@ -4158,7 +4158,7 @@ export API_KEY="secret"
 
 **File secret dengan permission ketat:**
 
-```zsh
+```bash
 # Buat file secret
 umask 077   # Hanya owner yang bisa baca
 echo "API_KEY=secret" > ~/.secrets/api_key
@@ -4171,7 +4171,7 @@ source ~/.secrets/api_key
 
 **Mask secret di log:**
 
-```zsh
+```bash
 log() {
     local msg="$1"
     # Mask nilai env var yang sensitif
@@ -4184,7 +4184,7 @@ log() {
 
 **Struktur proyek:**
 
-```
+```bash
 proyek/
 ├── .envrc          # Konfigurasi direnv
 ├── .env            # Secret (gitignored)
@@ -4193,7 +4193,7 @@ proyek/
 
 **`.envrc`:**
 
-```zsh
+```bash
 # Load .env
 dotenv
 
@@ -4211,7 +4211,7 @@ PATH_add bin
 
 ### Contoh Studi Kasus: Konfigurasi Multi-Environment
 
-```zsh
+```bash
 #!/bin/zsh
 
 # Tentukan environment
@@ -4319,27 +4319,27 @@ Bagian ini mengajarkan **menggabungkan alat CLI modern** dalam pipeline. Peranny
 
 **Ambil nama pod:**
 
-```zsh
+```bash
 kubectl get pods -o json | jq -r '.items[].metadata.name'
 ```
 
 **Filter pod running:**
 
-```zsh
+```bash
 kubectl get pods -o json \
     | jq -r '.items[] | select(.status.phase == "Running") | .metadata.name'
 ```
 
 **Ambil image:**
 
-```zsh
+```bash
 kubectl get pods -o json \
     | jq -r '.items[] | [.metadata.name, .spec.containers[0].image] | @tsv'
 ```
 
 **Format custom:**
 
-```zsh
+```bash
 kubectl get pods -o custom-columns=NAME:.metadata.name,STATUS:.status.phase
 ```
 
@@ -4349,26 +4349,26 @@ kubectl get pods -o custom-columns=NAME:.metadata.name,STATUS:.status.phase
 
 **List PR:**
 
-```zsh
+```bash
 gh pr list --json number,title,author \
     | jq -r '.[] | "#\(.number) \(.title) by \(.author.login)"'
 ```
 
 **Buat issue:**
 
-```zsh
+```bash
 gh issue create --title "Bug: ..." --body "Deskripsi..." --label bug
 ```
 
 **Lihat repo:**
 
-```zsh
+```bash
 gh repo view --json name,description,stargazerCount
 ```
 
 **API langsung:**
 
-```zsh
+```bash
 gh api repos/owner/repo/pulls | jq -r '.[].title'
 ```
 
@@ -4378,7 +4378,7 @@ gh api repos/owner/repo/pulls | jq -r '.[].title'
 
 **AWS S3:**
 
-```zsh
+```bash
 aws s3 ls s3://bucket/ --recursive | awk '{print $4}'
 
 # Output JSON
@@ -4388,14 +4388,14 @@ aws s3api list-objects-v2 --bucket mybucket \
 
 **AWS EC2:**
 
-```zsh
+```bash
 aws ec2 describe-instances \
     | jq -r '.Reservations[].Instances[] | [.InstanceId, .State.Name] | @tsv'
 ```
 
 **gcloud:**
 
-```zsh
+```bash
 gcloud compute instances list --format=json \
     | jq -r '.[] | [.name, .status] | @tsv'
 ```
@@ -4404,7 +4404,7 @@ gcloud compute instances list --format=json \
 
 ### Contoh Studi Kasus: Dashboard Cluster
 
-```zsh
+```bash
 #!/bin/zsh
 
 dashboard() {
@@ -4486,7 +4486,7 @@ Bagian ini **tidak ada di kurikulum asli** Anda, tetapi saya tambahkan karena pi
 
 **Masalah default:** Exit code pipeline = exit code perintah **terakhir**. Jika `curl` gagal tapi `jq` sukses, pipeline dianggap sukses.
 
-```zsh
+```bash
 false | true
 echo $?   # 0 — padahal false gagal!
 ```
@@ -4497,7 +4497,7 @@ echo $?   # 0 — padahal false gagal!
 
 **`setopt pipefail`:**
 
-```zsh
+```bash
 setopt pipefail
 false | true
 echo $?   # 1 — sekarang mendeteksi kegagalan
@@ -4507,7 +4507,7 @@ echo $?   # 1 — sekarang mendeteksi kegagalan
 
 **`pipestatus` (Zsh) vs `PIPESTATUS` (Bash):**
 
-```zsh
+```bash
 # Zsh — lowercase, 1-indexed
 false | true | false
 echo "${pipestatus[@]}"   # 1 0 1
@@ -4521,7 +4521,7 @@ echo "${pipestatus[1]}"   # 1
 
 **Cek setiap stage:**
 
-```zsh
+```bash
 setopt pipefail
 
 curl -s https://api.example.com/data | jq '.items' | head -5
@@ -4540,7 +4540,7 @@ fi
 
 **1. `set -e` + `setopt pipefail`:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -e
 setopt pipefail
@@ -4555,7 +4555,7 @@ curl -s https://api.example.com/data | jq '.items'
 
 **2. Simpan exit code sebelum perintah lain:**
 
-```zsh
+```bash
 result=$(curl -s https://api.example.com/data)
 curl_status=$?
 jq_status=$?
@@ -4570,7 +4570,7 @@ fi
 
 **3. `if` dengan pipeline:**
 
-```zsh
+```bash
 if ! curl -sf https://api.example.com/data | jq -e '.items'; then
     echo "Pipeline gagal" >&2
     exit 1
@@ -4581,7 +4581,7 @@ fi
 
 **4. `trap` untuk cleanup:**
 
-```zsh
+```bash
 #!/bin/zsh
 set -e
 setopt pipefail
@@ -4599,7 +4599,7 @@ jq '.items' /tmp/temp_data
 
 **5. Logging setiap stage:**
 
-```zsh
+```bash
 run_pipeline() {
     local status
     
@@ -4618,7 +4618,7 @@ run_pipeline() {
 
 ### Contoh Studi Kasus: Pipeline API → Database
 
-```zsh
+```bash
 #!/bin/zsh
 set -e
 setopt pipefail
@@ -4721,7 +4721,7 @@ Bagian ini **tidak ada di kurikulum asli** Anda, tetapi saya tambahkan karena ke
 
 **`eval` mengeksekusi string sebagai kode:**
 
-```zsh
+```bash
 # BAHAYA
 user_input="rm -rf /"
 eval "$user_input"   # Menghapus seluruh filesystem!
@@ -4734,7 +4734,7 @@ eval "$user_input"   # Menghapus seluruh filesystem!
 
 **Alternatif aman:**
 
-```zsh
+```bash
 # JANGAN
 eval "ls $user_input"
 
@@ -4745,7 +4745,7 @@ ls "${args[@]}"
 
 **Jika `eval` terpaksa:**
 
-```zsh
+```bash
 # Sanitasi: hanya alphanumeric
 if [[ "$user_input" =~ ^[a-zA-Z0-9_]+$ ]]; then
     eval "$user_input"
@@ -4761,7 +4761,7 @@ fi
 
 **Selalu quote variabel:**
 
-```zsh
+```bash
 # BAHAYA — jika $file berisi spasi
 rm $file
 
@@ -4773,7 +4773,7 @@ rm "$file"
 
 **Quote dalam array:**
 
-```zsh
+```bash
 # AMAN
 args=("-f" "$file" "--output" "$out")
 command "${args[@]}"
@@ -4781,7 +4781,7 @@ command "${args[@]}"
 
 **Jangan pakai `eval` untuk quote:**
 
-```zsh
+```bash
 # BAHAYA
 eval "command '$user_input'"
 
@@ -4791,7 +4791,7 @@ command "$user_input"
 
 **Zsh-specific: `${(q)var}`:**
 
-```zsh
+```bash
 # Quote untuk shell
 quoted="${(q)user_input}"
 # Hasil: string yang aman untuk eval
@@ -4803,7 +4803,7 @@ quoted="${(q)user_input}"
 
 **1. Glob qualifiers `(e:)` dan `(+)`:**
 
-```zsh
+```bash
 # BAHAYA — eksekusi kode saat glob
 ls *(e:'echo hacked':)
 ```
@@ -4812,7 +4812,7 @@ ls *(e:'echo hacked':)
 
 **2. `PROMPT_SUBST` dan prompt injection:**
 
-```zsh
+```bash
 # BAHAYA — jika branch name berisi escape
 setopt prompt_subst
 PS1='$(git branch --show-current) $ '
@@ -4820,7 +4820,7 @@ PS1='$(git branch --show-current) $ '
 
 **Solusi:**
 
-```zsh
+```bash
 # Escape % dan $ di output
 precmd() {
     local branch=$(git branch --show-current)
@@ -4831,14 +4831,14 @@ precmd() {
 
 **3. `zmodload` dan modul berbahaya:**
 
-```zsh
+```bash
 # BAHAYA — bisa buka socket
 zmodload zsh/net/tcp
 ```
 
 **4. `source` file dari direktori yang tidak aman:**
 
-```zsh
+```bash
 # BAHAYA — file bisa dimodifikasi
 source /tmp/user_script.zsh
 
@@ -4852,7 +4852,7 @@ fi
 
 ### Contoh Studi Kasus: Sanitasi Input
 
-```zsh
+```bash
 #!/bin/zsh
 
 validate_input() {

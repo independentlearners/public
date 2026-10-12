@@ -29,7 +29,7 @@ Zsh menyediakan builtin `whence` untuk membantu mengetahui bagaimana suatu nama 
 
 Coba jalankan:
 
-```
+```bash
 whence -w cd
 whence -w print
 whence -w ls
@@ -39,7 +39,7 @@ Opsi `-w` meminta Zsh menjelaskan jenis perintah. Hasilnya dapat menunjukkan kat
 
 Untuk informasi yang lebih terperinci, gunakan:
 
-```
+```bash
 whence -v cd
 whence -v print
 whence -v ls
@@ -60,7 +60,7 @@ Ada beberapa kemungkinan:
 
 Kita bisa memeriksa nama yang tersedia:
 
-```
+```bash
 whence -va ll
 ```
 
@@ -74,13 +74,13 @@ Zsh menyediakan dua mekanisme penting: `builtin` dan `command`.
 
 `builtin` meminta Zsh menjalankan builtin dengan nama tertentu:
 
-```
+```bash
 builtin cd /tmp
 ```
 
 `command` meminta shell menjalankan perintah tanpa menggunakan fungsi shell dengan nama tersebut:
 
-```
+```bash
 command ls
 ```
 
@@ -88,7 +88,7 @@ Dalam praktiknya, `command` berguna ketika Anda ingin menghindari fungsi yang me
 
 Perhatikan contoh berikut:
 
-```
+```bash
 my_command() {
     print -r -- "Ini fungsi buatan sendiri"
 }
@@ -107,7 +107,7 @@ Anda sudah mengenal `printf` dari Bash. Zsh juga menyediakan builtin `print` den
 
 Contoh:
 
-```
+```bash
 print "Halo"
 print -r -- '$HOME tetap berupa teks'
 print -n -- "Tanpa newline"
@@ -180,7 +180,7 @@ Bagian ini membahas bagaimana Zsh menyediakan fitur internal untuk mengelola par
 
 `typeset` adalah builtin Zsh untuk mendeklarasikan parameter dan menentukan atributnya. Parameter di sini mencakup variabel biasa, array, dan associative array.
 
-```
+```bash
 typeset username="user"
 typeset -i count=10
 typeset -a tools=(git fzf nvim)
@@ -198,7 +198,7 @@ Arti setiap deklarasi:
 
 Contoh atribut integer:
 
-```
+```bash
 typeset -i count=10
 count=count+5
 
@@ -207,7 +207,7 @@ print -r -- "$count"
 
 Hasil:
 
-```
+```bash
 15
 ```
 
@@ -215,7 +215,7 @@ Karena `count` memiliki atribut integer, Zsh memperlakukan nilainya sebagai bila
 
 `typeset` juga berkaitan dengan cakupan variabel. Di dalam fungsi, deklarasi `local` merupakan cara yang lazim untuk membuat variabel lokal:
 
-```
+```bash
 show_message() {
     local message="Halo dari fungsi"
     print -r -- "$message"
@@ -232,7 +232,7 @@ Konsep utama: `typeset` bukan sekadar cara lain menulis `name=value`. Ia juga me
 
 Zsh memiliki builtin `functions` yang dapat digunakan untuk menampilkan definisi fungsi yang sudah dikenal oleh shell.
 
-```
+```bash
 my_greeting() {
     print -r -- "Halo"
 }
@@ -240,7 +240,7 @@ my_greeting() {
 
 Setelah fungsi didefinisikan, jalankan:
 
-```
+```bash
 functions my_greeting
 ```
 
@@ -248,7 +248,7 @@ Zsh akan menampilkan definisi fungsi tersebut.
 
 Untuk memeriksa apakah suatu nama dikenali sebagai fungsi, gunakan:
 
-```
+```bash
 whence -w my_greeting
 ```
 
@@ -277,13 +277,13 @@ Kita bisa menguji mekanisme ini dalam direktori sementara.
 
 Pertama, buat direktori untuk menyimpan fungsi:
 
-```
+```bash
 mkdir -p ~/zsh-functions
 ```
 
 Buat file `~/zsh-functions/hello_zsh` dengan isi berikut:
 
-```
+```bash
 print -r -- "Fungsi autoload berhasil dipanggil"
 ```
 
@@ -291,7 +291,7 @@ Pada format native Zsh yang digunakan contoh ini, file tersebut berisi isi fungs
 
 Kemudian, di sesi Zsh yang sama:
 
-```
+```bash
 fpath=(~/zsh-functions $fpath)
 autoload -Uz hello_zsh
 hello_zsh
@@ -299,7 +299,7 @@ hello_zsh
 
 Hasilnya:
 
-```
+```bash
 Fungsi autoload berhasil dipanggil
 ```
 
@@ -328,7 +328,7 @@ Keempat builtin ini berhubungan dengan direktori kerja, tetapi tidak memiliki fu
 
 Coba urutan berikut:
 
-```
+```bash
 cd ~
 pushd /tmp
 dirs -v
@@ -399,7 +399,7 @@ Hanya menampilkan directory stack
 
 Contoh:
 
-```
+```bash
 read -r username
 print -r -- "Nama: $username"
 ```
@@ -410,7 +410,7 @@ Opsi `-r` membuat `read` memperlakukan backslash sebagai karakter biasa, bukan s
 
 Agar pengguna mendapat petunjuk sebelum memasukkan input, Anda dapat menggunakan `-p` pada Zsh:
 
-```
+```bash
 read -r "username?Masukkan nama: "
 print -r -- "Nama: $username"
 ```
@@ -419,7 +419,7 @@ Perhatikan perbedaan sintaksnya: format `read -r "parameter?prompt"` merupakan b
 
 Untuk membaca input dengan batas waktu:
 
-```
+```bash
 if read -r -t 5 "answer?Jawab dalam 5 detik: "; then
     print -r -- "Input: $answer"
 else
@@ -435,26 +435,26 @@ Keduanya digunakan untuk membaca dan menjalankan isi file dalam lingkungan shell
 
 Misalnya, file `settings.zsh` berisi:
 
-```
+```bash
 MY_EDITOR="nvim"
 ```
 
 Anda dapat memuatnya dengan:
 
-```
+```bash
 source ./settings.zsh
 print -r -- "$MY_EDITOR"
 ```
 
 Hasilnya:
 
-```
+```bash
 nvim
 ```
 
 Zsh juga mendukung bentuk berikut:
 
-```
+```bash
 . ./settings.zsh
 ```
 
@@ -468,13 +468,13 @@ Zsh memiliki sistem modul yang dapat menyediakan fitur tambahan bagi shell. `zmo
 
 Untuk melihat modul yang telah dimuat:
 
-```
+```bash
 zmodload
 ```
 
 Untuk memuat modul tertentu, sintaks umumnya:
 
-```
+```bash
 zmodload nama_modul
 ```
 
@@ -516,7 +516,7 @@ Ketiganya memengaruhi cara Zsh menjalankan perintah, tetapi mekanismenya berbeda
 
 Misalnya Anda membuat fungsi bernama `ls`:
 
-```
+```bash
 ls() {
     print -r -- "Ini fungsi ls"
 }
@@ -524,13 +524,13 @@ ls() {
 
 Saat menjalankan:
 
-```
+```bash
 ls
 ```
 
 Zsh memanggil fungsi tersebut. Untuk meminta Zsh mencari perintah eksternal bernama `ls` tanpa memanggil fungsi `ls` itu, gunakan:
 
-```
+```bash
 command ls
 ```
 
@@ -538,7 +538,7 @@ Catatan: `command` tidak dengan sendirinya menonaktifkan ekspansi alias. Jika na
 
 2\. `builtin` — memaksa pemanggilan builtin
 
-```
+```bash
 cd /tmp
 builtin cd ~
 ```
@@ -547,7 +547,7 @@ builtin cd ~
 
 3\. `exec` — mengganti proses shell
 
-```
+```bash
 exec program
 ```
 
@@ -565,14 +565,14 @@ Perbedaan intinya:
 
 `eval` meminta shell mem-parsing dan menjalankan teks sebagai perintah shell.
 
-```
+```bash
 name="Zsh"
 eval 'print -r -- "$name"'
 ```
 
 Hasil:
 
-```
+```bash
 Zsh
 ```
 
@@ -580,7 +580,7 @@ Perhatikan bahwa teks yang diteruskan ke `eval` diproses sebagai kode shell. Ini
 
 Contoh berisiko:
 
-```
+```bash
 eval "$user_input"
 ```
 

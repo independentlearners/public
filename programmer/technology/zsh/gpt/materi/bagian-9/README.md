@@ -6,7 +6,7 @@ Fokus lesson ini adalah memahami bagaimana fungsi Zsh didefinisikan, menerima ar
 
 Fungsi mengelompokkan serangkaian perintah di bawah satu nama agar dapat dipanggil kembali.
 
-```
+```bash
 greet() {
     print -r -- "Halo dari Zsh"
 }
@@ -29,7 +29,7 @@ Fungsi juga bisa ditulis dengan sintaks `function greet { ... }`, tetapi bentuk 
 
 Saat fungsi dipanggil, argumen tersedia melalui parameter posisi, seperti pada scripting shell lainnya.
 
-```
+```bash
 show_args() {
     print -r -- "Argumen pertama: $1"
     print -r -- "Argumen kedua: $2"
@@ -41,7 +41,7 @@ show_args git status
 
 Hasil:
 
-```
+```bash
 Argumen pertama: git
 Argumen kedua: status
 Jumlah argumen: 2
@@ -59,7 +59,7 @@ Makna parameter yang digunakan:
 
 Untuk meneruskan seluruh argumen sebagai argumen terpisah, gunakan `"$@"`:
 
-```
+```bash
 run_command() {
     command "$@"
 }
@@ -67,7 +67,7 @@ run_command() {
 
 Misalnya:
 
-```
+```bash
 run_command ls -l /tmp
 ```
 
@@ -77,7 +77,7 @@ Fungsi meneruskan `ls`, `-l`, dan `/tmp` sebagai tiga argumen terpisah. Ini lebi
 
 Variabel yang dibuat di dalam fungsi tidak otomatis menjadi lokal. Jika Anda ingin variabel hanya digunakan oleh fungsi tersebut, deklarasikan dengan `local`.
 
-```
+```bash
 message="Variabel global"
 
 show_message() {
@@ -91,7 +91,7 @@ print -r -- "$message"
 
 Hasil:
 
-```
+```bash
 Variabel lokal
 Variabel global
 ```
@@ -106,7 +106,7 @@ Untuk konfigurasi Zsh, gunakan variabel lokal bagi nilai sementara yang hanya di
 
 Fungsi dapat memberikan status keluar kepada pemanggil menggunakan `return`.
 
-```
+```bash
 check_directory() {
     if [[ -d "$1" ]]; then
         return 0
@@ -141,7 +141,7 @@ Tanpa autoload, Anda dapat memuat file fungsi secara langsung dengan `source`. N
 
 Contoh struktur:
 
-```
+```bash
 ~/.config/zsh/
 ├── .zshrc
 └── functions/
@@ -150,7 +150,7 @@ Contoh struktur:
 
 Isi file `~/.config/zsh/functions/mkcd`:
 
-```
+```bash
 mkdir -- "$1" && cd -- "$1"
 ```
 
@@ -158,14 +158,14 @@ Ini adalah isi fungsi dalam format native Zsh untuk autoload, bukan deklarasi pe
 
 Dalam sesi Zsh, jalankan:
 
-```
+```bash
 fpath=("$HOME/.config/zsh/functions" $fpath)
 autoload -Uz mkcd
 ```
 
 Sekarang Anda dapat memanggil:
 
-```
+```bash
 mkcd proyek-baru
 ```
 
@@ -214,7 +214,7 @@ Fokus bagian ini adalah memahami bagaimana fungsi Zsh menerima argumen, menjaga 
 
 Dalam fungsi Zsh, `"$@"` dan `"$*"` tidak setara ketika diberi tanda kutip.
 
-```
+```bash
 show_args() {
     print -r -- "Jumlah argumen: $#"
 
@@ -228,7 +228,7 @@ show_args git status "file dengan spasi.txt"
 
 Hasilnya berupa tiga argumen terpisah:
 
-```
+```bash
 Jumlah argumen: 3
 Argumen: git
 Argumen: status
@@ -243,7 +243,7 @@ Perbedaannya:
 
 Untuk fungsi yang meneruskan argumen ke program lain, gunakan pola berikut:
 
-```
+```bash
 run_command() {
     command "$@"
 }
@@ -257,7 +257,7 @@ run_command ls -l "/tmp"
 
 Fungsi dapat menghasilkan teks sekaligus mengembalikan status keluar. Keduanya memiliki tujuan berbeda.
 
-```
+```bash
 get_shell_name() {
     print -r -- "$SHELL"
     return 0
@@ -279,7 +279,7 @@ Penjelasannya:
 
 Jika fungsi dipanggil langsung dalam kondisi `if`, statusnya dapat digunakan tanpa mengambil `$?` secara manual:
 
-```
+```bash
 if get_shell_name >/dev/null; then
     print -r -- "Fungsi berhasil"
 else
@@ -295,7 +295,7 @@ Konfigurasi Zsh dapat mengubah perilaku shell melalui `setopt` dan `unsetopt`. J
 
 Contoh:
 
-```
+```bash
 temporary_option() {
     setopt EXTENDED_GLOB
 }
@@ -305,7 +305,7 @@ Fungsi tersebut mengaktifkan `EXTENDED_GLOB`, tetapi tidak secara eksplisit meng
 
 Untuk fungsi yang memang dirancang menggunakan sintaks dan perilaku native Zsh, gunakan:
 
-```
+```bash
 my_function() {
     emulate -L zsh
 
@@ -329,7 +329,7 @@ Catatan: `emulate -L zsh` tidak mengisolasi seluruh efek samping fungsi. Perubah
 
 Sebelumnya, kita membuat fungsi sederhana untuk membuat direktori dan langsung masuk ke dalamnya. Sekarang kita perbaiki dengan validasi argumen dan penanganan kegagalan.
 
-```
+```bash
 mkcd() {
     emulate -L zsh
 
@@ -345,7 +345,7 @@ mkcd() {
 
 Contoh pemakaian:
 
-```
+```bash
 mkcd proyek-baru
 ```
 
@@ -367,7 +367,7 @@ Setelah fungsi bekerja, kita dapat memisahkannya dari berkas konfigurasi utama.
 
 Struktur:
 
-```
+```bash
 ~/.config/zsh/
 ├── zshrc
 └── functions/
@@ -376,7 +376,7 @@ Struktur:
 
 Isi berkas `~/.config/zsh/functions/mkcd`:
 
-```
+```bash
 emulate -L zsh
 
 if (( $# != 1 )); then
@@ -392,7 +392,7 @@ Untuk format autoload native Zsh ini, berkas berisi badan fungsi, bukan deklaras
 
 Daftarkan direktori fungsi dan tandai fungsi untuk autoload:
 
-```
+```bash
 fpath=("$HOME/.config/zsh/functions" $fpath)
 autoload -Uz mkcd
 ```
@@ -452,7 +452,7 @@ show_args git status
 
 Hasilnya:
 
-```
+```bash
 Argumen pertama: git
 Jumlah argumen: 2
 ```
@@ -487,7 +487,7 @@ inspect_args alpha "dua kata" gamma
 
 Hasilnya:
 
-```
+```bash
 Jumlah argumen: 3
 Argumen: [alpha]
 Argumen: [dua kata]

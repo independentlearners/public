@@ -40,7 +40,7 @@ Yang membedakan Zsh dari shell lain adalah Zsh memandang globbing sebagai **baha
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # * — mencocokkan nol atau lebih karakter (tidak melewati /)
 ls *.txt                    # Semua file berakhiran .txt
 ls foo*                     # Semua file yang diawali "foo"
@@ -79,7 +79,7 @@ ls file[^0-9].txt           # fileA.txt (bukan file1.txt)
 
 ### Diagram Alur: Bagaimana Globbing Bekerja
 
-```
+```bash
 Anda mengetik: ls *.txt
         │
         ▼
@@ -137,7 +137,7 @@ Perintah akhir yang dijalankan: ls file1.txt file2.txt file3.txt
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Buat struktur file untuk latihan
 mkdir -p /tmp/zsh-glob-lab && cd /tmp/zsh-glob-lab
 touch file1.txt file2.txt fileA.txt file01.txt .hidden.txt
@@ -180,7 +180,7 @@ Secara teknis, `**/` setara dengan `(*/)#` dalam sintaks Zsh. Artinya: "nol atau
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # **/ — rekursif melalui semua subdirektori
 ls **/*.txt                 # Semua .txt di direktori ini dan semua subdir
 ls **/*.log                 # Semua .log secara rekursif
@@ -204,7 +204,7 @@ ls **.c                     # Sama dengan **/*.c
 
 **Mengapa `**/` penting?** Karena ini menghilangkan kebutuhan akan `find` untuk sebagian besar kasus. Bandingkan:
 
-```zsh
+```bash
 # Dengan find (POSIX, bekerja di shell apa pun)
 find . -name '*.txt' -type f
 
@@ -228,7 +228,7 @@ ls **/*.txt(D.)
 
 Misalkan struktur direktori:
 
-```
+```bash
 project/
 ├── main.c
 ├── README.md
@@ -243,7 +243,7 @@ project/
 
 Ketika Anda menjalankan `ls **/*.c` dari dalam `project/`:
 
-```
+```bash
 **/  mencocokkan:
   ├── (nol direktori) → main.c  ✅
   ├── src/ → src/utils.c        ✅
@@ -285,7 +285,7 @@ Hasil: `main.c  src/utils.c  src/lib/helper.c  tests/test_main.c`
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Menggunakan struktur direktori dari latihan sebelumnya
 cd /tmp/zsh-glob-lab
 
@@ -333,7 +333,7 @@ Secara implementasi, Zsh melakukan langkah berikut:
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # Tipe file
 ls *(.)                 # Hanya file reguler (bukan direktori, bukan symlink)
 ls *(/)                 # Hanya direktori
@@ -401,7 +401,7 @@ Ini adalah konvensi yang perlu dihafal. Trik: "huruf kecil untuk saya sendiri, h
 
 ### Diagram Alur: Pattern → Qualifier → Hasil
 
-```
+```bash
 Pola:    *(.x)     ← "File reguler DAN owner-executable"
         │   │
         │   └── Qualifier: x (owner-executable)
@@ -451,7 +451,7 @@ Dengan menggabungkan qualifier, Anda memfilter dengan logika AND.
 
 ### Latihan Praktis
 
-```zsh
+```bash
 cd /tmp/zsh-glob-lab
 
 # Latihan 1: Tipe file
@@ -490,7 +490,7 @@ Filosofi kuncinya: **metadata file adalah data**. Ketika Anda menulis `*(Lk+100)
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === UKURAN FILE (L = Length) ===
 ls *(L0)                    # File kosong (0 byte)
 ls *(Lk+100)                # File lebih dari 100 KB
@@ -537,7 +537,7 @@ ls *(l2)                    # File dengan tepat 2 hard link
 
 Qualifier `m`, `a`, dan `c` menggunakan format:
 
-```
+```bash
 m[unit][+|-]N
 
 m   = modification time (waktu modifikasi)
@@ -587,7 +587,7 @@ Jadi: "File yang dimodifikasi **kurang dari** 5 jam yang lalu" = dimodifikasi da
 
 ### Diagram Alur: Qualifier Ukuran sebagai Filter Numerik
 
-```
+```bash
 Pola: *(.Lk+100m-1)   ← "File reguler, > 100 KB, < 1 MB, dimodifikasi < 1 hari"
 
 Breakdown:
@@ -641,7 +641,7 @@ Hasil: fileB.txt fileD.jpg
 
 ### Latihan Praktis
 
-```zsh
+```bash
 cd /tmp/zsh-glob-lab
 
 # Buat file dengan ukuran berbeda
@@ -691,7 +691,7 @@ Filosofinya: **"Jangan berikan semua; berikan yang paling relevan."** Dalam duni
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === SORTING ===
 # o = order (ascending/terkecil dulu), O = reverse order (terbesar dulu)
 
@@ -762,7 +762,7 @@ Tanda kurung siku setelah qualifier sorting adalah **array subscript** yang dite
 
 Kombinasi `om[1]` adalah idiom paling terkenal: "urutkan berdasarkan mtime ascending (terlama dulu), lalu ambil elemen pertama" — tapi tunggu, itu memberikan **file terlama**, bukan terbaru. Untuk file terbaru, gunakan `Om[1]`:
 
-```zsh
+```bash
 ls *(Om[1])     # File TERBARU (sort descending, ambil pertama)
 ls *(om[1])     # File TERLAMA (sort ascending, ambil pertama)
 ```
@@ -776,7 +776,7 @@ Qualifier `Y` (bukan `y`) adalah qualifier pembatasan yang **berbeda** dari `[1,
 - `[1,n]` — **mengumpulkan semua** hasil, **mengurutkan**, lalu **memotong** n pertama. Bekerja setelah semua file ditemukan.
 - `Yn` — **berhenti mencari** setelah menemukan n file. Ini lebih cepat untuk direktori besar karena tidak perlu memproses semua file terlebih dahulu.
 
-```zsh
+```bash
 ls *(NY1)       # Berhenti setelah 1 file ditemukan (tidak peduli urutan)
 ls *(.omY1)     # Urutkan berdasarkan mtime, tapi berhenti setelah 1? 
                  # Sebenarnya Y dan o bisa digabung: Yn implies oN jika tidak ada o.
@@ -802,7 +802,7 @@ Dokumentasi Zsh menyatakan: "Yn enables short-circuit mode: the pattern will exp
 
 ### Diagram Alur: Sorting → Limit → Hasil
 
-```
+```bash
 Pola: *(.Om[1,3])   ← "3 file reguler terbaru"
 
 Langkah:
@@ -852,7 +852,7 @@ Hasil: e.txt c.txt b.txt
 
 ### Latihan Praktis
 
-```zsh
+```bash
 cd /tmp/zsh-glob-lab
 
 # Buat beberapa file dengan ukuran dan waktu berbeda
@@ -911,7 +911,7 @@ Perbedaan filosofisnya:
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 setopt EXTENDED_GLOB    # Wajib untuk ^ dan ~
 
 # === NEGASI SEDERHANA (^) ===
@@ -946,7 +946,7 @@ Dari FAQ Zsh (diterjemahkan dari mailing list oleh Peter Stephenson):
 
 **Contoh perbedaan `^` dan `~`:**
 
-```zsh
+```bash
 # Skenario: Ada file: a.c, b.c, c.h, d.h
 
 ls ^*.c                 # b.c? Tidak — hasil: c.h, d.h (semua kecuali .c)
@@ -963,7 +963,7 @@ ls foo*.c~foo1.c        # foo2.h? Tidak — foo*.c hanya cocok .c, jadi hasil: (
 
 **Brace expansion dengan exclusion:**
 
-```zsh
+```bash
 ls ^*.{jpg,png}         # Ini bekerja karena brace expansion terjadi SEBELUM globbing
 # Setara dengan: ls ^*.jpg ^*.png — tapi tunggu, itu tidak benar.
 # Sebenarnya: brace expansion menghasilkan: ^*.jpg ^*.png
@@ -987,7 +987,7 @@ ls ^*.(jpg|png)         # Dengan EXTENDED_GLOB dan grouping
 
 ### Diagram Alur: Cara Kerja `^` dan `~`
 
-```
+```bash
 Contoh: ls ^*.tmp   (setopt EXTENDED_GLOB)
 
 Langkah:
@@ -1044,7 +1044,7 @@ Langkah:
 
 ### Latihan Praktis
 
-```zsh
+```bash
 cd /tmp/zsh-glob-lab
 setopt EXTENDED_GLOB
 
@@ -1094,7 +1094,7 @@ Zsh memilih `NOMATCH` sebagai default karena **prinsip keamanan**: jika Anda men
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === NOMATCH (default) ===
 ls *.nonexistent
 # → zsh: no matches found: *.nonexistent
@@ -1154,7 +1154,7 @@ Kapan menggunakan yang mana?
 
 ### Diagram Alur: NOMATCH vs NULL_GLOB
 
-```
+```bash
 Anda mengetik: ls *.tmp
 
 Ada file .tmp di direktori?
@@ -1197,7 +1197,7 @@ Ada file .tmp di direktori?
 
 ### Latihan Praktis
 
-```zsh
+```bash
 cd /tmp/zsh-glob-lab
 
 # Latihan 1: NOMATCH vs NULL_GLOB
@@ -1245,7 +1245,7 @@ Keduanya bisa dikombinasikan: `*(ND.)` = "file reguler, termasuk tersembunyi, ta
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === N — NULL_GLOB lokal ===
 ls *.txt(N)                 # Tidak error jika tidak ada .txt
 ls *(N)                     # Tidak error jika direktori kosong
@@ -1288,7 +1288,7 @@ Qualifier `D` mengubah ini untuk pola tertentu: `*(D)` = "semua file, termasuk y
 
 ### Diagram Alur: `N` dan `D` dalam Aksi
 
-```
+```bash
 Direktori: [.hidden.txt, a.txt, b.txt, .git/, subdir/]
 
 # Tanpa qualifier
@@ -1336,7 +1336,7 @@ ls *(ND.)     → .hidden.txt a.txt b.txt  (file reguler + hidden, no error)
 
 ### Latihan Praktis
 
-```zsh
+```bash
 cd /tmp/zsh-glob-lab
 
 # Latihan 1: N
@@ -1469,7 +1469,7 @@ Secara teknis, `compinit` melakukan beberapa hal :
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === INISIALISASI DASAR ===
 autoload -Uz compinit && compinit
 
@@ -1514,7 +1514,7 @@ autoload -Uz bashcompinit && bashcompinit
 
 ### Diagram Alur: Proses Inisialisasi
 
-```
+```bash
 Anda menjalankan: autoload -Uz compinit && compinit
         │
         ▼
@@ -1566,7 +1566,7 @@ Sistem completion siap digunakan
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: Inisialisasi dasar
 autoload -Uz compinit && compinit
 # Coba ketik: ls --<TAB> — apakah muncul opsi?
@@ -1595,7 +1595,7 @@ Dalam kurikulum, `zstyle` adalah **alat kontrol utama** untuk completion. Tanpa 
 Filosofi `zstyle` adalah **"konfigurasi berbasis konteks"**. Alih-alih memiliki serangkaian opsi global seperti `setopt`, `zstyle` memungkinkan Anda menentukan **di mana** konfigurasi berlaku. Anda bisa mengatur perilaku yang berbeda untuk perintah yang berbeda, argumen yang berbeda, atau bahkan tag yang berbeda.
 
 Struktur `zstyle` adalah:
-```
+```bash
 zstyle <context-pattern> <style-name> <value>
 ```
 
@@ -1612,7 +1612,7 @@ Filosofi kuncinya: **semakin spesifik pattern, semakin tinggi prioritasnya**. Ji
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === STYLE DASAR ===
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
@@ -1654,7 +1654,7 @@ zstyle ':completion:*:default' list-colors 'di=01;34' 'ln=01;36'
 `matcher-list` adalah style yang sangat kuat. Nilainya adalah daftar spesifikasi yang dipisahkan oleh spasi. Setiap spesifikasi adalah "matcher" yang akan dicoba secara berurutan. Jika matcher pertama tidak menemukan hasil, matcher kedua dicoba, dan seterusnya .
 
 Format matcher:
-```
+```bash
 m:<pattern>=<replacement>   # Map satu pola ke pola lain
 r:<pattern>=<replacement>   # Replace pola dengan replacement
 b:<pattern>=<replacement>   # Both (map dan replace)
@@ -1681,7 +1681,7 @@ Contoh:
 
 ### Diagram Alur: Cara `zstyle` Bekerja
 
-```
+```bash
 Anda mengetik: kill -<TAB>
         │
         ▼
@@ -1734,7 +1734,7 @@ Tampilkan opsi tanpa deskripsi lengkap
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: Konfigurasi dasar
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
@@ -1770,7 +1770,7 @@ Bayangkan Anda berada di sebuah restoran. Pelayan (completion system) perlu tahu
 
 Itulah context. Setiap kali Anda menekan TAB, completion system membangun string context yang mendeskripsikan **secara tepat** posisi Anda. String ini memiliki format :
 
-```
+```bash
 :completion:<function>:<completer>:<command>:<argument>:<tag>
 ```
 
@@ -1784,7 +1784,7 @@ Itulah context. Setiap kali Anda menekan TAB, completion system membangun string
 6. **`<tag>`** — Jenis match yang sedang dihasilkan. Misalnya `files`, `directories`, `options`, `jobs`.
 
 **Contoh context lengkap:**
-```
+```bash
 :completion::complete:dvips:option-o-1:files
 ```
 Artinya: "Completion normal sedang dilakukan untuk argumen pertama dari opsi `-o` pada perintah `dvips`, dan tipe match adalah files" .
@@ -1795,7 +1795,7 @@ Artinya: "Completion normal sedang dilakukan untuk argumen pertama dari opsi `-o
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === MELIHAT CONTEXT AKTUAL ===
 # Tekan Ctrl+X h saat completion aktif (setelah menekan TAB)
 # Ini akan menampilkan context dan tag yang tersedia
@@ -1840,7 +1840,7 @@ zstyle ':completion:*:*:kill:*:processes' verbose yes
 `_complete_help` adalah bindable command yang sangat berguna untuk debugging. Ketika Anda menekan `Ctrl+X h` (default binding), Zsh menampilkan context string dan daftar tag yang tersedia untuk posisi cursor saat ini. Ini adalah cara **paling akurat** untuk mengetahui pattern `zstyle` yang harus Anda gunakan .
 
 Contoh output:
-```
+```bash
 tags in context :completion::complete:git::
     commands  (_git_commands)
     ...
@@ -1861,7 +1861,7 @@ tags in context :completion::complete:git:argument-1::
 
 ### Diagram Alur: Konstruksi Context
 
-```
+```bash
 Anda mengetik: git commit -m <TAB>
         │
         ▼
@@ -1908,7 +1908,7 @@ Context akhir: :completion::complete:git:option-m-1:messages
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: Lihat context aktual
 # Ketik: git <Ctrl+X> h
 # Catat context string yang muncul
@@ -1951,7 +1951,7 @@ Filosofi `_arguments` adalah **"deklarasi, bukan imperatif"**. Alih-alih menulis
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === MENDEFINISIKAN COMPLETION FUNCTION SEDERHANA ===
 _my_command() {
     local -a options
@@ -2023,7 +2023,7 @@ _my_exclusive() {
 
 `_arguments` menerima daftar **spec** (spesifikasi) sebagai argumen. Setiap spec mendeskripsikan satu opsi atau argumen. Format umum:
 
-```
+```bash
 '[-]option[description]:message:action'
 ```
 
@@ -2062,7 +2062,7 @@ _my_exclusive() {
 
 ### Diagram Alur: Cara `compdef` dan `_arguments` Bekerja
 
-```
+```bash
 User mengetik: my_command --o<TAB>
         │
         ▼
@@ -2117,7 +2117,7 @@ Menampilkan saran: --output
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: Buat completion sederhana
 _my_ls() {
     _arguments \
@@ -2167,7 +2167,7 @@ Secara teknis, completion function adalah **fungsi shell biasa** yang:
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === STRUKTUR DASAR COMPLETION FUNCTION ===
 _my_completion() {
     local -a options values
@@ -2247,7 +2247,7 @@ compdef _my_dynamic my_dynamic
 
 `compadd` adalah **building block** dari semua completion function. Helper seperti `_describe`, `_arguments`, dan `_values` pada akhirnya memanggil `compadd`. Memahami `compadd` berarti memahami apa yang sebenarnya terjadi.
 
-```zsh
+```bash
 compadd [options] -- <matches...>
 ```
 
@@ -2283,7 +2283,7 @@ Opsi penting:
 
 ### Diagram Alur: Dari TAB ke Hasil
 
-```
+```bash
 User mengetik: my_command apple<TAB>
         │
         ▼
@@ -2341,7 +2341,7 @@ Zsh menampilkan:
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: Completion sederhana dengan compadd
 _my_fruits() {
     local -a fruits descs
@@ -2390,7 +2390,7 @@ Filosofi context-sensitive completion adalah **"satu perintah, banyak konteks"**
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === COMPLETION UNTUK SUBCOMMAND ===
 _my_tool() {
     local -a subcmds
@@ -2494,7 +2494,7 @@ Helper lanjutan untuk mendefinisikan completion berdasarkan **pola regex** pada 
 
 ### Diagram Alur: Subcommand Completion
 
-```
+```bash
 User mengetik: my_tool build --<TAB>
         │
         ▼
@@ -2547,7 +2547,7 @@ Tampilkan: --release  --target=
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: Completion dengan subcommand
 _my_cli() {
     local state
@@ -2618,7 +2618,7 @@ Format matcher:
 
 **Contoh matcher umum:**
 
-```zsh
+```bash
 # Case-insensitive
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
@@ -2631,7 +2631,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*'
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === MENU SELECTION ===
 # Menu selection dasar: tampilkan menu, navigasi dengan arrow keys
 zstyle ':completion:*' menu select
@@ -2701,7 +2701,7 @@ Menu selection lebih disukai karena lebih interaktif dan tidak mengubah command 
 
 ### Diagram Alur: Menu Selection
 
-```
+```bash
 User mengetik: git checkout <TAB>
         │
         ▼
@@ -2757,7 +2757,7 @@ Command line menjadi: git checkout feature/logout
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: Aktifkan menu selection
 zstyle ':completion:*' menu select
 
@@ -2798,7 +2798,7 @@ Filosofi debugging completion adalah **"jangan menebak; lihat."** Completion sys
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === _complete_help ===
 # Binding default: Ctrl+X h
 # Tekan saat completion aktif (setelah menekan TAB)
@@ -2852,7 +2852,7 @@ Ini adalah cara **paling akurat** untuk mengetahui pattern `zstyle` yang harus A
 
 **Cara membaca output `_complete_help`:**
 
-```
+```bash
 tags in context :completion::complete:git::
     commands  (_git_commands)
     ...
@@ -2865,7 +2865,7 @@ tags in context :completion::complete:git:argument-1::
 - `_git_commands` — Fungsi yang menghasilkan tag ini.
 
 Untuk mengonfigurasi style untuk tag `commands` di context ini:
-```zsh
+```bash
 zstyle ':completion::complete:git:argument-1:commands' <style> <value>
 ```
 
@@ -2891,7 +2891,7 @@ Output `compaudit` adalah daftar direktori yang tidak aman. Untuk memperbaiki, A
 
 ### Diagram Alur: Debugging Completion
 
-```
+```bash
 Completion tidak berfungsi
         │
         ▼
@@ -2956,7 +2956,7 @@ Completion tidak berfungsi
 
 ### Latihan Praktis
 
-```zsh
+```bash
 # Latihan 1: _complete_help
 # Ketik: git <Ctrl+X> h
 # Catat context string
@@ -3092,7 +3092,7 @@ Filosofi desain Zsh adalah **pemisahan tanggung jawab berdasarkan konteks**. Set
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === MELIHAT URUTAN FILE YANG DIBACA ===
 # Jalankan Zsh dengan xtrace untuk melihat file mana yang dibaca
 zsh -x -i -c 'exit' 2>&1 | grep -E '\.(zshenv|zprofile|zshrc|zlogin)'
@@ -3183,7 +3183,7 @@ print "Sampai jumpa!"
 
 ### Diagram Alur: Urutan Pembacaan File Startup
 
-```
+```bash
 Zsh dimulai
     │
     ▼
@@ -3284,7 +3284,7 @@ Keduanya setara. Prefix `NO` berguna ketika Anda ingin menonaktifkan opsi dalam 
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === MELIHAT OPSI YANG AKTIF ===
 setopt                      # Tampilkan semua opsi yang aktif
 setopt | grep GLOB          # Filter opsi yang mengandung "GLOB"
@@ -3354,7 +3354,7 @@ setopt NO_CLOBBER           # Cegah > menimpa file yang ada
 
 ### Diagram Alur: Opsi sebagai Saklar Perilaku
 
-```
+```bash
 Opsi: AUTO_CD
     │
     ├── ON  → Ketik "Documents" → Zsh melakukan cd Documents
@@ -3433,7 +3433,7 @@ Namun, ada filosofi tandingan: **"Aliases adalah makro yang tidak higienis"** . 
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === ALIAS SEDERHANA (AMAN) ===
 alias ll='ls -la'
 alias la='ls -A'
@@ -3497,7 +3497,7 @@ unalias -a                  # Hapus SEMUA alias (hati-hati!)
 
 ### Diagram Alur: Alias vs Fungsi
 
-```
+```bash
 Anda mengetik: ll
 
 Sistem memeriksa:
@@ -3569,7 +3569,7 @@ Filosofi environment variables adalah **"konfigurasi melalui lingkungan"**. Alih
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === MELIHAT ENVIRONMENT VARIABLES ===
 printenv                    # Tampilkan semua environment variables
 echo $PATH                  # Tampilkan PATH
@@ -3631,7 +3631,7 @@ unset MY_VAR
 
 Zsh memiliki keunikan: variabel `path` (huruf kecil) adalah **array** yang terhubung dengan `PATH` (huruf besar). Mengubah `path` akan mengubah `PATH`, dan sebaliknya .
 
-```zsh
+```bash
 # path adalah array
 path=("/usr/local/bin" "/usr/bin" "/bin")
 echo $PATH
@@ -3660,7 +3660,7 @@ Ini adalah fitur Zsh yang sangat berguna: Anda bisa mengelola `PATH` sebagai arr
 
 ### Diagram Alur: Resolusi Perintah dengan PATH
 
-```
+```bash
 Anda mengetik: python3
 
 Shell mencari di setiap direktori di $PATH secara berurutan:
@@ -3727,7 +3727,7 @@ Filosofi autoloading adalah **"lazy loading"**. Tidak semua fungsi perlu dimuat 
 
 **Format file fungsi autoload**:
 
-```zsh
+```bash
 # File: ~/.zsh/functions/mkcd
 # TIDAK perlu "mkcd() {" di awal
 # Langsung isi fungsi:
@@ -3742,7 +3742,7 @@ Dokumentasi Zsh menyatakan: "A function can be marked as undefined using the `au
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === FUNGSI DASAR DI .zshrc ===
 mkcd() {
     mkdir -p "$1" && cd "$1"
@@ -3761,7 +3761,7 @@ gclone() {
 # Gunakan format: #compdef namafungsi
 ```
 
-```zsh
+```bash
 # === AUTOLOADING ===
 
 # 1. Buat direktori untuk fungsi
@@ -3796,7 +3796,7 @@ done
 
 `fpath` adalah **array** direktori tempat Zsh mencari fungsi autoload. Ini mirip dengan `PATH` tetapi untuk fungsi, bukan perintah eksternal.
 
-```zsh
+```bash
 # Lihat fpath saat ini
 print -l $fpath
 
@@ -3816,7 +3816,7 @@ typeset -U fpath
 
 `zcompile` adalah builtin yang mengompilasi file Zsh menjadi **bytecode** (file `.zwc`). File `.zwc` dimuat lebih cepat daripada file teks asli, karena Zsh tidak perlu mem-parsing ulang.
 
-```zsh
+```bash
 # Kompilasi satu file
 zcompile ~/.zsh/functions/mkcd
 
@@ -3850,7 +3850,7 @@ rm ~/.zsh/functions/*.zwc
 
 ### Diagram Alur: Autoloading
 
-```
+```bash
 Anda mengetik: mkcd Documents
 
 Shell mencari perintah "mkcd":
@@ -3921,7 +3921,7 @@ Filosofi modularitas adalah **"pemisahan tanggung jawab"**. Setiap file memiliki
 
 **Struktur direktori yang direkomendasikan**:
 
-```
+```bash
 ~/.config/zsh/
 ├── .zshenv              → environment variables minimal
 ├── .zprofile            → PATH, SSH agent
@@ -3945,7 +3945,7 @@ Filosofi modularitas adalah **"pemisahan tanggung jawab"**. Setiap file memiliki
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === ~/.zshrc — ENTRY POINT ===
 # File ini hanya memuat modul dari zsh.d/
 
@@ -4000,7 +4000,7 @@ alias work-ssh='ssh user@$WORK_VPN'
 
 **Penjelasan loop pemuatan:**
 
-```zsh
+```bash
 for config in "$ZSH_MODULES"/*.zsh(N); do
     source "$config"
 done
@@ -4014,7 +4014,7 @@ done
 
 **Alternatif: Pemuatan dengan fungsi**:
 
-```zsh
+```bash
 # Fungsi untuk memuat modul dengan aman
 load_module() {
     local module="$1"
@@ -4047,7 +4047,7 @@ load_module 05-prompt.zsh
 
 ### Diagram Pohon: Struktur Konfigurasi Modular
 
-```
+```bash
 ~/.config/zsh/
 │
 ├── .zshenv ──────────────→ Environment variables (SEMUA shell)
@@ -4127,7 +4127,7 @@ Filosofi `zcompile` adalah **"parse sekali, jalankan berkali-kali"**. Setiap kal
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === KOMPILASI SATU FILE ===
 zcompile ~/.zshrc
 # Menghasilkan ~/.zshrc.zwc
@@ -4175,7 +4175,7 @@ zcompile ~/.zcompdump
 
 **Apakah `zcompile` benar-benar mempercepat?** Ini tergantung. Beberapa pengembang melaporkan bahwa untuk `.zshrc` yang kompleks, `zcompile` bisa mengurangi startup time **10–20ms**. Untuk konfigurasi sederhana, perbedaannya tidak terasa. Yang terbaik adalah **mengukur sendiri**:
 
-```zsh
+```bash
 # Ukur startup time
 time zsh -i -c exit
 
@@ -4245,7 +4245,7 @@ Filosofi keamanan Zsh adalah **"percaya tetapi verifikasi"**. Zsh memiliki mekan
 
 ### Sintaks Dasar dan Contoh
 
-```zsh
+```bash
 # === CEK KEAMANAN FILE KONFIGURASI ===
 ls -la ~/.zshrc ~/.zshenv ~/.zprofile
 # Pastikan permission adalah 644 atau 600

@@ -8,7 +8,7 @@ Glob adalah pola yang digunakan shell untuk mencocokkan nama file atau direktori
 
 Misalnya, direktori Anda berisi:
 
-```
+```bash
 project/
 ├── main.zsh
 ├── setup.zsh
@@ -35,7 +35,7 @@ Zsh melakukan pencocokan tersebut sebelum menjalankan `print`. Dengan demikian, 
 
 Alur sederhananya:
 
-```
+```bash
 Perintah yang ditulis
         ↓
 Zsh memproses ekspansi
@@ -91,7 +91,7 @@ mencari nama yang cocok di direktori saat ini. Pola tersebut tidak secara otomat
 
 Misalnya:
 
-```
+```bash
 project/
 ├── main.lua
 └── modules/
@@ -175,7 +175,7 @@ Glob digunakan Zsh untuk mencocokkan nama file atau direktori. Selain `*` dan `?
 
 Misalkan direktori saat ini berisi:
 
-```
+```bash
 file1.txt
 file2.txt
 file3.txt
@@ -200,7 +200,7 @@ Karena `file10.txt` memiliki dua karakter setelah `file`, pola `file?.txt` tidak
 
 Contoh pengujian di Zsh:
 
-```
+```bash
 print -r -- file[1-3].txt
 ```
 
@@ -210,7 +210,7 @@ print -r -- file[1-3].txt
 
 Kurung siku juga dapat digunakan untuk mencocokkan karakter yang bukan bagian dari himpunan tertentu.
 
-```
+```bash
 print -r -- file[^12].txt
 ```
 
@@ -224,7 +224,7 @@ Pola `**/` memungkinkan pencarian nama file melalui direktori bertingkat.
 
 Misalnya struktur direktori berikut:
 
-```
+```bash
 project/
 ├── main.lua
 ├── config/
@@ -236,7 +236,7 @@ project/
 
 Jika posisi shell berada di dalam `project/`:
 
-```
+```bash
 print -r -- *.lua
 ```
 
@@ -244,7 +244,7 @@ mencocokkan file Lua di direktori saat ini, yaitu `main.lua`.
 
 Sementara itu:
 
-```
+```bash
 print -r -- **/*.lua
 ```
 
@@ -256,7 +256,7 @@ Perhatikan bahwa `**/*.lua` bergantung pada struktur direktori dan file yang ben
 
 Dokumen kurikulum Anda juga memperkenalkan pola negasi `^*.bak`. Pola ini menggunakan fitur extended glob, yang perlu diaktifkan dengan opsi `EXTENDED_GLOB`.
 
-```
+```bash
 setopt EXTENDED_GLOB
 
 print -r -- ^*.bak
@@ -276,7 +276,7 @@ Extended glob menyediakan operator lain yang berguna:
 
 Contoh berikut mengasumsikan `EXTENDED_GLOB` sudah aktif:
 
-```
+```bash
 # Nama yang berakhiran .txt atau .md
 print -r -- *.(txt|md)
 
@@ -341,7 +341,7 @@ Glob digunakan Zsh untuk mencocokkan nama file atau direktori. Selain `*` dan `?
 
 Misalkan direktori saat ini berisi:
 
-```
+```bash
 file1.txt
 file2.txt
 file3.txt
@@ -366,7 +366,7 @@ Karena `file10.txt` memiliki dua karakter setelah `file`, pola `file?.txt` tidak
 
 Contoh pengujian di Zsh:
 
-```
+```bash
 print -r -- file[1-3].txt
 ```
 
@@ -376,7 +376,7 @@ print -r -- file[1-3].txt
 
 Kurung siku juga dapat digunakan untuk mencocokkan karakter yang bukan bagian dari himpunan tertentu.
 
-```
+```bash
 print -r -- file[^12].txt
 ```
 
@@ -390,7 +390,7 @@ Pola `**/` memungkinkan pencarian nama file melalui direktori bertingkat.
 
 Misalnya struktur direktori berikut:
 
-```
+```bash
 project/
 ├── main.lua
 ├── config/
@@ -402,7 +402,7 @@ project/
 
 Jika posisi shell berada di dalam `project/`:
 
-```
+```bash
 print -r -- *.lua
 ```
 
@@ -410,7 +410,7 @@ mencocokkan file Lua di direktori saat ini, yaitu `main.lua`.
 
 Sementara itu:
 
-```
+```bash
 print -r -- **/*.lua
 ```
 
@@ -422,7 +422,7 @@ Perhatikan bahwa `**/*.lua` bergantung pada struktur direktori dan file yang ben
 
 Dokumen kurikulum Anda juga memperkenalkan pola negasi `^*.bak`. Pola ini menggunakan fitur extended glob, yang perlu diaktifkan dengan opsi `EXTENDED_GLOB`.
 
-```
+```bash
 setopt EXTENDED_GLOB
 
 print -r -- ^*.bak
@@ -442,7 +442,7 @@ Extended glob menyediakan operator lain yang berguna:
 
 Contoh berikut mengasumsikan `EXTENDED_GLOB` sudah aktif:
 
-```
+```bash
 # Nama yang berakhiran .txt atau .md
 print -r -- *.(txt|md)
 

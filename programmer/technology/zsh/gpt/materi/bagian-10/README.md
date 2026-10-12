@@ -80,7 +80,7 @@ Urutan itu menjelaskan mengapa `.zprofile` tidak selalu dijalankan sebelum `.zsh
 
 Zsh menyediakan kondisi untuk memeriksa sifat shell saat ini:
 
-```
+```bash
 if [[ -o login ]]; then
     print -r -- "Login shell"
 fi
@@ -101,13 +101,13 @@ Anda juga dapat memeriksa jenis shell melalui beberapa cara berbeda.
 
 Untuk menguji kondisi shell tanpa mengubah konfigurasi, jalankan:
 
-```
+```bash
 zsh -c '[[ -o interactive ]] && print interactive || print noninteractive'
 ```
 
 Lalu bandingkan dengan:
 
-```
+```bash
 zsh -ic '[[ -o interactive ]] && print interactive || print noninteractive'
 ```
 
@@ -119,13 +119,13 @@ Secara default, Zsh mencari file startup di direktori home. Parameter `$ZDOTDIR`
 
 Contoh:
 
-```
+```bash
 ZDOTDIR="$HOME/.config/zsh"
 ```
 
 Jika nilai ini telah tersedia saat Zsh mulai, file startup dapat ditempatkan di:
 
-```
+```bash
 ~/.config/zsh/
 ├── .zshenv
 ├── .zprofile
@@ -142,7 +142,7 @@ Untuk konfigurasi yang menggunakan `~/.config/zsh`, pengaturan awal lokasi start
 
 Untuk membangun konfigurasi yang mudah dipelihara, gunakan pembagian tanggung jawab berikut sebagai titik awal.
 
-```
+```bash
 .zshenv
 └── Variabel lingkungan yang diperlukan oleh semua jenis shell
 

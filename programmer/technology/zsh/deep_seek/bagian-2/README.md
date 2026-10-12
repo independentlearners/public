@@ -676,7 +676,7 @@ fi
 ## 11. Visualisasi yang Direkomendasikan
 
 1. **Diagram alur eksekusi script:**
-   ```
+   ```bash
    User menjalankan ./script.zsh
         |
         v
@@ -696,7 +696,7 @@ fi
    ```
 
 2. **Flowchart if/elif/else:**
-   ```
+   ```bash
    [Kondisi 1] --Ya--> [Blok 1]
         | Tidak
         v
@@ -707,7 +707,7 @@ fi
    ```
 
 3. **Flowchart loop:**
-   ```
+   ```bash
    [Inisialisasi] -> [Kondisi] --Ya--> [Blok] -> [Update] -> [Kondisi]
                           | Tidak
                           v
@@ -715,7 +715,7 @@ fi
    ```
 
 4. **Pohon scope variabel:**
-   ```
+   ```bash
    Parent Shell
    ├── Shell variable: nama
    ├── Environment variable: PATH (diwariskan)
@@ -995,7 +995,7 @@ tambah
 echo "Di luar: $counter"
 ```
 Output:
-```
+```bash
 Dalam fungsi: 6
 Di luar: 10
 ```
@@ -1116,7 +1116,7 @@ done
 - `break` — keluar dari loop.
 
 **Output:**
-```
+```bash
 1) Start
 2) Stop
 3) Keluar
@@ -1366,7 +1366,7 @@ printf "Nama: %s\n" "$nama"
 ## 12. Visualisasi yang Direkomendasikan
 
 1. **Diagram Tiga Stream Standar:**
-   ```
+   ```bash
    +-------------+
    |   Program   |
    |             |
@@ -1377,7 +1377,7 @@ printf "Nama: %s\n" "$nama"
    ```
 
 2. **Diagram Redirection:**
-   ```
+   ```bash
    command > file       : stdout -> file
    command 2> file      : stderr -> file
    command &> file      : stdout + stderr -> file
@@ -1387,21 +1387,21 @@ printf "Nama: %s\n" "$nama"
    ```
 
 3. **Diagram Pipeline:**
-   ```
+   ```bash
    ps aux  |  grep zsh  |  awk '{print $2}'
       |           |              |
    stdout     stdin/stdout    stdin/stdout
    ```
 
 4. **Diagram Fungsi:**
-   ```
+   ```bash
    Input argumen -> [ Fungsi ] -> Output stdout
                         |
                     Exit code
    ```
 
 5. **Diagram Here-Doc:**
-   ```
+   ```bash
    cat <<EOF
    baris1
    baris2
@@ -1692,7 +1692,7 @@ set +x
 - `set +x` — mematikan.
 
 **Output:**
-```
+```bash
 + echo Halo
 Halo
 ```
@@ -1944,7 +1944,7 @@ trap 'echo "Dihentikan"; exit 143' TERM
 ## 12. Visualisasi yang Direkomendasikan
 
 1. **Diagram Alur Error Handling:**
-   ```
+   ```bash
    Perintah dijalankan
         |
         v
@@ -1961,7 +1961,7 @@ trap 'echo "Dihentikan"; exit 143' TERM
    ```
 
 2. **Diagram Trap Cleanup:**
-   ```
+   ```bash
    Script mulai
         |
    trap cleanup EXIT
@@ -1978,7 +1978,7 @@ trap 'echo "Dihentikan"; exit 143' TERM
    ```
 
 3. **Diagram Xtrace:**
-   ```
+   ```bash
    set -x
    + echo Halo
    Halo
@@ -1988,7 +1988,7 @@ trap 'echo "Dihentikan"; exit 143' TERM
    ```
 
 4. **Diagram Stream dan Trap:**
-   ```
+   ```bash
    stdout -> terminal / file
    stderr -> terminal / file
    trap -> cleanup saat EXIT
@@ -2127,7 +2127,7 @@ Kita pakai Zsh (sesuai kurikulum), tetapi banyak bagian kompatibel Bash.
 
 ## 3. Arsitektur & Struktur File
 
-```
+```bash
 backuptool/
 ├── backuptool.zsh        # Script utama
 ├── lib/
@@ -2139,7 +2139,7 @@ backuptool/
 ```
 
 **Struktur script:**
-```
+```bash
 [Header: shebang, deskripsi]
 [Opsi shell: set -euo pipefail]
 [Konstanta: VERSION, BASE_DIR, dll]
@@ -2184,7 +2184,7 @@ Backup Log Info Debug Keluar
 ```
 
 ### 4.2 Struktur Stream
-```
+```bash
 stdin  <-- keyboard / file
 stdout --> terminal (menu, hasil)
 stderr --> log file (>&2)
@@ -2192,7 +2192,7 @@ log    --> logs/backuptool.log (fd 3)
 ```
 
 ### 4.3 Trap & Cleanup
-```
+```bash
 Script mulai
     |
 trap cleanup EXIT

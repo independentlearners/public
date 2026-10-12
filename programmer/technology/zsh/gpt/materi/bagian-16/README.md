@@ -8,7 +8,7 @@ ZLE merupakan fondasi penting untuk tujuan Anda: membuat fitur keyboard sendiri,
 
 Saat Anda mengetik perintah di terminal, alurnya secara sederhana seperti ini:
 
-```
+```bash
 Keyboard
 │
 └─▶ Karakter dan tombol yang ditekan
@@ -23,7 +23,7 @@ Keyboard
 
 
 ```
-```
+```bash
 print -r -- "Halo"
 ```
 
@@ -45,13 +45,13 @@ Beberapa contoh widget bawaan:
 
 Anda dapat memeriksa binding tombol yang tersedia:
 
-```
+```bash
 bindkey
 ```
 
 Untuk memeriksa binding tombol tertentu, misalnya Ctrl+A:
 
-```
+```bash
 bindkey '^A'
 ```
 
@@ -63,19 +63,19 @@ Keymap adalah kumpulan pemetaan antara input keyboard dan widget. Zsh dapat memi
 
 Karena konfigurasi Anda menggunakan vi mode, periksa keymap yang tersedia:
 
-```
+```bash
 bindkey -l
 ```
 
 Kemudian periksa keymap aktif:
 
-```
+```bash
 bindkey -L
 ```
 
 Untuk melihat pemetaan dalam keymap vi insert, Anda dapat mencoba:
 
-```
+```bash
 bindkey -M viins
 ```
 
@@ -83,7 +83,7 @@ Jika keymap `viins` tersedia, perintah tersebut menampilkan binding yang terkait
 
 Pemetaan tombol dapat diubah dengan `bindkey`. Misalnya, binding berikut menghubungkan Ctrl+X dengan widget `clear-screen` pada keymap saat ini:
 
-```
+```bash
 bindkey '^X' clear-screen
 ```
 
@@ -93,7 +93,7 @@ Gunakan contoh tersebut hanya untuk percobaan. Binding Ctrl+X yang sudah ada bis
 
 Sekarang kita membuat fitur sederhana. Ketika Anda menekan Ctrl+G, ZLE akan mengganti isi baris perintah dengan teks yang telah ditentukan.
 
-```
+```bash
 zsh_lesson_widget() {
     BUFFER='print -r -- "Halo dari ZLE"'
     CURSOR=${#BUFFER}
@@ -117,7 +117,7 @@ Setelah kode dimuat, tekan Ctrl+G saat prompt siap menerima input. Teks perintah
 
 Karena Anda menggunakan vi mode, binding juga dapat dipasang secara khusus pada keymap insert:
 
-```
+```bash
 bindkey -M viins '^G' zsh_lesson_widget
 ```
 
@@ -140,7 +140,7 @@ Ini memungkinkan Anda membuat fitur seperti menyisipkan teks pada posisi kursor,
 
 Contoh widget yang menambahkan awalan ke input:
 
-```
+```bash
 zsh_prefix_widget() {
     LBUFFER='sudo ' 
 }
@@ -155,7 +155,7 @@ Ketika dipanggil, widget menambahkan `sudo ` di sebelah kiri kursor. Contoh ini 
 
 Jika widget sudah diuji dan ingin dipertahankan, simpan definisinya dalam file, misalnya:
 
-```
+```bash
 ~/.config/zsh/
 ├── zshrc
 └── keybinds.zsh
@@ -163,7 +163,7 @@ Jika widget sudah diuji dan ingin dipertahankan, simpan definisinya dalam file, 
 
 Contoh isi `keybinds.zsh`:
 
-```
+```bash
 zsh_lesson_widget() {
     BUFFER='print -r -- "Halo dari ZLE"'
     CURSOR=${#BUFFER}
@@ -175,7 +175,7 @@ bindkey -M viins '^G' zsh_lesson_widget
 
 Muat file tersebut dari `zshrc` setelah konfigurasi vi mode diaktifkan:
 
-```
+```bash
 if [[ -r "$HOME/.config/zsh/keybinds.zsh" ]]; then
     source "$HOME/.config/zsh/keybinds.zsh"
 fi
@@ -196,7 +196,7 @@ Pemisahan ini membuat definisi widget dan binding keyboard lebih mudah dipelihar
 Hooks memungkinkan Zsh menjalankan fungsi secara otomatis ketika peristiwa tertentu terjadi. Ini merupakan salah satu fondasi penting untuk membangun automation pada interactive shell tanpa harus memanggil fungsi secara manual setiap kali.
 
 #### Versi tree
-```
+```bash
 Mental model
 └── Event
     ├── Contoh: perintah akan dijalankan
@@ -209,7 +209,7 @@ Mental model
 
 #### Versi alur
 
-```
+```bash
 Event ──▶ Hook ──▶ Function ──▶ Action
   │         │          │
   │         │          └─ Kode yang didaftarkan untuk event tersebut
@@ -224,7 +224,7 @@ Contoh: mencatat aktivitas atau memperbarui status
 
 Tanpa hooks, Anda biasanya harus memanggil fungsi secara eksplisit:
 
-```
+```bash
 update_status
 ```
 
@@ -266,13 +266,13 @@ Cara yang disarankan untuk mengelola hooks adalah menggunakan fungsi bawaan `add
 
 Pertama, muat fungsi tersebut:
 
-```
+```bash
 autoload -Uz add-zsh-hook
 ```
 
 Kemudian daftarkan fungsi ke hook yang diinginkan:
 
-```
+```bash
 my_precmd() {
     print -r -- "Prompt akan ditampilkan"
 }
@@ -303,7 +303,7 @@ Dengan `add-zsh-hook`, beberapa fungsi dapat didaftarkan pada hook yang sama tan
 
 Coba jalankan kode berikut langsung pada sesi Zsh interaktif:
 
-```
+```bash
 autoload -Uz add-zsh-hook
 
 lesson_precmd() {
@@ -317,13 +317,13 @@ Setelah fungsi didaftarkan, pesan akan muncul sebelum prompt berikutnya ditampil
 
 Untuk memeriksa fungsi yang terdaftar:
 
-```
+```bash
 add-zsh-hook -L precmd
 ```
 
 Untuk menghapus pendaftaran fungsi tersebut:
 
-```
+```bash
 add-zsh-hook -d precmd lesson_precmd
 ```
 
@@ -335,7 +335,7 @@ Jika `precmd` bekerja sebelum prompt ditampilkan, `preexec` bekerja ketika perin
 
 Contoh:
 
-```
+```bash
 lesson_preexec() {
     print -r -- "[hook] Perintah: $1"
 }
@@ -345,7 +345,7 @@ add-zsh-hook preexec lesson_preexec
 
 Coba jalankan:
 
-```
+```bash
 pwd
 ```
 
@@ -359,7 +359,7 @@ Namun, ada batasan penting: jangan menganggap setiap perintah yang tercatat past
 
 Hook `chpwd` dipanggil setelah direktori kerja berhasil berubah.
 
-```
+```bash
 lesson_chpwd() {
     print -r -- "[hook] Direktori sekarang: $PWD"
 }
@@ -369,7 +369,7 @@ add-zsh-hook chpwd lesson_chpwd
 
 Kemudian:
 
-```
+```bash
 cd /tmp
 ```
 
@@ -385,7 +385,7 @@ Hook `periodic` dipanggil secara berkala ketika shell interaktif menunggu input,
 
 Contoh:
 
-```
+```bash
 PERIOD=60
 
 lesson_periodic() {
@@ -403,7 +403,7 @@ Gunakan hook ini untuk pemeriksaan ringan. Jangan menaruh pekerjaan berat di dal
 
 Semua contoh di atas dapat dicoba dalam sesi Zsh saat ini. Untuk membersihkan pendaftaran hook, jalankan:
 
-```
+```bash
 add-zsh-hook -d precmd lesson_precmd
 add-zsh-hook -d preexec lesson_preexec
 add-zsh-hook -d chpwd lesson_chpwd
@@ -412,7 +412,7 @@ add-zsh-hook -d periodic lesson_periodic
 
 Jika Anda juga ingin menghapus fungsi eksperimen dari sesi saat ini:
 
-```
+```bash
 unfunction lesson_precmd lesson_preexec lesson_chpwd lesson_periodic
 ```
 
@@ -429,7 +429,7 @@ Ketika membangun automation, perhatikan empat hal berikut:
 
 Contoh arsitektur yang lebih modular:
 
-```
+```bash
 ~/.config/zsh/
 ├── zshrc
 └── hooks.zsh
@@ -441,7 +441,7 @@ Isi `hooks.zsh` dapat memuat fungsi-fungsi hook dan pendaftarannya. Kemudian `zs
 
 Hooks menghubungkan event internal Zsh dengan fungsi buatan Anda:
 
-```
+```bash
 Event
   ↓
 Hook

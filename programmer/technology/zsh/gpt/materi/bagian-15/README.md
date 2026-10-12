@@ -14,7 +14,7 @@ Completion adalah mekanisme yang membantu Zsh melengkapi input berdasarkan konte
 
 Misalnya, ketika Anda mengetik:
 
-```
+```bash
 cd ~/Doc
 ```
 
@@ -22,7 +22,7 @@ lalu menekan `Tab`, Zsh dapat melengkapi nama direktori menjadi `Documents`, jik
 
 Contoh lain:
 
-```
+```bash
 git che<Tab>
 ```
 
@@ -65,7 +65,7 @@ Ada tiga konsep yang perlu dibedakan:
 
 Pada konfigurasi Zsh, completion system biasanya diaktifkan menggunakan:
 
-```
+```bash
 autoload -Uz compinit
 compinit
 ```
@@ -87,14 +87,14 @@ Catatan: `autoload` tidak sama dengan menjalankan fungsi. Baris pertama menyiapk
 
 Jalankan:
 
-```
+```bash
 autoload -Uz compinit
 compinit
 ```
 
 Kemudian coba:
 
-```
+```bash
 cd /usr/lo<Tab>
 ```
 
@@ -106,7 +106,7 @@ Zsh memiliki array khusus bernama `fpath`. Array ini berisi direktori yang digun
 
 Lihat isinya:
 
-```
+```bash
 print -rl -- $fpath
 ```
 
@@ -114,7 +114,7 @@ Opsi `-r` membuat `print` tidak menafsirkan escape sequence, sedangkan `-l` menc
 
 Contoh struktur konseptual:
 
-```
+```bash
 fpath
 ├── direktori fungsi bawaan atau sistem
 ├── direktori fungsi completion
@@ -127,13 +127,13 @@ Lokasi sebenarnya bergantung pada sistem dan konfigurasi Anda.
 
 Misalnya, Anda ingin menyimpan fungsi buatan sendiri di:
 
-```
+```bash
 ~/.config/zsh/functions/
 ```
 
 Tambahkan direktori tersebut ke `fpath` sebelum memanggil `compinit`:
 
-```
+```bash
 fpath=("$HOME/.config/zsh/functions" $fpath)
 
 autoload -Uz compinit
@@ -160,13 +160,13 @@ Nama-nama tersebut merupakan bagian dari sistem completion, bukan command termin
 
 Anda dapat memeriksa apakah fungsi tersedia:
 
-```
+```bash
 whence -v _git
 ```
 
 Jika fungsi telah dimuat dan ingin memeriksa definisinya:
 
-```
+```bash
 functions _git
 ```
 
@@ -178,7 +178,7 @@ Jika `_git` belum dimuat, hasil pemeriksaan definisi dapat berbeda. Jangan menga
 
 Contoh:
 
-```
+```bash
 compdef _git git
 ```
 
@@ -194,7 +194,7 @@ Karena konfigurasi Anda menggunakan struktur modular, completion dapat ditempatk
 
 Contoh:
 
-```
+```bash
 ~/.config/zsh/
 ├── zshrc
 ├── options.zsh
@@ -205,7 +205,7 @@ Contoh:
 
 Isi `completion.zsh`:
 
-```
+```bash
 # Tambahkan direktori fungsi kustom sebelum inisialisasi.
 fpath=("$HOME/.config/zsh/functions" $fpath)
 
@@ -218,7 +218,7 @@ compinit
 
 Kemudian, dalam `zshrc`, muat file tersebut:
 
-```
+```bash
 if [[ -r "$HOME/.config/zsh/completion.zsh" ]]; then
     source "$HOME/.config/zsh/completion.zsh"
 fi
@@ -238,7 +238,7 @@ Pengecualian penting: plugin manager atau framework Zsh mungkin sudah menginisia
 
 Jalankan perintah berikut satu per satu di terminal Zsh interaktif:
 
-```
+```bash
 # Periksa direktori pencarian fungsi.
 print -rl -- $fpath
 
@@ -259,7 +259,7 @@ Perintah terakhir dapat menampilkan banyak kode. Jika fungsi belum dimuat, hasil
 
 Selanjutnya, uji completion langsung:
 
-```
+```bash
 git che<Tab>
 ```
 

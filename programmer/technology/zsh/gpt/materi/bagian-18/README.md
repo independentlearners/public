@@ -10,7 +10,7 @@ Konfigurasi modular adalah pendekatan untuk memisahkan konfigurasi besar menjadi
 
 Tanpa modularisasi, seluruh konfigurasi bisa berada dalam satu file:
 
-```
+```bash
 # ~/.zshrc
 
 setopt AUTO_CD
@@ -66,7 +66,7 @@ Mekanisme utama untuk memuat konfigurasi dari file lain adalah `source`.
 
 Misalnya, buat file berikut:
 
-```
+```bash
 # ~/.config/zsh/options.zsh
 
 setopt AUTO_CD
@@ -75,7 +75,7 @@ setopt EXTENDED_GLOB
 
 Kemudian, pada file utama:
 
-```
+```bash
 # ~/.config/zsh/zshrc
 
 source "$HOME/.config/zsh/options.zsh"
@@ -85,12 +85,12 @@ Ketika Zsh menjalankan `source`, isi file tersebut dieksekusi di lingkungan shel
 
 Contoh sederhananya:
 
-```
+```bash
 # child.zsh
 message="Konfigurasi dimuat"
 ```
 
-```
+```bash
 # main.zsh
 source ./child.zsh
 print -r -- "$message"
@@ -98,7 +98,7 @@ print -r -- "$message"
 
 Jika file ditemukan dan berhasil dijalankan, output-nya:
 
-```
+```bash
 Konfigurasi dimuat
 ```
 
@@ -112,7 +112,7 @@ Tidak semua file konfigurasi harus selalu tersedia. Sebuah integrasi bisa belum 
 
 Untuk memeriksa apakah file dapat dibaca, gunakan `[[ -r ... ]]`.
 
-```
+```bash
 local_config="$HOME/.config/zsh/integrations/git.zsh"
 
 if [[ -r "$local_config" ]]; then
@@ -134,7 +134,7 @@ Pemeriksaan `-r` tidak menjamin isi file bebas dari kesalahan sintaks atau kesal
 
 Berikut contoh file utama yang lebih teratur:
 
-```
+```bash
 # ~/.config/zsh/zshrc
 
 ZSH_CONFIG="$HOME/.config/zsh"
@@ -152,7 +152,7 @@ Contoh tersebut mengasumsikan semua file yang disebutkan memang tersedia. Jika f
 
 Untuk file opsional, gunakan pemeriksaan keterbacaan:
 
-```
+```bash
 integration="$ZSH_CONFIG/integrations/git.zsh"
 
 if [[ -r "$integration" ]]; then
@@ -166,7 +166,7 @@ Anda tidak harus menggunakan pola yang sama untuk semua file. Bedakan file yang 
 
 Anggap konfigurasi memiliki dependensi berikut:
 
-```
+```bash
 environment
     ↓
 completion setup
@@ -197,7 +197,7 @@ Nama `zshrc` di dalam `~/.config/zsh/` tidak otomatis menjadikannya file startup
 
 Dalam lingkungan Anda, `.zshrc` diketahui mengarah ke `~/.config/zsh/zshrc`. Untuk memastikan keadaan saat ini, Anda bisa memeriksa:
 
-```
+```bash
 print -r -- "${ZDOTDIR:-$HOME}"
 readlink -f ~/.zshrc
 ```
@@ -208,7 +208,7 @@ Perintah pertama menampilkan direktori startup Zsh yang efektif menurut variabel
 
 Anda mungkin tergoda menulis:
 
-```
+```bash
 for file in "$HOME"/.config/zsh/*.zsh; do
     source "$file"
 done
@@ -227,7 +227,7 @@ Untuk konfigurasi utama, daftar eksplisit biasanya lebih mudah dipahami dan di-d
 
 Sebelum mengedit konfigurasi yang digunakan sehari-hari, periksa sintaks file:
 
-```
+```bash
 zsh -n "$HOME/.config/zsh/zshrc"
 ```
 
@@ -235,7 +235,7 @@ zsh -n "$HOME/.config/zsh/zshrc"
 
 Untuk menelusuri proses startup, Anda dapat menjalankan:
 
-```
+```bash
 zsh -xlic exit 2> /tmp/zsh-startup.log
 ```
 
@@ -251,7 +251,7 @@ Perintah ini dapat menjalankan kode startup dan integrasi Anda, jadi gunakan seb
 
 Untuk membaca log:
 
-```
+```bash
 less /tmp/zsh-startup.log
 ```
 
@@ -263,7 +263,7 @@ Buat rancangan modular sederhana terlebih dahulu. Tidak perlu mengubah seluruh k
 
 Struktur latihan:
 
-```
+```bash
 ~/.config/zsh/
 ├── zshrc
 ├── options.zsh
@@ -273,21 +273,21 @@ Struktur latihan:
 
 Isi `options.zsh`:
 
-```
+```bash
 setopt AUTO_CD
 setopt HIST_IGNORE_DUPS
 ```
 
 Isi `aliases.zsh`:
 
-```
+```bash
 alias ll='ls -lah'
 alias c='clear'
 ```
 
 Isi `functions.zsh`:
 
-```
+```bash
 mkcd() {
     if (( $# != 1 )); then
         print -u2 -- "Penggunaan: mkcd DIREKTORI"
@@ -300,7 +300,7 @@ mkcd() {
 
 Isi file utama `zshrc`:
 
-```
+```bash
 ZSH_CONFIG="$HOME/.config/zsh"
 
 source "$ZSH_CONFIG/options.zsh"
@@ -310,7 +310,7 @@ source "$ZSH_CONFIG/functions.zsh"
 
 Setelah memuatnya pada shell uji, verifikasi:
 
-```
+```bash
 setopt | grep -E 'AUTO_CD|HIST_IGNORE_DUPS'
 alias ll
 whence -v mkcd

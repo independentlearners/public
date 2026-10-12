@@ -12,7 +12,7 @@ Tujuan Lesson 01 bukan membuat Anda menghafal semua perbedaan syntax. Tujuannya 
 
 Bash dan Zsh sama-sama Unix shell dan memiliki banyak konsep yang sama:
 
-```text
+```bash
 Bash                         Zsh
  │                            │
  ├─ variable                  ├─ variable
@@ -30,7 +30,7 @@ Karena itu, pengetahuan Bash Anda tetap berguna.
 
 Tetapi Zsh mempunyai desain bahasa dan fitur interaktifnya sendiri. Jadi model yang lebih tepat adalah:
 
-```text
+```bash
               Unix Shell Concepts
                        │
              ┌─────────┴─────────┐
@@ -43,7 +43,7 @@ Tetapi Zsh mempunyai desain bahasa dan fitur interaktifnya sendiri. Jadi model y
 
 Jangan berpikir:
 
-```text
+```bash
 Bash
  ↓
 Bash++
@@ -53,7 +53,7 @@ Zsh
 
 Lebih tepat:
 
-```text
+```bash
 Bash ────────┐
              ├── konsep shell yang sama
 Zsh ─────────┘
@@ -81,7 +81,7 @@ fi
 
 Konsep seperti:
 
-```text
+```bash
 variable
   ↓
 parameter expansion
@@ -129,14 +129,14 @@ print "Hello"
 
 Contoh:
 
-```zsh
+```bash
 print "Hello"
 print -r -- "Hello\nWorld"
 ```
 
 Perhatikan:
 
-```zsh
+```bash
 print -r -- "$value"
 ```
 
@@ -146,7 +146,7 @@ Untuk sementara jangan menghafalkan seluruh option `print`.
 
 Yang perlu dipahami:
 
-```text
+```bash
 Bash:
 echo / printf
 
@@ -174,7 +174,7 @@ echo "${array[2]}"
 
 Hasil:
 
-```text
+```bash
 A
 B
 C
@@ -182,7 +182,7 @@ C
 
 Zsh secara default menggunakan indexing mulai dari `1`:
 
-```zsh
+```bash
 array=("A" "B" "C")
 
 print "$array[1]"
@@ -192,7 +192,7 @@ print "$array[3]"
 
 Hasil:
 
-```text
+```bash
 A
 B
 C
@@ -200,7 +200,7 @@ C
 
 Jadi:
 
-```text
+```bash
 Bash                       Zsh
 
 array[0] → A              array[1] → A
@@ -218,19 +218,19 @@ Ketika membaca plugin Zsh, konfigurasi completion, widget, atau script yang mema
 
 Misalnya:
 
-```zsh
+```bash
 files=(one two three)
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "$files[1]"
 ```
 
 atau:
 
-```zsh
+```bash
 print "$files[@]"
 ```
 
@@ -238,7 +238,7 @@ Zsh mempunyai sistem parameter expansion yang sangat kuat.
 
 Nanti kita akan mempelajari secara khusus:
 
-```text
+```bash
 $array
 $array[1]
 $array[1,3]
@@ -270,7 +270,7 @@ echo "${user[name]}"
 
 Zsh menggunakan:
 
-```zsh
+```bash
 typeset -A user
 
 user[name]="Amir"
@@ -283,7 +283,7 @@ print "$user[name]"
 
 Nanti kita akan membahas:
 
-```zsh
+```bash
 typeset
 typeset -a
 typeset -A
@@ -308,7 +308,7 @@ Bash:
 
 Zsh juga:
 
-```zsh
+```bash
 *.txt
 ```
 
@@ -316,13 +316,13 @@ Tetapi Zsh mempunyai kemampuan globbing yang jauh lebih luas.
 
 Contohnya recursive glob:
 
-```zsh
+```bash
 **/*.txt
 ```
 
 Secara konseptual:
 
-```text
+```bash
 *.txt
 │
 └── file .txt pada level tertentu
@@ -337,7 +337,7 @@ Zsh juga memiliki extended globbing.
 
 Contoh:
 
-```zsh
+```bash
 ^*.txt
 ```
 
@@ -345,7 +345,7 @@ atau pola-pola yang jauh lebih kompleks.
 
 Nantinya kita akan mempelajari:
 
-```text
+```bash
 Filename generation
         │
         ├── *
@@ -374,7 +374,7 @@ Di Zsh ada sistem option sendiri.
 
 Contoh:
 
-```zsh
+```bash
 setopt
 ```
 
@@ -382,25 +382,25 @@ Untuk melihat option aktif.
 
 Kemudian:
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
 atau:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
 Untuk mematikannya:
 
-```zsh
+```bash
 unsetopt AUTO_CD
 ```
 
 Secara konsep:
 
-```text
+```bash
 Bash
 
 set -o option
@@ -429,13 +429,13 @@ Anda mungkin sudah menggunakan:
 
 Zsh juga sangat bergantung pada:
 
-```zsh
+```bash
 [[ ... ]]
 ```
 
 Contoh:
 
-```zsh
+```bash
 if [[ -n "$name" ]]; then
     print "name exists"
 fi
@@ -443,13 +443,13 @@ fi
 
 Bahkan banyak konfigurasi Zsh hampir seluruhnya menggunakan:
 
-```zsh
+```bash
 [[ ... ]]
 ```
 
 daripada:
 
-```zsh
+```bash
 [ ... ]
 ```
 
@@ -461,7 +461,7 @@ Jadi pengetahuan conditional Bash Anda tetap berguna, tetapi nanti kita perlu me
 
 Bentuk dasar tetap familiar:
 
-```zsh
+```bash
 hello() {
     print "Hello"
 }
@@ -469,13 +469,13 @@ hello() {
 
 Kemudian:
 
-```zsh
+```bash
 hello
 ```
 
 Namun Zsh memiliki kemampuan function yang lebih luas, terutama ketika dikombinasikan dengan:
 
-```text
+```bash
 autoload
 function directories
 modules
@@ -486,7 +486,7 @@ completion
 
 Contoh yang nanti akan menjadi sangat penting:
 
-```zsh
+```bash
 autoload -Uz some_function
 ```
 
@@ -508,7 +508,7 @@ Di sinilah Zsh mulai berbeda secara signifikan dari cara Anda memandang Bash.
 
 Model Bash yang umum:
 
-```text
+```bash
 Bash
  │
  ├── script
@@ -519,7 +519,7 @@ Bash
 
 Model Zsh yang akan kita bangun:
 
-```text
+```bash
 Zsh
  │
  ├── shell language
@@ -553,7 +553,7 @@ Ia juga menyediakan lingkungan pemrograman untuk **interactive shell**.
 
 Ketika Anda menekan:
 
-```text
+```bash
 Ctrl + A
 Ctrl + E
 Ctrl + R
@@ -577,7 +577,7 @@ Zsh Line Editor
 
 Secara konseptual:
 
-```text
+```bash
 Keyboard
    │
    ▼
@@ -620,14 +620,14 @@ Bash mempunyai completion system.
 
 Zsh mempunyai completion system yang sangat terintegrasi dengan Zsh:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
 
 Setelah itu:
 
-```text
+```bash
 Tab
  │
  ▼
@@ -643,7 +643,7 @@ completion system
 
 Nanti kita akan membedah:
 
-```text
+```bash
 compinit
    │
    ├── completion functions
@@ -663,7 +663,7 @@ Cukup pahami bahwa ini adalah **lapisan interactive Zsh**, bukan sekadar builtin
 
 Simpan model berikut.
 
-```text
+```bash
                  BASH
                   │
        ┌──────────┴──────────┐
@@ -692,7 +692,7 @@ Simpan model berikut.
 
 Kemudian:
 
-```text
+```bash
 Zsh
  │
  └── Configuration
@@ -791,7 +791,7 @@ print "Hello"
 
 Bandingkan:
 
-```text
+```bash
 printf '%s\n' "Hello"
 ```
 
@@ -838,7 +838,7 @@ touch /tmp/zsh-glob/a/three.md
 
 Masuk:
 
-```zsh
+```bash
 cd /tmp/zsh-glob
 ```
 
@@ -886,7 +886,7 @@ sekaligus.
 
 Kita sedang membangun peta.
 
-```text
+```bash
 Lesson 01
    │
    ├── Bash knowledge tetap berguna
@@ -936,13 +936,13 @@ arr=(A B C)
 
 **5.** Apa perbedaan peran:
 
-```text
+```bash
 Readline
 ```
 
 dengan:
 
-```text
+```bash
 ZLE
 ```
 
@@ -950,7 +950,7 @@ ZLE
 
 Dan mengapa:
 
-```zsh
+```bash
 **/*.txt
 ```
 
@@ -958,7 +958,7 @@ menunjukkan bahwa Zsh mempunyai kemampuan globbing yang lebih luas daripada glob
 
 **7.** Dari daftar berikut, mana yang merupakan mekanisme yang sangat berkaitan dengan interactive Zsh?
 
-```text
+```bash
 variable
 ZLE
 widget
@@ -980,13 +980,13 @@ bash
 
 dan:
 
-```zsh
+```bash
 zsh
 ```
 
 Kemudian bandingkan:
 
-```text
+```bash
 array indexing
 print
 globbing
@@ -1006,7 +1006,7 @@ Kita mulai kembali dari awal Lesson 01 secara sistematis. Tujuan bagian ini buka
 
 Pengetahuan berikut dapat langsung dibawa ke Zsh:
 
-```text
+```bash
 Shell
 ├── command execution
 ├── process
@@ -1040,7 +1040,7 @@ fi
 
 Ketika melihat:
 
-```zsh
+```bash
 name="Amir"
 
 if [[ -n "$name" ]]; then
@@ -1060,7 +1060,7 @@ Ini salah satu konsep penting dalam perpindahan Bash → Zsh.
 
 Secara sederhana:
 
-```text
+```bash
              Shell programming
                     │
           ┌─────────┴─────────┐
@@ -1088,7 +1088,7 @@ Keduanya salah.
 
 Model yang lebih tepat:
 
-```text
+```bash
 Bash knowledge
       │
       ├── konsep shell umum ──────────────► tetap berguna
@@ -1119,7 +1119,7 @@ name="Amir"
 
 dan:
 
-```zsh
+```bash
 name="Amir"
 ```
 
@@ -1135,7 +1135,7 @@ arr=(A B C)
 
 dan:
 
-```zsh
+```bash
 arr=(A B C)
 ```
 
@@ -1149,7 +1149,7 @@ Namun ketika mengakses elemennya:
 
 sedangkan di Zsh:
 
-```zsh
+```bash
 "$arr[1]"
 ```
 
@@ -1157,7 +1157,7 @@ kita sudah menemukan perbedaan semantik.
 
 Jadi ketika belajar Zsh, kita perlu membedakan:
 
-```text
+```bash
 Syntax terlihat sama
         ≠
 Behavior pasti sama
@@ -1171,7 +1171,7 @@ Ini akan menjadi salah satu prinsip utama ketika nanti Anda membaca plugin Zsh.
 
 Karena tujuan kita bukan:
 
-```text
+```bash
 Bash
  ↓
 ulang dari awal
@@ -1181,7 +1181,7 @@ Zsh
 
 Tetapi:
 
-```text
+```bash
 Bash foundation
       │
       ▼
@@ -1211,7 +1211,7 @@ hello() {
 
 Sebaliknya kita akan bertanya:
 
-```text
+```bash
 Bagaimana function Zsh berbeda?
 Apa itu autoload?
 Bagaimana function directory bekerja?
@@ -1228,7 +1228,7 @@ Dengan demikian waktu belajar digunakan untuk bagian yang memang baru.
 
 Dalam Lesson 01 kita akan membedah perbedaan pada beberapa lapisan.
 
-```text
+```bash
 Zsh vs Bash
 │
 ├── 1. Language
@@ -1262,7 +1262,7 @@ Urutan ini penting.
 
 Kita akan bergerak dari:
 
-```text
+```bash
 bahasa
  ↓
 perilaku shell
@@ -1290,7 +1290,7 @@ printf '%s\n' "${arr[2]}"
 
 Konsepnya:
 
-```text
+```bash
 index
  0 ──► A
  1 ──► B
@@ -1299,7 +1299,7 @@ index
 
 Zsh:
 
-```zsh
+```bash
 arr=(A B C)
 
 print "$arr[1]"
@@ -1309,7 +1309,7 @@ print "$arr[3]"
 
 Konsepnya:
 
-```text
+```bash
 index
  1 ──► A
  2 ──► B
@@ -1320,7 +1320,7 @@ Ini merupakan perbedaan yang sangat penting karena array akan muncul terus-mener
 
 Terutama ketika nanti kita bertemu:
 
-```text
+```bash
 completion
 plugin manager
 PATH manipulation
@@ -1341,7 +1341,7 @@ Zsh memperlakukan array sebagai bagian integral dari sistem parameter shell.
 
 Nanti kita akan melihat hal seperti:
 
-```zsh
+```bash
 array=(one two three)
 
 print "$array"
@@ -1372,7 +1372,7 @@ set
 
 Di Zsh Anda akan sering menemukan:
 
-```zsh
+```bash
 print
 printf
 typeset
@@ -1384,7 +1384,7 @@ autoload
 
 Perhatikan khusus:
 
-```zsh
+```bash
 print
 typeset
 setopt
@@ -1397,7 +1397,7 @@ Namun jangan mempelajari semuanya sekarang.
 
 Untuk saat ini cukup kategorikan:
 
-```text
+```bash
 print
 └── output
 
@@ -1431,19 +1431,19 @@ set -o pipefail
 
 Zsh:
 
-```zsh
+```bash
 setopt
 ```
 
 dan:
 
-```zsh
+```bash
 setopt PIPE_FAIL
 ```
 
 serta:
 
-```zsh
+```bash
 unsetopt PIPE_FAIL
 ```
 
@@ -1451,7 +1451,7 @@ Yang perlu Anda pahami sekarang bukan nama setiap option.
 
 Konsepnya:
 
-```text
+```bash
 Shell behavior
       │
       ▼
@@ -1468,7 +1468,7 @@ Ini nantinya sangat penting dalam konfigurasi karena banyak perilaku Zsh ditentu
 
 Contoh:
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
@@ -1476,7 +1476,7 @@ dapat mengubah bagaimana command line diperlakukan.
 
 Jadi ketika membaca `.zshrc`, Anda tidak boleh menganggap:
 
-```zsh
+```bash
 setopt ...
 ```
 
@@ -1494,13 +1494,13 @@ Shell melakukan filename generation sebelum command dieksekusi.
 
 Misalnya:
 
-```zsh
+```bash
 print -- *.txt
 ```
 
 Jika direktori berisi:
 
-```text
+```bash
 a.txt
 b.txt
 c.txt
@@ -1508,13 +1508,13 @@ c.txt
 
 shell dapat mengembangkan:
 
-```text
+```bash
 *.txt
 ```
 
 menjadi:
 
-```text
+```bash
 a.txt b.txt c.txt
 ```
 
@@ -1522,13 +1522,13 @@ Zsh kemudian menyediakan kemampuan glob yang jauh lebih luas.
 
 Contoh yang perlu Anda kenal sejak sekarang:
 
-```zsh
+```bash
 **/*.txt
 ```
 
 Secara konseptual:
 
-```text
+```bash
 *.txt
 └── matching pada level tertentu
 
@@ -1548,7 +1548,7 @@ Perbedaan yang jauh lebih besar muncul ketika kita menggunakan keduanya sebagai 
 
 Model sederhana Bash:
 
-```text
+```bash
 Bash
  │
  ├── shell language
@@ -1557,7 +1557,7 @@ Bash
 
 Model Zsh:
 
-```text
+```bash
 Zsh
  │
  ├── shell language
@@ -1573,13 +1573,13 @@ Ini sangat relevan dengan tujuan Anda.
 
 Anda bukan hanya ingin:
 
-```text
+```bash
 menulis script.zsh
 ```
 
 Anda ingin dapat memahami:
 
-```text
+```bash
 .zshrc
    ↓
 function
@@ -1607,7 +1607,7 @@ Itulah konsep yang akan menjadi jembatan dari Lesson 01 menuju Lesson 11–24.
 
 Bagian pertama sudah selesai:
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Zsh bukan Bash++
@@ -1639,7 +1639,7 @@ Setelah memahami posisi Zsh terhadap Bash, kita masuk ke compatibility/incompati
 
 Saat membawa pengetahuan Bash ke Zsh, gunakan tiga kategori berikut:
 
-```text
+```bash
 Syntax Bash
 │
 ├── 1. Sama dan kompatibel
@@ -1660,7 +1660,7 @@ arr=(A B C)
 
 dan:
 
-```zsh
+```bash
 arr=(A B C)
 ```
 
@@ -1684,19 +1684,19 @@ Di shell, istilah yang lebih tepat untuk dipahami adalah **parameter**, bukan ha
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "$name"
 ```
 
 Secara sederhana:
 
-```text
+```bash
 name
  │
  ▼
@@ -1708,13 +1708,13 @@ parameter
 
 Shell melakukan parameter expansion ketika `$name` digunakan.
 
-```zsh
+```bash
 $name
 ```
 
 atau:
 
-```zsh
+```bash
 ${name}
 ```
 
@@ -1722,7 +1722,7 @@ Keduanya dapat digunakan dalam banyak konteks.
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 
 print "$name"
@@ -1739,7 +1739,7 @@ Tetapi `${...}` menjadi sangat penting ketika expansion mulai kompleks.
 
 Perhatikan:
 
-```zsh
+```bash
 name="Amir"
 
 print "${name}123"
@@ -1747,13 +1747,13 @@ print "${name}123"
 
 Yang dimaksud adalah:
 
-```text
+```bash
 nilai name + literal 123
 ```
 
 Hasil:
 
-```text
+```bash
 Amir123
 ```
 
@@ -1761,13 +1761,13 @@ Tanpa boundary yang jelas, shell dapat kesulitan menentukan bagian mana yang mer
 
 Karena itu:
 
-```zsh
+```bash
 ${name}
 ```
 
 dapat dipahami sebagai bentuk eksplisit:
 
-```text
+```bash
 mulai parameter expansion
         ↓
        name
@@ -1777,7 +1777,7 @@ selesai expansion
 
 Nanti kita akan menemukan bentuk yang jauh lebih kompleks:
 
-```zsh
+```bash
 ${name:-default}
 ${name##pattern}
 ${name%%pattern}
@@ -1802,7 +1802,7 @@ Tetapi di Zsh, sistem ini menjadi salah satu bagian paling kuat dari bahasa.
 
 Modelnya:
 
-```text
+```bash
 Parameter
    │
    ▼
@@ -1818,7 +1818,7 @@ Parameter Expansion
 
 Karena itu nanti kurikulum memiliki:
 
-```text
+```bash
 02 — Zsh Language
 03 — Parameter Expansion
 04 — Arrays & Data Manipulation
@@ -1834,27 +1834,27 @@ Seperti Bash, Zsh mempunyai positional parameters.
 
 Contoh konseptual:
 
-```zsh
+```bash
 print "$1"
 print "$2"
 ```
 
 Jika sebuah function dipanggil:
 
-```zsh
+```bash
 my_function one two
 ```
 
 maka:
 
-```text
+```bash
 $1 → one
 $2 → two
 ```
 
 Zsh juga memiliki:
 
-```zsh
+```bash
 $0
 $1
 $2
@@ -1864,7 +1864,7 @@ $3
 
 serta:
 
-```zsh
+```bash
 $#
 ```
 
@@ -1882,7 +1882,7 @@ Zsh juga mempunyai banyak special parameters.
 
 Contoh yang sudah kita gunakan pada Lesson 00:
 
-```zsh
+```bash
 $$
 ```
 
@@ -1890,25 +1890,25 @@ yang merepresentasikan [PID] shell saat ini.
 
 Contoh lainnya yang nanti akan sering ditemui:
 
-```zsh
+```bash
 $?
 ```
 
 exit status command terakhir.
 
-```zsh
+```bash
 $!
 ```
 
 PID proses background terakhir.
 
-```zsh
+```bash
 $#
 ```
 
 jumlah positional parameters.
 
-```zsh
+```bash
 $0
 ```
 
@@ -1918,7 +1918,7 @@ Dan masih banyak lagi.
 
 Jadi ketika membaca konfigurasi Zsh:
 
-```zsh
+```bash
 if (( $? != 0 )); then
     ...
 fi
@@ -1934,7 +1934,7 @@ Pengetahuan Bash mengenai quoting tetap sangat berguna.
 
 Tiga bentuk dasar:
 
-```text
+```bash
 '...'
 "..."
 tanpa quote
@@ -1942,7 +1942,7 @@ tanpa quote
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 
 print "$name"
@@ -1952,7 +1952,7 @@ print $name
 
 Secara konseptual:
 
-```text
+```bash
 "$name"
     │
     └── parameter expansion terjadi
@@ -1971,13 +1971,13 @@ Ini akan menjadi jauh lebih penting di Zsh karena Zsh memiliki expansion system 
 
 Jangan menganggap:
 
-```zsh
+```bash
 "$array"
 ```
 
 dan:
 
-```zsh
+```bash
 $array
 ```
 
@@ -1995,7 +1995,7 @@ Secara konseptual, command line Zsh melewati beberapa jenis pemrosesan.
 
 Salah satu model sederhananya:
 
-```text
+```bash
 source code
     │
     ▼
@@ -2039,13 +2039,13 @@ result=$(command)
 
 Zsh juga mendukung:
 
-```zsh
+```bash
 result=$(command)
 ```
 
 Contoh:
 
-```zsh
+```bash
 current_dir=$(pwd)
 
 print "$current_dir"
@@ -2061,7 +2061,7 @@ Tetapi Zsh juga mempunyai mekanisme expansion dan substitution lain yang akan ki
 
 Demikian pula:
 
-```zsh
+```bash
 number=10
 
 print $((number + 5))
@@ -2069,13 +2069,13 @@ print $((number + 5))
 
 Hasil:
 
-```text
+```bash
 15
 ```
 
 Konsep:
 
-```text
+```bash
 $(( ... ))
 ```
 
@@ -2097,7 +2097,7 @@ diff <(command1) <(command2)
 
 Zsh juga mendukung konsep:
 
-```zsh
+```bash
 diff <(command1) <(command2)
 ```
 
@@ -2105,7 +2105,7 @@ Ini merupakan contoh penting bahwa pengetahuan Bash Anda tidak dibuang.
 
 Konsep:
 
-```text
+```bash
 command1
    │
    └── process substitution ──┐
@@ -2125,25 +2125,25 @@ Sekarang kita kembali ke array karena di sinilah model Zsh mulai berbeda secara 
 
 Zsh:
 
-```zsh
+```bash
 files=(one two three)
 ```
 
 Anda dapat mengakses:
 
-```zsh
+```bash
 print "$files[1]"
 ```
 
 atau beberapa elemen:
 
-```zsh
+```bash
 print "$files[1,2]"
 ```
 
 Secara konseptual:
 
-```text
+```bash
 files
  │
  ├── [1] one
@@ -2163,7 +2163,7 @@ Sistem parameter Zsh sendiri mempunyai semantic model yang berbeda.
 
 Karena kurikulum sengaja memisahkan:
 
-```text
+```bash
 Lesson 01
     ↓
 memahami perbedaan Bash ↔ Zsh
@@ -2207,13 +2207,13 @@ Ketika suatu saat Anda memiliki script Bash:
 
 dan ingin memindahkannya ke:
 
-```zsh
+```bash
 #!/usr/bin/env zsh
 ```
 
 jangan melakukan:
 
-```text
+```bash
 ganti interpreter
        ↓
 selesai
@@ -2221,7 +2221,7 @@ selesai
 
 Gunakan proses:
 
-```text
+```bash
 Bash script
     │
     ▼
@@ -2250,7 +2250,7 @@ Ini akan sangat relevan ketika nanti Anda mulai membaca konfigurasi `.zshrc` mil
 
 ## Posisi Lesson 01 sekarang
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Zsh bukan Bash++
@@ -2288,7 +2288,7 @@ arr=(one two three)
 
 Zsh:
 
-```zsh
+```bash
 arr=(one two three)
 ```
 
@@ -2298,7 +2298,7 @@ Tetapi jangan berhenti pada syntax. Perhatikan bagaimana elemen tersebut direpre
 
 Di Bash:
 
-```text
+```bash
 arr
 ├── [0] one
 ├── [1] two
@@ -2307,7 +2307,7 @@ arr
 
 Di Zsh:
 
-```text
+```bash
 arr
 ├── [1] one
 ├── [2] two
@@ -2330,13 +2330,13 @@ printf '%s\n' "${arr[0]}"
 
 menghasilkan:
 
-```text
+```bash
 one
 ```
 
 Zsh:
 
-```zsh
+```bash
 arr=(one two three)
 
 print "$arr[1]"
@@ -2344,13 +2344,13 @@ print "$arr[1]"
 
 menghasilkan:
 
-```text
+```bash
 one
 ```
 
 Jadi:
 
-```text
+```bash
 Bash                       Zsh
 
 ${arr[0]} → one            $arr[1] → one
@@ -2362,13 +2362,13 @@ Perbedaan ini harus menjadi refleks ketika membaca kode.
 
 Jika Anda melihat:
 
-```zsh
+```bash
 $array[1]
 ```
 
 jangan membacanya dengan mental model Bash:
 
-```text
+```bash
 "elemen kedua"
 ```
 
@@ -2382,25 +2382,25 @@ Zsh juga mendukung indexing dari belakang.
 
 Misalnya:
 
-```zsh
+```bash
 arr=(one two three)
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "$arr[-1]"
 ```
 
 mengacu pada elemen terakhir:
 
-```text
+```bash
 three
 ```
 
 Secara konseptual:
 
-```text
+```bash
         depan             belakang
           │                  │
           ▼                  ▼
@@ -2419,7 +2419,7 @@ Ini akan menjadi semakin berguna ketika nanti kita mempelajari parameter expansi
 
 Zsh juga memungkinkan pemilihan range:
 
-```zsh
+```bash
 arr=(one two three four five)
 
 print "$arr[2,4]"
@@ -2427,7 +2427,7 @@ print "$arr[2,4]"
 
 Secara konseptual:
 
-```text
+```bash
 [1] one
 [2] two    ←
 [3] three  ←
@@ -2437,7 +2437,7 @@ Secara konseptual:
 
 Hasilnya merupakan elemen:
 
-```text
+```bash
 two
 three
 four
@@ -2445,13 +2445,13 @@ four
 
 Jadi bentuk:
 
-```zsh
+```bash
 $array[start,end]
 ```
 
 dapat dipahami sebagai:
 
-```text
+```bash
 ambil elemen dari start sampai end
 ```
 
@@ -2465,7 +2465,7 @@ Dalam Zsh, parameter mempunyai tipe/atribut.
 
 Contoh:
 
-```zsh
+```bash
 typeset -a arr
 ```
 
@@ -2473,7 +2473,7 @@ berarti parameter tersebut merupakan array biasa.
 
 Sedangkan:
 
-```zsh
+```bash
 typeset -A map
 ```
 
@@ -2481,13 +2481,13 @@ merupakan associative array.
 
 Ini membawa kita ke builtin penting:
 
-```zsh
+```bash
 typeset
 ```
 
 Untuk saat ini cukup pahami:
 
-```text
+```bash
 typeset
    │
    └── mengatur / mendeklarasikan atribut parameter
@@ -2510,7 +2510,7 @@ user[shell]="zsh"
 
 Zsh:
 
-```zsh
+```bash
 typeset -A user
 
 user[name]="Amir"
@@ -2519,19 +2519,19 @@ user[shell]="zsh"
 
 Kemudian:
 
-```zsh
+```bash
 print "$user[name]"
 ```
 
 menghasilkan:
 
-```text
+```bash
 Amir
 ```
 
 Modelnya:
 
-```text
+```bash
 user
 │
 ├── [name]  → Amir
@@ -2540,7 +2540,7 @@ user
 
 Berbeda dengan indexed array:
 
-```text
+```bash
 arr
 │
 ├── [1] → one
@@ -2550,7 +2550,7 @@ arr
 
 Maka secara konseptual:
 
-```text
+```bash
 Zsh parameter
 │
 ├── scalar
@@ -2578,19 +2578,19 @@ Zsh memiliki model expansion yang berbeda.
 
 Misalnya:
 
-```zsh
+```bash
 arr=(one two three)
 ```
 
 Anda dapat menggunakan:
 
-```zsh
+```bash
 print -rl -- "$arr[@]"
 ```
 
 Konsepnya:
 
-```text
+```bash
 $arr[@]
    │
    └── seluruh elemen array
@@ -2600,7 +2600,7 @@ Namun Anda harus berhati-hati terhadap quoting dan konteks penggunaan.
 
 Ini bukan tempat untuk menghafalkan semua variasi:
 
-```zsh
+```bash
 $array
 $array[@]
 $array[*]
@@ -2617,7 +2617,7 @@ Untuk Lesson 01, yang penting adalah memahami bahwa **array expansion Zsh tidak 
 
 Dalam `.zshrc`, plugin, completion, dan konfigurasi terminal, array sering digunakan untuk menyimpan:
 
-```text
+```bash
 PATH entries
 plugin names
 completion configuration
@@ -2629,13 +2629,13 @@ options
 
 Misalnya suatu konfigurasi dapat mempunyai:
 
-```zsh
+```bash
 plugins=(git fzf zoxide)
 ```
 
 Kemudian:
 
-```text
+```bash
 plugins[1] → git
 plugins[2] → fzf
 plugins[3] → zoxide
@@ -2643,7 +2643,7 @@ plugins[3] → zoxide
 
 Jika Anda membawa asumsi Bash:
 
-```text
+```bash
 plugins[0] → git
 ```
 
@@ -2661,19 +2661,19 @@ Zsh dapat memperlakukan parameter tertentu sebagai array melalui parameter khusu
 
 Salah satu contoh terkenal adalah:
 
-```zsh
+```bash
 path
 ```
 
 yang berkaitan dengan:
 
-```text
+```bash
 PATH
 ```
 
 Secara konseptual:
 
-```text
+```bash
 PATH
  │
  ▼
@@ -2682,7 +2682,7 @@ PATH
 
 sedangkan bentuk array-nya:
 
-```text
+```bash
 path
  │
  ├── /usr/bin
@@ -2692,7 +2692,7 @@ path
 
 Ini sangat cocok dengan filosofi Zsh:
 
-```text
+```bash
 PATH sebagai string
         ↓
 PATH sebagai kumpulan directory
@@ -2710,7 +2710,7 @@ Perhatikan dua mental model berikut.
 
 Bash:
 
-```text
+```bash
 "${array[@]}"
 ```
 
@@ -2718,7 +2718,7 @@ sering digunakan ketika kita ingin mempertahankan setiap elemen sebagai argument
 
 Zsh:
 
-```text
+```bash
 $array
 $array[@]
 ```
@@ -2727,7 +2727,7 @@ mempunyai aturan expansion Zsh sendiri.
 
 Jadi ketika melakukan porting:
 
-```text
+```bash
 Bash code
    │
    ▼
@@ -2742,7 +2742,7 @@ Kita harus memahami konteks expansion-nya terlebih dahulu.
 
 Ini contoh konkret dari prinsip yang sudah kita bangun:
 
-```text
+```bash
 Syntax mirip
      ≠
 Semantik sama
@@ -2756,7 +2756,7 @@ Sekarang belum perlu menjawab quiz. Tujuan eksperimen ini hanya membuat perbedaa
 
 Di Zsh:
 
-```zsh
+```bash
 arr=(one two three four five)
 
 print "$arr[1]"
@@ -2766,7 +2766,7 @@ print "$arr[2,4]"
 
 Perhatikan hubungan:
 
-```text
+```bash
 $arr[1]
 $arr[-1]
 $arr[2,4]
@@ -2774,7 +2774,7 @@ $arr[2,4]
 
 Kemudian:
 
-```zsh
+```bash
 typeset -A user
 
 user[name]="Amir"
@@ -2786,7 +2786,7 @@ print "$user[shell]"
 
 Sekarang Anda sudah melihat tiga konsep berbeda:
 
-```text
+```bash
 indexed array
      │
      ├── positive index
@@ -2808,7 +2808,7 @@ parameter
 
 Setelah bagian array ini:
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++
@@ -2840,7 +2840,7 @@ Globbing adalah mekanisme shell untuk mencocokkan pola terhadap nama file atau d
 
 Misalnya terdapat:
 
-```text
+```bash
 project/
 ├── main.zsh
 ├── config.zsh
@@ -2850,13 +2850,13 @@ project/
 
 Kemudian:
 
-```zsh
+```bash
 print -- *.zsh
 ```
 
 Shell mencocokkan:
 
-```text
+```bash
 *.zsh
   │
   └── semua nama yang berakhiran .zsh
@@ -2864,7 +2864,7 @@ Shell mencocokkan:
 
 sehingga pola tersebut dapat berkembang menjadi:
 
-```text
+```bash
 main.zsh config.zsh
 ```
 
@@ -2872,7 +2872,7 @@ Proses ini disebut **filename generation**.
 
 Mental modelnya:
 
-```text
+```bash
 pattern
    │
    ▼
@@ -2887,7 +2887,7 @@ command execution
 
 Jadi:
 
-```zsh
+```bash
 print -- *.zsh
 ```
 
@@ -2901,7 +2901,7 @@ Shell-lah yang melakukan ekspansi tersebut sebelum `print` menerima argument.
 
 Wildcard yang paling dasar:
 
-```text
+```bash
 *
 ?
 [...]
@@ -2909,7 +2909,7 @@ Wildcard yang paling dasar:
 
 `*`:
 
-```zsh
+```bash
 *.zsh
 ```
 
@@ -2917,7 +2917,7 @@ berarti pola dengan sejumlah karakter sebelum `.zsh`.
 
 `?`:
 
-```zsh
+```bash
 file?.txt
 ```
 
@@ -2925,7 +2925,7 @@ mencocokkan satu karakter pada posisi `?`.
 
 Character class:
 
-```zsh
+```bash
 file[0-9].txt
 ```
 
@@ -2943,13 +2943,13 @@ Perbedaannya mulai menarik ketika kita masuk ke kemampuan khusus Zsh.
 
 Perhatikan:
 
-```zsh
+```bash
 *.txt
 ```
 
 Jika struktur direktori:
 
-```text
+```bash
 project/
 ├── a.txt
 ├── b.txt
@@ -2959,7 +2959,7 @@ project/
 
 maka:
 
-```zsh
+```bash
 *.txt
 ```
 
@@ -2967,14 +2967,14 @@ berhubungan dengan file `.txt` pada direktori saat ini.
 
 Ia tidak secara otomatis berarti:
 
-```text
+```bash
 semua .txt
 di seluruh subdirectory
 ```
 
 Untuk recursive globbing, Zsh mempunyai:
 
-```zsh
+```bash
 **/*.txt
 ```
 
@@ -2982,7 +2982,7 @@ yang memungkinkan pencocokan secara recursive.
 
 Secara konseptual:
 
-```text
+```bash
 *.txt
 │
 └── current directory
@@ -3003,7 +3003,7 @@ Ini salah satu kemampuan Zsh yang akan sangat sering Anda temui.
 
 Perhatikan perbedaan mental model:
 
-```text
+```bash
 find
  │
  └── program eksternal
@@ -3011,7 +3011,7 @@ find
 
 sedangkan:
 
-```text
+```bash
 **/*.txt
  │
  └── filename generation shell
@@ -3019,7 +3019,7 @@ sedangkan:
 
 Jadi ketika menulis:
 
-```zsh
+```bash
 print -rl -- **/*.txt
 ```
 
@@ -3041,7 +3041,7 @@ Zsh mempunyai sistem extended globbing yang jauh lebih kaya.
 
 Untuk mengaktifkannya:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -3049,7 +3049,7 @@ Setelah option tersebut aktif, pola glob dapat menggunakan operator tambahan.
 
 Contohnya:
 
-```zsh
+```bash
 ^*.txt
 ```
 
@@ -3057,7 +3057,7 @@ Dalam konteks extended globbing, operator tersebut dapat digunakan untuk membuat
 
 Secara konseptual:
 
-```text
+```bash
 *.txt
    │
    └── match .txt
@@ -3071,7 +3071,7 @@ Detail sintaks extended glob sangat luas. Karena itu kita **tidak akan menghafal
 
 Nanti Lesson 05 akan membedah:
 
-```text
+```bash
 extended glob
 ├── operators
 ├── negation
@@ -3089,7 +3089,7 @@ Ini penting untuk menghubungkan materi sebelumnya.
 
 Kita sebelumnya melihat:
 
-```text
+```bash
 parameter expansion
 command substitution
 arithmetic expansion
@@ -3097,7 +3097,7 @@ arithmetic expansion
 
 Sekarang:
 
-```text
+```bash
 filename generation
 ```
 
@@ -3105,7 +3105,7 @@ Semuanya merupakan bagian dari mekanisme expansion shell.
 
 Secara konseptual:
 
-```text
+```bash
 Zsh command line
        │
        ▼
@@ -3135,7 +3135,7 @@ Ini salah satu perbedaan perilaku yang harus Anda kenali.
 
 Misalnya tidak ada file `.xyz`:
 
-```zsh
+```bash
 print -- *.xyz
 ```
 
@@ -3145,7 +3145,7 @@ Zsh secara default memiliki perilaku `NOMATCH`, sehingga pola yang tidak menemuk
 
 Secara konseptual:
 
-```text
+```bash
 pattern
    │
    ▼
@@ -3163,7 +3163,7 @@ Ini contoh bagus mengapa:
 
 Bash dan Zsh dapat menerima:
 
-```text
+```bash
 *.xyz
 ```
 
@@ -3175,7 +3175,7 @@ tetapi menangani hasil unmatched secara berbeda.
 
 Bayangkan sebuah function:
 
-```zsh
+```bash
 cleanup() {
     rm -- *.tmp
 }
@@ -3185,7 +3185,7 @@ Jika tidak ada file `.tmp`, perilakunya perlu Anda pahami.
 
 Jangan hanya melihat:
 
-```zsh
+```bash
 rm -- *.tmp
 ```
 
@@ -3195,7 +3195,7 @@ dan berpikir:
 
 Anda harus mempertimbangkan:
 
-```text
+```bash
 shell options
        │
        ▼
@@ -3222,7 +3222,7 @@ Contohnya pola glob dapat digunakan untuk memilih jenis file tertentu.
 
 Misalnya konsep:
 
-```text
+```bash
 file biasa
 directory
 executable
@@ -3233,7 +3233,7 @@ dapat menjadi bagian dari filtering glob.
 
 Ini sangat berbeda dari mental model:
 
-```text
+```bash
 *.txt
 ```
 
@@ -3241,7 +3241,7 @@ yang hanya melihat pola nama.
 
 Zsh dapat membuat glob menjadi lebih dekat dengan:
 
-```text
+```bash
 "cari file yang memenuhi nama + atribut tertentu"
 ```
 
@@ -3253,13 +3253,13 @@ Detail syntax glob qualifiers kita simpan untuk Lesson 05.
 
 Jangan mencampurkan:
 
-```text
+```bash
 glob
 ```
 
 dengan:
 
-```text
+```bash
 regular expression
 ```
 
@@ -3267,19 +3267,19 @@ Keduanya sama-sama melakukan pattern matching, tetapi sistemnya berbeda.
 
 Contoh glob:
 
-```zsh
+```bash
 *.txt
 ```
 
 Sedangkan regex memiliki konsep seperti:
 
-```text
+```bash
 ^.*\.txt$
 ```
 
 Mental model:
 
-```text
+```bash
 Glob
  │
  └── shell filename generation
@@ -3291,7 +3291,7 @@ Regex
 
 Contoh program yang menggunakan regex:
 
-```text
+```bash
 grep
 sed
 awk
@@ -3299,7 +3299,7 @@ awk
 
 Sedangkan:
 
-```zsh
+```bash
 *.txt
 ```
 
@@ -3315,7 +3315,7 @@ Dalam Zsh, globbing sangat terintegrasi dengan parameter expansion dan pattern m
 
 Artinya kemampuan pattern Zsh nantinya tidak hanya berguna untuk:
 
-```text
+```bash
 nama file
 ```
 
@@ -3331,7 +3331,7 @@ Namun detail tersebut kita tahan sampai Lesson 03 dan Lesson 05.
 
 Gunakan direktori sementara agar tidak mengganggu file Anda:
 
-```zsh
+```bash
 mkdir -p /tmp/zsh-glob/a/b
 touch /tmp/zsh-glob/one.txt
 touch /tmp/zsh-glob/two.txt
@@ -3342,25 +3342,25 @@ touch /tmp/zsh-glob/a/note.md
 
 Masuk:
 
-```zsh
+```bash
 cd /tmp/zsh-glob
 ```
 
 Coba:
 
-```zsh
+```bash
 print -rl -- *.txt
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print -rl -- **/*.txt
 ```
 
 Sekarang coba pola yang tidak ada:
 
-```zsh
+```bash
 print -rl -- *.does-not-exist
 ```
 
@@ -3368,7 +3368,7 @@ Perhatikan perbedaan perilakunya.
 
 Kemudian:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -3376,7 +3376,7 @@ dan perhatikan bahwa option tersebut mengubah kemampuan globbing Zsh.
 
 Tidak perlu menghafalkan hasil eksperimen. Tujuan tahap ini adalah membentuk hubungan:
 
-```text
+```bash
 glob
   ↓
 filename generation
@@ -3392,7 +3392,7 @@ hasil argument
 
 Setelah bagian globbing:
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++
@@ -3419,7 +3419,7 @@ Bagian berikutnya adalah **Conditional Expressions — perbedaan `[ ]`, `[[ ]]`,
 
 Kita masih tetap berada tepat di dalam cakupan **Lesson 01 — Zsh vs Bash**. Urutannya sekarang:
 
-```text
+```bash
 01 — Zsh vs Bash
 ├── ✓ Mengapa Zsh bukan Bash++
 ├── ✓ POSIX vs Zsh-specific extensions
@@ -3455,13 +3455,13 @@ dan:
 
 Zsh juga mendukung:
 
-```zsh
+```bash
 [ "$name" = "Amir" ]
 ```
 
 dan:
 
-```zsh
+```bash
 [[ "$name" == "Amir" ]]
 ```
 
@@ -3469,13 +3469,13 @@ Jadi syntax dasar tidak perlu Anda pelajari ulang.
 
 Yang penting adalah memahami bahwa:
 
-```text
+```bash
 [ ... ]
 ```
 
 dan:
 
-```text
+```bash
 [[ ... ]]
 ```
 
@@ -3489,7 +3489,7 @@ bukan sekadar dua cara penulisan yang identik.
 
 Dalam konfigurasi Zsh, Anda akan sangat sering melihat:
 
-```zsh
+```bash
 if [[ condition ]]; then
     ...
 fi
@@ -3497,7 +3497,7 @@ fi
 
 Contoh:
 
-```zsh
+```bash
 if [[ -n "$EDITOR" ]]; then
     print "$EDITOR"
 fi
@@ -3505,7 +3505,7 @@ fi
 
 atau:
 
-```zsh
+```bash
 if [[ "$TERM" == "xterm-256color" ]]; then
     ...
 fi
@@ -3513,7 +3513,7 @@ fi
 
 Jadi ketika membaca `.zshrc`, bentuk:
 
-```zsh
+```bash
 [[ ... ]]
 ```
 
@@ -3525,7 +3525,7 @@ harus langsung Anda kenali sebagai **shell conditional expression**.
 
 Contoh dasar:
 
-```zsh
+```bash
 name="Amir"
 
 if [[ "$name" == "Amir" ]]; then
@@ -3535,7 +3535,7 @@ fi
 
 Operator:
 
-```text
+```bash
 == 
 !=
 ```
@@ -3544,7 +3544,7 @@ digunakan untuk perbandingan.
 
 Anda juga sudah mengenal:
 
-```zsh
+```bash
 [[ -n "$name" ]]
 ```
 
@@ -3552,7 +3552,7 @@ untuk memeriksa apakah string tidak kosong.
 
 Dan:
 
-```zsh
+```bash
 [[ -z "$name" ]]
 ```
 
@@ -3560,7 +3560,7 @@ untuk memeriksa apakah string kosong.
 
 Mental model:
 
-```text
+```bash
 [[ ... ]]
    │
    ├── string comparison
@@ -3578,7 +3578,7 @@ Di sini mulai muncul perbedaan penting.
 
 Conditional:
 
-```zsh
+```bash
 [[ "$name" == "Amir" ]]
 ```
 
@@ -3588,7 +3588,7 @@ Tetapi dalam konteks `[[ ... ]]`, pola dapat digunakan dengan aturan shell patte
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 
 if [[ "$name" == A* ]]; then
@@ -3602,7 +3602,7 @@ Ini penting.
 
 Kita sebelumnya membahas:
 
-```zsh
+```bash
 *.txt
 ```
 
@@ -3610,7 +3610,7 @@ sebagai filename generation.
 
 Tetapi:
 
-```zsh
+```bash
 [[ "$name" == A* ]]
 ```
 
@@ -3618,7 +3618,7 @@ menggunakan pattern matching di dalam conditional.
 
 Jadi:
 
-```text
+```bash
 *.txt
   ↓
 filename generation
@@ -3636,7 +3636,7 @@ Syntax pattern-nya dapat terlihat sama, tetapi konteks pemrosesannya berbeda.
 
 Anda dapat menggabungkan kondisi:
 
-```zsh
+```bash
 if [[ -n "$name" && "$name" == "Amir" ]]; then
     print "valid"
 fi
@@ -3644,7 +3644,7 @@ fi
 
 atau:
 
-```zsh
+```bash
 if [[ -z "$name" || "$name" == "unknown" ]]; then
     print "empty or unknown"
 fi
@@ -3652,7 +3652,7 @@ fi
 
 Secara konseptual:
 
-```text
+```bash
 [[ condition1 && condition2 ]]
               │
               ▼
@@ -3669,7 +3669,7 @@ Ini sangat mirip dengan yang sudah Anda kenal dari Bash.
 
 Jadi sekali lagi:
 
-```text
+```bash
 Pengetahuan Bash
        │
        ▼
@@ -3689,7 +3689,7 @@ Zsh juga menyediakan pemeriksaan file melalui conditional expressions.
 
 Contoh:
 
-```zsh
+```bash
 if [[ -f "$file" ]]; then
     print "regular file"
 fi
@@ -3697,7 +3697,7 @@ fi
 
 Direktori:
 
-```zsh
+```bash
 if [[ -d "$dir" ]]; then
     print "directory"
 fi
@@ -3705,7 +3705,7 @@ fi
 
 File readable:
 
-```zsh
+```bash
 if [[ -r "$file" ]]; then
     print "readable"
 fi
@@ -3723,7 +3723,7 @@ Zsh juga memiliki arithmetic evaluation.
 
 Misalnya:
 
-```zsh
+```bash
 count=10
 
 if (( count > 5 )); then
@@ -3733,7 +3733,7 @@ fi
 
 Perhatikan bentuk:
 
-```zsh
+```bash
 (( ... ))
 ```
 
@@ -3743,7 +3743,7 @@ Ia merupakan konteks evaluasi arithmetic.
 
 Modelnya:
 
-```text
+```bash
 (( expression ))
        │
        ▼
@@ -3752,7 +3752,7 @@ numeric evaluation
 
 Contoh:
 
-```zsh
+```bash
 (( count == 10 ))
 (( count > 5 ))
 (( count < 20 ))
@@ -3762,7 +3762,7 @@ Konsep ini juga sudah ada di Bash.
 
 Jadi kembali:
 
-```text
+```bash
 Bash knowledge
       ↓
 langsung berguna
@@ -3776,7 +3776,7 @@ pelajari semantic Zsh
 
 Shell tidak memiliki sistem boolean seperti bahasa pemrograman yang biasanya menghasilkan:
 
-```text
+```bash
 true
 false
 ```
@@ -3785,25 +3785,25 @@ Sebaliknya, conditional shell berhubungan dengan **exit status**.
 
 Misalnya:
 
-```zsh
+```bash
 [[ -n "$name" ]]
 ```
 
 Jika kondisi benar, statusnya:
 
-```text
+```bash
 0
 ```
 
 Jika salah:
 
-```text
+```bash
 non-zero
 ```
 
 Karena itu:
 
-```zsh
+```bash
 if [[ -n "$name" ]]; then
     ...
 fi
@@ -3811,7 +3811,7 @@ fi
 
 secara konseptual berarti:
 
-```text
+```bash
 jalankan conditional
        ↓
 periksa exit status
@@ -3831,7 +3831,7 @@ Ini juga penting untuk mental model.
 
 Ketika Anda menulis:
 
-```zsh
+```bash
 [[ -f "$file" ]]
 ```
 
@@ -3841,7 +3841,7 @@ shell tidak menjalankan sebuah program eksternal bernama `[[`.
 
 Demikian pula:
 
-```zsh
+```bash
 (( count > 5 ))
 ```
 
@@ -3849,7 +3849,7 @@ merupakan konstruksi shell.
 
 Bandingkan dengan:
 
-```zsh
+```bash
 test -f "$file"
 ```
 
@@ -3857,7 +3857,7 @@ test -f "$file"
 
 Mental model:
 
-```text
+```bash
 [[ ... ]]
     │
     └── shell conditional construct
@@ -3881,7 +3881,7 @@ Konfigurasi Zsh sering harus memeriksa keadaan environment.
 
 Contohnya secara konseptual:
 
-```zsh
+```bash
 if [[ -o interactive ]]; then
     ...
 fi
@@ -3889,7 +3889,7 @@ fi
 
 atau:
 
-```zsh
+```bash
 if [[ -n "$commands[fzf]" ]]; then
     ...
 fi
@@ -3897,7 +3897,7 @@ fi
 
 atau:
 
-```zsh
+```bash
 if [[ -d "$HOME/.config" ]]; then
     ...
 fi
@@ -3905,7 +3905,7 @@ fi
 
 Artinya conditional expressions nantinya menjadi bagian dari pola konfigurasi:
 
-```text
+```bash
 startup
    │
    ▼
@@ -3931,7 +3931,7 @@ Ini perlu ditekankan karena kedua materi berdekatan.
 
 Globbing:
 
-```zsh
+```bash
 print -- *.txt
 ```
 
@@ -3939,7 +3939,7 @@ dapat menghasilkan nama file.
 
 Conditional:
 
-```zsh
+```bash
 [[ "$file" == *.txt ]]
 ```
 
@@ -3949,19 +3949,19 @@ Ia membandingkan **nilai string** dengan pattern.
 
 Contoh:
 
-```text
+```bash
 file="config.txt"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 [[ "$file" == *.txt ]]
 ```
 
 berarti:
 
-```text
+```bash
 nilai file
     │
     ▼
@@ -3973,7 +3973,7 @@ cocok dengan pattern *.txt ?
 
 Bukan:
 
-```text
+```bash
 cari semua file *.txt
 ```
 
@@ -3985,7 +3985,7 @@ Perbedaan ini harus benar-benar jelas sebelum kita masuk lebih jauh ke Zsh patte
 
 Yang perlu dibawa dari bagian ini:
 
-```text
+```bash
 Bash → Zsh
 │
 ├── [ ... ]             → tersedia
@@ -3999,13 +3999,13 @@ Bash → Zsh
 
 Dan satu prinsip penting:
 
-```text
+```bash
 [[ "$value" == *.txt ]]
 ```
 
 ≠
 
-```text
+```bash
 *.txt
 ```
 
@@ -4017,7 +4017,7 @@ Yang kedua adalah **filename generation**.
 
 ## Posisi Lesson 01
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++
@@ -4043,7 +4043,7 @@ Bagian berikutnya sesuai urutan kurikulum adalah **Functions — perbedaan funct
 
 Bentuk yang paling familiar:
 
-```zsh
+```bash
 hello() {
     print "Hello"
 }
@@ -4051,13 +4051,13 @@ hello() {
 
 Kemudian:
 
-```zsh
+```bash
 hello
 ```
 
 Output:
 
-```text
+```bash
 Hello
 ```
 
@@ -4071,7 +4071,7 @@ hello() {
 
 Jadi struktur dasarnya tidak berubah:
 
-```text
+```bash
 nama_function()
     │
     ▼
@@ -4085,7 +4085,7 @@ Perbedaan pertama yang langsung terlihat adalah builtin Zsh `print`.
 
 Di Zsh:
 
-```zsh
+```bash
 print "Hello"
 ```
 
@@ -4097,7 +4097,7 @@ merupakan builtin yang sangat penting dan akan sering ditemukan dalam konfiguras
 
 Setelah didefinisikan:
 
-```zsh
+```bash
 hello() {
     print "Hello"
 }
@@ -4105,13 +4105,13 @@ hello() {
 
 function tersebut menjadi bagian dari command namespace shell:
 
-```zsh
+```bash
 hello
 ```
 
 Anda dapat melihatnya menggunakan:
 
-```zsh
+```bash
 whence -f hello
 ```
 
@@ -4119,7 +4119,7 @@ Zsh akan menunjukkan definisi function tersebut.
 
 Ini memperkenalkan salah satu builtin penting Zsh:
 
-```zsh
+```bash
 whence
 ```
 
@@ -4127,7 +4127,7 @@ yang nanti akan kita bahas lebih lengkap ketika masuk ke **Builtins**.
 
 Untuk sekarang, pahami:
 
-```text
+```bash
 whence
   │
   └── membantu mengetahui bagaimana Zsh
@@ -4140,7 +4140,7 @@ whence
 
 Seperti Bash, argument function tersedia melalui positional parameters.
 
-```zsh
+```bash
 greet() {
     print "Hello, $1"
 }
@@ -4148,19 +4148,19 @@ greet() {
 
 Kemudian:
 
-```zsh
+```bash
 greet Amir
 ```
 
 menghasilkan:
 
-```text
+```bash
 Hello, Amir
 ```
 
 Parameter:
 
-```text
+```bash
 $1
 $2
 $3
@@ -4171,7 +4171,7 @@ tetap digunakan.
 
 Contoh:
 
-```zsh
+```bash
 greet() {
     print "name : $1"
     print "shell: $2"
@@ -4180,13 +4180,13 @@ greet() {
 
 Pemanggilan:
 
-```zsh
+```bash
 greet Amir zsh
 ```
 
 menghasilkan:
 
-```text
+```bash
 name : Amir
 shell: zsh
 ```
@@ -4203,7 +4203,7 @@ Zsh memiliki model array yang berbeda dari Bash.
 
 Misalnya:
 
-```zsh
+```bash
 show_args() {
     print -rl -- "$@"
 }
@@ -4211,7 +4211,7 @@ show_args() {
 
 Pemanggilan:
 
-```zsh
+```bash
 show_args one two three
 ```
 
@@ -4221,7 +4221,7 @@ Zsh memperlakukan positional parameters sebagai array dengan karakteristik Zsh s
 
 Ini berkaitan erat dengan materi sebelumnya:
 
-```text
+```bash
 Bash
 └── indexed array biasanya mulai dari 0
 
@@ -4251,7 +4251,7 @@ Zsh juga mendukung local variables.
 
 Contoh:
 
-```zsh
+```bash
 my_function() {
     local value="hello"
     print "$value"
@@ -4260,13 +4260,13 @@ my_function() {
 
 Namun Zsh memiliki builtin yang jauh lebih sentral:
 
-```zsh
+```bash
 typeset
 ```
 
 Contoh:
 
-```zsh
+```bash
 my_function() {
     typeset value="hello"
     print "$value"
@@ -4277,7 +4277,7 @@ Dalam function, `typeset` dapat digunakan untuk membuat parameter lokal.
 
 Zsh juga menggunakan `typeset` untuk berbagai deklarasi parameter:
 
-```zsh
+```bash
 typeset -a array
 typeset -A map
 typeset -i number
@@ -4285,7 +4285,7 @@ typeset -i number
 
 Karena itu:
 
-```text
+```bash
 Bash
 └── local
      │
@@ -4309,7 +4309,7 @@ Nanti kita akan membahas `typeset` secara lebih mendalam.
 
 Zsh juga menerima bentuk:
 
-```zsh
+```bash
 function hello {
     print "Hello"
 }
@@ -4317,7 +4317,7 @@ function hello {
 
 Jadi Anda dapat menemukan dua bentuk:
 
-```zsh
+```bash
 hello() {
     print "Hello"
 }
@@ -4325,7 +4325,7 @@ hello() {
 
 dan:
 
-```zsh
+```bash
 function hello {
     print "Hello"
 }
@@ -4347,7 +4347,7 @@ Function berjalan di dalam shell dan dapat mengakses serta memodifikasi paramete
 
 Contoh:
 
-```zsh
+```bash
 show_shell() {
     print "$ZSH_VERSION"
 }
@@ -4355,7 +4355,7 @@ show_shell() {
 
 Kemudian:
 
-```zsh
+```bash
 show_shell
 ```
 
@@ -4363,7 +4363,7 @@ Function tersebut dapat membaca parameter environment/shell yang tersedia.
 
 Ini menjadi dasar:
 
-```text
+```bash
 .zshrc
  │
  ├── define function
@@ -4383,7 +4383,7 @@ Jadi function adalah salah satu komponen utama yang nantinya menghubungkan **bah
 
 Function juga memiliki exit status.
 
-```zsh
+```bash
 check() {
     return 0
 }
@@ -4391,20 +4391,20 @@ check() {
 
 Kemudian:
 
-```zsh
+```bash
 check
 print $?
 ```
 
 akan menghasilkan:
 
-```text
+```bash
 0
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 check() {
     return 1
 }
@@ -4414,7 +4414,7 @@ akan menghasilkan status non-zero.
 
 Ini langsung berhubungan dengan materi sebelumnya:
 
-```text
+```bash
 function
    │
    ▼
@@ -4429,7 +4429,7 @@ if / && / ||
 
 Contoh:
 
-```zsh
+```bash
 check_file() {
     [[ -f "$1" ]]
 }
@@ -4437,7 +4437,7 @@ check_file() {
 
 Kemudian:
 
-```zsh
+```bash
 if check_file "$HOME/.zshrc"; then
     print "exists"
 fi
@@ -4445,7 +4445,7 @@ fi
 
 Function tersebut tidak perlu secara eksplisit menulis:
 
-```zsh
+```bash
 return $?
 ```
 
@@ -4461,20 +4461,20 @@ Sekarang kita sampai pada bagian yang sangat penting untuk tujuan akhir Anda.
 
 Dalam Bash, Anda mungkin terbiasa dengan:
 
-```text
+```bash
 script
  └── define functions
 ```
 
 Sedangkan Zsh memiliki mekanisme yang memungkinkan function disimpan secara terpisah dan dimuat ketika diperlukan:
 
-```zsh
+```bash
 autoload
 ```
 
 Contoh konseptual:
 
-```zsh
+```bash
 autoload -Uz my_function
 ```
 
@@ -4484,7 +4484,7 @@ Ini **bukan sekadar alternatif syntax function**.
 
 Mental model:
 
-```text
+```bash
 Function biasa
 │
 └── function sudah didefinisikan di shell
@@ -4497,7 +4497,7 @@ autoload
 
 Ini merupakan salah satu alasan mengapa memahami Zsh secara mendalam nantinya membawa Anda ke:
 
-```text
+```bash
 autoload
    ↓
 function directories
@@ -4521,13 +4521,13 @@ Untuk Lesson 01, yang perlu Anda pahami hanya posisinya:
 
 Ketika nanti membaca konfigurasi/plugin Zsh, Anda sangat mungkin menemukan:
 
-```zsh
+```bash
 autoload -Uz compinit
 ```
 
 atau:
 
-```zsh
+```bash
 autoload -Uz some_function
 ```
 
@@ -4535,7 +4535,7 @@ Untuk saat ini jangan menghafalkan `-U` dan `-z` sebagai mantra.
 
 Pahami struktur besarnya:
 
-```text
+```bash
 autoload
    │
    ├── mengambil function dari function search path
@@ -4545,7 +4545,7 @@ autoload
 
 Detail:
 
-```text
+```bash
 autoload flags
 function search path
 autoloaded functions
@@ -4562,7 +4562,7 @@ Ini sengaja ditahan agar kita tidak keluar dari urutan kurikulum.
 
 Perbandingan mental model:
 
-```text
+```bash
                     Bash                  Zsh
                     ────                  ───
 Function syntax     ✓                     ✓
@@ -4592,13 +4592,13 @@ Tetapi Zsh memiliki konsep function autoloading yang merupakan bagian native dar
 
 Tujuan Anda bukan sekadar:
 
-```text
+```bash
 bisa menulis function Zsh
 ```
 
 Tetapi akhirnya:
 
-```text
+```bash
 memahami konfigurasi
        ↓
 memahami function
@@ -4624,7 +4624,7 @@ Karena itu, `autoload` sekarang cukup dipahami sebagai **konsep yang akan muncul
 
 ## Posisi kurikulum sekarang
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++
@@ -4651,7 +4651,7 @@ Kita tetap berada di **Lesson 01 — Zsh vs Bash**. Tidak ada perpindahan ke Les
 
 Posisinya sekarang:
 
-```text
+```bash
 01 — Zsh vs Bash
 ├── ✓ Mengapa Zsh bukan Bash++
 ├── ✓ POSIX vs Zsh-specific extensions
@@ -4675,37 +4675,37 @@ Redirection adalah salah satu bagian Bash yang sudah Anda pelajari. Jadi kita ti
 
 Output standar:
 
-```zsh
+```bash
 print "hello" > output.txt
 ```
 
 Input dari file:
 
-```zsh
+```bash
 command < input.txt
 ```
 
 Append:
 
-```zsh
+```bash
 print "hello" >> output.txt
 ```
 
 Standard error:
 
-```zsh
+```bash
 command 2> error.txt
 ```
 
 Standard output dan error secara terpisah:
 
-```zsh
+```bash
 command > output.txt 2> error.txt
 ```
 
 Konsep file descriptor tetap:
 
-```text
+```bash
 0 → stdin
 1 → stdout
 2 → stderr
@@ -4713,13 +4713,13 @@ Konsep file descriptor tetap:
 
 Sehingga:
 
-```zsh
+```bash
 command > file
 ```
 
 secara konseptual adalah:
 
-```text
+```bash
 stdout (1)
     │
     ▼
@@ -4728,13 +4728,13 @@ file
 
 Sedangkan:
 
-```zsh
+```bash
 command 2> file
 ```
 
 adalah:
 
-```text
+```bash
 stderr (2)
     │
     ▼
@@ -4749,7 +4749,7 @@ Ini tidak berubah hanya karena shell yang digunakan adalah Zsh.
 
 Perhatikan:
 
-```zsh
+```bash
 print "hello" > output.txt
 ```
 
@@ -4759,7 +4759,7 @@ Ia merupakan bagian dari syntax shell.
 
 Mental model:
 
-```text
+```bash
 print "hello" > output.txt
 │
 ├── command: print
@@ -4776,19 +4776,19 @@ Hal ini penting ketika nanti membaca konfigurasi Zsh karena banyak perilaku shel
 
 Pola yang sudah Anda kenal:
 
-```zsh
+```bash
 command >output.txt 2>error.txt
 ```
 
 Atau menggabungkan keduanya:
 
-```zsh
+```bash
 command >output.txt 2>&1
 ```
 
 Modelnya:
 
-```text
+```bash
              ┌── stdout ──→ output.txt
 command ─────┤
              └── stderr ──→ stdout
@@ -4798,13 +4798,13 @@ Urutan redirection penting.
 
 Misalnya:
 
-```zsh
+```bash
 command >file 2>&1
 ```
 
 berbeda secara konsep dari:
 
-```zsh
+```bash
 command 2>&1 >file
 ```
 
@@ -4818,13 +4818,13 @@ Ini adalah konsep file descriptor yang sudah Anda pelajari di Bash dan tetap rel
 
 Contoh:
 
-```zsh
+```bash
 command1 | command2
 ```
 
 berarti stdout `command1` diberikan sebagai stdin `command2`.
 
-```text
+```bash
 command1
    │
  stdout
@@ -4838,25 +4838,25 @@ Pipeline juga tersedia di Zsh.
 
 Contoh:
 
-```zsh
+```bash
 print -rl -- *.txt | grep config
 ```
 
 Namun jangan mencampurkan:
 
-```text
+```bash
 |
 ```
 
 dengan:
 
-```text
+```bash
 >
 ```
 
 secara konseptual.
 
-```text
+```bash
 |  → menghubungkan proses
 >  → mengarahkan file descriptor
 ```
@@ -4875,7 +4875,7 @@ Zsh dapat mengizinkan satu output diarahkan ke lebih dari satu tujuan.
 
 Contoh konseptual:
 
-```zsh
+```bash
 print "hello" >one >two
 ```
 
@@ -4883,7 +4883,7 @@ Dengan mekanisme multios Zsh, output dapat diteruskan ke beberapa file.
 
 Secara mental:
 
-```text
+```bash
                  ┌──→ one
 stdout ──────────┤
                  └──→ two
@@ -4893,7 +4893,7 @@ Ini berbeda dari asumsi Bash bahwa redirection terakhir semata-mata menggantikan
 
 Fitur ini merupakan salah satu contoh nyata mengapa:
 
-```text
+```bash
 syntax terlihat sama
         ≠
 semantics selalu sama
@@ -4907,13 +4907,13 @@ yang sejak awal menjadi prinsip utama Lesson 01.
 
 Perilaku tersebut dikendalikan oleh option Zsh:
 
-```zsh
+```bash
 MULTIOS
 ```
 
 Nanti kita akan mempelajari option secara khusus, tetapi untuk sekarang cukup mengetahui hubungan:
 
-```text
+```bash
 setopt MULTIOS
        │
        ▼
@@ -4924,7 +4924,7 @@ Anda dapat melihat status option dengan mekanisme Zsh yang akan kita bahas lebih
 
 Jangan menghafalkan implementasinya sekarang. Yang penting adalah mengenali ketika Anda membaca konfigurasi:
 
-```zsh
+```bash
 setopt MULTIOS
 ```
 
@@ -4938,7 +4938,7 @@ Konsep lain yang penting adalah redirection yang tidak hanya menggunakan file.
 
 Misalnya process substitution:
 
-```zsh
+```bash
 command < <(other_command)
 ```
 
@@ -4946,7 +4946,7 @@ Tetapi ini sudah masuk ke materi berikutnya.
 
 Untuk Lesson 01, kita pisahkan dengan jelas:
 
-```text
+```bash
 Redirection
 └── file descriptor → file / stream
 
@@ -4962,19 +4962,19 @@ Dengan pemisahan ini kita tidak mencampurkan dua konsep yang berdekatan.
 
 Karena Zsh memiliki builtin `print`, Anda akan sering melihat:
 
-```zsh
+```bash
 print -r -- "message" >file
 ```
 
 Perhatikan bahwa:
 
-```text
+```bash
 print
 ```
 
 adalah command/builtin Zsh, sedangkan:
 
-```text
+```bash
 >
 ```
 
@@ -4982,7 +4982,7 @@ adalah redirection shell.
 
 Jadi:
 
-```text
+```bash
 print -r -- "message" >file
 │                  │
 │                  └── shell redirection
@@ -4999,7 +4999,7 @@ Karena Anda sudah mempelajari file descriptor di Bash, kita tidak perlu mengulan
 
 Yang perlu dipastikan:
 
-```text
+```bash
 Zsh
 │
 ├── stdin  = 0
@@ -5009,7 +5009,7 @@ Zsh
 
 dan operasi seperti:
 
-```zsh
+```bash
 1>file
 2>file
 <file
@@ -5020,7 +5020,7 @@ tetap harus Anda pahami.
 
 Nantinya, ketika membuat function atau plugin Zsh, kemampuan ini digunakan untuk mengontrol:
 
-```text
+```bash
 output function
 error message
 input
@@ -5045,7 +5045,7 @@ Anda tidak perlu mencari "versi Zsh" secara otomatis.
 
 Pertama tanyakan:
 
-```text
+```bash
 Apakah syntax ini merupakan shell concept umum?
 ```
 
@@ -5053,7 +5053,7 @@ Jika ya, kemungkinan besar konsepnya tetap berlaku.
 
 Kemudian tanyakan:
 
-```text
+```bash
 Apakah Zsh memberikan semantic tambahan?
 ```
 
@@ -5061,7 +5061,7 @@ Untuk redirection, salah satu jawabannya adalah **multios**.
 
 Maka pendekatannya:
 
-```text
+```bash
 Bash syntax
     ↓
 identifikasi konsep
@@ -5073,7 +5073,7 @@ periksa semantic Zsh
 
 Bukan:
 
-```text
+```bash
 Bash syntax
     ↓
 terjemahkan setiap karakter
@@ -5089,13 +5089,13 @@ Sekarang kita lanjut tepat ke item berikutnya dalam kurikulum.
 
 Process substitution adalah fitur shell yang mungkin sudah pernah Anda lihat di Bash:
 
-```zsh
+```bash
 <(command)
 ```
 
 atau:
 
-```zsh
+```bash
 >(command)
 ```
 
@@ -5107,13 +5107,13 @@ Tujuannya adalah membuat output/input suatu command dapat digunakan seolah-olah 
 
 Contoh:
 
-```zsh
+```bash
 diff <(command1) <(command2)
 ```
 
 Mental model:
 
-```text
+```bash
 command1 ──┐
            │
            ▼
@@ -5131,7 +5131,7 @@ command2 ──┘
 
 Jadi `diff` tidak menerima:
 
-```text
+```bash
 output command1
 output command2
 ```
@@ -5146,13 +5146,13 @@ Ia menerima path-like input yang mewakili output kedua command.
 
 Misalnya:
 
-```zsh
+```bash
 diff <(sort file1) <(sort file2)
 ```
 
 Daripada harus:
 
-```text
+```bash
 sort file1 → temporary file
 sort file2 → temporary file
 diff temporary files
@@ -5163,7 +5163,7 @@ process substitution memungkinkan shell menyediakan mekanisme perantara tersebut
 
 Mental model:
 
-```text
+```bash
 tanpa process substitution:
 
 command
@@ -5190,13 +5190,13 @@ Ini sangat berguna dalam scripting.
 
 Arah sebaliknya:
 
-```zsh
+```bash
 command > >(other_command)
 ```
 
 Secara konseptual:
 
-```text
+```bash
 command
    │
  stdout
@@ -5212,7 +5212,7 @@ Jadi `>(...)` menyediakan endpoint yang dapat menerima data.
 
 Perhatikan perbedaan:
 
-```text
+```bash
 <(command)
     │
     └── command menghasilkan input
@@ -5228,19 +5228,19 @@ Perhatikan perbedaan:
 
 Bandingkan:
 
-```zsh
+```bash
 command1 | command2
 ```
 
 dengan:
 
-```zsh
+```bash
 command2 <(command1)
 ```
 
 Pipeline:
 
-```text
+```bash
 command1
    │
    ▼
@@ -5249,7 +5249,7 @@ command2
 
 Process substitution:
 
-```text
+```bash
 command1
    │
    ▼
@@ -5263,7 +5263,7 @@ Ini memungkinkan command kedua menggunakan hasil command pertama melalui interfa
 
 Contoh:
 
-```zsh
+```bash
 diff <(sort file1) <(sort file2)
 ```
 
@@ -5277,7 +5277,7 @@ Process substitution memungkinkan kita memberikan hasil command sebagai sumber i
 
 Sama seperti:
 
-```text
+```bash
 [[ ... ]]
 (( ... ))
 >
@@ -5286,7 +5286,7 @@ Sama seperti:
 
 syntax:
 
-```zsh
+```bash
 <(command)
 ```
 
@@ -5296,7 +5296,7 @@ Bukan berarti ada executable bernama `<`.
 
 Mental model:
 
-```text
+```bash
 Zsh parser
     │
     ├── expansion
@@ -5315,7 +5315,7 @@ Process substitution tersedia di Bash dan Zsh.
 
 Jadi:
 
-```zsh
+```bash
 <(command)
 >(command)
 ```
@@ -5324,7 +5324,7 @@ bukan sesuatu yang harus Anda pelajari ulang sebagai konsep baru.
 
 Yang perlu Anda kuasai dalam Lesson 01 adalah:
 
-```text
+```bash
 Bash
   │
   └── process substitution
@@ -5343,7 +5343,7 @@ dengan catatan bahwa masing-masing shell dapat memiliki detail semantic tambahan
 
 Untuk melihat perbedaannya dengan jelas:
 
-```zsh
+```bash
 mkdir -p /tmp/zsh-redirection
 cd /tmp/zsh-redirection
 
@@ -5353,20 +5353,20 @@ print -r -- "a" > two.txt
 
 Kemudian:
 
-```zsh
+```bash
 diff <(sort one.txt) <(sort two.txt)
 ```
 
 Bandingkan dengan:
 
-```zsh
+```bash
 sort one.txt
 sort two.txt
 ```
 
 Tujuan eksperimen ini bukan menghafalkan command, tetapi memahami struktur:
 
-```text
+```bash
 diff
 ├── input 1 ← hasil command
 └── input 2 ← hasil command
@@ -5378,7 +5378,7 @@ tanpa membuat temporary files secara manual.
 
 ## Posisi Lesson 01 sekarang
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++
@@ -5404,7 +5404,7 @@ Urutan berikutnya tetap **Options — `setopt` vs `set -o`**, lalu **Builtins**,
 
 Kita tetap mengikuti urutan **Lesson 01 — Zsh vs Bash**.
 
-```text
+```bash
 01 — Zsh vs Bash
 ├── ✓ Mengapa Zsh bukan Bash++
 ├── ✓ POSIX vs Zsh-specific extensions
@@ -5428,7 +5428,7 @@ Shell option adalah konfigurasi internal yang mengubah perilaku shell.
 
 Mental model sederhananya:
 
-```text
+```bash
 Zsh
 │
 ├── syntax
@@ -5442,7 +5442,7 @@ Zsh
 
 Misalnya sebelumnya kita sudah bertemu:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -5450,7 +5450,7 @@ Option tersebut mengubah kemampuan pattern matching/globbing Zsh.
 
 Jadi:
 
-```text
+```bash
 command
    +
 shell option
@@ -5466,25 +5466,25 @@ Ini berbeda dari variable biasa.
 
 Cara native Zsh untuk mengaktifkan option adalah:
 
-```zsh
+```bash
 setopt OPTION_NAME
 ```
 
 Contoh:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
 Untuk menonaktifkannya:
 
-```zsh
+```bash
 unsetopt EXTENDED_GLOB
 ```
 
 Mental model:
 
-```text
+```bash
 setopt
    ↓
 enable option
@@ -5496,7 +5496,7 @@ disable option
 
 Contoh:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 unsetopt EXTENDED_GLOB
 ```
@@ -5507,26 +5507,26 @@ unsetopt EXTENDED_GLOB
 
 Karena Zsh memiliki hubungan historis dan kompatibilitas dengan shell lain, Anda juga dapat menemukan:
 
-```zsh
+```bash
 set -o
 ```
 
 dan:
 
-```zsh
+```bash
 set +o
 ```
 
 Tetapi dalam konfigurasi Zsh, bentuk yang perlu Anda kenali sebagai idiom Zsh adalah:
 
-```zsh
+```bash
 setopt
 unsetopt
 ```
 
 Perbandingan mental:
 
-```text
+```bash
 Bash
 └── set -o OPTION
     set +o OPTION
@@ -5546,7 +5546,7 @@ Zsh memiliki jumlah option yang jauh lebih besar dan option tersebut merupakan b
 
 Contoh yang akan sering Anda temui:
 
-```zsh
+```bash
 setopt AUTO_CD
 setopt AUTO_PUSHD
 setopt EXTENDED_GLOB
@@ -5558,7 +5558,7 @@ Masing-masing mengubah perilaku shell.
 
 Karena itu ketika membaca `.zshrc`, bagian seperti:
 
-```zsh
+```bash
 setopt ...
 ```
 
@@ -5579,7 +5579,7 @@ Ia dapat mengubah bagaimana Zsh:
 
 Contoh sederhana:
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
@@ -5587,13 +5587,13 @@ Dengan option tersebut, directory dapat digunakan sebagai command untuk berpinda
 
 Misalnya:
 
-```text
+```bash
 ~/projects
 ```
 
 Jika `AUTO_CD` aktif, mengetik:
 
-```zsh
+```bash
 projects
 ```
 
@@ -5601,7 +5601,7 @@ dapat diperlakukan sebagai perpindahan directory ketika nama tersebut merupakan 
 
 Secara konseptual:
 
-```text
+```bash
 tanpa AUTO_CD:
 
 projects
@@ -5624,7 +5624,7 @@ Ini contoh yang baik untuk memahami bahwa option dapat mengubah **bahasa interak
 
 Ini sudah kita temui di bagian globbing:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -5632,7 +5632,7 @@ Option tersebut mengaktifkan extended globbing.
 
 Jadi sekarang kita bisa melihat hubungan antar-materi:
 
-```text
+```bash
 Lesson 01
 │
 ├── Globbing
@@ -5652,19 +5652,19 @@ Materi tidak berdiri sendiri. Kita sengaja kembali ke contoh yang sudah dipelaja
 
 Jangan mencampurkan:
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
 dengan:
 
-```zsh
+```bash
 export AUTO_CD=1
 ```
 
 Keduanya merupakan mekanisme yang berbeda.
 
-```text
+```bash
 Shell option
 └── state internal Zsh
 
@@ -5674,7 +5674,7 @@ Parameter/environment variable
 
 Misalnya:
 
-```zsh
+```bash
 EDITOR=nvim
 ```
 
@@ -5682,7 +5682,7 @@ adalah parameter.
 
 Sedangkan:
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
@@ -5698,7 +5698,7 @@ Zsh menyediakan mekanisme untuk melihat option yang aktif.
 
 Salah satu bentuk yang akan Anda temui:
 
-```zsh
+```bash
 setopt
 ```
 
@@ -5706,7 +5706,7 @@ Tanpa argument, Zsh dapat menampilkan option yang sedang aktif.
 
 Anda juga akan menemukan:
 
-```zsh
+```bash
 set -o
 ```
 
@@ -5714,7 +5714,7 @@ untuk melihat status option dalam format shell-option style.
 
 Untuk pembelajaran sekarang, jangan terlalu fokus pada format output. Yang penting:
 
-```text
+```bash
 setopt
    ↓
 mengubah / melihat konfigurasi option Zsh
@@ -5732,7 +5732,7 @@ Misalnya sebuah script berjalan dengan perilaku tertentu di Bash.
 
 Ketika dijalankan di Zsh:
 
-```text
+```bash
 source code sama
        ↓
 shell berbeda
@@ -5744,19 +5744,19 @@ behavior dapat berbeda
 
 Jadi ketika sesuatu yang tampaknya "aneh" terjadi di Zsh, jangan hanya memeriksa:
 
-```text
+```bash
 syntax
 ```
 
 Periksa juga:
 
-```text
+```bash
 shell options
 ```
 
 Mental model porting kita sekarang menjadi:
 
-```text
+```bash
 Bash → Zsh
 │
 ├── syntax
@@ -5778,7 +5778,7 @@ Tujuan akhir kita adalah memahami konfigurasi Zsh.
 
 Contoh konfigurasi sederhana:
 
-```zsh
+```bash
 # Globbing
 setopt EXTENDED_GLOB
 
@@ -5789,7 +5789,7 @@ setopt AUTO_PUSHD
 
 Secara konseptual:
 
-```text
+```bash
 .zshrc
 │
 ├── parameter configuration
@@ -5812,7 +5812,7 @@ Itu akan terlalu jauh dari posisi kita dalam kurikulum.
 
 Belum sekarang:
 
-```text
+```bash
 ❌ seluruh daftar option Zsh
 ❌ kombinasi option kompleks
 ❌ option inheritance
@@ -5825,7 +5825,7 @@ Semua itu akan muncul ketika fondasi Zsh sudah lebih kuat.
 
 Untuk Lesson 01, targetnya hanya:
 
-```text
+```bash
 Bash
 └── set -o
 
@@ -5854,7 +5854,7 @@ Builtin adalah command yang disediakan oleh shell itu sendiri.
 
 Misalnya:
 
-```zsh
+```bash
 cd
 ```
 
@@ -5864,7 +5864,7 @@ Shell menangani `cd` secara internal karena perubahan working directory harus te
 
 Secara konseptual:
 
-```text
+```bash
 command
 │
 ├── external command
@@ -5880,19 +5880,19 @@ command
 
 Salah satu builtin Zsh yang sangat penting:
 
-```zsh
+```bash
 print
 ```
 
 Contoh:
 
-```zsh
+```bash
 print "Hello"
 ```
 
 atau:
 
-```zsh
+```bash
 print -r -- "$message"
 ```
 
@@ -5904,7 +5904,7 @@ Karena `print` memiliki interface yang cocok untuk berbagai kebutuhan output Zsh
 
 Mental model:
 
-```text
+```bash
 Bash
 └── printf sangat umum
 
@@ -5925,7 +5925,7 @@ Keduanya tersedia.
 
 Kita sudah menyentuhnya ketika membahas function:
 
-```zsh
+```bash
 typeset
 ```
 
@@ -5933,19 +5933,19 @@ Ini merupakan builtin yang sangat penting karena berkaitan langsung dengan param
 
 Contoh:
 
-```zsh
+```bash
 typeset -a files
 ```
 
 indexed array.
 
-```zsh
+```bash
 typeset -A config
 ```
 
 associative array.
 
-```zsh
+```bash
 typeset -i count
 ```
 
@@ -5953,7 +5953,7 @@ integer parameter.
 
 Jadi:
 
-```text
+```bash
 typeset
 │
 ├── parameter
@@ -5971,13 +5971,13 @@ Ini merupakan salah satu alasan mengapa `typeset` akan muncul berkali-kali dalam
 
 Kita juga sudah mengenalnya:
 
-```zsh
+```bash
 autoload
 ```
 
 Fungsinya berkaitan dengan pemuatan function secara modular.
 
-```text
+```bash
 autoload
    ↓
 function definition
@@ -5995,19 +5995,19 @@ Pembahasan mendalam tetap ditunda ke **Lesson 08 — Functions & Autoload**.
 
 Salah satu builtin/introspection mechanism yang sangat berguna:
 
-```zsh
+```bash
 whence
 ```
 
 Contoh:
 
-```zsh
+```bash
 whence -v ls
 ```
 
 atau:
 
-```zsh
+```bash
 whence -f my_function
 ```
 
@@ -6015,7 +6015,7 @@ Tujuannya adalah membantu mengetahui bagaimana Zsh menyelesaikan sebuah nama.
 
 Mental model:
 
-```text
+```bash
 "nama ini sebenarnya apa?"
           │
           ▼
@@ -6037,25 +6037,25 @@ Zsh juga menyediakan mekanisme directory stack.
 
 Contoh:
 
-```zsh
+```bash
 pushd /tmp
 ```
 
 Kemudian:
 
-```zsh
+```bash
 popd
 ```
 
 dan:
 
-```zsh
+```bash
 dirs
 ```
 
 Secara konseptual:
 
-```text
+```bash
 directory stack
 │
 ├── current directory
@@ -6067,7 +6067,7 @@ Zsh kemudian menyediakan berbagai option yang berhubungan dengan directory stack
 
 Ini nantinya bertemu dengan:
 
-```text
+```bash
 AUTO_PUSHD
 PUSHD_IGNORE_DUPS
 ```
@@ -6086,7 +6086,7 @@ Ia berisi instruksi kepada **shell itu sendiri**.
 
 Contoh:
 
-```zsh
+```bash
 setopt ...
 typeset ...
 autoload ...
@@ -6098,7 +6098,7 @@ Semua ini berhubungan langsung dengan kemampuan internal Zsh.
 
 Mental model:
 
-```text
+```bash
 .zshrc
 │
 ├── external commands
@@ -6119,7 +6119,7 @@ Dan semakin jauh kita masuk ke konfigurasi Zsh, semakin besar bagian kedua terse
 
 ## Posisi kurikulum
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++
@@ -6150,7 +6150,7 @@ Setelah dua bagian itu selesai, kita akan melakukan **mini lab Bash vs Zsh side-
 
 Kita tetap berada di **Lesson 01 — Zsh vs Bash**, tepat pada dua materi terakhir sebelum penutup Lesson 01.
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++
@@ -6175,7 +6175,7 @@ Bagian ini penting karena mulai membawa kita dari **Zsh sebagai scripting langua
 
 Ketika Anda menggunakan Bash secara interaktif:
 
-```text
+```bash
 Terminal
    │
    ▼
@@ -6193,13 +6193,13 @@ Readline adalah library yang menangani line editing untuk banyak program termina
 
 Contohnya ketika Anda menekan:
 
-```text
+```bash
 ↑
 ```
 
 untuk mengambil command sebelumnya, atau:
 
-```text
+```bash
 Ctrl+A
 Ctrl+E
 Ctrl+R
@@ -6213,19 +6213,19 @@ dan sebagainya, Anda sedang berinteraksi dengan sistem line editing.
 
 Zsh memiliki sistem sendiri:
 
-```text
+```bash
 ZLE
 ```
 
 singkatan dari:
 
-```text
+```bash
 Zsh Line Editor
 ```
 
 Modelnya:
 
-```text
+```bash
 Terminal
    │
    ▼
@@ -6241,7 +6241,7 @@ Zsh
 
 Jadi perbandingan fundamentalnya:
 
-```text
+```bash
 Bash
 └── Readline
 
@@ -6257,19 +6257,19 @@ Ini adalah salah satu perbedaan paling penting antara kedua shell ketika kita be
 
 Karena tujuan Anda nantinya bukan hanya:
 
-```text
+```bash
 menulis script Zsh
 ```
 
 tetapi:
 
-```text
+```bash
 membuat fitur produktivitas terminal
 ```
 
 Untuk itu Anda perlu memahami:
 
-```text
+```bash
 keyboard input
       ↓
 keymap
@@ -6283,7 +6283,7 @@ shell action
 
 Misalnya Anda ingin membuat shortcut:
 
-```text
+```bash
 Ctrl+X
    ↓
 menjalankan custom action
@@ -6291,7 +6291,7 @@ menjalankan custom action
 
 Mekanismenya di Zsh bukan sekadar:
 
-```text
+```bash
 alias Ctrl+X=...
 ```
 
@@ -6307,7 +6307,7 @@ Widget merupakan unit aksi yang dapat dijalankan oleh ZLE.
 
 Contoh built-in widget:
 
-```text
+```bash
 accept-line
 backward-char
 forward-char
@@ -6318,7 +6318,7 @@ kill-line
 
 Secara konseptual:
 
-```text
+```bash
 keyboard
    │
    ▼
@@ -6333,7 +6333,7 @@ action
 
 Misalnya Enter secara konseptual terhubung dengan:
 
-```text
+```bash
 accept-line
 ```
 
@@ -6347,13 +6347,13 @@ ZLE tidak hanya memiliki widget.
 
 Ada pula:
 
-```text
+```bash
 keymap
 ```
 
 Keymap menentukan hubungan antara:
 
-```text
+```bash
 key sequence
        ↓
 widget
@@ -6361,7 +6361,7 @@ widget
 
 Contoh mental model:
 
-```text
+```bash
 "^A"
   │
   ▼
@@ -6370,7 +6370,7 @@ beginning-of-line
 
 dan:
 
-```text
+```bash
 "^E"
   │
   ▼
@@ -6379,7 +6379,7 @@ end-of-line
 
 Jadi:
 
-```text
+```bash
 Keymap
 │
 ├── Ctrl+A → beginning-of-line
@@ -6395,13 +6395,13 @@ Ini berbeda dari alias.
 
 Builtin Zsh yang akan sangat sering Anda lihat:
 
-```zsh
+```bash
 bindkey
 ```
 
 Contoh:
 
-```zsh
+```bash
 bindkey -v
 ```
 
@@ -6409,7 +6409,7 @@ Ini relevan langsung dengan konfigurasi Anda karena Anda memang menggunakan **vi
 
 Secara konseptual:
 
-```zsh
+```bash
 bindkey -v
 ```
 
@@ -6417,7 +6417,7 @@ mengubah mode editing ZLE menjadi model vi.
 
 Sedangkan:
 
-```zsh
+```bash
 bindkey -e
 ```
 
@@ -6425,7 +6425,7 @@ menggunakan gaya emacs.
 
 Mental model:
 
-```text
+```bash
 ZLE
 │
 └── keymap
@@ -6436,13 +6436,13 @@ ZLE
 
 Jadi ketika Anda menemukan:
 
-```zsh
+```bash
 bindkey -v
 ```
 
 di `.zshrc`, sekarang Anda seharusnya mengenal bahwa command tersebut berkaitan dengan:
 
-```text
+```bash
 Zsh
  └── ZLE
       └── keymap
@@ -6460,7 +6460,7 @@ Function Zsh dapat digunakan untuk membuat custom widget.
 
 Secara konseptual:
 
-```text
+```bash
 Zsh function
       ↓
 zle widget
@@ -6472,7 +6472,7 @@ keyboard shortcut
 
 Contohnya nanti kita dapat membuat function:
 
-```zsh
+```bash
 my_widget() {
     ...
 }
@@ -6494,7 +6494,7 @@ Karena ZLE dapat diprogram.
 
 Model sederhananya:
 
-```text
+```bash
 Readline
 └── line editing system
 
@@ -6510,7 +6510,7 @@ Ini salah satu alasan Zsh sangat cocok untuk konfigurasi interactive shell yang 
 
 Nantinya Anda dapat membuat fitur seperti:
 
-```text
+```bash
 Ctrl+G
    ↓
 custom widget
@@ -6530,7 +6530,7 @@ Tanpa harus membuat program terminal terpisah untuk setiap fitur.
 
 Keduanya sama-sama berada di interactive Zsh, tetapi mekanismenya berbeda.
 
-```text
+```bash
 Interactive Zsh
 │
 ├── ZLE
@@ -6546,25 +6546,25 @@ Interactive Zsh
 
 Jadi:
 
-```text
+```bash
 bindkey
 ```
 
 berhubungan terutama dengan:
 
-```text
+```bash
 ZLE / keymap
 ```
 
 sedangkan:
 
-```text
+```bash
 compinit
 ```
 
 berhubungan dengan:
 
-```text
+```bash
 completion system
 ```
 
@@ -6576,7 +6576,7 @@ Ini akan menjadi sangat penting ketika kita membaca `.zshrc`.
 
 Ini adalah materi terakhir dalam daftar utama Lesson 01.
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 └── Completion system ← SEKARANG
@@ -6586,25 +6586,25 @@ Ini adalah materi terakhir dalam daftar utama Lesson 01.
 
 Ketika Anda mengetik:
 
-```zsh
+```bash
 cd /u<Tab>
 ```
 
 shell dapat membantu melengkapi:
 
-```text
+```bash
 /usr/
 ```
 
 atau ketika:
 
-```zsh
+```bash
 git che<Tab>
 ```
 
 shell dapat menawarkan:
 
-```text
+```bash
 checkout
 cherry-pick
 ...
@@ -6612,7 +6612,7 @@ cherry-pick
 
 Ini disebut:
 
-```text
+```bash
 completion
 ```
 
@@ -6638,7 +6638,7 @@ Artinya sebuah completion function dikaitkan dengan command tertentu.
 
 Mental model:
 
-```text
+```bash
 Bash
 │
 └── complete
@@ -6654,14 +6654,14 @@ Zsh memiliki completion framework yang jauh lebih terintegrasi.
 
 Entry point yang sangat sering Anda lihat:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
 
 Sekarang Anda dapat melihat beberapa materi sebelumnya bertemu:
 
-```text
+```bash
 autoload
    ↓
 completion function
@@ -6681,14 +6681,14 @@ Ini bukan kebetulan.
 
 Contoh konfigurasi yang sangat umum:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
 
 Strukturnya:
 
-```text
+```bash
 autoload -Uz compinit
         │
         ▼
@@ -6705,7 +6705,7 @@ Untuk sekarang, jangan masuk ke detail implementasi `compinit`.
 
 Nanti akan ada materi khusus **Completion System** yang membahas:
 
-```text
+```bash
 completion functions
 compdef
 compsys
@@ -6721,13 +6721,13 @@ widgets
 
 Salah satu konsep yang nantinya akan sangat penting adalah:
 
-```zsh
+```bash
 compdef
 ```
 
 Secara konseptual:
 
-```text
+```bash
 command
    │
    ▼
@@ -6736,13 +6736,13 @@ completion function
 
 Contoh bentuk yang mungkin Anda temukan:
 
-```zsh
+```bash
 compdef _mycommand mycommand
 ```
 
 Artinya completion system mengetahui bahwa:
 
-```text
+```bash
 mycommand
     ↓
 _mycommand
@@ -6752,7 +6752,7 @@ digunakan untuk menyediakan completion.
 
 Perhatikan konvensi:
 
-```text
+```bash
 _mycommand
 ```
 
@@ -6764,7 +6764,7 @@ Nama dengan underscore seperti ini sangat umum dalam completion system Zsh.
 
 Mental model sederhana:
 
-```text
+```bash
 Bash
 │
 └── programmable completion
@@ -6786,7 +6786,7 @@ Zsh
 
 Zsh completion bukan sekadar:
 
-```text
+```bash
 "versi Bash completion yang syntax-nya berbeda"
 ```
 
@@ -6800,13 +6800,13 @@ Karena completion merupakan salah satu bagian terbesar dari kemampuan interactiv
 
 Nantinya Anda dapat membuat:
 
-```text
+```bash
 mycommand <Tab>
 ```
 
 menghasilkan:
 
-```text
+```bash
 subcommands
 files
 directories
@@ -6819,7 +6819,7 @@ Bahkan completion dapat mengambil data dari program lain.
 
 Secara konseptual:
 
-```text
+```bash
 User
  │
  └── mycommand <Tab>
@@ -6847,7 +6847,7 @@ Ini merupakan salah satu fondasi utama ketika nanti Anda membuat fitur produktiv
 
 Kita sekarang bisa melihat mengapa `autoload` tadi sengaja diperkenalkan tanpa dibahas terlalu dalam.
 
-```text
+```bash
 Zsh completion
        │
        ▼
@@ -6862,7 +6862,7 @@ function loading
 
 Dengan demikian materi Lesson 01 sebenarnya sudah mulai membangun hubungan antar-konsep:
 
-```text
+```bash
 Functions
     │
     ├── autoload
@@ -6890,7 +6890,7 @@ Mini lab ini bukan untuk menguji Anda sekarang, melainkan untuk mengikat semua m
 
 Buat dua shell secara berdampingan.
 
-```text
+```bash
 /tmp/zsh-bash-lab/
 ├── bash/
 └── zsh/
@@ -6898,7 +6898,7 @@ Buat dua shell secara berdampingan.
 
 Di masing-masing shell, bandingkan:
 
-```text
+```bash
 1. parameter
 2. array
 3. globbing
@@ -6914,7 +6914,7 @@ Di masing-masing shell, bandingkan:
 
 Beberapa eksperimen yang relevan:
 
-```zsh
+```bash
 print -r -- "$ZSH_VERSION"
 ```
 
@@ -6926,7 +6926,7 @@ printf '%s\n' "$BASH_VERSION"
 
 Array:
 
-```zsh
+```bash
 arr=(one two three)
 print -r -- "$arr[1]"
 ```
@@ -6935,19 +6935,19 @@ Bandingkan dengan indeks Bash.
 
 Globbing:
 
-```zsh
+```bash
 print -rl -- **/*.txt
 ```
 
 Conditional:
 
-```zsh
+```bash
 [[ -f "$file" ]]
 ```
 
 Function:
 
-```zsh
+```bash
 hello() {
     print "hello"
 }
@@ -6955,45 +6955,45 @@ hello() {
 
 Redirection:
 
-```zsh
+```bash
 print "hello" > output.txt
 ```
 
 Process substitution:
 
-```zsh
+```bash
 diff <(sort one.txt) <(sort two.txt)
 ```
 
 Option:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
 Builtin:
 
-```zsh
+```bash
 whence -v print
 whence -v typeset
 ```
 
 Interactive:
 
-```zsh
+```bash
 bindkey -v
 ```
 
 Completion:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
 
 Tujuan lab bukan menghafalkan command-command tersebut. Tujuannya adalah membentuk kemampuan berikut:
 
-```text
+```bash
 Melihat kode Zsh
       │
       ▼
@@ -7013,7 +7013,7 @@ mampu membaca konfigurasi Zsh
 
 Sekarang status kurikulum:
 
-```text
+```bash
 00 — Prep / Mental Model
 ✓ SELESAI
 
@@ -7028,7 +7028,7 @@ Dan **Lesson 01 tidak kita perluas lagi dengan materi dari Lesson 02**.
 
 Urutan utama yang sudah diselesaikan:
 
-```text
+```bash
 01 — Zsh vs Bash
 │
 ├── ✓ Mengapa Zsh bukan Bash++

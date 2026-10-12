@@ -36,7 +36,7 @@ Zsh cocok untuk ini karena ia memberi Anda:
 
 Mental model:
 
-```text
+```bash
 Kebutuhan berulang
    ↓
 Widget / function / alias / completion
@@ -58,7 +58,7 @@ Widget adalah unit aksi ZLE. Anda sudah mempelajari dasar `zle -N` dan `bindkey`
 
 Tujuan: menekan `Ctrl+S` untuk menambahkan `sudo ` di awal baris.
 
-```zsh
+```bash
 insert_sudo() {
     if [[ "$BUFFER" != sudo* ]]; then
         BUFFER="sudo $BUFFER"
@@ -94,7 +94,7 @@ Efek: jika Anda mengetik `apt update`, lalu `Ctrl+S`, buffer menjadi `sudo apt u
 
 Tujuan: menekan `Ctrl+R` untuk mencari history menggunakan `fzf`.
 
-```zsh
+```bash
 fzf_history() {
     local selected
     selected=$(fc -l 1 | fzf --height 40% --reverse --tac | sed 's/^[ ]*[0-9]*[ ]*//')
@@ -137,7 +137,7 @@ Penjelasan:
 
 Tujuan: menekan `Ctrl+Y` untuk menyalin buffer ke clipboard.
 
-```zsh
+```bash
 copy_line() {
     print -rn -- "$BUFFER" | xclip -selection clipboard
     zle -M "Disalin ke clipboard"
@@ -182,7 +182,7 @@ File completion harus:
 
 Buat file `~/.config/zsh/completion/_hello`:
 
-```zsh
+```bash
 #compdef hello
 
 _hello() {
@@ -213,7 +213,7 @@ Setelah file ada di `$fpath` dan `compinit` dijalankan ulang, `hello <Tab>` akan
 
 ### 6.3.3 Completion dengan `compadd`
 
-```zsh
+```bash
 #compdef mycmd
 
 _mycmd() {
@@ -229,7 +229,7 @@ Penjelasan:
 
 ### 6.3.4 Completion dengan `_arguments`
 
-```zsh
+```bash
 #compdef mycmd
 
 _mycmd() {
@@ -251,7 +251,7 @@ Penjelasan:
 
 ### 6.3.5 Mendaftarkan Completion Manual
 
-```zsh
+```bash
 compdef _mycmd mycmd
 ```
 
@@ -269,7 +269,7 @@ Penjelasan:
 
 Alias adalah pengganti teks sederhana.
 
-```zsh
+```bash
 alias ll='ls -la'
 ```
 
@@ -294,7 +294,7 @@ Alias tidak cocok untuk:
 
 Fungsi adalah blok kode yang bisa menerima argumen.
 
-```zsh
+```bash
 mkcd() {
     mkdir -p "$1" && cd "$1"
 }
@@ -331,7 +331,7 @@ Hook memungkinkan Anda menjalankan kode pada momen tertentu.
 
 ### 6.5.1 `precmd` untuk Informasi Git
 
-```zsh
+```bash
 autoload -Uz vcs_info
 precmd() {
     vcs_info
@@ -346,7 +346,7 @@ Penjelasan:
 
 ### 6.5.2 `preexec` untuk Timer
 
-```zsh
+```bash
 preexec() {
     start_time=$EPOCHREALTIME
 }
@@ -372,7 +372,7 @@ Penjelasan:
 
 ### 6.5.3 `chpwd` untuk Auto `ls`
 
-```zsh
+```bash
 chpwd() {
     ls -CF
 }
@@ -391,7 +391,7 @@ Terminal integration menghubungkan Zsh dengan terminal emulator.
 
 ### 6.6.1 Mengatur Judul Terminal
 
-```zsh
+```bash
 set_title() {
     print -Pn "\e]0;%~\a"
 }
@@ -413,7 +413,7 @@ Penjelasan:
 
 ### 6.6.2 Clipboard
 
-```zsh
+```bash
 clip() {
     if command -v xclip >/dev/null 2>&1; then
         xclip -selection clipboard
@@ -442,7 +442,7 @@ Penjelasan:
 
 ### 6.6.3 Notifikasi
 
-```zsh
+```bash
 notify() {
     if command -v notify-send >/dev/null 2>&1; then
         notify-send "$1"
@@ -464,7 +464,7 @@ Penjelasan:
 
 ### 6.7.1 `vcs_info` di Prompt
 
-```zsh
+```bash
 autoload -Uz vcs_info
 precmd() {
     vcs_info
@@ -487,7 +487,7 @@ Penjelasan:
 
 ### 6.7.2 Fungsi Git
 
-```zsh
+```bash
 gcom() {
     git add -A && git commit -m "$1"
 }
@@ -507,7 +507,7 @@ Penjelasan:
 
 ### 6.7.3 Alias Git
 
-```zsh
+```bash
 alias gs='git status'
 alias ga='git add'
 alias gc='git commit'
@@ -529,7 +529,7 @@ Penjelasan:
 
 ### 6.8.1 fzf
 
-```zsh
+```bash
 if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
     source /usr/share/fzf/key-bindings.zsh
 fi
@@ -549,7 +549,7 @@ Penjelasan:
 
 ### 6.8.2 zoxide
 
-```zsh
+```bash
 if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init zsh)"
 fi
@@ -563,7 +563,7 @@ Penjelasan:
 
 ### 6.8.3 yazi
 
-```zsh
+```bash
 y() {
     local tmp="$(mktemp -t yazi-cwd.XXXXXX)"
     yazi "$@" --cwd-file="$tmp"
@@ -589,7 +589,7 @@ Penjelasan:
 
 ### 6.9.1 Prompt Dasar
 
-```zsh
+```bash
 setopt PROMPT_SUBST
 
 PROMPT='%F{green}%n%f@%F{blue}%m%f:%F{yellow}%~%f %# '
@@ -617,7 +617,7 @@ Penjelasan:
 
 ### 6.9.2 Prompt dengan Git
 
-```zsh
+```bash
 autoload -Uz vcs_info
 precmd() { vcs_info }
 zstyle ':vcs_info:git:*' formats ' %F{yellow}(%b)%f'
@@ -631,7 +631,7 @@ Penjelasan:
 
 ### 6.9.3 Promptinit
 
-```zsh
+```bash
 autoload -Uz promptinit
 promptinit
 prompt walters
@@ -650,7 +650,7 @@ Sekarang kita rakit semuanya menjadi kerangka pribadi.
 
 ### 6.10.1 Struktur Direktori
 
-```text
+```bash
 ~/.config/zsh/
 ├── .zshenv
 ├── .zshrc
@@ -677,7 +677,7 @@ Sekarang kita rakit semuanya menjadi kerangka pribadi.
 
 ### 6.10.2 File `.zshenv`
 
-```zsh
+```bash
 export ZDOTDIR=$HOME/.config/zsh
 ```
 
@@ -688,7 +688,7 @@ Penjelasan:
 
 ### 6.10.3 File `.zshrc`
 
-```zsh
+```bash
 source $ZDOTDIR/options.zsh
 source $ZDOTDIR/history.zsh
 source $ZDOTDIR/aliases.zsh
@@ -718,7 +718,7 @@ Penjelasan:
 
 ### 6.10.4 Lazy Loading Plugin
 
-```zsh
+```bash
 lazy_load() {
     local plugin=$1
     local trigger=$2
@@ -743,7 +743,7 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 lazy_load ~/.config/zsh/plugins/fzf.zsh fzf fzf
 ```
 
@@ -751,7 +751,7 @@ lazy_load ~/.config/zsh/plugins/fzf.zsh fzf fzf
 
 Buat script `install.sh`:
 
-```zsh
+```bash
 #!/bin/zsh
 set -e
 
@@ -799,7 +799,7 @@ Sesuai kurikulum awal, berikut referensi resmi yang wajib Anda baca:
 
 Cara membacanya:
 
-```zsh
+```bash
 man zsh
 man zshoptions
 man zshexpn

@@ -18,7 +18,7 @@ echo $-
 
 Output yang umum adalah:
 
-```
+```bash
 himBH
 ```
 

@@ -19,7 +19,7 @@ Di Zsh, hampir semua perilaku shell dikendalikan oleh **option**. Ada ratusan op
 
 Mental model yang harus Anda bangun:
 
-```text
+```bash
 Zsh
  ├── options (perilaku shell)
  ├── parameters (data)
@@ -36,7 +36,7 @@ Option adalah lapisan **perilaku**, bukan data. Jadi jangan tertukar dengan vari
 
 Bentuk dasar:
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
@@ -48,7 +48,7 @@ Penjelasan kata demi kata:
 
 Anda bisa menyalakan beberapa option sekaligus:
 
-```zsh
+```bash
 setopt AUTO_CD EXTENDED_GLOB SHARE_HISTORY
 ```
 
@@ -61,13 +61,13 @@ Penjelasan:
 
 Jika nama option salah, Zsh akan menampilkan error:
 
-```zsh
+```bash
 setopt NAMA_OPTION_YANG_SALAH
 ```
 
 Output kira-kira:
 
-```text
+```bash
 setopt: no such option: NAMA_OPTION_YANG_SALAH
 ```
 
@@ -79,7 +79,7 @@ Pesan ini memberitahu bahwa option tidak dikenali. Perhatikan: Zsh **tidak** mel
 
 Bentuk dasar:
 
-```zsh
+```bash
 unsetopt AUTO_CD
 ```
 
@@ -91,7 +91,7 @@ Penjelasan kata demi kata:
 
 Anda juga bisa mematikan beberapa sekaligus:
 
-```zsh
+```bash
 unsetopt AUTO_CD EXTENDED_GLOB
 ```
 
@@ -109,7 +109,7 @@ Kombinasi `setopt` dan `unsetopt` adalah cara utama Anda mengonfigurasi Zsh.
 
 Zsh juga mengenal bentuk opsi shell klasik dengan tanda `-` dan `+`.
 
-```zsh
+```bash
 set -o AUTO_CD
 ```
 
@@ -119,7 +119,7 @@ Penjelasan:
 - `AUTO_CD` — nama opsi.
 - Bentuk ini setara dengan `setopt AUTO_CD`.
 
-```zsh
+```bash
 set +o AUTO_CD
 ```
 
@@ -129,7 +129,7 @@ Penjelasan:
 - `AUTO_CD` — nama opsi.
 - Setara dengan `unsetopt AUTO_CD`.
 
-```zsh
+```bash
 setopt -o
 ```
 
@@ -138,7 +138,7 @@ Penjelasan:
 - `-o` — bendera untuk menampilkan semua opsi yang sedang aktif.
 - Output: daftar option yang menyala saat ini, satu per baris.
 
-```zsh
+```bash
 setopt +o
 ```
 
@@ -148,7 +148,7 @@ Penjelasan:
 
 Ada juga:
 
-```zsh
+```bash
 setopt -m
 ```
 
@@ -157,7 +157,7 @@ Penjelasan:
 
 Anda bisa mencari option tertentu dengan menggabungkan dengan `grep`:
 
-```zsh
+```bash
 setopt -o | grep GLOB
 ```
 
@@ -185,7 +185,7 @@ Zsh menerima keduanya, tetapi konvensi yang jelas adalah dengan underscore. Guna
 
 Ada juga bentuk negasi eksplisit. Contoh:
 
-```zsh
+```bash
 setopt NO_AUTO_CD
 ```
 
@@ -196,7 +196,7 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 setopt AUTO_CD NO_EXTENDED_GLOB
 ```
 
@@ -237,7 +237,7 @@ Option interaktif adalah option yang hanya relevan untuk shell interaktif. Conto
 
 Anda bisa memeriksa apakah Zsh berjalan interaktif:
 
-```zsh
+```bash
 [[ -o INTERACTIVE ]] && echo "interaktif"
 ```
 
@@ -262,7 +262,7 @@ Karena itu, konfigurasi `setopt` biasanya diletakkan di `.zshrc` (file konfigura
 
 Emulation adalah mode di mana Zsh meniru shell lain.
 
-```zsh
+```bash
 emulate sh
 ```
 
@@ -273,7 +273,7 @@ Penjelasan kata demi kata:
 
 Setelah `emulate sh`, Zsh akan menyesuaikan banyak option agar berperilaku seperti `sh`. Ini berguna ketika Anda ingin menjalankan script POSIX dengan Zsh.
 
-```zsh
+```bash
 emulate zsh
 ```
 
@@ -281,7 +281,7 @@ Penjelasan:
 - `emulate zsh` — kembali ke mode Zsh native.
 - Ini mematikan emulasi dan mengembalikan default Zsh.
 
-```zsh
+```bash
 emulate -L zsh
 ```
 
@@ -293,7 +293,7 @@ Emulasi penting untuk memahami mengapa perilaku Zsh bisa berbeda di beberapa kon
 
 Anda bisa melihat mode emulasi saat ini:
 
-```zsh
+```bash
 emulate
 ```
 
@@ -308,7 +308,7 @@ Berikut option yang paling sering digunakan dan masuk dalam kurikulum kita.
 
 ### AUTO_CD
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
@@ -326,7 +326,7 @@ Catatan: `AUTO_CD` tidak aktif di script. Ia hanya berguna di shell interaktif.
 
 ### EXTENDED_GLOB
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -339,7 +339,7 @@ Ini adalah opsi yang sangat sering dipakai di konfigurasi Zsh.
 
 ### HIST_IGNORE_DUPS
 
-```zsh
+```bash
 setopt HIST_IGNORE_DUPS
 ```
 
@@ -352,7 +352,7 @@ Ini berbeda dari `HIST_IGNORE_ALL_DUPS` yang menghapus semua duplikat, bukan han
 
 ### SHARE_HISTORY
 
-```zsh
+```bash
 setopt SHARE_HISTORY
 ```
 
@@ -365,7 +365,7 @@ Ada juga `INC_APPEND_HISTORY` yang menambahkan perintah ke file history segera s
 
 ### Kombinasi Umum
 
-```zsh
+```bash
 setopt AUTO_CD
 setopt EXTENDED_GLOB
 setopt HIST_IGNORE_DUPS
@@ -382,7 +382,7 @@ Mari kita praktikkan sesuai kurikulum.
 
 ### Langkah 1: Cek Status Awal
 
-```zsh
+```bash
 setopt -o | grep AUTO_CD
 ```
 
@@ -393,7 +393,7 @@ Penjelasan:
 
 ### Langkah 2: Nyalakan
 
-```zsh
+```bash
 setopt AUTO_CD
 ```
 
@@ -403,7 +403,7 @@ Penjelasan:
 
 ### Langkah 3: Uji
 
-```zsh
+```bash
 ~/Documents
 ```
 
@@ -413,7 +413,7 @@ Penjelasan:
 
 Untuk kembali:
 
-```zsh
+```bash
 cd -
 ```
 
@@ -422,7 +422,7 @@ Penjelasan:
 
 ### Langkah 4: Matikan
 
-```zsh
+```bash
 unsetopt AUTO_CD
 ```
 
@@ -434,13 +434,13 @@ Penjelasan:
 
 ## 2.10 Praktik: EXTENDED_GLOB
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
 Setelah aktif, coba:
 
-```zsh
+```bash
 ls ^*.txt
 ```
 
@@ -449,7 +449,7 @@ Penjelasan:
 - `^*.txt` — semua file kecuali `.txt`.
 - Tanpa `EXTENDED_GLOB`, `^` dianggap literal dan glob gagal.
 
-```zsh
+```bash
 ls *.txt~*.bak
 ```
 
@@ -459,7 +459,7 @@ Penjelasan:
 - `*.bak` — file `.bak`.
 - Hasil: file `.txt` yang bukan `.bak`.
 
-```zsh
+```bash
 ls *.(txt|md)
 ```
 
@@ -472,14 +472,14 @@ Penjelasan:
 
 ## 2.11 Praktik: HIST_IGNORE_DUPS dan SHARE_HISTORY
 
-```zsh
+```bash
 setopt HIST_IGNORE_DUPS
 setopt SHARE_HISTORY
 ```
 
 Uji `HIST_IGNORE_DUPS`:
 
-```zsh
+```bash
 echo halo
 echo halo
 history | tail -5
@@ -501,7 +501,7 @@ Uji `SHARE_HISTORY`:
 
 Karena ada ratusan option, Anda perlu cara mencari.
 
-```zsh
+```bash
 setopt -m | less
 ```
 
@@ -511,7 +511,7 @@ Penjelasan:
 
 Untuk opsi yang nonaktif:
 
-```zsh
+```bash
 unsetopt -m | less
 ```
 
@@ -520,7 +520,7 @@ Penjelasan:
 
 Untuk melihat dokumentasi:
 
-```zsh
+```bash
 man zshoptions
 ```
 

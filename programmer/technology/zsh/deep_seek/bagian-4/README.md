@@ -49,7 +49,7 @@ Bayangkan Zsh sebagai sebuah **rumah**. Saat Anda "masuk" (membuka terminal), Zs
 
 **Urutan Pemuatan File Startup Zsh (dari yang paling awal):**
 
-```zsh
+```bash
 # 1. /etc/zshenv       — System-wide, SELALU dijalankan (semua mode)
 # 2. ~/.zshenv         — User-specific, SELALU dijalankan (semua mode)
 # 3. /etc/zprofile     — System-wide, hanya login shell
@@ -69,7 +69,7 @@ Bayangkan Zsh sebagai sebuah **rumah**. Saat Anda "masuk" (membuka terminal), Zs
 
 **Konsep `$fpath` dan `autoload`:**
 
-```zsh
+```bash
 # $fpath adalah array direktori tempat Zsh mencari fungsi autoload
 echo $fpath
 # Output contoh: /usr/share/zsh/functions /usr/local/share/zsh/functions
@@ -132,7 +132,7 @@ Oh My Zsh menganut filosofi **"batteries included"** — semua yang Anda butuhka
 
 **Instalasi Oh My Zsh:**
 
-```zsh
+```bash
 # Install via curl (memerlukan curl)
 sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
@@ -151,7 +151,7 @@ sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools
 
 **Konfigurasi `.zshrc` untuk Oh My Zsh:**
 
-```zsh
+```bash
 # Path instalasi Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -184,7 +184,7 @@ export EDITOR='nvim'
 
 **Contoh plugin bawaan Oh My Zsh — `git`:**
 
-```zsh
+```bash
 # Setelah mengaktifkan plugin 'git', Anda bisa menggunakan aliases ini:
 gst        # git status
 ga         # git add
@@ -256,7 +256,7 @@ Antidote menganut filosofi **"generate once, load many"** . Bayangkan Anda memil
 
 **Instalasi Antidote:**
 
-```zsh
+```bash
 # Clone repository Antidote
 git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
 ```
@@ -269,7 +269,7 @@ git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antid
 
 **Konfigurasi `.zshrc` untuk Antidote:**
 
-```zsh
+```bash
 # 1. Source antidote
 source ${ZDOTDIR:-~}/.antidote/antidote.zsh
 
@@ -290,7 +290,7 @@ antidote load
 
 **File `~/.zsh_plugins.txt` (daftar plugin):**
 
-```zsh
+```bash
 # Format: satu plugin per baris
 # Komentar diawali dengan #
 
@@ -316,7 +316,7 @@ romkatv/powerlevel10k
 
 **Optimasi tingkat lanjut (manual static loading):**
 
-```zsh
+```bash
 # .zshrc
 # Set nama file plugin
 zsh_plugins=${ZDOTDIR:-~}/.zsh_plugins
@@ -402,7 +402,7 @@ Zinit menganut filosofi **"kontrol penuh"** . Daripada memuat semua plugin di aw
 
 **Instalasi Zinit:**
 
-```zsh
+```bash
 # Metode 1: Clone manual
 git clone --depth=1 https://github.com/zdharma-continuum/zinit.git ~/.zinit/bin
 
@@ -412,7 +412,7 @@ bash -c "$(curl --fail --show-error --silent --location https://raw.githubuserco
 
 **Konfigurasi `.zshrc` untuk Zinit:**
 
-```zsh
+```bash
 # Source Zinit
 source ~/.zinit/bin/zinit.zsh
 
@@ -445,7 +445,7 @@ zinit light zsh-users/zsh-completions
 
 **Mode Turbo lebih detail:**
 
-```zsh
+```bash
 # Turbo dengan threshold waktu (ms)
 zinit ice wait"0" lucid    # Muat segera setelah prompt muncul
 zinit ice wait"1" lucid    # Muat setelah 1 detik
@@ -462,7 +462,7 @@ zinit light zsh-users/zsh-autosuggestions
 
 **Zinit commands (manajemen plugin):**
 
-```zsh
+```bash
 # Melihat daftar plugin yang dimuat
 zinit list
 
@@ -536,7 +536,7 @@ Dua plugin ini adalah **plugin yang paling sering direkomendasikan** untuk Zsh. 
 
 **Instalasi manual (tanpa plugin manager):**
 
-```zsh
+```bash
 # Clone plugin
 git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
@@ -553,7 +553,7 @@ source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 **Instalasi dengan Oh My Zsh:**
 
-```zsh
+```bash
 # Clone ke direktori custom Oh My Zsh
 git clone https://github.com/zsh-users/zsh-autosuggestions \
     ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -575,7 +575,7 @@ plugins=(
 
 **Konfigurasi zsh-autosuggestions:**
 
-```zsh
+```bash
 # Mengubah warna saran (default: abu-abu)
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'  # Warna 8 = abu-abu gelap
 
@@ -596,7 +596,7 @@ ZSH_AUTOSUGGEST_HISTORY_IGNORE="cd *"
 
 **Konfigurasi zsh-syntax-highlighting:**
 
-```zsh
+```bash
 # Mengubah warna perintah yang valid
 ZSH_HIGHLIGHT_STYLES[command]='fg=green,bold'
 
@@ -677,7 +677,7 @@ Filosofi di balik manual sourcing adalah **"Anda tahu apa yang Anda muat, dan An
 
 **Struktur direktori:**
 
-```
+```bash
 ~/.zsh/
 ├── plugins/
 │   ├── zsh-autosuggestions/
@@ -691,7 +691,7 @@ Filosofi di balik manual sourcing adalah **"Anda tahu apa yang Anda muat, dan An
 
 **Konfigurasi `.zshrc` manual:**
 
-```zsh
+```bash
 # Set ZDOTDIR (opsional, tapi direkomendasikan)
 export ZDOTDIR="$HOME/.zsh"
 
@@ -725,7 +725,7 @@ ZSH_HIGHLIGHT_STYLES[path]='fg=cyan'
 
 **Manajemen update manual:**
 
-```zsh
+```bash
 # Script untuk update semua plugin
 update_plugins() {
     local plugin_dir="$ZDOTDIR/plugins"
@@ -800,7 +800,7 @@ Modul ini membahas **bagaimana mengukur** waktu startup Zsh dan **teknik-teknik 
 
 **Mengukur waktu startup:**
 
-```zsh
+```bash
 # Mengukur waktu startup shell
 time zsh -i -c exit
 
@@ -818,7 +818,7 @@ time zsh -i -c exit
 
 **Profiling dengan `zprof`:**
 
-```zsh
+```bash
 # Tambahkan di paling atas .zshrc
 zmodload zsh/zprof
 
@@ -834,7 +834,7 @@ zprof | head -20
 
 **Contoh output `zprof`:**
 
-```
+```bash
 num  calls                time                       self            name
 -----------------------------------------------------------------------------------
  1)    1          12.34    12.34   33.33%     12.34    12.34   33.33%  compinit
@@ -852,7 +852,7 @@ num  calls                time                       self            name
 
 **Teknik optimasi — `zcompile`:**
 
-```zsh
+```bash
 # Kompilasi .zshrc ke bytecode
 zcompile ~/.zshrc
 
@@ -869,7 +869,7 @@ zcompile ~/.zsh_plugins.zsh
 
 **Teknik optimasi — `compinit -C`:**
 
-```zsh
+```bash
 # Cara biasa (dengan security check)
 autoload -Uz compinit
 compinit
@@ -884,7 +884,7 @@ compinit -C
 
 **Teknik optimasi — Lazy loading dengan `zsh-defer`:**
 
-```zsh
+```bash
 # Install zsh-defer
 git clone https://github.com/romkatv/zsh-defer.git ~/.zsh/zsh-defer
 
@@ -1117,7 +1117,7 @@ Sebelum kita menyentuh sintaks `PS1` atau `vcs_info`, kita **wajib** memahami **
 
 **Prompt paling sederhana:**
 
-```zsh
+```bash
 PS1='$ '    # Hanya menampilkan "$ " sebagai prompt
 ```
 
@@ -1127,7 +1127,7 @@ PS1='$ '    # Hanya menampilkan "$ " sebagai prompt
 
 **Prompt dengan ekspansi dasar:**
 
-```zsh
+```bash
 PS1='%n@%m:%~%# '
 # Contoh output: user@hostname:~/projects$
 ```
@@ -1146,7 +1146,7 @@ Single quotes (`'...'`) mencegah Zsh melakukan **parameter expansion** (`$variab
 
 **Visualisasi konsep:**
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │  SAAT ASSIGNMENT (single quotes):                           │
 │  PS1='%n@%m:%~%# '                                          │
@@ -1204,14 +1204,14 @@ Zsh menggunakan **tanda persen (`%`)** sebagai penanda ekspansi prompt. Setiap k
 
 **Contoh prompt dengan multiple ekspansi:**
 
-```zsh
+```bash
 PS1='[%T] %n@%m:%~%# '
 # Output: [14:30:25] john@laptop:~/projects$
 ```
 
 **Prompt dengan conditional:**
 
-```zsh
+```bash
 # Menampilkan simbol berbeda berdasarkan exit code
 PS1='%(?.%F{green}√.%F{red}✗)%f %# '
 # Jika exit code 0: √ (hijau)
@@ -1232,7 +1232,7 @@ PS1='%(?.%F{green}√.%F{red}✗)%f %# '
 
 **Prompt dengan informasi git (sederhana):**
 
-```zsh
+```bash
 # Menggunakan command substitution (memerlukan PROMPT_SUBST)
 setopt PROMPT_SUBST
 PS1='%~$(git branch --show-current 2>/dev/null | sed "s/^/ (/;s/$/)/")%# '
@@ -1247,7 +1247,7 @@ PS1='%~$(git branch --show-current 2>/dev/null | sed "s/^/ (/;s/$/)/")%# '
 
 **Prompt dengan ekspansi bertingkat (nested):**
 
-```zsh
+```bash
 # Menampilkan "user@host" hanya jika bukan user yang sama dengan default
 PS1='%(!.%F{red}%n@%m%f.)%F{blue}%~%f%# '
 # %(!...) — jika root, tampilkan user@host dengan warna merah
@@ -1344,7 +1344,7 @@ Zsh menggunakan **ANSI escape codes** — urutan karakter khusus yang dimulai de
 
 **Warna dasar:**
 
-```zsh
+```bash
 # Menggunakan nama warna
 PS1='%F{green}%n%f@%F{blue}%m%f:%F{yellow}%~%f%# '
 
@@ -1363,7 +1363,7 @@ PS1='%F{#00ff00}%n%f@%F{#0000ff}%m%f%# '
 
 **Formatting (bold, underline, dll.):**
 
-```zsh
+```bash
 # Bold
 PS1='%B%n%f%b@%m%# '
 # %B = bold on, %b = bold off
@@ -1384,7 +1384,7 @@ PS1='%B%F{green}%n%f%b@%F{blue}%m%f%# '
 
 **Background color:**
 
-```zsh
+```bash
 # Background untuk path
 PS1='%K{blue}%F{white}%~%f%k%# '
 # %K{blue} = background biru, %F{white} = teks putih
@@ -1393,7 +1393,7 @@ PS1='%K{blue}%F{white}%~%f%k%# '
 
 **Prompt dengan warna kondisional:**
 
-```zsh
+```bash
 # Warna path berubah berdasarkan apakah direktori writable
 PS1='%(W.%F{green}.%F{red})%~%f%# '
 # Jika direktori writable: hijau
@@ -1411,7 +1411,7 @@ PS1='%(W.%F{green}.%F{red})%~%f%# '
 
 **Efek warna lebih lanjut (256 warna):**
 
-```zsh
+```bash
 # Menggunakan 256 warna
 PS1='%F{196}%n%f@%F{21}%m%f:%F{226}%~%f%# '
 
@@ -1495,7 +1495,7 @@ done
 
 **Urutan eksekusi:**
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │  USER MENGETIK PERINTAH                                     │
 │  → preexec dijalankan (mencatat waktu mulai)                │
@@ -1509,7 +1509,7 @@ done
 
 **`precmd` dasar:**
 
-```zsh
+```bash
 # Fungsi yang dijalankan sebelum prompt
 precmd() {
     echo "Prompt akan ditampilkan..."
@@ -1532,7 +1532,7 @@ my_precmd_function() {
 
 **`preexec` dasar:**
 
-```zsh
+```bash
 # Fungsi yang dijalankan sebelum perintah dieksekusi
 preexec() {
     echo "Akan menjalankan: $1"
@@ -1557,7 +1557,7 @@ my_preexec_function() {
 
 **Studi kasus: Mengukur waktu eksekusi perintah:**
 
-```zsh
+```bash
 # Variabel untuk menyimpan waktu mulai
 typeset -g _cmd_start_time
 
@@ -1587,7 +1587,7 @@ precmd() {
 
 **Studi kasus: Menampilkan git status di prompt:**
 
-```zsh
+```bash
 autoload -Uz vcs_info
 precmd() {
     vcs_info
@@ -1610,7 +1610,7 @@ PS1='%F{green}%n%f@%F{blue}%m%f:%F{yellow}%~%f${vcs_info_msg_0_}%# '
 
 **Caching git status untuk performa:**
 
-```zsh
+```bash
 # Cache git status untuk menghindari pengecekan setiap prompt
 typeset -g _git_status_cache=""
 typeset -g _git_status_cache_dir=""
@@ -1703,7 +1703,7 @@ precmd() {
 
 **Konfigurasi dasar:**
 
-```zsh
+```bash
 # Muat modul vcs_info
 autoload -Uz vcs_info
 
@@ -1750,7 +1750,7 @@ PS1='%~${vcs_info_msg_0_}%# '
 
 **Contoh format dengan status:**
 
-```zsh
+```bash
 zstyle ':vcs_info:git:*' formats '(%b) %u%c%m'
 # %u = unmerged, %c = staged, %m = modified
 # Output: (main) U M
@@ -1763,7 +1763,7 @@ zstyle ':vcs_info:git:*' formats '(%b) %u%c%m'
 
 **Menampilkan stash:**
 
-```zsh
+```bash
 zstyle ':vcs_info:git:*' formats '(%b) %s'
 # %s = jumlah stash
 # Output: (main) 2
@@ -1771,7 +1771,7 @@ zstyle ':vcs_info:git:*' formats '(%b) %s'
 
 **Konfigurasi lanjutan — `check-for-changes`:**
 
-```zsh
+```bash
 # Mengaktifkan pengecekan perubahan (lebih lambat tapi lebih informatif)
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' stagedstr 'S'
@@ -1786,7 +1786,7 @@ zstyle ':vcs_info:git:*' formats '(%b) %c%u'
 
 **Action formats untuk rebase/merge:**
 
-```zsh
+```bash
 zstyle ':vcs_info:git:*' actionformats '(%b|%a)'
 # %a = action
 # Output saat rebase: (main|rebase-i)
@@ -1863,7 +1863,7 @@ Tema adalah **paket siap pakai** yang mengonfigurasi prompt Anda. Daripada menul
 
 **Powerlevel10k:**
 
-```zsh
+```bash
 # Instalasi dengan Oh My Zsh
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
     ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
@@ -1888,7 +1888,7 @@ p10k configure
 
 **Fitur Powerlevel10k:**
 
-```zsh
+```bash
 # Konfigurasi via ~/.p10k.zsh
 # Prompt segments: dir, vcs, time, status, dll.
 
@@ -1918,7 +1918,7 @@ typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
 
 **Agnoster:**
 
-```zsh
+```bash
 # Agnoster tersedia di Oh My Zsh
 ZSH_THEME="agnoster"
 
@@ -1938,7 +1938,7 @@ source ~/.zsh/themes/agnoster/agnoster.zsh-theme
 
 **Pure:**
 
-```zsh
+```bash
 # Instalasi Pure
 git clone https://github.com/sindresorhus/pure.git ~/.zsh/pure
 
@@ -2028,7 +2028,7 @@ Prompt yang baik adalah **dashboard** — ia menampilkan informasi yang **releva
 
 **Prompt minimal:**
 
-```zsh
+```bash
 # Hanya path dan prompt character
 PS1='%~%# '
 # Output: ~/projects$
@@ -2036,7 +2036,7 @@ PS1='%~%# '
 
 **Prompt informatif:**
 
-```zsh
+```bash
 # User, host, path, git, exit code, waktu
 autoload -Uz vcs_info
 precmd() { vcs_info }
@@ -2048,7 +2048,7 @@ PS1='%F{green}%n%f@%F{blue}%m%f:%F{yellow}%~%f${vcs_info_msg_0_} %(?.%F{green}�
 
 **Prompt adaptif (berubah berdasarkan konteks):**
 
-```zsh
+```bash
 # Tampilkan git hanya jika di git repository
 autoload -Uz vcs_info
 precmd() { vcs_info }
@@ -2116,7 +2116,7 @@ Modul ini adalah **studi kasus lengkap** — membangun prompt kustom dari nol, m
 
 **Desain prompt:**
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │  [14:30:25] user@host:~/projects (main) √ $                 │
 │  │          │    │    │         │        │ │                │
@@ -2134,7 +2134,7 @@ Modul ini adalah **studi kasus lengkap** — membangun prompt kustom dari nol, m
 
 **Langkah 1: Setup dasar**
 
-```zsh
+```bash
 # ~/.zshrc
 
 # 1. Muat modul yang diperlukan
@@ -2163,7 +2163,7 @@ zstyle ':vcs_info:git:*' unstagedstr 'U'
 
 **Langkah 2: Fungsi `precmd` untuk update `vcs_info`**
 
-```zsh
+```bash
 # 4. Update vcs_info sebelum prompt
 precmd() {
     vcs_info
@@ -2176,7 +2176,7 @@ precmd() {
 
 **Langkah 3: Fungsi `preexec` untuk mencatat waktu**
 
-```zsh
+```bash
 # 5. Catat waktu mulai perintah
 typeset -g _cmd_start_time
 
@@ -2192,7 +2192,7 @@ preexec() {
 
 **Langkah 4: Fungsi `precmd` untuk menampilkan durasi**
 
-```zsh
+```bash
 # 6. Tampilkan durasi jika > 1 detik
 precmd() {
     vcs_info
@@ -2215,7 +2215,7 @@ precmd() {
 
 **Langkah 5: Prompt dengan warna dan conditional**
 
-```zsh
+```bash
 # 7. Prompt kustom
 PS1='%F{244}[%T]%f %F{green}%n%f@%F{blue}%m%f:%F{yellow}%~%f${vcs_info_msg_0_:+ %F{magenta}${vcs_info_msg_0_}%f} %(?.%F{green}√.%F{red}✗)%f %# '
 ```
@@ -2233,13 +2233,13 @@ PS1='%F{244}[%T]%f %F{green}%n%f@%F{blue}%m%f:%F{yellow}%~%f${vcs_info_msg_0_:+ 
 
 **Hasil akhir:**
 
-```
+```bash
 [14:30:25] user@host:~/projects (main) √ $
 ```
 
 **Langkah 6: Optimasi — Cache git status**
 
-```zsh
+```bash
 # 8. Cache git status untuk performa
 typeset -g _git_cache=""
 typeset -g _git_cache_dir=""
@@ -2488,7 +2488,7 @@ Sebelum kita membahas teknik optimasi, kita **wajib** memahami **apa yang membua
 
 **Mengukur waktu startup (cara cepat):**
 
-```zsh
+```bash
 # Mengukur waktu startup shell
 time zsh -i -c exit
 ```
@@ -2503,7 +2503,7 @@ time zsh -i -c exit
 
 **Mengukur waktu startup (cara lebih akurat):**
 
-```zsh
+```bash
 # Menggunakan zsh-bench (perlu instalasi)
 git clone https://github.com/romkatv/zsh-bench.git ~/.zsh-bench
 ~/.zsh-bench/zsh-bench
@@ -2515,7 +2515,7 @@ git clone https://github.com/romkatv/zsh-bench.git ~/.zsh-bench
 
 **Mengidentifikasi plugin yang berat:**
 
-```zsh
+```bash
 # Menggunakan zprof (lihat bagian berikutnya)
 zmodload zsh/zprof
 # ... konfigurasi ...
@@ -2583,7 +2583,7 @@ zprof | head -20
 
 **Setup `zprof`:**
 
-```zsh
+```bash
 # Di paling atas .zshrc
 zmodload zsh/zprof
 
@@ -2599,7 +2599,7 @@ zprof | head -20
 
 **Contoh output `zprof`:**
 
-```
+```bash
 num  calls                time                       self            name
 -----------------------------------------------------------------------------------
  1)    1          12.34    12.34   33.33%     12.34    12.34   33.33%  compinit
@@ -2624,7 +2624,7 @@ num  calls                time                       self            name
 
 **Cara mengatasi bottleneck:**
 
-```zsh
+```bash
 # 1. Untuk compinit: gunakan compinit -C (skip security check) atau caching
 compinit -C
 
@@ -2637,7 +2637,7 @@ zsh-defer source ~/.pyenv/pyenv.zsh
 
 **`zprof` dengan lebih banyak detail:**
 
-```zsh
+```bash
 # Menampilkan semua fungsi (tanpa head)
 zprof
 
@@ -2713,7 +2713,7 @@ Waktu startup adalah **metrik utama** untuk performa shell. Ada beberapa cara me
 
 **Metode 1: `time zsh -i -c exit`**
 
-```zsh
+```bash
 # Ukur sekali
 time zsh -i -c exit
 
@@ -2731,7 +2731,7 @@ done
 
 **Metode 2: `zsh-bench`**
 
-```zsh
+```bash
 # Clone zsh-bench
 git clone https://github.com/romkatv/zsh-bench.git ~/.zsh-bench
 
@@ -2745,7 +2745,7 @@ git clone https://github.com/romkatv/zsh-bench.git ~/.zsh-bench
 
 **Output `zsh-bench`:**
 
-```
+```bash
 Benchmarking: zsh -i -c exit
   Time: 0.178s
   ...
@@ -2753,7 +2753,7 @@ Benchmarking: zsh -i -c exit
 
 **Metode 3: `hyperfine`**
 
-```zsh
+```bash
 # Install hyperfine (jika belum)
 # macOS: brew install hyperfine
 # Linux: apt install hyperfine
@@ -2768,7 +2768,7 @@ hyperfine 'zsh -i -c exit'
 
 **Output `hyperfine`:**
 
-```
+```bash
 Benchmark #1: zsh -i -c exit
   Time (mean ± σ):     178.3 ms ±   5.2 ms
   Range (min … max):   170.1 ms … 190.2 ms
@@ -2842,7 +2842,7 @@ Lazy loading adalah **teknik paling efektif** untuk mempercepat startup. Daripad
 
 **Metode 1: `zsh-defer`**
 
-```zsh
+```bash
 # Install zsh-defer
 git clone https://github.com/romkatv/zsh-defer.git ~/.zsh/zsh-defer
 
@@ -2861,7 +2861,7 @@ zsh-defer source ~/.sdkman/bin/sdkman-init.sh
 
 **Metode 2: Fungsi wrapper (untuk NVM)**
 
-```zsh
+```bash
 # Lazy load NVM
 lazy_load_nvm() {
     unset -f nvm node npm npx
@@ -2885,7 +2885,7 @@ npx() { lazy_load_nvm; npx "$@"; }
 
 **Metode 3: Zinit Turbo Mode**
 
-```zsh
+```bash
 # Di .zshrc dengan Zinit
 zinit ice wait lucid
 zinit light zsh-users/zsh-autosuggestions
@@ -2900,7 +2900,7 @@ zinit light zsh-users/zsh-syntax-highlighting
 
 **Metode 4: Lazy loading dengan `$fpath` dan `autoload`**
 
-```zsh
+```bash
 # Tambahkan direktori ke fpath
 fpath=(~/.zsh/functions $fpath)
 
@@ -2983,7 +2983,7 @@ my_heavy_function() {
 
 **Kompilasi `.zshrc`:**
 
-```zsh
+```bash
 # Kompilasi .zshrc
 zcompile ~/.zshrc
 
@@ -2997,7 +2997,7 @@ zcompile ~/.zshrc
 
 **Kompilasi file plugin:**
 
-```zsh
+```bash
 # Kompilasi plugin
 zcompile ~/.zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
@@ -3013,7 +3013,7 @@ done
 
 **Kompilasi file plugins statis (Antidote):**
 
-```zsh
+```bash
 # Kompilasi file statis Antidote
 zcompile ~/.zsh_plugins.zsh
 ```
@@ -3023,7 +3023,7 @@ zcompile ~/.zsh_plugins.zsh
 
 **Cara Zsh memuat file yang dikompilasi:**
 
-```zsh
+```bash
 # Zsh akan otomatis memuat .zwc jika ada dan lebih baru dari .zsh
 source ~/.zshrc
 # Jika ~/.zshrc.zwc ada dan lebih baru, Zsh akan memuatnya
@@ -3035,7 +3035,7 @@ source ~/.zshrc
 
 **Kompilasi dengan `-U` (untuk fungsi autoload):**
 
-```zsh
+```bash
 # Kompilasi dengan -U (abaikan alias)
 zcompile -U ~/.zsh/functions/my_function
 ```
@@ -3045,7 +3045,7 @@ zcompile -U ~/.zsh/functions/my_function
 
 **Kompilasi dengan `-R` (untuk file yang di-source):**
 
-```zsh
+```bash
 # Kompilasi dengan -R (untuk file yang di-source)
 zcompile -R ~/.zshrc
 ```
@@ -3122,7 +3122,7 @@ zcompile -R ~/.zshrc
 
 **Metode 1: `compinit -C` (skip security check)**
 
-```zsh
+```bash
 # Cara biasa (dengan security check)
 autoload -Uz compinit
 compinit
@@ -3139,7 +3139,7 @@ compinit -C
 
 **Metode 2: Caching `compinit`**
 
-```zsh
+```bash
 # Cek apakah cache ada dan masih baru
 autoload -Uz compinit
 if [[ -n ${ZDOTDIR:-~}/.zcompdump(#qN.mh+24) ]]; then
@@ -3161,7 +3161,7 @@ fi
 
 **Metode 3: Caching dengan `compdump`**
 
-```zsh
+```bash
 # Set file cache
 ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-${HOST}-${ZSH_VERSION}"
 
@@ -3176,7 +3176,7 @@ compinit -d "$ZSH_COMPDUMP"
 
 **Metode 4: `zcompile` untuk file cache**
 
-```zsh
+```bash
 # Kompilasi file cache
 zcompile ${ZDOTDIR:-~}/.zcompdump
 ```
@@ -3246,7 +3246,7 @@ zcompile ${ZDOTDIR:-~}/.zcompdump
 
 **Audit plugin:**
 
-```zsh
+```bash
 # Lihat semua plugin yang dimuat
 zinit list
 
@@ -3260,7 +3260,7 @@ echo $plugins
 
 **Mengukur dampak plugin:**
 
-```zsh
+```bash
 # Ukur startup dengan semua plugin
 time zsh -i -c exit
 
@@ -3274,7 +3274,7 @@ time zsh -i -c exit
 
 **Mengganti plugin berat dengan yang ringan:**
 
-```zsh
+```bash
 # Berat: Oh My Zsh git plugin
 plugins=(git)
 
@@ -3288,7 +3288,7 @@ plugins=(git)
 
 **Menghapus plugin yang tidak digunakan:**
 
-```zsh
+```bash
 # Sebelum
 plugins=(git docker kubectl npm node python ruby rails go rust)
 
@@ -3355,7 +3355,7 @@ Modul ini membahas **teknik optimasi lanjutan** yang melampaui dasar-dasar: `zsh
 
 **`zsh-defer` untuk async loading:**
 
-```zsh
+```bash
 # Source zsh-defer
 source ~/.zsh/zsh-defer/zsh-defer.plugin.zsh
 
@@ -3371,7 +3371,7 @@ zsh-defer source ~/.sdkman/bin/sdkman-init.sh
 
 **Async loading dengan `zinit`:**
 
-```zsh
+```bash
 # Zinit Turbo Mode
 zinit ice wait lucid
 zinit light zsh-users/zsh-autosuggestions
@@ -3386,7 +3386,7 @@ zinit light zsh-users/zsh-syntax-highlighting
 
 **Optimasi completion dengan caching:**
 
-```zsh
+```bash
 # Caching compinit
 ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.zcompdump-${HOST}-${ZSH_VERSION}"
 autoload -Uz compinit
@@ -3405,7 +3405,7 @@ fi
 
 **Mengurangi `$fpath`:**
 
-```zsh
+```bash
 # Lihat $fpath
 echo $fpath
 
@@ -3491,7 +3491,7 @@ Modul ini adalah **studi kasus lengkap** — mengoptimasi shell dari 1.5 detik m
 
 **Sebelum optimasi:**
 
-```zsh
+```bash
 # .zshrc (sebelum)
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -3506,7 +3506,7 @@ compinit
 
 **Setelah optimasi:**
 
-```zsh
+```bash
 # .zshrc (sesudah)
 # 1. Source zsh-defer
 source ~/.zsh/zsh-defer/zsh-defer.plugin.zsh
@@ -3737,7 +3737,7 @@ Sebelum kita membahas teknik keamanan spesifik, kita **wajib** memahami **apa ya
 
 **Prinsip dasar keamanan dalam script Zsh:**
 
-```zsh
+```bash
 #!/bin/zsh
 # Script yang aman dimulai dengan shebang dan strict mode
 
@@ -3814,7 +3814,7 @@ set -euo pipefail
 
 **Contoh serangan:**
 
-```zsh
+```bash
 # Script yang rentan
 user_input="hello; rm -rf /"
 eval "echo $user_input"
@@ -3828,7 +3828,7 @@ eval "echo $user_input"
 
 **Contoh `eval` yang berbahaya:**
 
-```zsh
+```bash
 # ❌ JANGAN: eval dengan input pengguna
 user_input="hello; rm -rf /"
 eval "echo $user_input"  # BAHAYA: code injection!
@@ -3846,7 +3846,7 @@ eval "cat $filename"  # BAHAYA: code injection!
 
 **Alternatif yang aman:**
 
-```zsh
+```bash
 # ✅ GUNAKAN: array dan quoting
 user_input="hello"
 printf '%s\n' "$user_input"
@@ -3870,7 +3870,7 @@ eval "echo ${(q)user_input}"
 - **Indirect variable reference:** Mengakses variabel berdasarkan nama yang disimpan di variabel lain. Gunakan `${(P)name}` sebagai alternatif.
 - **Dynamic command construction:** Membangun perintah secara dinamis. Gunakan array sebagai alternatif.
 
-```zsh
+```bash
 # Indirect variable reference tanpa eval
 var_name="my_var"
 my_var="hello"
@@ -3951,7 +3951,7 @@ Quoting adalah cara memberi tahu shell untuk **memperlakukan karakter khusus seb
 
 **Word splitting:**
 
-```zsh
+```bash
 # ❌ JANGAN: tanpa quoting
 filename="my file.txt"
 ls $filename  # Akan mencoba membuka "my" dan "file.txt"
@@ -3967,7 +3967,7 @@ ls "$filename"  # Akan membuka "my file.txt"
 
 **Globbing:**
 
-```zsh
+```bash
 # ❌ JANGAN: tanpa quoting
 pattern="*.txt"
 echo $pattern  # Akan menampilkan semua file .txt
@@ -3983,7 +3983,7 @@ echo "$pattern"  # Akan menampilkan "*.txt" secara literal
 
 **Code injection:**
 
-```zsh
+```bash
 # ❌ JANGAN: tanpa quoting
 user_input="hello; rm -rf /"
 echo $user_input  # Akan menjalankan: echo hello; rm -rf /
@@ -3999,7 +3999,7 @@ echo "$user_input"  # Akan menampilkan: hello; rm -rf /
 
 **Quoting dalam array:**
 
-```zsh
+```bash
 # ✅ GUNAKAN: quoting setiap elemen array
 files=("my file.txt" "another file.txt")
 for file in "${files[@]}"; do
@@ -4082,7 +4082,7 @@ done
 
 **Fungsi `safe_source`:**
 
-```zsh
+```bash
 # Fungsi untuk source file dengan aman
 safe_source() {
     local file="$1"
@@ -4123,7 +4123,7 @@ safe_source() {
 
 **Mengamankan plugin:**
 
-```zsh
+```bash
 # Sebelum source plugin, verifikasi checksum
 verify_plugin() {
     local plugin_file="$1"
@@ -4151,7 +4151,7 @@ fi
 
 **Menggunakan `zinit` dengan verifikasi:**
 
-```zsh
+```bash
 # Zinit dengan verifikasi
 zinit ice verifier'my_verifier_function'
 zinit light user/repo
@@ -4231,7 +4231,7 @@ zinit light user/repo
 
 **❌ JANGAN: Hardcode secrets di script:**
 
-```zsh
+```bash
 # ❌ JANGAN: hardcode API key
 API_KEY="sk-1234567890"
 curl -H "Authorization: Bearer $API_KEY" https://api.example.com
@@ -4245,7 +4245,7 @@ curl -H "Authorization: Bearer $API_KEY" https://api.example.com
 
 **✅ GUNAKAN: Environment variable dari secure store:**
 
-```zsh
+```bash
 # ✅ GUNAKAN: environment variable
 export API_KEY="$(op read 'op://vault/api-key')"
 curl -H "Authorization: Bearer $API_KEY" https://api.example.com
@@ -4258,7 +4258,7 @@ curl -H "Authorization: Bearer $API_KEY" https://api.example.com
 
 **✅ GUNAKAN: File dengan permission yang ketat:**
 
-```zsh
+```bash
 # ✅ GUNAKAN: file dengan permission 600
 # ~/.secrets
 API_KEY="sk-1234567890"
@@ -4280,7 +4280,7 @@ chmod 600 ~/.secrets
 
 **✅ GUNAKAN: Secret manager:**
 
-```zsh
+```bash
 # 1Password CLI
 export API_KEY="$(op read 'op://vault/api-key')"
 
@@ -4301,7 +4301,7 @@ export API_KEY="$(aws secretsmanager get-secret-value \
 
 **Mencegah secrets di history:**
 
-```zsh
+```bash
 # ❌ JANGAN: secrets di command line
 # mysql -u root -p"password123"
 
@@ -4319,7 +4319,7 @@ mysql -u root -p"$DB_PASSWORD"
 
 **Redaksi history:**
 
-```zsh
+```bash
 # Jangan simpan perintah yang mengandung secrets di history
 setopt HIST_IGNORE_SPACE
 # Perintah yang dimulai dengan spasi tidak akan disimpan
@@ -4405,7 +4405,7 @@ Permission menentukan siapa yang dapat membaca, menulis, dan mengeksekusi file. 
 
 **Melihat permission:**
 
-```zsh
+```bash
 # Melihat permission file
 ls -la ~/.zshrc
 # Output: -rw------- 1 user user 1234 Jan 1 00:00 .zshrc
@@ -4422,7 +4422,7 @@ stat -c '%a %n' ~/.zshrc
 
 **Mengubah permission:**
 
-```zsh
+```bash
 # Set permission 600 untuk .zshrc
 chmod 600 ~/.zshrc
 
@@ -4442,7 +4442,7 @@ chmod 600 ~/.secrets
 
 **Memeriksa permission secara otomatis:**
 
-```zsh
+```bash
 # Fungsi untuk memeriksa permission
 check_permissions() {
     local file="$1"
@@ -4477,7 +4477,7 @@ check_permissions ~/.ssh/id_rsa 600
 
 **Audit permission di `.zshrc`:**
 
-```zsh
+```bash
 # Audit permission file konfigurasi
 audit_config_permissions() {
     local files=(
@@ -4572,7 +4572,7 @@ ShellCheck adalah **linter** — alat yang menganalisis kode tanpa menjalankanny
 
 **Instalasi ShellCheck:**
 
-```zsh
+```bash
 # macOS
 brew install shellcheck
 
@@ -4588,7 +4588,7 @@ scoop install shellcheck
 
 **Menjalankan ShellCheck:**
 
-```zsh
+```bash
 # Audit script
 shellcheck script.sh
 
@@ -4605,7 +4605,7 @@ shellcheck --shell=zsh ~/.zshrc
 
 **Contoh peringatan ShellCheck:**
 
-```zsh
+```bash
 # ❌ Kode dengan masalah
 filename="my file.txt"
 ls $filename
@@ -4613,7 +4613,7 @@ ls $filename
 
 **Output ShellCheck:**
 
-```
+```bash
 In script.sh line 2:
 ls $filename
    ^-- SC2086 (info): Double quote to prevent globbing and word splitting.
@@ -4625,7 +4625,7 @@ ls $filename
 
 **Memperbaiki kode:**
 
-```zsh
+```bash
 # ✅ Kode yang diperbaiki
 filename="my file.txt"
 ls "$filename"
@@ -4633,7 +4633,7 @@ ls "$filename"
 
 **ShellCheck untuk Zsh:**
 
-```zsh
+```bash
 # ShellCheck secara default untuk sh/bash
 # Untuk Zsh, gunakan direktif
 #!/bin/zsh
@@ -4649,7 +4649,7 @@ shellcheck --shell=zsh ~/.zshrc
 
 **Mengabaikan peringatan tertentu:**
 
-```zsh
+```bash
 # Mengabaikan peringatan SC2086
 # shellcheck disable=SC2086
 ls $filename
@@ -4660,7 +4660,7 @@ ls $filename
 
 **Integrasi dengan editor:**
 
-```zsh
+```bash
 # VS Code: Install extension "ShellCheck"
 # Vim: Install ALE atau Syntastic
 # Emacs: Install flycheck
@@ -4730,7 +4730,7 @@ Modul ini membahas **teknik keamanan lanjutan** yang melampaui dasar-dasar: sand
 
 **Sandboxing dengan `bwrap`:**
 
-```zsh
+```bash
 # Menjalankan script dalam sandbox
 bwrap --ro-bind / / \
       --dev /dev \
@@ -4749,7 +4749,7 @@ bwrap --ro-bind / / \
 
 **Redaction dengan `zsh-redact-history`:**
 
-```zsh
+```bash
 # Install zsh-redact-history
 git clone https://github.com/severeon/zsh-redact-history.git ~/.zsh/zsh-redact-history
 source ~/.zsh/zsh-redact-history/zsh-redact-history.plugin.zsh
@@ -4770,7 +4770,7 @@ ZSH_REDACT_HISTORY_PATTERNS=(
 
 **Audit trail dengan `script`:**
 
-```zsh
+```bash
 # Merekam sesi terminal
 script -t timing.log session.log
 
@@ -4785,7 +4785,7 @@ script -t 2>timing.log session.log
 
 **Custom audit logging:**
 
-```zsh
+```bash
 # Log semua perintah ke file
 audit_log() {
     local log_file="$HOME/.zsh_audit.log"
@@ -4882,7 +4882,7 @@ Modul ini adalah **studi kasus lengkap** — mengaudit `.zshrc` untuk keamanan. 
 
 **Sebelum audit:**
 
-```zsh
+```bash
 # .zshrc (sebelum)
 # ❌ Secrets hardcode
 export API_KEY="sk-1234567890"
@@ -4902,7 +4902,7 @@ source /tmp/plugin.zsh
 
 **Setelah audit:**
 
-```zsh
+```bash
 # .zshrc (sesudah)
 #!/bin/zsh
 set -euo pipefail
@@ -4934,7 +4934,7 @@ chmod 600 ~/.secrets
 
 **Script audit otomatis:**
 
-```zsh
+```bash
 #!/bin/zsh
 # audit_zshrc.sh
 

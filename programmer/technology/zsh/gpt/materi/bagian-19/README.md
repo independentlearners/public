@@ -10,14 +10,14 @@ Plugin Zsh pada dasarnya adalah kumpulan kode dan konfigurasi yang menambahkan k
 
 Sebuah plugin sederhana dapat berupa satu file:
 
-```
+```bash
 my-plugin/
 └── my-plugin.zsh
 ```
 
 Isinya bisa sesederhana:
 
-```
+```bash
 # my-plugin.zsh
 
 hello-zsh() {
@@ -27,19 +27,19 @@ hello-zsh() {
 
 Ketika file tersebut dimuat:
 
-```
+```bash
 source ./my-plugin.zsh
 ```
 
 fungsi `hello-zsh` tersedia di shell saat ini dan dapat dipanggil:
 
-```
+```bash
 hello-zsh
 ```
 
 Output:
 
-```
+```bash
 Fitur dari plugin aktif
 ```
 
@@ -51,7 +51,7 @@ Fungsi dan alias
 
 Menyediakan perintah baru atau jalan pintas untuk menjalankan perintah yang sudah ada.
 
-```
+```bash
 alias gs='git status'
 ```
 
@@ -59,7 +59,7 @@ Keybindings dan widget ZLE
 
 Mengubah cara baris perintah diedit melalui keyboard.
 
-```
+```bash
 bindkey -v
 ```
 
@@ -69,7 +69,7 @@ Completion
 
 Menambahkan saran atau penyelesaian argumen untuk perintah tertentu.
 
-```
+```bash
 compdef _git mygit
 ```
 
@@ -79,7 +79,7 @@ Hooks
 
 Menjalankan fungsi pada peristiwa tertentu, seperti sebelum prompt ditampilkan atau setelah direktori berubah.
 
-```
+```bash
 add-zsh-hook chpwd my_directory_hook
 ```
 
@@ -93,7 +93,7 @@ Keduanya berkaitan dengan pemuatan kode, tetapi memiliki tujuan berbeda.
 
 ### A. `source`: langsung menjalankan file
 
-```
+```bash
 source "$HOME/.config/zsh/integrations/git.zsh"
 ```
 
@@ -111,14 +111,14 @@ Mekanisme ini cocok untuk konfigurasi yang memang perlu segera diterapkan, misal
 
 Misalnya struktur file berikut:
 
-```
+```bash
 ~/.config/zsh/functions/
 └── mkcd
 ```
 
 Isi file `mkcd`, tanpa pembungkus definisi fungsi:
 
-```
+```bash
 # ~/.config/zsh/functions/mkcd
 
 if (( $# != 1 )); then
@@ -131,7 +131,7 @@ mkdir -p -- "$1" && cd -- "$1"
 
 Kemudian, di konfigurasi:
 
-```
+```bash
 fpath=("$HOME/.config/zsh/functions" $fpath)
 autoload -Uz mkcd
 ```
@@ -140,7 +140,7 @@ Pada pola autoload fungsi standar ini, Zsh mengetahui lokasi fungsi `mkcd`, teta
 
 Contoh pemanggilan:
 
-```
+```bash
 mkcd /tmp/zsh-lab
 ```
 
@@ -178,7 +178,7 @@ Detailnya berbeda antar-plugin manager. Tidak semua manager mendukung semua fitu
 
 Misalnya, plugin B menggunakan fungsi yang disediakan plugin A.
 
-```
+```bash
 plugin A
 └── menyediakan fungsi helper
 
@@ -203,7 +203,7 @@ Ketika membuka repositori plugin, jangan langsung membaca semua file dari atas s
 
 Misalnya:
 
-```
+```bash
 example-plugin/
 ├── example-plugin.plugin.zsh
 ├── functions/
@@ -226,7 +226,7 @@ Nama file di atas hanya ilustrasi, bukan struktur wajib setiap plugin.
 
 Saat membaca kode, cari mekanisme Zsh yang sudah dipelajari:
 
-```
+```bash
 source
 autoload
 fpath
@@ -244,7 +244,7 @@ Kemudian ikuti alurnya. Misalnya, jika sebuah plugin memanggil `add-zsh-hook`, c
 
 Buat struktur berikut di direktori latihan, bukan langsung di konfigurasi utama:
 
-```
+```bash
 zsh-plugin-lab/
 ├── plugin.zsh
 └── functions/
@@ -253,20 +253,20 @@ zsh-plugin-lab/
 
 Isi `plugin.zsh`:
 
-```
+```bash
 fpath=("$HOME/zsh-plugin-lab/functions" $fpath)
 autoload -Uz greet
 ```
 
 Isi `functions/greet`:
 
-```
+```bash
 print -r -- "Halo dari fungsi autoload Zsh"
 ```
 
 Untuk mencoba di shell interaktif:
 
-```
+```bash
 source "$HOME/zsh-plugin-lab/plugin.zsh"
 whence -v greet
 greet

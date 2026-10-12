@@ -16,7 +16,7 @@ Globbing adalah mekanisme *filename generation*: shell mengubah pola seperti `*.
 
 Jalankan perintah berikut:
 
-```zsh
+```bash
 mkdir -p /tmp/zsh-glob/a/b
 touch /tmp/zsh-glob/a/one.txt
 touch /tmp/zsh-glob/a/b/two.txt
@@ -26,7 +26,7 @@ cd /tmp/zsh-glob
 
 Struktur direktorinya menjadi:
 
-```text
+```bash
 /tmp/zsh-glob
 ├── a
 │   ├── b
@@ -39,13 +39,13 @@ Struktur direktorinya menjadi:
 
 Coba:
 
-```zsh
+```bash
 print -rl -- *.txt
 ```
 
 Hasil yang diharapkan:
 
-```text
+```bash
 zsh: no matches found: *.txt
 ```
 
@@ -55,13 +55,13 @@ zsh: no matches found: *.txt
 
 Coba:
 
-```zsh
+```bash
 print -rl -- **/*.txt
 ```
 
 Hasil yang diharapkan:
 
-```text
+```bash
 a/one.txt
 a/b/two.txt
 ```
@@ -74,7 +74,7 @@ Pola `**/` berarti “nol atau lebih level direktori”, sehingga `**/*.txt` men
 
 Untuk eksperimen ini, aktifkan opsi berikut di sesi Zsh:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -82,7 +82,7 @@ setopt EXTENDED_GLOB
 
 Contoh penggunaan lanjutan setelah opsi aktif:
 
-```zsh
+```bash
 print -rl -- **/*.txt~*two*
 ```
 
@@ -94,7 +94,7 @@ Jangan langsung menambahkan `setopt EXTENDED_GLOB` ke `~/.zshrc` untuk keperluan
 
 Buat direktori dan konfigurasi minimal:
 
-```zsh
+```bash
 mkdir -p ~/zsh-training
 
 cat > ~/zsh-training/.zshrc <<'EOF'
@@ -107,7 +107,7 @@ EOF
 
 Jalankan shell pelatihan:
 
-```zsh
+```bash
 ZDOTDIR=~/zsh-training zsh -d
 ```
 
@@ -115,13 +115,13 @@ Opsi `-d` menonaktifkan pembacaan file startup global seperti `/etc/zprofile` da
 
 Di dalam shell pelatihan, prompt akan berubah menjadi:
 
-```text
+```bash
 latihan> 
 ```
 
 Kemudian lakukan eksperimen:
 
-```zsh
+```bash
 cd /tmp/zsh-glob
 print -rl -- *.txt
 print -rl -- **/*.txt
@@ -129,7 +129,7 @@ print -rl -- **/*.txt
 
 Keluar dari lingkungan latihan dengan:
 
-```zsh
+```bash
 exit
 ```
 
@@ -144,13 +144,13 @@ Jika prompt atau plugin dari `~/.zshrc` masih muncul meskipun Anda sudah memakai
 
 Periksa nilai aktifnya:
 
-```zsh
+```bash
 echo "$ZDOTDIR"
 ```
 
 Lacak file startup yang dibaca:
 
-```zsh
+```bash
 ZDOTDIR=~/zsh-training zsh -x -i -c 'exit' 2>&1 | grep -E 'zshenv|zprofile|zshrc|zlogin|source'
 ```
 

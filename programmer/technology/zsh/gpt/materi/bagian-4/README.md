@@ -6,7 +6,7 @@ Parameter expansion adalah salah satu alasan utama Zsh sangat kuat untuk scripti
 
 Urutan belajarnya:
 
-```text
+```bash
 03 — Parameter Expansion
 │
 ├── 03.1 Konsep parameter expansion
@@ -30,31 +30,31 @@ Kita mulai dari fondasinya.
 
 Misalnya:
 
-```zsh
+```bash
 name="Amir"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "$name"
 ```
 
 Shell melihat:
 
-```text
+```bash
 $name
 ```
 
 dan menggantinya dengan isi parameter:
 
-```text
+```bash
 Amir
 ```
 
 Secara sederhana:
 
-```text
+```bash
 source code
     │
     ▼
@@ -69,7 +69,7 @@ parameter expansion
 
 Jadi:
 
-```zsh
+```bash
 print "$name"
 ```
 
@@ -79,7 +79,7 @@ Justru Zsh terlebih dahulu melakukan expansion terhadap argumen sebelum `print` 
 
 Secara konseptual:
 
-```text
+```bash
 print "$name"
      │
      └── expansion
@@ -97,13 +97,13 @@ Ini adalah dasar penting.
 
 Dua bentuk dasar:
 
-```zsh
+```bash
 print "$name"
 ```
 
 dan:
 
-```zsh
+```bash
 print "${name}"
 ```
 
@@ -111,7 +111,7 @@ keduanya mengambil nilai parameter `name`.
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 
 print "$name"
@@ -120,7 +120,7 @@ print "${name}"
 
 hasilnya sama:
 
-```text
+```bash
 Amir
 Amir
 ```
@@ -131,7 +131,7 @@ Karena ketika parameter berada di dalam teks lain, batas nama parameter harus di
 
 Misalnya:
 
-```zsh
+```bash
 name="Amir"
 
 print "${name}_config"
@@ -139,13 +139,13 @@ print "${name}_config"
 
 hasil:
 
-```text
+```bash
 Amir_config
 ```
 
 Bandingkan:
 
-```zsh
+```bash
 print "$name_config"
 ```
 
@@ -153,25 +153,25 @@ Zsh akan menganggap `name_config` sebagai nama parameter.
 
 Jadi:
 
-```text
+```bash
 "$name_config"
 ```
 
 berarti:
 
-```text
+```bash
 parameter bernama name_config
 ```
 
 sedangkan:
 
-```text
+```bash
 "${name}_config"
 ```
 
 berarti:
 
-```text
+```bash
 parameter name
 +
 literal "_config"
@@ -185,7 +185,7 @@ Ini alasan `${parameter}` merupakan bentuk fundamental dalam parameter expansion
 
 Perhatikan:
 
-```zsh
+```bash
 name="Amir"
 ```
 
@@ -193,7 +193,7 @@ Ini adalah **assignment**.
 
 Sedangkan:
 
-```zsh
+```bash
 print "$name"
 ```
 
@@ -201,7 +201,7 @@ mengandung **parameter expansion**.
 
 Jangan mencampurkan keduanya:
 
-```text
+```bash
 name="Amir"
 │
 └── assignment
@@ -213,13 +213,13 @@ name="Amir"
 
 Contoh lain:
 
-```zsh
+```bash
 result="${name}_developer"
 ```
 
 Dalam satu statement terdapat dua hal:
 
-```text
+```bash
 result=...
 │
 └── assignment
@@ -231,14 +231,14 @@ result=...
 
 Hasil:
 
-```zsh
+```bash
 name="Amir"
 result="${name}_developer"
 
 print "$result"
 ```
 
-```text
+```bash
 Amir_developer
 ```
 
@@ -248,13 +248,13 @@ Amir_developer
 
 Sekarang kita masuk ke salah satu bentuk yang sangat penting:
 
-```zsh
+```bash
 ${parameter:-word}
 ```
 
 Contoh:
 
-```zsh
+```bash
 name=""
 
 print "${name:-Anonymous}"
@@ -262,13 +262,13 @@ print "${name:-Anonymous}"
 
 hasil:
 
-```text
+```bash
 Anonymous
 ```
 
 Mental model:
 
-```text
+```bash
 ${name:-Anonymous}
        │
        ├── name punya nilai?
@@ -280,7 +280,7 @@ ${name:-Anonymous}
 
 Contoh lain:
 
-```zsh
+```bash
 name="Amir"
 
 print "${name:-Anonymous}"
@@ -288,13 +288,13 @@ print "${name:-Anonymous}"
 
 hasil:
 
-```text
+```bash
 Amir
 ```
 
 Perhatikan bahwa:
 
-```zsh
+```bash
 ${name:-Anonymous}
 ```
 
@@ -302,7 +302,7 @@ ${name:-Anonymous}
 
 Misalnya:
 
-```zsh
+```bash
 unset name
 
 print "${name:-Anonymous}"
@@ -311,7 +311,7 @@ print "$name"
 
 hasil secara konseptual:
 
-```text
+```bash
 Anonymous
 
 ```
@@ -326,7 +326,7 @@ Ini berbeda dengan bentuk assignment default yang akan kita bahas berikutnya.
 
 Bentuk:
 
-```zsh
+```bash
 ${parameter:=word}
 ```
 
@@ -336,7 +336,7 @@ berarti:
 
 Contoh:
 
-```zsh
+```bash
 unset name
 
 print "${name:=Anonymous}"
@@ -345,14 +345,14 @@ print "$name"
 
 Hasil:
 
-```text
+```bash
 Anonymous
 Anonymous
 ```
 
 Perbedaannya:
 
-```text
+```bash
 ${name:-Anonymous}
         │
         └── hanya menghasilkan fallback
@@ -365,7 +365,7 @@ ${name:=Anonymous}
 
 Mental model:
 
-```text
+```bash
 :- 
 parameter ──→ fallback
               │
@@ -382,13 +382,13 @@ Ini sangat sering digunakan dalam konfigurasi shell.
 
 Misalnya:
 
-```zsh
+```bash
 config_dir="${CONFIG_DIR:-$HOME/.config}"
 ```
 
 Artinya:
 
-```text
+```bash
 CONFIG_DIR tersedia?
 │
 ├── ya → gunakan CONFIG_DIR
@@ -402,13 +402,13 @@ CONFIG_DIR tersedia?
 
 Ada juga:
 
-```zsh
+```bash
 ${parameter:?word}
 ```
 
 Contoh:
 
-```zsh
+```bash
 unset required_value
 
 print "${required_value:?required_value is required}"
@@ -418,7 +418,7 @@ Jika parameter tidak tersedia sesuai kondisi yang diperiksa, expansion menghasil
 
 Mental model:
 
-```text
+```bash
 ${required_value:?message}
           │
           ├── tersedia → gunakan nilainya
@@ -430,13 +430,13 @@ Ini berguna untuk parameter yang memang wajib ada.
 
 Contoh konseptual:
 
-```zsh
+```bash
 config_file="${CONFIG_FILE:?CONFIG_FILE must be defined}"
 ```
 
 Sekarang kita memiliki tiga pola penting:
 
-```text
+```bash
 ${name:-default}
     fallback
 
@@ -450,7 +450,7 @@ ${name:?error}
 
 Ada juga:
 
-```zsh
+```bash
 ${name:+word}
 ```
 
@@ -462,13 +462,13 @@ yang akan kita bahas setelah memahami konsep dasarnya lebih kuat.
 
 Perhatikan:
 
-```zsh
+```bash
 ${name:-default}
 ```
 
 dan:
 
-```zsh
+```bash
 ${name-default}
 ```
 
@@ -476,7 +476,7 @@ Keduanya tidak selalu berarti hal yang sama.
 
 Dengan `:`:
 
-```zsh
+```bash
 ${name:-default}
 ```
 
@@ -484,7 +484,7 @@ kondisinya memperhatikan parameter yang **unset atau empty**.
 
 Tanpa `:`:
 
-```zsh
+```bash
 ${name-default}
 ```
 
@@ -492,7 +492,7 @@ fokusnya adalah apakah parameter **unset**.
 
 Mental model:
 
-```text
+```bash
 name unset
     │
     ├── ${name:-default} → default
@@ -515,7 +515,7 @@ Jadi jangan menganggap `:` hanya karakter dekoratif.
 
 Gunakan eksperimen kecil:
 
-```zsh
+```bash
 unset value
 
 print "A=[${value-default}]"
@@ -524,7 +524,7 @@ print "B=[${value:-default}]"
 
 Kemudian:
 
-```zsh
+```bash
 value=""
 
 print "A=[${value-default}]"
@@ -533,7 +533,7 @@ print "B=[${value:-default}]"
 
 Dan:
 
-```zsh
+```bash
 value="hello"
 
 print "A=[${value-default}]"
@@ -542,7 +542,7 @@ print "B=[${value:-default}]"
 
 Dengan memasukkan hasil ke:
 
-```text
+```bash
 [ ... ]
 ```
 
@@ -550,7 +550,7 @@ kita dapat melihat string kosong dengan jelas.
 
 Mental model eksperimen:
 
-```text
+```bash
            unset       empty       non-empty
 ------------------------------------------------
 :-         default     default     value
@@ -565,7 +565,7 @@ Ini adalah salah satu tabel kecil yang layak kamu ingat.
 
 Sekarang kebalikan dari fallback:
 
-```zsh
+```bash
 ${parameter:+word}
 ```
 
@@ -575,7 +575,7 @@ Artinya secara konseptual:
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 
 print "[${name:+defined}]"
@@ -583,13 +583,13 @@ print "[${name:+defined}]"
 
 hasil:
 
-```text
+```bash
 [defined]
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 name=""
 
 print "[${name:+defined}]"
@@ -597,19 +597,19 @@ print "[${name:+defined}]"
 
 hasil:
 
-```text
+```bash
 []
 ```
 
 Jadi:
 
-```text
+```bash
 ${name:-default}
 ```
 
 berorientasi:
 
-```text
+```bash
 tidak ada nilai
       ↓
 gunakan default
@@ -617,13 +617,13 @@ gunakan default
 
 Sedangkan:
 
-```text
+```bash
 ${name:+alternate}
 ```
 
 berorientasi:
 
-```text
+```bash
 ada nilai
     ↓
 gunakan alternate
@@ -635,7 +635,7 @@ gunakan alternate
 
 Sekarang kita punya empat bentuk fundamental:
 
-```text
+```bash
 ${parameter:-word}
 ${parameter-word}
 
@@ -653,7 +653,7 @@ Jangan menghafalnya sebagai simbol acak.
 
 Kelompokkan berdasarkan operasi:
 
-```text
+```bash
 -  → default
 =  → assign default
 ?  → error
@@ -662,7 +662,7 @@ Kelompokkan berdasarkan operasi:
 
 Sedangkan:
 
-```text
+```bash
 :
 ```
 
@@ -670,7 +670,7 @@ membedakan perlakuan terhadap parameter kosong.
 
 Mental model:
 
-```text
+```bash
 parameter expansion
 │
 ├── -
@@ -690,7 +690,7 @@ Ini baru lapisan pertama dari Parameter Expansion.
 
 Kita **belum** masuk ke:
 
-```zsh
+```bash
 ${name#pattern}
 ${name##pattern}
 ${name%pattern}
@@ -707,7 +707,7 @@ karena itu merupakan bagian berikutnya dari Lesson 03.
 
 ### Posisi kurikulum saat ini
 
-```text
+```bash
 03 — Parameter Expansion
 │
 ├── ✓ konsep parameter expansion
@@ -736,7 +736,7 @@ Sekarang kita masuk ke operasi yang sangat sering digunakan dalam konfigurasi da
 
 Misalnya:
 
-```zsh
+```bash
 path="/home/amir/projects/zsh/config.zsh"
 ```
 
@@ -746,7 +746,7 @@ Kita ingin mengambil bagian tertentu dari path tanpa menggunakan `sed`, `cut`, a
 
 Bentuk:
 
-```zsh
+```bash
 ${parameter#pattern}
 ```
 
@@ -756,7 +756,7 @@ berarti:
 
 Contoh sederhana:
 
-```zsh
+```bash
 path="/home/amir/projects/zsh/config.zsh"
 
 print "${path#*/}"
@@ -764,7 +764,7 @@ print "${path#*/}"
 
 Hasil:
 
-```text
+```bash
 home/amir/projects/zsh/config.zsh
 ```
 
@@ -772,7 +772,7 @@ Mengapa?
 
 Nilai awal:
 
-```text
+```bash
 /home/amir/projects/zsh/config.zsh
 ^
 └── */ cocok dengan / paling pendek
@@ -786,7 +786,7 @@ Karena `*` dapat mencocokkan string, tetapi algoritmanya memilih **kecocokan pal
 
 Sekarang:
 
-```zsh
+```bash
 ${parameter##pattern}
 ```
 
@@ -794,7 +794,7 @@ Perbedaannya adalah `##` menghapus kecocokan **paling panjang** dari awal.
 
 Contoh:
 
-```zsh
+```bash
 path="/home/amir/projects/zsh/config.zsh"
 
 print "${path##*/}"
@@ -802,13 +802,13 @@ print "${path##*/}"
 
 Hasil:
 
-```text
+```bash
 config.zsh
 ```
 
 Mental model:
 
-```text
+```bash
 ${path#*/}
         │
         └── hapus match TERPENDEK dari awal
@@ -821,7 +821,7 @@ ${path##*/}
 
 Ini merupakan pola klasik untuk mendapatkan nama file dari path.
 
-```text
+```bash
 /home/amir/projects/zsh/config.zsh
 ───────────────────────────────────
                        config.zsh
@@ -833,37 +833,37 @@ Ini merupakan pola klasik untuk mendapatkan nama file dari path.
 
 Gunakan:
 
-```zsh
+```bash
 value="abc/def/ghi"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "${value#*/}"
 ```
 
 hasil:
 
-```text
+```bash
 def/ghi
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 print "${value##*/}"
 ```
 
 hasil:
 
-```text
+```bash
 ghi
 ```
 
 Visual:
 
-```text
+```bash
 abc/def/ghi
 │
 ├── ${value#*/}
@@ -887,14 +887,14 @@ Sekarang kita membalik arah.
 
 Jika:
 
-```text
+```bash
 #  → dari kiri / awal
 %  → dari kanan / akhir
 ```
 
 Bentuk:
 
-```zsh
+```bash
 ${parameter%pattern}
 ```
 
@@ -904,7 +904,7 @@ berarti:
 
 Sedangkan:
 
-```zsh
+```bash
 ${parameter%%pattern}
 ```
 
@@ -914,19 +914,19 @@ berarti:
 
 Contoh:
 
-```zsh
+```bash
 file="config.backup.zsh"
 ```
 
 Gunakan:
 
-```zsh
+```bash
 print "${file%.*}"
 ```
 
 Hasil:
 
-```text
+```bash
 config.backup
 ```
 
@@ -934,13 +934,13 @@ Karena `.*` dicocokkan dari bagian akhir dan memilih match paling pendek.
 
 Sedangkan:
 
-```zsh
+```bash
 print "${file%%.*}"
 ```
 
 hasil:
 
-```text
+```bash
 config
 ```
 
@@ -948,7 +948,7 @@ Karena `%%` memilih match paling panjang dari akhir.
 
 Visual:
 
-```text
+```bash
 config.backup.zsh
       │       │
       │       └── extension terakhir
@@ -956,7 +956,7 @@ config.backup.zsh
       └── bagian sebelumnya
 ```
 
-```text
+```bash
 ${file%.*}
 → config.backup
 
@@ -971,7 +971,7 @@ ${file%%.*}
 
 Sekarang kita memiliki empat operator utama:
 
-```text
+```bash
 ┌───────────────┬───────────────────────────────┐
 │ Operator      │ Operasi                       │
 ├───────────────┼───────────────────────────────┤
@@ -984,7 +984,7 @@ Sekarang kita memiliki empat operator utama:
 
 Mental model paling sederhana:
 
-```text
+```bash
               STRING
         ┌─────────────────┐
         │ abc/def/ghi.txt │
@@ -997,7 +997,7 @@ Mental model paling sederhana:
 
 Dan:
 
-```text
+```bash
 satu simbol
 → shortest match
 
@@ -1015,13 +1015,13 @@ Ini perlu ditegaskan karena kamu sudah mempelajari Bash.
 
 Dalam:
 
-```zsh
+```bash
 ${path##*/}
 ```
 
 bagian:
 
-```text
+```bash
 */
 ```
 
@@ -1029,7 +1029,7 @@ adalah **pattern**, bukan regular expression.
 
 Misalnya:
 
-```text
+```bash
 *     → mencocokkan sejumlah karakter
 ?     → satu karakter
 [abc] → salah satu karakter dalam set
@@ -1037,7 +1037,7 @@ Misalnya:
 
 Jadi jangan membaca:
 
-```zsh
+```bash
 ${path##*/}
 ```
 
@@ -1045,7 +1045,7 @@ sebagai regex.
 
 Bacalah:
 
-```text
+```bash
 parameter expansion
         +
 pattern matching
@@ -1061,37 +1061,37 @@ Kita memang akan membahas globbing secara khusus pada **Lesson 05**, tetapi untu
 
 Ini adalah salah satu penggunaan yang sangat relevan untuk konfigurasi Zsh.
 
-```zsh
+```bash
 file="/home/amir/.config/zsh/zshrc"
 ```
 
 Nama file:
 
-```zsh
+```bash
 print "${file##*/}"
 ```
 
 hasil:
 
-```text
+```bash
 zshrc
 ```
 
 Directory/path:
 
-```zsh
+```bash
 print "${file%/*}"
 ```
 
 hasil:
 
-```text
+```bash
 /home/amir/.config/zsh
 ```
 
 Jadi kita dapat memperoleh dua bagian:
 
-```text
+```bash
 /home/amir/.config/zsh/zshrc
 ───────────────────────────
              │
@@ -1104,7 +1104,7 @@ Jadi kita dapat memperoleh dua bagian:
 
 Tanpa:
 
-```text
+```bash
 basename
 dirname
 sed
@@ -1120,60 +1120,60 @@ Ini merupakan contoh penting mengapa parameter expansion menjadi sangat kuat dal
 
 Misalnya:
 
-```zsh
+```bash
 file="script.zsh"
 ```
 
 Gunakan:
 
-```zsh
+```bash
 print "${file%.zsh}"
 ```
 
 hasil:
 
-```text
+```bash
 script
 ```
 
 Namun jika extension dapat bervariasi:
 
-```zsh
+```bash
 file="script.zsh"
 print "${file%.*}"
 ```
 
 hasil:
 
-```text
+```bash
 script
 ```
 
 Untuk nama:
 
-```zsh
+```bash
 file="archive.tar.gz"
 ```
 
-```zsh
+```bash
 print "${file%.*}"
 ```
 
 hasil:
 
-```text
+```bash
 archive.tar
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 print "${file%%.*}"
 ```
 
 hasil:
 
-```text
+```bash
 archive
 ```
 
@@ -1185,7 +1185,7 @@ Ini menunjukkan kembali perbedaan shortest vs longest.
 
 Jangan menghafalkan:
 
-```text
+```bash
 # = kiri
 ## = kiri lebih banyak
 % = kanan
@@ -1196,7 +1196,7 @@ saja.
 
 Gunakan model:
 
-```text
+```bash
 #   → remove shortest prefix match
 ##  → remove longest prefix match
 
@@ -1206,7 +1206,7 @@ Gunakan model:
 
 Kemudian visualisasikan arah pencarian:
 
-```text
+```bash
 # / ##
 ←──────────── STRING ────────────→
 ^
@@ -1227,37 +1227,37 @@ Parameter expansion dapat digunakan bertingkat.
 
 Misalnya:
 
-```zsh
+```bash
 path="/home/amir/projects/zsh/config.zsh"
 ```
 
 Kita ingin mendapatkan:
 
-```text
+```bash
 config
 ```
 
 Pertama:
 
-```zsh
+```bash
 ${path##*/}
 ```
 
 menghasilkan:
 
-```text
+```bash
 config.zsh
 ```
 
 Kemudian suffix:
 
-```zsh
+```bash
 ${...%.zsh}
 ```
 
 secara konseptual menghasilkan:
 
-```text
+```bash
 config
 ```
 
@@ -1273,7 +1273,7 @@ Yang penting sekarang adalah memahami bahwa hasil sebuah expansion dapat menjadi
 
 Kita sekarang sudah menguasai:
 
-```text
+```bash
 ${parameter#pattern}
 ${parameter##pattern}
 ${parameter%pattern}
@@ -1282,7 +1282,7 @@ ${parameter%%pattern}
 
 Dengan model:
 
-```text
+```bash
                  PARAMETER
                      │
           ┌──────────┴──────────┐
@@ -1297,7 +1297,7 @@ Dengan model:
 
 Contoh paling penting:
 
-```zsh
+```bash
 path="/home/amir/project/file.zsh"
 
 print "${path##*/}"
@@ -1309,7 +1309,7 @@ print "${path%/*}"
 
 Dan:
 
-```zsh
+```bash
 file="archive.tar.gz"
 
 print "${file%.*}"
@@ -1323,7 +1323,7 @@ print "${file%%.*}"
 
 ## Posisi Lesson 03 sekarang
 
-```text
+```bash
 03 — Parameter Expansion
 │
 ├── ✓ Konsep parameter expansion
@@ -1352,7 +1352,7 @@ Tujuannya adalah mengambil bagian tertentu dari nilai parameter berdasarkan posi
 
 Bentuk dasarnya:
 
-```zsh
+```bash
 ${parameter:offset:length}
 ```
 
@@ -1362,19 +1362,19 @@ Namun ada satu hal penting: **indeks substring Zsh perlu dipahami dengan benar**
 
 Misalnya:
 
-```zsh
+```bash
 value="abcdef"
 ```
 
 Kita dapat mengambil substring berdasarkan posisi:
 
-```zsh
+```bash
 print "${value:2}"
 ```
 
 Secara konsep:
 
-```text
+```bash
 abcdef
   ↑
  offset
@@ -1390,7 +1390,7 @@ Untuk belajar substring dengan aman, gunakan eksperimen kecil dan jangan langsun
 
 Bentuk:
 
-```zsh
+```bash
 ${value:offset:length}
 ```
 
@@ -1398,7 +1398,7 @@ memungkinkan kita menentukan jumlah karakter yang diambil.
 
 Misalnya secara konseptual:
 
-```zsh
+```bash
 value="abcdef"
 
 print "${value:1:3}"
@@ -1406,14 +1406,14 @@ print "${value:1:3}"
 
 artinya:
 
-```text
+```bash
 mulai dari offset 1
 ambil 3 karakter
 ```
 
 Mental model:
 
-```text
+```bash
 abcdef
  ↑───↑
  │
@@ -1432,7 +1432,7 @@ Sekarang bedakan dua teknik yang sudah kita pelajari.
 
 ### Prefix/suffix removal
 
-```zsh
+```bash
 ${value#pattern}
 ${value##pattern}
 ${value%pattern}
@@ -1443,7 +1443,7 @@ berbasis **pattern**.
 
 Misalnya:
 
-```zsh
+```bash
 path="/home/amir/project/file.zsh"
 
 print "${path##*/}"
@@ -1457,7 +1457,7 @@ Kita tidak menentukan posisi karakter. Kita mengatakan:
 
 ### Substring
 
-```zsh
+```bash
 ${value:offset:length}
 ```
 
@@ -1465,7 +1465,7 @@ berbasis **posisi**.
 
 Mental model:
 
-```text
+```bash
 Pattern-based
 ────────────────────────
 ${value##pattern}
@@ -1490,13 +1490,13 @@ Zsh juga mendukung pengambilan dari arah akhir string menggunakan offset negatif
 
 Misalnya:
 
-```zsh
+```bash
 value="abcdef"
 ```
 
 Secara konsep:
 
-```text
+```bash
 abcdef
      ↑
    akhir
@@ -1506,13 +1506,13 @@ Offset negatif memungkinkan kita menghitung dari sisi kanan.
 
 Ini berguna untuk kasus seperti:
 
-```text
+```bash
 ambil beberapa karakter terakhir
 ```
 
 Tetapi hati-hati membedakannya dari:
 
-```zsh
+```bash
 ${value[-1]}
 ```
 
@@ -1522,7 +1522,7 @@ Karena **Lesson 04 adalah Arrays & Data Manipulation**, kita tidak akan mencampu
 
 Untuk Lesson 03, fokusnya:
 
-```text
+```bash
 substring
 └── manipulasi scalar string
 ```
@@ -1533,25 +1533,25 @@ substring
 
 Sekarang kita masuk ke operasi berikutnya:
 
-```zsh
+```bash
 ${parameter/pattern/replacement}
 ```
 
 Misalnya:
 
-```zsh
+```bash
 name="hello world"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "${name/hello/hi}"
 ```
 
 Secara konseptual:
 
-```text
+```bash
 hello world
   │
   └── hello → hi
@@ -1559,7 +1559,7 @@ hello world
 
 hasil:
 
-```text
+```bash
 hi world
 ```
 
@@ -1567,13 +1567,13 @@ Ini adalah **pattern replacement**, bukan regex replacement.
 
 Jadi:
 
-```zsh
+```bash
 ${name/hello/hi}
 ```
 
 harus dibaca:
 
-```text
+```bash
 parameter
     ↓
 cari pattern
@@ -1587,19 +1587,19 @@ ganti dengan replacement
 
 Perhatikan bentuk:
 
-```zsh
+```bash
 ${parameter/pattern/replacement}
 ```
 
 dan:
 
-```zsh
+```bash
 ${parameter//pattern/replacement}
 ```
 
 Satu `/`:
 
-```zsh
+```bash
 ${value/pattern/replacement}
 ```
 
@@ -1607,7 +1607,7 @@ ${value/pattern/replacement}
 
 Dua `/`:
 
-```zsh
+```bash
 ${value//pattern/replacement}
 ```
 
@@ -1615,7 +1615,7 @@ ${value//pattern/replacement}
 
 Contoh:
 
-```zsh
+```bash
 value="foo foo foo"
 
 print "${value/foo/bar}"
@@ -1623,7 +1623,7 @@ print "${value/foo/bar}"
 
 secara konsep:
 
-```text
+```bash
 foo foo foo
  ↓
 bar foo foo
@@ -1631,19 +1631,19 @@ bar foo foo
 
 Sedangkan:
 
-```zsh
+```bash
 print "${value//foo/bar}"
 ```
 
 menjadi:
 
-```text
+```bash
 bar bar bar
 ```
 
 Mental model:
 
-```text
+```bash
 /   → first match
 //  → all matches
 ```
@@ -1656,13 +1656,13 @@ Ini merupakan pola yang sangat penting.
 
 Misalnya:
 
-```zsh
+```bash
 value="foo123foo456"
 ```
 
 Kamu mungkin terbiasa berpikir:
 
-```text
+```bash
 regex → foo[0-9]+
 ```
 
@@ -1670,7 +1670,7 @@ Tetapi parameter replacement menggunakan **shell pattern**, bukan regular expres
 
 Jadi jangan membawa mental model regex ke:
 
-```zsh
+```bash
 ${value//pattern/replacement}
 ```
 
@@ -1678,7 +1678,7 @@ Kita akan membahas pattern secara lebih lengkap di **Lesson 05 — Filename Gene
 
 Untuk sekarang:
 
-```text
+```bash
 parameter expansion
         │
         └── pattern matching
@@ -1692,7 +1692,7 @@ cukup dipahami sebagai mekanisme pattern Zsh.
 
 Replacement juga dapat menggunakan parameter lain.
 
-```zsh
+```bash
 value="hello world"
 replacement="Zsh"
 
@@ -1701,13 +1701,13 @@ print "${value/world/$replacement}"
 
 Hasil:
 
-```text
+```bash
 hello Zsh
 ```
 
 Dengan demikian parameter expansion dapat dikombinasikan:
 
-```text
+```bash
 parameter
    ↓
 match pattern
@@ -1727,7 +1727,7 @@ Sekarang kita masuk ke operasi perubahan huruf besar/kecil.
 
 Zsh menyediakan modifier:
 
-```zsh
+```bash
 ${parameter:l}
 ```
 
@@ -1735,7 +1735,7 @@ untuk lowercase.
 
 Contoh:
 
-```zsh
+```bash
 name="AMIR"
 
 print "${name:l}"
@@ -1743,19 +1743,19 @@ print "${name:l}"
 
 hasil:
 
-```text
+```bash
 amir
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 ${parameter:u}
 ```
 
 untuk uppercase.
 
-```zsh
+```bash
 name="amir"
 
 print "${name:u}"
@@ -1763,13 +1763,13 @@ print "${name:u}"
 
 hasil:
 
-```text
+```bash
 AMIR
 ```
 
 Mental model:
 
-```text
+```bash
 ${name:l}
       │
       └── lowercase
@@ -1782,7 +1782,7 @@ ${name:u}
 
 Perhatikan bahwa expansion ini **tidak mengubah parameter asli**.
 
-```zsh
+```bash
 name="Amir"
 
 print "${name:u}"
@@ -1791,14 +1791,14 @@ print "$name"
 
 hasil secara konseptual:
 
-```text
+```bash
 AMIR
 Amir
 ```
 
 Jadi:
 
-```text
+```bash
 ${name:u}
 ```
 
@@ -1810,13 +1810,13 @@ menghasilkan nilai baru untuk digunakan dalam command/assignment, bukan melakuka
 
 Misalnya kita ingin normalisasi input:
 
-```zsh
+```bash
 choice="YES"
 ```
 
 Kita bisa melakukan:
 
-```zsh
+```bash
 case "${choice:l}" in
     yes)
         print "Enabled"
@@ -1829,7 +1829,7 @@ esac
 
 Input:
 
-```text
+```bash
 YES
 Yes
 yes
@@ -1838,13 +1838,13 @@ YeS
 
 semuanya dapat dinormalisasi menjadi:
 
-```text
+```bash
 yes
 ```
 
 melalui:
 
-```zsh
+```bash
 ${choice:l}
 ```
 
@@ -1858,49 +1858,49 @@ Sekarang kita mulai melihat kekuatan parameter expansion ketika beberapa operasi
 
 Misalnya:
 
-```zsh
+```bash
 file="/home/amir/projects/script.zsh"
 ```
 
 Kita bisa mengambil nama file:
 
-```zsh
+```bash
 name="${file##*/}"
 ```
 
 hasil:
 
-```text
+```bash
 script.zsh
 ```
 
 Kemudian menghilangkan extension:
 
-```zsh
+```bash
 base="${name%.zsh}"
 ```
 
 hasil:
 
-```text
+```bash
 script
 ```
 
 Kemudian mengubahnya:
 
-```zsh
+```bash
 print "${base:u}"
 ```
 
 hasil:
 
-```text
+```bash
 SCRIPT
 ```
 
 Alurnya:
 
-```text
+```bash
 /home/amir/projects/script.zsh
                 │
                 │ ${file##*/}
@@ -1926,7 +1926,7 @@ Sekarang mulai terlihat mengapa Zsh sangat kuat untuk scripting konfigurasi.
 
 Dalam shell lain, seseorang mungkin membuat pipeline:
 
-```text
+```bash
 path
  ↓
 basename
@@ -1938,7 +1938,7 @@ tr
 
 Sedangkan Zsh dapat melakukan banyak transformasi langsung:
 
-```zsh
+```bash
 "${path##*/}"
 "${name%.zsh}"
 "${name:u}"
@@ -1949,7 +1949,7 @@ Namun jangan mengambil kesimpulan bahwa external tools selalu buruk.
 
 Prinsipnya:
 
-```text
+```bash
 Gunakan parameter expansion
 → jika operasi memang merupakan manipulasi parameter sederhana.
 
@@ -1966,7 +1966,7 @@ Tujuan kita bukan menghilangkan `sed`, `awk`, `grep`, dan lainnya, tetapi memaha
 
 Sekarang struktur kita menjadi:
 
-```text
+```bash
 03 — Parameter Expansion
 │
 ├── ✓ Konsep parameter expansion
@@ -1997,7 +1997,7 @@ Sekarang struktur kita menjadi:
 
 Tahap berikutnya masih **Lesson 03**, yaitu bagian yang sangat khas Zsh:
 
-```zsh
+```bash
 ${(flag)parameter}
 ```
 
@@ -2011,7 +2011,7 @@ Ini adalah bagian yang sangat penting dari Zsh.
 
 Sebelumnya kita menggunakan:
 
-```zsh
+```bash
 ${name}
 ${name:u}
 ${name:l}
@@ -2021,13 +2021,13 @@ ${value//old/new}
 
 Zsh memiliki bentuk tambahan:
 
-```zsh
+```bash
 ${(flag)parameter}
 ```
 
 Bagian:
 
-```text
+```bash
 ${( ... )parameter}
    ^^^^^
    flags
@@ -2039,7 +2039,7 @@ Dokumentasi Zsh menjelaskan bahwa ketika `{` langsung diikuti `(`, isi sampai `)
 
 Mental modelnya:
 
-```text
+```bash
 ${(flag)parameter}
        │
        └── ubah cara Zsh memproses
@@ -2054,7 +2054,7 @@ Jadi `(flag)` bukan nilai parameter dan bukan syntax command biasa.
 
 Salah satu flag yang sangat penting:
 
-```zsh
+```bash
 ${(f)parameter}
 ```
 
@@ -2062,19 +2062,19 @@ ${(f)parameter}
 
 Misalnya:
 
-```zsh
+```bash
 text=$'one\ntwo\nthree'
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print -r -- ${(f)text}
 ```
 
 Secara konseptual, hasil expansion menjadi:
 
-```text
+```bash
 one
 two
 three
@@ -2084,7 +2084,7 @@ Yang penting bukan sekadar outputnya.
 
 Sebelum `(f)`:
 
-```text
+```bash
 text
 └── satu scalar string
     "one\ntwo\nthree"
@@ -2092,7 +2092,7 @@ text
 
 Dengan `(f)`:
 
-```text
+```bash
 text
    │
    ▼
@@ -2117,7 +2117,7 @@ Ini sangat berguna ketika membaca file.
 
 Misalnya:
 
-```zsh
+```bash
 text="$(< "$HOME/example.txt")"
 ```
 
@@ -2125,7 +2125,7 @@ Kemudian kita ingin memproses setiap baris.
 
 Dengan:
 
-```zsh
+```bash
 ${(f)text}
 ```
 
@@ -2133,7 +2133,7 @@ isi tersebut dapat diperlakukan sebagai kumpulan word berdasarkan newline.
 
 Dokumentasi resmi bahkan menggunakan pola:
 
-```zsh
+```bash
 ${(f)"$(<file)"}
 ```
 
@@ -2141,20 +2141,20 @@ untuk membuat isi file menjadi elemen berdasarkan baris. ([Zsh][1])
 
 Perhatikan dua hal:
 
-```zsh
+```bash
 ${(f)"$(<file)"}
       ^^^^^^^^
 ```
 
 dan:
 
-```zsh
+```bash
 ${(f)text}
 ```
 
 Keduanya menggunakan konsep yang sama:
 
-```text
+```bash
 ambil hasil
    ↓
 parameter expansion flag (f)
@@ -2164,7 +2164,7 @@ split berdasarkan newline
 
 Ini adalah contoh bagus bagaimana Zsh menggabungkan beberapa mekanisme native tanpa harus menggunakan:
 
-```text
+```bash
 cat
 while read
 sed
@@ -2179,7 +2179,7 @@ untuk pekerjaan sederhana.
 
 Kebalikan konseptual `(f)` adalah:
 
-```zsh
+```bash
 ${(F)array}
 ```
 
@@ -2187,7 +2187,7 @@ ${(F)array}
 
 Mental model:
 
-```text
+```bash
 (f)
 ──────
 string
@@ -2208,7 +2208,7 @@ string
 
 Jadi:
 
-```text
+```bash
 (f) → memecah
 (F) → menggabungkan
 ```
@@ -2221,25 +2221,25 @@ Perhatikan bahwa `(f)` dan `(F)` **case-sensitive** dan memiliki fungsi berbeda.
 
 Sekarang bentuk yang lebih umum:
 
-```zsh
+```bash
 ${(j:separator:)parameter}
 ```
 
 Contoh:
 
-```zsh
+```bash
 items=(one two three)
 ```
 
 Kemudian secara konseptual:
 
-```zsh
+```bash
 print -r -- "${(j:, :)items}"
 ```
 
 hasil:
 
-```text
+```bash
 one, two, three
 ```
 
@@ -2247,7 +2247,7 @@ Dokumentasi resmi mendefinisikan `j:string:` sebagai penggabungan words dari arr
 
 Perhatikan syntax-nya:
 
-```text
+```bash
 (j:, :)
   │  │
   │  └── separator
@@ -2264,25 +2264,25 @@ Tetapi delimiter sebenarnya tidak harus selalu `:`. Zsh memungkinkan delimiter l
 
 Kebalikan dari `(j)`:
 
-```zsh
+```bash
 ${(s:separator:)parameter}
 ```
 
 Misalnya:
 
-```zsh
+```bash
 value="one,two,three"
 ```
 
 Kita dapat membaginya menggunakan comma:
 
-```zsh
+```bash
 print -r -- "${(s:,:)value}"
 ```
 
 Mental model:
 
-```text
+```bash
 one,two,three
       │
       │ (s:, :)
@@ -2294,7 +2294,7 @@ three
 
 Jadi:
 
-```text
+```bash
 (s:...:)
 → split
 
@@ -2310,7 +2310,7 @@ Ini merupakan pasangan konsep yang sangat penting.
 
 Perhatikan transformasi:
 
-```text
+```bash
                 STRING
                    │
              (s:,:)
@@ -2326,25 +2326,25 @@ Perhatikan transformasi:
 
 Secara konseptual:
 
-```zsh
+```bash
 ${(s:,:)value}
 ```
 
 melakukan:
 
-```text
+```bash
 string → words
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 ${(j:,:)array}
 ```
 
 melakukan:
 
-```text
+```bash
 words → string
 ```
 
@@ -2356,7 +2356,7 @@ Ini akan menjadi sangat penting ketika kita masuk ke **Lesson 04 — Arrays & Da
 
 Sekarang salah satu flag yang sangat berguna ketika membaca plugin:
 
-```zsh
+```bash
 ${(q)parameter}
 ```
 
@@ -2364,19 +2364,19 @@ ${(q)parameter}
 
 Contoh:
 
-```zsh
+```bash
 value='hello world'
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print -r -- ${(q)value}
 ```
 
 Secara konseptual menghasilkan bentuk yang aman untuk dibaca sebagai satu shell word, misalnya:
 
-```text
+```bash
 hello\ world
 ```
 
@@ -2384,7 +2384,7 @@ Tujuan utamanya bukan membuat output "lebih cantik".
 
 Tujuannya adalah:
 
-```text
+```bash
 nilai
  ↓
 (q)
@@ -2400,7 +2400,7 @@ aman diproses kembali sebagai shell syntax
 
 Kebalikan tertentu dari `(q)` adalah:
 
-```zsh
+```bash
 ${(Q)parameter}
 ```
 
@@ -2408,7 +2408,7 @@ ${(Q)parameter}
 
 Mental model sederhananya:
 
-```text
+```bash
 (q)
 → tambahkan/hasilkan quoting
 
@@ -2423,7 +2423,7 @@ Ia memiliki aturan khusus dalam sistem expansion Zsh.
 
 Untuk tahap awal, cukup pahami pasangan:
 
-```text
+```bash
 q → quote
 Q → remove one level of quote
 ```
@@ -2434,21 +2434,21 @@ Q → remove one level of quote
 
 Sebelumnya kita sudah menggunakan:
 
-```zsh
+```bash
 ${name:u}
 ${name:l}
 ```
 
 Dalam pembahasan expansion flags, Zsh juga memiliki flag case transformation seperti:
 
-```zsh
+```bash
 ${(U)name}
 ${(L)name}
 ```
 
 Secara konseptual:
 
-```text
+```bash
 (U) → uppercase
 (L) → lowercase
 ```
@@ -2457,13 +2457,13 @@ Dokumentasi expansion Zsh mendefinisikan `L` dan `U` sebagai case modification f
 
 Perhatikan perbedaan bentuk:
 
-```zsh
+```bash
 ${name:u}
 ```
 
 dan:
 
-```zsh
+```bash
 ${(U)name}
 ```
 
@@ -2471,7 +2471,7 @@ Keduanya berkaitan dengan transformasi case, tetapi berasal dari mekanisme modif
 
 Untuk sekarang jangan mencampurkannya secara sembarangan. Yang penting kamu mulai mengenali bahwa Zsh memiliki **dua lapisan syntax manipulasi parameter**:
 
-```text
+```bash
 ${parameter:modifier}
         │
         └── parameter modifier
@@ -2489,26 +2489,26 @@ Kita akan menyatukan konsep ini setelah semua komponen utama selesai.
 
 Ini salah satu flag yang lebih maju:
 
-```zsh
+```bash
 ${(P)name}
 ```
 
 Misalnya:
 
-```zsh
+```bash
 foo="bar"
 bar="hello"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "${(P)foo}"
 ```
 
 hasilnya:
 
-```text
+```bash
 hello
 ```
 
@@ -2516,7 +2516,7 @@ Mengapa?
 
 Tanpa `(P)`:
 
-```text
+```bash
 foo
  ↓
 bar
@@ -2524,7 +2524,7 @@ bar
 
 Dengan `(P)`:
 
-```text
+```bash
 foo
  ↓
 bar
@@ -2538,7 +2538,7 @@ Dokumentasi resmi menjelaskan `(P)` sebagai mekanisme yang membuat nilai paramet
 
 Mental model:
 
-```text
+```bash
 foo="bar"
 bar="hello"
 
@@ -2562,7 +2562,7 @@ Kita tidak perlu menggunakannya dalam scripting sehari-hari, tetapi sangat penti
 
 Zsh juga memiliki:
 
-```zsh
+```bash
 ${(V)parameter}
 ```
 
@@ -2572,7 +2572,7 @@ Ini terutama berguna untuk debugging.
 
 Mental model:
 
-```text
+```bash
 nilai sebenarnya
     ↓
 (V)
@@ -2583,7 +2583,7 @@ karakter khusus
 
 Misalnya ketika kamu sedang mencoba memahami apakah sebuah string mengandung:
 
-```text
+```bash
 newline
 tab
 escape
@@ -2597,7 +2597,7 @@ flag semacam ini dapat membantu inspeksi.
 
 Pada titik ini daftar flag mulai terlihat panjang:
 
-```text
+```bash
 (f)
 (F)
 
@@ -2618,7 +2618,7 @@ Jangan mencoba menghafalkan semuanya sekarang.
 
 Kelompokkan berdasarkan fungsi:
 
-```text
+```bash
 SPLITTING / JOINING
 ├── (f)       split newline
 ├── (s:...:)  split separator
@@ -2642,7 +2642,7 @@ DEBUGGING / DISPLAY
 
 Dengan model ini, syntax:
 
-```zsh
+```bash
 ${(s:,:)value}
 ```
 
@@ -2650,7 +2650,7 @@ tidak lagi terlihat seperti simbol acak.
 
 Kamu membacanya:
 
-```text
+```bash
 ${ ... }
    │
    └── expansion
@@ -2669,7 +2669,7 @@ Ini bagian yang sangat penting untuk memahami mengapa kombinasi flags kadang men
 
 Zsh tidak sekadar melihat:
 
-```zsh
+```bash
 ${(flags)parameter}
 ```
 
@@ -2679,7 +2679,7 @@ Expansion memiliki tahapan pemrosesan. Dokumentasi Zsh menjelaskan bahwa splitti
 
 Mental model sederhananya:
 
-```text
+```bash
 parameter
    ↓
 parameter expansion
@@ -2701,13 +2701,13 @@ Urutan persisnya lebih kompleks daripada diagram ini, tetapi konsep terpentingny
 
 Karena itu:
 
-```zsh
+```bash
 ${(j:,:)value}
 ```
 
 dan:
 
-```zsh
+```bash
 ${(s:,:)value}
 ```
 
@@ -2719,13 +2719,13 @@ bukan sekadar dua syntax yang melakukan hal berlawanan secara tekstual. Mereka b
 
 Misalnya:
 
-```zsh
+```bash
 value="one,two,three"
 ```
 
 Kita ingin:
 
-```text
+```bash
 one
 two
 three
@@ -2733,7 +2733,7 @@ three
 
 Gunakan:
 
-```zsh
+```bash
 ${(s:,:)value}
 ```
 
@@ -2741,7 +2741,7 @@ Kemudian kita dapat menggabungkannya lagi dengan separator lain.
 
 Secara konsep:
 
-```text
+```bash
 one,two,three
        │
        │ (s:,:)
@@ -2755,7 +2755,7 @@ one|two|three
 
 Jadi:
 
-```text
+```bash
 STRING
   │
   ├── split
@@ -2775,7 +2775,7 @@ Ini merupakan dasar penting untuk manipulasi data di Zsh.
 
 ## Posisi kurikulum setelah bagian ini
 
-```text
+```bash
 03 — Parameter Expansion
 │
 ├── ✓ Konsep parameter expansion
@@ -2803,14 +2803,14 @@ Contoh sederhana:
 
 Zsh
 
-```
+```bash
 name="amir"
 print -r -- "${${name}}"
 ```
 
 Hasil:
 
-```
+```bash
 amir
 ```
 
@@ -2832,7 +2832,7 @@ Misalnya:
 
 Zsh
 
-```
+```bash
 filename="/home/user/archive.tar.gz"
 
 base="${${filename:t}:r}"
@@ -2842,7 +2842,7 @@ print -r -- "$base"
 
 Hasil yang diharapkan:
 
-```
+```bash
 archive.tar
 ```
 
@@ -2854,7 +2854,7 @@ Kita perlu memahami dua modifier yang dipakai di sini:
 
 Alurnya:
 
-```
+```bash
 filename
    │
    ▼
@@ -2878,7 +2878,7 @@ Untuk contoh path tadi, Zsh juga menyediakan bentuk yang lebih ringkas:
 
 Zsh
 
-```
+```bash
 filename="/home/user/archive.tar.gz"
 
 print -r -- "${filename:t:r}"
@@ -2886,7 +2886,7 @@ print -r -- "${filename:t:r}"
 
 Hasil:
 
-```
+```bash
 archive.tar
 ```
 
@@ -2896,7 +2896,7 @@ Perbandingannya:
 
 Zsh
 
-```
+```bash
 # Nested expansion
 print -r -- "${${filename:t}:r}"
 
@@ -2918,7 +2918,7 @@ Kita juga bisa menggunakan operator yang sudah dipelajari sebelumnya:
 
 Zsh
 
-```
+```bash
 value="prefix-content-suffix"
 
 print -r -- "${${value#prefix-}%-suffix}"
@@ -2926,7 +2926,7 @@ print -r -- "${${value#prefix-}%-suffix}"
 
 Hasil:
 
-```
+```bash
 content
 ```
 
@@ -2954,7 +2954,7 @@ Jangan menyamakan dua mekanisme ini.
 
 Zsh
 
-```
+```bash
 name="amir"
 
 print -r -- "${${name}}"
@@ -2962,7 +2962,7 @@ print -r -- "${${name}}"
 
 Hasil:
 
-```
+```bash
 amir
 ```
 
@@ -2972,7 +2972,7 @@ Sekarang bandingkan dengan indirect expansion yang menggunakan flag `(P)`:
 
 Zsh
 
-```
+```bash
 target="message"
 message="Halo dari Zsh"
 
@@ -2981,7 +2981,7 @@ print -r -- "${(P)target}"
 
 Hasil:
 
-```
+```bash
 Halo dari Zsh
 ```
 
@@ -3015,7 +3015,7 @@ Bentuk umum:
 
 Zsh
 
-```
+```bash
 ${parameter:modifier}
 ```
 
@@ -3023,7 +3023,7 @@ Beberapa modifier bisa dirangkai:
 
 Zsh
 
-```
+```bash
 ${parameter:modifier1:modifier2}
 ```
 
@@ -3039,7 +3039,7 @@ Gunakan satu nilai berikut untuk menguji contoh:
 
 Zsh
 
-```
+```bash
 file="/home/amir/archive.tar.gz"
 ```
 
@@ -3054,7 +3054,7 @@ Contoh:
 
 Zsh
 
-```
+```bash
 file="/home/amir/archive.tar.gz"
 
 print -r -- "${file:h}"
@@ -3071,7 +3071,7 @@ Modifier ini berguna ketika menulis fungsi Zsh yang mengolah path tanpa harus me
 
 Zsh
 
-```
+```bash
 word="Belajar Zsh"
 
 print -r -- "${word:l}"
@@ -3080,7 +3080,7 @@ print -r -- "${word:u}"
 
 Hasil:
 
-```
+```bash
 belajar zsh
 BELAJAR ZSH
 ```
@@ -3093,7 +3093,7 @@ Ini mirip dengan flag `(L)` dan `(U)` yang telah kita pelajari, tetapi penulisan
 
 Zsh
 
-```
+```bash
 print -r -- "${word:u}"    # Modifier
 print -r -- "${(U)word}"   # Expansion flag
 ```
@@ -3106,7 +3106,7 @@ Modifier `:q` melakukan quoting terhadap hasil ekspansi agar karakter khusus she
 
 Zsh
 
-```
+```bash
 value='file with spaces/$HOME'
 
 print -r -- "${value:q}"
@@ -3124,7 +3124,7 @@ Modifier `:s` dapat mengganti kemunculan pertama teks yang cocok. Berbeda dengan
 
 Zsh
 
-```
+```bash
 text="zsh-config-zsh"
 
 print -r -- "${text:s/zsh/bash/}"
@@ -3132,7 +3132,7 @@ print -r -- "${text:s/zsh/bash/}"
 
 Hasil:
 
-```
+```bash
 bash-config-zsh
 ```
 
@@ -3142,13 +3142,13 @@ Untuk mengganti semua kemunculan, gunakan bentuk global modifier:
 
 Zsh
 
-```
+```bash
 print -r -- "${text:gs/zsh/bash/}"
 ```
 
 Hasil:
 
-```
+```bash
 bash-config-bash
 ```
 
@@ -3156,7 +3156,7 @@ Perhatikan perbedaan sintaksnya:
 
 Zsh
 
-```
+```bash
 # Operator parameter expansion
 ${text//zsh/bash}
 
@@ -3370,7 +3370,7 @@ Modifier `:u` mengubah huruf menjadi kapital. Kebalikannya, `:l`, mengubah huruf
 
 Zsh
 
-```
+```bash
 print -r -- "${word:u}"  # BELAJAR ZSH
 print -r -- "${word:l}"  # belajar zsh
 ```
@@ -3407,7 +3407,7 @@ Variabel biasa menyimpan satu nilai:
 
 Zsh
 
-```
+```bash
 name="Amir"
 ```
 
@@ -3415,13 +3415,13 @@ Array menyimpan beberapa elemen dalam satu parameter:
 
 Zsh
 
-```
+```bash
 names=(Amir Budi Citra)
 ```
 
 Gambaran konseptual:
 
-```
+```bash
 names
   │
   ├── elemen 1: Amir
@@ -3435,7 +3435,7 @@ Array berguna ketika script perlu mengelola sekumpulan nilai, misalnya daftar pa
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi)
 
 print -r -- "$tools[1]"
@@ -3445,7 +3445,7 @@ print -r -- "$tools[3]"
 
 Output:
 
-```
+```bash
 git
 fzf
 neovim
@@ -3461,7 +3461,7 @@ Untuk membuat kode lebih mudah dibaca, gunakan bentuk kurung kurawal:
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi)
 
 print -r -- "${tools[1]}"
@@ -3470,7 +3470,7 @@ print -r -- "${tools[4]}"
 
 Hasil:
 
-```
+```bash
 git
 yazi
 ```
@@ -3479,7 +3479,7 @@ Untuk mengambil semua elemen:
 
 Zsh
 
-```
+```bash
 print -r -- "${tools[@]}"
 ```
 
@@ -3489,7 +3489,7 @@ Contoh:
 
 Zsh
 
-```
+```bash
 tools=("git" "GNU Stow" "neovim")
 
 for tool in "${tools[@]}"; do
@@ -3499,7 +3499,7 @@ done
 
 Output:
 
-```
+```bash
 git
 GNU Stow
 neovim
@@ -3513,7 +3513,7 @@ Gunakan:
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi)
 
 print -r -- "${#tools}"
@@ -3521,7 +3521,7 @@ print -r -- "${#tools}"
 
 Hasil:
 
-```
+```bash
 4
 ```
 
@@ -3531,7 +3531,7 @@ Bandingkan dengan parameter string:
 
 Zsh
 
-```
+```bash
 name="Amir"
 
 print -r -- "${#name}"
@@ -3539,7 +3539,7 @@ print -r -- "${#name}"
 
 Hasil:
 
-```
+```bash
 4
 ```
 
@@ -3551,7 +3551,7 @@ Menambahkan elemen ke akhir array:
 
 Zsh
 
-```
+```bash
 tools=(git fzf)
 tools+=(neovim)
 tools+=(yazi)
@@ -3561,7 +3561,7 @@ print -r -- "${tools[@]}"
 
 Hasilnya adalah tiga elemen:
 
-```
+```bash
 git
 fzf
 neovim
@@ -3572,7 +3572,7 @@ Mengubah elemen tertentu:
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim)
 
 tools[2]="ripgrep"
@@ -3582,7 +3582,7 @@ print -r -- "${tools[@]}"
 
 Hasil:
 
-```
+```bash
 git
 ripgrep
 neovim
@@ -3596,7 +3596,7 @@ Gunakan `unset` untuk menghapus elemen berdasarkan indeks:
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi)
 
 unset 'tools[2]'
@@ -3606,7 +3606,7 @@ print -r -- "${tools[@]}"
 
 Hasil:
 
-```
+```bash
 git
 neovim
 yazi
@@ -3633,7 +3633,7 @@ Soal 1 — Indeks
 
 Zsh
 
-```
+```bash
 items=(alpha beta gamma)
 print -r -- "${items[2]}"
 ```
@@ -3642,7 +3642,7 @@ Soal 2 — Jumlah elemen
 
 Zsh
 
-```
+```bash
 items=(git fzf yazi neovim)
 print -r -- "${#items}"
 ```
@@ -3651,7 +3651,7 @@ Soal 3 — Menambahkan elemen
 
 Zsh
 
-```
+```bash
 items=(git fzf)
 items+=(yazi)
 print -r -- "${items[@]}"
@@ -3661,7 +3661,7 @@ Soal 4 — Elemen dengan spasi
 
 Zsh
 
-```
+```bash
 items=("GNU Stow" git)
 for item in "${items[@]}"; do
     print -r -- "$item"
@@ -3685,13 +3685,13 @@ Misalnya:
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi ripgrep)
 ```
 
 Representasi indeksnya:
 
-```
+```bash
 Indeks:   1      2       3       4       5
          git    fzf   neovim   yazi   ripgrep
 ```
@@ -3702,7 +3702,7 @@ Gunakan bentuk subscript berikut:
 
 Zsh
 
-```
+```bash
 ${array[start,end]}
 ```
 
@@ -3710,7 +3710,7 @@ Contoh:
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi ripgrep)
 
 print -r -- "${tools[2,4]}"
@@ -3718,7 +3718,7 @@ print -r -- "${tools[2,4]}"
 
 Output:
 
-```
+```bash
 fzf
 neovim
 yazi
@@ -3730,7 +3730,7 @@ Artinya, ambil elemen dari indeks 2 sampai indeks 4, termasuk kedua batas terseb
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi ripgrep)
 
 print -r -- "${tools[1,3]}"
@@ -3738,7 +3738,7 @@ print -r -- "${tools[1,3]}"
 
 Output:
 
-```
+```bash
 git
 fzf
 neovim
@@ -3752,7 +3752,7 @@ Zsh mendukung indeks negatif untuk mengakses elemen dari belakang:
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi ripgrep)
 
 print -r -- "${tools[-1]}"
@@ -3761,7 +3761,7 @@ print -r -- "${tools[-2]}"
 
 Output:
 
-```
+```bash
 ripgrep
 yazi
 ```
@@ -3778,7 +3778,7 @@ Indeks negatif berguna ketika panjang array berubah-ubah dan Anda tidak ingin me
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi ripgrep)
 
 print -r -- "${tools[-3,-1]}"
@@ -3786,7 +3786,7 @@ print -r -- "${tools[-3,-1]}"
 
 Output:
 
-```
+```bash
 neovim
 yazi
 ripgrep
@@ -3802,7 +3802,7 @@ Perhatikan perbedaan berikut:
 
 Zsh
 
-```
+```bash
 tools=(git "GNU Stow" neovim)
 
 print -r -- "${tools[2]}"
@@ -3811,7 +3811,7 @@ print -r -- "${tools[@]}"
 
 Perintah pertama mengambil satu elemen:
 
-```
+```bash
 GNU Stow
 ```
 
@@ -3823,7 +3823,7 @@ Contoh:
 
 Zsh
 
-```
+```bash
 tools=(git "GNU Stow" neovim)
 
 printf '<%s>\n' "${tools[@]}"
@@ -3831,7 +3831,7 @@ printf '<%s>\n' "${tools[@]}"
 
 Output:
 
-```
+```bash
 <git>
 <GNU Stow>
 <neovim>
@@ -3856,7 +3856,7 @@ Soal 1 — Rentang indeks
 
 Zsh
 
-```
+```bash
 items=(alpha beta gamma delta epsilon)
 print -r -- "${items[2,4]}"
 ```
@@ -3865,7 +3865,7 @@ Soal 2 — Indeks negatif
 
 Zsh
 
-```
+```bash
 items=(alpha beta gamma delta epsilon)
 print -r -- "${items[-2]}"
 ```
@@ -3874,7 +3874,7 @@ Soal 3 — Mempertahankan elemen yang mengandung spasi
 
 Zsh
 
-```
+```bash
 items=("GNU Stow" git neovim)
 printf '<%s>\n' "${items[@]:1:2}"
 ```

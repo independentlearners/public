@@ -68,7 +68,7 @@ print -r -- "${tools[files]}"
 
 Output:
 
-```
+```bash
 neovim
 fzf
 yazi
@@ -94,7 +94,7 @@ Anda bisa menambahkan pasangan kunci–nilai setelah deklarasi:
 
 Zsh
 
-```
+```bash
 typeset -A tools
 
 tools=(
@@ -110,7 +110,7 @@ Jika kunci sudah ada, pemberian nilai baru akan memperbarui nilai tersebut:
 
 Zsh
 
-```
+```bash
 tools[editor]=helix
 
 print -r -- "${tools[editor]}"
@@ -118,7 +118,7 @@ print -r -- "${tools[editor]}"
 
 Output:
 
-```
+```bash
 helix
 ```
 
@@ -130,7 +130,7 @@ Untuk mengambil semua kunci, gunakan ekspansi `(k)`:
 
 Zsh
 
-```
+```bash
 print -r -- "${(k)tools}"
 ```
 
@@ -138,7 +138,7 @@ Untuk mengambil semua nilai, gunakan ekspansi `(v)`:
 
 Zsh
 
-```
+```bash
 print -r -- "${(v)tools}"
 ```
 
@@ -152,7 +152,7 @@ Gunakan operator pemeriksaan parameter `${+...}`:
 
 Zsh
 
-```
+```bash
 if (( ${+tools[editor]} )); then
     print -r -- "Kunci editor tersedia"
 else
@@ -170,7 +170,7 @@ Gunakan `unset` dengan ekspresi kunci yang dikutip:
 
 Zsh
 
-```
+```bash
 unset 'tools[search]'
 ```
 
@@ -195,7 +195,7 @@ Soal 1 — Mengakses nilai
 
 Zsh
 
-```
+```bash
 typeset -A apps
 apps=(editor neovim terminal foot)
 print -r -- "${apps[terminal]}"
@@ -205,7 +205,7 @@ Soal 2 — Memperbarui nilai
 
 Zsh
 
-```
+```bash
 typeset -A apps
 apps=(editor neovim)
 apps[editor]=helix
@@ -216,7 +216,7 @@ Soal 3 — Memeriksa kunci
 
 Zsh
 
-```
+```bash
 typeset -A apps
 apps=(editor neovim)
 if (( ${+apps[terminal]} )); then
@@ -237,7 +237,7 @@ Iterasi berarti mengunjungi setiap elemen array secara berurutan, biasanya mengg
 
 Zsh
 
-```
+```bash
 tools=(git fzf neovim yazi)
 
 for tool in "${tools[@]}"; do
@@ -247,7 +247,7 @@ done
 
 Output:
 
-```
+```bash
 git
 fzf
 neovim
@@ -268,7 +268,7 @@ Mengapa ekspansi array dikutip? Karena sebuah elemen bisa mengandung spasi.
 
 Zsh
 
-```
+```bash
 tools=("GNU Stow" git neovim)
 
 for tool in "${tools[@]}"; do
@@ -284,7 +284,7 @@ Associative array juga dapat diproses menggunakan `for`, tetapi kita perlu memil
 
 Zsh
 
-```
+```bash
 typeset -A apps
 
 apps=(
@@ -304,7 +304,7 @@ Jika kita ingin mengambil nilai berdasarkan setiap kunci:
 
 Zsh
 
-```
+```bash
 for key in "${(k)apps}"; do
     print -r -- "$key: ${apps[$key]}"
 done
@@ -312,7 +312,7 @@ done
 
 Contoh hasil:
 
-```
+```bash
 editor: neovim
 search: fzf
 files: yazi
@@ -328,7 +328,7 @@ Misalnya:
 
 Zsh
 
-```
+```bash
 output=$(print -r -- $'git\nfzf\nyazi')
 ```
 
@@ -338,7 +338,7 @@ Untuk memecah teks berdasarkan baris menjadi elemen array, gunakan flag ekspansi
 
 Zsh
 
-```
+```bash
 output=$(print -r -- $'git\nfzf\nyazi')
 items=("${(@f)output}")
 
@@ -349,7 +349,7 @@ print -r -- "${items[3]}"
 
 Output:
 
-```
+```bash
 git
 fzf
 yazi

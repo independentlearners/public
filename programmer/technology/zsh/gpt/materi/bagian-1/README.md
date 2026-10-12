@@ -12,7 +12,7 @@ Zsh adalah **shell Unix** yang dapat berfungsi sebagai command interpreter sekal
 
 Secara sederhana:
 
-```text
+```bash
 Terminal Emulator
        │
        ▼
@@ -42,7 +42,7 @@ Bash juga mempunyai kemampuan interactive, tetapi Zsh menyediakan mekanisme yang
 
 Ini konsep pertama yang harus benar-benar jelas.
 
-```text
+```bash
 Terminal Emulator
         │
         │ input/output
@@ -55,13 +55,13 @@ Terminal Emulator
 
 Misalnya Anda menggunakan:
 
-```text
+```bash
 foot
 ```
 
 Maka kira-kira:
 
-```text
+```bash
 foot
  │
  └── zsh
@@ -81,7 +81,7 @@ foot
 
 Ini penting karena nanti ketika kita membuat fitur Zsh, kita perlu mengetahui apakah sebuah kemampuan berasal dari:
 
-```text
+```bash
 Zsh
 atau
 program eksternal
@@ -97,7 +97,7 @@ Interactive shell adalah shell yang menerima input secara langsung dari pengguna
 
 Contohnya Anda membuka terminal dan mendapatkan:
 
-```text
+```bash
 ~
 ❯
 ```
@@ -112,7 +112,7 @@ Zsh membaca input tersebut dan memprosesnya.
 
 Secara konseptual:
 
-```text
+```bash
 keyboard
    │
    ▼
@@ -154,7 +154,7 @@ Keduanya bukan istilah yang sama.
 
 Sebuah shell dapat dikategorikan berdasarkan dua sifat berbeda:
 
-```text
+```bash
              Login?
             /      \
           yes       no
@@ -166,7 +166,7 @@ Interactive?
 
 Sehingga secara konseptual kita dapat memiliki:
 
-```text
+```bash
 login + interactive
 login + non-interactive
 non-login + interactive
@@ -181,7 +181,7 @@ Karena Zsh menentukan file konfigurasi yang dibaca berdasarkan kondisi tersebut.
 
 Nanti kita akan sampai pada:
 
-```text
+```bash
 .zshenv
 .zprofile
 .zshrc
@@ -231,7 +231,7 @@ print -r -- "$SHELL"
 
 Anda kemungkinan akan melihat sesuatu yang menarik:
 
-```text
+```bash
 ZSH_VERSION → versi Zsh
 ZSH_NAME    → zsh
 SHELL       → shell login yang terdaftar
@@ -253,7 +253,7 @@ ps -p $$
 
 Di sini terdapat konsep yang sudah Anda pelajari dari Bash:
 
-```text
+```bash
 $$
 ```
 
@@ -275,7 +275,7 @@ Perhatikan hasilnya.
 
 Secara konseptual:
 
-```text
+```bash
 PID
  │
  └── shell sekarang
@@ -293,7 +293,7 @@ Anda kembali ke shell sebelumnya.
 
 Ini menunjukkan sesuatu yang fundamental:
 
-```text
+```bash
 Bash
  │
  └── zsh
@@ -378,13 +378,13 @@ $$
 
 4. Menurut Anda, apa perbedaan konseptual antara:
 
-```text
+```bash
 interactive shell
 ```
 
 dan:
 
-```text
+```bash
 login shell
 ```
 
@@ -405,7 +405,7 @@ Pada lesson sebelumnya kita membedakan terminal emulator dan shell. Sekarang kit
 
 Target lesson ini:
 
-```text
+```bash
 login shell
 interactive shell
         ↓
@@ -430,7 +430,7 @@ zsh
 
 Kemudian Anda mendapatkan prompt:
 
-```text
+```bash
 ~
 ❯
 ```
@@ -445,7 +445,7 @@ cd ~/Documents
 
 Secara sederhana:
 
-```text
+```bash
 keyboard
    │
    ▼
@@ -477,7 +477,7 @@ Login shell berkaitan dengan shell yang dijalankan sebagai bagian dari proses lo
 
 Jadi jangan membuat persamaan:
 
-```text
+```bash
 login shell = interactive shell
 ```
 
@@ -485,7 +485,7 @@ Itu salah.
 
 Yang benar:
 
-```text
+```bash
 LOGIN
 │
 ├── login + interactive
@@ -509,7 +509,7 @@ Inilah inti lesson ini.
 
 Zsh mempunyai beberapa startup files:
 
-```text
+```bash
 .zshenv
 .zprofile
 .zshrc
@@ -521,7 +521,7 @@ Tetapi masing-masing mempunyai kondisi pemuatan tertentu.
 
 Secara konseptual:
 
-```text
+```bash
                  ZSH STARTUP
                      │
                      ▼
@@ -553,7 +553,7 @@ Secara konseptual:
 
 Ketika shell login berakhir, terdapat:
 
-```text
+```bash
 .zlogout
 ```
 
@@ -567,7 +567,7 @@ Untuk tahap ini, jangan menghafalkan diagram tersebut dulu. Yang penting adalah 
 
 Konsepnya:
 
-```text
+```bash
 setiap invocation Zsh
         │
         ▼
@@ -600,7 +600,7 @@ Karena `.zshenv` juga dapat dibaca oleh shell yang tidak interactive.
 
 Mental model:
 
-```text
+```bash
 .zshenv
     ↓
 environment / fundamental configuration
@@ -608,7 +608,7 @@ environment / fundamental configuration
 
 bukan:
 
-```text
+```bash
 .zshenv
     ↓
 semua konfigurasi Zsh
@@ -622,7 +622,7 @@ semua konfigurasi Zsh
 
 Secara konseptual:
 
-```text
+```bash
 login shell
     │
     └── .zprofile
@@ -646,7 +646,7 @@ Namun kita belum akan membuat konfigurasi nyata di sini. Kita sedang membangun m
 
 Ini file yang akan paling sering Anda temui sebagai pengguna Zsh interactive.
 
-```text
+```bash
 interactive Zsh
        │
        ▼
@@ -655,7 +655,7 @@ interactive Zsh
 
 Di sinilah biasanya terdapat:
 
-```text
+```bash
 alias
 function
 option
@@ -699,7 +699,7 @@ Karena target kita adalah **Zsh sebagai programmable interactive shell**, `.zshr
 
 Perhatikan bahwa:
 
-```text
+```bash
 .zprofile
 .zlogin
 ```
@@ -708,7 +708,7 @@ bukan dua nama untuk file yang sama.
 
 Secara konseptual:
 
-```text
+```bash
 login Zsh
    │
    ├── .zprofile
@@ -722,7 +722,7 @@ Urutan ini nantinya penting ketika konfigurasi Anda mempunyai dependency.
 
 Misalnya:
 
-```text
+```bash
 A harus dimuat sebelum B
 ```
 
@@ -736,7 +736,7 @@ maka kita perlu memahami startup sequence, bukan sekadar memasukkan semuanya ke 
 
 Mental model:
 
-```text
+```bash
 login shell
     │
     ├── startup
@@ -757,7 +757,7 @@ Konsep ini nantinya berguna jika kita perlu melakukan cleanup tertentu ketika se
 
 Untuk login + interactive Zsh, mental model sederhananya:
 
-```text
+```bash
 .zshenv
    ↓
 .zprofile
@@ -773,7 +773,7 @@ Untuk login + interactive Zsh, mental model sederhananya:
 
 Sedangkan untuk non-login interactive:
 
-```text
+```bash
 .zshenv
    ↓
 .zshrc
@@ -783,7 +783,7 @@ Sedangkan untuk non-login interactive:
 
 Untuk non-interactive:
 
-```text
+```bash
 .zshenv
    ↓
 [command/script]
@@ -791,7 +791,7 @@ Untuk non-interactive:
 
 Jadi satu file yang paling universal adalah:
 
-```text
+```bash
 .zshenv
 ```
 
@@ -803,7 +803,7 @@ sedangkan `.zshrc` berhubungan dengan interactive shell.
 
 Anda nantinya ingin memiliki struktur seperti:
 
-```text
+```bash
 ~/.config/zsh/
 ├── .zshenv
 ├── .zprofile
@@ -830,7 +830,7 @@ print -r -- "$ZDOTDIR"
 
 dan bagaimana membuat:
 
-```text
+```bash
 ~/.config/zsh/
 ```
 
@@ -893,7 +893,7 @@ Kemudian:
 
 Sekarang Anda memiliki:
 
-```text
+```bash
 shell pertama
     │
     └── zsh -l
@@ -941,7 +941,7 @@ zsh -li
 
 Ini menggabungkan:
 
-```text
+```bash
 -l → login
 -i → interactive
 ```
@@ -955,13 +955,13 @@ Periksa lagi:
 
 Dengan eksperimen ini Anda dapat melihat sendiri bahwa:
 
-```text
+```bash
 login
 ```
 
 dan:
 
-```text
+```bash
 interactive
 ```
 
@@ -973,7 +973,7 @@ adalah dua properti berbeda.
 
 Jangan menghafalkan:
 
-```text
+```bash
 .zshenv
 .zprofile
 .zshrc
@@ -985,7 +985,7 @@ sebagai lima nama file.
 
 Pahami sebagai **startup lifecycle**:
 
-```text
+```bash
                   Zsh starts
                       │
                       ▼
@@ -1064,7 +1064,7 @@ Sekarang kita berhenti sejenak dari teori. Tujuan lesson ini adalah **membuktika
 
 Kita ingin membuktikan hubungan:
 
-```text
+```bash
                  Zsh
                   │
               .zshenv
@@ -1126,7 +1126,7 @@ ls -la /tmp/zsh-lab
 
 Hasil konseptual:
 
-```text
+```bash
 /tmp/zsh-lab/
 ├── .zlogin
 ├── .zlogout
@@ -1185,7 +1185,7 @@ sebagai lokasi startup files.
 
 Kita akan memberitahu Zsh:
 
-```text
+```bash
 "Gunakan /tmp/zsh-lab sebagai direktori konfigurasi."
 ```
 
@@ -1199,7 +1199,7 @@ Perhatikan output.
 
 Anda seharusnya mendapatkan:
 
-```text
+```bash
 .zshenv
 .zshrc
 ```
@@ -1216,14 +1216,14 @@ Ini adalah observasi pertama yang penting.
 
 Shell tadi:
 
-```text
+```bash
 interactive
 non-login
 ```
 
 Maka:
 
-```text
+```bash
 .zshenv
    ↓
 .zshrc
@@ -1243,14 +1243,14 @@ Perhatikan hasilnya.
 
 Shell ini:
 
-```text
+```bash
 login
 non-interactive
 ```
 
 Secara umum Anda akan melihat:
 
-```text
+```bash
 .zshenv
 .zprofile
 .zlogin
@@ -1264,13 +1264,13 @@ exit
 
 dan Anda seharusnya melihat:
 
-```text
+```bash
 .zlogout
 ```
 
 Perhatikan sesuatu yang penting:
 
-```text
+```bash
 .zshrc
 ```
 
@@ -1292,14 +1292,14 @@ ZDOTDIR=/tmp/zsh-lab zsh -li
 
 Kali ini terdapat dua flag:
 
-```text
+```bash
 -l → login
 -i → interactive
 ```
 
 Maka kita mengharapkan:
 
-```text
+```bash
 .zshenv
 .zprofile
 .zshrc
@@ -1314,13 +1314,13 @@ exit
 
 kita mengharapkan:
 
-```text
+```bash
 .zlogout
 ```
 
 Jadi lifecycle lengkapnya:
 
-```text
+```bash
 START
  │
  ▼
@@ -1359,14 +1359,14 @@ ZDOTDIR=/tmp/zsh-lab zsh -c 'print "command body"'
 
 Hasil yang perlu diperhatikan:
 
-```text
+```bash
 .zshenv
 command body
 ```
 
 Tidak ada:
 
-```text
+```bash
 .zprofile
 .zshrc
 .zlogin
@@ -1436,7 +1436,7 @@ Anda akan melihat bahwa seluruh startup file menggunakan PID shell yang sama.
 
 Misalnya:
 
-```text
+```bash
 STARTUP: .zshenv PID=12345
 STARTUP: .zprofile PID=12345
 STARTUP: .zshrc PID=12345
@@ -1449,7 +1449,7 @@ Setelah:
 exit
 ```
 
-```text
+```bash
 STARTUP: .zlogout PID=12345
 ```
 
@@ -1473,7 +1473,7 @@ ketika `.zshrc` dibaca, variable tersebut berada dalam shell yang sedang berjala
 
 Secara konseptual:
 
-```text
+```bash
 zsh process
     │
     ├── source .zshenv
@@ -1517,7 +1517,7 @@ ZDOTDIR=/tmp/zsh-lab zsh -c 'print -- "$ZSH_LAB"'
 
 Hasil:
 
-```text
+```bash
 hello-from-zshenv
 ```
 
@@ -1547,7 +1547,7 @@ Setelah memahami eksperimen ini, kita dapat mulai menentukan arsitektur.
 
 Misalnya:
 
-```text
+```bash
 .zshenv
 │
 └── environment yang benar-benar fundamental
@@ -1610,7 +1610,7 @@ Tanpa memahami startup architecture, kode tersebut hanya terlihat seperti sekump
 
 Setelah memahami lifecycle:
 
-```text
+```bash
 shell starts
     ↓
 startup files

@@ -8,7 +8,7 @@
 
 Shebang adalah baris pertama dalam script yang memberi tahu kernel interpreter apa yang harus digunakan.
 
-```zsh
+```bash
 #!/bin/zsh
 ```
 
@@ -28,7 +28,7 @@ Bash menggunakan `/bin/bash`. Jika Anda menulis script untuk Zsh, jangan gunakan
 
 Zsh juga bisa dipanggil dengan nama lain untuk emulasi:
 
-```zsh
+```bash
 #!/bin/sh
 ```
 
@@ -40,7 +40,7 @@ Jika `zsh` dipanggil sebagai `sh`, ia akan berjalan dalam mode kompatibilitas PO
 
 ### Assignment Variabel
 
-```zsh
+```bash
 name="Cendekiawan"
 ```
 
@@ -63,14 +63,14 @@ Bash akan melakukan *word splitting* pada `$name` karena tidak dikutip. Hasilnya
 
 Di Zsh, *word splitting tidak terjadi secara default* pada parameter expansion yang tidak dikutip. Jadi:
 
-```zsh
+```bash
 name="Cendekiawan Muslim"
 echo $name
 ```
 
 Zsh akan memperlakukan `$name` sebagai satu kata. Ini adalah salah satu perbedaan terbesar yang harus Anda ingat. Untuk mengaktifkan word splitting seperti Bash, Anda harus menyalakan opsi `SH_WORD_SPLIT`:
 
-```zsh
+```bash
 setopt SH_WORD_SPLIT
 ```
 
@@ -78,7 +78,7 @@ Namun, jangan lakukan itu kecuali Anda benar-benar membutuhkannya. Default Zsh l
 
 ### Menggunakan Variabel
 
-```zsh
+```bash
 printf '%s\n' "$name"
 ```
 
@@ -92,7 +92,7 @@ printf '%s\n' "$name"
 
 `echo` di Zsh memiliki beberapa opsi yang bisa membingungkan. `printf` lebih eksplisit dan portabel. Contoh:
 
-```zsh
+```bash
 echo -n "Hello"   # mencetak tanpa newline
 printf '%s' "Hello"  # sama, tetapi lebih jelas
 ```
@@ -103,7 +103,7 @@ printf '%s' "Hello"  # sama, tetapi lebih jelas
 
 ### Deklarasi Array
 
-```zsh
+```bash
 files=(one two three)
 ```
 
@@ -121,7 +121,7 @@ Di Zsh, array diindeks mulai dari 1 secara default. Elemen pertama adalah `$file
 
 Jika Anda ingin Zsh menggunakan indeks 0 seperti Bash, Anda bisa menyalakan opsi `KSH_ARRAYS`:
 
-```zsh
+```bash
 setopt KSH_ARRAYS
 ```
 
@@ -129,7 +129,7 @@ Namun, untuk tujuan kita, biasakan diri dengan indeks 1 karena itu default Zsh d
 
 ### Mengakses Elemen Array
 
-```zsh
+```bash
 print -r -- $files[1]
 ```
 
@@ -142,7 +142,7 @@ print -r -- $files[1]
 
 Jika Anda menulis `$files` tanpa indeks, Zsh akan mengekspansi ke semua elemen array, dipisahkan oleh spasi. Namun, dalam konteks tertentu, ini bisa berbeda. Untuk mengambil semua elemen sebagai array, gunakan `$files[@]` atau `$files[*]`.
 
-```zsh
+```bash
 print -r -- $files[@]   # mencetak semua elemen, masing-masing sebagai argumen terpisah
 print -r -- $files[*]   # mencetak semua elemen sebagai satu string, dipisahkan spasi
 ```
@@ -160,7 +160,7 @@ Dalam Bash, `${files[@]}` dan `${files[*]}` memiliki perilaku serupa, tetapi sin
 
 ### Glob Dasar
 
-```zsh
+```bash
 *.txt
 ```
 
@@ -174,7 +174,7 @@ Di Zsh, globbing terjadi secara otomatis pada argumen perintah. Jika tidak ada f
 
 ### Glob Rekursif
 
-```zsh
+```bash
 **/*.lua
 ```
 
@@ -189,7 +189,7 @@ Di Bash, Anda harus menyalakan `shopt -s globstar` terlebih dahulu agar `**` ber
 
 ### Glob Negasi
 
-```zsh
+```bash
 ^*.bak
 ```
 
@@ -201,7 +201,7 @@ Di Bash, Anda harus menyalakan `shopt -s globstar` terlebih dahulu agar `**` ber
 
 Untuk menggunakan `^`, Anda harus menyalakan opsi `EXTENDED_GLOB`:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -209,7 +209,7 @@ Jika tidak, `^` akan dianggap karakter literal. Setelah `EXTENDED_GLOB` aktif, A
 
 Contoh lain:
 
-```zsh
+```bash
 *.txt~*.bak
 ```
 
@@ -221,7 +221,7 @@ Artinya: semua file `.txt` kecuali yang berakhiran `.bak`.
 
 ### Ekspansi Dasar
 
-```zsh
+```bash
 ${name}
 ```
 
@@ -233,7 +233,7 @@ ${name}
 
 ### Modifier Huruf Besar dan Kecil
 
-```zsh
+```bash
 ${name:u}
 ```
 
@@ -242,7 +242,7 @@ ${name:u}
 - `:u` — modifier untuk mengubah seluruh nilai menjadi huruf besar (uppercase). Ini adalah fitur khas Zsh.
 - Jika `name="Cendekiawan"`, maka `${name:u}` menghasilkan `CENDEKIAWAN`.
 
-```zsh
+```bash
 ${name:l}
 ```
 
@@ -253,7 +253,7 @@ Modifier ini bisa digabungkan dengan ekspansi lain. Misalnya, `${name:u:l}` akan
 
 ### Quoting Ekspansi
 
-```zsh
+```bash
 ${(q)name}
 ```
 
@@ -265,7 +265,7 @@ ${(q)name}
 
 ### Memecah Teks Menjadi Array
 
-```zsh
+```bash
 ${(f)text}
 ```
 
@@ -277,7 +277,7 @@ ${(f)text}
 
 Contoh:
 
-```zsh
+```bash
 text=$'baris1\nbaris2\nbaris3'
 lines=(${(f)text})
 print -r -- $lines[1]   # baris1
@@ -292,7 +292,7 @@ Perhatikan penggunaan `$'...'` untuk string yang mengandung escape sequence sepe
 
 ### Definisi Fungsi
 
-```zsh
+```bash
 myfunc() {
     echo "Hello"
 }
@@ -312,7 +312,7 @@ Di Bash, `function myfunc { ... }` juga valid, tetapi `myfunc() { ... }` lebih u
 
 ### Autoload
 
-```zsh
+```bash
 autoload -Uz myfunc
 myfunc
 ```
@@ -327,13 +327,13 @@ myfunc
 
 Contoh isi file `~/.zsh/functions/myfunc`:
 
-```zsh
+```bash
 echo "Hello from autoloaded function"
 ```
 
 Kemudian tambahkan direktori ke `$fpath`:
 
-```zsh
+```bash
 fpath=(~/.zsh/functions $fpath)
 autoload -Uz myfunc
 myfunc
@@ -345,7 +345,7 @@ myfunc
 
 ### Conditional dengan `[[ ]]`
 
-```zsh
+```bash
 if [[ $name == "Cendekiawan" ]]; then
     echo "Yes"
 fi
@@ -369,7 +369,7 @@ Di Bash, `[[ ]]` juga ada, tetapi Zsh memiliki beberapa perbedaan dalam pencocok
 
 ### Loop dengan Brace Expansion
 
-```zsh
+```bash
 for i in {1..5}; do
     echo $i
 done
@@ -395,7 +395,7 @@ Brace expansion `{1..5}` didukung di Bash dan Zsh. Namun, Zsh memiliki `{1..5..2
 
 ### Exit Status
 
-```zsh
+```bash
 command
 echo $?
 ```
@@ -409,7 +409,7 @@ Di Zsh, sama seperti Bash. Namun, Zsh memiliki variabel `$pipestatus` untuk stat
 
 ### Redirection
 
-```zsh
+```bash
 command > file 2>&1
 ```
 
@@ -425,7 +425,7 @@ Di Zsh, redirection sama. Zsh juga mendukung `&> file` untuk mengarahkan stdout 
 
 ## 1.9 Process Substitution
 
-```zsh
+```bash
 diff <(ls dir1) <(ls dir2)
 ```
 
@@ -439,7 +439,7 @@ diff <(ls dir1) <(ls dir2)
 
 Process substitution juga bekerja untuk output:
 
-```zsh
+```bash
 command >(gzip > file.gz)
 ```
 
@@ -491,7 +491,7 @@ Parameter expansion adalah mekanisme untuk mengambil nilai variabel dan memodifi
 
 ### Bentuk Dasar
 
-```zsh
+```bash
 ${name}
 ```
 
@@ -503,7 +503,7 @@ Penjelasan:
 
 Bentuk ini sama seperti Bash. Gunanya adalah memperjelas batas nama variabel. Contoh:
 
-```zsh
+```bash
 name="Cendekiawan"
 echo "${name}Muslim"
 ```
@@ -512,7 +512,7 @@ Tanpa `{}`, `$nameMuslim` akan dianggap variabel bernama `nameMuslim`. Dengan `$
 
 ### Default Value
 
-```zsh
+```bash
 ${name:-default}
 ```
 
@@ -525,7 +525,7 @@ Jika `name` kosong atau belum diset, hasilnya `default`. Jika `name` sudah beris
 
 Contoh:
 
-```zsh
+```bash
 name=""
 echo "${name:-tanpa nama}"
 ```
@@ -534,7 +534,7 @@ Hasil: `tanpa nama`.
 
 ### Assign Default Value
 
-```zsh
+```bash
 ${name:=default}
 ```
 
@@ -543,7 +543,7 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 unset name
 echo "${name:=Cendekiawan}"
 echo "$name"
@@ -555,7 +555,7 @@ Hasil:
 
 ### Error Jika Kosong
 
-```zsh
+```bash
 ${name:?pesan error}
 ```
 
@@ -564,7 +564,7 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 unset name
 echo "${name:?Variabel name wajib diisi}"
 ```
@@ -573,7 +573,7 @@ Jika `name` kosong, Zsh akan menampilkan error dan script berhenti.
 
 ### Alternatif Jika Ada Nilai
 
-```zsh
+```bash
 ${name:+alternatif}
 ```
 
@@ -582,7 +582,7 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 name="Cendekiawan"
 echo "${name:+Ada nilai}"
 ```
@@ -593,112 +593,112 @@ Hasil: `Ada nilai`.
 
 Zsh memiliki modifier yang ditulis setelah titik dua.
 
-```zsh
+```bash
 ${name:u}
 ```
 
 Penjelasan:
 - `:u` — uppercase. Mengubah seluruh nilai menjadi huruf besar.
 
-```zsh
+```bash
 name="Cendekiawan"
 echo "${name:u}"
 ```
 
 Hasil: `CENDEKIAWAN`.
 
-```zsh
+```bash
 ${name:l}
 ```
 
 Penjelasan:
 - `:l` — lowercase. Mengubah seluruh nilai menjadi huruf kecil.
 
-```zsh
+```bash
 name="Cendekiawan"
 echo "${name:l}"
 ```
 
 Hasil: `cendekiawan`.
 
-```zsh
+```bash
 ${path:h}
 ```
 
 Penjelasan:
 - `:h` — head. Menghapus komponen terakhir dari path.
 
-```zsh
+```bash
 path="/home/user/dokumen/file.txt"
 echo "${path:h}"
 ```
 
 Hasil: `/home/user/dokumen`.
 
-```zsh
+```bash
 ${path:t}
 ```
 
 Penjelasan:
 - `:t` — tail. Mengambil komponen terakhir dari path.
 
-```zsh
+```bash
 path="/home/user/dokumen/file.txt"
 echo "${path:t}"
 ```
 
 Hasil: `file.txt`.
 
-```zsh
+```bash
 ${file:r}
 ```
 
 Penjelasan:
 - `:r` — remove extension. Menghapus ekstensi terakhir.
 
-```zsh
+```bash
 file="catatan.txt"
 echo "${file:r}"
 ```
 
 Hasil: `catatan`.
 
-```zsh
+```bash
 ${file:e}
 ```
 
 Penjelasan:
 - `:e` — extension. Mengambil ekstensi terakhir.
 
-```zsh
+```bash
 file="catatan.txt"
 echo "${file:e}"
 ```
 
 Hasil: `txt`.
 
-```zsh
+```bash
 ${text:s/lama/baru/}
 ```
 
 Penjelasan:
 - `:s` — substitute. Mengganti kemunculan pertama pola `lama` dengan `baru`.
 
-```zsh
+```bash
 text="saya suka bash"
 echo "${text:s/bash/zsh/}"
 ```
 
 Hasil: `saya suka zsh`.
 
-```zsh
+```bash
 ${text:gs/lama/baru/}
 ```
 
 Penjelasan:
 - `:gs` — global substitute. Mengganti semua kemunculan.
 
-```zsh
+```bash
 text="bash bash bash"
 echo "${text:gs/bash/zsh/}"
 ```
@@ -709,7 +709,7 @@ Hasil: `zsh zsh zsh`.
 
 Flag ditulis di dalam tanda kurung setelah `$`.
 
-```zsh
+```bash
 ${(q)name}
 ```
 
@@ -722,21 +722,21 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 name="Cendekiawan Muslim"
 echo "${(q)name}"
 ```
 
 Hasil kira-kira: `Cendekiawan\ Muslim`.
 
-```zsh
+```bash
 ${(f)text}
 ```
 
 Penjelasan:
 - `f` — split on newlines. Memecah string menjadi array berdasarkan baris baru.
 
-```zsh
+```bash
 text=$'baris1\nbaris2\nbaris3'
 lines=(${(f)text})
 echo "$lines[1]"
@@ -747,7 +747,7 @@ Hasil:
 - `baris1`
 - `baris2`
 
-```zsh
+```bash
 ${(s:,:)text}
 ```
 
@@ -760,7 +760,7 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 text="satu,dua,tiga"
 arr=(${(s:,:)text})
 echo "$arr[2]"
@@ -768,7 +768,7 @@ echo "$arr[2]"
 
 Hasil: `dua`.
 
-```zsh
+```bash
 ${(j:,:)array}
 ```
 
@@ -781,63 +781,63 @@ Penjelasan:
 
 Contoh:
 
-```zsh
+```bash
 arr=(satu dua tiga)
 echo "${(j:,:)arr}"
 ```
 
 Hasil: `satu,dua,tiga`.
 
-```zsh
+```bash
 ${(k)assoc}
 ```
 
 Penjelasan:
 - `k` — keys flag. Mengambil semua key dari associative array.
 
-```zsh
+```bash
 ${(v)assoc}
 ```
 
 Penjelasan:
 - `v` — values flag. Mengambil semua value dari associative array.
 
-```zsh
+```bash
 ${(kv)assoc}
 ```
 
 Penjelasan:
 - `kv` — keys dan values secara bergantian.
 
-```zsh
+```bash
 ${(o)array}
 ```
 
 Penjelasan:
 - `o` — order. Mengurutkan array secara ascending.
 
-```zsh
+```bash
 ${(O)array}
 ```
 
 Penjelasan:
 - `O` — order reverse. Mengurutkan array secara descending.
 
-```zsh
+```bash
 ${(u)array}
 ```
 
 Penjelasan:
 - `u` — unique. Menghapus duplikat.
 
-```zsh
+```bash
 ${(L)name}
 ```
 
 Penjelasan:
 - `L` — lower. Mengubah menjadi huruf kecil.
 
-```zsh
+```bash
 ${(U)name}
 ```
 
@@ -852,7 +852,7 @@ Penjelasan:
 
 Di Zsh, array diindeks mulai dari 1.
 
-```zsh
+```bash
 files=(one two three)
 ```
 
@@ -863,7 +863,7 @@ Penjelasan:
 
 Mengakses elemen:
 
-```zsh
+```bash
 echo "$files[1]"
 ```
 
@@ -871,7 +871,7 @@ Penjelasan:
 - `$files[1]` — elemen pertama.
 - Hasil: `one`.
 
-```zsh
+```bash
 echo "$files[-1]"
 ```
 
@@ -879,7 +879,7 @@ Penjelasan:
 - `-1` — indeks negatif. Menghitung dari belakang.
 - Hasil: `three`.
 
-```zsh
+```bash
 echo "$files[2,3]"
 ```
 
@@ -887,7 +887,7 @@ Penjelasan:
 - `[2,3]` — slice. Mengambil elemen indeks 2 sampai 3.
 - Hasil: `two three`.
 
-```zsh
+```bash
 echo "${#files}"
 ```
 
@@ -895,7 +895,7 @@ Penjelasan:
 - `${#files}` — jumlah elemen array.
 - Hasil: `3`.
 
-```zsh
+```bash
 echo "${#files[1]}"
 ```
 
@@ -905,7 +905,7 @@ Penjelasan:
 
 Menambah elemen:
 
-```zsh
+```bash
 files+=(four)
 ```
 
@@ -916,7 +916,7 @@ Penjelasan:
 
 Mengubah elemen:
 
-```zsh
+```bash
 files[1]="satu"
 ```
 
@@ -926,7 +926,7 @@ Penjelasan:
 
 Menghapus elemen:
 
-```zsh
+```bash
 unset "files[2]"
 ```
 
@@ -937,7 +937,7 @@ Penjelasan:
 
 ### Expansi Array
 
-```zsh
+```bash
 print -r -- "${files[@]}"
 ```
 
@@ -945,7 +945,7 @@ Penjelasan:
 - `"${files[@]}"` — semua elemen sebagai argumen terpisah.
 - `print -r --` — cetak raw.
 
-```zsh
+```bash
 print -r -- "${files[*]}"
 ```
 
@@ -956,7 +956,7 @@ Penjelasan:
 
 Associative array adalah array dengan key berupa string.
 
-```zsh
+```bash
 typeset -A user
 ```
 
@@ -967,7 +967,7 @@ Penjelasan:
 
 Mengisi:
 
-```zsh
+```bash
 user=(
     nama "Cendekiawan"
     kota "Jakarta"
@@ -984,7 +984,7 @@ Penjelasan:
 
 Mengakses:
 
-```zsh
+```bash
 echo "${user[nama]}"
 ```
 
@@ -994,7 +994,7 @@ Penjelasan:
 
 Mengambil keys:
 
-```zsh
+```bash
 echo "${(k)user}"
 ```
 
@@ -1004,7 +1004,7 @@ Penjelasan:
 
 Mengambil values:
 
-```zsh
+```bash
 echo "${(v)user}"
 ```
 
@@ -1014,7 +1014,7 @@ Penjelasan:
 
 Mengambil keys dan values:
 
-```zsh
+```bash
 for key val in "${(kv)user[@]}"; do
     echo "$key = $val"
 done
@@ -1033,7 +1033,7 @@ Penjelasan:
 
 Untuk menggunakan operator glob lanjutan, aktifkan:
 
-```zsh
+```bash
 setopt EXTENDED_GLOB
 ```
 
@@ -1043,7 +1043,7 @@ Penjelasan:
 
 ### Negasi
 
-```zsh
+```bash
 ^*.bak
 ```
 
@@ -1054,7 +1054,7 @@ Penjelasan:
 
 ### Except
 
-```zsh
+```bash
 *.txt~*.bak
 ```
 
@@ -1066,7 +1066,7 @@ Penjelasan:
 
 ### Pengulangan
 
-```zsh
+```bash
 a#
 ```
 
@@ -1074,7 +1074,7 @@ Penjelasan:
 - `#` — nol atau lebih kemunculan pola sebelumnya.
 - `a#` — cocok dengan string kosong, `a`, `aa`, `aaa`, dan seterusnya.
 
-```zsh
+```bash
 a##
 ```
 
@@ -1084,7 +1084,7 @@ Penjelasan:
 
 ### Alternasi
 
-```zsh
+```bash
 (ini|itu)
 ```
 
@@ -1097,7 +1097,7 @@ Penjelasan:
 
 Glob qualifier ditulis dalam tanda kurung di akhir pola.
 
-```zsh
+```bash
 **/*.lua(.)
 ```
 
@@ -1105,28 +1105,28 @@ Penjelasan:
 - `**/*.lua` — semua file `.lua` rekursif.
 - `(.)` — qualifier: hanya file biasa, bukan direktori.
 
-```zsh
+```bash
 **/*(/)
 ```
 
 Penjelasan:
 - `(/)` — hanya direktori.
 
-```zsh
+```bash
 **/*(@)
 ```
 
 Penjelasan:
 - `(@)` — hanya symlink.
 
-```zsh
+```bash
 **/*(*)
 ```
 
 Penjelasan:
 - `(*)` — hanya file executable biasa.
 
-```zsh
+```bash
 *.log(om[1])
 ```
 
@@ -1135,7 +1135,7 @@ Penjelasan:
 - `(om[1])` — `om` urutkan berdasarkan modification time, terbaru dulu. `[1]` ambil yang pertama.
 - Hasil: file `.log` paling baru.
 
-```zsh
+```bash
 *(m-1)
 ```
 
@@ -1144,7 +1144,7 @@ Penjelasan:
 - `-1` — kurang dari 1 hari.
 - Hasil: file yang dimodifikasi dalam 24 jam terakhir.
 
-```zsh
+```bash
 *(Lk+10)
 ```
 
@@ -1160,7 +1160,7 @@ Penjelasan:
 
 ### Fungsi Dasar
 
-```zsh
+```bash
 myfunc() {
     echo "Hello"
 }
@@ -1175,13 +1175,13 @@ Penjelasan:
 
 Memanggil:
 
-```zsh
+```bash
 myfunc
 ```
 
 ### Argumen Fungsi
 
-```zsh
+```bash
 greet() {
     echo "Hello, $1"
 }
@@ -1191,7 +1191,7 @@ Penjelasan:
 - `$1` — argumen pertama.
 - `greet "Cendekiawan"` akan mencetak `Hello, Cendekiawan`.
 
-```zsh
+```bash
 show_all() {
     for arg in "$@"; do
         echo "$arg"
@@ -1205,7 +1205,7 @@ Penjelasan:
 
 ### Local Variable
 
-```zsh
+```bash
 myfunc() {
     local name="Cendekiawan"
     echo "$name"
@@ -1218,7 +1218,7 @@ Penjelasan:
 
 ### Return
 
-```zsh
+```bash
 myfunc() {
     return 1
 }
@@ -1232,7 +1232,7 @@ Penjelasan:
 
 Autoload memungkinkan fungsi dimuat dari file terpisah saat pertama kali dipanggil.
 
-```zsh
+```bash
 fpath=(~/.zsh/functions $fpath)
 autoload -Uz myfunc
 ```
@@ -1247,13 +1247,13 @@ Penjelasan:
 
 File `~/.zsh/functions/myfunc` berisi isi fungsi, bukan definisi `myfunc() { ... }`. Contoh isi:
 
-```zsh
+```bash
 echo "Hello dari autoload"
 ```
 
 Setelah itu:
 
-```zsh
+```bash
 myfunc
 ```
 
@@ -1265,7 +1265,7 @@ Zsh akan mencari file `myfunc` di `$fpath`, memuatnya, lalu menjalankannya.
 
 ### Operator File
 
-```zsh
+```bash
 [[ -e "$file" ]]
 ```
 
@@ -1290,7 +1290,7 @@ Operator lain:
 
 Contoh:
 
-```zsh
+```bash
 if [[ -f "$file" ]]; then
     echo "File biasa"
 fi
@@ -1304,28 +1304,28 @@ Penjelasan:
 
 ### Operator String
 
-```zsh
+```bash
 [[ -z "$str" ]]
 ```
 
 Penjelasan:
 - `-z` — zero length. Benar jika string kosong.
 
-```zsh
+```bash
 [[ -n "$str" ]]
 ```
 
 Penjelasan:
 - `-n` — non-zero length. Benar jika string tidak kosong.
 
-```zsh
+```bash
 [[ "$a" == "$b" ]]
 ```
 
 Penjelasan:
 - `==` — sama dengan.
 
-```zsh
+```bash
 [[ "$a" != "$b" ]]
 ```
 
@@ -1334,7 +1334,7 @@ Penjelasan:
 
 ### Pattern Matching
 
-```zsh
+```bash
 [[ "$file" == *.txt ]]
 ```
 
@@ -1344,7 +1344,7 @@ Penjelasan:
 
 ### Regex
 
-```zsh
+```bash
 [[ "$name" =~ ^[A-Z] ]]
 ```
 
@@ -1355,21 +1355,21 @@ Penjelasan:
 
 ### Logika
 
-```zsh
+```bash
 [[ -f "$file" && -r "$file" ]]
 ```
 
 Penjelasan:
 - `&&` — DAN. Kedua kondisi harus benar.
 
-```zsh
+```bash
 [[ -f "$file" || -d "$file" ]]
 ```
 
 Penjelasan:
 - `||` — ATAU. Salah satu kondisi benar.
 
-```zsh
+```bash
 [[ ! -f "$file" ]]
 ```
 

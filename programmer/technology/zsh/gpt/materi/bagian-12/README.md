@@ -8,7 +8,7 @@ Keduanya menyimpan nilai, tetapi memiliki perbedaan pada proses yang dapat menga
 
 ### Variabel shell biasa
 
-```
+```bash
 PROJECT_NAME="zsh-lab"
 
 print -r -- "$PROJECT_NAME"
@@ -18,7 +18,7 @@ print -r -- "$PROJECT_NAME"
 
 ### Environment variable
 
-```
+```bash
 export PROJECT_NAME="zsh-lab"
 
 print -r -- "$PROJECT_NAME"
@@ -38,7 +38,7 @@ Menerima PROJECT_NAME dari environment
 
 Contoh pengujian yang dapat dijalankan langsung:
 
-```
+```bash
 PROJECT_LOCAL="tidak-diekspor"
 export PROJECT_SHARED="diwariskan"
 
@@ -48,7 +48,7 @@ zsh -c 'print -r -- "${PROJECT_SHARED-unset}"'
 
 Hasilnya:
 
-```
+```bash
 unset
 diwariskan
 ```
@@ -57,7 +57,7 @@ diwariskan
 
 Perintah untuk memeriksa variabel:
 
-```
+```bash
 print -r -- "$PROJECT_SHARED"
 export -p
 env
@@ -73,7 +73,7 @@ env
 
 Misalnya, ketika Anda mengetik:
 
-```
+```bash
 git status
 ```
 
@@ -81,13 +81,13 @@ Zsh mencari executable bernama `git` melalui direktori di `PATH`, kecuali perint
 
 Periksa `PATH`:
 
-```
+```bash
 print -r -- "$PATH"
 ```
 
 Dalam Zsh, tersedia array khusus bernama `path` yang terhubung langsung dengan `PATH`.
 
-```
+```bash
 print -rl -- $path
 ```
 
@@ -97,7 +97,7 @@ Opsi `-l` mencetak setiap elemen pada baris tersendiri. Karena `path` merupakan 
 
 Misalnya, Anda ingin menambahkan `~/.local/bin` agar executable pribadi dapat dijalankan tanpa menulis lokasi lengkapnya.
 
-```
+```bash
 typeset -U path
 path=("$HOME/.local/bin" $path)
 ```
@@ -112,7 +112,7 @@ Urutan direktori penting: direktori yang muncul lebih awal biasanya diperiksa le
 
 Untuk menambahkan direktori di bagian akhir:
 
-```
+```bash
 path+=("$HOME/bin")
 ```
 
@@ -122,7 +122,7 @@ Hindari menambahkan direktori berulang kali tanpa penanganan duplikat, terutama 
 
 Gunakan:
 
-```
+```bash
 command -v git
 whence -va git
 ```
@@ -131,7 +131,7 @@ whence -va git
 
 Untuk melihat apakah direktori tertentu tersedia di `PATH`:
 
-```
+```bash
 [[ -d "$HOME/.local/bin" ]] && print -r -- "Direktori tersedia"
 ```
 
@@ -157,14 +157,14 @@ Untuk konfigurasi Anda, gunakan aturan praktis berikut:
 
 Contoh file `~/.config/zsh/options.zsh`:
 
-```
+```bash
 setopt AUTO_CD
 setopt EXTENDED_GLOB
 ```
 
 Contoh file `~/.config/zsh/environment.zsh`:
 
-```
+```bash
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
 
@@ -174,7 +174,7 @@ path=("$HOME/.local/bin" $path)
 
 Kemudian, di `zshrc`, muat konfigurasi lingkungan sebelum modul yang menggunakannya:
 
-```
+```bash
 ZSH_CONFIG="$HOME/.config/zsh"
 
 if [[ -r "$ZSH_CONFIG/environment.zsh" ]]; then
@@ -194,7 +194,7 @@ Ada satu koreksi terkait materi sebelumnya: jangan membungkus `source` konfigura
 
 Jalankan perintah berikut satu per satu pada terminal Zsh:
 
-```
+```bash
 # 1. Variabel shell biasa
 LESSON_VAR="local-value"
 

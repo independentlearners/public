@@ -2,7 +2,7 @@
 
 Pada Lesson 01 kita banyak menggunakan Bash sebagai pembanding. Mulai Lesson 02, fokus utama berubah:
 
-```text
+```bash
 Lesson 01
 Bash → Zsh
    ↓
@@ -16,7 +16,7 @@ memahami bahasa Zsh itu sendiri
 
 Tujuannya agar nantinya ketika melihat konfigurasi seperti:
 
-```zsh
+```bash
 typeset -A config
 [[ -n "$commands[fzf]" ]]
 setopt EXTENDED_GLOB
@@ -42,7 +42,7 @@ Untuk pembelajaran kita, pandangan itu terlalu sempit.
 
 Zsh memiliki:
 
-```text
+```bash
 Zsh
 ├── command execution
 ├── parameter system
@@ -61,7 +61,7 @@ Dengan kata lain, Zsh memiliki bahasa scripting yang cukup kaya.
 
 Model dasarnya:
 
-```text
+```bash
 input
   ↓
 Zsh parser
@@ -87,13 +87,13 @@ Kita mulai dari konstruksi paling dasar.
 
 Sebuah command:
 
-```zsh
+```bash
 print "Hello"
 ```
 
 terdiri dari:
 
-```text
+```bash
 print "Hello"
 │     │
 │     └── argument
@@ -102,7 +102,7 @@ print "Hello"
 
 Beberapa command:
 
-```zsh
+```bash
 print "one"
 print "two"
 print "three"
@@ -120,7 +120,7 @@ Dalam Zsh, sebagian besar operasi sehari-hari berbentuk command.
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 ```
 
@@ -128,7 +128,7 @@ merupakan assignment.
 
 Sedangkan:
 
-```zsh
+```bash
 print "$name"
 ```
 
@@ -136,7 +136,7 @@ merupakan command invocation.
 
 Dan:
 
-```zsh
+```bash
 if [[ -n "$name" ]]; then
     print "$name"
 fi
@@ -146,7 +146,7 @@ merupakan struktur control flow.
 
 Jadi bahasa Zsh dapat kita lihat sebagai kombinasi:
 
-```text
+```bash
 Zsh Language
 │
 ├── commands
@@ -164,25 +164,25 @@ Zsh Language
 
 Assignment dasar:
 
-```zsh
+```bash
 name="Amir"
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "$name"
 ```
 
 menghasilkan:
 
-```text
+```bash
 Amir
 ```
 
 Berbeda dengan banyak bahasa pemrograman, shell assignment tidak menggunakan:
 
-```text
+```bash
 name = "Amir"
 ```
 
@@ -190,13 +190,13 @@ Spasi di sekitar `=` memiliki arti penting.
 
 Benar:
 
-```zsh
+```bash
 name="Amir"
 ```
 
 Salah:
 
-```zsh
+```bash
 name = "Amir"
 ```
 
@@ -204,7 +204,7 @@ Karena bentuk kedua akan dipahami sebagai command bernama `name`.
 
 Mental model:
 
-```text
+```bash
 name="Amir"
 │ │     │
 │ │     └── value
@@ -220,13 +220,13 @@ Di Lesson 01 kita menyebut "variable".
 
 Dalam dokumentasi dan terminology Zsh, istilah yang lebih tepat adalah:
 
-```text
+```bash
 parameter
 ```
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 ```
 
@@ -236,7 +236,7 @@ Parameter Zsh jauh lebih kaya daripada sekadar container string.
 
 Sebuah parameter dapat memiliki berbagai atribut:
 
-```text
+```bash
 parameter
 │
 ├── scalar
@@ -250,37 +250,37 @@ parameter
 
 Contoh scalar:
 
-```zsh
+```bash
 name="Amir"
 ```
 
 Integer:
 
-```zsh
+```bash
 typeset -i count=10
 ```
 
 Array:
 
-```zsh
+```bash
 typeset -a files
 ```
 
 Associative array:
 
-```zsh
+```bash
 typeset -A config
 ```
 
 Ini menjadi salah satu perbedaan terbesar antara model:
 
-```text
+```bash
 Bash variable
 ```
 
 dan:
 
-```text
+```bash
 Zsh parameter system
 ```
 
@@ -290,31 +290,31 @@ Zsh parameter system
 
 Parameter biasa:
 
-```zsh
+```bash
 name="Amir"
 ```
 
 Nilainya dapat digunakan:
 
-```zsh
+```bash
 print "$name"
 ```
 
 atau:
 
-```zsh
+```bash
 print "${name}"
 ```
 
 Untuk sekarang:
 
-```text
+```bash
 $name
 ```
 
 dan:
 
-```text
+```bash
 ${name}
 ```
 
@@ -328,14 +328,14 @@ Tetapi `${...}` adalah bentuk yang jauh lebih penting karena hampir seluruh kema
 
 Contoh paling dasar:
 
-```zsh
+```bash
 name="Amir"
 print "$name"
 ```
 
 Zsh melakukan expansion:
 
-```text
+```bash
 "$name"
    │
    ▼
@@ -344,13 +344,13 @@ Zsh melakukan expansion:
 
 Dengan braces:
 
-```zsh
+```bash
 print "${name}"
 ```
 
 juga menghasilkan:
 
-```text
+```bash
 Amir
 ```
 
@@ -358,13 +358,13 @@ Namun braces memungkinkan kita menambahkan operasi.
 
 Misalnya:
 
-```zsh
+```bash
 print "${name:u}"
 ```
 
 dan:
 
-```zsh
+```bash
 print "${name:l}"
 ```
 
@@ -372,7 +372,7 @@ Zsh dapat melakukan transformasi terhadap parameter secara langsung.
 
 Konsep ini akan menjadi salah satu materi terbesar dalam kurikulum:
 
-```text
+```bash
 Lesson 03 — Parameter Expansion
 ```
 
@@ -384,20 +384,20 @@ Jadi sekarang kita hanya membangun fondasinya.
 
 Zsh mendukung:
 
-```zsh
+```bash
 result=$(command)
 ```
 
 Contoh:
 
-```zsh
+```bash
 current_dir=$(pwd)
 print "$current_dir"
 ```
 
 Modelnya:
 
-```text
+```bash
 $(pwd)
   │
   ▼
@@ -420,43 +420,43 @@ Tetapi nanti ketika kita masuk ke expansion system Zsh, kita akan melihat bahwa 
 
 Zsh juga mendukung:
 
-```zsh
+```bash
 result=$((10 + 20))
 ```
 
 Kemudian:
 
-```zsh
+```bash
 print "$result"
 ```
 
 hasilnya:
 
-```text
+```bash
 30
 ```
 
 Zsh juga memiliki arithmetic context:
 
-```zsh
+```bash
 (( result = 10 + 20 ))
 ```
 
 Sehingga:
 
-```text
+```bash
 $(( ... ))
 ```
 
 dan:
 
-```text
+```bash
 (( ... ))
 ```
 
 harus mulai Anda bedakan.
 
-```text
+```bash
 $(( expression ))
       ↓
 menghasilkan nilai
@@ -475,7 +475,7 @@ Konsep ini akan kita dalami dalam bahasa Zsh, bukan sekadar sebagai kompatibilit
 
 Tiga bentuk utama yang harus selalu Anda bedakan:
 
-```zsh
+```bash
 'text'
 "text"
 text
@@ -483,13 +483,13 @@ text
 
 ### Single quotes
 
-```zsh
+```bash
 print '$name'
 ```
 
 menghasilkan literal:
 
-```text
+```bash
 $name
 ```
 
@@ -497,7 +497,7 @@ Expansion tidak dilakukan di dalam single quotes.
 
 ### Double quotes
 
-```zsh
+```bash
 print "$name"
 ```
 
@@ -505,19 +505,19 @@ parameter expansion dilakukan.
 
 Jika:
 
-```zsh
+```bash
 name="Amir"
 ```
 
 hasilnya:
 
-```text
+```bash
 Amir
 ```
 
 ### Unquoted
 
-```zsh
+```bash
 print $name
 ```
 
@@ -525,7 +525,7 @@ di sinilah expansion dan word formation dapat memberikan efek berbeda.
 
 Dalam Zsh, perilaku array dan splitting juga berbeda dari Bash, sehingga:
 
-```text
+```bash
 unquoted expansion
 ```
 
@@ -539,7 +539,7 @@ Kita tidak akan menyelesaikan seluruh detailnya sekarang karena itu masuk ke **L
 
 Salah satu mental model terpenting dalam shell:
 
-```text
+```bash
 source text
     ↓
 parsing
@@ -553,7 +553,7 @@ execution
 
 Misalnya:
 
-```zsh
+```bash
 name="Amir"
 print "$name"
 ```
@@ -562,13 +562,13 @@ Zsh tidak langsung melihat `"Amir"` di source code.
 
 Ia terlebih dahulu menemukan:
 
-```text
+```bash
 $name
 ```
 
 kemudian melakukan parameter expansion:
 
-```text
+```bash
 $name
  ↓
 Amir
@@ -588,14 +588,14 @@ Zsh memungkinkan modifier/flag digunakan di dalam parameter expansion.
 
 Contoh:
 
-```zsh
+```bash
 value="one two three"
 print -r -- "${(f)value}"
 ```
 
 Flag:
 
-```text
+```bash
 (f)
 ```
 
@@ -605,7 +605,7 @@ Jangan khawatir jika syntax tersebut terlihat asing.
 
 Justru ini salah satu tujuan Lesson 02:
 
-```text
+```bash
 Bash:
 ${parameter}
 
@@ -619,7 +619,7 @@ Namun detail semua flags **belum kita pelajari sekarang**.
 
 Itu akan menjadi inti:
 
-```text
+```bash
 03 — Parameter Expansion
 ```
 
@@ -629,7 +629,7 @@ Itu akan menjadi inti:
 
 Sekarang kita bisa memperbaiki mental model kita:
 
-```text
+```bash
 Zsh command
 │
 ├── parsing
@@ -661,7 +661,7 @@ Ini jauh lebih berguna daripada sekadar menghafalkan syntax.
 
 Karena seluruh bagian besar Zsh berikutnya bergantung pada pemahaman ini:
 
-```text
+```bash
 Zsh Language
       │
       ▼
@@ -680,7 +680,7 @@ Parameter Expansion
 
 Kemudian:
 
-```text
+```bash
 Parameter Expansion
       ↓
 Configuration
@@ -708,7 +708,7 @@ Karena kamu sudah mempelajari control flow di Bash, fokus kita di Zsh adalah mem
 
 Struktur dasarnya tetap familiar:
 
-```zsh
+```bash
 if [[ condition ]]; then
     command
 elif [[ condition ]]; then
@@ -720,7 +720,7 @@ fi
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 
 if [[ -n "$name" ]]; then
@@ -734,7 +734,7 @@ Yang penting dipahami: `if` tidak secara langsung memeriksa apakah sebuah kondis
 
 Shell melihat exit status dari command/conditional expression.
 
-```text
+```bash
 [[ -n "$name" ]]
         │
         ▼
@@ -747,13 +747,13 @@ Shell melihat exit status dari command/conditional expression.
 
 Jadi:
 
-```zsh
+```bash
 if [[ -n "$name" ]]; then
 ```
 
 secara konseptual berarti:
 
-```text
+```bash
 jalankan [[ ... ]]
         ↓
 status = 0 ?
@@ -769,7 +769,7 @@ Ini merupakan konsep yang sama dengan Bash dan penting untuk dipertahankan sebag
 
 Zsh juga memiliki `case`:
 
-```zsh
+```bash
 case "$value" in
     one)
         print "Satu"
@@ -785,7 +785,7 @@ esac
 
 Misalnya:
 
-```zsh
+```bash
 choice="start"
 
 case "$choice" in
@@ -806,7 +806,7 @@ esac
 
 Mental model:
 
-```text
+```bash
 case value
    │
    ├── pattern 1 → command
@@ -823,7 +823,7 @@ case value
 
 Bentuk yang paling penting dalam Zsh:
 
-```zsh
+```bash
 for item in one two three; do
     print "$item"
 done
@@ -831,7 +831,7 @@ done
 
 Hasilnya:
 
-```text
+```bash
 one
 two
 three
@@ -839,7 +839,7 @@ three
 
 Dengan array:
 
-```zsh
+```bash
 items=(one two three)
 
 for item in "${items[@]}"; do
@@ -853,7 +853,7 @@ Namun, karena Zsh memiliki model array yang lebih kuat, nanti kita akan membahas
 
 ### 4. `while`
 
-```zsh
+```bash
 count=1
 
 while (( count <= 3 )); do
@@ -864,7 +864,7 @@ done
 
 Hasil:
 
-```text
+```bash
 1
 2
 3
@@ -872,7 +872,7 @@ Hasil:
 
 Di sini ada dua mekanisme berbeda:
 
-```zsh
+```bash
 (( count <= 3 ))
 ```
 
@@ -880,7 +880,7 @@ adalah arithmetic conditional.
 
 Sedangkan:
 
-```zsh
+```bash
 (( count++ ))
 ```
 
@@ -894,7 +894,7 @@ Keduanya merupakan bagian penting dari bahasa shell, bukan command eksternal.
 
 Kebalikan konseptual `while`:
 
-```zsh
+```bash
 count=1
 
 until (( count > 3 )); do
@@ -905,7 +905,7 @@ done
 
 Mental model:
 
-```text
+```bash
 while condition
 → ulangi SELAMA condition true
 
@@ -925,7 +925,7 @@ Ada beberapa kelompok.
 
 ### String
 
-```zsh
+```bash
 [[ "$name" == "Amir" ]]
 [[ "$name" != "Amir" ]]
 [[ -n "$name" ]]
@@ -934,7 +934,7 @@ Ada beberapa kelompok.
 
 Maknanya:
 
-```text
+```bash
 -n → string tidak kosong
 -z → string kosong
 == → cocok
@@ -943,7 +943,7 @@ Maknanya:
 
 Contoh:
 
-```zsh
+```bash
 name="Amir"
 
 if [[ "$name" == "Amir" ]]; then
@@ -955,7 +955,7 @@ fi
 
 ### File
 
-```zsh
+```bash
 [[ -f "$file" ]]
 [[ -d "$directory" ]]
 [[ -r "$file" ]]
@@ -965,7 +965,7 @@ fi
 
 Contoh:
 
-```zsh
+```bash
 if [[ -f "$HOME/.zshrc" ]]; then
     print ".zshrc ditemukan"
 fi
@@ -973,7 +973,7 @@ fi
 
 Ini penting untuk scripting konfigurasi karena nantinya banyak konfigurasi Zsh akan melakukan pemeriksaan seperti:
 
-```zsh
+```bash
 if [[ -r "$file" ]]; then
     source "$file"
 fi
@@ -983,7 +983,7 @@ fi
 
 ### Logical operators
 
-```zsh
+```bash
 [[ condition1 && condition2 ]]
 [[ condition1 || condition2 ]]
 [[ ! condition ]]
@@ -991,7 +991,7 @@ fi
 
 Contoh:
 
-```zsh
+```bash
 if [[ -f "$file" && -r "$file" ]]; then
     print "File tersedia dan dapat dibaca"
 fi
@@ -999,7 +999,7 @@ fi
 
 Mental model:
 
-```text
+```bash
 condition1 ──┐
               ├── && → keduanya harus true
 condition2 ──┘
@@ -1007,7 +1007,7 @@ condition2 ──┘
 
 Sedangkan:
 
-```text
+```bash
 condition1 ──┐
               ├── || → salah satu cukup true
 condition2 ──┘
@@ -1019,7 +1019,7 @@ condition2 ──┘
 
 Zsh memiliki arithmetic evaluation yang sangat terintegrasi.
 
-```zsh
+```bash
 count=10
 
 (( count += 5 ))
@@ -1029,13 +1029,13 @@ print "$count"
 
 Hasil:
 
-```text
+```bash
 15
 ```
 
 Conditional:
 
-```zsh
+```bash
 if (( count > 10 )); then
     print "Lebih besar dari 10"
 fi
@@ -1043,7 +1043,7 @@ fi
 
 Tidak perlu:
 
-```zsh
+```bash
 if [[ "$count" -gt 10 ]]; then
 ```
 
@@ -1051,13 +1051,13 @@ walaupun bentuk tersebut juga dikenal dari shell scripting.
 
 Untuk arithmetic, gunakan:
 
-```zsh
+```bash
 (( ... ))
 ```
 
 Mental model:
 
-```text
+```bash
 [[ ... ]]
 → conditional expression
 
@@ -1067,7 +1067,7 @@ Mental model:
 
 Contoh:
 
-```zsh
+```bash
 a=10
 b=20
 
@@ -1084,41 +1084,41 @@ Ini harus benar-benar kuat sebelum masuk ke bagian berikutnya.
 
 Setiap command menghasilkan status.
 
-```zsh
+```bash
 command
 print "$?"
 ```
 
 Secara umum:
 
-```text
+```bash
 0      → berhasil / true
 non-0  → gagal / false
 ```
 
 Contoh:
 
-```zsh
+```bash
 true
 print "$?"
 ```
 
 menghasilkan:
 
-```text
+```bash
 0
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 false
 print "$?"
 ```
 
 menghasilkan:
 
-```text
+```bash
 1
 ```
 
@@ -1130,7 +1130,7 @@ Tetapi angka non-zero tidak selalu berarti hanya `1`. Program dapat menggunakan 
 
 Ini menjelaskan kembali:
 
-```zsh
+```bash
 if command; then
     ...
 fi
@@ -1138,7 +1138,7 @@ fi
 
 sebenarnya:
 
-```text
+```bash
 jalankan command
        ↓
 ambil exit status
@@ -1150,7 +1150,7 @@ ambil exit status
 
 Contoh:
 
-```zsh
+```bash
 if command -v git >/dev/null 2>&1; then
     print "Git tersedia"
 else
@@ -1168,13 +1168,13 @@ Operator ini bukan hanya operator logical di `[[ ... ]]`.
 
 Mereka juga dapat menghubungkan command:
 
-```zsh
+```bash
 command1 && command2
 ```
 
 Artinya:
 
-```text
+```bash
 jalankan command1
        ↓
 berhasil?
@@ -1184,19 +1184,19 @@ berhasil?
 
 Contoh:
 
-```zsh
+```bash
 mkdir /tmp/example && print "Berhasil"
 ```
 
 Sedangkan:
 
-```zsh
+```bash
 command1 || command2
 ```
 
 berarti:
 
-```text
+```bash
 jalankan command1
        ↓
 berhasil?
@@ -1206,7 +1206,7 @@ berhasil?
 
 Contoh:
 
-```zsh
+```bash
 cd /directory || print "Gagal berpindah directory"
 ```
 
@@ -1214,7 +1214,7 @@ Ini sangat sering muncul dalam konfigurasi Zsh.
 
 Tetapi jangan langsung menganggap:
 
-```zsh
+```bash
 command1 && command2 || command3
 ```
 
@@ -1228,7 +1228,7 @@ Untuk logika yang penting, `if` biasanya lebih jelas.
 
 Kita sudah mengenalkan function pada Lesson 01. Sekarang kita lihat dari sudut bahasa.
 
-```zsh
+```bash
 greet() {
     print "Hello"
 }
@@ -1236,13 +1236,13 @@ greet() {
 
 Memanggil:
 
-```zsh
+```bash
 greet
 ```
 
 Parameter positional:
 
-```zsh
+```bash
 greet() {
     print "Hello $1"
 }
@@ -1252,7 +1252,7 @@ greet "Amir"
 
 Di dalam function:
 
-```text
+```bash
 $1 → argument pertama
 $2 → argument kedua
 $# → jumlah argument
@@ -1260,7 +1260,7 @@ $# → jumlah argument
 
 Contoh:
 
-```zsh
+```bash
 greet() {
     print "Jumlah argument: $#"
     print "Argument pertama: $1"
@@ -1275,7 +1275,7 @@ Ini bagian yang mulai membedakan cara berpikir antara scripting sederhana dan sc
 
 Misalnya:
 
-```zsh
+```bash
 name="global"
 
 test_scope() {
@@ -1291,7 +1291,7 @@ Assignment biasa di dalam function tidak otomatis berarti "buat variable lokal".
 
 Untuk membuat parameter lokal, Zsh menggunakan `typeset`:
 
-```zsh
+```bash
 name="global"
 
 test_scope() {
@@ -1306,7 +1306,7 @@ print "$name"
 
 Mental model:
 
-```text
+```bash
 global scope
     │
     │ name="global"
@@ -1324,7 +1324,7 @@ Nanti ketika kita masuk ke konfigurasi modular, fungsi, plugin, dan autoload, pe
 
 Untuk sekarang cukup pegang:
 
-```zsh
+```bash
 typeset name="..."
 ```
 
@@ -1336,7 +1336,7 @@ dalam function digunakan ketika kita ingin mendeklarasikan parameter lokal denga
 
 Function dapat mengembalikan exit status:
 
-```zsh
+```bash
 check() {
     return 0
 }
@@ -1344,7 +1344,7 @@ check() {
 
 Kemudian:
 
-```zsh
+```bash
 if check; then
     print "Berhasil"
 fi
@@ -1352,14 +1352,14 @@ fi
 
 Atau:
 
-```zsh
+```bash
 check
 print "$?"
 ```
 
 Perhatikan perbedaan:
 
-```text
+```bash
 return
 → keluar dari function
 
@@ -1371,7 +1371,7 @@ Ini sangat penting untuk konfigurasi `.zshrc`.
 
 Misalnya sebuah function:
 
-```zsh
+```bash
 setup_feature() {
     if [[ ! -d "$HOME/.something" ]]; then
         return 1
@@ -1389,19 +1389,19 @@ setup_feature() {
 
 Zsh dapat menjalankan file dalam environment shell saat ini:
 
-```zsh
+```bash
 source "$HOME/.config/zsh/module.zsh"
 ```
 
 atau:
 
-```zsh
+```bash
 . "$HOME/.config/zsh/module.zsh"
 ```
 
 Perbedaan mental modelnya dengan menjalankan script:
 
-```text
+```bash
 source file
     ↓
 kode file masuk ke shell saat ini
@@ -1411,7 +1411,7 @@ variable/function/options dapat memengaruhi shell sekarang
 
 sedangkan:
 
-```zsh
+```bash
 zsh file.zsh
 ```
 
@@ -1425,7 +1425,7 @@ Ini akan menjadi sangat penting pada Lesson 09 — Startup Architecture dan Less
 
 Lesson 02 sudah mencakup:
 
-```text
+```bash
 02 — Zsh Language
 
 ✓ syntax dasar
@@ -1457,7 +1457,7 @@ Sekarang kita menyelesaikan bagian **advanced syntax** yang masih termasuk bahas
 
 Sebelumnya kita sudah menggunakan:
 
-```zsh
+```bash
 if [[ -f "$file" ]]; then
     print "File ditemukan"
 fi
@@ -1465,13 +1465,13 @@ fi
 
 Penting untuk membedakan:
 
-```zsh
+```bash
 [[ ... ]]
 ```
 
 dari:
 
-```zsh
+```bash
 [ ... ]
 ```
 
@@ -1481,7 +1481,7 @@ dan dari command eksternal.
 
 Contoh:
 
-```zsh
+```bash
 if [[ "$SHELL" == */zsh ]]; then
     print "Menggunakan Zsh"
 fi
@@ -1489,7 +1489,7 @@ fi
 
 Mental modelnya:
 
-```text
+```bash
 [[ expression ]]
        │
        ▼
@@ -1512,7 +1512,7 @@ Ini merupakan salah satu konstruksi yang akan sangat sering kamu lihat di konfig
 
 Zsh dapat mengelompokkan beberapa command:
 
-```zsh
+```bash
 {
     print "Satu"
     print "Dua"
@@ -1524,7 +1524,7 @@ Ketiganya dijalankan dalam shell yang sama.
 
 Grouping ini juga dapat dikombinasikan dengan redirection:
 
-```zsh
+```bash
 {
     print "Satu"
     print "Dua"
@@ -1533,7 +1533,7 @@ Grouping ini juga dapat dikombinasikan dengan redirection:
 
 Mental model:
 
-```text
+```bash
 {
     command 1
     command 2
@@ -1554,7 +1554,7 @@ Ini berguna ketika beberapa command harus diperlakukan sebagai satu unit.
 
 Berbeda dengan `{ ... }`, bentuk:
 
-```zsh
+```bash
 (
     command1
     command2
@@ -1565,7 +1565,7 @@ menjalankan kelompok tersebut dalam subshell.
 
 Contoh:
 
-```zsh
+```bash
 pwd
 
 (
@@ -1578,7 +1578,7 @@ pwd
 
 Secara konsep:
 
-```text
+```bash
 shell utama
     │
     ├── pwd
@@ -1597,7 +1597,7 @@ Ini sangat berguna untuk memahami konfigurasi yang menjalankan operasi sementara
 
 Perbedaan penting:
 
-```zsh
+```bash
 {
     ...
 }
@@ -1605,7 +1605,7 @@ Perbedaan penting:
 
 → grouping dalam shell saat ini.
 
-```zsh
+```bash
 (
     ...
 )
@@ -1621,7 +1621,7 @@ Zsh memiliki konstruksi function yang dapat dibuat dan langsung dijalankan.
 
 Bentuknya:
 
-```zsh
+```bash
 () {
     print "Hello"
 }
@@ -1631,7 +1631,7 @@ Kemudian block tersebut langsung dieksekusi.
 
 Contoh:
 
-```zsh
+```bash
 () {
     print "Current directory: $PWD"
 }
@@ -1639,7 +1639,7 @@ Contoh:
 
 Mental model:
 
-```text
+```bash
 function
    ↓
 dibuat
@@ -1665,19 +1665,19 @@ Karena itu sebuah fungsi atau plugin kadang ingin menjalankan dirinya dengan lin
 
 Salah satu mekanismenya adalah:
 
-```zsh
+```bash
 emulate
 ```
 
 Contoh:
 
-```zsh
+```bash
 emulate -L zsh
 ```
 
 Mental model:
 
-```text
+```bash
 emulate -L zsh
        │
        ├── gunakan perilaku Zsh
@@ -1688,7 +1688,7 @@ Ini bukan sekadar command biasa yang kebetulan bernama `emulate`. Ini adalah bag
 
 Contoh yang akan sering kamu temui ketika membaca kode Zsh:
 
-```zsh
+```bash
 some_function() {
     emulate -L zsh
 
@@ -1710,7 +1710,7 @@ Zsh mempunyai kemampuan untuk menonaktifkan filename generation untuk invocation
 
 Contoh:
 
-```zsh
+```bash
 noglob command '*.txt'
 ```
 
@@ -1720,7 +1720,7 @@ Dengan `noglob`, pattern tersebut diteruskan ke command tanpa globbing biasa.
 
 Mental model:
 
-```text
+```bash
 normal:
 
 command *.txt
@@ -1754,13 +1754,13 @@ Namun detail filename generation secara keseluruhan memang milik **Lesson 05**, 
 
 Zsh juga memiliki:
 
-```zsh
+```bash
 eval
 ```
 
 Misalnya:
 
-```zsh
+```bash
 command="print Hello"
 
 eval "$command"
@@ -1770,7 +1770,7 @@ eval "$command"
 
 Mental model:
 
-```text
+```bash
 string
   ↓
 eval
@@ -1786,7 +1786,7 @@ Karena itu `eval` harus digunakan dengan sangat hati-hati.
 
 Contoh konseptual:
 
-```zsh
+```bash
 value="$user_input"
 eval "$value"
 ```
@@ -1805,19 +1805,19 @@ Biasanya ada mekanisme yang lebih aman.
 
 Ketika membaca konfigurasi Zsh, kamu akan sering menemukan:
 
-```zsh
+```bash
 command git
 ```
 
 atau:
 
-```zsh
+```bash
 builtin cd
 ```
 
 atau:
 
-```zsh
+```bash
 functions
 ```
 
@@ -1825,7 +1825,7 @@ Masing-masing memiliki tujuan berbeda.
 
 ### `command`
 
-```zsh
+```bash
 command git
 ```
 
@@ -1833,7 +1833,7 @@ meminta shell menjalankan `git` sebagai command, dengan menghindari penggunaan f
 
 Misalnya:
 
-```zsh
+```bash
 git() {
     print "custom git"
 }
@@ -1841,7 +1841,7 @@ git() {
 
 Kemudian:
 
-```zsh
+```bash
 git
 ```
 
@@ -1849,7 +1849,7 @@ akan memanggil function tersebut.
 
 Sedangkan:
 
-```zsh
+```bash
 command git
 ```
 
@@ -1861,7 +1861,7 @@ Ini sangat relevan ketika membuat wrapper function.
 
 ### `builtin`
 
-```zsh
+```bash
 builtin cd /tmp
 ```
 
@@ -1869,7 +1869,7 @@ secara eksplisit meminta builtin `cd`.
 
 Ini berguna ketika terdapat function dengan nama yang sama:
 
-```zsh
+```bash
 cd() {
     print "custom cd"
 }
@@ -1877,7 +1877,7 @@ cd() {
 
 Kemudian:
 
-```zsh
+```bash
 builtin cd /tmp
 ```
 
@@ -1889,19 +1889,19 @@ memanggil builtin asli.
 
 Zsh mempunyai mekanisme untuk melihat function yang didefinisikan:
 
-```zsh
+```bash
 functions
 ```
 
 Untuk melihat definisi function tertentu:
 
-```zsh
+```bash
 functions my_function
 ```
 
 Dan sebelumnya kita juga telah mengenal:
 
-```zsh
+```bash
 whence -f my_function
 ```
 
@@ -1913,7 +1913,7 @@ Ini akan sangat berguna nanti ketika kita mulai **membaca plugin Zsh**.
 
 Kita sudah beberapa kali menyebut:
 
-```zsh
+```bash
 autoload -Uz function_name
 ```
 
@@ -1921,7 +1921,7 @@ Sekarang kita perlu memasukkannya ke bahasa Zsh, tetapi belum membahas sistem au
 
 Konsep dasarnya:
 
-```text
+```bash
 function definition
        │
        ▼
@@ -1936,7 +1936,7 @@ function tersedia ketika dibutuhkan
 
 Contoh yang sangat terkenal:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
@@ -1953,19 +1953,19 @@ Kamu sudah memiliki dasar Bash mengenai `trap`, sehingga tidak perlu mengulang k
 
 Dalam Zsh juga terdapat:
 
-```zsh
+```bash
 trap 'command' SIGNAL
 ```
 
 Contoh:
 
-```zsh
+```bash
 trap 'print "Received INT"' INT
 ```
 
 Konsepnya tetap:
 
-```text
+```bash
 signal
    ↓
 trap
@@ -1977,13 +1977,13 @@ Namun Zsh mempunyai mekanisme lain yang lebih khas untuk konfigurasi interaktif,
 
 Hooks tersebut baru akan kita pelajari pada:
 
-```text
+```bash
 Lesson 15 — Hooks
 ```
 
 Jadi jangan mencampurkan `trap` dengan hook Zsh.
 
-```text
+```bash
 trap
 └── mekanisme signal
 
@@ -2001,7 +2001,7 @@ Zsh juga mempunyai mekanisme option yang memengaruhi bagaimana shell menangani s
 
 Misalnya:
 
-```zsh
+```bash
 setopt ERR_EXIT
 ```
 
@@ -2013,7 +2013,7 @@ Karena itu kita **tidak akan menjadikan `set -e`/`ERR_EXIT` sebagai fokus Lesson
 
 Yang perlu dibawa dari sini:
 
-```text
+```bash
 exit status
     ↓
 control flow
@@ -2032,7 +2032,7 @@ Pembahasan option secara sistematis tetap berada di:
 
 Sekarang kumpulkan seluruh bagian Lesson 02 yang telah kita pelajari.
 
-```text
+```bash
 ZSH LANGUAGE
 │
 ├── Syntax
@@ -2098,7 +2098,7 @@ ZSH LANGUAGE
 
 Yang **sengaja belum kita dalami**:
 
-```text
+```bash
 Parameter Expansion       → Lesson 03
 Arrays                    → Lesson 04
 Glob                      → Lesson 05
@@ -2120,7 +2120,7 @@ Secara materi inti, **Lesson 02 — Zsh Language sekarang sudah selesai**.
 
 Kita sudah bergerak dari:
 
-```text
+```bash
 Bash foundation
       ↓
 Lesson 01
@@ -2137,7 +2137,7 @@ Langkah berikutnya sesuai kurikulum adalah:
 
 Dan di sinilah kita mulai membedah salah satu bagian paling penting dari Zsh, bukan sekadar `${name}`, tetapi bagaimana Zsh dapat melakukan manipulasi data melalui expansion:
 
-```zsh
+```bash
 ${parameter}
 ${parameter:-default}
 ${parameter##pattern}

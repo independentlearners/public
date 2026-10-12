@@ -4,7 +4,7 @@ Pada pelajaran ini, kita mempelajari bagaimana Zsh dapat memuat modul untuk meny
 
 Mental model:
 
-```
+```bash
 Zsh
  │
  ├── Fitur bawaan
@@ -39,13 +39,13 @@ Plugin dapat menggunakan modul, tetapi tidak semua plugin membutuhkan modul. Seb
 
 Periksa bantuan yang tersedia di sistem Anda:
 
-```
+```bash
 man zshmodules
 ```
 
 Untuk mengetahui apakah `zmodload` tersedia:
 
-```
+```bash
 whence -v zmodload
 ```
 
@@ -55,7 +55,7 @@ Karena `zmodload` merupakan builtin Zsh, Anda tidak perlu memasang executable te
 
 Jalankan:
 
-```
+```bash
 zmodload
 ```
 
@@ -65,7 +65,7 @@ Daftar aktualnya bergantung pada konfigurasi dan kebutuhan shell. Jangan mengang
 
 Untuk memeriksa dokumentasi modul, gunakan:
 
-```
+```bash
 man zshmodules
 ```
 
@@ -77,7 +77,7 @@ Salah satu modul yang dapat Anda pelajari adalah `zsh/datetime`.
 
 Coba di sesi Zsh:
 
-```
+```bash
 zmodload zsh/datetime
 ```
 
@@ -85,7 +85,7 @@ Modul ini menyediakan parameter waktu seperti `$EPOCHSECONDS` dan `$EPOCHREALTIM
 
 Setelah modul berhasil dimuat, coba:
 
-```
+```bash
 print -r -- "$EPOCHSECONDS"
 ```
 
@@ -93,7 +93,7 @@ Nilainya menunjukkan waktu Unix dalam satuan detik.
 
 Untuk melihat waktu dengan presisi pecahan detik:
 
-```
+```bash
 print -r -- "$EPOCHREALTIME"
 ```
 
@@ -115,13 +115,13 @@ Contoh lain adalah `zsh/parameter`, yang menyediakan akses lebih luas terhadap i
 
 Coba:
 
-```
+```bash
 zmodload zsh/parameter
 ```
 
 Kemudian periksa salah satu parameter yang tersedia:
 
-```
+```bash
 print -r -- "$ZSH_VERSION"
 ```
 
@@ -147,7 +147,7 @@ Jangan menambahkan semua `zmodload` yang Anda temukan ke `zshrc`. Konfigurasi ya
 
 Jalankan perintah berikut secara berurutan:
 
-```
+```bash
 # Periksa versi Zsh.
 print -r -- "$ZSH_VERSION"
 
@@ -170,7 +170,7 @@ Jika terjadi kesalahan saat memuat modul, jangan langsung menyimpulkan bahwa sin
 
 Hal utama dari pelajaran ini adalah memahami hubungan antara modul dan fitur yang disediakan Zsh:
 
-```
+```bash
 zmodload
    ↓
 Memuat modul

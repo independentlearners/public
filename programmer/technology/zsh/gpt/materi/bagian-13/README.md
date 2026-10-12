@@ -14,7 +14,7 @@ Materi ini berfokus pada empat hal: lokasi penyimpanan, batas jumlah entri, opsi
 
 Contoh konfigurasi:
 
-```
+```bash
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
@@ -34,7 +34,7 @@ Zsh menyediakan opsi bawaan yang mengubah cara entri history dicatat dan disimpa
 
 Contoh:
 
-```
+```bash
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
 setopt APPEND_HISTORY
@@ -50,7 +50,7 @@ Perhatikan bahwa `HIST_IGNORE_SPACE` bukan mekanisme keamanan. Perintah yang tid
 
 Jika Anda membuka beberapa terminal Zsh, setiap terminal dapat memiliki sesi history sendiri. Opsi berikut mengubah cara sesi-sesi itu berbagi riwayat.
 
-```
+```bash
 setopt SHARE_HISTORY
 ```
 
@@ -58,7 +58,7 @@ setopt SHARE_HISTORY
 
 Opsi terkait lainnya:
 
-```
+```bash
 setopt INC_APPEND_HISTORY
 ```
 
@@ -70,19 +70,19 @@ Jangan mengaktifkan semua opsi history secara acak. Tentukan perilaku yang diing
 
 Gunakan perintah berikut untuk melihat riwayat perintah:
 
-```
+```bash
 fc -l -10
 ```
 
 Ini menampilkan sepuluh entri history terakhir beserta nomor entri. Anda juga dapat menggunakan:
 
-```
+```bash
 history
 ```
 
 History juga mendukung ekspansi perintah:
 
-```
+```bash
 !!
 ```
 
@@ -92,7 +92,7 @@ History juga mendukung ekspansi perintah:
 
 Karena konfigurasi Anda menggunakan struktur modular, pengaturan history dapat ditempatkan dalam `~/.config/zsh/history.zsh`:
 
-```
+```bash
 # Lokasi dan kapasitas history.
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
@@ -106,7 +106,7 @@ setopt SHARE_HISTORY
 
 Pastikan file ini dimuat dari `zshrc`:
 
-```
+```bash
 if [[ -r "$HOME/.config/zsh/history.zsh" ]]; then
     source "$HOME/.config/zsh/history.zsh"
 fi
@@ -118,7 +118,7 @@ fi
 
 Setelah memuat pengaturan, periksa nilainya:
 
-```
+```bash
 print -r -- "$HISTFILE"
 print -r -- "$HISTSIZE"
 print -r -- "$SAVEHIST"

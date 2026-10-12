@@ -15,7 +15,7 @@ Sebelum masuk ke ZLE, Anda harus paham dulu perbedaan fundamental ini.
 
 Shell interaktif adalah shell yang membaca perintah dari terminal dan menampilkan prompt.
 
-```zsh
+```bash
 [[ -o INTERACTIVE ]] && echo "ini shell interaktif"
 ```
 
@@ -32,7 +32,7 @@ Penjelasan kata demi kata:
 
 Shell non-interaktif adalah shell yang menjalankan script. Tidak ada prompt, tidak ada input keyboard.
 
-```zsh
+```bash
 zsh -c 'echo hello'
 ```
 
@@ -57,7 +57,7 @@ History adalah catatan perintah yang pernah Anda jalankan. Di Zsh, history dikel
 
 ### Variabel History
 
-```zsh
+```bash
 HISTFILE=~/.zsh_history
 ```
 
@@ -67,7 +67,7 @@ Penjelasan kata demi kata:
 - `=` — operator assignment.
 - `~/.zsh_history` — path. Tanda `~` akan diekspansi menjadi `$HOME` karena berada setelah `=` dalam konteks assignment.
 
-```zsh
+```bash
 HISTSIZE=10000
 ```
 
@@ -76,7 +76,7 @@ Penjelasan:
 - `HISTSIZE` — jumlah perintah yang disimpan di memori selama sesi berjalan.
 - `10000` — angka. Semakin besar, semakin banyak perintah tersimpan di memori.
 
-```zsh
+```bash
 SAVEHIST=10000
 ```
 
@@ -87,7 +87,7 @@ Penjelasan:
 
 ### Perintah History
 
-```zsh
+```bash
 history
 ```
 
@@ -96,7 +96,7 @@ Penjelasan:
 - `history` — builtin Zsh yang menampilkan daftar history dengan nomor urut.
 - Output berupa baris bernomor, lalu perintah.
 
-```zsh
+```bash
 history 10
 ```
 
@@ -105,7 +105,7 @@ Penjelasan:
 - `10` — jumlah baris terakhir yang ditampilkan.
 - Output: 10 perintah terakhir.
 
-```zsh
+```bash
 fc -l -10
 ```
 
@@ -116,7 +116,7 @@ Penjelasan:
 - `-10` — 10 perintah terakhir.
 - Ini adalah cara POSIX untuk melihat history.
 
-```zsh
+```bash
 fc -l 100 110
 ```
 
@@ -128,7 +128,7 @@ Penjelasan:
 
 ### Memanggil Ulang Perintah
 
-```zsh
+```bash
 !!
 ```
 
@@ -138,7 +138,7 @@ Penjelasan:
 - Contoh: jika perintah terakhir adalah `ls -la`, maka `!!` akan menjalankan `ls -la` lagi.
 - Sering digunakan sebagai `sudo !!` jika perintah sebelumnya butuh sudo.
 
-```zsh
+```bash
 !$ 
 ```
 
@@ -147,7 +147,7 @@ Penjelasan:
 - `!$` — argumen terakhir dari perintah sebelumnya.
 - Contoh: `mkdir proyek` lalu `cd !$` akan menjalankan `cd proyek`.
 
-```zsh
+```bash
 !100
 ```
 
@@ -155,7 +155,7 @@ Penjelasan:
 
 - `!100` — jalankan perintah dengan nomor history 100.
 
-```zsh
+```bash
 !ls
 ```
 
@@ -165,7 +165,7 @@ Penjelasan:
 
 ### Search History Interaktif
 
-```text
+```bash
 Ctrl+R
 ```
 
@@ -182,7 +182,7 @@ Ini adalah fitur ZLE yang akan kita bahas lebih dalam.
 
 Beberapa option history yang penting.
 
-```zsh
+```bash
 setopt HIST_IGNORE_DUPS
 ```
 
@@ -191,7 +191,7 @@ Penjelasan:
 - `HIST_IGNORE_DUPS` — tidak menyimpan duplikat berturut-turut.
 - Jika Anda menjalankan `ls` dua kali, hanya satu yang tersimpan.
 
-```zsh
+```bash
 setopt HIST_IGNORE_ALL_DUPS
 ```
 
@@ -200,7 +200,7 @@ Penjelasan:
 - Menghapus semua duplikat, bukan hanya berturut-turut.
 - Jika Anda pernah menjalankan `ls` kapan saja, maka `ls` baru akan dihapus dari history.
 
-```zsh
+```bash
 setopt HIST_IGNORE_SPACE
 ```
 
@@ -209,7 +209,7 @@ Penjelasan:
 - Perintah yang dimulai dengan spasi tidak disimpan ke history.
 - Berguna untuk perintah yang mengandung data sensitif.
 
-```zsh
+```bash
 setopt HIST_REDUCE_BLANKS
 ```
 
@@ -218,7 +218,7 @@ Penjelasan:
 - Menghapus spasi berlebih sebelum menyimpan.
 - `ls    -la` akan disimpan sebagai `ls -la`.
 
-```zsh
+```bash
 setopt HIST_VERIFY
 ```
 
@@ -226,7 +226,7 @@ Penjelasan:
 
 - Setelah ekspansi history (misalnya `!!`), perintah tidak langsung dijalankan. Anda diberi kesempatan untuk melihat dan mengeditnya.
 
-```zsh
+```bash
 setopt SHARE_HISTORY
 ```
 
@@ -235,7 +235,7 @@ Penjelasan:
 - Berbagi history antar sesi Zsh yang sedang berjalan.
 - Sesi terminal baru akan melihat perintah dari sesi lama.
 
-```zsh
+```bash
 setopt INC_APPEND_HISTORY
 ```
 
@@ -244,7 +244,7 @@ Penjelasan:
 - Menambahkan perintah ke file history segera setelah dijalankan, bukan saat shell keluar.
 - Berguna jika Anda sering membuka banyak terminal.
 
-```zsh
+```bash
 setopt EXTENDED_HISTORY
 ```
 
@@ -266,7 +266,7 @@ Di Bash, completion diatur oleh `bash-completion` dan fungsi-fungsi yang didafta
 
 Untuk mengaktifkan completion, Anda harus menjalankan:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
@@ -284,7 +284,7 @@ Penjelasan kata demi kata:
 
 `fpath` adalah array direktori tempat Zsh mencari fungsi autoload, termasuk fungsi completion.
 
-```zsh
+```bash
 print -l $fpath
 ```
 
@@ -296,7 +296,7 @@ Penjelasan:
 
 Secara default, `$fpath` berisi direktori sistem Zsh, misalnya `/usr/share/zsh/functions/Completion`. Jika Anda ingin menambah fungsi completion sendiri, tambahkan direktori ke `$fpath` sebelum `compinit`:
 
-```zsh
+```bash
 fpath=(~/.zsh/completion $fpath)
 autoload -Uz compinit
 compinit
@@ -311,7 +311,7 @@ Penjelasan:
 
 Saat pertama kali `compinit` dijalankan, Zsh membuat file:
 
-```text
+```bash
 ~/.zcompdump
 ```
 
@@ -325,7 +325,7 @@ Penjelasan:
 
 Setelah `compinit` aktif, coba:
 
-```zsh
+```bash
 ls /u<Tab>
 ```
 
@@ -335,7 +335,7 @@ Penjelasan:
 - `<Tab>` — tekan Tab.
 - Zsh akan melengkapi menjadi `/usr/` jika hanya itu yang cocok, atau menampilkan pilihan jika ada beberapa.
 
-```zsh
+```bash
 git <Tab>
 ```
 
@@ -348,7 +348,7 @@ Completion bekerja karena ada fungsi completion untuk `git`. Fungsi ini disediak
 
 ### Menu Completion
 
-```text
+```bash
 Tab Tab
 ```
 
@@ -362,7 +362,7 @@ Penjelasan:
 
 Beberapa option penting untuk completion.
 
-```zsh
+```bash
 setopt AUTO_MENU
 ```
 
@@ -370,7 +370,7 @@ Penjelasan:
 
 - Setelah Tab pertama, menu completion muncul otomatis tanpa perlu Tab kedua.
 
-```zsh
+```bash
 setopt AUTO_LIST
 ```
 
@@ -378,7 +378,7 @@ Penjelasan:
 
 - Menampilkan daftar kandidat saat Tab ambigu.
 
-```zsh
+```bash
 setopt COMPLETE_IN_WORD
 ```
 
@@ -386,7 +386,7 @@ Penjelasan:
 
 - Completion bekerja di tengah kata, bukan hanya di akhir.
 
-```zsh
+```bash
 setopt ALWAYS_TO_END
 ```
 
@@ -394,7 +394,7 @@ Penjelasan:
 
 - Kursor dipindah ke akhir kata setelah completion.
 
-```zsh
+```bash
 setopt MENU_COMPLETE
 ```
 
@@ -416,7 +416,7 @@ ZLE memiliki:
 
 Mental model:
 
-```text
+```bash
 Keyboard
    ↓
 Keymap
@@ -430,7 +430,7 @@ Aksi (modifikasi buffer, kursor, history, dsb)
 
 Buffer adalah isi command line saat ini.
 
-```zsh
+```bash
 echo $BUFFER
 ```
 
@@ -441,7 +441,7 @@ Penjelasan:
 
 ### CURSOR
 
-```zsh
+```bash
 echo $CURSOR
 ```
 
@@ -459,7 +459,7 @@ Penjelasan:
 
 ### Melihat Keymap
 
-```zsh
+```bash
 bindkey -l
 ```
 
@@ -471,7 +471,7 @@ Penjelasan:
 
 ### Melihat Binding
 
-```zsh
+```bash
 bindkey -M emacs
 ```
 
@@ -480,7 +480,7 @@ Penjelasan:
 - `-M emacs` — tampilkan binding di keymap `emacs`.
 - Output: daftar tombol dan widget yang terikat.
 
-```zsh
+```bash
 bindkey -M viins
 ```
 
@@ -490,7 +490,7 @@ Penjelasan:
 
 ### Memilih Keymap
 
-```zsh
+```bash
 bindkey -e
 ```
 
@@ -499,7 +499,7 @@ Penjelasan:
 - `-e` — pilih keymap `emacs`.
 - Ini adalah default Zsh.
 
-```zsh
+```bash
 bindkey -v
 ```
 
@@ -510,7 +510,7 @@ Penjelasan:
 
 ### Membuat Binding
 
-```zsh
+```bash
 bindkey '^G' my_widget
 ```
 
@@ -532,7 +532,7 @@ Cara menulis tombol:
 
 Contoh:
 
-```zsh
+```bash
 bindkey '^[[A' up-line-or-history
 ```
 
@@ -541,7 +541,7 @@ Penjelasan:
 - `^[[A` — escape sequence untuk panah atas.
 - `up-line-or-history` — widget yang memindahkan kursor ke baris atas history.
 
-```zsh
+```bash
 bindkey '^R' history-incremental-search-backward
 ```
 
@@ -561,7 +561,7 @@ Widget adalah fungsi ZLE yang bisa dipanggil oleh keymap. Ada dua jenis:
 
 ### Membuat Widget Kustom
 
-```zsh
+```bash
 my_widget() {
     BUFFER="echo hello"
     CURSOR=${#BUFFER}
@@ -585,7 +585,7 @@ Setelah ini, menekan `Ctrl+G` di prompt akan mengubah baris menjadi `echo hello`
 
 ### Widget Bawaan Penting
 
-```text
+```bash
 accept-line
 ```
 
@@ -593,7 +593,7 @@ Penjelasan:
 
 - Menjalankan perintah di buffer. Biasanya terikat ke `Enter`.
 
-```text
+```bash
 self-insert
 ```
 
@@ -601,7 +601,7 @@ Penjelasan:
 
 - Menyisipkan karakter yang ditekan ke buffer.
 
-```text
+```bash
 backward-delete-char
 ```
 
@@ -609,7 +609,7 @@ Penjelasan:
 
 - Menghapus karakter sebelum kursor.
 
-```text
+```bash
 history-incremental-search-backward
 ```
 
@@ -617,7 +617,7 @@ Penjelasan:
 
 - Pencarian history mundur. Terikat ke `Ctrl+R`.
 
-```text
+```bash
 up-line-or-history
 ```
 
@@ -625,7 +625,7 @@ Penjelasan:
 
 - Jika kursor di baris pertama, pindah ke history sebelumnya. Jika tidak, pindah baris.
 
-```text
+```bash
 down-line-or-history
 ```
 
@@ -633,7 +633,7 @@ Penjelasan:
 
 - Kebalikan dari `up-line-or-history`.
 
-```text
+```bash
 beginning-of-line
 ```
 
@@ -641,7 +641,7 @@ Penjelasan:
 
 - Pindahkan kursor ke awal baris. Biasanya `Ctrl+A`.
 
-```text
+```bash
 end-of-line
 ```
 
@@ -649,7 +649,7 @@ Penjelasan:
 
 - Pindahkan kursor ke akhir baris. Biasanya `Ctrl+E`.
 
-```text
+```bash
 kill-line
 ```
 
@@ -657,7 +657,7 @@ Penjelasan:
 
 - Hapus dari kursor ke akhir baris. Biasanya `Ctrl+K`.
 
-```text
+```bash
 kill-whole-line
 ```
 
@@ -665,7 +665,7 @@ Penjelasan:
 
 - Hapus seluruh baris.
 
-```text
+```bash
 undo
 ```
 
@@ -673,7 +673,7 @@ Penjelasan:
 
 - Urungkan perubahan di buffer. Biasanya `Ctrl+_` atau `Ctrl+Z` di Zsh.
 
-```text
+```bash
 redisplay
 ```
 
@@ -681,7 +681,7 @@ Penjelasan:
 
 - Tampilkan ulang buffer.
 
-```text
+```bash
 clear-screen
 ```
 
@@ -699,7 +699,7 @@ Hook adalah fungsi yang dipanggil secara otomatis pada momen tertentu. Di Zsh, a
 
 `preexec` dipanggil sebelum perintah dijalankan.
 
-```zsh
+```bash
 preexec() {
     echo "Menjalankan: $1"
 }
@@ -718,7 +718,7 @@ Berguna untuk logging, timer, atau notifikasi.
 
 `precmd` dipanggil sebelum prompt ditampilkan.
 
-```zsh
+```bash
 precmd() {
     echo "Siap menerima perintah"
 }
@@ -735,7 +735,7 @@ Berguna untuk memperbarui prompt, mengecek status git, atau menampilkan informas
 
 `chpwd` dipanggil setiap kali direktori berubah.
 
-```zsh
+```bash
 chpwd() {
     echo "Direktori sekarang: $PWD"
 }
@@ -753,7 +753,7 @@ Berguna untuk menampilkan isi direktori, mengubah prompt, atau mengaktifkan virt
 
 `zshaddhistory` dipanggil sebelum perintah ditambahkan ke history.
 
-```zsh
+```bash
 zshaddhistory() {
     return 0
 }
@@ -772,7 +772,7 @@ Berguna untuk memfilter perintah sensitif dari history.
 
 `period` dipanggil secara periodik jika Anda mengaktifkan:
 
-```zsh
+```bash
 TMOUT=60
 ```
 
@@ -782,7 +782,7 @@ Penjelasan:
 - `60` — 60 detik.
 - Setelah 60 detik idle, hook `period` dipanggil.
 
-```zsh
+```bash
 period() {
     echo "Sudah 60 detik idle"
 }
@@ -801,7 +801,7 @@ Autoload adalah mekanisme untuk memuat fungsi dari file saat pertama kali dipang
 
 ### Cara Kerja
 
-```zsh
+```bash
 autoload -Uz myfunc
 ```
 
@@ -823,7 +823,7 @@ Setelah ini, Zsh tahu bahwa `myfunc` adalah fungsi yang belum dimuat. Ketika And
 
 File `myfunc` **tidak** berisi:
 
-```zsh
+```bash
 myfunc() {
     echo "hello"
 }
@@ -831,7 +831,7 @@ myfunc() {
 
 File `myfunc` berisi **isi fungsi** langsung:
 
-```zsh
+```bash
 echo "hello"
 ```
 
@@ -839,7 +839,7 @@ Ini adalah perbedaan penting. File autoload adalah *tubuh fungsi*, bukan definis
 
 Jika fungsi Anda membutuhkan variabel lokal, Anda bisa menulis:
 
-```zsh
+```bash
 local name="Cendekiawan"
 echo "$name"
 ```
@@ -850,7 +850,7 @@ Zsh akan memperlakukan `local` sebagai deklarasi variabel lokal dalam konteks fu
 
 Autoload paling sering digunakan untuk completion. Setiap fungsi completion Zsh adalah file autoload di `$fpath`. Contoh:
 
-```text
+```bash
 /usr/share/zsh/functions/Completion/Unix/_git
 ```
 
@@ -863,7 +863,7 @@ Konvensi nama: fungsi completion diawali underscore, misalnya `_git`, `_ls`, `_d
 
 ### Melihat Fungsi yang Di-autoload
 
-```zsh
+```bash
 print -l $fpath
 ```
 
@@ -872,7 +872,7 @@ Penjelasan:
 - Menampilkan semua direktori di `$fpath`.
 - Setiap direktori berisi file autoload.
 
-```zsh
+```bash
 ls /usr/share/zsh/functions/Completion/Unix/
 ```
 
@@ -896,7 +896,7 @@ Membuat widget yang:
 
 ### Langkah 1: Definisikan Fungsi
 
-```zsh
+```bash
 my_widget() {
     BUFFER="echo hello"
     CURSOR=${#BUFFER}
@@ -913,7 +913,7 @@ Penjelasan:
 
 ### Langkah 2: Daftarkan sebagai Widget
 
-```zsh
+```bash
 zle -N my_widget
 ```
 
@@ -927,7 +927,7 @@ Tanpa langkah ini, `bindkey` akan gagal karena `my_widget` bukan widget yang dik
 
 ### Langkah 3: Ikat ke Tombol
 
-```zsh
+```bash
 bindkey '^G' my_widget
 ```
 
@@ -943,7 +943,7 @@ Tekan `Ctrl+G` di prompt. Buffer akan berubah menjadi `echo hello` dan kursor di
 
 ### Variasi: Widget dengan Input
 
-```zsh
+```bash
 my_widget() {
     local cmd
     cmd=$(date)
@@ -961,7 +961,7 @@ Penjelasan:
 
 ### Variasi: Widget yang Menjalankan Perintah
 
-```zsh
+```bash
 my_widget() {
     zle accept-line
 }
@@ -974,7 +974,7 @@ Penjelasan:
 
 Untuk menjalankan perintah sebelum `accept-line`:
 
-```zsh
+```bash
 my_widget() {
     echo "Widget dipanggil" >&2
     zle accept-line
@@ -988,7 +988,7 @@ Penjelasan:
 
 ### Variasi: Widget yang Memodifikasi Buffer
 
-```zsh
+```bash
 my_widget() {
     if [[ "$BUFFER" == ls* ]]; then
         BUFFER="ls -la ${BUFFER#ls }"

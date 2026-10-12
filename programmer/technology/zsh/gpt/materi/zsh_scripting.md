@@ -7,7 +7,7 @@ Kurikulum ini mengikuti jalur yang sudah kita tetapkan sebelumnya: fondasi Bash 
 
 ## Kurikulum Zsh — Beginner → Zsh Configuration Engineer
 
-```text
+```bash
 ZSH SCRIPTING
 │
 ├── 00. Persiapan & Mental Model
@@ -108,7 +108,7 @@ ZSH SCRIPTING
 
 Ini bukan sekadar daftar topik. Setiap tahap akan mempunyai pola:
 
-```text
+```bash
 TEORI
   ↓
 SINTAKS
@@ -134,7 +134,7 @@ Sebelum menyentuh konfigurasi, kita pastikan Anda memahami apa sebenarnya yang s
 
 Materi:
 
-```text
+```bash
 shell
 ├── shell sebagai interpreter
 ├── interactive shell
@@ -148,7 +148,7 @@ shell
 
 Kemudian:
 
-```text
+```bash
 Bash
    │
    └── shell scripting
@@ -173,7 +173,7 @@ Kita tidak mengulang seluruh Bash.
 
 Kita membandingkan:
 
-```text
+```bash
 Bash                    Zsh
 ────────────────────────────────
 variable                variable
@@ -203,7 +203,7 @@ Kita mulai benar-benar menulis Zsh.
 
 Urutannya:
 
-```text
+```bash
 02.1 Parameters
 02.2 Quoting
 02.3 Expansion
@@ -219,7 +219,7 @@ Urutannya:
 
 Contoh awal:
 
-```zsh
+```bash
 name="Cendekiawan"
 
 print -r -- "$name"
@@ -227,7 +227,7 @@ print -r -- "$name"
 
 Kemudian secara bertahap kita akan melihat perbedaan antara:
 
-```zsh
+```bash
 $name
 "$name"
 ${name}
@@ -244,7 +244,7 @@ Ini akan menjadi salah satu tahap paling penting.
 
 Kita akan mempelajari:
 
-```zsh
+```bash
 ${name}
 ${name:u}
 ${name:l}
@@ -260,7 +260,7 @@ Tujuannya bukan menghafal syntax.
 
 Kita akan membangun mental model:
 
-```text
+```bash
 parameter
     ↓
 parameter expansion
@@ -282,13 +282,13 @@ Zsh sangat kuat pada array.
 
 Kita pelajari:
 
-```zsh
+```bash
 files=(one two three)
 ```
 
 kemudian:
 
-```text
+```bash
 indexed array
 associative array
 array slicing
@@ -299,7 +299,7 @@ array iteration
 
 Termasuk:
 
-```zsh
+```bash
 ${files[1]}
 ${files[1,2]}
 ${files[@]}
@@ -308,7 +308,7 @@ ${#files}
 
 dan:
 
-```zsh
+```bash
 typeset -A config
 ```
 
@@ -324,19 +324,19 @@ Ini salah satu kekuatan besar Zsh.
 
 Kita mulai dari:
 
-```zsh
+```bash
 *.txt
 ```
 
 kemudian:
 
-```zsh
+```bash
 **/*.lua
 ```
 
 hingga extended glob:
 
-```zsh
+```bash
 ^*.bak
 ```
 
@@ -344,7 +344,7 @@ dan berbagai qualifier/filter glob.
 
 Kita akan belajar membedakan:
 
-```text
+```bash
 parameter expansion
         vs
 filename generation
@@ -362,14 +362,14 @@ Ini adalah milestone pertama yang sangat besar.
 
 Kita masuk ke:
 
-```zsh
+```bash
 setopt
 unsetopt
 ```
 
 dan memahami:
 
-```text
+```bash
 option
 option name
 option flag
@@ -380,7 +380,7 @@ emulation
 
 Contoh:
 
-```zsh
+```bash
 setopt AUTO_CD
 setopt EXTENDED_GLOB
 setopt HIST_IGNORE_DUPS
@@ -400,7 +400,7 @@ Kita mulai mengurangi ketergantungan pada program eksternal ketika Zsh sudah men
 
 Misalnya memahami:
 
-```text
+```bash
 print
 typeset
 autoload
@@ -429,7 +429,7 @@ Targetnya:
 
 Dari function biasa:
 
-```zsh
+```bash
 my_function() {
     print "hello"
 }
@@ -437,7 +437,7 @@ my_function() {
 
 menuju:
 
-```text
+```bash
 function
     ↓
 autoload
@@ -459,7 +459,7 @@ Ini sangat penting untuk tujuan Anda karena inti proyek Anda adalah konfigurasi 
 
 Kita akan membedah:
 
-```text
+```bash
 /etc/zsh/zshenv
         ↓
 ~/.zshenv
@@ -483,13 +483,13 @@ Urutan aktual bergantung pada jenis shell; ArchWiki mendokumentasikan startup/lo
 
 Kita juga akan mempelajari:
 
-```zsh
+```bash
 $ZDOTDIR
 ```
 
 dan bagaimana menempatkan konfigurasi Zsh di:
 
-```text
+```bash
 ~/.config/zsh/
 ```
 
@@ -503,7 +503,7 @@ Ini sangat relevan dengan dotfiles Anda.
 
 Kita pelajari hubungan:
 
-```text
+```bash
 shell variable
 environment variable
 PATH
@@ -521,7 +521,7 @@ Ini akan menjadi contoh nyata bagaimana Zsh tidak selalu memperlakukan sesuatu s
 
 Kita masuk ke:
 
-```text
+```bash
 HISTFILE
 HISTSIZE
 SAVEHIST
@@ -542,7 +542,7 @@ Bukan langsung Starship.
 
 Kita terlebih dahulu memahami prompt native Zsh:
 
-```text
+```bash
 PS1
 PROMPT
 RPROMPT
@@ -552,7 +552,7 @@ prompt themes
 
 Kemudian baru:
 
-```text
+```bash
 Starship
 Powerlevel10k
 custom prompt
@@ -568,7 +568,7 @@ Ini milestone besar kedua.
 
 Kita akan membedah:
 
-```text
+```bash
 compinit
     ↓
 completion system
@@ -584,7 +584,7 @@ completion functions
 
 Bukan hanya:
 
-```zsh
+```bash
 autoload -Uz compinit
 compinit
 ```
@@ -601,7 +601,7 @@ Ini akan membawa Anda dari pengguna Zsh menuju pembaca source code Zsh.
 
 Ini kemungkinan akan menjadi salah satu bagian yang paling Anda sukai.
 
-```text
+```bash
 ZLE
 │
 ├── line editor
@@ -615,7 +615,7 @@ ZLE
 
 Kemudian kita buat:
 
-```zsh
+```bash
 my_widget() {
     BUFFER="echo hello"
     CURSOR=${#BUFFER}
@@ -635,7 +635,7 @@ Kita pelajari bagaimana menjalankan mekanisme ketika event tertentu terjadi.
 
 Mental model:
 
-```text
+```bash
 event
   ↓
 hook
@@ -653,13 +653,13 @@ Ini akan menjadi dasar untuk membuat automation dalam interactive shell.
 
 Kemudian:
 
-```zsh
+```bash
 zmodload
 ```
 
 dan konsep:
 
-```text
+```bash
 module
 builtin functionality
 dynamic loading
@@ -674,7 +674,7 @@ Ini membawa kita lebih dekat ke pemahaman internal Zsh.
 
 Sekarang kita mulai membangun konfigurasi nyata:
 
-```text
+```bash
 ~/.config/zsh/
 ├── .zshenv
 ├── .zprofile
@@ -698,7 +698,7 @@ Kita akan menentukan apa yang seharusnya berada di masing-masing file.
 
 Baru setelah mekanisme Zsh dipahami, kita membahas:
 
-```text
+```bash
 plugin
 plugin manager
 autoload
@@ -712,7 +712,7 @@ lazy loading
 
 Dengan demikian Anda tidak menjadi pengguna plugin yang hanya menjalankan:
 
-```zsh
+```bash
 source plugin.zsh
 ```
 
@@ -723,7 +723,7 @@ tanpa memahami isinya.
 ## [19 — Terminal Integration][019]
 Baru kita integrasikan lingkungan Anda:
 
-```text
+```bash
 Zsh
 ├── Git
 ├── fzf
@@ -737,7 +737,7 @@ Zsh
 
 Tetapi setiap integrasi akan dipelajari dari sisi:
 
-```text
+```bash
 external program
        ↓
 Zsh interface
@@ -754,7 +754,7 @@ Sekarang mulai membuat fitur sendiri.
 
 Contoh:
 
-```text
+```bash
 Ctrl+G
    ↓
 custom ZLE widget
@@ -768,7 +768,7 @@ insert result into BUFFER
 
 Atau:
 
-```text
+```bash
 directory change
        ↓
 hook
@@ -795,7 +795,7 @@ Ini adalah tahap menuju tujuan akhir.
 
 Urutannya:
 
-```text
+```bash
 21. Read plugin
        ↓
 22. Understand mechanism
@@ -809,7 +809,7 @@ Kita akan mengambil plugin nyata dan membedahnya.
 
 Anda akan belajar mencari:
 
-```text
+```bash
 autoload
 function
 zstyle
@@ -831,7 +831,7 @@ di source code.
 
 Anda membangun konfigurasi/framework Zsh sendiri:
 
-```text
+```bash
 my-zsh/
 │
 ├── bootstrap
@@ -857,7 +857,7 @@ my-zsh/
 
 Target akhirnya:
 
-```text
+```bash
 Anda menemukan kebutuhan baru
         ↓
 tentukan mekanisme Zsh
@@ -881,7 +881,7 @@ Itulah kompetensi yang sebenarnya kita kejar.
 
 Setiap selesai materi saya akan memberikan:
 
-```text
+```bash
 Pemahaman konsep       /10
 Pemahaman syntax       /10
 Kemampuan praktik      /10
@@ -891,7 +891,7 @@ Pemahaman internal     /10
 
 Kemudian:
 
-```text
+```bash
 Progress Kurikulum
 ████░░░░░░░░░░░░░░░░  20%
 ```
@@ -912,7 +912,7 @@ zsh
 
 Kemudian periksa:
 
-```zsh
+```bash
 print -r -- "$ZSH_VERSION"
 print -r -- "$ZSH_NAME"
 print -r -- "$SHELL"
@@ -924,13 +924,13 @@ Perhatikan perbedaannya.
 
 Kemudian:
 
-```zsh
+```bash
 ps -p $$
 ```
 
 dan:
 
-```zsh
+```bash
 echo $-
 ```
 

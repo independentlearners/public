@@ -6,7 +6,7 @@ Dalam pelajaran ini, kita mempelajari hubungan antara Zsh, terminal emulator, da
 
 ### Stack shell
 
-```
+```bash
 Sistem Interaktif
 ├── Terminal emulator
 │   ├── Foot, Alacritty, Kitty
@@ -49,13 +49,13 @@ Terminal menyediakan antarmuka yang dapat digunakan program melalui input, outpu
 
 Misalnya, Zsh dapat menampilkan teks menggunakan:
 
-```
+```bash
 print -r -- "Halo dari Zsh"
 ```
 
 Untuk mengubah judul terminal, banyak terminal emulator mendukung urutan kontrol berbasis OSC (Operating System Command). Salah satu bentuk yang umum didukung adalah OSC 0:
 
-```
+```bash
 print -Pn '\e]0;Zsh Lab\a'
 ```
 
@@ -79,7 +79,7 @@ Zsh dapat membaca sejumlah variabel lingkungan yang memberi informasi tentang se
 
 Contoh:
 
-```
+```bash
 print -r -- "TERM=$TERM"
 print -r -- "TTY=$(tty)"
 print -r -- "ZSH_VERSION=$ZSH_VERSION"
@@ -120,7 +120,7 @@ File manager seperti yazi berjalan sebagai proses eksternal. Untuk mengubah dire
 
 Berikut ilustrasi mekanismenya, bukan pengganti integrasi resmi yazi:
 
-```
+```bash
 yazi-cd-demo() {
     local cwd_file
     cwd_file=$(mktemp) || return 1
@@ -156,7 +156,7 @@ Contoh ini mengasumsikan versi Yazi Anda mendukung `--cwd-file`. Untuk penggunaa
 
 Jalankan perintah berikut dari terminal Zsh:
 
-```
+```bash
 print -r -- "Shell: $SHELL"
 print -r -- "Versi: $ZSH_VERSION"
 print -r -- "Terminal: $TERM"

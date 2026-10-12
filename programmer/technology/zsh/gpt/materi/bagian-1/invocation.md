@@ -53,7 +53,7 @@ Karena `zshenv` dieksekusi pada **all invocations**:
 
 Anda dapat memverifikasi mode shell saat ini dengan perintah:
 
-```zsh
+```bash
 if [[ -o login ]]; then echo "Mode: Login"; else echo "Mode: Non-Login"; fi
 if [[ -o interactive ]]; then echo "Mode: Interactive"; else echo "Mode: Non-Interactive"; fi
 ```

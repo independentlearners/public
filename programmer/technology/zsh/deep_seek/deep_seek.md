@@ -51,7 +51,7 @@ Memahami peran shell sebagai jembatan antara pengguna dan sistem operasi. Membed
 Shell adalah program yang membaca perintah dari input (keyboard) dan meneruskannya ke kernel untuk dieksekusi. Filosofi Unix — "lakukan satu hal dengan baik dan gabungkan dengan alat lain" — tercermin dalam cara shell bekerja: setiap perintah adalah program kecil yang dapat digabungkan melalui pipe (`|`) dan redirection. Zsh hadir dengan filosofi "shell untuk manusia": tab completion yang benar-benar berfungsi, koreksi ejaan otomatis, dan array yang diindeks dari 1 (karena manusia menghitung dari 1).
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Cek shell yang sedang digunakan
 echo $SHELL
 echo $0
@@ -96,7 +96,7 @@ Menguasai navigasi direktori, manipulasi file, dan melihat konten. Ini adalah fo
 Sistem file Unix adalah pohon terbalik yang dimulai dari root (`/`). Setiap file dan direktori memiliki lokasi absolut dan relatif. Pemahaman ini penting karena script bekerja dengan path — dan path yang salah adalah penyebab bug paling umum.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Navigasi
 pwd                    # Print Working Directory
 cd /var/log            # Pindah ke direktori absolut
@@ -148,7 +148,7 @@ Memahami cara menyimpan nilai dalam variabel, mengapa quoting penting, dan bagai
 Shell adalah bahasa *untyped* — variabel tidak memiliki tipe data eksplisit. Semuanya adalah string sampai diproses lebih lanjut. Quoting adalah mekanisme untuk mengontrol kapan shell melakukan interpretasi terhadap karakter khusus. Perbedaan antara single quote (`'`), double quote (`"`), dan tanpa quote adalah salah satu sumber kebingungan terbesar bagi pemula.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Variabel
 nama="Budi"
 umur=25
@@ -211,7 +211,7 @@ Menulis script pertama: shebang, permission, variabel environment, kondisional, 
 Script adalah file teks yang berisi rangkaian perintah. Shebang (`#!`) memberi tahu sistem interpreter mana yang harus digunakan. Kontrol alur memungkinkan script membuat keputusan dan mengulangi operasi — inilah inti dari otomatisasi.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 #!/bin/zsh
 # script_pertama.zsh - Contoh script dasar
 
@@ -282,7 +282,7 @@ Membuat fungsi yang dapat digunakan ulang, membaca input dari pengguna, dan meng
 Fungsi adalah blok kode yang dapat dipanggil berulang kali. Redirection adalah kekuatan sebenarnya dari Unix: setiap program memiliki tiga stream standar (stdin, stdout, stderr) yang dapat diarahkan. Pipe (`|`) menghubungkan stdout satu program ke stdin program lain — inilah "lem" yang menyatukan alat-alat Unix.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 #!/bin/zsh
 
 # Fungsi dasar
@@ -352,7 +352,7 @@ Menangani error dengan graceful, menggunakan exit code, dan teknik debugging das
 Script yang baik tidak hanya berjalan saat semuanya lancar, tetapi juga menangani kegagalan dengan elegan. Setiap perintah mengembalikan exit code; `0` berarti sukses, non-zero berarti gagal. Prinsip "fail fast" — hentikan eksekusi segera saat terjadi error — mencegah kerusakan lebih lanjut.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 #!/bin/zsh
 set -e          # Exit on error
 set -u          # Error on undefined variable
@@ -414,7 +414,7 @@ Menguasai sistem globbing Zsh yang jauh lebih kaya dari Bash: recursive globbing
 Globbing adalah cara shell mencocokkan nama file dengan pola. Zsh memperluas ini secara dramatis: Anda bisa memfilter berdasarkan tipe file, ukuran, waktu modifikasi, dan bahkan atribut seperti executable atau symlink. Glob qualifier adalah "filter" yang diterapkan setelah pencocokan nama file, memungkinkan seleksi yang sangat presisi.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Globbing dasar
 ls *.txt                # Semua file .txt
 ls **/*.txt             # Recursive semua .txt (Zsh: tanpa find!)
@@ -475,7 +475,7 @@ Memahami dan mengkustomisasi sistem completion Zsh — salah satu fitur paling p
 Sistem completion Zsh (`compsys`) adalah kerangka kerja lengkap yang memungkinkan completion kontekstual. Ketika Anda menekan Tab, sistem menganalisis seluruh baris perintah, memahami konteks (apakah Anda mengetik opsi, path file, atau argumen khusus), dan menawarkan saran yang relevan. Ini bukan sekadar daftar perintah; ini adalah pemahaman semantik terhadap command line.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Inisialisasi completion system
 autoload -Uz compinit
 compinit
@@ -533,7 +533,7 @@ Menguasai file konfigurasi Zsh: urutan pembacaan, opsi shell, aliases, dan fungs
 Zsh membaca beberapa file saat startup, tergantung pada apakah shell bersifat login, interaktif, atau keduanya. Memahami urutan ini krusial untuk konfigurasi yang benar. File `.zshrc` adalah file konfigurasi utama untuk shell interaktif. Opsi shell (`setopt`) mengontrol perilaku shell — dari koreksi ejaan hingga format prompt.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # ~/.zshrc - File konfigurasi utama
 
 # Opsi shell yang direkomendasikan
@@ -604,7 +604,7 @@ Mengenal ekosistem plugin Zsh: Oh My Zsh, Antidote, Zinit, dan alternatif lainny
 Plugin manager memungkinkan Anda menginstal, memperbarui, dan memuat plugin dengan mudah. Namun, tidak semua plugin manager sama: beberapa cepat, beberapa lambat; beberapa aktif dikembangkan, beberapa sudah ditinggalkan. Memahami trade-off ini penting untuk membangun lingkungan kerja yang stabil dan cepat.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Oh My Zsh - Framework paling populer
 # Install: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting docker kubectl)
@@ -660,7 +660,7 @@ Membuat prompt yang informatif dan efisien: menampilkan git status, status exit,
 Prompt adalah antarmuka utama Anda dengan shell. Prompt yang baik memberikan informasi yang Anda butuhkan tanpa mengganggu. Zsh memiliki sistem prompt yang sangat fleksibel melalui ekspansi prompt (`%` escape) dan fungsi `precmd`/`preexec`.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Prompt sederhana dengan ekspansi
 PS1='%n@%m:%~%# '        # user@host:path#
 
@@ -718,7 +718,7 @@ Mengukur dan mengoptimalkan waktu startup shell dan waktu eksekusi perintah. Men
 Shell yang lambat saat startup adalah masalah produktivitas. Setiap milidetik di startup dikalikan dengan berapa kali Anda membuka terminal setiap hari. Optimasi bukan tentang "lebih cepat" secara abstrak, tetapi tentang menghilangkan bottleneck yang tidak perlu.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Profiling startup
 zmodload zsh/zprof
 # ... konfigurasi ...
@@ -771,7 +771,7 @@ Menulis script yang aman: menghindari code injection, mengelola secrets dengan b
 Script shell sering memiliki akses ke sistem dan data sensitif. Kesalahan sekecil apapun dapat menyebabkan eksekusi kode berbahaya. Prinsip "least privilege" dan "defense in depth" harus diterapkan.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 
@@ -839,7 +839,7 @@ Menguasai fungsi Zsh tingkat lanjut: anonymous functions, hook functions, autolo
 Zsh memiliki sistem fungsi yang jauh lebih kaya dari Bash. Hook functions (`chpwd`, `precmd`, `preexec`) memungkinkan Anda merespons event shell secara otomatis. Autoloading memungkinkan fungsi dimuat hanya saat dibutuhkan, menghemat waktu startup.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 #!/bin/zsh
 
 # Anonymous function
@@ -915,7 +915,7 @@ Menulis test untuk script Zsh menggunakan framework seperti ShellSpec, ZUnit, da
 Script shell juga memerlukan test. Tanpa test, refactoring menjadi berisiko, dan bug mudah lolos ke produksi. Framework testing Zsh menyediakan struktur untuk unit test, integration test, dan end-to-end test.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # ShellSpec - BDD testing framework
 # Install: curl -fsSL https://git.io/shellspec | sh
 
@@ -983,7 +983,7 @@ Menghubungkan Zsh dengan Python, Node.js, Ruby, dan API eksternal (REST, databas
 Shell bukan pulau. Kekuatan sebenarnya muncul ketika Anda menggabungkan kemampuan shell dengan bahasa pemrograman lain dan layanan eksternal. Zsh dapat memanggil script Python, menggunakan output JSON dari API, dan berinteraksi dengan database.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 #!/bin/zsh
 
 # Memanggil Python dan menangkap output
@@ -1048,7 +1048,7 @@ Merancang, mendeploy, dan mengelola lingkungan Zsh untuk tim dan organisasi. Sta
 Di tingkat enterprise, konsistensi dan keamanan lebih penting daripada kustomisasi individual. Tantangannya adalah menyeimbangkan kebutuhan tim untuk konfigurasi yang dapat diprediksi dengan preferensi individu pengembang.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Struktur dotfiles enterprise
 # /etc/zsh/zshrc - Konfigurasi sistem-wide
 # /etc/zsh/zshenv - Environment untuk semua shell
@@ -1103,7 +1103,7 @@ Berkontribusi ke proyek Zsh inti, plugin, atau alat terkait. Memahami proses dev
 Zsh dikembangkan oleh komunitas sejak 1990. Berkontribusi bukan hanya tentang menulis kode, tetapi juga tentang memahami ekosistem, berkomunikasi dengan maintainer, dan mengikuti standar yang telah ditetapkan.
 
 **Sintaks Dasar:**
-```zsh
+```bash
 # Clone repositori Zsh
 git clone https://github.com/zsh-users/zsh.git
 cd zsh
@@ -1170,7 +1170,7 @@ Modul ini memberikan tiga jalur spesialisasi yang dapat dipilih sesuai minat dan
 - Referensi: fzf, ripgrep, fd, bat
 
 **Sintaks Dasar (Contoh Jalur A — DevOps):**
-```zsh
+```bash
 #!/bin/zsh
 set -euo pipefail
 

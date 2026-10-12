@@ -112,7 +112,7 @@ Filosofi desain Zsh adalah: **semakin awal file dibaca, semakin universal dampak
 
 Berikut adalah urutan lengkap file startup Zsh berdasarkan manual resmi:
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                    URUTAN STARTUP ZSH                        │
 ├─────────────────────────────────────────────────────────────┤
@@ -149,7 +149,7 @@ Berikut adalah urutan lengkap file startup Zsh berdasarkan manual resmi:
 
 **`/etc/zshenv` dan `$ZDOTDIR/.zshenv`** — Dibaca oleh *semua* shell, tanpa kecuali. Ini adalah tempat untuk environment variable yang harus tersedia bahkan untuk script non-interactive: `PATH`, `EDITOR`, `LANG`, dan variabel yang dibutuhkan oleh tools otomasi. Karena dibaca oleh setiap shell, file ini harus **sesingkat mungkin**. Manual Zsh menyarankan untuk membungkus kode yang tidak perlu dijalankan setiap saat dengan `if [[ -o rcs ]]`.
 
-```zsh
+```bash
 # /etc/zsh/zshenv — KONFIGURASI MINIMAL
 # File ini dibaca oleh SETIAP instance zsh, termasuk cron, scp, dll.
 
@@ -164,7 +164,7 @@ export LANG="en_US.UTF-8"
 
 **`/etc/zprofile` dan `$ZDOTDIR/.zprofile`** — Hanya dibaca oleh login shell. Login shell adalah shell yang dijalankan saat Anda login ke sistem (via TTY, SSH, atau `su -`). Ini adalah tempat yang tepat untuk mengatur environment yang hanya perlu di-set sekali per sesi login, seperti `PATH` tambahan, variabel yang membutuhkan eksekusi command substitution berat (misalnya `$(brew shellenv)`), atau konfigurasi yang bergantung pada kondisi login.
 
-```zsh
+```bash
 # /etc/zsh/zprofile — KONFIGURASI LOGIN SHELL
 # Hanya dibaca sekali per sesi login.
 
@@ -179,7 +179,7 @@ export PATH="$PATH:/opt/company/tools/bin"
 
 **`/etc/zshrc` dan `$ZDOTDIR/.zshrc`** — Hanya dibaca oleh interactive shell. Ini adalah tempat untuk: alias, fungsi, prompt (PS1), plugin, key bindings, dan konfigurasi completion. Hampir semua "kustomisasi" pengguna ada di sini.
 
-```zsh
+```bash
 # /etc/zsh/zshrc — KONFIGURASI INTERACTIVE SHELL
 # Hanya dibaca oleh shell yang interaktif (terminal user).
 
@@ -208,7 +208,7 @@ fi
 
 ### Diagram Alur: Kapan Setiap File Dibaca
 
-```
+```bash
 Shell di-invoke
        │
        ▼
@@ -310,7 +310,7 @@ Kunci desainnya adalah: **file sistem-wide dibaca TERLEBIH DAHULU**, kemudian fi
 
 ### Sintaks Dasar — Hierarki Enterprise
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # STRUKTUR DIREKTORI ENTERPRISE ZSH
 # ═══════════════════════════════════════════════════════════
@@ -337,7 +337,7 @@ $HOME/
 
 **Mekanisme Loading di `.zshrc` Sistem:**
 
-```zsh
+```bash
 # /etc/zsh/zshrc — File ini dibaca oleh SEMUA interactive shell
 
 # 1. Load konfigurasi modular sistem-wide
@@ -370,7 +370,7 @@ fi
 
 ### Contoh Implementasi: Kebijakan Keamanan Enterprise
 
-```zsh
+```bash
 # /etc/zsh/conf.d/10-security.zsh
 # Kebijakan keamanan yang SELALU diterapkan, tidak bisa di-override
 
@@ -467,7 +467,7 @@ Di tingkat enterprise, `conf.d` memungkinkan:
 
 ### Sintaks Dasar — Modular Loading
 
-```zsh
+```bash
 # /etc/zsh/zshrc — Loading modular
 
 # Pola dasar: load semua *.zsh di conf.d dalam urutan numerik
@@ -479,7 +479,7 @@ done
 
 **Penjelasan Sintaks Zsh (kata demi kata):**
 
-```zsh
+```bash
 for conf in /etc/zsh/conf.d/*.zsh(N); do
 #  │    │    │                    │  │
 #  │    │    │                    │  └── (N) = glob qualifier "null_glob"
@@ -506,7 +506,7 @@ done
 
 **Struktur File yang Direkomendasikan:**
 
-```
+```bash
 /etc/zsh/conf.d/
 ├── 00-base.zsh          # PATH, locale, EDITOR, umask
 ├── 05-os-detect.zsh     # Deteksi OS, set OS-specific variables
@@ -521,7 +521,7 @@ done
 
 **Contoh Setiap File:**
 
-```zsh
+```bash
 # /etc/zsh/conf.d/00-base.zsh — FONDASI
 # Mengatur environment variable fundamental untuk semua pengguna.
 
@@ -542,7 +542,7 @@ export LC_ALL="en_US.UTF-8"
 export EDITOR="${EDITOR:-vim}"
 ```
 
-```zsh
+```bash
 # /etc/zsh/conf.d/10-security.zsh — KEAMANAN
 # Kebijakan keamanan yang tidak boleh di-override.
 
@@ -569,7 +569,7 @@ alias chmod='chmod --preserve-root'
 # preexec_functions+=(preexec)
 ```
 
-```zsh
+```bash
 # /etc/zsh/conf.d/20-tools.zsh — TOOLS PERUSAHAAN
 # Konfigurasi untuk tools yang digunakan perusahaan.
 
@@ -665,7 +665,7 @@ Untuk Zsh, ada dua aspek:
 
 **Langkah 1: Set `ZDOTDIR` di `/etc/zsh/zshenv`**
 
-```zsh
+```bash
 # /etc/zsh/zshenv — TAMBAHKAN INI di bagian atas
 
 # Jika ZDOTDIR belum di-set, gunakan ~/.config/zsh
@@ -692,7 +692,7 @@ fi
 
 **Langkah 3: Set XDG variables untuk Zsh history**
 
-```zsh
+```bash
 # ~/.config/zsh/.zshrc — XDG-compliant history
 
 # History di XDG_STATE_HOME (bukan $HOME)
@@ -777,7 +777,7 @@ GNU Stow adalah "symlink farm manager" — alat yang mengotomatiskan pembuatan s
 
 **Struktur Repository:**
 
-```
+```bash
 ~/dotfiles/                    # Git repository
 ├── zsh/                       # Package "zsh"
 │   ├── .zshenv
@@ -794,7 +794,7 @@ GNU Stow adalah "symlink farm manager" — alat yang mengotomatiskan pembuatan s
 
 **Cara Kerja Stow:**
 
-```
+```bash
 ~/dotfiles/zsh/.zshrc  ──(stow zsh)──>  ~/.zshrc (symlink)
 ~/dotfiles/zsh/.zshenv ──(stow zsh)──>  ~/.zshenv (symlink)
 
@@ -844,7 +844,7 @@ stow -n -v zsh
 
 ### Alur Kerja Enterprise
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                 WORKFLOW ENTERPRISE STOW                     │
 ├─────────────────────────────────────────────────────────────┤
@@ -972,7 +972,7 @@ Ansible adalah alat manajemen konfigurasi yang memungkinkan Anda men-deploy dotf
 
 **Struktur Role:**
 
-```
+```bash
 ansible-dotfiles/
 ├── playbook.yml
 ├── inventory.ini
@@ -1113,7 +1113,7 @@ ansible-playbook -i inventory.ini playbook.yml --tags "dotfiles"
 
 ### Alur Kerja Ansible Deployment
 
-```
+```bash
 ┌──────────────┐     ┌──────────────┐     ┌──────────────┐
 │  Control     │     │  Managed     │     │  Managed     │
 │  Node        │────>│  Node 1      │     │  Node 2      │
@@ -1209,7 +1209,7 @@ Di tingkat enterprise, plugin Zsh bukan sekadar preferensi pribadi — ini adala
 
 ### Sintaks Dasar — Contoh dengan Antidote
 
-```zsh
+```bash
 # ~/.config/zsh/.zsh_plugins.txt — Daftar plugin (dikelola tim)
 
 # Format: username/repo atau URL lengkap
@@ -1231,7 +1231,7 @@ romkatv/powerlevel10k
 # ~/.config/zsh/.zsh_plugins_local.txt
 ```
 
-```zsh
+```bash
 # ~/.config/zsh/.zshrc — Loading dengan Antidote
 
 # Inisialisasi Antidote
@@ -1246,7 +1246,7 @@ antidote load ~/.config/zsh/.zsh_plugins.txt
 
 **Alternatif: Manual Plugin Loading (zsh_unplugged)**
 
-```zsh
+```bash
 # ~/.config/zsh/.zshrc — Manual plugin loading (tanpa plugin manager)
 
 # Fungsi sederhana untuk clone & source plugin
@@ -1277,7 +1277,7 @@ autoload -Uz compinit && compinit
 
 ### Kebijakan Plugin Enterprise
 
-```zsh
+```bash
 # /etc/zsh/conf.d/35-plugins.zsh — Kebijakan plugin sistem-wide
 
 # Daftar plugin yang DIIZINKAN (whitelist)
@@ -1365,7 +1365,7 @@ Di lingkungan enterprise, shell adalah **titik akses paling sensitif** — dari 
 
 ### Sintaks Dasar — Secret Management
 
-```zsh
+```bash
 # /etc/zsh/conf.d/10-security.zsh — Secret management
 
 # ═══════════════════════════════════════════════════════════
@@ -1410,7 +1410,7 @@ fi
 
 ### Audit Logging
 
-```zsh
+```bash
 # /etc/zsh/conf.d/10-security.zsh — Audit logging
 
 # Aktifkan logging semua command ke file terpusat
@@ -1486,7 +1486,7 @@ Shell yang lambat startup adalah masalah produktivitas dan pengalaman pengguna. 
 
 ### Sintaks Dasar — Profiling
 
-```zsh
+```bash
 # Profiling startup time — letakkan di ~/.zshrc
 
 # Aktifkan profiling Zsh
@@ -1522,7 +1522,7 @@ hyperfine --warmup 3 'zsh -i -c exit'
 
 **1. Lazy Loading:**
 
-```zsh
+```bash
 # Sebelum: load plugin berat saat startup
 # source /path/to/heavy-plugin.zsh  # 200ms
 
@@ -1548,7 +1548,7 @@ ls -la ~/.config/zsh/.zshrc.zwc
 
 **3. Completion Cache:**
 
-```zsh
+```bash
 # Gunakan dump file untuk compinit
 # Ini menghindari scan ulang semua completion setiap startup
 autoload -Uz compinit
@@ -1760,7 +1760,7 @@ Memahami sejarah dan governance proyek adalah fondasi untuk berkontribusi secara
 
 ### Diagram: Sejarah dan Evolusi Zsh
 
-```
+```bash
 1990 ─── Paul Falstad menulis versi pertama Zsh di Princeton
          │  Nama "Zsh" dari login Zhong Shao
          │  Tujuan: cross antara ksh dan tcsh
@@ -1897,7 +1897,7 @@ git send-email \
 
 ### Diagram: Arsitektur Mailing List Nested
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                 ARSITEKTUR MAILING LIST ZSH                 │
 ├─────────────────────────────────────────────────────────────┤
@@ -2097,7 +2097,7 @@ git send-email \
 
 ### Diagram: Siklus Patch Zsh
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                    SIKLUS PATCH ZSH                          │
 ├─────────────────────────────────────────────────────────────┤
@@ -2197,7 +2197,7 @@ Plugin adalah cara untuk memperluas fungsionalitas Zsh tanpa harus memodifikasi 
 
 **Struktur Direktori Plugin:**
 
-```
+```bash
 my-plugin/
 ├── my-plugin.plugin.zsh      # Entry point utama (wajib)
 ├── functions/                # Fungsi autoload
@@ -2211,7 +2211,7 @@ my-plugin/
 
 **File Entry Point (`my-plugin.plugin.zsh`):**
 
-```zsh
+```bash
 # my-plugin.plugin.zsh — Entry point plugin
 
 # ═══════════════════════════════════════════════════════════
@@ -2287,7 +2287,7 @@ typeset -ga _my_plugin_functions=(
 
 **Struktur:**
 
-```
+```bash
 git-helper/
 ├── git-helper.plugin.zsh
 ├── functions/
@@ -2299,7 +2299,7 @@ git-helper/
 
 **`git-helper.plugin.zsh`:**
 
-```zsh
+```bash
 # git-helper.plugin.zsh — Plugin helper untuk Git
 
 # Standard $0 handling
@@ -2349,7 +2349,7 @@ typeset -ga _git_helper_functions=(
 
 **`functions/_git-helper` (Completion):**
 
-```zsh
+```bash
 #compdef git-helper
 
 # Completion untuk git-helper
@@ -2443,7 +2443,7 @@ Dokumentasi adalah bagian penting dari kontribusi Zsh. Setiap patch yang menguba
 
 **Contoh Yodl (`Doc/Zsh/builtins.yo`):**
 
-```
+```bash
 texinode(mybuiltin)(...)(...)
 sect(My Builtin)
 cindex(builtins)
@@ -2456,7 +2456,7 @@ Deskripsi builtin dalam format Yodl.
 
 **Contoh ChangeLog Entry:**
 
-```
+```bash
 2026-10-12  Nama Developer  <email@example.com>
 
     * Src/completion.c: Fix completion for git rebase
@@ -2709,7 +2709,7 @@ Bayangkan Anda adalah seorang DevOps engineer. Anda memiliki 50 server, 10 clust
 
 ### Diagram: Tiga Jalur Spesialisasi
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    TIGA JALUR SPESIALISASI ZSH                       │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -2754,7 +2754,7 @@ Jalur ini untuk Anda yang bekerja dengan **infrastruktur, deployment, dan cloud 
 
 ### Sintaks Dasar — Fungsi Deploy yang Robust
 
-```zsh
+```bash
 #!/bin/zsh
 # deploy.zsh — Script deploy enterprise-grade
 
@@ -2855,7 +2855,7 @@ deploy "$@"
 
 **AWS CLI adalah tool paling fundamental untuk DevOps di AWS.** Salah satu tantangan terbesar adalah **manajemen profil** — berpindah antara akun dev, staging, dan production. Berikut adalah fungsi yang memanfaatkan pola dari extension AWS CLI:
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/20-aws.zsh — AWS helper functions
 
 # ═══════════════════════════════════════════════════════════
@@ -2914,7 +2914,7 @@ alias asr='aws-region'
 
 **Terraform** memerlukan `terraform init` setiap kali Anda beralih antar workspace. **Kubernetes** memerlukan `kubectl config use-context`. Keduanya adalah kandidat sempurna untuk otomatisasi Zsh:
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/25-k8s-tf.zsh — Kubernetes & Terraform helpers
 
 # ═══════════════════════════════════════════════════════════
@@ -3069,7 +3069,7 @@ Jalur ini untuk Anda yang bekerja dengan **data: ETL, analisis, transformasi, da
 
 ### Sintaks Dasar — Pipeline ETL dengan awk, sed, jq
 
-```zsh
+```bash
 #!/bin/zsh
 # etl-pipeline.zsh — Pipeline ETL sederhana
 
@@ -3131,7 +3131,7 @@ echo "✅ Output tersimpan di $output_file"
 
 ### Contoh jq yang Lebih Kompleks
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # jq untuk data engineer — pola umum
 # ═══════════════════════════════════════════════════════════
@@ -3164,7 +3164,7 @@ jq -R -s 'split("\n") | map(select(length > 0)) |
 
 **Shell dan Python bukan kompetitor — mereka mitra.** Shell untuk orkestrasi dan transformasi ringan, Python untuk analisis kompleks:
 
-```zsh
+```bash
 # ═══════════════════════════════════════════════════════════
 # FUNGSI: py-pipe — Pipe shell output ke Python inline
 # ═══════════════════════════════════════════════════════════
@@ -3200,7 +3200,7 @@ print(f'Std Dev: {statistics.stdev(numbers):.2f}')
 
 **Integrasi dengan virtual environment:**
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/30-python.zsh — Python environment helper
 
 # ═══════════════════════════════════════════════════════════
@@ -3226,7 +3226,7 @@ alias pipup='pip3 install --upgrade pip'
 
 ### Alur Kerja ETL dengan Shell
 
-```
+```bash
 ┌─────────────────────────────────────────────────────────────┐
 │                   ETL WORKFLOW DENGAN ZSH                    │
 ├─────────────────────────────────────────────────────────────┤
@@ -3329,7 +3329,7 @@ Jalur ini untuk Anda yang ingin **membangun tools untuk developer lain** atau **
 
 **FZF adalah *fuzzy finder* serbaguna.** Ia bisa digunakan untuk mencari file, history, branch Git, proses, dan apa pun yang bisa di-pipe.
 
-```zsh
+```bash
 # ~/.config/zsh/.zshrc — FZF setup
 
 # ═══════════════════════════════════════════════════════════
@@ -3395,7 +3395,7 @@ bindkey -s '^O' 'fzf-file-open\n'
 
 ### Alias Modern CLI Tools
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/40-modern-cli.zsh — Alias untuk tools modern
 
 # ═══════════════════════════════════════════════════════════
@@ -3461,7 +3461,7 @@ fi
 
 **Zsh bisa digunakan untuk membangun CLI tool yang kompleks** dengan subcommands, help, dan completion. Berikut adalah template:
 
-```zsh
+```bash
 #!/usr/bin/env zsh
 # mytool — CLI tool example
 
@@ -3552,7 +3552,7 @@ main "$@"
 
 ### Integrasi dengan Editor
 
-```zsh
+```bash
 # ~/.config/zsh/conf.d/45-editor.zsh — Editor integration
 
 # ═══════════════════════════════════════════════════════════
@@ -3739,7 +3739,7 @@ vs() {
 
 ### Pohon Keputusan: Memilih Jalur
 
-```
+```bash
 Apakah Anda bekerja dengan infrastruktur/cloud?
 ├── YA → Jalur A (DevOps)
 │   └── Fokus: AWS/GCP/Azure, Terraform, Kubernetes

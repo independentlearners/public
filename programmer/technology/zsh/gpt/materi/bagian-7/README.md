@@ -10,13 +10,13 @@ Option adalah pengaturan yang mengubah perilaku Zsh. Contohnya, opsi dapat menga
 
 Perhatikan contoh berikut:
 
-```
+```bash
 setopt AUTO_CD
 ```
 
 Setelah opsi tersebut aktif, Anda dapat mengetik nama direktori sebagai perintah untuk berpindah ke direktori itu, tanpa menulis `cd` terlebih dahulu.
 
-```
+```bash
 Documents
 ```
 
@@ -24,13 +24,13 @@ Jika direktori `Documents` tersedia dan dapat dikenali oleh Zsh, shell akan berp
 
 Bandingkan dengan perilaku biasa:
 
-```
+```bash
 cd Documents
 ```
 
 Perintah `setopt` mengaktifkan opsi. Kebalikannya, `unsetopt`, menonaktifkannya:
 
-```
+```bash
 unsetopt AUTO_CD
 ```
 
@@ -42,7 +42,7 @@ Sebelum mengubah konfigurasi, Anda perlu mengetahui opsi mana yang aktif.
 
 Jalankan:
 
-```
+```bash
 setopt
 ```
 
@@ -50,7 +50,7 @@ Tanpa argumen, perintah ini menampilkan opsi yang sedang aktif. Anda dapat menca
 
 Untuk memeriksa satu opsi secara langsung, gunakan conditional expression:
 
-```
+```bash
 if [[ -o AUTO_CD ]]; then
     print -r -- "AUTO_CD aktif"
 else
@@ -70,7 +70,7 @@ Pemeriksaan seperti ini berguna saat Anda membaca konfigurasi yang perilakunya b
 
 `setopt` dan `unsetopt` dapat menerima lebih dari satu nama opsi.
 
-```
+```bash
 setopt AUTO_CD EXTENDED_GLOB
 ```
 
@@ -78,7 +78,7 @@ Perintah tersebut mengaktifkan kedua opsi.
 
 Untuk menonaktifkannya:
 
-```
+```bash
 unsetopt AUTO_CD EXTENDED_GLOB
 ```
 
@@ -88,7 +88,7 @@ Perlu diingat bahwa mengaktifkan suatu opsi bisa mengubah cara Zsh menafsirkan p
 
 Jalankan satu per satu:
 
-```
+```bash
 # Periksa status awal
 if [[ -o AUTO_CD ]]; then
     print -r -- "Awalnya aktif"
@@ -113,7 +113,7 @@ Komentar yang diawali `#` hanya menjadi penjelasan bagi pembaca. Zsh tidak menja
 
 Catatan: eksperimen ini mengubah opsi pada shell yang sedang digunakan. Jika Anda ingin menguji perubahan tanpa memengaruhi shell induk, Anda dapat menggunakan subshell:
 
-```
+```bash
 (
     setopt AUTO_CD
     setopt
@@ -132,7 +132,7 @@ Tanda kurung `(...)` menjalankan kelompok perintah dalam subshell. Perubahan ops
 
 Misalnya, jika Anda ingin `AUTO_CD` aktif setiap kali membuka shell interaktif, perintah berikut dapat ditambahkan ke konfigurasi yang sesuai:
 
-```
+```bash
 setopt AUTO_CD
 ```
 
@@ -197,7 +197,7 @@ Jangan berasumsi bahwa semua opsi nonaktif saat Zsh dimulai. Sebagian opsi sudah
 
 Untuk memeriksa keadaan aktual:
 
-```
+```bash
 [[ -o EXTENDED_GLOB ]] \
     && print -r -- "EXTENDED_GLOB aktif" \
     || print -r -- "EXTENDED_GLOB tidak aktif"
@@ -207,7 +207,7 @@ Ini lebih dapat diandalkan daripada menebak keadaan shell berdasarkan konfiguras
 
 Untuk melihat opsi yang aktif:
 
-```
+```bash
 setopt
 ```
 
@@ -237,7 +237,7 @@ Jangan menganggap semua opsi tersebut harus diaktifkan. Pilih berdasarkan perila
 
 Untuk mengetahui apakah shell saat ini interaktif:
 
-```
+```bash
 if [[ -o INTERACTIVE ]]; then
     print -r -- "Shell interaktif"
 else
@@ -257,7 +257,7 @@ zsh.sourceforge.io
 
 
 
-```
+```bash
 setopt AUTO_CD
 setopt auto_cd
 setopt autocd
@@ -265,13 +265,13 @@ setopt autocd
 
 Untuk menonaktifkan opsi, Anda dapat menggunakan `unsetopt`:
 
-```
+```bash
 unsetopt AUTO_CD
 ```
 
 Zsh juga menerima bentuk negatif menggunakan awalan `NO`:
 
-```
+```bash
 setopt NO_AUTO_CD
 ```
 
@@ -291,13 +291,13 @@ zsh.sourceforge.io
 
 Contoh:
 
-```
+```bash
 emulate zsh
 ```
 
 Perintah ini meminta Zsh menggunakan perilaku emulasi Zsh. Untuk memeriksa bantuan tentang opsi yang berkaitan dengan emulasi, Anda dapat membaca:
 
-```
+```bash
 man zshbuiltins
 ```
 
@@ -305,7 +305,7 @@ Lalu cari bagian `emulate`.
 
 Salah satu bentuk yang akan berguna ketika kita mempelajari fungsi adalah:
 
-```
+```bash
 emulate -L zsh
 ```
 
@@ -341,7 +341,7 @@ zsh.sourceforge.io
 
 Contohnya, `ERR_EXIT` memiliki nama alternatif `errexit`.
 
-```
+```bash
 # Bentuk nama opsi Zsh
 setopt ERR_EXIT
 
@@ -356,7 +356,7 @@ unsetopt ERR_EXIT
 
 Perhatikan perbedaannya:
 
-```
+```bash
 setopt ERR_EXIT
 setopt -o errexit
 ```
@@ -375,13 +375,13 @@ zsh.sourceforge.io
 
 Selain `setopt`, Zsh mendukung bentuk berikut:
 
-```
+```bash
 set -o
 ```
 
 Bentuk ini menampilkan status opsi menggunakan format nama alternatif. Untuk mengaktifkan atau menonaktifkan opsi tertentu, Anda juga dapat menulis:
 
-```
+```bash
 set -o errexit
 set +o errexit
 ```
