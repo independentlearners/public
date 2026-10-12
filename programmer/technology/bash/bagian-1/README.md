@@ -67,7 +67,7 @@ Banyak pemula mengira “terminal”, “konsol”, “shell”, dan “kernel�
 | **Terminal (emulator)** | Aplikasi yang menyediakan antarmuka teks ke shell | GNOME Terminal, Konsole, iTerm2, Windows Terminal, VS Code Terminal |
 | **Konsol** | Terminal fisik langsung terhubung ke sistem (tty) | `/dev/tty1`–`/dev/tty6` di Linux |
 
-**Analogi:** Mobil = sistem operasi. Mesin = kernel. Dashboard + setir = shell. Jendela kaca = terminal.
+**Analogi:** Mobil = sistem operasi. Mesin = kernel. Dashboard + setir = shell. Kerangka Mobil = terminal. Baris perintah = kendali anda.
 
 **Alur eksekusi perintah:**
 
