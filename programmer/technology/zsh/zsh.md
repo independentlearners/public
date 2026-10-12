@@ -4,7 +4,7 @@
 - [GPT][1] | [Others By GPT][1.1]
 -  [Deepseek][2] | [Deep_Seek][6]
 -  [Others][3]
--  [Zsh][3]
+-  [Bash][4]
 -  [Sh][5]
 
 [1]: ./gpt/materi/zsh_scripting.md
