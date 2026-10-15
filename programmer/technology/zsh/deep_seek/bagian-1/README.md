@@ -547,7 +547,7 @@ Zsh membaca file konfigurasi dalam urutan berikut (untuk *login shell*):
 
 ## ✅ Konfirmasi untuk Melanjutkan
 
-Materi **Modul 1.1** telah selesai disajikan secara komprehensif. Saya telah mencakup:
+Materi **Modul 1.1** telah selesai disajikan secara komprehensif. Kita telah mencakup:
 
 - ✅ Deskripsi konkret & peran dalam kurikulum
 - ✅ Konsep kunci & filosofi mendalam (dengan analogi restoran)

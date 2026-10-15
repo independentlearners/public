@@ -393,12 +393,12 @@ Setiap proses di Unix memiliki tiga saluran I/O standar:
 | `stderr` | Error standar | `2` | Terminal |
 
 ```
-                   +-------------------+
-                   |      Program      |
-                   |                   |
-Keyboard ─(0 stdin)→│                   │─(1 stdout)→ Terminal
-                   │                   │─(2 stderr)→ Terminal
-                   +-------------------+
+                    +-------------------+
+                    |      Program      |
+                    | ls, cd, tail, df  |
+Keyboard ─(0 stdin)→│    dan lainnya    │─(1 stdout)→ Terminal
+                    │                   │─(2 stderr)→ Terminal
+                    +-------------------+
 ```
 
 **Mengapa `stdout` dan `stderr` dipisah?**
@@ -413,7 +413,7 @@ Agar output normal bisa dialihkan ke file atau pipe, sementara pesan error tetap
 | `>` | redirect stdout (overwrite) | Timpa isi file |
 | `>>` | append stdout | Tambahkan ke akhir file |
 | `1>` | sama dengan `>` | Eksplisit untuk fd 1 |
-| `>|` | force overwrite (Bash) | Timpa meski `set -C` aktif |
+| `>\|` | force overwrite (Bash) | Timpa meski `set -C` aktif |
 | `&>` | redirect stdout + stderr (Bash/Zsh) | Gabung keduanya ke file |
 | `&>>` | append stdout + stderr (Bash) | Gabung dan tambahkan |
 
@@ -432,6 +432,67 @@ date >> daftar.txt
 > echo "x" > file.txt    # error jika file sudah ada
 > echo "x" >| file.txt   # paksa timpa
 > ```
+
+---
+
+**Tambahan contoh penggunaan *Output Redirection* di Bash yang sering digunakan sehari-hari:**
+
+### 1. Mengalihkan Error ke File Terpisah (`2>`)
+
+Jika Anda hanya ingin menyimpan pesan kesalahan (*stderr*) ke dalam file tanpa mencampur keluaran normalnya (*stdout*):
+
+```bash
+ls /direktory-yang-tidak-ada 2> error.log
+
+```
+
+* **Fungsi:** Menyimpan pesan error ke `error.log`, sementara teks sukses (jika ada) akan tetap tampil di layar.
+
+### 2. Menggabungkan Stdout dan Stderr ke Satu File (Cara Modern / Bash 4+)
+
+Selain operator `&>`, Bash modern mendukung sintaks ini untuk menggabungkan *stdout* dan *stderr* lalu menimpanya ke file:
+
+```bash
+perintah > log.txt 2>&1
+
+```
+
+* **Contoh praktis:**
+```bash
+make install > instalasi.log 2>&1
+
+```
+
+
+Semua proses (baik laporan sukses maupun pesan error) akan masuk bersih ke dalam file `instalasi.log`.
+
+### 3. Membuang Output yang Tidak Penting (`/dev/null`)
+
+Sangat berguna saat Anda menjalankan skrip atau perintah latar belakang dan ingin menyembunyikan semua pesan sukses maupun error agar terminal tetap bersih:
+
+```bash
+command > /dev/null 2>&1
+
+```
+
+* **Fungsi:** Mengirim *stdout* dan *stderr* ke "lubang hitam" `/dev/null` sehingga tidak ditampilkan dan tidak disimpan.
+
+
+
+### 4. Menggunakan Here Document (`<<`) untuk Menulis Multi-Baris
+
+Bukan hanya untuk membaca, Anda bisa mengalihkan teks multi-baris langsung ke dalam sebuah file menggunakan `cat` dan `<<`:
+
+```bash
+cat << EOF > konfigurasi.conf
+server_ip=192.168.1.10
+port=8080
+status=active
+EOF
+
+```
+
+* **Fungsi:** Membuat file `konfigurasi.conf` baru yang berisi teks di antara `cat` dan `EOF` secara otomatis.
 
 ---
 
@@ -466,6 +527,50 @@ root
 user2"
 ```
 
+---
+
+**Tambahan contoh penggunaan *Input Redirection* dan operator terkait lainnya di Bash yang sering digunakan:**
+
+### 1. Menggunakan File Descriptor Khusus untuk Membaca dan Menulis (`<>`)
+
+Operator `<>` membuka sebuah file dalam mode *read-write* (baca dan tulis sekaligus) tanpa menghapus isi file sebelumnya. Ini biasanya dipasangkan dengan *File Descriptor* (misalnya angka 3):
+
+```bash
+# 1. Buka file dalam mode read-write pada FD 3
+exec 3<> data_penting.txt
+
+# 2. Baca baris pertama dari FD 3
+read -u 3 baris_pertama
+echo "Baris pertama: $baris_pertama"
+
+# 3. Tulis data baru ke FD 3
+echo "Baris tambahan baru" >&3
+
+# 4. Tutup File Descriptor 3
+exec 3>&-
+
+```
+
+### 2. Mengirim Satu Baris dengan Here-String (`<<<`)
+
+Jika *Here-Document* (`<<`) digunakan untuk blok teks multi-baris, *Here-String* (`<<<`) jauh lebih ringkas untuk mengirimkan satu baris teks atau isi variabel langsung ke *stdin* suatu perintah:
+
+```bash
+# Memeriksa keberadaan teks dalam string secara langsung
+grep "error" <<< "Sistem mendapati error pada modul jaringan"
+
+```
+
+### 3. Menggabungkan Input Redirection dengan While Loop
+
+Anda dapat membaca baris demi baris dari sebuah file teks eksternal secara efisien ke dalam struktur perulangan menggunakan operator `<`:
+
+```bash
+while IFS= read -r line; do
+    echo "Memproses: $line"
+done < daftar_user.txt
+
+```
 ---
 
 ### 1.2.4 Pipes
@@ -554,11 +659,11 @@ ls -l | tee output.txt | grep ".sh"
 | `tail` | Baris akhir | `tail -f log.txt` |
 | `wc` | Hitung baris/kata/byte | `wc -l file.txt` |
 | `sort` | Urutkan | `sort -n`, `sort -r`, `sort -k2` |
-| `uniq` | Hapus duplikat berurutan | `sort file | uniq -c` |
+| `uniq` | Hapus duplikat berurutan | `sort file \| uniq -c` |
 | `cut` | Potong kolom | `cut -d: -f1 /etc/passwd` |
 | `tr` | Translasi karakter | `tr 'a-z' 'A-Z'` |
-| `tee` | Salin ke stdout & file | `cmd | tee log` |
-| `xargs` | Bangun argumen dari stdin | `find . -name "*.tmp" | xargs rm` |
+| `tee` | Salin ke stdout & file | `cmd \| tee log` |
+| `xargs` | Bangun argumen dari stdin | `find . -name "*.tmp" \| xargs rm` |
 | `sed` | Editor stream | `sed 's/foo/bar/g'` |
 | `awk` | Pemroses teks per kolom | `awk '{print $1, $3}'` |
 

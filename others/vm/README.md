@@ -7,7 +7,7 @@ Mari kita bedah secara terstruktur dan mendalam:
 
 ---
 
-## 🧩 1. QEMU + KVM (Kernel-based Virtual Machine)
+## [🧩 1. QEMU + KVM (Kernel-based Virtual Machine)](./Kurikulum-Mastering-Vm-Terisolasi.html)
 
 **Bahasa pemrograman:** C
 **Lisensi:** GPLv2
