@@ -978,9 +978,605 @@ Kesimpulan: personal framework yang baik bukan yang memiliki paling banyak plugi
 
 Tahap berikutnya dalam roadmap adalah mendalami custom ZLE widgets. Di sana Anda akan mulai memprogram editor command line Zsh sendiri menggunakan `BUFFER`, `CURSOR`, `zle -N`, dan `bindkey`—landasan untuk membuat fitur interaktif yang lebih kompleks.
 
+---
+
+# Pelajaran 25 — Custom ZLE Widgets
+
+Materi ini melanjutkan roadmap Beralih Ke Zsh: setelah konfigurasi modular dan personal framework, kita masuk ke ZLE (Zsh Line Editor), mekanisme yang memungkinkan Anda memprogram perilaku editor command line Zsh sendiri.
+
+## 1. Apa itu ZLE?
+
+Ketika Anda mengetik perintah di terminal, Zsh tidak langsung menjalankan setiap karakter yang Anda masukkan. Selama Anda masih mengedit baris perintah, ZLE mengelola teks yang sedang ditulis, posisi kursor, dan respons terhadap tombol keyboard.
+
+Alurnya secara sederhana:
+
+```
+Keyboard
+   │
+   ▼
+Keymap ── menentukan aksi untuk tombol
+   │
+   ▼
+ZLE widget ── menjalankan aksi
+   │
+   ▼
+Command line diperbarui
+   │
+   ▼
+Enter → Zsh memproses perintah
+```
+
+Contoh: Anda mengetik `git status`, lalu menekan tombol untuk memindahkan kursor, menghapus teks, atau memanggil fitur khusus. Selama proses penyuntingan itu, ZLE berperan sebagai editor baris perintah.
+
+Ada empat konsep utama yang perlu dibedakan:
+
+- Keymap: kumpulan pemetaan tombol ke aksi.
+- Widget: aksi yang dapat dijalankan oleh ZLE.
+- `zle -N`: mendaftarkan fungsi shell sebagai widget ZLE.
+- `bindkey`: menghubungkan tombol tertentu dengan widget.
+
+## 2. Memahami `BUFFER` dan `CURSOR`
+
+Dua parameter khusus ZLE yang paling penting untuk latihan awal adalah `BUFFER` dan `CURSOR`.
+
+| Parameter | Fungsi                                              |
+| --------- | --------------------------------------------------- |
+| `BUFFER`  | Teks lengkap pada baris perintah yang sedang diedit |
+| `CURSOR`  | Posisi kursor dalam teks tersebut                   |
+
+Misalnya, command line berisi:
+
+```
+echo hello
+```
+
+Secara konseptual, `BUFFER` menyimpan teks `echo hello`. `CURSOR` menunjukkan posisi kursor pada baris itu. Posisi kursor dihitung sebagai offset dalam teks, bukan nomor kolom terminal.
+
+Ketika widget mengubah `BUFFER`, ZLE menampilkan perubahan tersebut pada command line. Widget juga dapat mengatur `CURSOR` agar kursor berpindah ke posisi yang diinginkan.
+
+## 3. Membuat widget pertama
+
+Kita akan membuat widget yang mengganti teks command line dengan perintah contoh. Widget ini tidak menjalankan perintah secara langsung; Anda masih perlu menekan `Enter`.
+
+Untuk menghindari perubahan konfigurasi utama, lakukan latihan dalam shell terpisah:
+
+```
+zsh -f
+```
+
+Opsi `-f` mencegah pemuatan file startup pengguna yang biasanya memuat konfigurasi. Di shell baru tersebut, jalankan:
+
+```
+bindkey -v
+
+my_widget() {
+    BUFFER="print -r -- 'ZLE aktif'"
+    CURSOR=${#BUFFER}
+}
+
+zle -N my_widget
+bindkey -M viins '^G' my_widget
+```
+
+Sekarang tekan `Ctrl+G` pada prompt. Baris perintah akan berubah menjadi:
+
+```
+print -r -- 'ZLE aktif'
+```
+
+Tekan `Enter` untuk menjalankannya.
+
+Perintah `exit` dapat digunakan untuk keluar dari shell latihan setelah selesai.
+
+## 4. Memahami setiap bagian kode
+
+A. Membuat fungsi
+
+```
+my_widget() {
+    BUFFER="print -r -- 'ZLE aktif'"
+    CURSOR=${#BUFFER}
+}
+```
+
+- `my_widget()` mendefinisikan fungsi Zsh biasa.
+- `BUFFER=...` mengganti isi command line yang sedang diedit.
+- `${#BUFFER}` menghasilkan panjang teks `BUFFER`.
+- `CURSOR=${#BUFFER}` menempatkan kursor di akhir teks.
+
+B. Mendaftarkan fungsi sebagai widget
+
+```
+zle -N my_widget
+```
+
+Fungsi shell biasa belum otomatis menjadi widget ZLE. `zle -N` mendaftarkannya sebagai widget yang dapat dipanggil oleh editor baris perintah.
+
+C. Menghubungkan tombol dengan widget
+
+```
+bindkey -M viins '^G' my_widget
+```
+
+- `bindkey` mengatur pemetaan tombol.
+- `-M viins` memilih keymap vi insert mode.
+- `'^G'` adalah notasi untuk `Ctrl+G`.
+- `my_widget` adalah widget yang akan dipanggil.
+
+Karena Anda menggunakan vi mode, pemetaan tersebut secara eksplisit berlaku ketika editor berada dalam insert mode. Pemetaan ini menggantikan aksi `Ctrl+G` sebelumnya pada keymap tersebut selama shell latihan berlangsung.
+
+## 5. Mengapa mekanisme ini berguna?
+
+Widget tidak terbatas pada mengganti seluruh command line. Anda dapat mengembangkan widget untuk:
+
+- Menyisipkan template perintah yang sering digunakan.
+- Mengubah teks yang sedang dipilih atau diedit.
+- Menambahkan direktori atau argumen ke command line.
+- Memanggil fungsi pencarian interaktif.
+- Menghubungkan keyboard dengan alur kerja Git, fzf, atau utilitas lain.
+
+Untuk membuat widget yang layak dipakai sehari-hari, Anda nantinya perlu memahami widget bawaan, pemanggilan widget lain, keymap, penanganan kursor, serta bagaimana widget berinteraksi dengan completion.
+
+## Latihan
+
+Coba modifikasi `my_widget` agar command line berisi `git status` dan kursor berada di antara `git` dan `status`.
+
+Petunjuk: teks `git status` memiliki satu spasi di antara kedua kata. Karena `CURSOR` menggunakan offset karakter, tentukan jumlah karakter yang harus dihitung dari awal baris.
+
+Setelah latihan ini, materi berikutnya adalah ZLE widgets tingkat lanjut: memanggil widget bawaan, mempertahankan perilaku tombol asli, dan merancang widget yang tidak sekadar mengganti seluruh `BUFFER`.
+
+# Pelajaran 26 — Widget Bawaan, `zle`, dan Keymap
+
+Pada pelajaran sebelumnya, Anda membuat widget yang mengganti seluruh `BUFFER`. Sekarang kita akan belajar membuat widget yang memanfaatkan aksi ZLE yang sudah tersedia, sehingga tidak perlu mengimplementasikan semuanya sendiri.
+
+## 1. Memanggil widget bawaan
+
+ZLE memiliki banyak widget bawaan, misalnya:
+
+| Widget                 | Fungsi                                         |
+| ---------------------- | ---------------------------------------------- |
+| `self-insert`          | Menyisipkan karakter yang diketik              |
+| `backward-delete-char` | Menghapus karakter sebelum kursor              |
+| `forward-char`         | Memindahkan kursor ke kanan                    |
+| `backward-char`        | Memindahkan kursor ke kiri                     |
+| `accept-line`          | Menerima baris perintah, biasanya dengan Enter |
+| `kill-whole-line`      | Menghapus seluruh baris perintah               |
+
+Anda dapat memeriksa binding yang sedang aktif menggunakan:
+
+```
+bindkey -M viins
+```
+
+Perintah tersebut menampilkan pemetaan tombol pada keymap `viins`, yaitu keymap insert mode untuk vi.
+
+Untuk mencari informasi widget tertentu, gunakan:
+
+```
+zle -l
+```
+
+Perintah ini mencantumkan widget yang dikenal oleh ZLE. Untuk melihat dokumentasi lengkap dari terminal, jalankan:
+
+```
+man zshzle
+```
+
+## 2. Memanggil widget bawaan dari widget buatan sendiri
+
+Misalnya, kita ingin membuat widget yang memindahkan kursor ke akhir command line. ZLE sudah menyediakan widget `end-of-line`, jadi kita cukup memanggilnya:
+
+```
+my_end_of_line() {
+    zle end-of-line
+}
+
+zle -N my_end_of_line
+bindkey -M viins '^G' my_end_of_line
+```
+
+Ketika `Ctrl+G` ditekan dalam insert mode, widget buatan kita memanggil widget bawaan `end-of-line`.
+
+Perhatikan perbedaan ini:
+
+```
+CURSOR=${#BUFFER}
+```
+
+versus:
+
+```
+zle end-of-line
+```
+
+Keduanya dapat memindahkan kursor ke akhir baris, tetapi pendekatannya berbeda. Yang pertama mengubah parameter posisi kursor secara langsung; yang kedua meminta ZLE menjalankan widget bawaan yang dirancang untuk aksi tersebut.
+
+## 3. Mengapa keymap penting?
+
+Zsh memiliki beberapa keymap. Dua yang sering ditemui ketika menggunakan vi mode adalah:
+
+- `viins`: untuk insert mode.
+- `vicmd`: untuk command mode.
+
+Binding yang dipasang pada satu keymap belum tentu berlaku pada keymap lainnya.
+
+Contoh:
+
+```
+bindkey -M viins '^G' my_end_of_line
+bindkey -M vicmd '^G' my_end_of_line
+```
+
+Dengan dua binding tersebut, `Ctrl+G` diarahkan ke widget yang sama pada kedua keymap.
+
+Namun, jangan menambahkan binding seperti ini secara membabi buta ke konfigurasi utama. Pastikan dahulu bahwa tombol tersebut tidak memiliki fungsi lain yang ingin Anda pertahankan.
+
+## 4. Menguji widget secara terisolasi
+
+Buka shell latihan tanpa konfigurasi pengguna:
+
+```
+zsh -f
+```
+
+Lalu jalankan:
+
+```
+bindkey -v
+
+my_end_of_line() {
+    zle end-of-line
+}
+
+zle -N my_end_of_line
+bindkey -M viins '^G' my_end_of_line
+```
+
+Ketik teks yang cukup panjang, pindahkan kursor ke tengah menggunakan tombol panah, lalu tekan `Ctrl+G`. Kursor seharusnya berpindah ke akhir baris tanpa mengubah teks.
+
+Keluar dari shell latihan menggunakan:
+
+```
+exit
+```
+
+## 5. Hal penting ketika membaca plugin
+
+Saat menemukan kode seperti:
+
+```
+zle -N some_widget
+bindkey '^X' some_widget
+```
+
+bacalah alurnya seperti ini:
+
+```
+Fungsi shell
+    ↓
+Didaftarkan sebagai widget ZLE
+    ↓
+Dihubungkan ke tombol
+    ↓
+Pengguna menekan tombol
+    ↓
+Widget berjalan
+```
+
+Jika plugin menggunakan widget bawaan, periksa juga apakah ia memanggil `zle nama-widget`, mengubah `BUFFER`, memodifikasi `CURSOR`, atau memanggil fungsi eksternal. Ini membantu Anda memahami perilakunya sebelum mengubah kode plugin.
+
+Latihan: ubah contoh `my_end_of_line` agar `Ctrl+G` memindahkan kursor ke awal baris. Petunjuk: gunakan widget bawaan `beginning-of-line`.
+
+Pelajaran berikutnya: membuat custom completion, sehingga Anda dapat menambahkan penyelesaian otomatis untuk fungsi atau perintah buatan sendiri.
+
+# Pelajaran 27 — Custom Completion di Zsh
+
+Pada pelajaran sebelumnya, kita mempelajari cara membuat ZLE widgets. Sekarang kita beralih ke bagian lain dari programmable interactive shell: membuat Zsh memahami argumen dan pilihan untuk perintah buatan sendiri.
+
+Contohnya, Anda memiliki fungsi:
+
+```
+project() {
+    # Membuka direktori proyek.
+}
+```
+
+Anda ingin mengetik `project` lalu menekan `Tab`, dan Zsh menawarkan nama proyek yang tersedia. Mekanisme inilah yang akan kita bangun secara bertahap.
+
+## 1. Memahami alur completion
+
+Completion bukan sekadar daftar kata yang ditampilkan ketika tombol `Tab` ditekan. Sistem completion Zsh dapat mempertimbangkan konteks perintah, posisi argumen, opsi, direktori, dan sumber kandidat lainnya.
+
+```
+Pengguna menekan Tab
+        │
+        ▼
+Zsh memeriksa konteks command line
+        │
+        ▼
+Sistem completion memilih fungsi yang sesuai
+        │
+        ▼
+Fungsi completion menghasilkan kandidat
+        │
+        ▼
+Zsh menampilkan atau melengkapi kandidat
+```
+
+Beberapa komponen penting:
+
+- `compinit`: menginisialisasi sistem completion standar.
+- `compdef`: menghubungkan perintah dengan fungsi completion.
+- `_arguments`: membantu mendefinisikan argumen dan opsi perintah.
+- `$fpath`: daftar direktori tempat Zsh mencari fungsi autoload, termasuk fungsi completion.
+
+Anda telah mempelajari `compinit`, `compdef`, dan `$fpath` sebelumnya. Sekarang kita menggunakannya untuk membuat fitur sendiri.
+
+## 2. Membuat completion sederhana
+
+Kita akan membuat perintah `greet` yang menerima satu argumen: `alice`, `bob`, atau `world`. Kemudian kita tambahkan completion untuk argumen tersebut.
+
+Untuk menguji tanpa mengubah konfigurasi utama, jalankan shell terpisah:
+
+```
+zsh -f
+```
+
+Di shell baru itu, inisialisasi completion:
+
+```
+autoload -Uz compinit
+compinit
+```
+
+Inisialisasi ini cukup dilakukan sekali dalam sesi tersebut. Jangan menambahkan `compinit` berulang kali jika konfigurasi atau plugin manager Anda sudah menginisialisasikannya.
+
+Selanjutnya, definisikan perintah:
+
+```
+greet() {
+    print -r -- "Halo, $1"
+}
+```
+
+Sekarang buat fungsi completion:
+
+```
+_greet() {
+    _arguments '1:name:(alice bob world)'
+}
+```
+
+Hubungkan completion ke perintah:
+
+```
+compdef _greet greet
+```
+
+Coba ketik `greet ` lalu tekan `Tab`. Zsh seharusnya menawarkan kandidat `alice`, `bob`, dan `world`.
+
+Contoh pemakaian setelah memilih kandidat:
+
+```
+greet alice
+```
+
+Hasil:
+
+```
+Halo, alice
+```
+
+## 3. Memahami kode completion
+
+### Fungsi `_greet`
+
+```
+_greet() {
+    _arguments '1:name:(alice bob world)'
+}
+```
+
+Nama fungsi diawali `_` mengikuti konvensi umum fungsi completion Zsh.
+
+Bagian `_arguments` menjelaskan struktur argumen:
+
+- `1`: argumen pertama.
+- `name`: deskripsi argumen.
+- `(alice bob world)`: daftar kandidat yang ditawarkan.
+
+Jadi, Zsh tidak sekadar melengkapi teks secara sembarang. Fungsi tersebut memberi tahu sistem completion kandidat yang sesuai untuk posisi argumen pertama.
+
+### Menghubungkan dengan `compdef`
+
+```
+compdef _greet greet
+```
+
+Artinya, gunakan fungsi completion `_greet` ketika pengguna meminta completion untuk perintah `greet`.
+
+Tanpa hubungan ini, fungsi `_greet` dapat tersedia tetapi sistem completion belum tentu tahu bahwa fungsi tersebut harus dipakai untuk `greet`.
+
+## 4. Mengembangkan completion dengan opsi
+
+Misalnya perintah Anda mendukung opsi `--help` dan `--version`. Definisi completion dapat dikembangkan menjadi:
+
+```
+_greet() {
+    _arguments \
+        '1:name:(alice bob world)' \
+        '--help[Show help]' \
+        '--version[Show version]'
+}
+```
+
+Tanda `\` di akhir baris melanjutkan perintah ke baris berikutnya. Setiap spesifikasi di `_arguments` menjelaskan argumen atau opsi yang dapat dilengkapi.
+
+Perlu diingat, mendefinisikan completion tidak otomatis membuat opsi tersebut bekerja. Fungsi `greet` juga harus mengimplementasikan perilaku `--help` dan `--version` jika Anda ingin opsi itu benar-benar berfungsi.
+
+## 5. Menghubungkan completion dengan struktur plugin
+
+Ketika fungsi completion sudah lebih besar, Anda dapat memisahkannya dari konfigurasi utama:
+
+```
+project-tools/
+├── project-tools.plugin.zsh
+└── completions/
+    └── _greet
+```
+
+File `_greet` harus mengikuti format fungsi autoload Zsh: isinya adalah badan fungsi, bukan pembungkus `_greet() { ... }`.
+
+Entry point plugin dapat menambahkan direktori completion ke `$fpath` sebelum `compinit` dijalankan. Jika `compinit` sudah dikelola oleh konfigurasi utama atau plugin manager, jangan menginisialisasikannya kembali tanpa alasan.
+
+Pemisahan ini berguna ketika Anda mulai membuat plugin pribadi: fungsi utama, completion, dan binding dapat dikelola sebagai komponen yang berbeda.
+
+## Latihan
+
+1. Tambahkan kandidat `charlie` ke completion `_greet`.
+2. Uji apakah kandidat baru muncul ketika Anda menekan `Tab`.
+3. Ubah deskripsi argumen dari `name` menjadi `recipient`.
+4. Jelaskan perbedaan tugas `_arguments` dan `compdef`.
+
+Pelajaran berikutnya adalah memahami completion secara lebih mendalam: `styles`, `tags`, dan `completers`. Konsep tersebut akan membantu Anda memahami mengapa completion plugin yang lebih kompleks dapat mengurutkan, memfilter, dan menyajikan kandidat dengan perilaku berbeda.
+
+# Pelajaran 28 — Completion Styles, Tags, dan Completers
+
+Pada pelajaran sebelumnya, Anda membuat completion sederhana menggunakan `_arguments` dan `compdef`. Sekarang kita mempelajari mekanisme yang membuat sistem completion Zsh dapat dikonfigurasi tanpa harus mengubah fungsi completion itu sendiri.
+
+Tiga konsep utamanya adalah styles, tags, dan completers.
+
+## 1. Styles: mengatur perilaku completion
+
+Zsh menggunakan `zstyle` untuk mengatur perilaku berbagai bagian sistem completion.
+
+Contoh:
+
+```
+zstyle ':completion:*' menu select
+```
+
+Penjelasannya:
+
+- `zstyle` menetapkan konfigurasi berbasis pola konteks.
+- `':completion:*'` adalah pola konteks yang mencocokkan konteks dalam sistem completion.
+- `menu select` menetapkan nilai style bernama `menu`.
+
+Style tersebut meminta sistem completion menggunakan pemilihan menu ketika sesuai. Efek tepatnya bergantung pada konteks dan konfigurasi completion lainnya.
+
+Poin pentingnya: `zstyle` bukan perintah yang menghasilkan kandidat. Ia mengatur bagaimana bagian sistem completion berperilaku.
+
+Untuk memeriksa style yang telah dikonfigurasi:
+
+```
+zstyle -L
+```
+
+Untuk mempelajari mekanismenya:
+
+```
+man zshmodules
+```
+
+Cari bagian yang membahas completion system dan `zstyle`; dokumentasi lengkapnya juga tersedia di `man zshcompsys`.
+
+## 2. Tags: mengelompokkan jenis kandidat
+
+Tags mengelompokkan kandidat completion berdasarkan jenisnya.
+
+Misalnya, ketika Anda melengkapi argumen sebuah perintah, kandidat dapat berasal dari kategori seperti:
+
+- `files`: berkas.
+- `directories`: direktori.
+- `commands`: perintah.
+- `options`: opsi perintah.
+- `users`: nama pengguna.
+
+Nama tag yang tersedia bergantung pada fungsi completion dan konteksnya. Tidak setiap completion menghasilkan semua kategori tersebut.
+
+Mengapa pengelompokan ini berguna? Karena Anda dapat mengatur tampilan atau pemilihan kandidat berdasarkan jenisnya, alih-alih mengubah fungsi completion untuk setiap kebutuhan.
+
+## 3. Completers: strategi mencari kandidat
+
+Completers adalah mekanisme yang digunakan sistem completion untuk mencoba menemukan kandidat yang sesuai.
+
+Salah satu contoh konfigurasi yang sering dijumpai:
+
+```
+zstyle ':completion:*' completer _complete _correct
+```
+
+Secara umum:
+
+- `_complete` mencoba completion normal.
+- `_correct` dapat mencoba koreksi ejaan ketika strategi sebelumnya tidak menghasilkan kandidat yang sesuai.
+
+Urutan strategi penting karena sistem dapat mencoba completers sesuai urutan yang ditetapkan, dengan perilaku lanjutan bergantung pada hasil setiap strategi.
+
+Jangan langsung menerapkan konfigurasi ini ke `zshrc` utama. Konfigurasi completion yang sudah ada atau plugin manager Anda mungkin telah menetapkan style tersendiri.
+
+## 4. Bagaimana ketiganya bekerja bersama?
+
+```
+Pengguna menekan Tab
+        │
+        ▼
+Fungsi completion menentukan konteks
+        │
+        ▼
+Completers mencoba menemukan kandidat
+        │
+        ▼
+Tags mengelompokkan jenis kandidat
+        │
+        ▼
+Styles mengatur perilaku penyajian
+        │
+        ▼
+Zsh menampilkan atau memilih kandidat
+```
+
+Diagram tersebut merupakan gambaran konseptual, bukan urutan internal yang berlaku identik untuk setiap completion.
+
+## 5. Praktik membaca konfigurasi completion
+
+Saat menemukan kode seperti ini dalam plugin:
+
+```
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+```
+
+Jangan hanya menghafal sintaksnya. Ajukan tiga pertanyaan:
+
+1. Konteks mana yang cocok dengan pola `':completion:*'`?
+2. Style apa yang diatur, dan apa nilai yang diberikan?
+3. Bagaimana style itu memengaruhi hasil completion?
+
+Pada contoh tersebut, `matcher-list` mengatur aturan pencocokan kandidat. Aturan yang diberikan memungkinkan pencocokan huruf kecil dengan huruf besar pada posisi yang sesuai. Ini dapat membuat completion lebih toleran terhadap perbedaan kapitalisasi.
+
+## 6. Latihan
+
+Jalankan perintah berikut dalam sesi Zsh interaktif:
+
+```
+zstyle -L
+```
+
+Lalu periksa apakah konfigurasi Anda memiliki style untuk `menu`, `completer`, atau `matcher-list`.
+
+Berikutnya, buka dokumentasi:
+
+```
+man zshcompsys
+```
+
+Cari bagian yang menjelaskan `completers`, `tags`, dan `zstyle`. Tujuannya adalah menghubungkan konfigurasi yang Anda temukan dengan mekanisme resminya, bukan menyalin semua style sekaligus.
+
+Materi berikutnya: hooks tingkat lanjut, termasuk bagaimana menggabungkan `precmd`, `preexec`, dan `chpwd` untuk membuat fitur interaktif tanpa menimpa hook yang sudah digunakan plugin lain.
+
 > - **[Ke Atas](#)**
 > - **[Sebelumnya][sebelumnya]**
-<!-- > - **[Selanjutnya][selanjutnya]** -->
+> - **[Selanjutnya][selanjutnya]**
 > - **[Kurikulum][kurikulum]**
 > - **[Home][domain]**
 > - **[Daftar Teknologi][tekno]**
@@ -988,8 +1584,8 @@ Tahap berikutnya dalam roadmap adalah mendalami custom ZLE widgets. Di sana Anda
 [tekno]: ../../../../../README.md
 [domain]: ../../../../../../README.md
 [kurikulum]: ../zsh_scripting.md
-[sebelumnya]: ../bagian-15/README.md
-<!-- [selanjutnya]: ../bagian-17/README.md -->
+[sebelumnya]: ../bagian-19/README.md
+[selanjutnya]: ../bagian-21/README.md
 
 <!-- [selanjutnya]: ../bagian-3/README.md -->
 
