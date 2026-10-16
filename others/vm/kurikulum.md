@@ -96,7 +96,7 @@ Setiap fase terdiri dari:
 
 ---
 
-## 4. Fase 1 — Fondasi Virtualisasi & Host Hardening
+## [4. Fase 1 — Fondasi Virtualisasi & Host Hardening]
 
 **Estimasi: 1 minggu**
 
@@ -289,7 +289,7 @@ Buat skrip `fase1-setup.sh` yang:
 
 ---
 
-## 5. Fase 2 — QEMU/KVM Murni (Tanpa libvirt)
+## [5. Fase 2 — QEMU/KVM Murni (Tanpa libvirt)]
 
 **Estimasi: 2 minggu**
 
@@ -433,7 +433,7 @@ Jalankan VM Arch dengan virtio, OVMF, vTPM, dan kontrol QMP. Dokumentasikan seti
 
 ---
 
-## 6. Fase 3 — libvirt & virsh: Lifecycle & Domain XML
+## [6. Fase 3 — libvirt & virsh: Lifecycle & Domain XML]
 
 **Estimasi: 2 minggu**
 
@@ -548,7 +548,7 @@ Provisioning 3 VM: Arch, Debian, cloud image. Hapus dan bangun ulang hanya dari 
 
 ---
 
-## 7. Fase 4 — Storage, Image & Backup Engineering
+## [7. Fase 4 — Storage, Image & Backup Engineering]
 
 **Estimasi: 2 minggu**
 
@@ -642,7 +642,7 @@ sha256sum /backup/arch.qcow2
 
 ---
 
-## 8. Fase 5 — Networking & Isolasi Jaringan
+## [8. Fase 5 — Networking & Isolasi Jaringan]
 
 **Estimasi: 2 minggu**
 
@@ -750,7 +750,7 @@ Lab 3 segmen (DMZ/LAN/isolated) dengan matriks konektivitas dibuktikan `ping`/`n
 
 ---
 
-## 9. Fase 6 — Keamanan & Isolasi Lanjutan
+## [9. Fase 6 — Keamanan & Isolasi Lanjutan]
 
 **Estimasi: 2–3 minggu**
 
@@ -858,7 +858,7 @@ Threat model + checklist. `virt-host-validate` PASS penuh.
 
 ---
 
-## 10. Fase 7 — Otomasi, Troubleshooting & Capstone Multi-OS
+## [10. Fase 7 — Otomasi, Troubleshooting & Capstone Multi-OS]
 
 **Estimasi: 3 minggu**
 
@@ -964,7 +964,7 @@ fi
 
 ---
 
-## 11. Fase 8 — Expert: Migrasi, Passthrough & Observability (Opsional)
+## [11. Fase 8 — Expert: Migrasi, Passthrough & Observability (Opsional)]
 
 **Estimasi: 3–4 minggu**
 
@@ -1107,3 +1107,12 @@ Nilai akhir:
 ---
 
 **Kesimpulan:** Kurikulum ini kini lengkap, terstruktur, dan siap dipublikasikan. Setiap fase memiliki modul terperinci, lab, validasi, troubleshooting, referensi, dan rubrik. Fase 8 memastikan pencapaian tingkat expert. Aksesibilitas ditingkatkan dengan glosarium dan penjelasan konsep. Fleksibilitas dijaga melalui proyek mandiri dan topik opsional.
+
+[4. Fase 1 — Fondasi Virtualisasi & Host Hardening]: ./bagian-1/README.md
+[5. Fase 2 — QEMU/KVM Murni (Tanpa libvirt)]: ./bagian-2/README.md
+[6. Fase 3 — libvirt & virsh: Lifecycle & Domain XML]: ./bagian-3/README.md
+[7. Fase 4 — Storage, Image & Backup Engineering]: ./bagian-4/README.md
+[8. Fase 5 — Networking & Isolasi Jaringan]: ./bagian-5/README.md
+[9. Fase 6 — Keamanan & Isolasi Lanjutan]: ./bagian-6/README.md
+[10. Fase 7 — Otomasi, Troubleshooting & Capstone Multi-OS]: ./bagian-7/README.md
+[11. Fase 8 — Expert: Migrasi, Passthrough & Observability (Opsional)]: ./bagian-8/README.md
