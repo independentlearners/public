@@ -404,7 +404,7 @@ nft --version
 ```
 +-------------------------------------------------------------+
 |                        Userspace Tools                      |
-|  virsh  |  virt-install  |  qemu-system-x86_64  |  qemu-img  |
+| virsh  |  virt-install  |  qemu-system-x86_64  |  qemu-img  |
 +-------------------------------------------------------------+
 |                           libvirt                           |
 |  API  |  Daemon modular: virtqemud, virtnetworkd, ...       |

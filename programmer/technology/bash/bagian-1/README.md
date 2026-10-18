@@ -752,6 +752,7 @@ Shebang adalah baris pertama skrip yang memberi tahu kernel interpreter apa yang
 
 **Aturan:**
 - Shebang **wajib** ada di baris pertama (boleh didahului BOM tapi hindari BOM).
+    - > Lebih lanjut tentang [BOM](bom.md)
 - Path interpreter di shebang **selalu absolut** (`/bin/bash`, `/usr/bin/env`).
 - Jika memakai `env`, path `env` absolut (`/usr/bin/env` atau `/bin/env`), tapi argumen setelahnya (`bash`) dicari di `$PATH`.
 

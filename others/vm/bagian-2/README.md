@@ -735,11 +735,11 @@ qemu-img bitmap --remove disk.qcow2 backup0
 ```
 +-------------------------------------------------------+
 |              Header (1 cluster)                       |
-|  magic: QFI\xfb | version | backing_file_offset      |
-|  backing_file_size | cluster_bits | size (virtual)   |
-|  crypt_method | l1_size | l1_table_offset            |
-|  refcount_table_offset | refcount_table_clusters    |
-|  nb_snapshots | snapshots_offset                    |
+|  magic: QFI\xfb | version | backing_file_offset       |
+|  backing_file_size | cluster_bits | size (virtual)    |
+|  crypt_method | l1_size | l1_table_offset             |
+|  refcount_table_offset | refcount_table_clusters      |
+|  nb_snapshots | snapshots_offset                      |
 +-------------------------------------------------------+
 |              Refcount Table                           |
 |  (menunjuk ke refcount blocks)                        |
@@ -2963,29 +2963,29 @@ Di guest, instal `qemu-guest-agent` dan jalankan. Host bisa berkomunikasi via QM
 ### 5.2. Alur Handshake & Perintah
 
 ```
-Klien                          QEMU
-  |                              |
-  |  connect ke socket           |
-  |----------------------------->|
-  |                              |
-  |  greeting (QMP version)      |
-  |<-----------------------------|
-  |                              |
-  |  {"execute": "qmp_capabilities"}
-  |----------------------------->|
-  |                              |
-  |  {"return": {}}              |
-  |<-----------------------------|
-  |                              |
-  |  {"execute": "query-status", "id": 1}
-  |----------------------------->|
-  |                              |
-  |  {"return": {...}, "id": 1}  |
-  |<-----------------------------|
-  |                              |
-  |  event RESET (asinkron)      |
-  |<-----------------------------|
-  |                              |
+Klien                                     QEMU
+  |                                         |
+  |  connect ke socket                      |
+  |---------------------------------------->|
+  |                                         |
+  |  greeting (QMP version)                 |
+  |<----------------------------------------|
+  |                                         |
+  |  {"execute": "qmp_capabilities"}        |
+  |---------------------------------------->|
+  |                                         |
+  |  {"return": {}}                         |
+  |<----------------------------------------|
+  |                                         |
+  |  {"execute": "query-status", "id": 1}   |
+  |---------------------------------------->|
+  |                                         |
+  |  {"return": {...}, "id": 1}             |
+  |<----------------------------------------|
+  |                                         |
+  |  event RESET (asinkron)                 |
+  |<----------------------------------------|
+  |                                         |
 ```
 
 ### 5.3. Perbedaan QMP dan HMP
@@ -3000,7 +3000,7 @@ Klien                          QEMU
 +-------------------+         +-------------------+
         |                             |
         |  human-monitor-command      |
-        |<---------------------------|
+        |<----------------------------|
         |                             |
         v                             v
 +-------------------------------------------------+
