@@ -1,10 +1,10 @@
 # **Fase 1: Fondasi — Berinteraksi dengan Shell (Tingkat Pemula)**
 
-> **Prasyarat:** Cocok untuk pemula yang belum pernah menyentuh terminal. Kunjungi [disini][2] jika ingin secara khusus memahami terminal baris perintah. 
-> **Estimasi waktu:** 6–8 jam (teori + latihan).
-> **Target lingkungan:** Arch Linux, Ubuntu/Debian, Fedora, macOS, atau Windows via WSL2/Git Bash.
-> **Setelah menyelesaikan fase ini**, Anda akan mampu: menavigasi sistem berkas, mengalirkan data antar perintah, menulis skrip pertama, memakai variabel, menerima argumen, dan menangani kesalahan dasar.
-
+> - **Prasyarat:** Cocok untuk pemula yang belum pernah menyentuh terminal. Kunjungi [disini][2] jika ingin secara khusus memahami terminal baris perintah. 
+> - **Estimasi waktu:** 6–8 jam (teori + latihan).
+> - **Target lingkungan:** Arch Linux, Ubuntu/Debian, Fedora, macOS, atau Windows via WSL2/Git Bash.
+> - **Setelah menyelesaikan fase ini**, Anda akan mampu: menavigasi sistem berkas, mengalirkan data antar perintah, menulis skrip pertama, memakai variabel, menerima argumen, dan menangani kesalahan dasar.
+---   
 > 📘 **Catatan Lingkungan Belajar:**
 > Jika Anda pengguna Arch Linux yang **sudah menggunakan Zsh sebagai shell utama** dan tidak ingin mengubahnya hanya untuk belajar Bash, seluruh materi Fase 1 ini dapat dijalankan di dalam **lingkungan terisolasi** menggunakan `systemd-nspawn`.
 >
@@ -15,6 +15,8 @@
 > - Checklist kurikulum yang dipetakan ke setiap modul Fase 1
 >
 > **Rekomendasi pemakaian**: jalankan container di Terminal 2, sementara Terminal 1 tetap di host untuk mengedit file dan membaca dokumentasi. Semua perintah di Fase 1 diasumsikan **dijalankan di dalam container**, kecuali disebutkan lain.
+
+---   
 
 > ℹ️ **Untuk pengguna non-Arch atau yang belum siap dengan container:** semua materi Fase 1 bersifat **portabel dan POSIX-compatible** selama Anda memakai `bash` (bukan `dash`/`sh`). Anda tetap bisa mengikuti panduan di lingkungan native Anda. Dokumen isolasi hanya **opsional** dan **sangat direkomendasikan** bagi yang ingin eksperimen "bebas rusak".
 
