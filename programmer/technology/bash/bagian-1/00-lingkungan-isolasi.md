@@ -369,4 +369,4 @@ Setelah familiar dengan Bash di container ini, Anda bisa memperluas lab:
 
 ---
 
-*Dokumen ini adalah bagian dari materi belajar Bash. Simpan sebagai `docs/00-lingkungan-isolasi.md` di repo materi Anda.*
+*Dokumen ini adalah bagian dari materi belajar Bash.
