@@ -1,9 +1,26 @@
+Berikut deskripsi Fase 1 yang telah ditambahkan catatan referensi ke dokumen lingkungan isolasi:
+
+---
+
 # **Fase 1: Fondasi — Berinteraksi dengan Shell (Tingkat Pemula)**
 
 > **Prasyarat:** Tidak ada. Cocok untuk pemula yang belum pernah menyentuh terminal.
 > **Estimasi waktu:** 6–8 jam (teori + latihan).
 > **Target lingkungan:** Arch Linux, Ubuntu/Debian, Fedora, macOS, atau Windows via WSL2/Git Bash.
 > **Setelah menyelesaikan fase ini**, Anda akan mampu: menavigasi sistem berkas, mengalirkan data antar perintah, menulis skrip pertama, memakai variabel, menerima argumen, dan menangani kesalahan dasar.
+
+> 📘 **Catatan Lingkungan Belajar:**
+> Jika Anda pengguna Arch Linux yang **sudah menggunakan Zsh sebagai shell utama** dan tidak ingin mengubahnya hanya untuk belajar Bash, seluruh materi Fase 1 ini dapat dijalankan di dalam **lingkungan terisolasi** menggunakan `systemd-nspawn`.
+>
+> Lihat **[📚 Dokumentasi: Lingkungan Belajar Bash Terisolasi dengan `systemd-nspawn`](./00-lingkungan-isolasi.md)** — dokumen tersebut berisi panduan lengkap:
+> - Setup container Arch Linux minimal (sekali saja, ±5 menit)
+> - Workflow multi-terminal (host Zsh + container Bash) — Anda dapat **mengedit skrip dari host** dan **menjalankannya di container**
+> - Snapshot & restore container sebelum eksperimen berisiko
+> - Checklist kurikulum yang dipetakan ke setiap modul Fase 1
+>
+> **Rekomendasi pemakaian**: jalankan container di Terminal 2, sementara Terminal 1 tetap di host untuk mengedit file dan membaca dokumentasi. Semua perintah di Fase 1 diasumsikan **dijalankan di dalam container**, kecuali disebutkan lain.
+
+> ℹ️ **Untuk pengguna non-Arch atau yang belum siap dengan container:** semua materi Fase 1 bersifat **portabel dan POSIX-compatible** selama Anda memakai `bash` (bukan `dash`/`sh`). Anda tetap bisa mengikuti panduan di lingkungan native Anda. Dokumen isolasi hanya **opsional** dan **sangat direkomendasikan** bagi yang ingin eksperimen "bebas rusak".
 
 ---
 
@@ -18,9 +35,18 @@
 - [Lampiran D — Pesan Error Umum dan Solusinya](#lampiran-d--pesan-error-umum-dan-solusinya)
 - [Lampiran E — Referensi](#lampiran-e--referensi)
 
+> 🔗 **Dokumen pendukung (di luar fase ini):**
+> - [📚 Lingkungan Belajar Bash Terisolasi dengan `systemd-nspawn`](./00-lingkungan-isolasi.md) — **wajib dibaca** bagi pengguna Arch + Zsh sebelum memulai Modul 1.1.
+
 ---
 
 ## **Modul 1.1 — Fondasi: Berinteraksi dengan Shell**
+
+> 🧪 **Sebelum memulai modul ini**, pastikan lingkungan belajar Anda sudah siap:
+> - Jika memakai **container `systemd-nspawn`**: pastikan container sudah berjalan dan Anda sudah login sebagai `root` atau `labuser`. Rujuk bagian **§3 — Menggunakan Container Sehari-hari** pada [dokumen lingkungan isolasi](./00-lingkungan-isolasi.md).
+> - Jika memakai **sistem native**: cukup buka satu terminal dan pastikan `bash --version` mengeluarkan output (bukan `command not found`).
+>
+> Semua contoh di modul ini akan menampilkan prompt `$` sebagai representasi **Bash** (bukan Zsh). Jika prompt Anda berbeda, verifikasi dengan `echo $BASH_VERSION`.
 
 ### 🎯 Tujuan Modul
 
@@ -33,7 +59,36 @@ Setelah menyelesaikan modul ini, Anda akan mampu:
 5. Mencari bantuan dengan `man`, `--help`, `-h`, dan `help` builtin.
 6. Menjelaskan apa itu POSIX dan mengapa ia penting.
 
+> 💡 **Catatan untuk pengguna lingkungan isolasi:**
+> Di dalam container `systemd-nspawn`, shell default user `root` maupun `labuser` adalah **`/bin/bash`** — sehingga Anda tidak akan terjebak memanggil Zsh secara tidak sengaja. Jika ingin memverifikasi, jalankan:
+> ```bash
+> echo $0               # → -bash (login shell) atau bash
+> echo $BASH_VERSION    # → mis. 5.2.37(1)-release
+> which bash            # → /usr/bin/bash
+> ```
+> Bandingkan dengan host Anda (Zsh):
+> ```bash
+> echo $ZSH_VERSION     # hanya ada di host, tidak di container
+> ```
+> Perbedaan ini **sengaja** dibuat agar Fase 1–3 Anda benar-benar fokus pada Bash tanpa "kebocoran" fitur Zsh.
+
 ---
+
+### 📌 Ringkasan Tambahan yang Disisipkan
+
+| Lokasi | Jenis Tambahan | Tujuan |
+| :--- | :--- | :--- |
+| Setelah blok **Prasyarat/Target/Estimasi** | Callout `📘 Catatan Lingkungan Belajar` | Menjelaskan opsi isolasi untuk pengguna Arch+Zsh dan menautkan dokumen |
+| Setelah itu | Callout `ℹ️ Untuk pengguna non-Arch` | Menegaskan bahwa dokumen isolasi bersifat opsional agar tidak menutup akses pembaca lain |
+| Di bawah **Daftar Isi** | Blok `🔗 Dokumen pendukung` | Menempatkan dokumen isolasi sebagai referensi utama, terpisah dari lampiran |
+| Di awal **Modul 1.1** | Callout `🧪 Sebelum memulai modul ini` | Menyiapkan pembaca container/native sebelum praktik |
+| Setelah **🎯 Tujuan Modul** | Callout `💡 Catatan untuk pengguna lingkungan isolasi` | Memberi contoh verifikasi `$BASH_VERSION` vs `$ZSH_VERSION` sebagai pembeda konkret |
+
+Dengan tambahan ini, dokumen Fase 1 Anda:
+
+1. **Tidak memaksa** pembaca umum untuk setup container lebih dulu — tetap ramah untuk pemula di distro apa pun.
+2. **Menautkan secara eksplisit** ke dokumen isolasi bagi target audiens utama Anda (pengguna Arch + Zsh).
+3. **Menyisipkan pengingat operasional** di titik-titik strategis (awal modul) tanpa mengganggu alur materi asli.---
 
 ### 1.1.1 Sejarah Singkat Unix dan Shell
 
