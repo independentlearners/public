@@ -1,7 +1,9 @@
+# Fondasi Terminal Baris Perintah
+
 <details>
   <summary>
     <strong>Kurikulum</strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Membangun Fondasi Ahli CLI</i></div>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Membangun Fondasi Ahli CLI (Command Line Interface)</i></div>
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 
@@ -298,7 +300,7 @@ Sertifikasi ini tidak secara eksklusif tentang terminal, tetapi Anda tidak akan 
 <details>
   <summary>
     <strong>Ringkasan & Pengenalan </strong>
-    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Perbedaan CLI dan Terminal</i></div>
+    <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Perbedaan CLI dan Terminal serta Daftar Pintasan</i></div>
   </summary>
   <div style="padding-left: 25px; margin-top: 8px;">
 

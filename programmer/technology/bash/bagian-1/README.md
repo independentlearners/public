@@ -1,10 +1,6 @@
-Berikut deskripsi Fase 1 yang telah ditambahkan catatan referensi ke dokumen lingkungan isolasi:
-
----
-
 # **Fase 1: Fondasi — Berinteraksi dengan Shell (Tingkat Pemula)**
 
-> **Prasyarat:** Tidak ada. Cocok untuk pemula yang belum pernah menyentuh terminal.
+> **Prasyarat:** Cocok untuk pemula yang belum pernah menyentuh terminal. Kunjungi [disini][2] jika ingin secara khusus memahami terminal baris perintah. 
 > **Estimasi waktu:** 6–8 jam (teori + latihan).
 > **Target lingkungan:** Arch Linux, Ubuntu/Debian, Fedora, macOS, atau Windows via WSL2/Git Bash.
 > **Setelah menyelesaikan fase ini**, Anda akan mampu: menavigasi sistem berkas, mengalirkan data antar perintah, menulis skrip pertama, memakai variabel, menerima argumen, dan menangani kesalahan dasar.
@@ -1790,6 +1786,7 @@ Anda kini memiliki fondasi:
 
 <!-- Referensi internal -->
 [1]: ../README.md
+[2]: ./../../../../CLI_TUI/konsep/terminal/README.md
 
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
