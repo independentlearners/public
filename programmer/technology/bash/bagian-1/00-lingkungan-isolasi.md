@@ -369,4 +369,4 @@ Setelah familiar dengan Bash di container ini, Anda bisa memperluas lab:
 
 ---
 
-*Dokumen ini adalah bagian dari materi belajar Bash.
+*Dokumen ini adalah bagian dari materi belajar Bash.*
