@@ -82,11 +82,8 @@ Setelah menyelesaikan modul ini, Anda akan mampu:
 | Di awal **Modul 1.1** | Callout `🧪 Sebelum memulai modul ini` | Menyiapkan pembaca container/native sebelum praktik |
 | Setelah **🎯 Tujuan Modul** | Callout `💡 Catatan untuk pengguna lingkungan isolasi` | Memberi contoh verifikasi `$BASH_VERSION` vs `$ZSH_VERSION` sebagai pembeda konkret |
 
-Dengan tambahan ini, dokumen Fase 1 Anda:
 
-1. **Tidak memaksa** pembaca umum untuk setup container lebih dulu — tetap ramah untuk pemula di distro apa pun.
-2. **Menautkan secara eksplisit** ke dokumen isolasi bagi target audiens utama Anda (pengguna Arch + Zsh).
-3. **Menyisipkan pengingat operasional** di titik-titik strategis (awal modul) tanpa mengganggu alur materi asli.---
+---
 
 ### 1.1.1 Sejarah Singkat Unix dan Shell
 
