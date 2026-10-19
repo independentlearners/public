@@ -113,7 +113,7 @@ Banyak pemula mengira “terminal”, “konsol”, “shell”, dan “kernel�
 | Istilah | Apa Itu | Contoh |
 |---------|---------|--------|
 | **Kernel** | Inti sistem operasi; mengelola CPU, memori, perangkat I/O | Linux kernel, Darwin kernel (macOS) |
-| **Shell** | Program *interpreter* yang membaca dan mengeksekusi perintah | `bash`, `zsh`, `sh`, `dash`, `ksh`, `fish` |
+| **Shell** | Program *[interpreter][3]* yang membaca dan mengeksekusi perintah | `bash`, `zsh`, `sh`, `dash`, `ksh`, `fish` |
 | **Terminal (emulator)** | Aplikasi yang menyediakan antarmuka teks ke shell | GNOME Terminal, Konsole, iTerm2, Windows Terminal, VS Code Terminal |
 | **Konsol** | Terminal fisik langsung terhubung ke sistem (tty) | `/dev/tty1`–`/dev/tty6` di Linux |
 
@@ -789,7 +789,7 @@ ls -l | tee ls-output.txt
 
 ### 1.3.1 Shebang (`#!`)
 
-Shebang adalah baris pertama skrip yang memberi tahu kernel interpreter apa yang harus dipakai.
+Shebang adalah baris pertama skrip yang memberi tahu kernel mengenai [interpreter][3] apa yang harus dipakai.
 
 | Shebang | Arti | Portabilitas |
 |---------|------|--------------|
@@ -803,7 +803,7 @@ Shebang adalah baris pertama skrip yang memberi tahu kernel interpreter apa yang
 **Aturan:**
 - Shebang **wajib** ada di baris pertama (boleh didahului BOM tapi hindari BOM).
     - > Lebih lanjut tentang [BOM](bom.md)
-- Path interpreter di shebang **selalu absolut** (`/bin/bash`, `/usr/bin/env`).
+- Path [interpreter][3] di shebang **selalu absolut** (`/bin/bash`, `/usr/bin/env`).
 - Jika memakai `env`, path `env` absolut (`/usr/bin/env` atau `/bin/env`), tapi argumen setelahnya (`bash`) dicari di `$PATH`.
 
 **Kapan pakai apa?**
@@ -816,6 +816,10 @@ Shebang adalah baris pertama skrip yang memberi tahu kernel interpreter apa yang
 
 ### 1.3.2 Membuat dan Menjalankan Skrip
 
+Skrip Bash adalah file teks berisi perintah yang dijalankan oleh [interpreter][3] Bash. Agar bisa dijalankan langsung, skrip perlu **shebang** dan **izin eksekusi**.
+
+#### 1. Membuat file skrip
+
 Buat file `halo.sh`:
 
 ```bash
@@ -824,29 +828,110 @@ Buat file `halo.sh`:
 echo "Halo, dunia!"
 ```
 
-**Berikan izin eksekusi:**
+Contoh membuat lewat terminal:
+
+```bash
+cat > halo.sh <<'EOF'
+#!/usr/bin/env bash
+# Skrip pertama: mencetak salam
+echo "Halo, dunia!"
+EOF
+```
+
+**Penjelasan shebang:**
+
+| Baris | Arti |
+|-------|------|
+| `#!/usr/bin/env bash` | Cari program `bash` di `PATH` lewat `env`, lalu gunakan sebagai [interpreter][3]. Lebih portabel. |
+| `#!/bin/bash` | Langsung memakai Bash di `/bin/bash`. |
+| `#!/bin/sh` | Memakai shell POSIX `sh`; jangan pakai fitur khusus Bash. |
+
+Shebang harus berada di **baris pertama** file. Jika skrip dijalankan dengan `bash halo.sh`, shebang diabaikan.
+
+#### 2. Memberi izin eksekusi
+
+Lihat izin file:
+
+```bash
+ls -l halo.sh
+```
+
+Contoh output awal:
+
+```text
+-rw-r--r-- 1 user user 78 Jan 1 10:00 halo.sh
+```
+
+Berikan izin eksekusi:
 
 ```bash
 chmod u+x halo.sh
 ```
 
-**Jalankan:**
+Cek lagi:
 
 ```bash
-./halo.sh               # path relatif
-~/scripts/halo.sh       # path absolut dengan ~
-bash halo.sh            # paksa pakai bash (mengabaikan shebang)
-sh halo.sh              # paksa pakai sh
+ls -l halo.sh
 ```
 
-**Arti izin `chmod`:**
+Contoh output:
+
+```text
+-rwxr--r-- 1 user user 78 Jan 1 10:00 halo.sh
+```
+
+Jika ingin semua pengguna boleh mengeksekusi:
+
+```bash
+chmod a+x halo.sh
+# atau
+chmod 755 halo.sh
+```
+
+#### 3. Menjalankan skrip
+
+Dari direktori tempat file berada:
+
+```bash
+./halo.sh
+```
+
+Output:
+
+```text
+Halo, dunia!
+```
+
+Beberapa cara menjalankan:
+
+| Perintah | Syarat | Keterangan |
+|----------|--------|------------|
+| `./halo.sh` | File punya izin `x` | Menjalankan lewat shebang. `./` berarti direktori saat ini. |
+| `~/scripts/halo.sh` | File ada di `~/scripts` dan punya izin `x` | `~` dikembangkan shell menjadi direktori home, mis. `/home/user/scripts/halo.sh`. |
+| `/home/user/scripts/halo.sh` | Path absolut benar | Menjalankan dari mana saja. |
+| `bash halo.sh` | Tidak perlu izin `x` | Memaksa memakai Bash; shebang diabaikan. |
+| `sh halo.sh` | Tidak perlu izin `x` | Memaksa memakai `sh`; fitur khusus Bash bisa gagal. |
+| `source halo.sh` atau `. halo.sh` | Tidak perlu izin `x` | Menjalankan di shell saat ini; variabel tetap ada setelah skrip selesai. |
+
+Catatan: `~/scripts/halo.sh` **bukan** otomatis merujuk ke `halo.sh` di direktori saat ini. Jika file baru dibuat di direktori saat ini, gunakan `./halo.sh`. Jika ingin menjalankannya dari `~/scripts`, buat atau salin dulu:
+
+```bash
+mkdir -p ~/scripts
+cp halo.sh ~/scripts/
+chmod u+x ~/scripts/halo.sh
+~/scripts/halo.sh
+```
+
+Menjalankan `halo.sh` tanpa `./` hanya berhasil jika direktori saat ini ada di `PATH`. Umumnya direktori saat ini tidak dimasukkan ke `PATH` demi keamanan, sehingga gunakan `./halo.sh`.
+
+#### 4. Arti izin `chmod`
 
 | Simbol | Arti |
 |--------|------|
-| `u` | user (pemilik) |
+| `u` | user / pemilik file |
 | `g` | group |
-| `o` | others |
-| `a` | all |
+| `o` | others / pengguna lain |
+| `a` | all / semua (`u`, `g`, `o`) |
 | `+` | tambah izin |
 | `-` | hapus izin |
 | `=` | set izin persis |
@@ -858,12 +943,77 @@ Contoh:
 
 ```bash
 chmod u+x script.sh       # pemilik boleh eksekusi
+chmod a+x script.sh       # semua boleh eksekusi
 chmod 755 script.sh       # rwxr-xr-x
 chmod 644 file.txt        # rw-r--r--
-chmod +x script.sh        # tambah execute untuk semua yang diizinkan umask
+chmod +x script.sh        # tambah execute; jika who dihilangkan, bit yang dibatasi umask tidak diubah
 ```
 
----
+Tabel oktal izin:
+
+| Nilai | Izin | Arti |
+|-------|------|------|
+| `7` | `rwx` | baca, tulis, eksekusi |
+| `6` | `rw-` | baca, tulis |
+| `5` | `r-x` | baca, eksekusi |
+| `4` | `r--` | baca |
+| `3` | `-wx` | tulis, eksekusi |
+| `2` | `-w-` | tulis |
+| `1` | `--x` | eksekusi |
+| `0` | `---` | tidak ada izin |
+
+Untuk direktori, arti `r`, `w`, `x` sedikit berbeda:
+
+| Izin | Pada direktori |
+|------|----------------|
+| `r` | melihat daftar isi direktori |
+| `w` | membuat/menghapus entri di direktori |
+| `x` | masuk/traverse ke dalam direktori |
+
+#### 5. Troubleshooting umum
+
+| Masalah | Penyebab umum | Solusi |
+|---------|---------------|--------|
+| `Permission denied` | File belum punya izin eksekusi | `chmod u+x halo.sh` atau jalankan `bash halo.sh` |
+| `command not found` | Menjalankan `halo.sh` tanpa `./` dan direktori saat ini tidak ada di `PATH` | Gunakan `./halo.sh` |
+| `No such file or directory` | Path salah atau file tidak ada | Cek dengan `pwd` dan `ls -l` |
+| `bad interpreter` | Shebang salah atau file ber-CRLF | Perbaiki shebang; jalankan `dos2unix halo.sh` |
+| `sh: syntax error` | Skrip memakai fitur Bash tapi dijalankan dengan `sh` | Jalankan `bash halo.sh` atau tulis ulang POSIX |
+| Skrip tidak mau dijalankan dari `~/scripts/halo.sh` | File tidak ada di `~/scripts` atau direktori tidak bisa diakses | Buat/salin file ke sana dan cek izin direktori |
+
+Untuk debugging, gunakan:
+
+```bash
+bash -x halo.sh
+```
+
+Untuk melihat status keluar perintah terakhir:
+
+```bash
+echo $?
+```
+
+#### 6. Alur ringkas
+
+```bash
+mkdir -p ~/scripts
+cat > ~/scripts/halo.sh <<'EOF'
+#!/usr/bin/env bash
+# Skrip pertama: mencetak salam
+echo "Halo, dunia!"
+EOF
+
+chmod u+x ~/scripts/halo.sh
+~/scripts/halo.sh
+```
+
+Output:
+
+```text
+Halo, dunia!
+```
+
+--- 
 
 ### 1.3.3 Variabel: Definisi, Penggunaan, dan Nilai Default
 
@@ -1786,6 +1936,7 @@ Anda kini memiliki fondasi:
 <!-- Referensi internal -->
 [1]: ../README.md
 [2]: ./../../../../CLI_TUI/konsep/terminal/README.md
+[3]: ./interpreter.md
 
 [domain]: ../../../../README.md
 [kurikulum]: ../../README.md
