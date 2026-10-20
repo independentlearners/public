@@ -1,47 +1,50 @@
 # **Fase 1: Fondasi — Berinteraksi dengan Shell (Tingkat Pemula)**
 
 > - **Prasyarat:** Cocok untuk pemula yang belum pernah menyentuh terminal. Kunjungi [disini][2] jika ingin secara khusus memahami terminal baris perintah. 
-> - **Estimasi waktu:** 6–8 jam (teori + latihan).
+> - **Estimasi waktu:** 6–8 jam untuk membaca dan praktik awal; penguasaan yang nyaman biasanya memerlukan pengulangan selama beberapa hari atau minggu. Waktu bergantung pada pengalaman dan jumlah latihan.
 > - **Target lingkungan:** Arch Linux, Ubuntu/Debian, Fedora, macOS, atau Windows via WSL2/Git Bash.
-> - **Setelah menyelesaikan fase ini**, Anda akan mampu: menavigasi sistem berkas, mengalirkan data antar perintah, menulis skrip pertama, memakai variabel, menerima argumen, dan menangani kesalahan dasar.
----   
+> - **Setelah menyelesaikan fase ini**, Anda akan mampu: menavigasi sistem berkas, mengalirkan data antar perintah, menulis skrip pertama, memahami `PATH`, memakai variabel dan ekspansi, menerima argumen, serta menangani kesalahan dasar.
+>
+> ---
 > 📘 **Catatan Lingkungan Belajar:**
 > Jika Anda pengguna Arch Linux yang **sudah menggunakan Zsh sebagai shell utama** dan tidak ingin mengubahnya hanya untuk belajar Bash, seluruh materi Fase 1 ini dapat dijalankan di dalam **lingkungan terisolasi** menggunakan `systemd-nspawn`.
 >
-> Lihat **[📚 Dokumentasi: Lingkungan Belajar Bash Terisolasi dengan `systemd-nspawn`](./00-lingkungan-isolasi.md)** — dokumen tersebut berisi panduan lengkap:
+> Lihat **Lampiran E — Laboratorium Bash Terisolasi dengan `systemd-nspawn`** di dalam dokumen ini untuk panduan terintegrasi:
 > - Setup container Arch Linux minimal (sekali saja, ±5 menit)
 > - Workflow multi-terminal (host Zsh + container Bash) — Anda dapat **mengedit skrip dari host** dan **menjalankannya di container**
 > - Snapshot & restore container sebelum eksperimen berisiko
 > - Checklist kurikulum yang dipetakan ke setiap modul Fase 1
 >
-> **Rekomendasi pemakaian**: jalankan container di Terminal 2, sementara Terminal 1 tetap di host untuk mengedit file dan membaca dokumentasi. Semua perintah di Fase 1 diasumsikan **dijalankan di dalam container**, kecuali disebutkan lain.
-
----   
-
-> ℹ️ **Untuk pengguna non-Arch atau yang belum siap dengan container:** semua materi Fase 1 bersifat **portabel dan POSIX-compatible** selama Anda memakai `bash` (bukan `dash`/`sh`). Anda tetap bisa mengikuti panduan di lingkungan native Anda. Dokumen isolasi hanya **opsional** dan **sangat direkomendasikan** bagi yang ingin eksperimen "bebas rusak".
-
----
+> **Rekomendasi pemakaian**: jalankan container di Terminal 2, sementara Terminal 1 tetap di host untuk mengedit file dan membaca dokumentasi. Contoh yang memodifikasi file atau konfigurasi sebaiknya diuji di lab; perintah baca-saja dapat dijalankan di lingkungan yang sesuai.
+>
+> ---
+> ℹ️ **Untuk pengguna non-Arch atau yang belum siap dengan container:** materi konseptualnya dapat dipelajari di berbagai sistem. Namun, tidak semua contoh bersifat POSIX: beberapa menggunakan fitur khusus Bash atau utilitas GNU/Linux. Jalankan contoh sesuai shell dan utilitas yang tersedia. Container mengurangi risiko, tetapi bukan batas keamanan setara VM; jangan bind-mount direktori penting dan jangan menganggap semua eksperimen aman.
+>
+> ---
 
 ## 📑 Daftar Isi Fase 1
 
 - [Modul 1.1 — Fondasi: Berinteraksi dengan Shell](#modul-11--fondasi-berinteraksi-dengan-shell)
 - [Modul 1.2 — Perintah Fundamental & I/O Redirection](#modul-12--perintah-fundamental--io-redirection)
 - [Modul 1.3 — Skrip Pertama, Variabel, dan Ekspansi](#modul-13--skrip-pertama-variabel-dan-ekspansi)
+  - [PATH: Cara Shell Menemukan Perintah](#134-path-cara-shell-menemukan-perintah)
 - [Lampiran A — Kamus Simbol Shell Lengkap](#lampiran-a--kamus-simbol-shell-lengkap)
 - [Lampiran B — POSIX vs Bash vs Zsh](#lampiran-b--posix-vs-bash-vs-zsh)
 - [Lampiran C — Variabel Bawaan Shell dan Lingkungan](#lampiran-c--variabel-bawaan-shell-dan-lingkungan)
 - [Lampiran D — Pesan Error Umum dan Solusinya](#lampiran-d--pesan-error-umum-dan-solusinya)
-- [Lampiran E — Referensi](#lampiran-e--referensi)
+- [Lampiran E — Laboratorium Bash Terisolasi dengan systemd-nspawn](#lampiran-e--laboratorium-bash-terisolasi-dengan-systemd-nspawn)
+- [Lampiran F — BOM, Shebang, dan Encoding File](#lampiran-f--bom-shebang-dan-encoding-file)
+- [Lampiran G — Referensi](#lampiran-g--referensi)
 
 > 🔗 **Dokumen pendukung (di luar fase ini):**
-> - [📚 Lingkungan Belajar Bash Terisolasi dengan `systemd-nspawn`](./00-lingkungan-isolasi.md) — **wajib dibaca** bagi pengguna Arch + Zsh sebelum memulai Modul 1.1.
-
----
+> - [Lampiran E — Laboratorium Bash Terisolasi dengan `systemd-nspawn`](#lampiran-e--laboratorium-bash-terisolasi-dengan-systemd-nspawn) — panduan setup terintegrasi untuk pengguna Arch Linux.
+>
+> ---
 
 ## **Modul 1.1 — Fondasi: Berinteraksi dengan Shell**
 
 > 🧪 **Sebelum memulai modul ini**, pastikan lingkungan belajar Anda sudah siap:
-> - Jika memakai **container `systemd-nspawn`**: pastikan container sudah berjalan dan Anda sudah login sebagai `root` atau `labuser`. Rujuk bagian **§3 — Menggunakan Container Sehari-hari** pada [dokumen lingkungan isolasi](./00-lingkungan-isolasi.md).
+> - Jika memakai **container `systemd-nspawn`**: pastikan container sudah berjalan dan Anda sudah login sebagai `root` atau `labuser`. Rujuk **Lampiran E.3 — Menjalankan dan menggunakan container** di dokumen ini.
 > - Jika memakai **sistem native**: cukup buka satu terminal dan pastikan `bash --version` mengeluarkan output (bukan `command not found`).
 >
 > Semua contoh di modul ini akan menampilkan prompt `$` sebagai representasi **Bash** (bukan Zsh). Jika prompt Anda berbeda, verifikasi dengan `echo $BASH_VERSION`.
@@ -69,25 +72,12 @@ Setelah menyelesaikan modul ini, Anda akan mampu:
 > echo $ZSH_VERSION     # hanya ada di host, tidak di container
 > ```
 > Perbedaan ini **sengaja** dibuat agar Fase 1–3 Anda benar-benar fokus pada Bash tanpa "kebocoran" fitur Zsh.
-
----
-
-### 📌 Ringkasan Tambahan yang Disisipkan
-
-| Lokasi | Jenis Tambahan | Tujuan |
-| :--- | :--- | :--- |
-| Setelah blok **Prasyarat/Target/Estimasi** | Callout `📘 Catatan Lingkungan Belajar` | Menjelaskan opsi isolasi untuk pengguna Arch+Zsh dan menautkan dokumen |
-| Setelah itu | Callout `ℹ️ Untuk pengguna non-Arch` | Menegaskan bahwa dokumen isolasi bersifat opsional agar tidak menutup akses pembaca lain |
-| Di bawah **Daftar Isi** | Blok `🔗 Dokumen pendukung` | Menempatkan dokumen isolasi sebagai referensi utama, terpisah dari lampiran |
-| Di awal **Modul 1.1** | Callout `🧪 Sebelum memulai modul ini` | Menyiapkan pembaca container/native sebelum praktik |
-| Setelah **🎯 Tujuan Modul** | Callout `💡 Catatan untuk pengguna lingkungan isolasi` | Memberi contoh verifikasi `$BASH_VERSION` vs `$ZSH_VERSION` sebagai pembeda konkret |
-
-
----
+>
+> ---
 
 ### 1.1.1 Sejarah Singkat Unix dan Shell
 
-Pada 1969–1970, Ken Thompson dan Dennis Ritchie di Bell Labs mengembangkan **Unix** sebagai sistem operasi kecil, modular, dan multiuser. Salah satu warisan terbesarnya adalah **shell** — program yang membaca perintah pengguna dan memintanya dijalankan oleh kernel.
+Pada akhir 1960-an dan awal 1970-an, Ken Thompson, Dennis Ritchie, dan rekan-rekannya di Bell Labs mengembangkan **Unix** sebagai sistem operasi yang mendukung penggunaan interaktif dan multiuser. Salah satu warisan terbesarnya adalah **shell** — program yang membaca perintah pengguna dan memintanya dijalankan oleh kernel.
 
 Evolusi shell:
 
@@ -98,11 +88,11 @@ Evolusi shell:
 | 1978 | C shell (`csh`) | Sintaks mirip C, job control |
 | 1983 | Korn shell (`ksh`) | Gabungan `sh` + `csh` |
 | 1989 | Bash (`bash`) | Bourne-Again Shell, GNU, POSIX + ekstensi |
-| 1990 | Zsh (`zsh`) | Ekstensi Bash + globbing kaya |
+| 1990 | Zsh (`zsh`) | Shell dengan fitur interaktif dan globbing kaya; bukan sekadar ekstensi Bash |
 | 2005 | Fish (`fish`) | **Bukan** POSIX, sintaks berbeda |
 
-Shell modern seperti **Bash**, **Zsh**, dan **Ksh** adalah **turunan** atau **pengembangan** dari standar POSIX. **Fish bukan turunan POSIX** dan tidak dapat dijalankan dalam mode POSIX.
-> [RINGKASAN TEKNIS: PENGENALAN SHELL PADA SISTEM UNIX-LIKE - sh, Bash, Dash, dan Zsh](./posix.md)
+Bash, Zsh, dan KornShell memiliki mode atau bagian yang kompatibel dengan POSIX, tetapi masing-masing juga memiliki ekstensi dan perbedaan. Jangan menyimpulkan bahwa semua skrip dari satu shell otomatis berjalan di shell lain. **Fish tidak menggunakan sintaks POSIX shell**.
+> Untuk referensi standar, lihat [The Open Group — Shell Command Language](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html).
 
 ---
 
@@ -117,7 +107,7 @@ Banyak pemula mengira “terminal”, “konsol”, “shell”, dan “kernel�
 | **Terminal (emulator)** | Aplikasi yang menyediakan antarmuka teks ke shell | GNOME Terminal, Konsole, iTerm2, Windows Terminal, VS Code Terminal |
 | **Konsol** | Terminal fisik langsung terhubung ke sistem (tty) | `/dev/tty1`–`/dev/tty6` di Linux |
 
-**Analogi:** Mobil = sistem operasi. Mesin = kernel. Dashboard + setir = shell. Kerangka Mobil = terminal. Baris perintah = kendali anda.
+**Analogi sederhana:** sistem operasi adalah keseluruhan kendaraan; kernel mengelola sumber daya inti; shell adalah penerjemah perintah; terminal adalah perangkat/aplikasi tempat Anda melihat dan mengetik teks. Analogi ini hanya pendekatan awal, bukan pemetaan teknis satu-banding-satu.
 
 **Alur eksekusi perintah:**
 
@@ -135,8 +125,8 @@ Misalkan Anda mengetik `ls -l /home`:
 3. Shell melakukan **ekspansi** (variabel, glob, command substitution).
 4. Shell mencari program `ls` di direktori yang ada di `$PATH`.
 5. Shell meminta kernel mengeksekusi `ls` dengan argumen `-l` lalu nilainya `/home`.
-6. Kernel menjalankan proses, output dikirim kembali ke shell.
-7. Shell menampilkan output ke terminal dan menunggu perintah berikutnya.
+6. Program yang dijalankan menulis byte ke `stdout` dan/atau `stderr`; kernel menyediakan mekanisme I/O, sedangkan terminal menampilkan byte yang diarahkan kepadanya.
+7. Shell menunggu proses foreground selesai (atau berubah status), kemudian menampilkan prompt berikutnya. Output tidak selalu melewati shell terlebih dahulu.
 
 ---
 
@@ -352,8 +342,8 @@ Shell membaca file konfigurasi saat dijalankan:
 
 | Shell | Login shell | Interactive non-login |
 |-------|-------------|-----------------------|
-| Bash | `/etc/profile`, `~/.bash_profile`, `~/.bash_login`, `~/.profile` | `~/.bashrc` |
-| Zsh | `/etc/zprofile`, `~/.zprofile`, `~/.zshrc` | `~/.zshrc` |
+| Bash | `/etc/profile`, lalu **file pertama yang tersedia** dari `~/.bash_profile`, `~/.bash_login`, `~/.profile` | Biasanya `~/.bashrc` untuk interactive non-login; detail bergantung cara Bash dipanggil |
+| Zsh | `/etc/zshenv`, `/etc/zprofile`, `~/.zprofile` (dan file startup lain sesuai jenis shell) | `~/.zshrc` |
 | POSIX `sh` | `/etc/profile`, `~/.profile` | `$ENV` |
 
 **Muat ulang `.bashrc` tanpa logout:**
@@ -370,7 +360,7 @@ source ~/.bashrc
 |-------|----------|--------|
 | Login | Dimulai saat login (tty, SSH, `bash -l`) | Membaca `.bash_profile` |
 | Interactive non-login | Terminal emulator baru | Membaca `.bashrc` |
-| Non-interactive | Skrip yang dijalankan | Tidak membaca file startup interaktif |
+| Non-interactive | Skrip yang dijalankan, misalnya `bash skrip.sh` | Umumnya tidak membaca `~/.bashrc`; dapat membaca file yang ditunjuk `BASH_ENV`, dan ada perilaku khusus untuk shell non-interaktif yang dipanggil oleh layanan tertentu/remote shell |
 
 ---
 
@@ -383,7 +373,7 @@ source ~/.bashrc
 - Himpunan utilitas standar (`ls`, `cp`, `mv`, `grep`, `sed`, `awk`).
 - Ekspansi parameter, redirection, pipe, dan sebagainya.
 
-Skrip yang **POSIX-compliant** berjalan di semua shell POSIX: `sh`, `dash`, `ksh`, `bash --posix`, `zsh --emulate sh`.
+Skrip yang benar-benar **POSIX-compliant** ditujukan untuk shell yang mengikuti spesifikasi POSIX. Tetap uji pada target nyata: implementasi dan utilitas eksternal dapat berbeda. `bash --posix` dan `zsh --emulate sh` membantu kompatibilitas, tetapi tidak menjamin semua perilaku identik.
 
 > **Catatan penting:** `dash` (Debian/Ubuntu) dan `bash` bukan shell yang sama. Di Debian/Ubuntu, `/bin/sh` adalah symlink ke `dash`. Skrip yang mengandalkan `[[ ]]` atau array **akan gagal** di sana.
 
@@ -393,11 +383,11 @@ Skrip yang **POSIX-compliant** berjalan di semua shell POSIX: `sh`, `dash`, `ksh
 |-------|-------------------|
 | Sintaks | `if/then/elif/else/fi`, `case/esac`, `for`, `while`, `until` |
 | Builtin | `test`, `echo`, `read`, `set`, `trap`, `cd`, `pwd`, `umask`, `eval`, `exec`, `exit`, `export`, `readonly`, `return`, `shift`, `times`, `type`, `ulimit`, `unset`, `wait`, `.`, `:` |
-| Ekspansi | `$VAR`, `${VAR}`, `$(cmd)`, `` `cmd` ``, `$(( ))`, `~`, `{a,b}` (brace)** |
+| Ekspansi | `$VAR`, `${VAR}`, `$(cmd)`, `` `cmd` ``, `$(( ))`, `~` (dengan ketentuan POSIX) |
 | Redirection | `>`, `>>`, `<`, `2>`, `2>&1`, `|`, `<<` (here-doc) |
 | Utilitas | `ls`, `cp`, `mv`, `rm`, `mkdir`, `chmod`, `grep` (BRE), `sed`, `awk`, `sort`, `uniq`, `head`, `tail`, `wc`, `find`, `xargs`, `test` |
 
-> **Brace expansion `{a,b}` bukan POSIX.** Yang POSIX adalah *curly bracket pattern* di `case`, bukan `{a,b,c}`. Baca lebih lanjut tentang [POSIX][posix]
+> **Brace expansion `{a,b}` bukan POSIX.** Contoh Bash: `printf '%s\n' {a,b}`. Jangan mengandalkannya jika skrip harus berjalan di `/bin/sh`.
 
 ---
 
@@ -583,22 +573,24 @@ user2"
 
 ### 1. Menggunakan File Descriptor Khusus untuk Membaca dan Menulis (`<>`)
 
-Operator `<>` membuka sebuah file dalam mode *read-write* (baca dan tulis sekaligus) tanpa menghapus isi file sebelumnya. Ini biasanya dipasangkan dengan *File Descriptor* (misalnya angka 3):
+Operator `<>` membuka file untuk baca/tulis tanpa memotong isi file saat dibuka. Namun, posisi baca/tulis tetap penting: menulis dapat menimpa data pada posisi saat itu. Ini bukan operator append. Gunakan file latihan, bukan file penting:
 
 ```bash
-# 1. Buka file dalam mode read-write pada FD 3
-exec 3<> data_penting.txt
+# Siapkan file latihan terlebih dahulu; contoh ini akan mengubah file tersebut.
+printf 'baris pertama\nbaris kedua\n' > data_latihan.txt
 
-# 2. Baca baris pertama dari FD 3
-read -u 3 baris_pertama
-echo "Baris pertama: $baris_pertama"
+# Buka file untuk baca/tulis tanpa memotong isinya.
+exec 3<> data_latihan.txt
+IFS= read -r -u 3 baris_pertama
+printf 'Terbaca: %s\n' "$baris_pertama"
 
-# 3. Tulis data baru ke FD 3
-echo "Baris tambahan baru" >&3
-
-# 4. Tutup File Descriptor 3
+# Posisi FD 3 sekarang setelah baris yang dibaca; penulisan dimulai dari posisi ini.
+# Ini dapat menimpa byte yang sudah ada, bukan otomatis menambahkan ke akhir.
+printf 'X' >&3
 exec 3>&-
 
+# Periksa hasilnya. Untuk append, lebih mudah dan aman gunakan >>.
+cat data_latihan.txt
 ```
 
 ### 2. Mengirim Satu Baris dengan Here-String (`<<<`)
@@ -633,7 +625,7 @@ cat access.log | grep "ERROR" | wc -l
 ps aux | sort -k3 -n | tail -n5     # 5 proses dengan CPU tertinggi
 ```
 
-**`|&` (Bash 4+):** Pipe `stdout` **dan** `stderr` sekaligus.
+**`|&` (Bash):** bentuk singkat Bash untuk mengalirkan `stdout` dan `stderr` ke pipe. Secara konsep, Bash memperlakukan ini seperti `2>&1 |` pada posisi tersebut.
 
 ```bash
 make |& tee build.log
@@ -670,10 +662,10 @@ make |& tee build.log
 **Urutan itu penting:**
 
 ```bash
-# BENAR: stdout dan stderr sama-sama ke file
+# stdout dan stderr sama-sama ke out.log
 command > out.log 2>&1
 
-# SALAH: stderr ke terminal, stdout ke file
+# stdout ke out.log; stderr tetap ke tujuan stdout sebelumnya (umumnya terminal)
 command 2>&1 > out.log
 ```
 
@@ -713,7 +705,7 @@ ls -l | tee output.txt | grep ".sh"
 | `cut` | Potong kolom | `cut -d: -f1 /etc/passwd` |
 | `tr` | Translasi karakter | `tr 'a-z' 'A-Z'` |
 | `tee` | Salin ke stdout & file | `cmd \| tee log` |
-| `xargs` | Bangun argumen dari stdin | `find . -name "*.tmp" \| xargs rm` |
+| `xargs` | Bangun argumen dari stdin | `find . -type f -name "*.tmp" -print0 | xargs -0 -r rm --` |
 | `sed` | Editor stream | `sed 's/foo/bar/g'` |
 | `awk` | Pemroses teks per kolom | `awk '{print $1, $3}'` |
 
@@ -730,7 +722,7 @@ grep "ERROR" app.log | wc -l
 awk '{print $1}' access.log | sort | uniq -c | sort -rn | head
 
 # Hapus file .tmp secara aman
-find . -name "*.tmp" -print0 | xargs -0 rm
+find . -type f -name "*.tmp" -print0 | xargs -0 -r rm --
 
 # Ganti teks pada banyak file
 sed -i 's/foo/bar/g' *.txt
@@ -811,6 +803,32 @@ Shebang adalah baris pertama skrip yang memberi tahu kernel mengenai [interprete
 - Untuk **skrip POSIX murni** (portabel): `#!/bin/sh` atau `#!/usr/bin/env sh`.
 - Untuk **skrip Bash modern** (pakai `[[ ]]`, array): `#!/usr/bin/env bash`.
 - Untuk **skrip Arch/Debian personal**: `#!/bin/bash` juga oke karena `/bin/bash` hampir selalu ada.
+
+---
+
+### 1.3.2.1 Encoding, BOM, dan Akhir Baris
+
+Shell script sebaiknya disimpan sebagai **UTF-8 tanpa BOM** dengan akhir baris **LF**. BOM (*Byte Order Mark*) adalah penanda byte di awal file; untuk UTF-8, byte-nya `EF BB BF`. Jika BOM diletakkan sebelum `#!`, shebang tidak lagi berada pada byte pertama sehingga eksekusi langsung dapat gagal. BOM tidak selalu terlihat di editor.
+
+Periksa byte awal file:
+
+```bash
+hexdump -C halo.sh | head -n 1
+```
+
+Jika terlihat `ef bb bf` pada awal output, file diawali BOM. Untuk memeriksa karakter CRLF di akhir baris:
+
+```bash
+file halo.sh
+```
+
+Perbaiki lewat editor dengan memilih encoding `UTF-8` (bukan `UTF-8 with BOM`) dan line ending `LF`. Jika memang ingin menghapus BOM dari file tertentu, lakukan secara sadar dan simpan salinan cadangan terlebih dahulu. Contoh membuat ulang file sederhana tanpa BOM:
+
+```bash
+printf '#!/usr/bin/env bash\nprintf "Halo\\n"\n' > halo-baru.sh
+```
+
+Jangan menambahkan karakter, spasi, atau baris kosong sebelum shebang. Pada skrip yang dipanggil dengan `bash halo.sh`, Bash membaca isi file sebagai skrip meskipun shebang tidak digunakan untuk memilih interpreter; tetapi untuk `./halo.sh`, kernel harus mengenali shebang.
 
 ---
 
@@ -1157,9 +1175,77 @@ echo "${warna[merah]}"
 
 ---
 
-### 1.3.4 Variabel Lingkungan
+### 1.3.4 PATH: Cara Shell Menemukan Perintah
 
-Variabel lingkungan diwariskan ke proses anak. Variabel shell biasa tidak.
+`PATH` adalah daftar direktori yang dipisahkan oleh titik dua (`:`). Saat Anda mengetik nama perintah tanpa slash, misalnya `ls`, Bash mencari executable bernama `ls` pada direktori-direktori dalam `PATH`, dari kiri ke kanan. `PATH` **bukan** daftar nama perintah dan bukan daftar direktori tempat semua file Anda berada.
+
+```bash
+printf '%s\n' "$PATH"
+printf '%s\n' "$PATH" | tr ':' '\n'
+command -v bash
+type -a ls
+```
+
+Contoh ilustratif `PATH`:
+
+```text
+/home/alice/.local/bin:/usr/local/bin:/usr/bin
+```
+
+Urutannya berarti Bash mencari executable pada `~/.local/bin` lebih dulu, kemudian `/usr/local/bin`, lalu `/usr/bin` (dengan catatan Bash dapat menggunakan cache lokasi perintah yang sudah ditemukan). Jika dua direktori memiliki executable dengan nama sama, biasanya yang ditemukan lebih awal pada pencarian akan dipakai. Gunakan `type -a nama` untuk melihat seluruh kecocokan yang dikenal shell dan `command -v nama` untuk melihat resolusi yang dipilih. Alias, fungsi, dan builtin shell dapat memengaruhi hasil `type`; pencarian executable eksternal mengikuti `PATH`. Bash juga dapat mengingat lokasi executable yang pernah ditemukan. Jika Anda mengubah `PATH` dan hasil tampak tidak sesuai, `hash -r` menghapus cache lokasi perintah Bash.
+
+#### Menambahkan direktori ke PATH
+
+Misalkan executable pribadi Anda berada di `~/.local/bin`. Buat direktori jika perlu dan tambahkan ke depan `PATH`:
+
+```bash
+mkdir -p "$HOME/.local/bin"
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Arti kata per kata:
+
+- `mkdir -p` membuat direktori dan tidak mengeluh jika direktori itu sudah ada.
+- `"$HOME/.local/bin"` membentuk path di dalam home user tanpa mengasumsikan nama user tertentu.
+- `export` membuat nilai variabel tersedia bagi proses anak yang diluncurkan dari shell.
+- `:` memisahkan satu entri direktori dari entri berikutnya.
+- `$PATH` di sebelah kanan mempertahankan entri lama.
+
+Perubahan di atas berlaku pada shell saat ini dan proses anaknya; tidak otomatis permanen setelah terminal ditutup. Untuk Bash interaktif, letakkan pengaturan yang sesuai di `~/.bashrc` (atau file startup yang benar untuk jenis shell Anda), lalu buka shell baru atau muat ulang konfigurasi. Hindari menimpa `PATH` dengan nilai pendek seperti `export PATH="$HOME/.local/bin"`, karena perintah sistem seperti `ls`, `grep`, atau `sudo` mungkin tidak lagi ditemukan.
+
+#### Menguji PATH tanpa mengubah konfigurasi
+
+```bash
+# Tampilkan PATH satu direktori per baris
+tr ':' '\n' <<< "$PATH"
+
+# Cari executable
+command -v bash
+command -v shellcheck
+
+# Simulasikan pencarian dengan PATH sementara untuk satu perintah
+env PATH=/usr/bin:/bin bash -c 'command -v bash'
+```
+
+`PATH` kosong atau berisi entri kosong dapat membuat pencarian memasukkan direktori kerja saat ini pada sejumlah shell/implementasi. Jangan menambahkan `.` secara sembarangan: executable tak tepercaya di direktori aktif dapat dijalankan tanpa sengaja. Untuk menjalankan skrip di direktori saat ini, tulis `./skrip.sh` agar maksudnya jelas.
+
+#### Urutan direktori dan duplikasi
+
+```bash
+# Tambah di depan: prioritas lebih tinggi
+export PATH="$HOME/.local/bin:$PATH"
+
+# Tambah di belakang: prioritas lebih rendah
+export PATH="$PATH:$HOME/.local/bin"
+```
+
+Untuk menghindari entri duplikat, jangan menambahkan direktori berkali-kali setiap kali file startup dibaca. Penyaringan duplikat dapat dipelajari setelah memahami array dan loop Bash; pada tahap ini, utamakan pengaturan sederhana yang tidak mengulang-ulang append.
+
+---
+
+### 1.3.5 Variabel Lingkungan
+
+Variabel lingkungan diwariskan ke proses anak. Variabel shell biasa tidak. Beberapa nama pada daftar lampiran adalah variabel khusus Bash atau variabel shell, bukan variabel lingkungan yang otomatis diwariskan. `export -p` menampilkan variabel yang diekspor; `declare -p NAMA` dapat membantu memeriksa atribut variabel Bash.
 
 ```bash
 export API_KEY="rahasia"
@@ -1186,7 +1272,7 @@ echo "PWD    : $PWD"
 
 ---
 
-### 1.3.5 Argumen Baris Perintah
+### 1.3.6 Argumen Baris Perintah
 
 | Variabel | Arti |
 |----------|------|
@@ -1250,7 +1336,7 @@ done
 
 ---
 
-### 1.3.6 Input Interaktif: `read`
+### 1.3.7 Input Interaktif: `read`
 
 ```bash
 #!/usr/bin/env bash
@@ -1286,7 +1372,7 @@ done < file.txt
 
 ---
 
-### 1.3.7 Exit Status
+### 1.3.8 Exit Status
 
 Setiap perintah mengembalikan exit status `0`–`255`:
 
@@ -1326,22 +1412,22 @@ set -euo pipefail
 |------|------|
 | `-e` | Keluar jika perintah gagal (dengan pengecualian) |
 | `-u` | Error jika variabel tak terdefinisi |
-| `-o pipefail` | Exit status pipeline = kegagalan pertama di pipe |
+| `-o pipefail` | Status pipeline menjadi status perintah paling kanan yang gagal (non-zero), atau nol jika semua berhasil |
 
 **Catatan penting:** `set -e` memiliki jebakan — tidak berlaku pada perintah di dalam kondisi `if`, `&&`, `||`, `!`, atau perintah dengan `until/while`.
 
 ---
 
-### 1.3.8 Shell Expansion (Urutan Lengkap)
+### 1.3.9 Shell Expansion (Urutan Lengkap)
 
 Bash memproses baris perintah melalui tahap-tahap berikut **secara berurutan**:
 
 1. **Brace expansion** — `{a,b,c}` → `a b c`
 2. **Tilde expansion** — `~` → `/home/user`
 3. **Parameter expansion** — `$VAR`, `${VAR}`
-4. **Command substitution** — `$(cmd)` atau `` `cmd` ``
-5. **Arithmetic expansion** — `$((1+2))`
-6. **Word splitting** — pisah dengan `$IFS` (default: spasi, tab, newline)
+4. **Arithmetic expansion** — `$((1+2))`
+5. **Command substitution** — `$(cmd)` atau `` `cmd` ``
+6. **Word splitting** — pada hasil ekspansi parameter, command substitution, dan arithmetic expansion yang tidak dilindungi kutip; pemisah ditentukan oleh `$IFS`
 7. **Pathname expansion (globbing)** — `*.txt`, `?`, `[abc]`
 8. **Quote removal** — hapus kutip yang tidak di-escape
 
@@ -1432,7 +1518,7 @@ set -x ; ... ; set +x    # trace blok tertentu
 
 ---
 
-### 1.3.9 Pola `echo` vs `printf`
+### 1.3.10 Pola `echo` vs `printf`
 
 `echo` tidak portabel: perilaku `-e`, `-n`, dan `\` berbeda antar shell. Untuk skrip serius, gunakan `printf`:
 
@@ -1454,7 +1540,7 @@ printf "Hex: %x\n" 255
 
 ---
 
-### 1.3.10 Contoh Skrip Lengkap: `sapa.sh`
+### 1.3.11 Contoh Skrip Lengkap: `sapa.sh`
 
 ```bash
 #!/usr/bin/env bash
@@ -1491,7 +1577,7 @@ chmod +x sapa.sh
 
 ---
 
-### 1.3.11 Latihan Modul 1.3
+### 1.3.12 Latihan Modul 1.3
 
 1. Buat skrip `info.sh` yang mencetak: nama skrip, PID, user, home, dan shell.
 2. Buat skrip `greet.sh NAMA` yang menyapa NAMA; jika argumen tidak ada, gunakan `${1:-Tamu}`.
@@ -1648,7 +1734,7 @@ chmod +x sapa.sh
 | `echo -e` | ⚠️ | ✅ | ✅ | Tidak portabel; gunakan `printf` |
 | `printf` | ✅ | ✅ | ✅ | POSIX |
 | `&>` | ❌ | ✅ | ✅ | Gunakan `>file 2>&1` untuk POSIX |
-| `|&` | ❌ | ✅ | ✅ | Non-POSIX |
+| `\|&` | ❌ | ✅ | ✅ | Non-POSIX |
 | `<<<` | ❌ | ✅ | ✅ | Non-POSIX |
 | `${VAR:offset:length}` | ❌ | ✅ | ✅ | Non-POSIX |
 | `${VAR//pat/rep}` | ❌ | ✅ | ✅ | Non-POSIX |
@@ -1731,21 +1817,85 @@ chmod +x sapa.sh
 | `${VAR/%pat/rep}` | Ganti di akhir |
 | `${#VAR}` | Panjang |
 
-### C.4 `IFS` (Internal Field Separator)
+### C.3.1 Contoh Sederhana untuk Setiap Variabel dalam Daftar
 
-`IFS` menentukan bagaimana Bash memecah kata (word splitting). Default: spasi, tab, newline.
+Variabel lingkungan dari sistem dapat tidak tersedia, berbeda nilainya, atau tidak diekspor di semua lingkungan. Jalankan contoh berikut di Bash dan amati nilai pada sistem Anda; nilai contoh bukan nilai yang harus sama pada semua komputer.
+
+| Variabel | Contoh pemakaian sederhana | Catatan penting |
+|---|---|---|
+| `HOME` | `printf '%s\n' "$HOME"` | Home user saat ini menurut lingkungan. |
+| `USER` | `printf '%s\n' "${USER-}"` | Umum, tetapi tidak selalu tersedia. |
+| `LOGNAME` | `printf '%s\n' "${LOGNAME-}"` | Nama login yang diwariskan dari lingkungan; bukan sumber identitas keamanan. |
+| `UID` | `printf '%s\n' "$UID"` | Variabel Bash berisi user ID efektif pemilik shell; khusus Bash. |
+| `SHELL` | `printf '%s\n' "${SHELL-}"` | Biasanya login shell yang dicatat lingkungan, bukan bukti pasti shell yang sedang berjalan. |
+| `PATH` | `printf '%s\n' "$PATH" \| tr ':' '\n'` | Direktori pencarian executable. |
+| `PWD` | `printf '%s\n' "$PWD"` | Direktori kerja yang diketahui shell; bandingkan dengan `pwd -P` untuk path fisik. |
+| `OLDPWD` | `printf 'Sebelumnya: %s\n' "${OLDPWD-}"` | Diisi oleh `cd` dengan direktori sebelumnya; contoh ini tidak mengubah direktori kerja. |
+| `TERM` | `printf '%s\n' "${TERM-}"` | Tipe terminal; dapat kosong pada konteks non-terminal. |
+| `LANG` | `printf '%s\n' "${LANG-}"` | Locale dasar, jika disetel. |
+| `LC_ALL` | `printf '%s\n' "${LC_ALL-}"` | Jika disetel, mengesampingkan kategori locale lain. |
+| `LC_CTYPE` | `printf '%s\n' "${LC_CTYPE-}"` | Mengatur klasifikasi karakter/encoding locale. |
+| `LC_MESSAGES` | `printf '%s\n' "${LC_MESSAGES-}"` | Bahasa pesan aplikasi yang menghormati locale. |
+| `LC_NUMERIC` | `printf '%s\n' "${LC_NUMERIC-}"` | Format angka, jika didukung aplikasi. |
+| `LC_TIME` | `printf '%s\n' "${LC_TIME-}"` | Format tanggal dan waktu. |
+| `LC_COLLATE` | `printf '%s\n' "${LC_COLLATE-}"` | Aturan pengurutan/perbandingan karakter. |
+| `LC_MONETARY` | `printf '%s\n' "${LC_MONETARY-}"` | Format nilai moneter. |
+| `HOSTNAME` | `printf '%s\n' "${HOSTNAME-}"` | Dapat berasal dari lingkungan atau diatur shell; `hostname` adalah utilitas terpisah. |
+| `EDITOR` | `printf '%s\n' "${EDITOR-}"` | Preferensi editor untuk aplikasi yang menghormatinya. |
+| `VISUAL` | `printf '%s\n' "${VISUAL-}"` | Preferensi editor visual; tidak semua program memakainya. |
+| `PS1` | `printf '%s\n' "$PS1"` | Teks/escape prompt utama Bash interaktif. |
+| `PS2` | `printf '%s\n' "$PS2"` | Prompt sekunder saat Bash menunggu kelanjutan perintah. |
+| `IFS` | `printf 'a,b,c\n' \| { IFS=, read -r a b c; printf '%s / %s / %s\n' "$a" "$b" "$c"; }` | Pemisah field; jangan mengubah global tanpa alasan. |
+| `HISTSIZE` | `printf '%s\n' "${HISTSIZE-}"` | Batas jumlah perintah dalam history di memori, jika dikonfigurasi. |
+| `HISTFILE` | `printf '%s\n' "${HISTFILE-}"` | Lokasi file history Bash; bisa dinonaktifkan atau diubah. |
+| `RANDOM` | `printf '%s\n' "$RANDOM"` | Membaca nilai menghasilkan angka pseudoacak 0–32767; setiap pembacaan berikutnya dapat berbeda. |
+| `SECONDS` | `printf '%s\n' "$SECONDS"; sleep 1; printf '%s\n' "$SECONDS"` | Jumlah detik sejak shell dimulai atau sejak variabel diatur ulang. |
+| `LINENO` | `printf 'Nomor baris ini: %s\n' "$LINENO"` | Nomor baris sumber saat ekspansi; maknanya bergantung lokasi pemakaian. |
+| `FUNCNAME` | `contoh_fungsi() { printf '%s\n' "${FUNCNAME[0]}"; }; contoh_fungsi` | Array Bash yang berisi nama fungsi pada stack pemanggilan. |
+| `BASH_VERSION` | `printf '%s\n' "$BASH_VERSION"` | Versi Bash yang sedang berjalan. |
+| `BASH_SOURCE` | `printf '%s\n' "${BASH_SOURCE[0]}"` | Dalam skrip/fungsi, sumber file Bash; pada konteks interaktif bisa kosong atau berbeda. |
+| `DIRSTACK` | `pushd /tmp >/dev/null; dirs -v; popd >/dev/null` | Array direktori milik mekanisme `pushd`/`popd`; contoh memodifikasi stack sementara. |
+| `GROUPS` | `printf '%s\n' "${GROUPS[*]}"` | Array Bash berisi ID grup yang diketahui untuk user shell. |
+| `PPID` | `printf '%s\n' "$PPID"` | PID proses induk shell. |
+| `TMPDIR` | `printf '%s\n' "${TMPDIR:-/tmp}"` | Direktori sementara pilihan aplikasi; fallback `/tmp` hanya konvensi contoh. |
+
+**Variabel posisi dan spesial** paling mudah dipahami lewat skrip uji berikut. Simpan sebagai `lihat-argumen.sh`, lalu jalankan `bash lihat-argumen.sh "dua kata" ketiga`. Untuk memeriksa argumen posisi lain, gunakan `${3-}`, `${4-}`, dan seterusnya; argumen ke-10 ditulis `${10-}` (bukan `$10`).
 
 ```bash
-# Sementara ubah IFS untuk parsing CSV
-OLD_IFS="$IFS"
-IFS=","
-while read -r nama umur kota; do
-    echo "Nama: $nama, Umur: $umur, Kota: $kota"
-done < data.csv
-IFS="$OLD_IFS"
+#!/usr/bin/env bash
+printf 'Nama skrip ($0): %s\n' "$0"
+printf 'Jumlah argumen ($#): %s\n' "$#"
+printf 'Argumen pertama ($1): %s\n' "${1-}"
+printf 'Argumen kedua ($2): %s\n' "${2-}"
+printf 'Semua argumen terpisah ("$@"): '; printf '<%s> ' "$@"; printf '\n'
+printf 'Semua argumen sebagai satu string ("$*"): <%s>\n' "$*"
+false
+status_gagal=$?
+printf 'Status dari perintah false ($?): %s\n' "$status_gagal"
+printf 'PID shell/script ($$): %s\n' "$$"
+sleep 30 &
+pid_latar=$!
+printf 'PID job latar ($!): %s\n' "$pid_latar"
+kill "$pid_latar" 2>/dev/null || :
+printf 'Flag shell aktif ($-): %s\n' "$-"
+printf 'Nilai terakhir yang dipakai Bash ($_): %s\n' "$_"
 ```
 
-> ⚠️ Selalu simpan dan pulihkan `IFS` setelah diubah, atau gunakan `IFS=, read ...` inline.
+Catatan: `$?` harus dibaca segera setelah perintah yang ingin diperiksa karena setiap perintah berikutnya mengubah statusnya. `$!` hanya bermakna setelah job latar diluncurkan. `"$@"` mempertahankan setiap argumen sebagai elemen terpisah; `"$*"` menggabungkannya menjadi satu string dengan karakter pertama `IFS` sebagai pemisah. `${10}` diperlukan untuk argumen posisi kesepuluh atau lebih, karena `$10` dibaca sebagai `$1` diikuti karakter `0`.
+
+### C.4 `IFS` (Internal Field Separator)
+
+`IFS` adalah variabel khusus yang memengaruhi *word splitting* dan cara `read` membagi input. Nilai default-nya adalah spasi, tab, dan newline. Mengubah `IFS` tidak menjadikan Bash parser CSV yang lengkap: CSV dapat berisi koma di dalam kutip, kutip ter-escape, dan baris multi-line.
+
+Untuk data sederhana yang dipastikan tidak memiliki koma atau kutip di dalam field, gunakan `read` dengan `IFS` lokal pada satu operasi:
+
+```bash
+while IFS=, read -r nama umur kota; do
+    printf 'Nama: %s | Umur: %s | Kota: %s\n' "$nama" "$umur" "$kota"
+done < data_sederhana.txt
+```
+
+Cara ini tidak mengubah `IFS` global shell. Untuk CSV sungguhan, gunakan parser CSV yang sesuai, bukan pemisahan sederhana berdasarkan koma.
 
 ### C.5 `PATH`
 
@@ -1785,6 +1935,16 @@ PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ '
 
 ---
 
+### Catatan penting: quoting bukan parser shell dan bukan pengganti validasi
+
+Kutip ekspansi variabel agar nama file yang mengandung spasi atau wildcard tidak terpecah secara tidak sengaja:
+
+```bash
+rm -- "$FILENAME"
+```
+
+Namun, mengutip variabel tidak dengan sendirinya memvalidasi bahwa file yang dituju aman untuk dihapus. Periksa input, gunakan path yang diharapkan, dan minta konfirmasi jika dampaknya besar. Karakter seperti `;` yang berasal dari nilai ekspansi variabel **tidak otomatis diparse ulang sebagai operator shell**. Command injection muncul ketika data tidak tepercaya diserahkan lagi kepada parser shell, misalnya melalui `eval` atau `bash -c` dengan string yang dibangun dari input. Hindari pola seperti itu.
+
 ## **Lampiran D — Pesan Error Umum dan Solusinya**
 
 ### D.1 Kesalahan Sintaks
@@ -1806,7 +1966,7 @@ PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ '
 
 | Pesan | Penyebab | Solusi |
 |-------|----------|--------|
-| `unbound variable` | `set -u` aktif dan variabel kosong | Beri default `${VAR:-}` atau hapus `set -u` |
+| `unbound variable` | `set -u` aktif dan skrip menggunakan parameter yang belum diset | Beri default yang disengaja seperti `${VAR-}` atau `${VAR:-default}` sesuai kebutuhan; bedakan variabel unset dari variabel kosong |
 | `command not found: VAR=value` | Spasi di sekitar `=` | `VAR=value` tanpa spasi |
 | `bad substitution` | Sintaks `${}` salah, atau pakai Bash di `sh` | Perbaiki sintaks / ganti shebang ke `bash` |
 | `cannot assign to readonly variable` | Variabel `readonly` | `unset` tidak berlaku; restart shell / skrip |
@@ -1836,9 +1996,9 @@ PS1='\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\w\[\e[0m\]\$ '
 | `bash -n skrip.sh` | Cek sintaks tanpa eksekusi |
 | `bash -x skrip.sh` | Tampilkan setiap perintah sebelum dieksekusi |
 | `set -x` / `set +x` | Aktifkan / matikan trace di tengah skrip |
-| `set -e` | Keluar saat perintah gagal |
-| `set -u` | Error saat variabel kosong |
-| `set -o pipefail` | Deteksi kegagalan di pipeline |
+| `set -e` | Keluar pada sejumlah kondisi kegagalan, tetapi memiliki pengecualian pada `if`, `while`, `&&`, `||`, dan konteks lain; bukan pengganti pemeriksaan error eksplisit |
+| `set -u` | Error ketika ekspansi parameter yang tidak diset digunakan dalam konteks tertentu; variabel yang diset menjadi string kosong tidak otomatis dianggap unset |
+| `set -o pipefail` | Status pipeline menjadi status perintah paling kanan yang gagal (non-zero), atau nol jika semua berhasil |
 | `trap 'echo "error di baris $LINENO"' ERR` | Hook error |
 | `shellcheck skrip.sh` | Analisis statis (sangat direkomendasikan) |
 
@@ -1864,7 +2024,191 @@ ShellCheck akan mendeteksi:
 
 ---
 
-## **Lampiran E — Referensi**
+## **Lampiran E — Laboratorium Bash Terisolasi dengan `systemd-nspawn`**
+
+Bagian ini memasukkan panduan lingkungan isolasi sebagai materi fase, bukan sekadar tautan. Tujuannya adalah menyediakan sistem Arch Linux terpisah untuk eksperimen Bash sambil mempertahankan Zsh dan konfigurasi host. Container memberi isolasi proses dan filesystem melalui mekanisme namespace, tetapi **bukan VM dan bukan batas keamanan absolut**. Bind mount, perangkat, jaringan, hak root, dan konfigurasi container dapat membuat dampak menjangkau host. Jangan menganggap container sebagai tempat aman untuk menjalankan kode tak tepercaya.
+
+### E.1 Kapan menggunakan lab
+
+Lab berguna untuk menguji perubahan `.bashrc`, `PATH`, `IFS`, alias, fungsi, `trap`, redirection, `set -euo pipefail`, serta skrip yang mengubah file. Pengguna non-Arch dapat mempelajari konsepnya di sistem sendiri, WSL2, atau VM; langkah `pacstrap` di bawah khusus Arch Linux.
+
+### E.2 Prasyarat dan setup awal di Arch Linux
+
+Pastikan tersedia Arch Linux host, `systemd`, akses `sudo`, dan koneksi internet. Pasang alat instalasi:
+
+```bash
+sudo pacman -S arch-install-scripts
+mkdir -p "$HOME/labs/bash-lab"
+```
+
+Buat sistem dasar container:
+
+```bash
+sudo pacstrap -K -c "$HOME/labs/bash-lab" base nano bash-completion man-db tree shellcheck
+```
+
+`-K` menginisialisasi keyring pacman di target; `-c` menggunakan cache paket host jika tersedia; `base` memasang sistem dasar. `nano`, `bash-completion`, `man-db`, `tree`, dan `shellcheck` merupakan alat bantu. Paket `strace` dapat ditambahkan kemudian bila dibutuhkan.
+
+Masuk ke sistem container untuk menetapkan password root dan membuat user latihan opsional:
+
+```bash
+sudo systemd-nspawn -D "$HOME/labs/bash-lab"
+passwd
+useradd -m -G wheel -s /bin/bash labuser
+passwd labuser
+exit
+```
+
+Buat user `labuser` hanya jika diperlukan. Keanggotaan grup `wheel` sendiri belum tentu memberi `sudo`; konfigurasi sudo harus disiapkan secara terpisah bila dibutuhkan. Untuk latihan dasar, login sebagai root di container dapat memudahkan, tetapi kebiasaan administrasi sebaiknya tetap memisahkan aktivitas biasa dan root.
+
+### E.3 Menjalankan dan menggunakan container
+
+Boot container dengan systemd:
+
+```bash
+sudo systemd-nspawn -b -D "$HOME/labs/bash-lab" --machine=bash-lab
+```
+
+Perintah ini menjalankan container sampai dimatikan. Login menggunakan akun yang telah dibuat. Keluar dari sesi terminal nspawn tanpa mematikan container dapat dilakukan dengan menekan `Ctrl+]` tiga kali; cara ini bergantung pada mode terminal. Untuk mematikan dengan bersih dari dalam container, jalankan `poweroff`.
+
+Untuk membagikan direktori latihan, buat direktori khusus di host dan bind-mount hanya direktori tersebut:
+
+```bash
+mkdir -p "$HOME/labs/bash-lab-shared"
+sudo systemd-nspawn -D "$HOME/labs/bash-lab" --machine=bash-lab --bind="$HOME/labs/bash-lab-shared:/root/latihan"
+```
+
+Jalankan perintah ini tanpa `-b` jika Anda ingin sesi interaktif langsung; tambahkan `-b` bila memang ingin boot systemd penuh. Jangan bind-mount `HOME`, direktori konfigurasi, atau filesystem host secara luas untuk latihan yang berpotensi destruktif.
+
+Workflow dua terminal:
+
+1. Terminal host: edit skrip pada `~/labs/bash-lab-shared/`.
+2. Terminal container: jalankan `bash /root/latihan/nama-skrip.sh`.
+3. Periksa hasil dan log di container; simpan perubahan yang diperlukan di direktori latihan yang dibagikan.
+
+Verifikasi shell di dalam container:
+
+```bash
+printf 'Bash: %s\n' "${BASH_VERSION-}"
+printf 'Shell proses: %s\n' "$0"
+command -v bash
+```
+
+`$SHELL` biasanya menunjukkan login shell yang dicatat lingkungan, bukan jaminan shell yang saat ini sedang berjalan. Gunakan `BASH_VERSION`, `$0`, dan `ps -o comm= -p $$` sebagai petunjuk yang saling melengkapi.
+
+### E.4 Manajemen, backup, dan pemulihan
+
+Lihat container yang berjalan dan matikan dengan `machinectl`:
+
+```bash
+machinectl list
+sudo machinectl status bash-lab
+sudo machinectl shell root@bash-lab
+sudo machinectl poweroff bash-lab
+```
+
+Untuk melihat log container, gunakan `sudo journalctl -M bash-lab` jika journal tersedia.
+
+Sebelum eksperimen besar, buat backup dengan nama yang unik dan periksa tujuan backup:
+
+```bash
+backup="$HOME/labs/bash-lab.snapshot-$(date +%F-%H%M%S)"
+cp -a -- "$HOME/labs/bash-lab" "$backup"
+printf 'Backup dibuat di: %s\n' "$backup"
+```
+
+Pemulihan memerlukan container berhenti. Jangan langsung menghapus direktori aktif dengan `rm -rf` sebagai langkah pertama. Periksa path dan backup secara manual, lalu pindahkan direktori lama ke nama cadangan sebelum memulihkan. Contoh alur yang lebih hati-hati (ubah nilai `backup` ke path yang benar-benar ada):
+
+```bash
+sudo machinectl poweroff bash-lab 2>/dev/null || true
+# Verifikasi kedua path sebelum menjalankan operasi pemindahan.
+printf 'Container: %s\nBackup: %s\n' "$HOME/labs/bash-lab" "$backup"
+# Setelah memastikan backup benar dan container tidak aktif:
+# mv -- "$HOME/labs/bash-lab" "$HOME/labs/bash-lab.before-restore"
+# cp -a -- "$backup" "$HOME/labs/bash-lab"
+```
+
+Baris pemindahan/pemulihan sengaja dikomentari agar tidak merusak data jika path salah. Jangan menjalankan perintah penghapusan berdasarkan wildcard tanpa memeriksa hasilnya terlebih dahulu.
+
+### E.5 Troubleshooting dasar
+
+| Gejala | Pemeriksaan awal |
+|---|---|
+| Direktori bukan pohon OS valid | Pastikan `pacstrap` selesai dan `$HOME/labs/bash-lab/usr/bin/bash` ada. |
+| Container sudah terdaftar/berjalan | `machinectl list`, lalu matikan container yang memang ingin dihentikan. |
+| Bash tidak ditemukan | Masuk menggunakan `systemd-nspawn -D ...` dan periksa paket `bash`. |
+| Jaringan tidak tersedia | Periksa opsi jaringan nspawn dan firewall host; jangan menonaktifkan firewall host secara membabi buta. |
+| Tidak bisa login | Periksa akun dan password dari sesi `systemd-nspawn -D ...`. |
+
+### E.6 Checklist penggunaan lab untuk Fase 1
+
+- [ ] Kenali login, interactive, dan non-interactive shell.
+- [ ] Uji file startup Bash dengan salinan latihan, bukan konfigurasi host.
+- [ ] Coba variabel shell, environment, `export`, `readonly`, dan `unset`.
+- [ ] Uji parameter expansion, quoting, `IFS`, dan `PATH`.
+- [ ] Uji redirection, pipe, dan file descriptor pada file sementara.
+- [ ] Jalankan `bash -n`, `bash -x`, dan `shellcheck`.
+- [ ] Simpan backup sebelum eksperimen yang mengubah banyak file.
+
+### E.7 Pembersihan lab
+
+Sebelum menghapus lab, pastikan container berhenti, path yang akan dihapus tepat, dan backup yang dibutuhkan sudah ada. Mulailah dengan memeriksa direktori:
+
+```bash
+sudo machinectl poweroff bash-lab 2>/dev/null || true
+ls -ld -- "$HOME/labs/bash-lab" "$HOME/labs/bash-lab-shared"
+```
+
+Penghapusan permanen tidak dijalankan otomatis dalam materi ini. Jika Anda memilih menghapusnya, ketik path yang sudah diperiksa secara eksplisit dan pahami bahwa seluruh data di direktori tersebut akan hilang.
+
+### E.8 Roadmap setelah Fase 1
+
+Setelah fondasi Bash kuat, Anda dapat membuat container terpisah untuk Zsh dan dotfiles, lalu membandingkan startup, globbing, completion, dan parameter expansion. Untuk eksperimen disk atau sistem yang benar-benar destruktif, gunakan VM dengan disk virtual terpisah; jangan menganggap container saja cukup melindungi perangkat host.
+
+---
+
+## **Lampiran F — BOM, Shebang, dan Encoding File**
+
+### F.1 BOM itu apa?
+
+BOM (*Byte Order Mark*) adalah penanda encoding yang dapat ditambahkan pada awal file teks. Untuk UTF-8, urutan byte-nya `EF BB BF` (karakter Unicode U+FEFF). Banyak editor tidak menampilkannya sebagai karakter yang terlihat. BOM bukan komentar Bash dan bukan bagian dari baris shebang.
+
+Shebang adalah baris seperti `#!/usr/bin/env bash` yang memungkinkan sistem Unix/Linux memilih interpreter saat file dieksekusi langsung. Untuk pengenalan shebang oleh kernel, byte awal file harus berupa `#!`. Jika file dimulai dengan UTF-8 BOM, `#!` bergeser dari posisi pertama dan eksekusi langsung dapat gagal. Pesan error persisnya berbeda antar sistem dan cara menjalankan file.
+
+### F.2 Contoh dan verifikasi
+
+File yang benar secara visual dapat memiliki byte tersembunyi. Contoh berikut sengaja membuat file ber-BOM untuk demonstrasi; jalankan hanya pada file latihan:
+
+```bash
+printf '\xef\xbb\xbf#!/usr/bin/env bash\nprintf "Halo\\n"\n' > bom-latihan.sh
+hexdump -C bom-latihan.sh | head -n 1
+```
+
+Awal baris akan memperlihatkan `ef bb bf` sebelum `23 21` (byte `#` dan `!`). Jangan gunakan BOM pada shell script yang harus dieksekusi langsung.
+
+### F.3 Praktik encoding yang disarankan
+
+| Jenis file | Rekomendasi |
+|---|---|
+| Bash/sh script | UTF-8 tanpa BOM, akhir baris LF |
+| File konfigurasi | UTF-8 tanpa BOM kecuali dokumentasi aplikasinya menyatakan lain |
+| Python | UTF-8 tanpa BOM sebagai pilihan konsisten; Python 3 juga mendukung UTF-8 BOM |
+| File untuk aplikasi Windows tertentu | Ikuti kebutuhan aplikasi yang mengonsumsi file |
+
+Pastikan shebang adalah baris pertama tanpa spasi, baris kosong, atau byte tersembunyi sebelumnya. Di editor, pilih `UTF-8` (bukan `UTF-8 with BOM`) dan line ending `LF`. Jika skrip menunjukkan `^M` atau interpreter path dengan `^M`, kemungkinan ada CRLF. Periksa dengan `file nama.sh` dan ubah line ending melalui editor.
+
+### F.4 Dampak cara menjalankan
+
+```bash
+./skrip.sh       # kernel membaca shebang untuk memilih interpreter
+bash skrip.sh    # Bash yang Anda panggil membaca isi file; shebang tidak memilih interpreter
+```
+
+Kedua cara itu bukan hal yang sama. Menjalankan `bash skrip.sh` dapat melewati masalah pemilihan interpreter oleh shebang, tetapi tidak menjadikan BOM praktik yang baik dan tidak memperbaiki encoding file untuk alat lain.
+
+---
+
+## **Lampiran G — Referensi**
 
 ### Buku
 
@@ -1879,8 +2223,8 @@ ShellCheck akan mendeteksi:
 
 - **GNU Bash Manual**  
   <https://www.gnu.org/software/bash/manual/bash.html>
-- **POSIX.1-2017 (IEEE Std 1003.1)**  
-  <https://pubs.opengroup.org/onlinepubs/9699919799/>
+- **The Open Group — Base Specifications**  
+  <https://pubs.opengroup.org/onlinepubs/9799919799/>
 - **Zsh Manual**  
   <https://zsh.sourceforge.io/Doc/>
 
@@ -1924,22 +2268,12 @@ Anda kini memiliki fondasi:
 **Langkah selanjutnya (Fase 2):** kondisional (`if`, `case`), perulangan (`for`, `while`, `until`), fungsi, dan struktur kontrol lainnya.
 
 > **Tips terakhir:** *Latihan adalah kunci.* Tulis skrip setiap hari meski hanya 5 baris. Gunakan `shellcheck`. Baca `man` dan `help` sebelum bertanya pada mesin pencari. Selamat berkarya!
-
----
-
+>
+> ---
 > ⬆️ **[Ke Atas](#fase-1-fondasi--berinteraksi-dengan-shell-tingkat-pemula)**
-> ➡️ **[Modul Berikutnya (Fase 2)](../bagian-2/README.md)**
-> 📘 **[Kurikulum](../../README.md)**
-> 🌐 **[Domain Spesifik](../../../../README.md)**
-> 📎 **[Lampiran POSIX](./posix.md)**
-
+>
+> ➡️ [**Modul berikutnya:** Fase 2 — kondisional, perulangan, fungsi, dan manipulasi teks.](../bagian-2/README.md)
 <!-- Referensi internal -->
-[1]: ../README.md
-[2]: ./../../../../CLI_TUI/konsep/terminal/README.md
-[3]: ./interpreter.md
-
-[domain]: ../../../../README.md
-[kurikulum]: ../../README.md
-[selanjutnya]: ../bagian-2/README.md
-
-[long]: ./../../../../CLI_TUI/perintah/ls/long_format.md
+[2]: https://ubuntu.com/tutorials/command-line-for-beginners
+[3]: https://en.wikipedia.org/wiki/Interpreter_(computing)
+[long]: https://man7.org/linux/man-pages/man1/ls.1.html

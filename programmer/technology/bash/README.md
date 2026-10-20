@@ -1,3 +1,5 @@
+# Bash-Scripting
+
 <details>
   <summary>📃 Daftar Kurikulum</summary>
 
@@ -34,196 +36,210 @@ Kurikulum ini adalah peta jalan untuk menguasai inti dari seni otomasi di lingku
 
 ### **[Fase 1: Fondasi – Berinteraksi dengan Shell (Tingkat Pemula)][bag1]**
 
-**Tujuan Fase:** Membangun kenyamanan di baris perintah, memahami konsep fundamental interaksi dengan shell, dan menulis skrip pertama yang fungsional.
+**Tujuan Fase:** Membangun pemahaman dari nol tentang lingkungan shell, navigasi sistem berkas, aliran data, pembuatan skrip Bash, variabel, ekspansi, dan cara menjalankan skrip secara benar. Fokusnya bukan sekadar menghafal perintah, melainkan memahami apa yang dilakukan shell sebelum dan selama sebuah perintah dijalankan.
+
+**Prasyarat:** Literasi komputer dasar. Tidak diperlukan pengalaman pemrograman sebelumnya.
+
+**Lingkungan belajar:** Bash pada Linux (direkomendasikan), macOS, WSL2, atau lingkungan lain yang menyediakan Bash. Pengguna Arch Linux yang memakai Zsh sebagai shell utama dapat mempelajari Bash di container `systemd-nspawn` agar latihan tidak mencampur perilaku Zsh dan Bash.
 
 ---
 
-#### **Modul 1.1: Filosofi dan Lingkungan Shell**
+#### **Modul 1.1: Fondasi, Filosofi, dan Lingkungan Shell**
 
-1. **Deskripsi Konkret:** Modul ini memperkenalkan Anda pada "mengapa" dari baris perintah. Anda akan belajar apa itu shell, perbedaannya dengan terminal, dan prinsip-prinsip desain yang membuatnya begitu kuat dan bertahan lama.
+1. **Deskripsi Konkret:** Memahami komponen yang terlibat saat perintah dijalankan, mengenali Bash yang benar-benar aktif, menggunakan terminal secara efektif, dan menyiapkan lingkungan latihan yang sesuai.
 2. **Konsep Dasar dan Filosofi:**
-    - **The Unix Philosophy:**
-      1. _Tulis program yang melakukan satu hal dan melakukannya dengan baik._ Contoh: `grep` hanya untuk mencari teks.
-      2. _Tulis program yang bekerja bersama._ Ini adalah dasar dari penggunaan _pipes_.
-      3. _Tulis program untuk menangani aliran teks, karena itu adalah antarmuka universal._
-    - **Shell sebagai Interpreter Perintah:** Shell bukanlah terminal (jendela hitam). Shell adalah program yang berjalan di dalam terminal, yang tugasnya membaca perintah Anda, menafsirkannya, dan meminta kernel sistem operasi untuk menjalankannya.
-3. **Sintaks Dasar/Contoh Implementasi Inti:**
-
-    - Tidak ada kode skrip di sini, hanya interaksi:
-
-      ```bash
-      # Mengetahui shell apa yang sedang Anda gunakan
-      echo $SHELL
-
-      # Melihat di mana program 'ls' berada
-      which ls
-
-      # Mendapatkan bantuan untuk sebuah perintah
-      man ls
-      ```
-
-4. **Terminologi Kunci:**
-    - **Terminal:** Aplikasi yang menyediakan antarmuka jendela untuk berinteraksi dengan shell.
-    - **Shell:** Program interpreter perintah (misalnya, `bash`, `zsh`, `sh`). Ini adalah lingkungan pemrograman itu sendiri.
-    - **Command Line Interface (CLI):** Antarmuka pengguna berbasis teks.
-    - **Kernel:** Inti dari sistem operasi yang mengelola sumber daya perangkat keras dan perangkat lunak.
-5. **Daftar Isi:**
-    - Sejarah Singkat Unix dan Shell
-    - Membedakan Terminal, Konsol, dan Shell
-    - Memahami Filosofi Unix
-    - Navigasi Dasar: `pwd`, `ls`, `cd`
-    - Mendapatkan Bantuan: `man`, `tldr`, `--help`
-6. **Sumber Referensi:**
-    - [The Art of Unix Programming (Eric S. Raymond)](http://www.catb.org/~esr/writings/taoup/html/)
-    - [Linux Command Line for Beginners (Ubuntu)](https://ubuntu.com/tutorials/command-line-for-beginners)
-
----
-
-#### **Modul 1.2: Perintah Fundamental dan I/O Redirection**
-
-1. **Deskripsi Konkret:** Anda akan belajar bagaimana menggabungkan perintah-perintah sederhana menjadi alur kerja yang kuat menggunakan _redirection_ dan _pipes_. Ini adalah keterampilan paling fundamental dalam shell scripting.
-2. **Konsep Dasar dan Filosofi:** Di dunia Unix/Linux, hampir semuanya direpresentasikan sebagai file. Setiap program secara default memiliki tiga aliran data: Standard Input (stdin), Standard Output (stdout), dan Standard Error (stderr). Dengan mengarahkan aliran ini, Anda dapat mengontrol input dan output program.
+    - **Sejarah singkat Unix dan shell:** peran shell dalam sistem Unix-like dan perkembangan shell utama.
+    - **Terminal, konsol, shell, kernel, dan CLI:** definisi, perbedaan, serta hubungan antar-komponen.
+    - **Alur eksekusi perintah:** input dari terminal, parsing dan ekspansi oleh shell, pencarian perintah, eksekusi proses, lalu keluaran ke terminal atau stream lain.
+    - **Filosofi Unix:** program melakukan satu hal dengan baik; program dapat bekerja bersama; aliran teks sebagai antarmuka; kesederhanaan dan modularitas.
+    - **Mengenali shell aktif:** membedakan `$SHELL`, `$0`, `$$`, `ps`, `BASH_VERSION`, dan `ZSH_VERSION`; `$SHELL` umumnya menunjukkan login shell, bukan selalu shell aktif.
+    - **POSIX, Bash, dan Zsh:** mengenali standar portabilitas dan membedakan sintaks POSIX dari ekstensi Bash.
+    - **Jenis shell dan file startup:** login, interactive non-login, dan non-interactive; peran `/etc/profile`, `~/.bash_profile`, `~/.bash_login`, `~/.profile`, serta `~/.bashrc`. Bash tidak membaca semua file profil pengguna sekaligus; ada aturan prioritas.
 3. **Sintaks Dasar/Contoh Implementasi Inti:**
 
     ```bash
-    # Menulis output dari 'ls -l' ke dalam file 'daftar_file.txt'
-    ls -l > daftar_file.txt
+    # Periksa shell yang ditetapkan sebagai login shell
+    printf 'Login shell: %s\n' "$SHELL"
 
-    # Menambahkan output ke file yang sudah ada
-    date >> daftar_file.txt
+    # Periksa shell/proses yang sedang berjalan
+    printf 'Nama shell ($0): %s\n' "$0"
+    ps -o comm= -p "$$"
 
-    # Menggunakan output 'cat' sebagai input untuk 'grep' (mencari kata 'Dokumen')
-    cat daftar_file.txt | grep "Dokumen"
+    # BASH_VERSION tersedia ketika shell aktif adalah Bash
+    printf 'Bash version: %s\n' "${BASH_VERSION- bukan Bash}"
 
-    # Mengarahkan pesan error ke file terpisah
-    find / -name "rahasia.txt" 2> error.log
+    # Cari perintah tanpa mengandalkan utilitas non-POSIX `which`
+    command -v bash
+    type cd
+    type ls
+
+    # Navigasi dasar
+    pwd
+    ls -lah
+    cd ..
+    cd -
     ```
 
 4. **Terminologi Kunci:**
-    - **Standard Input (stdin, fd 0):** Aliran data masukan default, biasanya dari keyboard.
-    - **Standard Output (stdout, fd 1):** Aliran data keluaran default, biasanya ke layar.
-    - **Standard Error (stderr, fd 2):** Aliran untuk pesan kesalahan, juga biasanya ke layar.
-    - **Pipe (`|`):** Operator yang mengirimkan `stdout` dari perintah di sebelah kiri menjadi `stdin` dari perintah di sebelah kanan.
-    - **Redirection (`>`, `>>`, `<`):** Operator untuk mengarahkan aliran data ke atau dari file.
+    - **Terminal emulator:** aplikasi yang menampilkan antarmuka teks.
+    - **Shell:** program yang membaca dan menafsirkan perintah.
+    - **Kernel:** inti sistem operasi yang mengelola proses, memori, dan perangkat.
+    - **POSIX:** standar antarmuka dan perilaku sistem yang membantu portabilitas.
+    - **Builtin:** perintah yang dijalankan sebagai bagian dari shell, seperti `cd`.
+    - **Path:** alamat file atau direktori; berbeda dari variabel lingkungan `PATH`.
 5. **Daftar Isi:**
-    - Memahami Standard Streams: stdin, stdout, stderr
-    - Output Redirection: `>` (timpa) dan `>>` (tambahkan)
-    - Input Redirection: `<`
-    - Kekuatan Pipes (`|`): Merangkai Perintah
-    - Menggabungkan dan Mengarahkan Stream (`2>&1`)
-    - Perintah Esensial: `cat`, `grep`, `head`, `tail`, `wc`, `sort`, `uniq`
-6. **Sumber Referensi:**
-    - [I/O Redirection (The Linux Documentation Project)](https://tldp.org/LDP/abs/html/io-redirection.html)
-    - [Ryans Tutorials - Pipes and Redirection](https://ryanstutorials.net/linuxtutorial/piping.php)
-7. **Visualisasi:**
-    - Diagram alur untuk mengilustrasikan bagaimana data mengalir dari `stdout` satu perintah ke `stdin` perintah berikutnya melalui sebuah _pipe_.
-
-    - Bayangkan alur data di shell Bash seperti rantai pipa air: setiap perintah mengalirkan "air data" dari **stdout**-nya (output standar) menuju **stdin** perintah berikutnya (input standar). Diagram sederhananya bisa anda bayangkan seperti ini
-
-```bash
-[ command1 ] ──stdout──▶─stdin──[ command2 ]
-```
-
-Misalnya:
-
-```bash
-ls | grep ".txt" | sort
-```
-
-Jika kita gambarkan lebih lengkap:
-
-```bash
-[ ls ] ──stdout──▶─stdin──[ grep ".txt" ] ──stdout──▶─stdin──[ sort ]
-```
-
-Penjelasan alirannya:
-
-1. `ls` menulis daftar file ke **stdout**-nya.
-2. Pipa (`|`) mengalihkan **stdout** `ls` menjadi **stdin** untuk `grep`.
-3. `grep` menyaring data yang masuk dan menulis hasilnya ke **stdout**.
-4. Pipa berikutnya lagi mengalihkan hasil `grep` ke **stdin** milik `sort`.
-5. `sort` akhirnya menulis hasil akhir ke **stdout**, yang (jika tidak diarahkan ke file) akan tampil di terminal.
-
-Kita bisa memperjelas dengan tambahan opsi redirect:
-
-```bash
-command1 | command2 | command3 > output.txt
-```
-
-```bash
-[ command1 ] → [ command2 ] → [ command3 ] → (stdout) → output.txt
-```
-
-Setiap panah (`→`) di atas mewakili aliran data berbasis stream: teks, byte, atau baris.
+    - Sejarah singkat Unix dan shell; terminal, konsol, shell, kernel, dan CLI.
+    - Cara shell mem-parsing, memperluas, mencari, dan menjalankan perintah.
+    - Filosofi Unix: program kecil, komposisi, aliran teks, kesederhanaan, dan modularitas.
+    - Mengenali shell aktif dan membedakan `$SHELL` dari `$0`.
+    - Navigasi sistem berkas: `pwd`, `ls`, `cd`, path absolut/relatif, `.`, `..`, `~`, dan `-`.
+    - Membaca output `ls -l` dan mengenali tipe serta izin file.
+    - Bantuan: `man`, `help`, `info`, `apropos`, `whatis`, `--help`, dan `tldr` (opsional).
+    - Jenis shell dan file startup Bash.
+    - POSIX vs Bash vs Zsh; builtin vs perintah eksternal.
+    - Menyiapkan lingkungan latihan terisolasi dengan `systemd-nspawn` (opsional, direkomendasikan untuk pengguna Arch + Zsh).
+6. **Sumber dan Materi Pendukung:**
+    - [Bash Reference Manual](https://www.gnu.org/software/bash/manual/bash.html)
+    - [The Art of Unix Programming](http://www.catb.org/~esr/writings/taoup/html/)
+    - [The Open Group Base Specifications, Issue 8](https://pubs.opengroup.org/onlinepubs/9799919799/)
+    - Dokumen `00-lingkungan-isolasi.md`: setup container Arch minimal, workflow host/container, bind mount, backup/restore, troubleshooting, dan pembersihan.
 
 ---
 
-#### **Modul 1.3: Skrip Pertama Anda, Variabel, dan Ekspansi**
+#### **Modul 1.2: Perintah Fundamental, Standard Streams, dan I/O Redirection**
 
-1. **Deskripsi Konkret:** Anda akan menulis, menyimpan, dan menjalankan skrip shell pertama Anda. Modul ini mencakup konsep variabel untuk menyimpan data dan bagaimana shell melakukan ekspansi (mengganti variabel dan perintah dengan nilainya).
-2. **Konsep Dasar dan Filosofi:** Skrip adalah cara untuk menyimpan urutan perintah dalam sebuah file agar dapat dieksekusi kembali. Variabel memungkinkan skrip menjadi dinamis dan dapat digunakan kembali, bukan hanya urutan perintah yang statis.
+1. **Deskripsi Konkret:** Memahami bagaimana program menerima input, menghasilkan output, melaporkan kesalahan, dan mengalirkan data ke program lain atau file.
+2. **Konsep Dasar dan Filosofi:**
+    - Setiap proses umumnya memiliki `stdin` (file descriptor 0), `stdout` (fd 1), dan `stderr` (fd 2).
+    - Redirection mengubah tujuan atau sumber stream. Urutan redirection penting karena shell memprosesnya dari kiri ke kanan.
+    - Pipe (`|`) menghubungkan `stdout` perintah kiri ke `stdin` perintah kanan; `stderr` tidak ikut dialirkan kecuali diarahkan secara eksplisit.
+    - `>` menimpa file tujuan, sedangkan `>>` menambahkan ke akhir file. Redirection dapat mengosongkan file, sehingga perlu perhatian pada data penting.
+    - `<>` membuka file untuk baca-tulis tanpa otomatis mengosongkan isinya; posisi baca/tulis dan file descriptor harus dipahami agar data tidak tertimpa.
+    - `IFS= read -r` cocok untuk membaca baris teks, tetapi pemisahan berdasarkan koma saja bukan parser CSV lengkap.
 3. **Sintaks Dasar/Contoh Implementasi Inti:**
 
     ```bash
-    # File: sapa.sh
-    #!/bin/bash
+    # Pisahkan output normal dan pesan error
+    ls -la /etc > daftar-etc.txt 2> kesalahan-etc.txt
 
-    # 1. Deklarasi variabel (tanpa spasi di sekitar '=')
+    # Gabungkan stdout dan stderr ke file yang sama
+    perintah_yang_diuji > hasil.log 2>&1
+
+    # Baca isi file melalui stdin
+    wc -l < daftar-etc.txt
+
+    # Hubungkan beberapa perintah melalui pipe
+    grep 'ERROR' aplikasi.log | wc -l
+
+    # Baca file baris demi baris tanpa menghapus backslash
+    while IFS= read -r baris; do
+        printf 'Baris: %s\n' "$baris"
+    done < daftar-etc.txt
+
+    # Simpan output sekaligus tampilkan di terminal
+    ls -lah | tee daftar-file.txt
+    ```
+
+4. **Terminologi Kunci:**
+    - **File descriptor (FD):** bilangan yang merujuk pada stream terbuka milik proses.
+    - **Redirection:** pengalihan input/output.
+    - **Pipe:** saluran yang meneruskan byte dari satu proses ke proses lain.
+    - **Here-document (`<<`) dan here-string (`<<<`):** cara memberi input langsung; here-string adalah fitur Bash, bukan POSIX.
+    - **`tee`:** menyalin input ke output standar dan file.
+    - **Exit status:** angka hasil perintah; secara konvensi `0` berarti berhasil dan nilai nonzero menunjukkan kondisi lain/kegagalan.
+5. **Daftar Isi:**
+    - `stdin`, `stdout`, `stderr`, dan FD 0, 1, 2.
+    - Output redirection: `>`, `>>`, `>|`, `&>`, `&>>`.
+    - Input redirection: `<`, `<>`, here-document `<<`, `<<-`, dan here-string `<<<`.
+    - Mengalihkan error: `2>`, `2>>`, `2>&1`, `1>&2`, dan `/dev/null`.
+    - Mengapa `command > file 2>&1` berbeda dari `command 2>&1 > file`.
+    - File descriptor tambahan dengan `exec`, termasuk membuka dan menutup FD.
+    - Pipe `|`, Bash `|&`, dan status pipeline.
+    - Perintah teks: `cat`, `grep`, `head`, `tail`, `wc`, `sort`, `uniq`, `cut`, `tr`, `tee`, `xargs`, `sed`, dan `awk`.
+    - Penggunaan `find` dan `xargs` untuk nama file yang mengandung spasi atau newline, termasuk `-print0`/`-0` jika tersedia.
+    - Batasan pemrosesan teks: CSV bukan selalu aman diproses dengan pemisahan sederhana.
+6. **Sumber Referensi:**
+    - [Bash Reference Manual — Redirections](https://www.gnu.org/software/bash/manual/html_node/Redirections.html)
+    - [GNU Coreutils Manual](https://www.gnu.org/software/coreutils/manual/coreutils.html)
+    - [The Open Group — Shell Command Language](https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html)
+
+---
+
+#### **Modul 1.3: Skrip Pertama, Variabel, PATH, dan Ekspansi**
+
+1. **Deskripsi Konkret:** Menulis dan menjalankan skrip Bash, memahami cara sistem menemukan interpreter dan executable, menyimpan serta meneruskan nilai melalui variabel, menerima input dan argumen, dan memahami ekspansi shell sebelum perintah dijalankan.
+2. **Konsep Dasar dan Filosofi:**
+    - **Skrip dan shebang:** `#!/usr/bin/env bash` memilih interpreter; `env` mencari `bash` melalui `PATH`.
+    - **Encoding dan line ending:** simpan skrip sebagai UTF-8 tanpa BOM dan gunakan LF. BOM (`EF BB BF`) di awal file dapat mengganggu pengenalan shebang pada lingkungan tertentu.
+    - **Path file vs `PATH`:** path file menunjukkan lokasi file; `PATH` adalah daftar direktori yang dipisahkan oleh `:` untuk pencarian perintah tanpa path eksplisit.
+    - **Variabel shell dan lingkungan:** variabel biasa berlaku di shell saat ini; `export` membuat variabel tersedia bagi proses anak. Variabel khusus Bash dan parameter posisi memiliki aturan tersendiri.
+    - **Quoting dan ekspansi:** kutip ganda mengizinkan sebagian besar ekspansi tetapi mencegah word splitting dan pathname expansion pada hasil yang dikutip; kutip tunggal mempertahankan teks literal. Hasil ekspansi parameter tidak otomatis diparsing ulang sebagai sintaks shell.
+    - **Input, argumen, dan status:** `read` untuk input interaktif, `$1`, `$2`, dan seterusnya untuk argumen, serta `$?` untuk status perintah terakhir.
+    - **Keamanan dasar:** kutip ekspansi variabel saat nilainya harus menjadi satu argumen; gunakan `--` bila utilitas mendukungnya; jangan gunakan `eval` untuk input yang tidak tepercaya.
+3. **Sintaks Dasar/Contoh Implementasi Inti:**
+
+    ```bash
+    #!/usr/bin/env bash
+
     NAMA="Andi"
+    printf 'Halo, %s\n' "$NAMA"
 
-    # 2. Menggunakan variabel (ekspansi)
-    echo "Halo, $NAMA!"
+    LINGKUNGAN="lab"
+    export LINGKUNGAN
+    bash -c 'printf "Lingkungan anak: %s\n" "$LINGKUNGAN"'
 
-    # 3. Command Substitution: menyimpan output perintah ke variabel
-    LOKASI_SAAT_INI=$(pwd)
-    echo "Anda berada di direktori: $LOKASI_SAAT_INI"
+    # Lihat PATH dan temukan executable
+    printf '%s\n' "$PATH"
+    command -v bash
+    type -a bash
 
-    # 4. Membaca input dari pengguna
-    echo -n "Masukkan kota Anda: "
-    read KOTA
-    echo "Senang bertemu dengan Anda dari $KOTA!"
+    # Parameter posisi dan jumlah argumen
+    printf 'Nama skrip: %s\n' "$0"
+    printf 'Jumlah argumen: %s\n' "$#"
+    printf 'Argumen pertama: %s\n' "${1-}"
+
+    read -r -p 'Masukkan nama: ' nama_input
+    printf 'Nama: %s\n' "$nama_input"
+
+    DIREKTORI_SAAT_INI=$(pwd)
+    JUMLAH=$((2 + 3))
+    printf 'Lokasi: %s; hasil: %s\n' "$DIREKTORI_SAAT_INI" "$JUMLAH"
     ```
-
-    - Contoh lain dengan input nama dan kota.
-
-    ```bash
-    #!/bin/bash
-
-    # 1. Deklarasi variabel (tanpa spasi di sekitar '=')
-    echo -n "Masukkan Nama Anda :"
-    read NAMA_ANDA
-
-    # 4. Membaca input dari pengguna
-    echo -n "Masukkan kota Anda: "
-    read KOTA
-
-    # 2. Menggunakan variabel (ekspansi)
-    echo "Halo, $NAMA_ANDA!"
-    echo "Senang bertemu dengan Anda dari $KOTA!"
-
-    # 3. Command Substitution: menyimpan output perintah ke variabel
-    LOKASI_SAAT_INI=$(pwd)
-    echo "Anda berada di direktori: $LOKASI_SAAT_INI"
-    ```
-
-    - Untuk menjalankan: `chmod +x sapa.sh` lalu `./sapa.sh`
 
 4. **Terminologi Kunci:**
-    - **Shebang (`#!`):** Baris pertama dalam skrip yang memberitahu sistem operasi interpreter mana yang harus digunakan untuk menjalankan skrip ini.
-    - **Variable:** Nama simbolis yang terkait dengan sebuah nilai.
-    - **Expansion:** Proses di mana shell mengganti elemen seperti `$VARIABEL` atau `$(perintah)` dengan nilainya sebelum menjalankan baris perintah.
-    - **Quoting:** Penggunaan tanda kutip (`"` atau `'`) untuk mengontrol kapan ekspansi terjadi. `"` (double quotes) mengizinkan ekspansi, `'` (single quotes) mencegahnya.
+    - **Shebang:** penanda interpreter pada awal skrip.
+    - **BOM (Byte Order Mark):** penanda encoding yang tidak diperlukan untuk skrip Bash UTF-8 dan sebaiknya dihindari.
+    - **Variabel shell:** nama yang menyimpan nilai dalam lingkungan shell.
+    - **Variabel lingkungan:** variabel yang diekspor dan diwariskan proses anak.
+    - **`PATH`:** daftar direktori pencarian executable; urutan direktori memengaruhi perintah yang ditemukan lebih dahulu.
+    - **Parameter posisi:** `$0`, `$1` ...; `$#` menghitung argumen dan `"$@"` mempertahankan setiap argumen sebagai elemen terpisah.
+    - **Parameter khusus:** misalnya `$?` (status terakhir), `$$` (PID shell), `$!` (PID job latar belakang terakhir), dan `$-` (opsi shell aktif).
+    - **Ekspansi:** brace, tilde, parameter, command substitution, arithmetic, word splitting, pathname expansion, dan quote removal.
+    - **Command injection:** terjadi ketika data tak tepercaya diperlakukan sebagai kode oleh parser shell, misalnya melalui `eval` atau `bash -c` dengan string yang dibangun secara tidak aman; ini berbeda dari word splitting atau globbing akibat ekspansi tanpa kutip.
 5. **Daftar Isi:**
-    - Struktur Skrip: Shebang dan Komentar
-    - Membuat Skrip Dapat Dieksekusi (`chmod`)
-    - Deklarasi dan Penggunaan Variabel
-    - Perbedaan antara Double Quotes (`"`) dan Single Quotes (`'`)
-    - Command Substitution: `$(...)` vs. Backticks (`` ` ``)
-    - Membaca Input Pengguna dengan `read`
-    - Arithmetic Expansion: `$((...))`
-6. **Sumber Referensi:**
-    - [Bash Guide for Beginners - Chapter 3: The Bash environment](https://tldp.org/LDP/Bash-Beginners-Guide/html/Bash-Beginners-Guide.html%23chap_03)
-    - [Greg's Wiki - BashFAQ/050 (Quoting)](https://mywiki.wooledge.org/Quotes)
+    - Struktur skrip, komentar, shebang, serta perbedaan `bash script.sh` dan `./script.sh`.
+    - Izin file dan `chmod`; path relatif/absolut; mengapa skrip di direktori saat ini biasanya dipanggil dengan `./nama-skrip`.
+    - Diagnosis eksekusi: shebang salah, interpreter tidak ada, izin, CRLF, BOM, dan encoding.
+    - Pemeriksaan BOM dan line ending dengan `file`, `od`, atau `hexdump`; UTF-8 tanpa BOM dan LF.
+    - Definisi, pembacaan, penghapusan, `readonly`, dan nilai default variabel.
+    - Variabel lokal dalam fungsi sebagai pengantar; detail fungsi dan scoping lanjutan diperdalam pada fase berikutnya.
+    - Contoh sederhana untuk setiap variabel dalam daftar materi: variabel lingkungan `HOME`, `USER`, `LOGNAME`, `SHELL`, `PWD`, `OLDPWD`, `PATH`, `LANG`, `LANGUAGE`, `LC_ALL`, `TERM`, `EDITOR`, `VISUAL`, `TMPDIR`, `XDG_CONFIG_HOME`, dan `XDG_STATE_HOME` (jika tersedia); serta variabel/parameter Bash `BASH_VERSION`, `BASH`, `BASHPID`, `BASH_SOURCE`, `BASH_LINENO`, `FUNCNAME`, `LINENO`, `RANDOM`, `SECONDS`, `EPOCHSECONDS` (jika didukung), `IFS`, `PS1`, `PS2`, `PS4`, `OPTIND`, `OPTARG`, `PIPESTATUS`, `BASHOPTS`, dan `SHELLOPTS`, dengan catatan konteks ketersediaannya.
+    - `PATH` secara konkret: menampilkan dan memisahkan entri; membandingkan `command -v`, `type -a`, dan path absolut; menambahkan direktori sementara; menempatkan direktori di depan atau belakang; menghindari entri kosong yang dapat berarti direktori saat ini; memahami prioritas executable; dan mengatur perubahan permanen pada file startup yang tepat.
+    - Parameter posisi `$0`, `$1` ...; `$#`, `"$@"`, `"$*"`, dan `shift`.
+    - Input interaktif dengan `read`, `-r`, prompt, dan pemeriksaan input.
+    - Exit status: `$?`, `exit`, status pipeline, serta pengantar `set -e`, `set -u`, dan `pipefail` beserta batasannya.
+    - Urutan ekspansi Bash dan efek quoting; brace expansion adalah ekstensi Bash, bukan POSIX.
+    - Perbedaan `echo` dan `printf`, dengan `printf` sebagai pilihan yang lebih dapat diprediksi untuk output skrip.
+    - Keamanan dasar: quoting, opsi yang diawali `-`, nama file, `--`, `eval`, dan mengapa titik koma di dalam nilai variabel tidak otomatis dieksekusi sebagai sintaks shell.
+    - Latihan: skrip sapa, menerima argumen, memeriksa variabel, menelusuri `PATH`, dan mendiagnosis masalah shebang/BOM.
+6. **Sumber dan Materi Pendukung:**
+    - [Bash Reference Manual](https://www.gnu.org/software/bash/manual/bash.html)
+    - [ShellCheck](https://www.shellcheck.net/)
+    - [Greg's Wiki — BashFAQ](https://mywiki.wooledge.org/BashFAQ)
+    - Dokumen `bom.md`: BOM UTF-8 (`EF BB BF`), shebang, UTF-8 tanpa BOM, LF, dan pemeriksaan byte.
+    - Materi lengkap Fase 1 pada `bagian-1/README.md` harus mengikuti cakupan di atas tanpa menghapus topik yang telah tercantum.
+
+**Kriteria penyelesaian Fase 1:** Pelajar dapat menjelaskan alur dasar perintah, menavigasi sistem berkas, menemukan bantuan, membedakan shell dan POSIX, mengarahkan stream, menyusun pipeline teks, membuat dan menjalankan skrip Bash, menjelaskan `PATH` dan prioritas pencarian perintah, menggunakan variabel dan parameter, serta mendiagnosis masalah umum seperti quoting, izin eksekusi, BOM, dan line ending.
 
 ---
 
@@ -795,6 +811,7 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 - **[Others][others]** <span style="font-size: 11px; color: grey; margin-left: 24px;"><i>Mungkin bersifat Opsional.</i></span>
 - **[ZSH][zsh]**
 - **[SH][sh]**
+- **[Versi Lama](./READMEee.md)**
 
 [domain-spesifik]: ../../README.md
 [0]: ./../../../CLI_TUI/perintah/README.md
