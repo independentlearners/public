@@ -811,7 +811,6 @@ Kurikulum ini dirancang untuk membawa Anda dari pemula yang belum pernah menulis
 - **[Others][others]** <span style="font-size: 11px; color: grey; margin-left: 24px;"><i>Mungkin bersifat Opsional.</i></span>
 - **[ZSH][zsh]**
 - **[SH][sh]**
-- **[Versi Lama](./READMEee.md)**
 
 [domain-spesifik]: ../../README.md
 [0]: ./../../../CLI_TUI/perintah/README.md
