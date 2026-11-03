@@ -442,7 +442,7 @@ Dokumen ini memetakan banyak bahasa / bahasa-domain ke dalam: **Level Abstraksi*
 | DSLs for digital audio workstations (DAW scripting)          |             Scripting | Automation                         | Audio production                       | DAW APIs                                          | Plugin APIs                                                           |
 | DSLs for 3D modeling (OpenSCAD)                              |                   DSL | Declarative geometry               | 3D modeling/printing                   | OpenSCAD (C++)                                    | CSG semantics                                                         |
 | Geometry kernels (CGAL)                                      |           Library API | Geometry                           | Computational geometry                 | C++ libs                                          | Kernel APIs                                                           |
-| DSLs for UI (QML)                                            |                   DSL | Declarative UI                     | Qt Quick                               | Qt (C++)                                          | QML semantics, bindings                                               |
+| [DSLs for UI (QML)][qml]                                     |                   DSL | Declarative UI                     | Qt Quick                               | Qt (C++)                                          | QML semantics, bindings                                               |
 | XAML (WPF)                                                   |            Markup DSL | UI markup                          | Windows desktop                        | WPF (.NET)                                        | XAML schema                                                           |
 | Razor (ASP.NET)                                              |            Templating | Server-side templates              | Web apps                               | .NET (C#)                                         | Razor syntax                                                          |
 | JSP / ASP / PHP templates                                    |            Templating | Server-side templates              | Web                                    | JVM/.NET/PHP                                      | Template semantics                                                    |
@@ -762,3 +762,4 @@ Hasil komprehensif ini mencakup **spektrum ekosistem perangkat lunak**, sehingga
 [lua]: ./technology/lua/README.md
 [zsh]: ./technology/zsh/zsh.md
 [sh]: ./technology/sh/sh.md
+[qml]: ./technology/qml/qml.md
