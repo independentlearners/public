@@ -1,969 +1,1296 @@
-## Kurikulum Komprehensif: Quickshell, QML, dan Ekosistem Wayland untuk Shell Desktop Minimalis-Keyboard-Driven
+# Kurikulum Komprehensif: Quickshell, QML, dan Ekosistem Wayland untuk Shell Desktop Keyboard-Driven
 
-Kurikulum ini dirancang khusus untuk **power user Arch Linux** yang beroperasi di lingkungan **CLI/TUI**, mengutamakan **kontrol keyboard penuh**, **keamanan**, **isolasi**, dan **anonimitas**, serta memiliki prinsip **monolitik, modular, abstrak, dan super kontrol**. Quickshell bukan sekadar “bar” atau “panel”—ia adalah **toolkit low-level berbasis QtQuick/QML** untuk membangun seluruh komponen desktop (bar, widget, lockscreen, notification daemon, display manager) yang berjalan **di atas Wayland compositor** seperti Hyprland atau Sway. Anda akan memprogram shell Anda sendiri, bukan sekadar mengonfigurasi tema.
+*Revisi pasca-audit · diverifikasi terhadap dokumentasi Quickshell v0.3.x · 3 November 2026*
 
-> **Filosofi Inti Kurikulum:** Shell adalah **program**, bukan konfigurasi. Setiap piksel, setiap binding, dan setiap interaksi harus dapat dikontrol melalui kode dan keyboard. Keamanan dicapai melalui **isolasi proses**, **least privilege**, dan **auditabilitas kode**—bukan melalui GUI yang tidak transparan.
+Kurikulum ini dirancang untuk **power user Arch Linux** yang bekerja di lingkungan **CLI/TUI**, mengutamakan **kontrol keyboard penuh**, **keamanan**, **isolasi**, dan **anonimitas**, dengan prinsip **monolitik, modular, abstrak, dan super kontrol**. Quickshell bukan sekadar bar atau panel: ia adalah **toolkit berbasis QtQuick/QML** untuk membangun seluruh komponen desktop (bar, launcher, notification daemon, lockscreen, greeter) di atas **Wayland compositor** seperti Hyprland, Sway, atau Niri. Anda memprogram shell Anda sendiri, bukan sekadar mengatur tema.
+
+> **Filosofi Inti:** Shell adalah **program**, bukan konfigurasi. Setiap piksel, binding, dan interaksi harus dapat dikontrol lewat kode dan keyboard. Keamanan dicapai lewat **isolasi proses**, **least privilege**, dan **auditabilitas kode**, bukan lewat GUI yang tidak transparan.
+
+Empat prinsip dipakai sebagai kriteria desain di seluruh modul:
+
+| Prinsip | Arti praktis di Quickshell |
+| --- | --- |
+| **Monolitik** | Satu proses shell menyatukan bar, launcher, notifikasi, dan lockscreen, tetapi setiap bagian tetap dapat diaudit sendiri. |
+| **Modular** | Pisahkan `services/` (logika sistem), `components/` (UI), dan `config/` (preferensi). |
+| **Abstrak** | Deskripsikan *apa* yang diinginkan (deklaratif); biarkan runtime mengurus *bagaimana*. |
+| **Super kontrol** | Setiap aksi dapat dipicu keyboard dan IPC (`qs ipc call`), tanpa ketergantungan pada mouse. |
+
+---
+
+## Cara Memakai Kurikulum Ini
+
+**Dua jalur belajar.** *Jalur A* (power user yang sudah nyaman dengan terminal dan Arch) mulai dari Fase 0. *Jalur B* (pemula atau non-IT) mulai dari **Fase −1**, yang menyiapkan keterampilan dasar dan laboratorium yang aman.
+
+**Template setiap modul:** Deskripsi Konkret → Analogi → Konsep Dasar dan Filosofi → Sintaks Dasar/Contoh → Terminologi Kunci → Daftar Isi → Latihan dan Checkpoint → Sumber Referensi → Visualisasi.
+
+**Aturan kerja:**
+
+1. Jangan lanjut ke modul berikutnya sebelum *checkpoint* modul ini lulus.
+2. Contoh kode adalah **kerangka minimalis**. API Quickshell berkembang antarversi, jadi verifikasi setiap tipe pada halaman referensi versi yang terpasang (`quickshell --version`). Pola alamat halaman tipe: `https://quickshell.org/docs/types/<Modul>/<Tipe>` (contoh: `Quickshell.Io/Process`).
+3. Ragu dengan nilai atau skala sebuah properti? Cetak dengan `console.log(...)` sebelum mempercayainya.
+4. Jalankan eksperimen berisiko (lockscreen, sandbox) di **VM atau sesi cadangan**, bukan di sesi utama Anda.
 
 ---
 
 ## Prasyarat
 
-Sebelum memulai, Anda harus memiliki:
-
-- **Arch Linux** terpasang dan berjalan (disarankan dengan `base-devel`).
-- **Wayland compositor** yang mendukung `wlr-layer-shell` (Hyprland, Sway, atau Niri).
-- **Pemahaman dasar terminal**: navigasi filesystem, editing file dengan `vim`/`neovim`, manajemen paket `pacman`, dan `git`.
-- **Pemahaman dasar pemrograman**: variabel, fungsi, objek, dan event. (Tidak harus C++ atau QML; kurikulum akan mengajarkannya dari nol.)
-- **Komitmen terhadap prinsip keamanan**: tidak menjalankan skrip dari sumber tidak tepercaya tanpa audit, dan memahami konsep sandboxing serta isolasi proses.
+- **Jalur A:** Arch Linux terpasang (dengan `base-devel`), compositor Wayland yang mendukung `wlr-layer-shell` (Hyprland, Sway, Niri), navigasi terminal, editor modal (`vim`/`nvim`/`helix`), `pacman`, dan `git`.
+- **Jalur B:** tidak ada prasyarat teknis selain komputer yang mampu menjalankan mesin virtual dan kemauan mengetik perintah. Fase −1 membangun sisanya.
+- **Komitmen keamanan (semua jalur):** tidak menjalankan konfigurasi, skrip, atau PKGBUILD dari sumber tidak tepercaya sebelum membacanya, dan memahami bahwa **konfigurasi Quickshell adalah kode yang berjalan dengan hak akses Anda**.
 
 ---
 
 ## Alat Esensial
 
 | Kategori | Alat | Catatan |
-|---|---|---|
-| **Editor/IDE** | Neovim atau Helix dengan **QML LSP** (`qmlls`) | Quickshell menyediakan konfigurasi LSP untuk Neovim, Emacs, Helix, dan VS Code. |
-| **Terminal Multiplexer** | `tmux` atau `zellij` | Menjalankan Quickshell, log, dan editor dalam satu sesi keyboard-driven. |
-| **Build Tools** | `cmake`, `ninja`, `gcc` | Diperlukan jika membangun Quickshell dari source atau mengembangkan plugin C++. |
-| **Qt6** | `qt6-base`, `qt6-declarative`, `qt6-wayland`, `qt6-svg` | Dependensi inti Quickshell. |
-| **Compositor** | Hyprland atau Sway | Quickshell menyediakan integrasi workspace dan IPC khusus untuk keduanya. |
-| **Audit/Security** | `strace`, `bubblewrap`, `firejail` | Untuk analisis syscall dan isolasi proses shell. |
-| **Debugging** | `gdb`, `qtcreator` (hanya untuk debugging, bukan GUI utama) | Quickshell memiliki crash handler dan dukungan debugging. |
+| --- | --- | --- |
+| **Editor/IDE** | Neovim atau Helix + `qmlls` | `qmlls` ada di paket `qt6-declarative` (biasanya di `/usr/lib/qt6/bin/`). Buat berkas kosong `.qmlls.ini` di folder shell agar Quickshell mengisinya untuk LSP. |
+| **Multiplexer** | `tmux` atau `zellij` | Menjalankan Quickshell, log, dan editor dalam satu sesi keyboard-driven. |
+| **Build** | `cmake`, `ninja`, `gcc` | Untuk build dari source dan plugin C++. |
+| **Qt6** | `qt6-base`, `qt6-declarative`, `qt6-wayland`, `qt6-svg`, `qt6-imageformats`, `qt6-multimedia`, `qt6-5compat` | Dependensi Quickshell dan efek visual. |
+| **Compositor** | Hyprland, Sway, Niri | Hyprland: modul `Quickshell.Hyprland`. Sway/i3: modul `Quickshell.I3`. Lainnya: lewat `Process` ke CLI compositor. |
+| **Inspeksi Wayland** | `wayland-utils` (`wayland-info`) | Melihat protokol yang disediakan compositor. |
+| **Audit/Isolasi** | `strace`, `bubblewrap`, `xdg-dbus-proxy`, `systemd-analyze` | Analisis syscall, sandbox, penyaringan D-Bus, skor hardening unit. |
+| **Debug/Profiling** | `gdb`, `perf`, `heaptrack`, `valgrind` | Crash, CPU, dan memori. |
+| **Kualitas** | `qmllint` | Linting statis QML. |
+| **Laboratorium** | QEMU/KVM (`virt-manager`) | VM aman untuk eksperimen (Fase −1.3). |
 
 ---
 
 ## Struktur Fase dan Estimasi Waktu
 
-| Fase | Level | Estimasi Waktu | Fokus |
-|---|---|---|---|
-| **0** | Pemula | 4–6 minggu | Fondasi Linux, Wayland, QML, dan Qt6 |
-| **1** | Pemula–Menengah | 4 minggu | Dasar Quickshell: `shell.qml`, `PanelWindow`, `Process`, `Timer` |
-| **2** | Menengah | 6–8 minggu | Integrasi sistem: Wayland layer-shell, IPC compositor, PipeWire, MPRIS, BlueZ, UPower |
-| **3** | Mahir | 6 minggu | Arsitektur modular, komponen reusable, singletons, manajemen state |
-| **4** | Mahir–Expert | 4–6 minggu | Keamanan, isolasi, sandboxing, PAM, lockscreen, greetd |
-| **5** | Expert/Enterprise | 8+ minggu | Optimasi performa, plugin C++, deployment, CI/CD, kontribusi upstream |
+| Fase | Level | Estimasi | Fokus |
+| --- | --- | --- | --- |
+| **−1** (opsional) | Prapemula | 3–4 minggu | Terminal, konsep pemrograman, JavaScript dasar, lab VM |
+| **0** | Pemula | 5–7 minggu | Linux, keamanan Wayland, QML, Qt6, JavaScript dan animasi |
+| **1** | Pemula–Menengah | 5 minggu | `shell.qml`, `PanelWindow`, `Variants`, `Process`, komponen, debugging, autostart |
+| **2** | Menengah | 8–10 minggu | Layer-shell, fokus keyboard, IPC, layanan desktop, notifikasi/tray/launcher, persistensi |
+| **3** | Mahir | 6–7 minggu | Arsitektur, state, kualitas kode |
+| **4** | Mahir–Expert | 6–8 minggu | Threat model, sandbox, lockscreen, PAM, greetd, hardening sesi |
+| **5** | Expert/Enterprise | 8+ minggu | Plugin C++, performa, deployment, CI/CD, upstream |
+| **Capstone** | Penguasaan | 4–6 minggu | Shell mandiri end-to-end |
 
-**Total estimasi:** 32–38 minggu (sekitar 8–9 bulan) untuk mencapai tingkat expert dengan studi konsisten ~10–15 jam/minggu.
+**Total Jalur A:** 42–51+ minggu (±10–12 bulan). Jalur B menambah 3–4 minggu. Dengan 10–15 jam/minggu, kebutuhan total ±420–770 jam.
 
 ---
 
-## [Fase 0 — Fondasi: Linux, Wayland, QML, dan Qt6][0]
+## Model Ancaman Singkat (Benang Merah Keamanan)
 
-**Level:** Pemula  
-**Estimasi:** 4–6 minggu  
-**Prasyarat:** Arch Linux terpasang, terminal dasar.
+Keamanan tidak boleh baru muncul di Fase 4. Sejak awal, pegang peta ini dan tanyakan di setiap modul: *aset apa yang saya lindungi, dari siapa, dan di batas mana?*
 
-### Modul 0.1 — Arch Linux dan Filosofi CLI/TUI
+```text
+[Anda / keyboard]
+      │
+┌─────▼──────────────────────────────────┐
+│ Compositor (Hyprland/Sway/Niri)        │ ← batas #1: protokol Wayland istimewa
+│  ┌──────────────────────────────────┐  │
+│  │ Quickshell (QML = kode!)         │  │ ← batas #2: hak akses pengguna penuh
+│  │  └─ Process / helper             │  │ ← batas #3: sandbox (bwrap / systemd)
+│  └──────────────────────────────────┘  │
+└─────┬──────────────────────────────────┘
+      │ D-Bus · socket IPC · PAM
+[Layanan sistem: PipeWire, UPower, logind, PAM]
+```
 
-**Deskripsi Konkret:**  
-Membangun lingkungan kerja yang sepenuhnya dapat dikontrol melalui keyboard: shell (`zsh`/`fish`), terminal multiplexer, dan manajemen paket. Anda akan memahami mengapa Arch Linux—dengan filosofi KISS dan kontrol penuh—cocok untuk pengembangan shell Wayland.
+| Ancaman | Contoh | Mitigasi | Modul |
+| --- | --- | --- | --- |
+| Konfigurasi berbahaya | Config pihak ketiga memanggil `Process` atau membaca berkas pribadi | Baca seluruh kode sebelum dijalankan; jalankan di VM | 4.1 |
+| Rantai pasok | PKGBUILD AUR atau GitHub Action berubah isinya | Audit PKGBUILD, build di chroot bersih, pin Action ke commit SHA | 0.1, 5.3 |
+| Kebocoran lingkungan | Variabel rahasia diwariskan ke proses anak | `clearEnvironment: true` + daftar putih variabel | 1.2, 4.1 |
+| Bypass lockscreen | Memakai fokus keyboard eksklusif sebagai pengganti kunci sesi | Gunakan `WlSessionLock`, bukan `WlrKeyboardFocus.Exclusive` | 4.2 |
+| Klien Wayland berhak istimewa | Klien memakai screencopy atau virtual-keyboard | Batasi lewat security-context bila compositor mendukung | 0.1, 2.1 |
+| Jejak data | Kredensial atau path pribadi masuk ke log | Jangan mencatat input sensitif; periksa isi log | 1.4, 4.2 |
 
-**Konsep Dasar dan Filosofi:**  
-Arch Linux memberikan kontrol granular atas setiap paket. Berbeda dengan distro yang menyembunyikan detail, Arch memaksa Anda memahami dependensi. Ini selaras dengan prinsip **super kontrol**: Anda harus tahu apa yang berjalan di sistem Anda, termasuk setiap dependensi Quickshell.
+---
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
+## Fase −1 — Literasi Dasar untuk Pemula (Opsional)
+
+**Level:** Prapemula · **Estimasi:** 3–4 minggu · **Prasyarat:** komputer yang mampu menjalankan mesin virtual.
+
+### Modul −1.1 — Terminal, Filesystem, dan Proses
+
+**Deskripsi Konkret:** Anda belajar bergerak di sistem berkas, membaca izin berkas, menyambung perintah dengan pipe, dan memahami variabel lingkungan. Ini bahan baku hampir semua modul berikutnya (`Process`, `bwrap`, `systemd`).
+
+**Analogi:** Terminal adalah percakapan tertulis dengan komputer: Anda menulis kalimat perintah, komputer membalas dengan teks.
+
+**Konsep Dasar dan Filosofi:** Di Linux, hampir semuanya berupa berkas dan program kecil yang saling disambung. Keluaran satu program dapat menjadi masukan program lain lewat *pipe*, membentuk rantai yang bisa diaudit baris demi baris. Pola pikir inilah yang membuat `Process` di Quickshell terasa natural.
+
+**Sintaks Dasar/Contoh:**
+
 ```bash
-# Instalasi dependensi dasar Qt6 dan Wayland
-sudo pacman -S --needed base-devel qt6-base qt6-declarative qt6-wayland qt6-svg cmake ninja git
-
-# Verifikasi Wayland berjalan
-echo $XDG_SESSION_TYPE   # harus "wayland"
+pwd; ls -la ~                 # di mana saya, apa isinya
+mkdir -p ~/lab && cd ~/lab    # buat dan masuk folder
+echo halo > catatan.txt       # tulis berkas
+cat catatan.txt | wc -c       # sambung dua program dengan pipe
+chmod 600 catatan.txt         # hanya pemilik yang boleh baca/tulis
+echo $HOME; env | head        # variabel lingkungan
 ```
 
 **Terminologi Kunci:**
-- **Wayland**: Protokol display server modern yang menggantikan X11; compositor bertanggung jawab penuh atas rendering dan input.
-- **Compositor**: Program yang mengelola jendela, input, dan rendering (Hyprland, Sway).
-- **XDG Base Directory**: Standar lokasi konfigurasi (`~/.config`), data (`~/.local/share`), dan cache (`~/.cache`).
+
+- **Shell:** program yang membaca perintah Anda (`bash`, `zsh`, `fish`); **terminal** adalah jendelanya.
+- **Pipe (`|`):** menyambung keluaran satu program ke masukan program lain.
+- **Izin berkas:** aturan siapa yang boleh membaca, menulis, atau menjalankan berkas.
+- **Variabel lingkungan:** pasangan nama-nilai yang diwariskan ke setiap proses anak.
+- **Proses:** program yang sedang berjalan.
 
 **Daftar Isi:**
+
+1. Navigasi dan manipulasi berkas.
+2. Izin dan kepemilikan.
+3. Pipe dan redirect.
+4. Variabel lingkungan dan `PATH`.
+5. Melihat dan menghentikan proses (`ps`, `kill`).
+
+**Latihan dan Checkpoint:** Buat folder `~/lab`, tulis tiga berkas, hitung baris gabungannya dengan satu rantai pipe. *Checkpoint:* jelaskan mengapa proses anak bisa membaca variabel yang diatur induknya.
+
+**Sumber Referensi:** [Arch Wiki: Core utilities](https://wiki.archlinux.org/title/Core_utilities) · [Arch Wiki: File permissions and attributes](https://wiki.archlinux.org/title/File_permissions_and_attributes)
+
+---
+
+### Modul −1.2 — Konsep Pemrograman dan JavaScript Dasar
+
+**Deskripsi Konkret:** Memahami variabel, fungsi, objek, array, dan event, memakai JavaScript, karena QML menanamkan JavaScript di dalam ekspresinya.
+
+**Analogi:** Variabel adalah kotak berlabel; fungsi adalah resep yang bisa dipakai berulang; event adalah bel pintu yang memicu resep tertentu.
+
+**Konsep Dasar dan Filosofi:** Program adalah rangkaian keputusan dan transformasi data. JavaScript modern memberi alat ringkas (fungsi panah, `map`, optional chaining) yang akan Anda lihat di hampir setiap konfigurasi Quickshell.
+
+**Sintaks Dasar/Contoh** (jalankan dengan `node`, `sudo pacman -S nodejs`):
+
+```js
+const tugas = ['mandi', 'sarapan', 'kerja'];            // array
+const besar = tugas.map(t => t.toUpperCase());            // fungsi panah + map
+const info = { nama: 'budi', aktif: true };               // objek
+console.log(`Halo ${info.nama}`, info.profil?.umur ?? 'tidak diketahui');  // ?. dan ??
+```
+
+**Terminologi Kunci:**
+
+- **Variabel:** nama untuk sebuah nilai (`const` tidak bisa diubah, `let` bisa).
+- **Fungsi:** blok kode bernama yang menerima masukan dan memberi hasil.
+- **Objek / Array:** kumpulan data berpasangan nama-nilai / berurutan.
+- **Optional chaining (`?.`) dan nullish coalescing (`??`):** akses aman terhadap nilai yang mungkin kosong, dan nilai cadangan.
+- **Event:** kejadian (klik, tombol ditekan) yang memicu kode.
+
+**Daftar Isi:**
+
+1. Tipe data dan variabel.
+2. Fungsi dan fungsi panah.
+3. Objek, array, dan metode `map`/`filter`.
+4. `?.`, `??`, dan template literal.
+5. Membaca pesan galat.
+
+**Latihan dan Checkpoint:** Tulis fungsi yang menyaring daftar nama berawalan huruf tertentu. *Checkpoint:* jelaskan perbedaan `undefined` dan `null`, dan apa yang dilakukan `?.`.
+
+**Sumber Referensi:** [MDN: JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)
+
+---
+
+### Modul −1.3 — Laboratorium Aman: VM Arch dan Snapshot
+
+**Deskripsi Konkret:** Menyiapkan mesin virtual Arch Linux dengan snapshot, supaya setiap eksperimen (lockscreen, sandbox, konfigurasi compositor) bisa dibatalkan seketika.
+
+**Analogi:** VM adalah ruang uji coba berdinding kaca: apa pun yang rusak di dalamnya tidak menyentuh rumah Anda, dan tombol *undo* selalu tersedia.
+
+**Konsep Dasar dan Filosofi:** Prinsip *isolasi* dimulai dari cara Anda belajar. Kesalahan pada lockscreen atau sandbox bisa mengunci Anda dari sesi sendiri; di VM, risikonya nol.
+
+**Sintaks Dasar/Contoh:**
+
+```bash
+sudo pacman -S --needed qemu-full virt-manager libvirt dnsmasq
+sudo systemctl enable --now libvirtd.service
+# di virt-manager: pilih video virtio dengan 3D aktif, lalu ambil snapshot sebelum tiap eksperimen
+```
+
+**Terminologi Kunci:**
+
+- **VM (mesin virtual):** komputer tiruan yang berjalan di dalam komputer Anda.
+- **Snapshot:** titik simpan keadaan VM yang bisa dipulihkan.
+- **TTY:** konsol teks murni, jalur penyelamat bila sesi grafis bermasalah.
+
+**Daftar Isi:**
+
+1. QEMU/KVM dan `libvirt`.
+2. Memasang Arch di VM.
+3. Snapshot dan pemulihan.
+4. Berpindah ke TTY (`Ctrl+Alt+F3`) sebagai jalur penyelamat.
+
+**Latihan dan Checkpoint:** Pasang Arch minimal di VM, ambil snapshot, hapus sembarang berkas sistem, lalu pulihkan. *Checkpoint:* tunjukkan cara masuk ke TTY dan menghentikan proses grafis yang macet.
+
+**Sumber Referensi:** [Arch Wiki: QEMU](https://wiki.archlinux.org/title/QEMU) · [Arch Wiki: libvirt](https://wiki.archlinux.org/title/Libvirt)
+
+---
+
+## Fase 0 — Fondasi: Linux, Wayland, QML, dan Qt6
+
+**Level:** Pemula · **Estimasi:** 5–7 minggu · **Prasyarat:** Arch Linux terpasang (atau VM dari Fase −1.3) dan terminal dasar.
+
+### Modul 0.1 — Arch Linux, Keamanan Wayland, dan Higiene AUR
+
+**Deskripsi Konkret:** Membangun lingkungan kerja keyboard-driven (shell, multiplexer, `pacman`), memahami model keamanan Wayland, dan menerapkan kebiasaan audit AUR sebelum memasang `quickshell-git`.
+
+**Analogi:** Compositor Wayland adalah manajer gedung: ia mengendalikan semua pintu dan jendela; aplikasi hanya penyewa yang tidak boleh mengintip unit lain.
+
+**Konsep Dasar dan Filosofi:** Arch memberi kontrol granular dan memaksa Anda memahami dependensi, selaras dengan prinsip *super kontrol*. Di X11 setiap klien dapat membaca input dan layar klien lain; di Wayland isolasi itu adalah bawaan. Namun protokol istimewa (layer-shell, screencopy, virtual-keyboard) tetap tersedia bagi klien yang diizinkan compositor. Pembatasannya lewat protokol *security-context* dan dukungannya berbeda antar compositor, jadi **periksa milik Anda**. AUR berisi skrip kiriman pengguna: pasang hanya setelah dibaca.
+
+**Sintaks Dasar/Contoh:**
+
+```bash
+sudo pacman -S --needed base-devel git qt6-base qt6-declarative qt6-wayland qt6-svg cmake ninja wayland-utils
+echo $XDG_SESSION_TYPE                                                # harus: wayland
+wayland-info | grep -E 'layer_shell|session_lock|security_context'    # protokol yang tersedia
+```
+
+```bash
+# higiene AUR: baca sebelum membangun
+git clone https://aur.archlinux.org/quickshell-git.git && cd quickshell-git
+less PKGBUILD            # periksa source=, build(), package(), dan skrip .install
+git log --stat           # riwayat perubahan
+pkgctl build             # build di chroot bersih (paket devtools); alternatif: makepkg -si
+```
+
+**Terminologi Kunci:**
+
+- **Wayland:** protokol display modern pengganti X11; compositor memegang rendering dan input.
+- **Compositor:** program pengelola jendela, input, dan rendering (Hyprland, Sway, Niri).
+- **Protokol istimewa:** ekstensi Wayland yang memberi kuasa lebih (mis. `zwlr_layer_shell_v1`).
+- **XDG Base Directory:** standar lokasi konfigurasi (`~/.config`), data (`~/.local/share`), cache (`~/.cache`).
+- **PKGBUILD:** skrip build paket Arch; di AUR, ditulis pihak ketiga.
+
+**Daftar Isi:**
+
 1. Instalasi Arch dan `base-devel`.
-2. Manajemen paket dengan `pacman` dan AUR helper (`yay`/`paru`).
+2. `pacman`, AUR, dan **higiene AUR** (audit PKGBUILD, chroot bersih).
 3. Shell scripting untuk otomatisasi (`bash`/`zsh`).
-4. Terminal multiplexer (`tmux`): sesi, pane, dan keybinding.
-5. Wayland vs X11: arsitektur dan implikasi keamanan.
+4. `tmux`: sesi, pane, keybinding.
+5. Arsitektur Wayland dan **implikasi keamanannya** (isolasi input, protokol istimewa, security-context).
 
-**Sumber Referensi:**
-- Arch Wiki: [Installation guide](https://wiki.archlinux.org/title/Installation_guide)
-- Arch Wiki: [Wayland](https://wiki.archlinux.org/title/Wayland)
-- [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/)
+**Latihan dan Checkpoint:** Jalankan `wayland-info` dan catat protokol yang tersedia di compositor Anda; audit satu PKGBUILD AUR dan tulis tiga hal yang Anda periksa. *Checkpoint:* jelaskan mengapa klien Wayland biasa tidak dapat membaca ketikan klien lain, dan protokol mana yang mengecualikan hal itu.
 
-**Visualisasi:** Diagram alur arsitektur Wayland (client → compositor → kernel → hardware) direkomendasikan.
+**Sumber Referensi:** [Arch Wiki: Installation guide](https://wiki.archlinux.org/title/Installation_guide) · [Arch Wiki: Wayland](https://wiki.archlinux.org/title/Wayland) · [Arch Wiki: AUR](https://wiki.archlinux.org/title/Arch_User_Repository) · [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/latest/) · [Protokol security-context-v1](https://wayland.app/protocols/security-context-v1)
+
+**Visualisasi:**
+
+```text
+Shell/Aplikasi (klien) ──protokol Wayland──► Compositor ──DRM/KMS + libinput──► Kernel ──► GPU · Layar · Input
+        ▲                                        │
+        └────── event input (hanya ke yang fokus) ┘
+```
 
 ---
 
 ### Modul 0.2 — QML: Bahasa Deklaratif untuk Antarmuka
 
-**Deskripsi Konkret:**  
-Mempelajari sintaks QML dari nol: properti, binding, signal, komponen, dan layout. QML adalah bahasa deklaratif berbasis JavaScript yang digunakan Quickshell untuk mendeskripsikan UI dan perilaku shell.
+**Deskripsi Konkret:** Mempelajari sintaks QML dari nol: properti, binding, signal, komponen, layout, dan model-view-delegate. QML mendeskripsikan UI dan perilaku shell Quickshell.
 
-**Konsep Dasar dan Filosofi:**  
-QML memisahkan **deklarasi** (apa yang tampak) dari **logika imperatif** (JavaScript). **Property binding** adalah inti reaktivitas: ketika nilai sumber berubah, nilai turunan diperbarui secara otomatis. Ini memungkinkan shell yang sepenuhnya reaktif terhadap state sistem (baterai, volume, workspace) tanpa polling manual.
+**Analogi:** Seperti lembar kerja spreadsheet: sel yang bergantung pada sel lain dihitung ulang otomatis. Binding QML bekerja dengan cara yang sama.
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
+**Konsep Dasar dan Filosofi:** QML memisahkan **deklarasi** (apa yang tampak) dari **logika imperatif** (JavaScript di dalam ekspresi). **Property binding** adalah inti reaktivitas: ketika nilai sumber berubah, nilai turunan diperbarui otomatis. Shell bereaksi terhadap state sistem (baterai, volume, workspace) tanpa polling manual.
+
+**Sintaks Dasar/Contoh:**
+
 ```qml
+// hello.qml — jalankan: quickshell -p hello.qml
 import QtQuick
+import Quickshell
 
-Rectangle {
-    width: 200; height: 100
-    color: "black"
-
-    Text {
-        anchors.centerIn: parent
-        text: "Hello, Quickshell"
-        color: "white"
-    }
+FloatingWindow {
+    implicitWidth: 240; implicitHeight: 100
+    color: 'black'
+    Text { anchors.centerIn: parent; text: 'Halo, Quickshell'; color: 'white' }
 }
 ```
+
 ```qml
-// Property binding dan signal handler
+// Binding dan signal handler
 Text {
     property int counter: 0
-    text: "Count: " + counter
+    text: 'Count: ' + counter          // binding: diperbarui otomatis
+    color: 'white'
+    MouseArea { anchors.fill: parent; onClicked: parent.counter += 1 }
+}
+```
 
-    MouseArea {
-        anchors.fill: parent
-        onClicked: parent.counter += 1
+```qml
+// Layout dan model-view-delegate
+import QtQuick.Layouts
+RowLayout {
+    spacing: 8
+    Repeater {
+        model: ['alpha', 'beta', 'gamma']
+        delegate: Text { required property string modelData; text: modelData; color: 'white' }
     }
 }
 ```
 
+> `Rectangle` polos tidak bisa dijalankan Quickshell: akar berkas harus berupa window (`FloatingWindow`/`PanelWindow`). Alternatif: `qml6` dari paket `qt6-declarative`.
+
 **Terminologi Kunci:**
-- **QML (Qt Modeling Language):** Bahasa deklaratif untuk membangun UI; setiap elemen adalah objek dengan properti.
-- **Property Binding:** Ekspresi yang secara otomatis diperbarui saat dependensinya berubah (misalnya `text: "Count: " + counter`).
-- **Signal:** Notifikasi bahwa sesuatu terjadi (misalnya `clicked`); **signal handler** adalah blok kode yang merespons (`onClicked: { ... }`).
-- **Komponen:** Tipe QML yang dapat digunakan ulang, didefinisikan dalam file `.qml` terpisah.
+
+- **QML:** bahasa deklaratif untuk UI; setiap elemen adalah objek dengan properti.
+- **Property binding:** ekspresi yang dihitung ulang saat dependensinya berubah.
+- **Signal / signal handler:** notifikasi bahwa sesuatu terjadi (`clicked`) / blok kode yang merespons (`onClicked`).
+- **Anchors:** aturan penempelan elemen ke elemen lain atau induknya (`anchors.fill`, `anchors.centerIn`).
+- **Positioner dan Layout:** `Row`/`Column`/`Grid`/`Flow` menata anak berurutan; `RowLayout`/`ColumnLayout`/`GridLayout` (QtQuick.Layouts) menata dengan ukuran fleksibel.
+- **Model-View-Delegate:** `model` = data, `Repeater`/`ListView` = penyaji, `delegate` = tampilan satu item.
 
 **Daftar Isi:**
-1. Sintaks dasar QML dan struktur file `.qml`.
+
+1. Sintaks dasar dan struktur berkas `.qml`.
 2. Properti, tipe data, dan binding.
 3. Signal dan signal handler.
-4. Positioner dan Layout (`Row`, `Column`, `Grid`, `AnchorLayout`).
-5. Model-View-Delegate (dasar).
-6. Komponen inline dan file komponen terpisah.
+4. Anchors, positioner, dan layout.
+5. Model-View-Delegate (`Repeater`, `ListView`).
+6. Komponen inline dan berkas komponen terpisah.
 
-**Sumber Referensi:**
-- [QML Language Reference (Quickshell)](https://quickshell.org/docs/v0.3.1/guide/qml-language)
-- [Qt QML Documentation](https://doc.qt.io/qt-6/qmlapplications.html)
-- [Qt Academy: QML for Beginners (gratis)](https://www.qt.io/academy/course-catalog#qml-for-beginners)
+**Latihan dan Checkpoint:** Buat jendela dengan tiga tombol (tambah, kurang, reset) untuk sebuah counter. *Checkpoint:* jelaskan mengapa teks berubah tanpa Anda memanggil fungsi apa pun.
 
-**Visualisasi:** Diagram pohon objek QML (parent-child relationship) sangat direkomendasikan.
+**Sumber Referensi:** [Qt QML Documentation](https://doc.qt.io/qt-6/qmlapplications.html) · [Qt Academy](https://www.qt.io/academy) (kursus QML gratis) · panduan *QML Language* di [quickshell.org/docs](https://quickshell.org/docs/)
+
+**Visualisasi:**
+
+```text
+FloatingWindow
+└─ Text  (text ← terikat ke counter)
+   └─ MouseArea (onClicked → counter += 1 → binding menghitung ulang text)
+```
 
 ---
 
 ### Modul 0.3 — Qt6 dan QtQuick: Fondasi di Balik Quickshell
 
-**Deskripsi Konkret:**  
-Memahami peran Qt6 sebagai framework C++ di balik Quickshell, serta QtQuick sebagai modul rendering. Anda akan mempelajari cara Quickshell menggunakan QtQuick untuk membuat window, efek, dan animasi.
+**Deskripsi Konkret:** Memahami Qt6 sebagai framework C++ di balik Quickshell dan QtQuick sebagai modul rendering: window, efek, dan animasi.
 
-**Konsep Dasar dan Filosofi:**  
-Quickshell dibangun di atas **Qt6/QtQuick**. QtQuick menggunakan scene graph yang dipercepat GPU untuk rendering. Memahami QtQuick membantu Anda mengoptimalkan performa shell dan memahami batasan (misalnya, kapan menggunakan `MultiEffect` vs `qt5compat` untuk blur).
+**Analogi:** Qt adalah mesin dan rangka mobil; QML adalah dasbor dan setir yang Anda pegang.
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
+**Konsep Dasar dan Filosofi:** QtQuick menggambar lewat *scene graph* yang dipercepat GPU. Memahami ini membantu Anda mengoptimalkan performa dan mengenali batas: misalnya `MultiEffect` hanya mengaburkan isi item Anda sendiri; mengaburkan *latar di belakang jendela* adalah urusan compositor.
+
+**Sintaks Dasar/Contoh:**
+
 ```bash
-# Instalasi modul Qt6 tambahan untuk Quickshell
 sudo pacman -S qt6-svg qt6-imageformats qt6-multimedia qt6-5compat
 ```
+
 ```qml
-// Contoh penggunaan MultiEffect (QtQuick Effects)
+// MultiEffect: sumber terpisah, TIDAK menjadikan induk sebagai source
 import QtQuick
 import QtQuick.Effects
 
-Rectangle {
-    width: 100; height: 100; color: "blue"
-    MultiEffect {
-        source: parent
-        anchors.fill: parent
-        blurEnabled: true
-        blur: 1.0
-    }
+Item {
+    width: 120; height: 120
+    Rectangle { id: src; anchors.fill: parent; color: 'royalblue'; radius: 16; visible: false }
+    MultiEffect { source: src; anchors.fill: src; blurEnabled: true; blurMax: 32; blur: 1.0 }
 }
 ```
 
 **Terminologi Kunci:**
-- **QtQuick:** Modul Qt untuk membangun UI dinamis dengan QML; menggunakan scene graph.
-- **Scene Graph:** Struktur data yang dioptimalkan untuk rendering GPU.
-- **MultiEffect:** Efek visual modern di Qt6 (blur, shadow, mask) yang lebih efisien daripada `qt5compat`.
+
+- **QtQuick:** modul Qt untuk UI dinamis dengan QML.
+- **Scene graph:** struktur data rendering yang dioptimalkan untuk GPU.
+- **MultiEffect:** efek visual modern Qt6 (blur, shadow, mask); lebih efisien daripada efek lama di `qt5compat`.
+- **Overdraw:** menggambar piksel yang sama berulang kali; harus diminimalkan.
 
 **Daftar Isi:**
-1. Arsitektur Qt6 dan modul-modulnya.
-2. QtQuick vs QtWidgets (dan mengapa Quickshell memilih QtQuick).
-3. Modul Qt6 yang relevan untuk Quickshell (`qt6-svg`, `qt6-wayland`, `qt6-multimedia`).
-4. Efek visual: `MultiEffect` dan `qt5compat`.
-5. Sistem resource Qt dan cara Quickshell memuat file QML.
 
-**Sumber Referensi:**
-- [Qt6 Documentation](https://doc.qt.io/qt-6/)
-- [Qt Quick Effects](https://doc.qt.io/qt-6/qml-qtquick-effects-multieffect.html)
-- [Quickshell Installation & Setup (paket tambahan)](https://quickshell.org/docs/v0.3.1/guide/install-setup/)
+1. Arsitektur Qt6 dan modul-modulnya.
+2. QtQuick vs QtWidgets (mengapa Quickshell memilih QtQuick).
+3. Modul Qt6 yang relevan (`qt6-svg`, `qt6-wayland`, `qt6-multimedia`).
+4. Efek visual: `MultiEffect` dan `qt5compat`.
+5. Jendela transparan: `color: 'transparent'` dan peran compositor untuk blur latar.
+6. Sistem resource Qt dan cara Quickshell memuat berkas QML.
+
+**Latihan dan Checkpoint:** Beri bayangan (shadow) pada sebuah kartu dengan `MultiEffect`. *Checkpoint:* jelaskan mengapa sumber efek tidak boleh sama dengan induk yang memuat efek itu.
+
+**Sumber Referensi:** [Qt6 Documentation](https://doc.qt.io/qt-6/) · [MultiEffect](https://doc.qt.io/qt-6/qml-qtquick-effects-multieffect.html) · panduan *Install & Setup* di [quickshell.org/docs](https://quickshell.org/docs/)
 
 ---
 
-## [Fase 1 — Dasar Quickshell: Shell Pertama Anda][2]
+### Modul 0.4 — JavaScript di QML, Animasi, dan Cara Membaca Dokumentasi Referensi
 
-**Level:** Pemula–Menengah  
-**Estimasi:** 4 minggu  
-**Prasyarat:** Fase 0 selesai.
+**Deskripsi Konkret:** Memakai JavaScript di dalam ekspresi QML, membuat animasi halus, dan, yang paling penting untuk penguasaan, **membaca halaman referensi tipe Quickshell sendiri** sehingga Anda tidak bergantung pada contoh orang lain.
 
-### Modul 1.1 — Instalasi dan Struktur Konfigurasi
+**Analogi:** Referensi API adalah kamus; contoh kode hanyalah kalimat contoh. Penguasaan berarti bisa menyusun kalimat sendiri dari kamus.
 
-**Deskripsi Konkret:**  
-Menginstal Quickshell di Arch Linux (stable atau `-git`), memahami struktur direktori konfigurasi (`~/.config/quickshell/`), dan menjalankan shell pertama.
+**Konsep Dasar dan Filosofi:** Kemampuan menambah fitur apa pun bergantung pada satu keterampilan: memetakan kebutuhan ke tipe yang tepat lalu membaca *Properties*, *Functions*, dan *Signals* tipe itu. Label `readonly`, `uncreatable`, dan `singleton` menjelaskan cara tipe dipakai. Bila sebuah entri tertulis *No details provided*, baca kode sumbernya.
 
-**Konsep Dasar dan Filosofi:**  
-Quickshell mencari konfigurasi di subfolder `quickshell` dari setiap XDG config path. Setiap subfolder yang berisi `shell.qml` dianggap sebagai konfigurasi terpisah. Ini mendukung **isolasi konfigurasi** dan **modularitas**: Anda dapat memiliki beberapa shell (misalnya, satu untuk bar, satu untuk lockscreen) yang berjalan secara independen.
+**Sintaks Dasar/Contoh:**
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```bash
-# Instalasi stable dari repositori Arch
-sudo pacman -S quickshell
+```qml
+import QtQuick
 
-# Atau versi development (peringatan: bisa rusak saat Qt update)
-yay -S quickshell-git
-```
-```text
-~/.config/quickshell/
-├── shell.qml          # konfigurasi default
-├── bar/
-│   └── shell.qml      # konfigurasi "bar"
-└── lock/
-    └── shell.qml      # konfigurasi "lock"
-```
-```bash
-# Menjalankan konfigurasi tertentu
-quickshell -c bar
-# Menjalankan file QML langsung
-quickshell -p /path/to/custom.qml
+Rectangle {
+    id: box
+    width: 80; height: 80
+    color: hover.hovered ? 'tomato' : 'steelblue'
+    Behavior on color { ColorAnimation { duration: 150 } }
+    HoverHandler { id: hover }
+    Component.onCompleted: console.log('dibuat:', width, height)
+}
 ```
 
 **Terminologi Kunci:**
-- **Config:** Direktori bernama di dalam `~/.config/quickshell/` yang berisi `shell.qml`.
-- **`shell.qml`:** Titik masuk (entry point) setiap konfigurasi Quickshell.
-- **Hot Reload:** Quickshell memantau file dan memuat ulang konfigurasi secara otomatis saat disimpan.
+
+- **Ekspresi JavaScript:** potongan JS di dalam binding atau handler.
+- **`Behavior`:** animasi otomatis setiap kali sebuah properti berubah.
+- **`Component.onCompleted`:** kode yang berjalan setelah objek selesai dibuat.
+- **Singleton (di referensi):** tipe yang langsung dipakai tanpa dibuat instansinya, mis. `Pipewire`.
 
 **Daftar Isi:**
-1. Instalasi stable vs `-git` dan risikonya.
-2. Struktur direktori `~/.config/quickshell/`.
-3. Menjalankan dan memilih konfigurasi (`-c`, `-p`).
-4. Hot reload dan alur kerja pengembangan.
-5. Instance management dan file locking (isolasi antar instance).
 
-**Sumber Referensi:**
-- [Quickshell Installation & Setup](https://quickshell.org/docs/v0.3.1/guide/install-setup/)
-- [Quickshell Introduction (Config Files)](https://quickshell.org/docs/v0.3.1/guide/introduction/)
-- [Instance and Path Management (DeepWiki)](https://deepwiki.com/quickshell-mirror/quickshell)
+1. JavaScript dalam binding dan handler (`?.`, `??`, fungsi panah).
+2. `Behavior`, `NumberAnimation`, `states`, dan `transitions`.
+3. `Component.onCompleted` dan siklus hidup objek.
+4. Membaca halaman referensi tipe Quickshell.
+5. Memeriksa nilai dengan `console.log(JSON.stringify(obj))`.
+
+**Latihan dan Checkpoint:** Pilih tipe `SystemClock`, baca halamannya, dan tulis dari nol sebuah jam tanpa menyalin contoh. *Checkpoint:* tunjukkan di halaman referensi mana Anda mengetahui sebuah properti bersifat `readonly`.
+
+**Sumber Referensi:** [Qt: QML dan JavaScript](https://doc.qt.io/qt-6/qtqml-javascript-topic.html) · [Qt: Animasi](https://doc.qt.io/qt-6/qtquick-statesanimations-animations.html) · [Referensi tipe Quickshell](https://quickshell.org/docs/)
 
 ---
 
-### Modul 1.2 — PanelWindow, Process, dan Timer
+## Fase 1 — Dasar Quickshell: Shell Pertama Anda
 
-**Deskripsi Konkret:**  
-Membuat bar/panel sederhana dengan `PanelWindow`, menjalankan perintah sistem melalui `Process`, dan memperbarui UI secara periodik dengan `Timer`. Ini adalah inti dari shell yang menampilkan informasi sistem (jam, baterai, volume).
+**Level:** Pemula–Menengah · **Estimasi:** 5 minggu · **Prasyarat:** Fase 0 selesai.
 
-**Konsep Dasar dan Filosofi:**  
-Quickshell menyediakan `PanelWindow` untuk bar/overlay yang “menempel” di layar (menggunakan layer-shell), dan `Process` untuk berinteraksi dengan sistem tanpa memerlukan kode C++. Pendekatan ini **abstrak**: Anda mendeskripsikan *apa* yang ingin dijalankan, bukan *bagaimana* menjalankannya. Namun, Anda tetap memiliki kontrol penuh melalui argumen dan environment.
+### Modul 1.1 — Instalasi dan Struktur Konfigurasi
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
+**Deskripsi Konkret:** Memasang Quickshell di Arch (stabil atau `-git`), memahami struktur direktori konfigurasi, dan menjalankan shell pertama dengan *hot reload*.
+
+**Analogi:** Setiap folder konfigurasi adalah satu “profil” shell yang berdiri sendiri; Anda bisa menyimpan beberapa profil dan menjalankan yang Anda butuhkan.
+
+**Konsep Dasar dan Filosofi:** Quickshell mencari subfolder `quickshell` di `$XDG_CONFIG_HOME` dan di setiap path `$XDG_CONFIG_DIRS` (mis. `/etc/xdg/quickshell`, jalur yang dipakai paket sistem). Subfolder yang berisi `shell.qml` dianggap satu konfigurasi, sehingga bar dan lockscreen dapat berjalan sebagai instance terpisah (**modular**). Quickshell melacak instance yang berjalan dan menguncinya agar tidak saling bentrok; ini mekanisme anti-duplikasi, **bukan batas keamanan**.
+
+**Sintaks Dasar/Contoh:**
+
+```bash
+sudo pacman -S quickshell          # versi stabil dari repositori resmi Arch
+# alternatif: quickshell-git (AUR) — audit PKGBUILD dulu (Modul 0.1); dapat rusak saat Qt diperbarui
+quickshell --version
+```
+
+```text
+~/.config/quickshell/
+├── shell.qml          # konfigurasi default
+├── bar/shell.qml      # konfigurasi bernama 'bar'
+└── lock/shell.qml     # konfigurasi bernama 'lock'
+```
+
+```bash
+quickshell -c bar                  # jalankan konfigurasi bernama
+quickshell -p /path/custom.qml     # jalankan berkas atau folder QML langsung
+qs list                            # daftar instance yang sedang berjalan
+```
+
+**Terminologi Kunci:**
+
+- **Config:** folder bernama di dalam `~/.config/quickshell/` yang berisi `shell.qml`.
+- **`shell.qml`:** titik masuk (entry point) setiap konfigurasi.
+- **Hot reload:** Quickshell memantau berkas dan memuat ulang otomatis saat disimpan.
+- **Instance:** satu proses Quickshell yang sedang berjalan; `qs` adalah singkatan dari `quickshell`.
+
+**Daftar Isi:**
+
+1. Stabil vs `-git` beserta risikonya.
+2. Struktur `~/.config/quickshell/` dan `$XDG_CONFIG_DIRS`.
+3. Menjalankan dan memilih konfigurasi (`-c`, `-p`).
+4. Hot reload dan alur kerja pengembangan.
+5. Instance dan penguncian (`qs list`) — dan mengapa itu bukan keamanan.
+
+**Latihan dan Checkpoint:** Jalankan `hello.qml` dari Modul 0.2, lalu buat dua konfigurasi bernama berbeda. *Checkpoint:* jelaskan perbedaan `-c` dan `-p`, dan mengapa penguncian instance tidak melindungi Anda dari konfigurasi berbahaya.
+
+**Sumber Referensi:** [Dokumentasi Quickshell](https://quickshell.org/docs/) (Install & Setup, Introduction) · [Repositori utama](https://git.outfoxxed.me/quickshell/quickshell) · [Mirror GitHub](https://github.com/quickshell-mirror/quickshell)
+
+---
+
+### Modul 1.2 — PanelWindow, Variants, Process, dan SystemClock
+
+**Deskripsi Konkret:** Membuat bar yang tampil di **setiap monitor**, menampilkan jam dengan `SystemClock`, dan berinteraksi dengan sistem lewat `Process` (sekali jalan maupun streaming).
+
+**Analogi:** `Variants` adalah mesin fotokopi: satu rancangan bar diperbanyak otomatis untuk setiap layar yang tersambung.
+
+**Konsep Dasar dan Filosofi:** `PanelWindow` memakai layer-shell untuk menempel di tepi layar. `Variants` membuat satu instance per elemen model (di sini: `Quickshell.screens`) dan menyesuaikan diri saat monitor dicabut atau dipasang. `Process` memberi kontrol penuh tanpa C++, tetapi **proses anak mewarisi seluruh lingkungan Anda** kecuali dibersihkan; di situlah *least privilege* dimulai. Untuk data yang sudah disediakan Quickshell (waktu, baterai, volume), pakai modulnya, bukan memanggil program berulang-ulang.
+
+**Sintaks Dasar/Contoh:**
+
 ```qml
+// shell.qml — bar multi-monitor dengan jam
+import Quickshell
+import QtQuick
+
+ShellRoot {
+    Variants {
+        model: Quickshell.screens
+        PanelWindow {
+            required property var modelData
+            screen: modelData
+            anchors { top: true; left: true; right: true }
+            implicitHeight: 30
+            color: 'transparent'
+
+            SystemClock { id: clock; precision: SystemClock.Seconds }
+
+            Text {
+                anchors.centerIn: parent
+                color: 'white'
+                text: Qt.formatDateTime(clock.date, 'HH:mm:ss')
+            }
+        }
+    }
+}
+```
+
+```qml
+// Process: sekali jalan dan streaming per baris
 import Quickshell
 import Quickshell.Io
 import QtQuick
 
-PanelWindow {
-    anchors { top: true; left: true; right: true }
-    implicitHeight: 30
+ShellRoot {
+    property string nowPlaying: ''
 
-    Text {
-        id: clock
-        anchors.centerIn: parent
-        text: "Loading..."
+    Process {                                   // streaming: proses panjang, satu event per baris
+        command: ['playerctl', '--follow', 'metadata', '--format', '{{title}}']
+        running: true
+        stdout: SplitParser { onRead: data => nowPlaying = data }
     }
 
-    Process {
-        id: dateProc
-        command: ["date", "+%H:%M:%S"]
+    Process {                                   // sekali jalan, lingkungan dibersihkan
+        command: ['cat', '/proc/loadavg']
+        clearEnvironment: true                  // tanpa ini, environment induk TETAP diwariskan
+        environment: ({ PATH: '/usr/bin' })     // hanya variabel ini yang diteruskan
         running: true
-        stdout: StdioCollector {
-            onStreamFinished: clock.text = this.text.trim()
-        }
-    }
-
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: dateProc.running = true
+        stdout: StdioCollector { onStreamFinished: console.log(this.text.trim()) }
     }
 }
 ```
-```qml
-// Menjalankan perintah dengan environment kustom (untuk isolasi)
-Process {
-    command: ["sh", "-c", "echo $SECRET"]
-    environment: ({ "SECRET": "value" })
-}
-```
+
+> Untuk perintah satu kali yang tidak perlu dipantau (dan boleh hidup lebih lama dari shell), gunakan `Quickshell.execDetached(['notify-send', 'halo'])`.
 
 **Terminologi Kunci:**
-- **`PanelWindow`:** Window Quickshell yang menggunakan layer-shell; dapat di-anchor ke tepi layar dan mereservasi ruang.
-- **`Process`:** Objek QML untuk menjalankan proses eksternal; mendukung stdin/stdout, environment, dan signal.
-- **`StdioCollector`:** Mengumpulkan output stdout proses dan memancarkan `streamFinished` saat proses selesai.
-- **`Timer`:** Memicu signal `triggered` secara periodik; berguna untuk polling ringan.
+
+- **`PanelWindow`:** window layer-shell yang menempel di tepi layar dan dapat memesan ruang.
+- **`Variants`:** membuat satu instance kerangka per elemen model; pola standar multi-monitor.
+- **`SystemClock`:** sumber waktu bawaan yang efisien; mengganti polling `date` setiap detik.
+- **`Process`:** menjalankan program eksternal; `command` adalah daftar argumen, bukan satu string shell.
+- **`StdioCollector` / `SplitParser`:** mengumpulkan seluruh keluaran saat proses selesai / membaca per baris saat proses berjalan.
+- **`clearEnvironment`:** membuang lingkungan induk sebelum `environment` diterapkan (bawaan: `false`).
 
 **Daftar Isi:**
-1. `PanelWindow` dan anchoring.
-2. `Process`: command, running, stdout/stdin, environment.
-3. `StdioCollector` dan signal `streamFinished`.
-4. `Timer` untuk update periodik.
-5. Menjalankan perintah dengan hak akses minimal (environment bersih).
 
-**Sumber Referensi:**
-- [Quickshell Introduction: Creating Windows](https://quickshell.org/docs/v0.3.1/guide/introduction/#creating-windows)
-- [Quickshell Introduction: Running a Process](https://quickshell.org/docs/v0.3.1/guide/introduction/#running-a-process)
-- [Quickshell.Io Types](https://quickshell.org/docs/v0.3.1/types/Quickshell.Io/Process)
+1. `PanelWindow`, anchoring, dan `color: 'transparent'`.
+2. `Variants` dan `Quickshell.screens`.
+3. `SystemClock` vs polling.
+4. `Process`: `command`, `running`, `stdout`, `stdin`, `environment`, `clearEnvironment`.
+5. `StdioCollector` vs `SplitParser`; `execDetached`.
+6. Menjalankan perintah dengan hak minimal.
+
+**Latihan dan Checkpoint:** Bangun bar dengan jam dan load average di setiap monitor (uji dengan monitor virtual atau VM bermonitor ganda). *Checkpoint:* jelaskan mengapa `environment: ({ PATH: ... })` saja belum menghapus variabel rahasia, dan kapan memilih `SplitParser`.
+
+**Sumber Referensi:** [Process](https://quickshell.org/docs/types/Quickshell.Io/Process) · panduan *Introduction* (Creating Windows, Running a Process) di [quickshell.org/docs](https://quickshell.org/docs/)
+
+**Visualisasi:**
+
+```text
+Quickshell.screens = [ DP-1, HDMI-A-1 ]
+        │  Variants
+        ├──► PanelWindow (screen = DP-1)
+        └──► PanelWindow (screen = HDMI-A-1)
+```
 
 ---
 
-### Modul 1.3 — Komponen Reusable dan Singletons
+### Modul 1.3 — Komponen Reusable, Singleton, dan Impor
 
-**Deskripsi Konkret:**  
-Memecah shell menjadi komponen-komponen kecil yang dapat digunakan ulang (`Component`, file `.qml` terpisah) dan menggunakan **singleton QML** untuk state global (misalnya, tema, konfigurasi).
+**Deskripsi Konkret:** Memecah shell menjadi komponen kecil (berkas `.qml` terpisah) dan memakai **singleton** untuk state global yang statis, seperti tema.
 
-**Konsep Dasar dan Filosofi:**  
-Prinsip **modular** menuntut pemisahan concerns. Quickshell mendukung singletons melalui `pragma Singleton` dan `qmldir`. Singletons memungkinkan state global (misalnya, `Theme.qml`) diakses dari mana saja tanpa meneruskan properti secara manual. Ini mengurangi coupling dan meningkatkan auditabilitas.
+**Analogi:** Komponen adalah batu bata Lego bernama; singleton adalah papan pengumuman tunggal yang dibaca semua orang.
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
+**Konsep Dasar dan Filosofi:** Prinsip **modular** menuntut pemisahan concern. Nama berkas berawalan huruf besar menjadi nama tipe (`Clock.qml` → `Clock`). Singleton cocok untuk nilai global yang *statis* (warna, ukuran), bukan untuk menyembunyikan ketergantungan antarlayanan; ketergantungan dinamis sebaiknya dikirim eksplisit lewat properti (dibahas di Modul 3.1). Quickshell menyediakan impor relatif terhadap root shell dengan awalan `qs.` (mis. `import qs.services`) dan setahu saya tidak mewajibkan `qmldir` manual untuk singleton; **verifikasi di panduan resmi versi Anda**. Impor jenis ini juga membantu LSP menyelesaikan tipe (pastikan `.qmlls.ini` ada, Modul 1.4).
+
+**Sintaks Dasar/Contoh:**
+
 ```qml
-// components/Clock.qml
-import QtQuick
-Text {
-    property string format: "HH:mm"
-    // ...
-}
-```
-```qml
-// Theme.qml (singleton)
+// services/Theme.qml
 pragma Singleton
+import Quickshell
 import QtQuick
-QtObject {
-    readonly property color background: "#1e1e2e"
-    readonly property color foreground: "#cdd6f4"
+
+Singleton {
+    readonly property color background: '#1e1e2e'
+    readonly property color foreground: '#cdd6f4'
     readonly property int barHeight: 30
 }
 ```
-```qml
-// Penggunaan
-import QtQuick
-import "."  // untuk Theme singleton
 
-Rectangle {
-    color: Theme.background
-    height: Theme.barHeight
+```qml
+// components/Clock.qml
+import QtQuick
+import qs.services
+
+Text {
+    property string format: 'HH:mm'
+    color: Theme.foreground
 }
 ```
 
+```qml
+// shell.qml (cuplikan)
+import qs.components
+// ...
+Clock { format: 'HH:mm:ss' }
+```
+
 **Terminologi Kunci:**
-- **Singleton:** Instance tunggal yang dapat diakses secara global dalam QML; dideklarasikan dengan `pragma Singleton`.
-- **`qmldir`:** File yang mendaftarkan komponen dan singleton agar dapat diimpor.
-- **Komponen Reusable:** File `.qml` yang mendefinisikan tipe baru; dapat diparameterisasi melalui properti.
+
+- **Komponen reusable:** berkas `.qml` yang mendefinisikan tipe baru; dapat diparameterisasi lewat properti.
+- **Singleton:** satu instance global, dideklarasikan dengan `pragma Singleton`.
+- **Impor `qs.`:** impor folder relatif terhadap root shell.
+- **`qmldir`:** berkas pendaftaran modul Qt standar.
 
 **Daftar Isi:**
-1. Membuat komponen reusable di file terpisah.
+
+1. Berkas komponen dan penamaan tipe.
 2. Properti dan signal pada komponen.
-3. Singleton QML dan `pragma Singleton`.
-4. `qmldir` dan manajemen modul.
-5. Menghindari “root imports” yang merusak LSP.
+3. `pragma Singleton` dan tipe `Singleton`.
+4. Impor `qs.` dan struktur folder.
+5. Kapan singleton tepat, kapan properti eksplisit lebih baik.
 
-**Sumber Referensi:**
-- [Quickshell Introduction: Reusable Components & Singletons](https://quickshell.org/docs/v0.3.1/guide/introduction/)
-- [QML Singletons (Qt Documentation)](https://doc.qt.io/qt-6/qtqml-syntax-directoryimports.html)
+**Latihan dan Checkpoint:** Pindahkan jam dari Modul 1.2 menjadi komponen `Clock` dengan properti `format`, dan warna dari singleton `Theme`. *Checkpoint:* beri satu contoh nilai yang pantas jadi singleton dan satu yang tidak.
+
+**Sumber Referensi:** Panduan *Introduction* (Reusable Components, Singletons) di [quickshell.org/docs](https://quickshell.org/docs/) · [Qt: Singleton dan direktori impor](https://doc.qt.io/qt-6/qtqml-syntax-directoryimports.html)
 
 ---
 
-## [Fase 2 — Integrasi Sistem: Wayland, Compositor, dan Layanan Desktop][3]
+### Modul 1.4 — Debugging, Logging, LSP, dan Autostart
 
-**Level:** Menengah  
-**Estimasi:** 6–8 minggu  
-**Prasyarat:** Fase 1 selesai.
+**Deskripsi Konkret:** Menemukan dan memperbaiki galat sendiri, menyalakan LSP di editor, dan menjalankan shell otomatis saat sesi dimulai dengan pengawasan (restart saat crash).
 
-### Modul 2.1 — Wayland Layer-Shell Protocol
+**Analogi:** Log adalah kotak hitam pesawat; autostart dengan supervisi adalah teknisi jaga yang menyalakan ulang mesin bila mati.
 
-**Deskripsi Konkret:**  
-Memahami protokol `wlr-layer-shell` yang memungkinkan Quickshell membuat panel, overlay, dan lockscreen yang terintegrasi dengan compositor. Anda akan mempelajari layer (background, bottom, top, overlay) dan cara `PanelWindow` memetakan ke protokol ini.
+**Konsep Dasar dan Filosofi:** Penguasaan berarti mampu mendiagnosis sendiri. Mulai dari log Quickshell, lalu linting statis, lalu `console.log`, lalu debugger. Dari sisi keamanan, log bisa memuat path, keluaran proses, dan data pribadi: **jangan mencetak kredensial atau input sensitif**, dan periksa isi log sebelum membagikannya.
 
-**Konsep Dasar dan Filosofi:**  
-Layer-shell adalah protokol Wayland yang memungkinkan client (seperti Quickshell) untuk “mengklaim” area di layar dan menempatkannya di lapisan tertentu. Ini berbeda dari window biasa: panel tidak memiliki dekorasi dan dapat mereservasi ruang sehingga aplikasi lain tidak tumpang tindih. Ini adalah fondasi **super kontrol** atas tata letak desktop.
+**Sintaks Dasar/Contoh:**
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```qml
-PanelWindow {
-    // Quickshell secara internal menggunakan zwlr_layer_shell_v1
-    anchors { top: true; left: true; right: true }
-    exclusiveZone: 30  // mereservasi 30px agar aplikasi lain tidak tumpang tindih
-    // layer: "top" (default untuk panel)
-}
-```
 ```bash
-# Verifikasi compositor mendukung layer-shell
-# Hyprland: aktif secara default
-# Sway: aktif secara default
+touch ~/.config/quickshell/my-shell/.qmlls.ini    # Quickshell mengisinya; aktifkan qmlls di editor
+qs log                                            # log instance yang sedang berjalan
+quickshell -c my-shell -v                         # lebih rinci (cek quickshell --help)
+/usr/lib/qt6/bin/qmllint shell.qml                # linting statis
 ```
 
-**Terminologi Kunci:**
-- **`zwlr_layer_shell_v1`:** Protokol Wayland untuk layer surface (panel, overlay).
-- **Exclusive Zone:** Area yang “dipesan” oleh panel sehingga compositor tidak menempatkan window lain di sana.
-- **Layer:** Tingkatan (background, bottom, top, overlay) yang menentukan urutan rendering.
+```ini
+# ~/.config/systemd/user/quickshell.service
+[Unit]
+Description=Quickshell
+PartOf=graphical-session.target
+After=graphical-session.target
 
-**Daftar Isi:**
-1. Arsitektur Wayland dan peran compositor.
-2. Protokol `wlr-layer-shell`: layer, anchor, exclusive zone.
-3. `PanelWindow` vs `FloatingWindow`.
-4. Layer pada Hyprland dan Sway.
-5. Debugging layer-shell dengan `wayland-info`.
+[Service]
+ExecStart=/usr/bin/quickshell -c my-shell
+Restart=on-failure
+NoNewPrivileges=yes
 
-**Sumber Referensi:**
-- [Wayland Layer Shell Protocol (wlroots)](https://wayland.app/protocols/wlr-layer-shell-unstable-v1)
-- [Quickshell Platform Support (DeepWiki)](https://deepwiki.com/quickshell-mirror/quickshell)
-
-**Visualisasi:** Diagram lapisan layar (background → bottom → top → overlay) sangat direkomendasikan.
-
----
-
-### Modul 2.2 — IPC Compositor: Hyprland dan Sway
-
-**Deskripsi Konkret:**  
-Menggunakan integrasi Quickshell dengan IPC Hyprland dan Sway untuk membaca state workspace, monitor, dan jendela secara real-time, serta mengirim perintah ke compositor dari shell.
-
-**Konsep Dasar dan Filosofi:**  
-Compositor seperti Hyprland dan Sway menyediakan socket IPC untuk komunikasi dua arah. Quickshell membungkus IPC ini dalam layanan QML (`Quickshell.Hyprland`, `Quickshell.Sway`), sehingga Anda dapat bereaksi terhadap event dan mengontrol compositor tanpa parsing output teks. Ini adalah **otomatisasi keyboard-driven**: Anda dapat memetakan keybinding di compositor untuk memicu aksi di Quickshell melalui `qs ipc call`.
-
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```qml
-import Quickshell.Hyprland
-
-Text {
-    // Menampilkan workspace aktif
-    text: Hyprland.focusedWorkspace?.name ?? "?"
-}
+[Install]
+WantedBy=graphical-session.target
 ```
-```qml
-// Mengirim perintah ke Hyprland dari Quickshell
-Process {
-    command: ["hyprctl", "dispatch", "workspace", "2"]
-    running: true
-}
-```
+
 ```bash
-# Dari terminal, memicu IPC target Quickshell
-qs ipc call ctrl toggle
+systemctl --user enable --now quickshell.service
+journalctl --user -u quickshell -f
 ```
-```hypr
-# hyprland.conf: keybinding untuk mengontrol Quickshell
-bind = SUPER, B, exec, qs ipc call bar toggle
-```
+
+> Alternatif tanpa systemd: Hyprland `exec-once = quickshell -c my-shell`; Sway `exec quickshell -c my-shell`. `graphical-session.target` hanya aktif bila compositor mengaktifkannya (mis. lewat `uwsm`).
 
 **Terminologi Kunci:**
-- **IPC (Inter-Process Communication):** Mekanisme pertukaran data antar proses; Hyprland menggunakan socket Unix.
-- **`Hyprland` singleton:** Layanan QML Quickshell yang menyediakan state compositor secara reaktif.
-- **`qs ipc`:** CLI Quickshell untuk mengirim perintah ke instance yang berjalan.
+
+- **LSP (Language Server Protocol):** layanan yang memberi editor fitur pintar (autocomplete, galat) untuk bahasa tertentu; untuk QML bernama `qmlls`.
+- **Linting:** pemeriksaan statis kode tanpa menjalankannya (`qmllint`).
+- **Unit systemd (user):** deskripsi layanan yang dijalankan dan diawasi per pengguna.
+- **Crash handler:** mekanisme Quickshell yang menangkap crash dan menyimpan laporan.
 
 **Daftar Isi:**
-1. IPC Hyprland: socket, event, dan dispatcher.
-2. Layanan `Quickshell.Hyprland`: workspace, monitor, jendela.
-3. IPC Sway dan `SWAYSOCK`.
-4. Mengekspos IPC target dari Quickshell (`qs ipc`)。
-5. Keybinding compositor untuk mengontrol shell.
 
-**Sumber Referensi:**
-- [Hyprland IPC Wiki](https://wiki.hyprland.org/IPC/)
-- [Quickshell Hyprland Integration (DeepWiki)](https://deepwiki.com/quickshell-mirror/quickshell)
-- [Quickshell Sway Integration (DeepWiki)](https://deepwiki.com/quickshell-mirror/quickshell)
+1. Membaca log (`qs log`) dan tingkat verbositas.
+2. `qmllint` dan `.qmlls.ini` untuk LSP.
+3. `console.log`, inspeksi nilai, dan `gdb` untuk crash.
+4. Autostart: `exec-once`/`exec` vs unit `systemd --user`.
+5. Kebersihan log (anonimitas) dan pemulihan saat crash.
+
+**Latihan dan Checkpoint:** Sengaja buat satu galat sintaks dan satu galat runtime, temukan keduanya lewat log dan `qmllint`; jadikan shell Anda layanan systemd. *Checkpoint:* matikan proses Quickshell dengan `kill` dan buktikan ia hidup kembali.
+
+**Sumber Referensi:** Panduan *Language Server* dan *Debugging* di [quickshell.org/docs](https://quickshell.org/docs/) · [Arch Wiki: systemd/User](https://wiki.archlinux.org/title/Systemd/User) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html)
 
 ---
 
-### Modul 2.3 — Layanan Desktop: PipeWire, MPRIS, BlueZ, UPower
+## Fase 2 — Integrasi Sistem: Wayland, Compositor, dan Layanan Desktop
 
-**Deskripsi Konkret:**  
-Mengintegrasikan shell dengan layanan desktop standar: kontrol audio (PipeWire), pemutar media (MPRIS), Bluetooth (BlueZ), dan baterai (UPower). Quickshell menyediakan modul QML siap pakai untuk masing-masing layanan.
+**Level:** Menengah · **Estimasi:** 8–10 minggu · **Prasyarat:** Fase 1 selesai.
 
-**Konsep Dasar dan Filosofi:**  
-Quickshell menyediakan **Service Integration Layer** yang menjembatani QML dengan D-Bus, PipeWire, dan protokol desktop lainnya. Ini memungkinkan shell Anda menjadi **monolitik** dalam fungsi (satu shell untuk banyak kontrol) tetapi tetap **modular** dalam kode (setiap layanan adalah modul terpisah). Anda tidak perlu menulis boilerplate D-Bus; cukup menggunakan tipe QML yang disediakan.
+### Modul 2.1 — Wayland Layer-Shell, Fokus Keyboard, dan Transparansi
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
+**Deskripsi Konkret:** Memahami protokol `wlr-layer-shell`: layer, anchor, zona eksklusif, dan **mode fokus keyboard**, fondasi shell yang sepenuhnya dikendalikan keyboard.
+
+**Analogi:** Layer-shell adalah denah gedung dengan lantai tetap (background, bottom, top, overlay); panel “menyewa” tepi lantai tertentu sehingga jendela lain tidak menimpanya.
+
+**Konsep Dasar dan Filosofi:** Panel tidak punya dekorasi dan dapat memesan ruang. Lapisan ditentukan lewat attached property `WlrLayershell` (modul `Quickshell.Wayland`). Pada Quickshell, `exclusionMode` biasanya mengatur ruang yang dipesan secara otomatis dari tinggi dan anchor. Mode fokus keyboard menentukan apakah jendela Anda menerima ketikan: `None`, `OnDemand`, atau `Exclusive`. **Peringatan:** `Exclusive` mengunci keyboard untuk jendela itu, tetapi **bukan** mekanisme kunci sesi yang aman (lihat Modul 4.2).
+
+**Sintaks Dasar/Contoh:**
+
 ```qml
-import Quickshell.Services.Pipewire
-import Quickshell.Services.Mpris
-
-// Kontrol volume PipeWire
-Slider {
-    from: 0; to: 100
-    value: Pipewire.defaultAudioSink?.audio.volume ?? 0
-    onValueChanged: Pipewire.defaultAudioSink.audio.volume = value
-}
-
-// Menampilkan metadata MPRIS
-Text {
-    text: Mpris.players.values[0]?.track?.title ?? "No media"
-}
-```
-```qml
-import Quickshell.Services.UPower
-Text {
-    text: UPower.displayDevice?.percentage + "%"
-}
-```
-
-**Terminologi Kunci:**
-- **PipeWire:** Server multimedia modern untuk audio/video; Quickshell menyediakan `Quickshell.Services.Pipewire`.
-- **MPRIS:** Spesifikasi D-Bus untuk kontrol pemutar media; Quickshell menyediakan `Quickshell.Services.Mpris`.
-- **BlueZ:** Stack Bluetooth Linux; Quickshell menyediakan integrasi untuk kontrol Bluetooth.
-- **UPower:** Layanan manajemen daya; Quickshell menyediakan `Quickshell.Services.UPower`.
-
-**Daftar Isi:**
-1. Arsitektur D-Bus dan Service Integration Layer Quickshell.
-2. PipeWire: node, device, volume, dan routing.
-3. MPRIS: player, track, playback control.
-4. BlueZ: adapter, device, pairing.
-5. UPower: baterai, power profiles.
-6. System tray (StatusNotifierItem).
-
-**Sumber Referensi:**
-- [Quickshell Services Documentation](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services/)
-- [PipeWire Documentation](https://docs.pipewire.org/)
-- [MPRIS D-Bus Specification](https://specifications.freedesktop.org/mpris-spec/latest/)
-- [UPower Documentation](https://upower.freedesktop.org/docs/)
-
----
-
-## [Fase 3 — Arsitektur Modular dan Manajemen State][4]
-
-**Level:** Mahir  
-**Estimasi:** 6 minggu  
-**Prasyarat:** Fase 2 selesai.
-
-### Modul 3.1 — Arsitektur Shell yang Skalabel
-
-**Deskripsi Konkret:**  
-Merancang arsitektur shell yang dapat tumbuh: pemisahan layanan (services), komponen UI, dan konfigurasi. Anda akan mempelajari pola yang digunakan oleh shell Quickshell populer (Caelestia, Noctalia) untuk mengelola kompleksitas.
-
-**Konsep Dasar dan Filosofi:**  
-Shell yang kompleks cenderung menjadi monolitik yang sulit dirawat. Prinsip **modular** menuntut pemisahan: `services/` untuk logika sistem, `components/` untuk UI reusable, `config/` untuk preferensi, dan `shell.qml` sebagai entry point yang “merakit” semuanya. Ini juga memudahkan audit keamanan: setiap modul dapat diperiksa secara terisolasi.
-
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```text
-~/.config/quickshell/my-shell/
-├── shell.qml          # entry point: merakit services dan UI
-├── services/
-│   ├── Audio.qml      # singleton layanan audio
-│   ├── Battery.qml
-│   └── Workspaces.qml
-├── components/
-│   ├── Bar.qml
-│   ├── Clock.qml
-│   └── VolumeSlider.qml
-└── config/
-    └── Theme.qml      # singleton tema
-```
-```qml
-// shell.qml
-import QtQuick
 import Quickshell
-import "services"
-import "components"
+import Quickshell.Wayland
 
-ShellRoot {
-    Bar {
-        audio: Audio
-        battery: Battery
+PanelWindow {
+    anchors { top: true; left: true; right: true }
+    implicitHeight: 30
+    exclusionMode: ExclusionMode.Auto            // ruang dipesan otomatis
+    WlrLayershell.layer: WlrLayer.Top            // Background | Bottom | Top | Overlay
+    WlrLayershell.namespace: 'my-shell-bar'      // dipakai aturan layer di compositor
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+}
+```
+
+```bash
+wayland-info | grep layer_shell    # compositor menyediakan zwlr_layer_shell_v1?
+hyprctl layers                     # (Hyprland) daftar layer surface yang aktif
+```
+
+**Terminologi Kunci:**
+
+- **`zwlr_layer_shell_v1`:** protokol Wayland untuk layer surface (panel, overlay).
+- **Exclusive zone / `exclusionMode`:** ruang yang dipesan agar jendela lain tidak menimpa panel.
+- **`WlrKeyboardFocus`:** mode fokus keyboard layer surface: `None`, `OnDemand`, `Exclusive`.
+- **Namespace:** nama layer yang dipakai compositor untuk aturan khusus (mis. blur).
+
+**Daftar Isi:**
+
+1. Arsitektur Wayland dan peran compositor.
+2. Layer, anchor, `exclusionMode`.
+3. Fokus keyboard layer surface dan penanganan tombol (`Keys.onPressed`; lihat Modul 2.5).
+4. `PanelWindow` vs `FloatingWindow` vs `PopupWindow`.
+5. Transparansi dan aturan layer compositor (blur latar).
+6. Debugging dengan `wayland-info` dan alat compositor.
+
+**Latihan dan Checkpoint:** Buat overlay yang muncul di layer `Overlay` dan menerima ketikan hanya saat dipanggil. *Checkpoint:* jelaskan mengapa `Exclusive` tidak boleh dipakai sebagai lockscreen.
+
+**Sumber Referensi:** [wlr-layer-shell](https://wayland.app/protocols/wlr-layer-shell-unstable-v1) · [WlrKeyboardFocus](https://quickshell.org/docs/types/Quickshell.Wayland/WlrKeyboardFocus)
+
+**Visualisasi:**
+
+```text
+Overlay   ─ notifikasi, launcher
+Top       ─ bar/panel          (jendela aplikasi di bawah ini)
+Bottom    ─ widget desktop
+Background─ wallpaper
+```
+
+---
+
+### Modul 2.2 — IPC Compositor: Hyprland, Sway/i3, `IpcHandler`, dan Pintasan Global
+
+**Deskripsi Konkret:** Membaca state workspace dan monitor, mengirim perintah ke compositor, dan **mengekspos aksi shell Anda ke keyboard** lewat `IpcHandler` dan pintasan global.
+
+**Analogi:** IPC adalah interkom antar ruangan: shell dan compositor saling menelepon tanpa perlu membaca teks mentah dari layar.
+
+**Konsep Dasar dan Filosofi:** Hyprland dan Sway menyediakan socket IPC. Quickshell membungkusnya: `Quickshell.Hyprland` untuk Hyprland dan **`Quickshell.I3` untuk i3 dan Sway** (tidak ada modul bernama `Quickshell.Sway`). Arah sebaliknya, dari keyboard ke shell, memakai `IpcHandler` + `qs ipc call`, atau `GlobalShortcut` pada Hyprland. Inilah jantung **super kontrol berbasis keyboard**.
+
+**Sintaks Dasar/Contoh:**
+
+```qml
+// Hyprland: state reaktif dan perintah lewat modul
+import Quickshell.Hyprland
+Text { text: Hyprland.focusedWorkspace?.name ?? '?'; color: 'white' }
+// Hyprland.dispatch('workspace 2')
+```
+
+```qml
+// i3/Sway
+import Quickshell.I3
+// I3.dispatch('workspace 2')       // menjalankan perintah i3/Sway
+```
+
+```qml
+// Mengekspos aksi ke keyboard/CLI
+import Quickshell.Io
+
+IpcHandler {
+    target: 'bar'
+    function toggle(): void { bar.visible = !bar.visible }   // 'bar' = id PanelWindow Anda
+    function isVisible(): bool { return bar.visible }
+}
+```
+
+```bash
+qs ipc show                  # daftar target dan fungsi yang diekspos
+qs ipc call bar toggle       # panggil dari terminal atau keybind
+```
+
+```text
+# hyprland.conf
+bind = SUPER, B, exec, qs ipc call bar toggle
+# sway config
+bindsym $mod+b exec qs ipc call bar toggle
+```
+
+```qml
+// Hyprland: pintasan global langsung ke shell
+import Quickshell.Hyprland
+GlobalShortcut {
+    appid: 'quickshell'; name: 'launcher'
+    onPressed: launcher.visible = !launcher.visible
+}
+// hyprland.conf: bind = SUPER, space, global, quickshell:launcher
+```
+
+**Terminologi Kunci:**
+
+- **IPC (Inter-Process Communication):** pertukaran data antar proses; Hyprland dan Sway memakai socket Unix.
+- **`Hyprland` / `I3` (singleton):** layanan QML yang memberi state dan dispatcher compositor.
+- **`IpcHandler`:** objek QML yang mengekspos fungsi bertipe agar dapat dipanggil dengan `qs ipc call`.
+- **`GlobalShortcut`:** pintasan global lewat protokol khusus Hyprland; Sway tidak punya padanannya, gunakan `IpcHandler`.
+
+**Daftar Isi:**
+
+1. Socket IPC Hyprland: event dan dispatcher.
+2. `Quickshell.Hyprland`: workspace, monitor, jendela.
+3. `Quickshell.I3` untuk Sway/i3 dan `SWAYSOCK`.
+4. `IpcHandler` dan `qs ipc`.
+5. `GlobalShortcut` dan keybind compositor.
+
+**Latihan dan Checkpoint:** Ekspos tiga aksi (`toggle`, `show`, `hide`) lewat `IpcHandler` dan pasang keybind untuk masing-masing. *Checkpoint:* jelaskan mengapa fungsi `IpcHandler` wajib memiliki tipe parameter dan tipe kembalian yang eksplisit.
+
+**Sumber Referensi:** [Hyprland IPC](https://wiki.hyprland.org/IPC/) · [Quickshell.I3](https://quickshell.org/docs/types/Quickshell.I3/I3) · panduan *IPC* di [quickshell.org/docs](https://quickshell.org/docs/)
+
+---
+
+### Modul 2.3 — Layanan Desktop: PipeWire, MPRIS, UPower, dan Bluetooth
+
+**Deskripsi Konkret:** Mengintegrasikan shell dengan audio (PipeWire), pemutar media (MPRIS), baterai (UPower), dan Bluetooth, memakai modul QML siap pakai tanpa boilerplate D-Bus.
+
+**Analogi:** Setiap layanan adalah pusat informasi yang sudah ada; modul Quickshell adalah loket yang menerjemahkan jawabannya ke bahasa QML.
+
+**Konsep Dasar dan Filosofi:** Quickshell menjembatani QML dengan D-Bus dan PipeWire sehingga shell **monolitik** dalam fungsi tetapi **modular** dalam kode. Tiga jebakan akurasi: (1) properti audio node PipeWire **tidak valid sebelum node “di-bind”** lewat `PwObjectTracker`; (2) skala nilai (volume, persentase baterai) harus diverifikasi, jangan diasumsikan; (3) properti MPRIS bernama `trackTitle`, bukan `track.title`.
+
+**Sintaks Dasar/Contoh:**
+
+```qml
+// PipeWire: kontrol volume
+import QtQuick.Controls
+import Quickshell.Services.Pipewire
+
+Item {
+    readonly property var sink: Pipewire.defaultAudioSink
+    PwObjectTracker { objects: [sink] }           // WAJIB: tanpa ini properti audio tidak valid
+    Slider {
+        from: 0; to: 1.0                          // skala float (umumnya 1.0 = 100%); uji dengan console.log
+        value: sink?.audio?.volume ?? 0
+        onMoved: if (sink?.audio) sink.audio.volume = value
+    }
+}
+```
+
+```qml
+// MPRIS dan UPower
+import Quickshell.Services.Mpris
+import Quickshell.Services.UPower
+
+Text { text: Mpris.players.values[0]?.trackTitle || 'Tidak ada media'; color: 'white' }
+Text {
+    readonly property var bat: UPower.displayDevice
+    text: Math.round((bat?.percentage ?? 0) * 100) + '%'   // verifikasi skala 0–1 dengan console.log
+    color: 'white'
+}
+```
+
+```qml
+// Bluetooth (modul terpisah dari Services.*; periksa referensi versi Anda)
+import Quickshell.Bluetooth
+Text { text: Bluetooth.defaultAdapter?.enabled ? 'BT aktif' : 'BT mati'; color: 'white' }
+```
+
+> **Keselamatan:** batasi volume maksimum di kode (mis. `Math.min(value, 1.0)`); nilai salah skala dapat memicu volume berlebihan.
+
+**Terminologi Kunci:**
+
+- **D-Bus:** sistem pesan antar program di Linux; dipakai MPRIS, UPower, BlueZ, dan banyak layanan desktop.
+- **PipeWire:** server multimedia modern; `Pipewire.defaultAudioSink` adalah keluaran audio bawaan.
+- **`PwObjectTracker`:** mengikat objek PipeWire agar propertinya valid.
+- **MPRIS:** spesifikasi D-Bus untuk mengontrol pemutar media.
+- **UPower:** layanan informasi daya dan baterai; `UPower.displayDevice` adalah perangkat ringkasan.
+- **BlueZ:** stack Bluetooth Linux.
+
+**Daftar Isi:**
+
+1. Arsitektur D-Bus dan lapisan integrasi layanan Quickshell.
+2. PipeWire: node, `PwObjectTracker`, volume, routing.
+3. MPRIS: player, `trackTitle`, kontrol pemutaran.
+4. UPower: baterai dan profil daya.
+5. Bluetooth: adapter dan perangkat.
+6. Memverifikasi skala dan nilai kosong (`?.`, `??`).
+
+**Latihan dan Checkpoint:** Buat widget volume dengan tombol mute dan batas maksimum, serta widget media yang menampilkan judul dan tombol putar/jeda. *Checkpoint:* jelaskan apa yang terjadi bila `PwObjectTracker` dihilangkan, dan bagaimana Anda memastikan skala volume.
+
+**Sumber Referensi:** [Pipewire (Quickshell)](https://quickshell.org/docs/types/Quickshell.Services.Pipewire/Pipewire) · [MprisPlayer](https://quickshell.org/docs/types/Quickshell.Services.Mpris/MprisPlayer) · [UPowerDevice](https://quickshell.org/docs/types/Quickshell.Services.UPower/UPowerDevice) · [Dokumentasi PipeWire](https://docs.pipewire.org/) · [Spesifikasi MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/) · [UPower](https://upower.freedesktop.org/docs/)
+
+---
+
+### Modul 2.4 — Notifikasi, System Tray, dan Launcher
+
+**Deskripsi Konkret:** Membangun tiga komponen desktop yang paling sering dibutuhkan: *notification daemon*, area *system tray*, dan *launcher* aplikasi berbasis keyboard.
+
+**Analogi:** Notification daemon adalah resepsionis yang menerima semua pesan masuk; tray adalah papan ikon program latar belakang; launcher adalah mesin pencari yang hanya mengenal aplikasi terpasang.
+
+**Konsep Dasar dan Filosofi:** Ketiganya berbicara dengan protokol desktop (D-Bus: `org.freedesktop.Notifications`, StatusNotifierItem, berkas `.desktop`). Quickshell membungkusnya menjadi tipe QML. Karena hanya satu program yang boleh menjadi notification daemon, **hentikan daemon lama** (dunst, mako) sebelum menjalankan milik Anda. Aplikasi yang diluncurkan mewarisi lingkungan sesi, jadi shell sebaiknya **tidak menyimpan rahasia** di environment-nya.
+
+**Sintaks Dasar/Contoh:**
+
+```qml
+// Notifikasi: shell Anda menjadi notification daemon
+import Quickshell.Services.Notifications
+
+NotificationServer {
+    id: server
+    keepOnReload: true
+    bodySupported: true
+    actionsSupported: true
+    imageSupported: true
+    onNotification: notif => { notif.tracked = true }    // tanpa 'tracked', notifikasi dibuang
+}
+// tampilkan: Repeater { model: server.trackedNotifications; delegate: ... modelData.summary / modelData.body }
+```
+
+```qml
+// System tray
+import Quickshell.Services.SystemTray
+import Quickshell.Widgets
+import QtQuick
+
+Row {
+    Repeater {
+        model: SystemTray.items
+        delegate: IconImage {
+            required property var modelData
+            source: modelData.icon
+            implicitSize: 18
+            MouseArea { anchors.fill: parent; onClicked: modelData.activate() }
+        }
+    }
+}
+```
+
+```qml
+// Launcher: filter DesktopEntries
+import Quickshell
+import QtQuick
+
+Item {
+    property string query: ''
+    ScriptModel {
+        id: results
+        values: DesktopEntries.applications.values
+            .filter(e => e.name.toLowerCase().includes(query.toLowerCase()))
+            .slice(0, 8)
+    }
+    ListView {
+        anchors.fill: parent
+        model: results
+        delegate: Text { required property var modelData; text: modelData.name; color: 'white' }
+    }
+    // Enter: results.values[0]?.execute()
+}
+```
+
+```bash
+busctl --user list | grep -i Notifications     # siapa yang saat ini memegang nama notifikasi?
+```
+
+> Nama properti tiap tipe dapat berubah antarversi; cocokkan dengan halaman referensi `NotificationServer`, `SystemTrayItem`, dan `DesktopEntry`.
+
+**Terminologi Kunci:**
+
+- **Notification daemon:** program yang menerima dan menampilkan notifikasi desktop.
+- **StatusNotifierItem (tray):** protokol D-Bus tempat aplikasi mendaftarkan ikon latar belakangnya.
+- **Desktop entry (`.desktop`):** berkas yang mendeskripsikan aplikasi terpasang (nama, ikon, perintah).
+- **`ScriptModel`:** model yang nilainya dihitung dari ekspresi JavaScript dan diperbarui efisien.
+
+**Daftar Isi:**
+
+1. `NotificationServer`: pelacakan, aksi, dan urgensi.
+2. Tampilan notifikasi (popup, riwayat) dan batas waktu.
+3. `SystemTray`: ikon, aksi, dan menu.
+4. `DesktopEntries`, `ScriptModel`, dan pencarian fuzzy sederhana.
+5. Peluncuran aplikasi dan lingkungan yang diwariskan.
+
+**Latihan dan Checkpoint:** Buat popup notifikasi yang hilang otomatis dan launcher yang meluncurkan aplikasi dengan Enter. *Checkpoint:* kirim `notify-send halo` dan tunjukkan notifikasinya tampil di shell Anda, bukan di daemon lain.
+
+**Sumber Referensi:** Modul `Quickshell.Services.Notifications`, `Quickshell.Services.SystemTray`, dan tipe `DesktopEntries` di [quickshell.org/docs](https://quickshell.org/docs/) · [Spesifikasi Desktop Notifications](https://specifications.freedesktop.org/notification-spec/latest/) · [Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry-spec/latest/)
+
+---
+
+### Modul 2.5 — Navigasi Keyboard-Driven dan Persistensi State
+
+**Deskripsi Konkret:** Membangun antarmuka yang bisa dioperasikan penuh dengan keyboard (fokus, pintasan, mode ala vim) dan menyimpan preferensi agar bertahan setelah restart.
+
+**Analogi:** Fokus keyboard adalah “siapa yang sedang memegang mikrofon”; hanya satu elemen yang menerima ketikan pada satu waktu.
+
+**Konsep Dasar dan Filosofi:** Di QML, elemen yang berfokus menerima event `Keys.*`. Pada layer-shell, jendela hanya menerima ketikan bila mode fokusnya mengizinkan (Modul 2.1). Prinsipnya: **minta fokus eksklusif hanya selama launcher terbuka, lepaskan saat ditutup.** Untuk persistensi, `FileView` membaca/menulis berkas dan `JsonAdapter` memetakan JSON ke properti; simpan **preferensi saja, bukan rahasia**.
+
+**Sintaks Dasar/Contoh:**
+
+```qml
+// Launcher overlay yang dikendalikan keyboard
+import Quickshell
+import Quickshell.Wayland
+import QtQuick
+
+PanelWindow {
+    id: launcher
+    visible: false
+    implicitWidth: 480; implicitHeight: 320
+    color: 'transparent'
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+
+    Item {
+        anchors.fill: parent
+        focus: true
+        Keys.onEscapePressed: launcher.visible = false
+        Keys.onPressed: event => {
+            if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_J) {
+                list.incrementCurrentIndex(); event.accepted = true
+            }
+        }
+        ListView {
+            id: list
+            anchors.fill: parent
+            model: ['satu', 'dua', 'tiga']
+            delegate: Text { required property string modelData; text: modelData; color: 'white' }
+        }
+    }
+}
+```
+
+```qml
+// Persistensi: simpan dan muat preferensi
+import Quickshell
+import Quickshell.Io
+
+FileView {
+    path: Quickshell.statePath('settings.json')
+    watchChanges: true
+    onFileChanged: reload()
+    onAdapterUpdated: writeAdapter()
+    adapter: JsonAdapter {
+        property bool barVisible: true
+        property string theme: 'dark'
     }
 }
 ```
 
 **Terminologi Kunci:**
-- **`ShellRoot`:** Root element opsional untuk konfigurasi Quickshell; menyediakan akses ke settings dan lifecycle.
-- **Service Singleton:** Singleton QML yang membungkus layanan sistem (audio, baterai) dan mengekspos state reaktif.
-- **Entry Point:** `shell.qml` yang mengimpor dan merakit modul-modul.
+
+- **Fokus (`focus`):** elemen yang saat ini menerima event keyboard.
+- **`Keys.onPressed`:** handler untuk setiap tombol; set `event.accepted = true` agar tidak diteruskan.
+- **Mode modal:** pola ala vim, di mana satu tombol berarti hal berbeda di mode berbeda (mis. `normal` vs `insert`), disimpan sebagai properti `mode`.
+- **`FileView` / `JsonAdapter`:** membaca-menulis berkas / memetakan JSON ke properti QML.
 
 **Daftar Isi:**
-1. Struktur direktori yang skalabel.
-2. `ShellRoot` dan lifecycle.
-3. Pola service singleton.
-4. Dependency injection melalui properti QML.
-5. Studi kasus: arsitektur Caelestia dan Noctalia.
 
-**Sumber Referensi:**
-- [Quickshell Core Types (ShellRoot)](https://quickshell.org/docs/v0.3.1/types/Quickshell/ShellRoot)
-- [Quickshell project patterns (SkillsMP)](https://skillsmp.com/skills/quickshell)
+1. Rantai fokus dan `Keys.*`.
+2. Mode fokus layer-shell dan siklus buka-tutup.
+3. Pintasan satu jendela vs global (`GlobalShortcut`, `IpcHandler`).
+4. Mode modal ala vim.
+5. `FileView`, `JsonAdapter`, dan `Quickshell.statePath`.
+6. Izin berkas dan apa yang tidak boleh disimpan.
+
+**Latihan dan Checkpoint:** Tambahkan mode `normal`/`insert` ke launcher (`j`/`k` bergerak, `i` mengetik) dan simpan tema terakhir ke `settings.json`. *Checkpoint:* jelaskan mengapa fokus eksklusif harus dilepas saat jendela tertutup.
+
+**Sumber Referensi:** [Qt: Keyboard focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html) · tipe `FileView`, `JsonAdapter`, dan `WlrLayershell` di [quickshell.org/docs](https://quickshell.org/docs/)
+
+---
+
+## Fase 3 — Arsitektur Modular dan Manajemen State
+
+**Level:** Mahir · **Estimasi:** 6–7 minggu · **Prasyarat:** Fase 2 selesai.
+
+### Modul 3.1 — Arsitektur Shell yang Skalabel
+
+**Deskripsi Konkret:** Merancang arsitektur yang bisa tumbuh: layanan (services) terpisah dari komponen UI dan konfigurasi, dengan arah dependensi yang jelas dan dapat diaudit.
+
+**Analogi:** Dapur restoran: pemasok (sistem) → koki (services) → pelayan (UI). Pelayan tidak berbelanja sendiri ke pasar.
+
+**Konsep Dasar dan Filosofi:** Shell kompleks mudah menjadi gumpalan sulit dirawat. Aturan inti: **UI → services → sistem**. Hanya `services/` yang mengimpor modul sistem (`Quickshell.Services.*`, `Process`); komponen UI hanya membaca properti service. Hasilnya: satu titik audit keamanan, satu titik untuk mengganti implementasi, dan UI yang mudah diuji. Singleton service boleh dipakai langsung oleh UI selama dependensinya searah.
+
+**Sintaks Dasar/Contoh:**
+
+```text
+~/.config/quickshell/my-shell/
+├── shell.qml            # entry point: merakit modul
+├── services/            # singleton: Audio.qml, Battery.qml, Workspaces.qml
+├── components/          # UI reusable: Clock.qml, VolumeSlider.qml
+├── modules/             # fitur utuh: bar/, launcher/, notifications/, lock/
+└── config/              # Theme.qml, Settings.qml
+```
+
+```qml
+// services/Audio.qml — satu-satunya tempat yang menyentuh PipeWire
+pragma Singleton
+import Quickshell
+import Quickshell.Services.Pipewire
+
+Singleton {
+    readonly property var sink: Pipewire.defaultAudioSink
+    readonly property real volume: sink?.audio?.volume ?? 0
+    function setVolume(v: real): void {
+        if (sink?.audio) sink.audio.volume = Math.max(0, Math.min(v, 1))
+    }
+    PwObjectTracker { objects: [sink] }
+}
+```
+
+```qml
+// shell.qml
+import Quickshell
+import qs.modules.bar
+import qs.modules.launcher
+
+ShellRoot {
+    Bar {}
+    Launcher {}
+}
+```
+
+**Terminologi Kunci:**
+
+- **`ShellRoot`:** elemen akar opsional konfigurasi Quickshell.
+- **Service singleton:** singleton QML yang membungkus layanan sistem dan mengekspos state reaktif.
+- **Arah dependensi:** aturan siapa boleh mengimpor siapa; di sini UI → services → sistem.
+- **Dependency injection:** menyerahkan dependensi lewat properti, bukan memanggilnya secara global.
+
+**Daftar Isi:**
+
+1. Struktur direktori yang skalabel.
+2. `ShellRoot` dan siklus hidup.
+3. Pola service singleton dan arah dependensi.
+4. Kapan memakai injeksi properti dibanding singleton.
+5. Mempelajari shell open-source (mis. Caelestia, Noctalia): **baca dan audit kodenya sebelum menjalankannya.**
+
+**Latihan dan Checkpoint:** Refaktor bar dari Fase 2 sehingga hanya `services/` yang mengimpor `Quickshell.Services.*`. *Checkpoint:* tunjukkan bahwa mengganti sumber audio hanya mengubah satu berkas.
+
+**Sumber Referensi:** [ShellRoot](https://quickshell.org/docs/types/Quickshell/ShellRoot) · [Qt: QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html)
+
+**Visualisasi:**
+
+```text
+UI (components, modules) ──baca properti──► services (singleton) ──► modul sistem / Process
+                  ▲ tidak boleh langsung ke sistem ✕
+```
 
 ---
 
 ### Modul 3.2 — Manajemen State dan Reaktivitas Lanjutan
 
-**Deskripsi Konkret:**  
-Menguasai property binding, signal, dan state management untuk membangun UI yang sepenuhnya reaktif. Anda akan mempelajari kapan menggunakan binding vs JavaScript imperative, serta cara menghindari binding loop.
+**Deskripsi Konkret:** Menguasai binding, signal, dan state machine sederhana untuk UI yang sepenuhnya reaktif, serta menghindari binding loop dan performa buruk.
 
-**Konsep Dasar dan Filosofi:**  
-Reaktivitas QML adalah kekuatan sekaligus jebakan. Binding yang salah dapat menyebabkan loop tak terbatas atau performa buruk. Prinsip **abstrak** menuntut Anda memahami *mengapa* suatu binding dievaluasi ulang, bukan sekadar *bagaimana* menulisnya. Anda akan mempelajari `Binding`, `Connections`, dan pola state machine sederhana.
+**Analogi:** Binding loop seperti dua orang yang masing-masing menunggu yang lain bicara lebih dulu: tidak ada yang pernah selesai.
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
+**Konsep Dasar dan Filosofi:** Reaktivitas QML adalah kekuatan sekaligus jebakan. Anda harus memahami *mengapa* sebuah binding dihitung ulang, bukan sekadar menulisnya. Aturan praktis: **baca lewat binding, tulis lewat handler interaksi** (`onMoved`, `onClicked`), bukan lewat `onValueChanged` yang ikut terpicu saat nilai berubah dari luar.
+
+**Sintaks Dasar/Contoh:**
+
 ```qml
-// Binding eksplisit dengan kondisi
-Binding {
-    target: rect
-    property: "color"
-    value: mouseArea.containsMouse ? "blue" : "black"
-    when: rect.visible
+// Binding kondisional
+Binding { target: rect; property: 'color'; value: 'blue'; when: mouse.containsMouse }
+
+// Connections (Qt 6): handler berbentuk fungsi
+Connections {
+    target: Audio
+    function onVolumeChanged() { osd.show() }
 }
+
+// Hindari loop: tulis hanya saat pengguna menggeser
+Slider { value: Audio.volume; onMoved: Audio.setVolume(value) }
 ```
+
 ```qml
-// Menghindari binding loop dengan signal handler
-Slider {
-    id: slider
-    onValueChanged: {
-        if (audio.volume !== value)
-            audio.volume = value
-    }
+// State machine sederhana
+Rectangle {
+    id: panel
+    state: 'closed'
+    states: [
+        State { name: 'open';   PropertyChanges { target: panel; height: 200 } },
+        State { name: 'closed'; PropertyChanges { target: panel; height: 0 } }
+    ]
+    transitions: Transition { NumberAnimation { properties: 'height'; duration: 150 } }
 }
 ```
 
 **Terminologi Kunci:**
-- **Binding Loop:** Situasi di mana dua properti saling bergantung secara sirkular.
-- **`Binding`:** Elemen QML untuk membuat binding kondisional atau sementara.
-- **`Connections`:** Elemen untuk merespons signal dari objek lain tanpa mengubah properti target secara langsung.
+
+- **Binding loop:** dua properti saling bergantung secara melingkar.
+- **`Binding`:** elemen untuk binding kondisional atau sementara (`when`).
+- **`Connections`:** merespons signal dari objek lain; di Qt 6 handler ditulis sebagai `function onNamaSignal() {}`.
+- **State / Transition:** keadaan bernama dan animasi perpindahan antar keadaan.
 
 **Daftar Isi:**
+
 1. Siklus evaluasi binding.
-2. Mendeteksi dan memperbaiki binding loop.
+2. Mendeteksi dan memperbaiki binding loop (cari peringatan di log).
 3. `Binding` dan `Connections`.
-4. State machine sederhana dengan `states` dan `transitions`.
-5. Optimasi performa binding.
+4. `states` dan `transitions`.
+5. Optimasi binding yang mahal.
 
-**Sumber Referensi:**
-- [QML Property Binding (Qt Documentation)](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html)
-- [QML Best Practices (Qt Academy)](https://www.qt.io/academy/course-catalog#qml-best-practice)
+**Latihan dan Checkpoint:** Sengaja buat binding loop pada slider, baca peringatannya di `qs log`, lalu perbaiki dengan `onMoved`. *Checkpoint:* jelaskan beda `onValueChanged` dan `onMoved` pada `Slider`.
+
+**Sumber Referensi:** [Qt: Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html) · [Qt: Best Practices for QML and Qt Quick](https://doc.qt.io/qt-6/qtquick-bestpractices.html)
 
 ---
 
-## [Fase 4 — Keamanan, Isolasi, dan Anonimitas][5]
+### Modul 3.3 — Kualitas Kode: Linting, Pengujian Asap, dan Review
 
-**Level:** Mahir–Expert  
-**Estimasi:** 4–6 minggu  
-**Prasyarat:** Fase 3 selesai.
+**Deskripsi Konkret:** Menjaga shell tetap benar dan aman seiring bertambahnya fitur: linting, uji asap (smoke test) di compositor headless, dan daftar periksa review.
 
-### Modul 4.1 — Model Keamanan Quickshell dan Isolasi Instance
+**Analogi:** Seperti pemeriksaan sebelum penerbangan: tidak ada yang ditemukan bukan berarti aman, tetapi daftar periksa mencegah kesalahan yang sama berulang.
 
-**Deskripsi Konkret:**  
-Memahami model keamanan Quickshell: bagaimana instance diisolasi, bagaimana file locking mencegah konflik, dan bagaimana menjalankan shell dengan hak akses minimal. Anda akan mempelajari sandboxing dengan `bubblewrap` dan teknik isolasi direktori XDG.
+**Konsep Dasar dan Filosofi:** Karena konfigurasi adalah kode yang berhak penuh, kualitas adalah keamanan. Otomatiskan yang bisa diotomatiskan; sisanya masuk daftar periksa review.
 
-**Konsep Dasar dan Filosofi:**  
-Quickshell menggunakan **POSIX advisory file locking** (`fcntl`) untuk mencegah beberapa instance menggunakan direktori yang sama. Namun, isolasi sejati memerlukan lebih dari itu: Anda harus membatasi akses filesystem, jaringan, dan D-Bus. Prinsip **least privilege** dan **anonimitas** menuntut shell Anda tidak memiliki akses ke data sensitif yang tidak diperlukan.
+**Sintaks Dasar/Contoh:**
 
-**Sintaks Dasar/Contoh Implementasi Inti:**
 ```bash
-# Menjalankan Quickshell dalam bubblewrap dengan akses terbatas
-bwrap \
-  --ro-bind /usr /usr \
-  --ro-bind /lib /lib \
-  --ro-bind /lib64 /lib64 \
-  --bind ~/.config/quickshell ~/.config/quickshell \
-  --tmpfs /tmp \
-  --unshare-net \
-  --die-with-parent \
-  quickshell -c secure-shell
+#!/usr/bin/env bash
+# Sketsa uji asap: sesuaikan nama socket dan jalur
+set -euo pipefail
+WLR_BACKENDS=headless WLR_LIBINPUT_NO_DEVICES=1 sway -c /dev/null &
+SWAY=$!; sleep 2
+export WAYLAND_DISPLAY=wayland-1
+timeout 10 quickshell -p ./my-shell > /tmp/qs.out 2>&1 || true
+kill $SWAY
+! grep -Ei 'error|fatal' /tmp/qs.out
 ```
-```qml
-// Membatasi akses Process ke environment minimal
-Process {
-    command: ["sh", "-c", "cat /proc/loadavg"]
-    environment: ({ "PATH": "/usr/bin:/bin" })  // tanpa variabel sensitif
-}
-```
-```qml
-// Menggunakan pragma untuk override direktori data (isolasi)
-//@ pragma DataDir $BASE/quickshell-secure
-```
+
+**Daftar Periksa Review (setiap perubahan):**
+
+- Apakah setiap `Process` memakai `clearEnvironment` dan perintah berbentuk daftar argumen?
+- Apakah ada kredensial atau data pribadi yang bisa masuk ke log atau berkas state?
+- Apakah dependensi hanya mengalir UI → services → sistem?
+- Apakah ada binding loop atau polling yang bisa diganti modul bawaan?
+- Apakah ada keadaan gagal yang membuat layar terkunci atau tak bisa dioperasikan?
 
 **Terminologi Kunci:**
-- **File Locking:** Mekanisme OS untuk mencegah akses bersamaan ke resource.
-- **Bubblewrap (`bwrap`):** Alat sandboxing ringan dari proyek Flatpak; menggunakan namespace Linux.
-- **`pragma DataDir`:** Direktif Quickshell untuk mengubah direktori data instance.
-- **Least Privilege:** Prinsip memberikan hak akses seminimal mungkin.
+
+- **Smoke test:** uji cepat yang hanya memastikan program bisa menyala tanpa galat.
+- **Headless:** berjalan tanpa layar fisik.
+- **Regresi:** perilaku yang tadinya benar lalu rusak karena perubahan.
 
 **Daftar Isi:**
-1. Instance management dan file locking di Quickshell.
-2. Isolasi direktori XDG dan `pragma DataDir`.
-3. Sandboxing dengan `bubblewrap`: filesystem, jaringan, dan PID namespace.
-4. Membatasi `Process` dan environment.
-5. Audit akses filesystem dengan `strace`.
-6. Anonimitas: menghindari logging yang tidak perlu.
 
-**Sumber Referensi:**
-- [Quickshell Instance and Path Management (DeepWiki)](https://deepwiki.com/quickshell-mirror/quickshell)
-- [Bubblewrap GitHub](https://github.com/containers/bubblewrap)
-- [Quickshell Security Baseline (SkillsMP)](https://skillsmp.com/skills/quickshell-process-action)
+1. `qmllint` dan kebijakan peringatan.
+2. Uji asap di compositor headless.
+3. Daftar periksa review keamanan.
+4. Mencatat keputusan desain (catatan singkat per modul).
 
-**Visualisasi:** Diagram namespace Linux (mount, network, PID) yang digunakan oleh `bubblewrap` sangat direkomendasikan.
+**Latihan dan Checkpoint:** Buat skrip uji asap dan hubungkan ke `git` hook atau CI (Modul 5.3). *Checkpoint:* tunjukkan satu galat yang tertangkap oleh skrip Anda sebelum sampai ke sesi utama.
 
----
-
-### Modul 4.2 — Lockscreen, PAM, dan Greetd
-
-**Deskripsi Konkret:**  
-Membangun lockscreen aman menggunakan PAM (Pluggable Authentication Modules) dan display manager menggunakan Greetd. Anda akan mempelajari cara Quickshell menangani autentikasi tanpa membocorkan kredensial.
-
-**Konsep Dasar dan Filosofi:**  
-Lockscreen adalah komponen keamanan kritis. Quickshell menyediakan integrasi PAM untuk autentikasi dan Greetd untuk display manager. Prinsip **isolasi** menuntut lockscreen berjalan sebagai proses terpisah dengan akses minimal, dan **anonimitas** menuntut tidak ada logging kredensial. Jika Quickshell crash, compositor harus tetap dalam keadaan terkunci (fail-safe).
-
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```qml
-import Quickshell.Services.Pam
-
-PamContext {
-    id: pam
-    onAuthenticationSuccess: { /* unlock */ }
-    onAuthenticationFailure: { /* show error */ }
-}
-```
-```bash
-# Konfigurasi PAM untuk Quickshell lockscreen (contoh)
-# /etc/pam.d/quickshell
-auth required pam_unix.so
-account required pam_unix.so
-```
-```qml
-// Greetd integration (display manager)
-import Quickshell.Services.Greetd
-```
-
-**Terminologi Kunci:**
-- **PAM:** Framework autentikasi Linux; digunakan untuk verifikasi password.
-- **Greetd:** Display manager minimalis yang mendukung Wayland.
-- **Fail-safe Lock:** Jika proses lockscreen mati, compositor tetap terkunci (menggunakan `ext-session-lock`).
-
-**Daftar Isi:**
-1. Arsitektur PAM dan alur autentikasi.
-2. `Quickshell.Services.Pam`: konteks dan signal.
-3. Membangun lockscreen yang aman.
-4. Greetd dan display manager minimalis.
-5. Fail-safe locking dengan `ext-session-lock`.
-6. Audit keamanan lockscreen.
-
-**Sumber Referensi:**
-- [Quickshell PAM Service](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Pam/)
-- [Greetd Documentation](https://sr.ht/~kennylevinsen/greetd/)
-- [PAM Documentation (Linux-PAM)](https://www.linux-pam.org/Linux-PAM-html/)
-
----
-
-## [Fase 5 — Expert/Enterprise: Optimasi, Ekstensi C++, dan Deployment][6]
-
-**Level:** Expert/Enterprise  
-**Estimasi:** 8+ minggu  
-**Prasyarat:** Fase 4 selesai.
-
-### Modul 5.1 — Plugin C++ dan Backend Kustom
-
-**Deskripsi Konkret:**  
-Memperluas Quickshell dengan plugin C++ untuk fungsionalitas yang tidak tersedia di QML murni (misalnya, akses hardware khusus, algoritma berat, atau integrasi dengan library sistem). Anda akan mempelajari cara Quickshell mengekspos tipe C++ ke QML.
-
-**Konsep Dasar dan Filosofi:**  
-Quickshell adalah toolkit C++ yang dapat diperluas. Ketika QML tidak cukup (misalnya, untuk operasi CPU-intensive atau akses API yang tidak diekspos), Anda dapat menulis plugin C++ yang mendaftarkan tipe QML baru. Ini adalah **super kontrol** pada level terendah, tetapi juga meningkatkan risiko keamanan—setiap baris C++ harus diaudit.
-
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```cpp
-// Contoh sederhana: tipe QML yang mengekspos informasi kernel
-#include <QtQml>
-#include <QObject>
-
-class KernelInfo : public QObject {
-    Q_OBJECT
-    QML_ELEMENT
-    Q_PROPERTY(QString version READ version CONSTANT)
-public:
-    QString version() const { return "6.x"; }
-};
-```
-```cmake
-# CMakeLists.txt untuk plugin
-qt_add_qml_module(myplugin
-    URI MyPlugin
-    VERSION 1.0
-    QML_FILES MyPlugin.qml
-    SOURCES kernelinfo.cpp
-)
-```
-
-**Terminologi Kunci:**
-- **`QML_ELEMENT`:** Makro Qt untuk mendaftarkan kelas C++ sebagai tipe QML.
-- **Plugin QML:** Library dinamis yang menyediakan tipe QML tambahan.
-- **`qt_add_qml_module`:** Fungsi CMake untuk membangun modul QML dari C++.
-
-**Daftar Isi:**
-1. Arsitektur plugin Quickshell.
-2. Mendaftarkan tipe C++ ke QML.
-3. Property, signal, dan slot di C++.
-4. Membangun plugin dengan CMake.
-5. Audit keamanan kode C++.
-6. Debugging plugin dengan `gdb`.
-
-**Sumber Referensi:**
-- [Quickshell HACKING.md (Development)](https://github.com/quickshell-mirror/quickshell/blob/master/HACKING.md)
-- [Qt QML C++ Integration](https://doc.qt.io/qt-6/qtqml-cppintegration-topic.html)
-
----
-
-### Modul 5.2 — Optimasi Performa dan Profiling
-
-**Deskripsi Konkret:**  
-Mengoptimalkan shell Quickshell untuk penggunaan CPU, memori, dan GPU yang minimal. Anda akan mempelajari profiling dengan `perf`, `valgrind`, dan Qt Creator, serta teknik mengurangi alokasi memori dan rendering yang tidak perlu.
-
-**Konsep Dasar dan Filosofi:**  
-Shell yang berjalan terus-menerus harus efisien. Prinsip **monolitik** tidak berarti boros; justru sebaliknya, satu proses harus dioptimalkan sebaik mungkin. Anda akan mempelajari kapan menggunakan `MultiEffect` vs `qt5compat`, cara menghindari binding yang mahal, dan cara memantau penggunaan resource.
-
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```bash
-# Profiling dengan perf
-perf stat -p $(pgrep quickshell)
-# Atau
-perf record -g -p $(pgrep quickshell)
-```
-```qml
-// Menggunakan MultiEffect (lebih efisien) daripada efek qt5compat
-MultiEffect {
-    source: parent
-    blurEnabled: true
-    blur: 0.5
-}
-```
-```bash
-# Memantau memori
-valgrind --tool=massif quickshell -c my-shell
-```
-
-**Terminologi Kunci:**
-- **`perf`:** Alat profiling Linux untuk menghitung event hardware/software.
-- **Scene Graph:** Struktur rendering QtQuick; memahami cara kerjanya membantu mengurangi overdraw.
-- **Overdraw:** Menggambar piksel yang sama berulang kali; harus diminimalkan.
-
-**Daftar Isi:**
-1. Profiling CPU dengan `perf`.
-2. Profiling memori dengan `valgrind`/`massif`.
-3. Optimasi rendering QtQuick.
-4. Menghindari binding dan JavaScript yang mahal.
-5. Mengukur frame rate dan latency.
-6. Benchmarking shell.
-
-**Sumber Referensi:**
-- [Qt Quick Performance Best Practices](https://doc.qt.io/qt-6/qtquick-performance.html)
-- [perf Wiki](https://perf.wiki.kernel.org/)
-
----
-
-### Modul 5.3 — Deployment, CI/CD, dan Kontribusi Upstream
-
-**Deskripsi Konkret:**  
-Mengemas shell Quickshell untuk distribusi (AUR, Nix, Flatpak), mengotomatiskan pengujian dengan CI/CD, dan berkontribusi ke proyek Quickshell upstream.
-
-**Konsep Dasar dan Filosofi:**  
-Shell yang baik harus dapat direproduksi dan diaudit. Anda akan mempelajari cara membuat PKGBUILD yang aman, menggunakan Nix flakes untuk reproducibility, dan menyiapkan pipeline CI yang menjalankan linting QML serta pengujian sandbox. Ini juga merupakan jalur untuk berkontribusi pada proyek open-source dan memvalidasi keahlian Anda.
-
-**Sintaks Dasar/Contoh Implementasi Inti:**
-```bash
-# PKGBUILD sederhana untuk shell Quickshell kustom
-pkgname=my-quickshell
-pkgver=1.0
-pkgrel=1
-depends=('quickshell' 'qt6-svg')
-source=("$pkgname-$pkgver.tar.gz")
-package() {
-    install -Dm644 shell.qml "$pkgdir/usr/share/quickshell/my-shell/shell.qml"
-}
-```
-```yaml
-# .github/workflows/ci.yml
-name: CI
-on: [push]
-jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: qmllint shell.qml
-```
-```nix
-# flake.nix untuk reproducibility
-{
-  inputs.quickshell.url = "github:quickshell-mirror/quickshell";
-  outputs = { self, nixpkgs, quickshell }: {
-    packages.x86_64-linux.default = quickshell.packages.x86_64-linux.default;
-  };
-}
-```
-
-**Terminologi Kunci:**
-- **PKGBUILD:** Skrip build paket Arch Linux.
-- **Nix Flake:** Konfigurasi Nix yang reproducible dan composable.
-- **`qmllint`:** Alat linting statis untuk file QML.
-- **CI/CD:** Continuous Integration/Continuous Deployment; otomatisasi build dan test.
-
-**Daftar Isi:**
-1. Membuat PKGBUILD untuk shell kustom.
-2. Nix flake dan reproducibility.
-3. CI/CD untuk linting QML dan pengujian.
-4. Menyiapkan environment pengembangan dengan `quickshell-git`.
-5. Berkontribusi ke Quickshell upstream (HACKING.md, CONTRIBUTING.md).
-6. Publikasi shell ke AUR.
-
-**Sumber Referensi:**
-- [Arch PKGBUILD Wiki](https://wiki.archlinux.org/title/PKGBUILD)
-- [Nix Flakes Wiki](https://nixos.wiki/wiki/Flakes)
-- [Quickshell HACKING.md](https://github.com/quickshell-mirror/quickshell/blob/master/HACKING.md)
-- [Quickshell CONTRIBUTING.md](https://github.com/quickshell-mirror/quickshell/blob/master/CONTRIBUTING.md)
-
----
-
-## Hasil Pembelajaran (Learning Outcomes)
-
-Setelah menyelesaikan seluruh kurikulum, Anda akan mampu:
-
-1. **Merancang dan membangun** shell desktop Wayland dari nol menggunakan Quickshell dan QML, sepenuhnya dikontrol melalui keyboard dan kode.
-2. **Mengintegrasikan** shell dengan layanan sistem (PipeWire, MPRIS, BlueZ, UPower, Hyprland/Sway IPC) secara reaktif.
-3. **Menerapkan prinsip keamanan** dalam pengembangan shell: isolasi instance, sandboxing dengan `bubblewrap`, least privilege, dan audit kode.
-4. **Membangun lockscreen dan display manager** yang aman dengan PAM dan Greetd, termasuk fail-safe locking.
-5. **Memperluas Quickshell** dengan plugin C++ untuk fungsionalitas kustom.
-6. **Mengoptimalkan performa** shell untuk penggunaan resource minimal.
-7. **Mengemas dan mendistribusikan** shell melalui AUR, Nix, atau Flatpak, serta berkontribusi ke proyek upstream.
-8. **Mengadaptasi** kurikulum ini untuk tujuan lain (misalnya, shell untuk lingkungan air-gapped, shell untuk forensic workstation) dengan menambahkan modul keamanan dan anonimitas tambahan.
-
----
-
-## Sumber Daya Komunitas dan Sertifikasi
-
-| Sumber Daya | Tautan | Catatan |
-|---|---|---|
-| **Quickshell Matrix/Discord** | [quickshell.org/community](https://quickshell.org/) (lihat tautan komunitas) | Diskusi langsung dengan pengembang dan pengguna. |
-| **GitHub Discussions** | [quickshell-mirror/quickshell/discussions](https://github.com/quickshell-mirror/quickshell/discussions) | Q&A dan showcase. |
-| **r/unixporn** | [reddit.com/r/unixporn](https://www.reddit.com/r/unixporn/) | Inspirasi shell Quickshell (cari “quickshell”). |
-| **Qt Academy** | [qt.io/academy](https://www.qt.io/academy) | Kursus QML gratis dan bersertifikat (QML for Beginners, Qt Quick). |
-| **Hyprland Wiki** | [wiki.hyprland.org](https://wiki.hyprland.org/) | Dokumentasi IPC dan layer-shell. |
-| **Sway Wiki** | [github.com/swaywm/sway/wiki](https://github.com/swaywm/sway/wiki) | Integrasi Sway. |
-| **Sertifikasi** | Tidak ada sertifikasi resmi Quickshell; validasi keahlian melalui **portofolio shell yang dipublikasikan** (GitHub, AUR) dan kontribusi upstream. | |
-
----
-
-## Catatan Akhir untuk Pengguna dengan Profil Anda
-
-Kurikulum ini sengaja menghindari ketergantungan pada GUI yang tidak dapat dikustomisasi. Quickshell sendiri adalah **program**, dan Anda mengontrolnya melalui **file QML yang Anda tulis sendiri**. Setiap modul menekankan **auditabilitas** dan **isolasi**. Untuk profil cybersecurity Anda, disarankan menambahkan modul mandiri tentang:
-
-- **Analisis statis QML** dengan `qmllint` dan `semgrep` untuk mendeteksi pola tidak aman.
-- **Isolasi D-Bus** menggunakan `xdg-dbus-proxy` untuk membatasi akses shell ke bus sistem.
-- **Anonimitas metadata** dengan menghapus timestamp dan path dari file konfigurasi sebelum distribusi.
-
-Dengan menyelesaikan kurikulum ini, Anda tidak hanya akan menguasai Quickshell, tetapi juga memiliki kerangka berpikir untuk **membangun, mengamankan, dan mengaudit** shell Wayland apa pun yang sepenuhnya selaras dengan prinsip **super kontrol berbasis keyboard**.
-
-[1]: ./bagian-1/README.md
-[2]: ./bagian-2/README.md
-[3]: ./bagian-3/README.md
-[4]: ./bagian-4/README.md
-[5]: ./bagian-5/README.md
-[6]: ./bagian-6/README.md
-
+**Sumber Referensi:** [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [Sway](https://github.com/swaywm/sway/wiki) (opsi headless wlroots)
