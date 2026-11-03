@@ -5,6 +5,11 @@
 Kurikulum ini dirancang untuk **power user Arch Linux** yang bekerja di lingkungan **CLI/TUI**, mengutamakan **kontrol keyboard penuh**, **keamanan**, **isolasi**, dan **anonimitas**, dengan prinsip **monolitik, modular, abstrak, dan super kontrol**. Quickshell bukan sekadar bar atau panel: ia adalah **toolkit berbasis QtQuick/QML** untuk membangun seluruh komponen desktop (bar, launcher, notification daemon, lockscreen, greeter) di atas **Wayland compositor** seperti Hyprland, Sway, atau Niri. Anda memprogram shell Anda sendiri, bukan sekadar mengatur tema.
 
 > **Filosofi Inti:** Shell adalah **program**, bukan konfigurasi. Setiap piksel, binding, dan interaksi harus dapat dikontrol lewat kode dan keyboard. Keamanan dicapai lewat **isolasi proses**, **least privilege**, dan **auditabilitas kode**, bukan lewat GUI yang tidak transparan.
+>
+> |  |  |  |
+> | --- | --- | --- |
+> |  |  |  |
+> |  |  |  |
 
 Empat prinsip dipakai sebagai kriteria desain di seluruh modul:
 
@@ -1294,3 +1299,665 @@ kill $SWAY
 **Latihan dan Checkpoint:** Buat skrip uji asap dan hubungkan ke `git` hook atau CI (Modul 5.3). *Checkpoint:* tunjukkan satu galat yang tertangkap oleh skrip Anda sebelum sampai ke sesi utama.
 
 **Sumber Referensi:** [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [Sway](https://github.com/swaywm/sway/wiki) (opsi headless wlroots)
+
+---
+
+## Fase 4 — Keamanan, Isolasi, dan Anonimitas
+
+**Level:** Mahir–Expert · **Estimasi:** 6–8 minggu · **Prasyarat:** Fase 3 selesai.
+
+### Modul 4.1 — Threat Model, Sandboxing, dan Isolasi Proses
+
+**Deskripsi Konkret:** Menyusun threat model untuk shell Anda, mengisolasi proses pembantu dengan `bubblewrap`, memahami apa yang bisa dan tidak bisa di-sandbox pada shell utuh, dan mengaudit akses dengan `strace`.
+
+**Analogi:** Sandbox adalah ruang tahanan berdinding kaca untuk sebuah program: ia boleh bekerja, tetapi hanya dengan alat yang Anda taruh di dalam ruangan itu.
+
+**Konsep Dasar dan Filosofi:** Quickshell **tidak punya sandbox bawaan**. Konfigurasi QML dapat menjalankan program (`Process`), membaca berkas (`FileView`), dan memanggil layanan sistem dengan hak akses Anda penuh, jadi konfigurasi pihak ketiga setara dengan menjalankan skrip asing. Penguncian instance (Modul 1.1) hanya mencegah bentrok, bukan menahan serangan. Strategi berlapis:
+
+1. **Audit** konfigurasi sebelum dijalankan.
+2. **Sandbox proses pembantu** yang memproses data tidak tepercaya (unduhan cuaca, parser berkas, dsb.).
+3. **Batasi shell sebagai layanan** (Modul 4.3).
+4. Sandbox **seluruh** shell hanya bila Anda siap menangani jebakan: **proses anak mewarisi sandbox**, sehingga aplikasi yang diluncurkan dari launcher ikut terkurung (tanpa jaringan bila `--unshare-net`). Luncurkan aplikasi lewat compositor atau `systemd-run --user` agar berada di luar kurungan shell.
+
+**Sintaks Dasar/Contoh:**
+
+```qml
+// Sandbox untuk satu proses pembantu: tanpa jaringan, tanpa home, PID terpisah
+Process {
+    command: [
+        'bwrap',
+        '--ro-bind', '/usr', '/usr',
+        '--symlink', 'usr/lib', '/lib',
+        '--symlink', 'usr/lib', '/lib64',
+        '--symlink', 'usr/bin', '/bin',
+        '--proc', '/proc',
+        '--dev', '/dev',
+        '--unshare-all',
+        '--die-with-parent',
+        '--new-session',
+        '/usr/bin/cat', '/proc/loadavg'
+    ]
+    running: true
+    stdout: StdioCollector { onStreamFinished: console.log(this.text.trim()) }
+}
+```
+
+```bash
+# Kerangka sandbox SELURUH shell (hard mode). Iterasi bind berdasarkan galat dan strace; path tanpa spasi.
+args=(
+  --ro-bind /usr /usr
+  --symlink usr/lib /lib --symlink usr/lib /lib64 --symlink usr/bin /bin
+  --ro-bind /etc /etc
+  --proc /proc --dev /dev --dev-bind /dev/dri /dev/dri --ro-bind /sys /sys
+  --ro-bind $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY $XDG_RUNTIME_DIR/$WAYLAND_DISPLAY
+  --ro-bind $HOME/.config/quickshell/my-shell $HOME/.config/quickshell/my-shell
+  --bind $XDG_RUNTIME_DIR/qs-bus $XDG_RUNTIME_DIR/bus
+  --setenv XDG_RUNTIME_DIR $XDG_RUNTIME_DIR --setenv WAYLAND_DISPLAY $WAYLAND_DISPLAY
+  --setenv DBUS_SESSION_BUS_ADDRESS unix:path=$XDG_RUNTIME_DIR/bus
+  --unshare-pid --unshare-ipc --unshare-uts --die-with-parent
+)
+bwrap ${args[@]} quickshell -c my-shell
+# Kemungkinan perlu menambah: socket IPC compositor, $XDG_RUNTIME_DIR/quickshell, socket D-Bus sistem.
+```
+
+```bash
+# Audit: apa yang ditolak saat di-sandbox?
+strace -f -e trace=file -o /tmp/qs.trace quickshell -c my-shell
+grep -E 'ENOENT|EACCES' /tmp/qs.trace | head
+```
+
+> **Jangan mengikat (bind) socket D-Bus sesi mentah ke dalam sandbox.** Bus sesi tidak punya penghalang kebijakan seperti bus sistem; proses di dalamnya bisa meminta layanan lain (termasuk manajer systemd pengguna) menjalankan program di luar sandbox. Saring dulu dengan `xdg-dbus-proxy` (Modul 4.3); baris `qs-bus` di atas mengacu pada socket hasil penyaringan itu.
+
+**Terminologi Kunci:**
+
+- **Threat model:** daftar tertulis tentang apa yang dilindungi, dari siapa, dan di batas mana.
+- **Namespace Linux:** cara kernel membuat “pandangan terpisah” atas sumber daya (mount, PID, jaringan, IPC).
+- **`bubblewrap` (`bwrap`):** alat sandbox ringan berbasis namespace dari ekosistem Flatpak.
+- **Least privilege:** memberi hak akses sekecil mungkin.
+- **Syscall:** permintaan program kepada kernel; `strace` merekamnya.
+- **Pragma Quickshell (`ShellId`, `DataDir`, `StateDir`, `CacheDir`):** direktif di baris awal `shell.qml` untuk memisahkan identitas dan direktori suatu shell; cek sintaksnya di panduan resmi.
+
+**Daftar Isi:**
+
+1. Threat model: aset, pelaku, batas kepercayaan.
+2. Sifat konfigurasi QML sebagai kode berhak penuh dan kebijakan audit pihak ketiga.
+3. Sandbox proses pembantu dengan `bwrap` (filesystem, jaringan, PID).
+4. Sandbox seluruh shell: bind yang dibutuhkan dan jebakan pewarisan.
+5. Pemisahan direktori runtime/state dan pragma.
+6. Audit akses dengan `strace`.
+7. Kebersihan log dan metadata (anonimitas): apa yang tercatat, di mana, dan cara meminimalkannya.
+
+**Latihan dan Checkpoint:** Tulis threat model satu halaman untuk shell Anda, lalu sandbox satu `Process` pembantu dan buktikan ia tidak bisa membaca `~` maupun menjangkau jaringan. *Checkpoint:* jelaskan mengapa mengikat socket D-Bus sesi mentah membuka jalan keluar dari sandbox.
+
+**Sumber Referensi:** [Bubblewrap](https://github.com/containers/bubblewrap) · [Arch Wiki: Bubblewrap](https://wiki.archlinux.org/title/Bubblewrap) · [Arch Wiki: Security](https://wiki.archlinux.org/title/Security) · [Process (Quickshell)](https://quickshell.org/docs/types/Quickshell.Io/Process)
+
+**Visualisasi:**
+
+```text
+Host ── Quickshell (hak pengguna penuh)
+          └─ Process: bwrap ─► [mount: /usr read-only] [pid terpisah] [net kosong] [ipc terpisah] ─► helper
+```
+
+---
+
+### Modul 4.2 — Lockscreen: `WlSessionLock` dan PAM
+
+**Deskripsi Konkret:** Membangun lockscreen yang benar-benar aman dengan `WlSessionLock` (protokol `ext-session-lock-v1`) dan autentikasi PAM, tanpa membocorkan kredensial.
+
+**Analogi:** Lockscreen yang aman seperti pintu yang dikunci oleh pengelola gedung (compositor), bukan sekadar poster “dilarang masuk” yang bisa dilepas oleh siapa saja.
+
+**Konsep Dasar dan Filosofi:** Pada `ext-session-lock-v1`, **compositor** yang mengunci sesi: input dan tampilan klien lain ditahan, dan bila klien pengunci mati, sesi **tetap terkunci** (fail-safe). Inilah alasan mengapa fokus keyboard eksklusif (`WlrKeyboardFocus.Exclusive`) bukan pengganti: ia tidak menyembunyikan jendela lain dan tidak fail-safe. Alur PAM di Quickshell: `start()` → sinyal `pamMessage` (bila `responseRequired`, kirim kata sandi dengan `respond()`) → sinyal `completed(result)` dengan `PamResult`. Konfigurasi PAM default adalah `login`; gunakan berkas khusus agar kebijakan lockscreen terpisah.
+
+**Sintaks Dasar/Contoh:**
+
+```qml
+// lock/shell.qml — KERANGKA lockscreen. Uji di VM dengan TTY cadangan!
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Services.Pam
+import QtQuick
+
+Scope {
+    id: root
+    property string currentText: ''
+    property string statusText: ''
+
+    PamContext {
+        id: pam
+        config: 'quickshell-lock'                       // /etc/pam.d/quickshell-lock
+        onPamMessage: { if (this.responseRequired) this.respond(root.currentText) }
+        onCompleted: result => {
+            root.currentText = ''                           // buang kata sandi dari memori QML
+            if (result === PamResult.Success) sessionLock.locked = false
+            else root.statusText = 'Gagal, coba lagi'
+        }
+    }
+
+    WlSessionLock {
+        id: sessionLock
+        locked: false
+        WlSessionLockSurface {
+            color: 'black'
+            Column {
+                anchors.centerIn: parent
+                TextInput {
+                    echoMode: TextInput.Password
+                    color: 'white'
+                    focus: true
+                    text: root.currentText
+                    onTextEdited: root.currentText = text
+                    onAccepted: { root.statusText = ''; pam.start() }
+                }
+                Text { text: root.statusText; color: 'tomato' }
+            }
+        }
+    }
+
+    IpcHandler { target: 'lock'; function engage(): void { sessionLock.locked = true } }
+}
+```
+
+```text
+# /etc/pam.d/quickshell-lock
+auth     include  system-auth
+account  include  system-auth
+```
+
+```bash
+qs -c lock ipc call lock engage        # kunci sesi dari terminal atau keybind
+```
+
+> Pada Arch, `system-auth` biasanya memuat `pam_faillock` (pembatasan percobaan); periksa berkas Anda. Siapkan **prosedur pemulihan** sebelum pengujian pertama: banyak compositor mengizinkan klien lock baru mengambil alih sesi terkunci dari TTY (Hyprland: opsi `misc:allow_session_lock_restore`). Uji hanya di VM.
+
+**Terminologi Kunci:**
+
+- **PAM (Pluggable Authentication Modules):** kerangka autentikasi Linux untuk memverifikasi kata sandi.
+- **`ext-session-lock-v1`:** protokol Wayland tempat compositor menegakkan kunci sesi.
+- **`WlSessionLock` / `WlSessionLockSurface`:** tipe Quickshell untuk kunci sesi / permukaan kunci per layar.
+- **Fail-safe:** bila komponen pengunci gagal, sistem tetap dalam keadaan aman (terkunci).
+- **`PamResult`:** hasil autentikasi (mis. `Success`, `Failed`, `Error`).
+
+**Daftar Isi:**
+
+1. `ext-session-lock-v1` dan perilaku fail-safe.
+2. `WlSessionLock` dan `WlSessionLockSurface` (multi-monitor).
+3. `PamContext`: `start`, `pamMessage`, `respond`, `completed`; berkas konfigurasi PAM.
+4. Penanganan kredensial: umur di memori, pembersihan, tanpa log.
+5. Prosedur pemulihan dan pengujian di VM.
+6. Audit keamanan lockscreen (apa yang tampak sebelum kunci aktif, apa yang bocor di log).
+
+**Latihan dan Checkpoint:** Bangun lockscreen di VM, pastikan semua monitor tertutup, lalu `kill -9` prosesnya dan buktikan sesi tetap terkunci. *Checkpoint:* jelaskan perbedaan `WlSessionLock` dan fokus eksklusif, dan tunjukkan prosedur pemulihan dari TTY.
+
+**Sumber Referensi:** [PamContext](https://quickshell.org/docs/types/Quickshell.Services.Pam/PamContext) · [ext-session-lock-v1](https://wayland.app/protocols/ext-session-lock-v1) · [WlrKeyboardFocus](https://quickshell.org/docs/types/Quickshell.Wayland/WlrKeyboardFocus) · [Linux-PAM](https://www.linux-pam.org/Linux-PAM-html/)
+
+---
+
+### Modul 4.3 — Greetd, Hardening Sesi, dan Penyaringan D-Bus
+
+**Deskripsi Konkret:** Membangun layar login minimalis dengan `greetd`, menyaring akses D-Bus shell dengan `xdg-dbus-proxy`, dan mengukur hardening unit systemd.
+
+**Analogi:** Greetd adalah penjaga pintu depan; `xdg-dbus-proxy` adalah operator telepon yang hanya menyambungkan shell ke nomor yang diizinkan.
+
+**Konsep Dasar dan Filosofi:** `greetd` menjalankan *greeter* (di sini Quickshell) sebagai pengguna terbatas di dalam compositor minimal, dan greeter berbicara ke greetd lewat IPC. Setelah autentikasi berhasil, greetd meluncurkan sesi pilihan. Untuk shell sehari-hari, prinsip *least privilege* diterapkan lewat penyaringan D-Bus dan hardening unit. Catatan penting: layanan seperti UPower, BlueZ, dan logind ada di **bus sistem** (yang punya kebijakan akses), sedangkan **bus sesi** tidak punya penghalang serupa, sehingga bus sesi yang perlu disaring.
+
+**Sintaks Dasar/Contoh:**
+
+```toml
+# /etc/greetd/config.toml
+[terminal]
+vt = 1
+
+[default_session]
+command = 'cage -s -- quickshell -p /etc/xdg/quickshell/greeter'
+user = 'greeter'
+```
+
+```qml
+// Greeter (kerangka; cocokkan nama sinyal dan fungsi dengan referensi Quickshell.Services.Greetd)
+import Quickshell.Services.Greetd
+import QtQuick
+
+Connections {
+    target: Greetd
+    function onAuthMessage(message, error, responseRequired, echoResponse) {
+        if (responseRequired) Greetd.respond(root.currentText)
+    }
+    function onReadyToLaunch() { Greetd.launch(['Hyprland']) }
+    function onAuthFailure(message) { root.statusText = 'Gagal'; root.currentText = '' }
+}
+// memulai: Greetd.createSession('nama_pengguna')
+```
+
+```bash
+# Saring bus sesi: hanya nama yang dibutuhkan shell
+xdg-dbus-proxy $DBUS_SESSION_BUS_ADDRESS $XDG_RUNTIME_DIR/qs-bus --filter --own=org.freedesktop.Notifications --own=org.kde.StatusNotifierWatcher --talk=org.mpris.MediaPlayer2.*
+
+# Ukur hardening unit
+systemd-analyze --user security quickshell.service
+```
+
+| Praktik hardening | Catatan |
+| --- | --- |
+| `NoNewPrivileges=yes` | Aman dan hampir selalu diinginkan. |
+| Jangan jalankan shell sebagai root | Greeter memakai pengguna `greeter`, bukan root. |
+| Direktif sandbox systemd (mis. `RestrictAddressFamilies`) | **Diwariskan ke aplikasi yang diluncurkan shell.** Luncurkan aplikasi dengan `systemd-run --user` agar keluar dari unit shell. |
+| `umask 077` | Berkas state dan log tidak terbaca pengguna lain. |
+| Skor `systemd-analyze --user security` | Gunakan sebagai pengukur kemajuan, bukan tujuan mutlak. |
+
+**Terminologi Kunci:**
+
+- **Greetd / greeter:** login manager minimalis / program antarmuka login-nya.
+- **`cage`:** compositor kios minimal yang menjalankan satu aplikasi layar penuh.
+- **`xdg-dbus-proxy`:** proxy yang menyaring pesan D-Bus berdasarkan daftar nama yang diizinkan.
+- **Bus sesi vs bus sistem:** dua jalur D-Bus; sistem punya kebijakan akses, sesi tidak.
+
+**Daftar Isi:**
+
+1. Arsitektur greetd: greeter, IPC, peluncuran sesi.
+2. Greeter Quickshell dan compositor minimal.
+3. Menyaring D-Bus dengan `xdg-dbus-proxy`.
+4. Hardening unit `systemd --user` dan pewarisan ke proses anak.
+5. Meluncurkan aplikasi di luar kurungan shell.
+
+**Latihan dan Checkpoint:** Jalankan greeter di VM, saring bus sesi shell Anda, dan naikkan skor `systemd-analyze` tanpa merusak fitur. *Checkpoint:* jelaskan mengapa menerapkan `RestrictAddressFamilies` pada unit shell bisa memutus jaringan aplikasi yang diluncurkan darinya.
+
+**Sumber Referensi:** [greetd](https://sr.ht/~kennylevinsen/greetd/) · [Arch Wiki: greetd](https://wiki.archlinux.org/title/Greetd) · [xdg-dbus-proxy](https://github.com/flatpak/xdg-dbus-proxy) · modul `Quickshell.Services.Greetd` di [quickshell.org/docs](https://quickshell.org/docs/)
+
+---
+
+## Fase 5 — Expert/Enterprise: Optimasi, Ekstensi C++, dan Deployment
+
+**Level:** Expert/Enterprise · **Estimasi:** 8+ minggu · **Prasyarat:** Fase 4 selesai dan C++ dasar (kelas, header, pointer/referensi, build dengan CMake).
+
+### Modul 5.1 — Plugin C++ dan Backend Kustom
+
+**Deskripsi Konkret:** Memperluas Quickshell dengan modul C++ untuk hal yang tidak bisa dilakukan QML murni (komputasi berat, API sistem yang belum dibungkus), lalu mengeksposnya sebagai tipe QML.
+
+**Analogi:** QML adalah dasbor; plugin C++ adalah mesin tambahan yang Anda pasang di bawah kap saat dasbor tidak cukup.
+
+**Konsep Dasar dan Filosofi:** Gunakan C++ **hanya setelah** QML, `Process`, dan modul bawaan terbukti tidak cukup. Setahu saya, mekanismenya adalah modul QML Qt standar (`qt_add_qml_module`) yang dimuat lewat jalur impor QML; **verifikasi cara pemasangan pastinya di HACKING.md dan dokumentasi versi Anda**. Ini **super kontrol** pada level terendah, tetapi juga permukaan serang terbesar: kode C++ berjalan di dalam proses shell tanpa batas sandbox QML, jadi setiap baris wajib diaudit.
+
+**Sintaks Dasar/Contoh:**
+
+```cpp
+// kernelinfo.hpp — tipe QML yang membaca rilis kernel lewat uname()
+#pragma once
+#include <sys/utsname.h>
+#include <QObject>
+#include <QString>
+#include <QtQml/qqmlregistration.h>
+
+class KernelInfo : public QObject {
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(QString release READ release CONSTANT)
+public:
+    explicit KernelInfo(QObject* parent = nullptr) : QObject(parent) {
+        struct utsname u {};
+        if (uname(&u) == 0) m_release = QString::fromLocal8Bit(u.release);
+    }
+    QString release() const { return m_release; }
+private:
+    QString m_release;
+};
+```
+
+```cmake
+cmake_minimum_required(VERSION 3.21)
+project(kernelinfo LANGUAGES CXX)
+find_package(Qt6 REQUIRED COMPONENTS Qml)
+qt_standard_project_setup(REQUIRES 6.5)
+qt_add_qml_module(kernelinfo URI KernelInfo VERSION 1.0 SOURCES kernelinfo.hpp)
+```
+
+```qml
+import KernelInfo
+import QtQuick
+
+Item {
+    KernelInfo { id: ki }
+    Text { text: ki.release; color: 'white' }
+}
+```
+
+**Terminologi Kunci:**
+
+- **`QML_ELEMENT`:** makro Qt yang mendaftarkan kelas C++ sebagai tipe QML.
+- **`Q_PROPERTY`:** menjadikan anggota kelas properti yang dapat dibaca/diikat dari QML.
+- **Plugin/modul QML:** pustaka dinamis yang menyediakan tipe QML tambahan.
+- **`qt_add_qml_module`:** fungsi CMake untuk membangun modul QML dari C++.
+- **Sanitizer:** instrumen kompilator yang menangkap galat memori saat program berjalan (`-fsanitize=address,undefined`).
+
+**Daftar Isi:**
+
+1. Kapan C++ dibutuhkan (dan kapan tidak): lihat pohon keputusan.
+2. Mendaftarkan tipe C++ ke QML.
+3. Property, signal, dan slot.
+4. Membangun dengan CMake dan memasang modul ke jalur impor.
+5. Audit keamanan C++: validasi masukan, batas buffer, sanitizer, flag hardening bawaan `makepkg`.
+6. Debugging dengan `gdb`.
+
+**Latihan dan Checkpoint:** Bangun modul `KernelInfo`, tambahkan properti kedua (mis. nama host), dan jalankan dengan sanitizer. *Checkpoint:* jelaskan mengapa bug di plugin C++ lebih berbahaya daripada bug di QML.
+
+**Sumber Referensi:** [HACKING.md](https://github.com/quickshell-mirror/quickshell/blob/master/HACKING.md) · [Qt: Integrasi QML dan C++](https://doc.qt.io/qt-6/qtqml-cppintegration-topic.html) · [Qt: qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html)
+
+---
+
+### Modul 5.2 — Optimasi Performa dan Profiling
+
+**Deskripsi Konkret:** Menekan penggunaan CPU, memori, dan GPU shell yang berjalan terus-menerus, dengan mengukur dulu, baru mengoptimalkan.
+
+**Analogi:** Seperti dokter yang memeriksa sebelum memberi obat: jangan mengoptimalkan bagian yang tidak terbukti lambat.
+
+**Konsep Dasar dan Filosofi:** **Monolitik** bukan berarti boros: satu proses harus efisien. Urutan kerja: ukur (`perf`, `heaptrack`, variabel `QSG_*`), temukan titik panas, ubah, ukur lagi. Kemenangan terbesar biasanya datang dari **menghapus kerja yang tidak perlu**: mengganti polling dengan modul reaktif (`SystemClock`), menunda pembuatan jendela (`LazyLoader`), dan mengurangi overdraw.
+
+**Sintaks Dasar/Contoh:**
+
+```bash
+perf stat -p $(pgrep -x quickshell)
+perf record -g -p $(pgrep -x quickshell) -- sleep 30 && perf report
+heaptrack quickshell -c my-shell                 # profil alokasi memori
+QSG_RENDER_TIMING=1 quickshell -c my-shell       # waktu render per frame
+QSG_VISUALIZE=overdraw quickshell -c my-shell    # tampilkan area yang digambar berulang
+```
+
+```qml
+// Buat jendela hanya saat dibutuhkan
+LazyLoader {
+    active: launcherOpen
+    PanelWindow { /* launcher */ }
+}
+```
+
+**Terminologi Kunci:**
+
+- **`perf`:** alat profiling Linux untuk CPU dan event perangkat keras.
+- **`heaptrack`:** pelacak alokasi memori; lebih praktis daripada `valgrind` untuk aplikasi GUI berat.
+- **Overdraw:** menggambar piksel yang sama berulang kali.
+- **`LazyLoader`:** membuat isi hanya saat `active` bernilai benar.
+- **Frame time:** waktu menggambar satu frame; target di bawah 16 ms untuk 60 Hz.
+
+**Daftar Isi:**
+
+1. Profiling CPU dengan `perf`.
+2. Profiling memori dengan `heaptrack` (dan `valgrind` bila perlu).
+3. Variabel `QSG_*` untuk render dan overdraw.
+4. Menghindari binding dan JavaScript yang mahal; `ListView` vs `Repeater` untuk daftar panjang.
+5. `LazyLoader`, `Loader`, dan pembuatan objek tertunda.
+6. Benchmark sederhana sebelum dan sesudah perubahan.
+
+**Latihan dan Checkpoint:** Ukur penggunaan CPU saat idle, ganti satu polling dengan modul reaktif, dan ukur lagi. *Checkpoint:* tunjukkan angka sebelum dan sesudah, serta satu area overdraw yang berhasil Anda hapus.
+
+**Sumber Referensi:** [Qt Quick Performance](https://doc.qt.io/qt-6/qtquick-performance.html) · [perf Wiki](https://perf.wiki.kernel.org/) · [Arch Wiki: Improving performance](https://wiki.archlinux.org/title/Improving_performance)
+
+---
+
+### Modul 5.3 — Deployment, CI/CD, dan Kontribusi Upstream
+
+**Deskripsi Konkret:** Mengemas shell untuk distribusi (AUR dan Nix), mengotomatiskan linting di CI, mengamankan rantai pasok, dan berkontribusi ke Quickshell upstream.
+
+**Analogi:** Pengemasan adalah segel pada botol obat: pengguna lain harus bisa memastikan isinya tidak berubah sejak Anda menutupnya.
+
+**Konsep Dasar dan Filosofi:** Shell yang baik dapat **direproduksi dan diaudit**. Untuk Arch, pasang konfigurasi sistem di `/etc/xdg/quickshell/<nama>` (jalur yang dicari Quickshell lewat `$XDG_CONFIG_DIRS`, Modul 1.1) dan jalankan dengan `quickshell -c <nama>`. Rantai pasok adalah titik lemah: kunci checksum, tanda tangani tag rilis, dan **sematkan (pin) GitHub Actions ke SHA commit**, bukan ke tag yang bisa digeser.
+
+**Sintaks Dasar/Contoh:**
+
+```bash
+# PKGBUILD shell kustom
+pkgname=my-quickshell
+pkgver=1.0
+pkgrel=1
+pkgdesc='Shell Quickshell kustom'
+arch=('any')
+license=('MIT')
+depends=('quickshell' 'qt6-svg' 'qt6-5compat')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('GANTI_DENGAN_CHECKSUM_ASLI')    # hasilkan dengan: updpkgsums (jangan pakai SKIP)
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    install -d "$pkgdir/etc/xdg/quickshell/my-shell"
+    cp -r --no-preserve=ownership . "$pkgdir/etc/xdg/quickshell/my-shell/"
+}
+```
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - uses: actions/checkout@<SHA-COMMIT-LENGKAP>      # pin ke commit, bukan tag
+      - run: pacman -Syu --noconfirm qt6-declarative
+      - run: find . -name '*.qml' -print0 | xargs -0 /usr/lib/qt6/bin/qmllint
+```
+
+```nix
+# flake.nix — reproducibility (flake.lock mengunci versi)
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    quickshell = {
+      url = "github:quickshell-mirror/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+  outputs = { self, nixpkgs, quickshell }: {
+    packages.x86_64-linux.default = quickshell.packages.x86_64-linux.default;
+  };
+}
+```
+
+> `qmllint` tidak mengenal modul Quickshell tanpa jalur impor, jadi peringatan *import not found* untuk modul Quickshell wajar di CI sederhana; mulai dengan memeriksa sintaks, lalu tambahkan jalur impor bila perlu. Flatpak tidak dibahas karena tidak lazim untuk mendistribusikan konfigurasi shell sesi.
+
+**Terminologi Kunci:**
+
+- **PKGBUILD:** skrip build paket Arch; `sha256sums` memastikan sumber tidak berubah.
+- **Nix flake / `flake.lock`:** konfigurasi Nix yang reproducible / berkas yang mengunci versi tepat.
+- **`qmllint`:** pemeriksa statis berkas QML.
+- **Pin ke SHA:** mengacu pada commit tertentu agar isinya tidak bisa diganti diam-diam.
+- **CI/CD:** otomatisasi build, uji, dan rilis.
+
+**Daftar Isi:**
+
+1. Membuat PKGBUILD yang aman (checksum, tanpa `SKIP`).
+2. Nix flake dan reproducibility.
+3. CI untuk linting QML dan uji asap.
+4. Keamanan rantai pasok: pin SHA, tag bertanda tangan, izin minimal.
+5. Lingkungan pengembangan: membangun Quickshell dari source (lihat HACKING.md).
+6. Berkontribusi ke upstream (CONTRIBUTING.md): mulai dari perbaikan kecil.
+7. Publikasi ke AUR dan pemeliharaannya.
+
+**Latihan dan Checkpoint:** Kemas shell Anda sebagai PKGBUILD, bangun di chroot bersih, dan pasang pipeline CI. Kirim satu perbaikan dokumentasi ke upstream. *Checkpoint:* jelaskan mengapa `sha256sums=('SKIP')` meniadakan auditabilitas dan mengapa tag Action harus diganti dengan SHA.
+
+**Sumber Referensi:** [Arch Wiki: PKGBUILD](https://wiki.archlinux.org/title/PKGBUILD) · [Arch Wiki: Creating packages](https://wiki.archlinux.org/title/Creating_packages) · [Nix Flakes (wiki resmi)](https://wiki.nixos.org/wiki/Flakes) · [HACKING.md](https://github.com/quickshell-mirror/quickshell/blob/master/HACKING.md) · [CONTRIBUTING.md](https://github.com/quickshell-mirror/quickshell/blob/master/CONTRIBUTING.md)
+
+**Visualisasi:**
+
+```text
+kode ─► qmllint ─► uji asap ─► paket (PKGBUILD/flake) ─► rilis bertanda tangan ─► AUR / Nix
+          └──────────── CI (izin minimal, Action di-pin SHA) ────────────┘
+```
+
+---
+
+## Proyek Capstone: Shell Mandiri End-to-End
+
+**Estimasi:** 4–6 minggu · **Tujuan:** membuktikan penguasaan dengan membangun satu shell lengkap yang aman, terdokumentasi, dan dapat dipasang orang lain.
+
+**Persyaratan:**
+
+1. Bar multi-monitor dengan workspace, jam, volume, baterai, dan tray.
+2. Launcher aplikasi yang dioperasikan penuh dengan keyboard (termasuk mode modal).
+3. Notification daemon dengan riwayat.
+4. OSD volume yang dibuat tertunda (`LazyLoader`).
+5. Lockscreen `WlSessionLock` + PAM yang fail-safe.
+6. Semua aksi utama dapat dipanggil lewat `qs ipc call` dan keybind.
+7. Berjalan sebagai unit `systemd --user` dengan hardening yang diukur.
+8. Proses pembantu yang menangani data tidak tepercaya berjalan dalam `bwrap`.
+9. PKGBUILD atau flake, serta CI linting.
+10. Dokumen threat model satu halaman dan README pemasangan.
+
+**Rubrik kelulusan:**
+
+| Kriteria | Bukti lulus |
+| --- | --- |
+| Fungsi | Seluruh persyaratan berjalan di VM bermonitor ganda |
+| Keyboard-driven | Seluruh alur utama dapat dijalankan tanpa mouse |
+| Keamanan | `clearEnvironment` pada setiap `Process`; D-Bus disaring; lockscreen lolos uji `kill -9` |
+| Arsitektur | Arah dependensi UI → services → sistem terjaga; tidak ada binding loop di log |
+| Kualitas | `qmllint` bersih; uji asap lulus di CI |
+| Operasional | Pulih otomatis saat crash; log bebas kredensial |
+| Dokumentasi | Orang lain dapat memasang dan menambah satu fitur hanya dari README |
+
+---
+
+## Pemetaan Kebutuhan ke Pendekatan (Pohon Keputusan)
+
+Tujuan akhir kurikulum ini: Anda mampu menambahkan fitur apa pun yang dibutuhkan. Mulailah dari pohon keputusan, lalu cari tipe di referensi (Modul 0.4).
+
+```text
+Butuh fitur baru?
+├─ Hanya tampilan/logika UI? ──────────────► QML murni (0.2–0.4, 3.2)
+├─ Ada tipe Quickshell untuk layanannya? ──► pakai modul (2.3–2.4)
+├─ Ada program CLI yang melakukannya? ─────► Process + SplitParser (1.2); sandbox bila data tak tepercaya (4.1)
+├─ Perlu protokol atau aksi compositor? ───► Quickshell.Hyprland / I3, atau CLI compositor (2.2)
+├─ Perlu komputasi berat / API tak terekspos?► plugin C++ (5.1)
+└─ Selalu: threat model + daftar periksa review (3.3, 4.1)
+```
+
+| Kebutuhan | Pendekatan | Modul |
+| --- | --- | --- |
+| Bar, jam, workspace | `PanelWindow` + `Variants` + `SystemClock` + `Hyprland`/`I3` | 1.2, 2.2 |
+| Launcher | `DesktopEntries` + `ScriptModel` + fokus keyboard | 2.4, 2.5 |
+| Notifikasi | `NotificationServer` | 2.4 |
+| System tray | `SystemTray` | 2.4 |
+| OSD volume/kecerahan | `Pipewire` + `Process` (`brightnessctl`) + `LazyLoader` | 2.3, 5.2 |
+| Media | `Mpris` | 2.3 |
+| Baterai, menu daya | `UPower`; `Process` untuk `systemctl` | 2.3 |
+| Bluetooth | `Quickshell.Bluetooth` | 2.3 |
+| Jaringan | `Process` (`nmcli`) + `SplitParser`; cek apakah versi Anda punya modul jaringan | 1.2 |
+| Clipboard, screenshot | `Process` (`cliphist`, `grim`, `slurp`) | 1.2 |
+| Wallpaper | `PanelWindow` pada layer `Background` | 2.1 |
+| Daftar jendela | `ToplevelManager` (`Quickshell.Wayland`) | 2.1 |
+| Lockscreen, login | `WlSessionLock` + PAM; `Greetd` | 4.2, 4.3 |
+| Fitur yang tak ada modulnya | Cari CLI → `Process`; jika tak cukup → plugin C++ | 1.2, 5.1 |
+
+---
+
+## Glosarium (untuk Pembaca Non-Teknis)
+
+| Istilah | Arti sederhana |
+| --- | --- |
+| **Wayland** | Cara modern program menggambar di layar dan menerima input; pengganti X11. |
+| **Compositor** | Program yang menyusun semua jendela menjadi satu tampilan dan mengatur input (Hyprland, Sway, Niri). |
+| **Layer-shell** | Aturan agar panel/bar dapat menempel di tepi layar dan tidak tertimpa jendela biasa. |
+| **Qt / QtQuick** | Perangkat lunak dasar yang menggambar antarmuka Quickshell. |
+| **QML** | Bahasa untuk mendeskripsikan tampilan dan perilakunya secara deklaratif. |
+| **Binding** | Hubungan “nilai A selalu mengikuti nilai B” yang dihitung ulang otomatis. |
+| **Signal** | Pemberitahuan bahwa sesuatu terjadi (klik, data berubah). |
+| **Singleton** | Satu objek tunggal yang bisa dipakai dari mana saja. |
+| **Komponen** | Potongan antarmuka yang bisa dipakai ulang, disimpan dalam berkas sendiri. |
+| **Proses** | Program yang sedang berjalan. |
+| **IPC** | Cara dua program saling berkirim pesan. |
+| **D-Bus** | Sistem pesan antar program di Linux (bus sesi untuk aplikasi Anda, bus sistem untuk layanan sistem). |
+| **Daemon** | Program latar belakang yang melayani program lain (mis. penerima notifikasi). |
+| **Environment (lingkungan)** | Kumpulan variabel yang diwariskan ke program yang Anda jalankan. |
+| **LSP** | Layanan yang memberi editor fitur pintar untuk suatu bahasa pemrograman. |
+| **Linting** | Pemeriksaan otomatis kode untuk menemukan kesalahan tanpa menjalankannya. |
+| **Hot reload** | Perubahan kode langsung tampil tanpa menutup-buka program. |
+| **Sandbox** | Ruang terisolasi tempat program hanya mendapat akses terbatas. |
+| **Namespace** | Fitur kernel yang membuat program “melihat” sistem yang terpisah. |
+| **Syscall** | Permintaan program kepada kernel. |
+| **Least privilege** | Prinsip memberi hak akses sekecil mungkin. |
+| **Threat model** | Catatan tertulis tentang apa yang dilindungi, dari siapa, dan di batas mana. |
+| **PAM** | Sistem Linux untuk memeriksa kata sandi dan identitas. |
+| **Fail-safe** | Bila komponen gagal, sistem berakhir pada keadaan aman. |
+| **Unit systemd** | Deskripsi layanan yang dijalankan dan diawasi systemd. |
+| **PKGBUILD** | Resep pembuatan paket di Arch Linux. |
+| **AUR** | Gudang resep paket buatan komunitas Arch; harus dibaca sebelum dipakai. |
+| **Supply chain (rantai pasok)** | Seluruh sumber kode dan alat yang masuk ke perangkat lunak Anda. |
+| **CI/CD** | Otomatisasi pemeriksaan, build, dan rilis setiap kali kode berubah. |
+| **TTY** | Konsol teks murni; jalur darurat saat sesi grafis bermasalah. |
+| **VM** | Komputer tiruan di dalam komputer Anda, untuk bereksperimen dengan aman. |
+
+---
+
+## Hasil Pembelajaran (Learning Outcomes)
+
+Setelah menyelesaikan kurikulum dan proyek capstone, Anda mampu:
+
+1. **Merancang dan membangun** shell desktop Wayland dari nol dengan Quickshell dan QML, dikontrol penuh lewat keyboard dan kode.
+2. **Mengintegrasikan** layanan sistem (PipeWire, MPRIS, UPower, Bluetooth, notifikasi, tray, IPC Hyprland/i3/Sway) secara reaktif dan memverifikasi nilainya.
+3. **Menyusun threat model** dan menerapkan isolasi: `clearEnvironment`, sandbox `bwrap`, penyaringan D-Bus, dan hardening unit systemd.
+4. **Membangun lockscreen dan greeter** yang aman dengan `WlSessionLock`, PAM, dan greetd, termasuk prosedur pemulihan.
+5. **Memperluas Quickshell** dengan plugin C++ ketika QML tidak cukup, dan mengauditnya.
+6. **Mendiagnosis dan mengoptimalkan** shell secara terukur (log, `qmllint`, `perf`, `heaptrack`).
+7. **Mengemas, menguji, dan mendistribusikan** shell (PKGBUILD, Nix, CI) dengan rantai pasok yang aman, serta berkontribusi ke upstream.
+8. **Menambahkan fitur apa pun** pada proyek apa pun dengan memetakan kebutuhan ke pendekatan yang tepat (pohon keputusan) dan membaca referensi API sendiri.
+9. **Mengadaptasi** kurikulum untuk tujuan lain (lingkungan air-gapped, workstation forensik) dengan menambah modul keamanan dan anonimitas.
+
+---
+
+## Sumber Daya Komunitas dan Sertifikasi
+
+| Sumber Daya | Tautan | Catatan |
+| --- | --- | --- |
+| **Dokumentasi resmi Quickshell** | [quickshell.org/docs](https://quickshell.org/docs/) | Sumber utama panduan dan referensi tipe. Cocokkan versi dengan `quickshell --version`. |
+| **Repositori utama** | [git.outfoxxed.me/quickshell/quickshell](https://git.outfoxxed.me/quickshell/quickshell) | Kode sumber, HACKING.md, CONTRIBUTING.md; ada mirror di [GitHub](https://github.com/quickshell-mirror/quickshell). |
+| **Komunitas Quickshell** | Tautan komunitas (Matrix/Discord) di [quickshell.org](https://quickshell.org/) | Diskusi langsung dengan pengembang dan pengguna. |
+| **r/unixporn** | [reddit.com/r/unixporn](https://www.reddit.com/r/unixporn/) | Inspirasi shell Quickshell; **audit sebelum menjalankan konfigurasi orang lain**. |
+| **Qt Academy** | [qt.io/academy](https://www.qt.io/academy) | Kursus QML gratis; periksa sendiri apakah tersedia sertifikat penyelesaian. |
+| **Hyprland Wiki** | [wiki.hyprland.org](https://wiki.hyprland.org/) | IPC, aturan layer, pintasan global. |
+| **Sway Wiki** | [github.com/swaywm/sway/wiki](https://github.com/swaywm/sway/wiki) | Integrasi Sway. |
+| **Arch Wiki** | [wiki.archlinux.org](https://wiki.archlinux.org/) | Referensi sistem: Wayland, systemd, bubblewrap, PKGBUILD, AUR. |
+| **Sertifikasi** | Tidak ada sertifikasi resmi Quickshell | Validasi keahlian lewat **portofolio shell yang dipublikasikan** (GitHub, AUR) dan kontribusi upstream. |
+
+> Agregator pihak ketiga (ringkasan otomatis, indeks keterampilan) boleh membantu menemukan topik, tetapi **bukan sumber otoritatif**, terutama untuk keamanan. Rujukan utama: dokumentasi resmi, kode sumber, dan spesifikasi protokol.
+
+---
+
+## Catatan Akhir untuk Pengguna dengan Profil Keamanan Tinggi
+
+Kurikulum ini sengaja menghindari ketergantungan pada GUI yang tidak dapat dikustomisasi. Quickshell adalah **program** yang Anda kendalikan lewat **berkas QML yang Anda tulis sendiri**. Keamanan tidak ditambahkan di akhir, tetapi menjadi benang merah: model ancaman (di awal), `clearEnvironment` (Fase 1), review (Fase 3), sandbox, lockscreen, dan penyaringan D-Bus (Fase 4), serta rantai pasok (Fase 5). Untuk memperdalam:
+
+- **Analisis statis QML:** `qmllint`; untuk pola tak aman khusus, gunakan aturan pencarian berbasis teks (mis. mode *generic* pada alat seperti `semgrep`; setahu saya QML belum menjadi bahasa yang didukung resmi).
+- **Isolasi D-Bus:** `xdg-dbus-proxy` (Modul 4.3); ingat bahwa shell perlu `--own` untuk nama notifikasi dan tray.
+- **Anonimitas metadata:** hapus path pribadi dan timestamp dari artefak yang dibagikan; untuk build reproducible, atur `SOURCE_DATE_EPOCH`.
+
+---
+
+## Catatan Revisi (Pasca-Audit)
+
+| Temuan audit | Perbaikan dalam revisi ini |
+| --- | --- |
+| `PamContext` memakai sinyal yang tidak ada | Modul 4.2 ditulis ulang: `start` → `pamMessage` → `respond` → `completed(PamResult)` |
+| `WlSessionLock` tidak ada | Ditambahkan di 4.2, plus peringatan bahwa fokus eksklusif bukan kunci sesi |
+| `PwObjectTracker` dan skala volume | Diperbaiki di 2.3 (tracker, skala 0–1, `onMoved`, batas maksimum) |
+| `track.title` salah | Menjadi `trackTitle` |
+| `UPower.percentage` | Dikalikan 100 dan diberi catatan verifikasi skala |
+| `Quickshell.Sway` tidak ada | Menjadi `Quickshell.I3` (i3/Sway) |
+| `environment` tidak membersihkan lingkungan | `clearEnvironment: true` di 1.2 dan 4.1 |
+| Contoh `bwrap` tidak berjalan; masalah pewarisan sandbox | Ditulis ulang di 4.1 (helper yang valid, kerangka shell utuh, jebakan D-Bus dan pewarisan) |
+| “Model keamanan” menyesatkan | 4.1 menegaskan: konfigurasi QML adalah kode berhak penuh; kunci instance bukan keamanan |
+| `// layer: 'top'` | Menjadi `WlrLayershell.layer: WlrLayer.Top` dan `exclusionMode` |
+| `AnchorLayout` tidak ada | Diganti `anchors`, positioner, dan `QtQuick.Layouts` |
+| `MultiEffect` dengan sumber melingkar | Contoh diperbaiki di 0.3 |
+| Contoh pertama tidak bisa dijalankan | Memakai `FloatingWindow` dan `quickshell -p` |
+| `Connections` dan `onValueChanged` | Diperbaiki di 3.2 (`function onX()`, `onMoved`) |
+| Polling `date` tiap detik | Diganti `SystemClock`; `SplitParser` ditambahkan |
+| Plugin C++ ditulis seolah API khusus; contoh palsu | 5.1 diperjelas dan contoh membaca kernel sungguhan; prasyarat C++ ditambahkan |
+| Flake tanpa input `nixpkgs`; `SKIP` checksum; Action tanpa pin | Diperbaiki di 5.3; Flatpak dihapus |
+| `semgrep` untuk QML | Diberi catatan batasan |
+| Sumber pihak ketiga dan tautan terkunci versi | Diganti sumber primer dan tautan tanpa versi |
+| Topik hilang | Ditambahkan: `Variants`, `IpcHandler`, `GlobalShortcut`, fokus keyboard, notifikasi, tray, launcher, persistensi, debugging, autostart, `WlSessionLock`, greetd, hardening, uji asap |
+| Non-IT, latihan, penguasaan | Ditambahkan: Fase −1, analogi, glosarium, latihan dan checkpoint per modul, capstone dengan rubrik, pohon keputusan, modul membaca referensi (0.4) |
+| Tautan judul fase | Format `[Fase ...][n]` dipertahankan; `[0]` kini terdefinisi (mengarah ke `bagian-1`), `[-1]` untuk Fase −1 mengarah ke `bagian-0` (berkas baru) |
+
+**Butir yang masih perlu Anda verifikasi di versi Quickshell yang terpasang** (ditandai di teks): skala volume PipeWire dan persentase UPower, nama modul Bluetooth, impor `qs.` dan singleton tanpa `qmldir`, mekanisme pemuatan plugin C++, nama sinyal Greetd, properti `NotificationServer`, serta opsi verbositas `-v`.
