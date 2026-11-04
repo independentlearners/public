@@ -1968,3 +1968,4 @@ Kurikulum ini sengaja menghindari ketergantungan pada GUI yang tidak dapat dikus
 [2]: ./bagian-3/README.md
 [3]: ./bagian-4/README.md
 [4]: ./bagian-5/README.md
+[5]: ./bagian-6/README.md
