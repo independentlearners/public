@@ -1,6053 +1,3480 @@
-# QML
+# Kurikulum Mastery Qt 6 — QML & Qt Quick (Edisi Revisi)
 
-<details>
-  <summary>JavaScript dalam QML Qt 6</summary>
+*Edisi revisi 4 November 2026 · Target Qt 6.12 LTS (minimal Qt 6.8) · Jalur terminal-centric di Arch Linux*
 
-# Kurikulum JavaScript dalam QML Qt 6 — Dasar hingga Expert
+## Catatan revisi
 
-Kurikulum ini dirancang khusus untuk memahami, membaca, menulis, menganalisis, men-debug, dan mengembangkan seluruh logika JavaScript yang digunakan di dalam lingkungan QML Qt 6.
+Edisi ini menyatukan dua dokumen asli (JavaScript dalam QML dan Mastery Qt 6) menjadi satu kurikulum dan menerapkan seluruh temuan audit.
 
-Batas pembelajaran: ini bukan kurikulum JavaScript umum. Kita tidak akan mempelajari JavaScript untuk browser, Node.js, frontend web, atau pengembangan aplikasi web. Kita hanya mempelajari bagian bahasa JavaScript, objek, API, mekanisme eksekusi, dan integrasi yang benar-benar relevan dengan QML.
+- **Akurasi:** `pragma ComponentBehavior` dibedakan dari `.pragma library`; `time` dihapus dari tipe dasar, sedangkan `font`, `matrix4x4`, dan `quaternion` ditambahkan; `qmlscene` ditandai deprecated; daftar style Controls diperbarui; delegate memakai `required property`; singleton dilengkapi sisi CMake; `main.cpp` lengkap; aturan `this` mengikuti dokumentasi; klaim yang belum terbukti (`async/await`, BigInt, object spread) ditandai **\[uji dulu\]**.
+- **Kelengkapan:** tujuh modul baru: 0.0 Orientasi, 0.3 Runtime & Bootstrap, 6.4 Qt Quick Ekstra, 10.7 Threading, 11.5 Kompilasi QML, 14.6 Menambah Fitur pada Proyek Asing, 14.7 Peta Keputusan Modul Qt.
+- **Template tetap** di setiap modul, kini dengan kesalahan umum, latihan, dan cek pemahaman.
+- **Struktur:** Dokumen 1 menjadi Bagian B (jalur pendalaman JavaScript) dengan tabel pemetaan; C++ menjadi jalur paralel; estimasi waktu disinkronkan; tabel progres mencakup semua fase.
+- **Format:** tautan bersih tanpa parameter pelacak dan dipin ke `/qt-6/`; tanpa gambar eksternal (diagram memakai teks).
+- **Batas verifikasi:** klaim teknis yang diaudit dicocokkan dengan dokumentasi resmi Qt, tetapi contoh kode belum dikompilasi dan tautan belum diuji otomatis. Rinciannya dan skrip validasi ada di Bagian E.
 
-Ada satu prinsip penting: JavaScript dalam QML bukan bahasa pemrograman yang sepenuhnya berbeda, tetapi JavaScript yang dijalankan dalam lingkungan QML dengan aturan, objek bawaan, batasan, dan integrasi khusus dari Qt. Karena itu, kita perlu memahami dua hal sekaligus:
+## Cara memakai kurikulum ini
 
-1. Sintaks dan perilaku JavaScript yang memang digunakan oleh QML.
-2. Cara Qt QML menjalankan, membatasi, dan menghubungkan JavaScript dengan objek serta sistem deklaratif QML.
+Dua jalur belajar memakai materi yang sama:
 
-Kurikulum ini disusun agar setelah menyelesaikannya, kode JavaScript dalam dokumen QML, file `.js`, signal handler, property binding, komponen, dan integrasi C++ tidak lagi menjadi bagian yang membingungkan ketika mempelajari QML.
+| Jalur | Untuk siapa | Rute |
+| --- | --- | --- |
+| A — Dasar | Tanpa latar belakang pemrograman | Modul 0.0 → Fase 0–7, dengan Bagian B Fase 0–9 dibaca paralel. Lanjut Fase 8–9 bila sudah nyaman. |
+| B — Penuh | Sudah bisa memprogram | Fase 0–14 berurutan; C++ dipelajari di jalur paralel mulai Fase 4. |
 
-## 1. Identitas dan batas teknis JavaScript dalam QML
+**Template modul.** Setiap modul memuat: *Deskripsi*, *Konsep & analogi*, *Contoh minimal* (dengan cara menjalankan), *Terminologi*, *Daftar isi*, *Kesalahan umum*, *Latihan 15 menit*, *Cek pemahaman*, dan *Referensi*. Kerjakan latihan sebelum membaca referensi.
 
-| Aspek          | Penjelasan                                                                                                          |
-| -------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Nama           | JavaScript in QML / QML JavaScript Environment                                                                      |
-| Platform       | Qt 6 — Qt QML                                                                                                       |
-| Mesin eksekusi | JavaScript engine yang disediakan Qt QML                                                                            |
-| Standar bahasa | Berbasis ECMAScript; dokumentasi Qt 6.10 menyebut implementasi ECMAScript edisi ke-7 dengan sejumlah fitur tambahan |
-| Fungsi utama   | Logika UI, perhitungan, manipulasi data, event handling, interaksi objek QML                                        |
-| Lokasi kode    | Inline di `.qml`, file `.js`, dan ECMAScript module `.mjs` yang didukung                                            |
-| Integrasi      | QML Object Model, Qt APIs, dan objek C++ yang diekspos ke QML                                                       |
-| Implementasi   | Qt ditulis terutama dalam C++; mesin JavaScript dan lapisan QML merupakan bagian dari ekosistem Qt                  |
+**Cara menjalankan contoh.** Simpan kode QML sebagai `Main.qml`, lalu jalankan `qml Main.qml` (nama executable di Arch dijelaskan di Bagian 4). CMake baru dipakai mulai Modul 0.2 untuk proyek multi-file.
 
-Sumber utama: dokumentasi resmi [JavaScript Host Environment](https://doc.qt.io/qt-6.10/qtqml-javascript-hostenvironment.html?utm_source=chatgpt.com) dan [Integrating QML and JavaScript](https://doc.qt.io/qt-6.10/qtqml-javascript-topic.html?utm_source=chatgpt.com).
+**Penanda versi.** `[≥6.5]` berarti fitur tersedia sejak Qt 6.5; tanpa penanda berarti sejak Qt 6.0. **\[uji dulu\]** berarti dokumentasi resmi tidak menjaminnya; buktikan dengan satu file uji di `qml`.
 
-### Apa yang tidak perlu dipelajari?
+## 1. Identitas teknologi dan ruang lingkup
 
-Kurikulum ini sengaja tidak memasukkan topik yang tidak menjadi bagian dari kebutuhan JavaScript dalam QML:
+Tiga istilah harus dibedakan:
 
-- DOM, `document`, `window`, dan manipulasi elemen HTML.
-- CSSOM dan browser rendering.
-- React, Vue, Angular, dan framework frontend.
-- Node.js, npm, Express, dan backend JavaScript.
-- Browser event API seperti `addEventListener()` sebagai mekanisme utama UI.
-- Web Storage seperti `localStorage` dan `sessionStorage`.
-- Service Worker, Web Worker, dan browser-specific API.
-- Build tools JavaScript web seperti Vite dan Webpack.
-
-Namun, beberapa konsep JavaScript umum tetap wajib dipahami karena memang digunakan di QML: variabel, tipe data, fungsi, objek, array, kondisi, perulangan, scope, closure, dan error handling.
-
-### Perbedaan penting yang wajib dipahami
-
-| Konsep             | JavaScript browser                           | JavaScript QML                                         |
-| ------------------ | -------------------------------------------- | ------------------------------------------------------ |
-| Global UI object   | `window`                                     | Tidak tersedia sebagai objek browser                   |
-| DOM                | Tersedia                                     | Tidak tersedia                                         |
-| UI event           | DOM event                                    | Signal dan signal handler QML                          |
-| UI state           | Biasanya dikelola melalui framework atau DOM | QML properties dan object state                        |
-| Reactive update    | Bergantung pada framework                    | Property binding bawaan QML                            |
-| Timer              | Browser timer API                            | QML `Timer`                                            |
-| HTTP               | `fetch()` dan XHR                            | API Qt Network atau `XMLHttpRequest` yang didukung QML |
-| UI component       | HTML element/framework                       | QML object dan component                               |
-| Module             | ECMAScript modules                           | QML imports, JavaScript resources, dan `.mjs`          |
-| Native integration | Bergantung pada browser API                  | QObject, Qt meta-object, dan C++                       |
-
-Jangan menyamakan lingkungan browser dengan QML. Dokumentasi Qt secara eksplisit menjelaskan bahwa host environment QML berbeda dari browser maupun Node.js.&#x20;
-
-[image](https://www.google.com/s2/favicons?domain=https://doc.qt.io\&sz=32)
-
-Qt 6.10.3+2
-
-
-
-## 2. Struktur kurikulum
-
-20 fase · 100+ kelompok materi · estimasi 12–18 minggu dengan 2–4 jam belajar per hari
-
-| Tahap | Fokus                                         | Tingkat         |
-| ----- | --------------------------------------------- | --------------- |
-| 0     | Orientasi JavaScript QML                      | Fondasi         |
-| 1     | Sintaks JavaScript yang digunakan QML         | Pemula          |
-| 2     | Variabel, tipe data, dan konversi             | Pemula          |
-| 3     | Operator dan ekspresi                         | Pemula          |
-| 4     | Kondisi dan perulangan                        | Pemula          |
-| 5     | Fungsi dan pemanggilan fungsi                 | Pemula–Menengah |
-| 6     | Array dan manipulasi koleksi                  | Menengah        |
-| 7     | Object dan manipulasi data                    | Menengah        |
-| 8     | Scope, closure, dan resolusi nama             | Menengah        |
-| 9     | JavaScript di dalam dokumen QML               | Menengah        |
-| 10    | QML global object dan API JavaScript          | Menengah        |
-| 11    | Property binding dan ekspresi deklaratif      | Menengah–Lanjut |
-| 12    | Signal, handler, dan event-driven logic       | Menengah–Lanjut |
-| 13    | JavaScript resources dan modularisasi         | Lanjut          |
-| 14    | QML data types dan konversi nilai             | Lanjut          |
-| 15    | Asynchronous dan pemrosesan berbasis event    | Lanjut          |
-| 16    | Interaksi JavaScript dengan Qt dan C++        | Lanjut–Expert   |
-| 17    | Object lifecycle dan memory management        | Expert          |
-| 18    | Debugging, analisis, dan optimasi             | Expert          |
-| 19    | Arsitektur dan rekayasa logika JavaScript QML | Expert          |
-
-Setiap fase di bawah menjelaskan tujuan, materi, sintaks yang harus dikenali, dan hasil kompetensi yang harus dicapai.
-
-## Fase 0 — Orientasi JavaScript dalam lingkungan QML
-
-Tujuan: memahami di mana JavaScript berada, bagaimana kode dijalankan, dan apa hubungannya dengan QML.
-
-Materi:
-
-1. Identitas JavaScript dalam Qt QML.
-2. Hubungan ECMAScript, JavaScript engine, Qt QML, dan QML language.
-3. Perbedaan JavaScript inline dan JavaScript resource.
-4. Perbedaan kode deklaratif QML dengan kode imperatif JavaScript.
-5. Bagian dokumen QML yang menerima ekspresi JavaScript.
-6. Bagian dokumen QML yang menerima deklarasi fungsi JavaScript.
-7. Perbedaan `.qml`, `.js`, dan `.mjs`.
-8. Cara JavaScript mengakses QML object.
-9. Cara QML memanggil fungsi JavaScript.
-10. Cara JavaScript membaca dan mengubah QML property.
-11. Perbedaan JavaScript dalam QML dengan JavaScript browser.
-12. Perbedaan JavaScript dalam QML dengan JavaScript Node.js.
-
-Contoh struktur:
+- **Qt**: framework lintas platform untuk sistem objek, event, jaringan, file, multimedia, dan grafis.
+- **QML**: bahasa deklaratif untuk mendeskripsikan objek, properti, hubungan antarnilai, dan hierarki komponen. Sintaksnya mirip JSON, tetapi bukan JSON dan bukan JavaScript biasa.
+- **Qt Quick**: modul antarmuka grafis berbasis QML: item visual, input, animasi, model-view, layout, scene graph.
 
 ```
-import QtQuick
-
-Item {
-    id: root
-
-    property int counter: 0
-
-    function increment() {
-        counter += 1
-    }
-
-    Component.onCompleted: {
-        increment()
-        console.log(counter)
-    }
-}
+Aplikasi Anda
+├── QML ............... deklaratif: apa yang ada dan bagaimana saling terhubung
+│   └── JavaScript .... imperatif: langkah-langkah, hidup di dalam QML
+├── Qt Quick .......... item visual, input, animasi, model-view
+├── Qt Quick Controls . komponen siap pakai + style
+├── Qt QML ............ engine: tipe, modul, binding, signal
+└── Qt Core / C++ ..... QObject, meta-object, thread, jaringan, file
+        └── Scene graph → RHI → OpenGL / Vulkan / Metal / Direct3D / Software
 ```
 
-Pahami setiap bagian:
-
-- `Item`: tipe objek QML.
-- `id`: identitas objek dalam scope QML.
-- `property int`: deklarasi property bertipe integer.
-- `function`: deklarasi fungsi JavaScript pada objek QML.
-- `counter += 1`: operasi JavaScript yang mengubah property QML.
-- `Component.onCompleted`: signal handler yang dijalankan setelah komponen selesai dibuat.
-- `console.log()`: fungsi logging dari lingkungan JavaScript QML.
-
-Kompetensi akhir: dapat membedakan kode QML dan JavaScript, serta mengetahui bagian mana yang sedang dibaca ketika menemukan kode campuran.
-
-Referensi: [JavaScript Expressions in QML Documents](https://doc.qt.io/qt-6.10/qtqml-javascript-expressions.html?utm_source=chatgpt.com).
-
-## Fase 1 — Sintaks JavaScript yang berlaku dalam QML
-
-Tujuan: dapat membaca seluruh bentuk sintaks dasar JavaScript yang lazim ditemukan dalam kode QML.
-
-Materi:
-
-1. Statement dan expression.
-2. Statement terminator `;`.
-3. Code block `{}`.
-4. Komentar satu baris `//`.
-5. Komentar banyak baris `/* ... */`.
-6. Identifier dan aturan penamaan.
-7. Keyword dan reserved words.
-8. Case sensitivity.
-9. Literal dan nilai literal.
-10. Parentheses dan grouping.
-11. Operator precedence.
-12. Associativity.
-13. Semicolon behavior dan automatic semicolon insertion.
-14. Nested expression.
-15. Nested function call.
-16. Object literal dan array literal.
-17. Destructuring syntax.
-18. Spread syntax.
-19. Template literal.
-20. Conditional expression.
-
-Contoh:
-
-```
-const result = (10 + 5) * 2;
-
-const message = `Total: ${result}`;
-
-const settings = {
-    enabled: true,
-    volume: 80
-};
-
-const { enabled, volume } = settings;
-```
-
-Istilah yang harus dikuasai:
-
-| Istilah          | Makna                                              |
-| ---------------- | -------------------------------------------------- |
-| Statement        | Instruksi yang dijalankan                          |
-| Expression       | Ekspresi yang menghasilkan nilai                   |
-| Literal          | Nilai yang ditulis secara langsung                 |
-| Identifier       | Nama variabel, fungsi, atau property               |
-| Scope            | Wilayah tempat identifier dapat diakses            |
-| Block            | Sekumpulan statement di dalam `{}`                 |
-| Destructuring    | Mengambil nilai dari array/object ke variabel      |
-| Spread           | Mengembangkan elemen iterable atau property object |
-| Template literal | String yang mendukung interpolasi ekspresi         |
-
-Kompetensi akhir: mampu membaca sintaks JavaScript tanpa harus menebak fungsi tanda baca, struktur blok, atau susunan ekspresi.
-
-## Fase 2 — Variabel, tipe data, dan konversi nilai
-
-Tujuan: memahami bagaimana JavaScript menyimpan dan memperlakukan nilai ketika bekerja dengan property dan object QML.
-
-### 2.1 Deklarasi variabel
-
-- `var`.
-- `let`.
-- `const`.
-- Perbedaan function scope dan block scope.
-- Reassignment.
-- Redeclaration.
-- Variable initialization.
-- Temporal Dead Zone secara konseptual.
-- Mengapa variabel harus dideklarasikan secara eksplisit dalam QML.
-
-Contoh:
-
-```
-let count = 10;
-count = 20;
-
-const maximum = 100;
-```
-
-Catatan penting: `const` mencegah binding variabel diarahkan ulang, tetapi tidak otomatis membuat isi object atau array menjadi immutable.
-
-### 2.2 Primitive data types
-
-- Number.
-- String.
-- Boolean.
-- `null`.
-- `undefined`.
-- Symbol dan BigInt sebagai konsep yang perlu dikenali, bukan prioritas penggunaan.
-- Perbedaan nilai primitive dan object.
-
-### 2.3 Number dan operasi numerik
-
-- Integer dan floating-point.
-- Bilangan negatif.
-- Decimal.
-- `NaN`.
-- `Infinity`.
-- `-Infinity`.
-- Pembulatan.
-- Presisi floating-point.
-- Pembagian dan modulo.
-- Konversi numerik.
-
-Contoh:
-
-```
-const width = 1920;
-const ratio = width / 2;
-const remainder = 10 % 3;
-```
-
-### 2.4 String
-
-- String literal.
-- Single quote dan double quote.
-- Template literal.
-- String interpolation.
-- Concatenation.
-- Escape characters.
-- String length.
-- Character access.
-- `includes()`.
-- `startsWith()`.
-- `endsWith()`.
-- `indexOf()`.
-- `slice()`.
-- `substring()`.
-- `replace()`.
-- `split()`.
-- `trim()`.
-- `toUpperCase()`.
-- `toLowerCase()`.
-
-### 2.5 Boolean dan truthiness
-
-- `true` dan `false`.
-- Truthy values.
-- Falsy values.
-- Boolean conversion.
-- Logical evaluation.
-- Short-circuit evaluation.
-
-### 2.6 Null dan undefined
-
-- Perbedaan `null` dan `undefined`.
-- Property yang belum diinisialisasi.
-- Property yang tidak ditemukan.
-- Pemeriksaan keberadaan nilai.
-- Default value.
-- Nullish coalescing `??`.
-- Optional chaining `?.`.
-
-### 2.7 Type conversion
-
-- Implicit conversion.
-- Explicit conversion.
-- `Number()`.
-- `String()`.
-- `Boolean()`.
-- `parseInt()`.
-- `parseFloat()`.
-- `typeof`.
-- `instanceof`.
-- Perbandingan nilai dengan tipe berbeda.
-
-### 2.8 Konversi JavaScript dan QML
-
-- JavaScript `number` dengan QML `int` dan `real`.
-- JavaScript `string` dengan QML `string`.
-- JavaScript `boolean` dengan QML `bool`.
-- JavaScript `Date` dengan QML `date`.
-- Konversi `QVariant`.
-- Nilai `undefined` dan `null` dalam interaksi QML.
-- Dampak konversi terhadap fungsi dan property.
-
-Kompetensi akhir: dapat memahami tipe nilai, melakukan konversi yang tepat, dan menghindari bug akibat perbedaan tipe.
-
-Referensi: [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html?utm_source=chatgpt.com).
-
-## Fase 3 — Operator dan ekspresi
-
-Tujuan: memahami seluruh operasi yang digunakan untuk menghitung, membandingkan, menggabungkan, dan mengendalikan nilai.
-
-Materi:
-
-1. Arithmetic operators: `+`, `-`, `*`, `/`, `%`, `**`.
-2. Assignment operators: `=`, `+=`, `-=`, `*=`, `/=`.
-3. Comparison operators: `==`, `===`, `!=`, `!==`, `>`, `<`, `>=`, `<=`.
-4. Logical operators: `&&`, `||`, `!`.
-5. Nullish coalescing: `??`.
-6. Optional chaining: `?.`.
-7. Conditional operator: `?:`.
-8. Unary operators.
-9. Increment dan decrement: `++`, `--`.
-10. String concatenation.
-11. `typeof`.
-12. `instanceof`.
-13. Operator precedence.
-14. Short-circuit evaluation.
-15. Assignment dalam ekspresi.
-16. Perbedaan equality dan strict equality.
-17. Ekspresi bersarang.
-18. Evaluasi ekspresi yang menghasilkan nilai.
-19. Efek samping dalam ekspresi.
-20. Ekspresi yang digunakan dalam QML property binding.
-
-Contoh:
-
-```
-Item {
-    property int widthValue: 500
-    property int heightValue: 300
-
-    property bool isLandscape:
-        widthValue > heightValue
-
-    property string orientation:
-        isLandscape ? "Landscape" : "Portrait"
-}
-```
-
-Kompetensi akhir: mampu membaca ekspresi kompleks dan memahami urutan evaluasinya.
-
-## Fase 4 — Kondisi dan perulangan
-
-Tujuan: menguasai alur eksekusi logika yang digunakan untuk memproses data dan menentukan perilaku UI.
-
-### 4.1 Conditional statements
-
-- `if`.
-- `else`.
-- `else if`.
-- Nested `if`.
-- Conditional operator `?:`.
-- `switch`.
-- `case`.
-- `break`.
-- `default`.
-
-### 4.2 Looping
-
-- `for`.
-- `while`.
-- `do...while`.
-- `for...of`.
-- `for...in`.
-- Nested loop.
-- Infinite loop.
-- Loop termination.
-
-### 4.3 Flow control
-
-- `break`.
-- `continue`.
-- `return`.
-- `throw`.
-- Early return.
-- Guard clause.
-- Nested control flow.
-
-### 4.4 Penggunaan dalam QML
-
-- Memilih tampilan berdasarkan nilai property.
-- Memproses daftar item.
-- Memvalidasi input.
-- Menentukan kondisi visibilitas.
-- Menghitung jumlah elemen.
-- Memproses konfigurasi.
-- Mengendalikan state komponen.
-- Menghindari loop yang menghambat UI.
-
-Contoh:
-
-```
-function getStatus(value) {
-    if (value >= 80)
-        return "High";
-
-    if (value >= 40)
-        return "Medium";
-
-    return "Low";
-}
-```
-
-Kompetensi akhir: mampu membuat dan membaca logika bercabang maupun perulangan tanpa kebingungan.
-
-## Fase 5 — Fungsi JavaScript dalam QML
-
-Tujuan: memahami fungsi sebagai unit utama logika, pemrosesan, dan komunikasi antarbagian kode.
-
-### 5.1 Function fundamentals
-
-- Function declaration.
-- Function expression.
-- Arrow function.
-- Anonymous function.
-- Function invocation.
-- Function call.
-- Function parameters.
-- Arguments.
-- Return value.
-- Default parameters.
-- Rest parameters.
-- Parameter passing.
-- Function composition.
-- Nested function.
-
-### 5.2 Function behavior
-
-- Local variable.
-- Function scope.
-- Lexical scope.
-- Closure.
-- Recursive function.
-- Callback function.
-- Higher-order function.
-- Pure function.
-- Impure function.
-- Side effect.
-- Function reference.
-- Function execution context.
-
-### 5.3 Fungsi khusus di QML
-
-- Fungsi yang dideklarasikan di dalam objek QML.
-- Fungsi yang dipanggil melalui `id`.
-- Fungsi yang mengakses property objek pemiliknya.
-- Fungsi yang mengakses objek lain melalui `id`.
-- Fungsi yang dipanggil dari signal handler.
-- Fungsi yang dipanggil dari file `.js`.
-- Fungsi yang mengembalikan nilai untuk property.
-- Fungsi yang mengubah property.
-- Fungsi yang menerima objek QML sebagai parameter.
-- Fungsi yang menerima dan mengembalikan data QML.
-- Perbedaan fungsi JavaScript biasa dengan method QObject.
-
-Contoh:
-
-```
-Item {
-    id: root
-
-    property int volume: 50
-
-    function setVolume(value) {
-        volume = Math.max(0, Math.min(value, 100));
-    }
-
-    Component.onCompleted: {
-        setVolume(75);
-    }
-}
-```
-
-### 5.4 Function design
-
-- Pemisahan fungsi berdasarkan tanggung jawab.
-- Fungsi kecil dan terfokus.
-- Validasi parameter.
-- Penanganan nilai kosong.
-- Pengembalian data terstruktur.
-- Penghindaran duplikasi.
-- Penghindaran efek samping yang tidak diperlukan.
-- Pemisahan logika perhitungan dan manipulasi UI.
-
-Kompetensi akhir: mampu membaca fungsi JavaScript yang kompleks, memahami sumber data dan hasilnya, serta menyusun fungsi reusable untuk QML.
-
-## Fase 6 — Array dan manipulasi koleksi
-
-Tujuan: memahami pemrosesan daftar data yang sering digunakan untuk model, menu, daftar aplikasi, konfigurasi, dan informasi UI.
-
-### 6.1 Array fundamentals
-
-- Array declaration.
-- Array literal.
-- Array indexing.
-- Array length.
-- Nested array.
-- Array of objects.
-- Multidimensional array.
-- Empty array.
-- Sparse array secara konseptual.
-
-### 6.2 Array operations
-
-- `push()`.
-- `pop()`.
-- `shift()`.
-- `unshift()`.
-- `splice()`.
-- `slice()`.
-- `concat()`.
-- `join()`.
-- `includes()`.
-- `indexOf()`.
-- `find()`.
-- `findIndex()`.
-- `filter()`.
-- `map()`.
-- `forEach()`.
-- `some()`.
-- `every()`.
-- `reduce()`.
-- `sort()`.
-- `reverse()`.
-
-### 6.3 Iteration
-
-- Iterasi menggunakan `for`.
-- Iterasi menggunakan `for...of`.
-- Iterasi menggunakan `forEach()`.
-- Iterasi dengan callback.
-- Index dan element.
-- Iterasi array objek.
-- Nested iteration.
-
-### 6.4 Transformasi data
-
-- Menyaring daftar.
-- Mengubah format data.
-- Mengurutkan daftar.
-- Menggabungkan daftar.
-- Menghapus duplikasi.
-- Menghitung total.
-- Mengelompokkan data.
-- Mencari elemen berdasarkan property.
-- Membuat salinan array.
-- Menghindari mutasi data yang tidak disengaja.
-
-Contoh:
-
-```
-const applications = [
-    { name: "Terminal", running: true },
-    { name: "Editor", running: false },
-    { name: "Browser", running: true }
-];
-
-const runningApps = applications.filter(
-    app => app.running
-);
-
-const appNames = runningApps.map(
-    app => app.name
-);
-```
-
-### 6.5 Array dalam QML
-
-- Array JavaScript sebagai property value.
-- Array yang disimpan dalam `var` property.
-- Array sebagai parameter fungsi.
-- Array sebagai return value.
-- Array untuk menghasilkan data model.
-- Perubahan array dan reaktivitas QML.
-- Perbedaan JavaScript Array dengan QML `list<T>`.
-- Perbedaan JavaScript Array dengan `QVariantList`.
-- Array-like object hasil konversi dari C++.
-
-Kompetensi akhir: dapat memproses koleksi data untuk UI dan memahami batasan reaktivitas ketika array dimodifikasi.
-
-## Fase 7 — Object dan manipulasi data
-
-Tujuan: memahami struktur object yang menjadi dasar representasi data dan konfigurasi dalam JavaScript QML.
-
-### 7.1 Object fundamentals
-
-- Object literal.
-- Property.
-- Key dan value.
-- Property access menggunakan dot notation.
-- Property access menggunakan bracket notation.
-- Nested object.
-- Object method.
-- Computed property name.
-- Object destructuring.
-- Object spread.
-
-### 7.2 Object operations
-
-- Membaca property.
-- Menambahkan property.
-- Mengubah property.
-- Menghapus property.
-- Memeriksa property.
-- Mengambil keys.
-- Mengambil values.
-- Mengambil entries.
-- Menggabungkan object.
-- Menyalin object.
-- Shallow copy.
-- Deep copy sebagai konsep.
-- Object reference.
-- Object mutation.
-
-### 7.3 Built-in object yang perlu dikenali
-
-- `Object`.
-- `Array`.
-- `String`.
-- `Number`.
-- `Boolean`.
-- `Math`.
-- `Date`.
-- `JSON`.
-- `RegExp`.
-- `Error`.
-- `Map` dan `Set` sebagai konsep serta fitur yang harus diverifikasi terhadap versi Qt yang dipakai.
-
-### 7.4 JSON
-
-- Pengertian JSON.
-- JSON object dan JavaScript object.
-- `JSON.parse()`.
-- `JSON.stringify()`.
-- Validasi JSON.
-- Error saat parsing.
-- Struktur konfigurasi.
-- Penyimpanan data konfigurasi.
-- Perbedaan data JSON dan object QML.
-
-Contoh:
-
-```
-const config = {
-    theme: "dark",
-    opacity: 0.95,
-    panel: {
-        visible: true,
-        position: "top"
-    }
-};
-
-const serialized = JSON.stringify(config);
-const restored = JSON.parse(serialized);
-```
-
-### 7.5 Object dalam QML
-
-- Membuat object JavaScript.
-- Menggunakan object sebagai `var` property.
-- Mengirim object ke fungsi.
-- Mengembalikan object dari fungsi.
-- Mengakses property object dari QML.
-- Menggunakan object sebagai data komponen.
-- Perbedaan object JavaScript dan QML object.
-- Perbedaan object JavaScript dan QObject.
-- Referensi object QML dari JavaScript.
-
-Kompetensi akhir: mampu membaca dan membangun struktur data yang digunakan oleh komponen QML.
-
-## Fase 8 — Scope, closure, dan resolusi nama
-
-Tujuan: memahami bagaimana JavaScript menemukan variabel, fungsi, dan property ketika kode berada dalam hierarki objek QML.
-
-Ini merupakan fase penting. Banyak kesalahan QML bukan disebabkan sintaks yang salah, melainkan karena identifier tidak ditemukan atau mengarah ke objek yang berbeda dari yang dimaksud.
-
-### 8.1 JavaScript scope
-
-- Global scope.
-- Function scope.
-- Block scope.
-- Lexical scope.
-- Local variable.
-- Outer scope.
-- Scope chain.
-- Variable shadowing.
-- Name collision.
-- Closure.
-- Hoisting.
-- Temporal Dead Zone.
-
-### 8.2 QML scope
-
-- Document scope.
-- Object scope.
-- Component scope.
-- ID scope.
-- Context properties.
-- Imported namespaces.
-- JavaScript resource scope.
-- QML global object.
-- Scope extension.
-- Identifier resolution.
-- Property shadowing.
-
-### 8.3 Resolusi nama
-
-- Bagaimana QML mencari identifier.
-- Prioritas nama lokal.
-- Akses terhadap property objek.
-- Akses melalui `id`.
-- Konflik nama variabel dengan property.
-- Konflik nama antarobjek.
-- Konflik nama dengan global object.
-- Akses identifier dari file JavaScript.
-- Perbedaan scope script biasa dan shared library.
-
-### 8.4 `this` dan konteks pemanggilan
-
-- Arti `this` dalam fungsi JavaScript.
-- Perbedaan regular function dan arrow function.
-- `this` dalam callback.
-- `this` dalam event handler.
-- Konteks objek QML.
-- Penggunaan `this` secara aman.
-- Mengapa `id` sering lebih jelas daripada mengandalkan `this`.
-
-Contoh:
-
-```
-Item {
-    id: root
-
-    property int count: 0
-
-    function increment() {
-        count += 1;
-    }
-
-    Item {
-        id: child
-
-        function report() {
-            console.log(root.count);
-        }
-    }
-}
-```
-
-Kompetensi akhir: dapat menelusuri asal identifier dan menjelaskan mengapa suatu variabel atau property dapat atau tidak dapat diakses.
-
-Referensi: [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html?utm_source=chatgpt.com).
-
-## Fase 9 — JavaScript di dalam dokumen QML
-
-Tujuan: menguasai semua lokasi dan bentuk penggunaan JavaScript dalam file `.qml`.
-
-Materi:
-
-1. JavaScript dalam property binding.
-2. JavaScript dalam property initialization.
-3. JavaScript dalam function declaration.
-4. JavaScript dalam signal handler.
-5. JavaScript dalam inline component.
-6. JavaScript dalam `Component.onCompleted`.
-7. JavaScript dalam `Component.onDestruction`.
-8. JavaScript dalam `Binding`.
-9. JavaScript dalam `State`.
-10. JavaScript dalam `Transition`.
-11. JavaScript dalam `Behavior`.
-12. JavaScript dalam `Timer` handler.
-13. JavaScript dalam `Connections`.
-14. JavaScript dalam `Instantiator` dan model-related handler.
-15. JavaScript dalam callback komponen.
-16. JavaScript dalam fungsi yang dipanggil oleh komponen lain.
-17. JavaScript yang menggunakan `id`.
-18. JavaScript yang mengakses property objek.
-19. JavaScript yang mengakses attached properties.
-20. JavaScript yang menggunakan enum QML.
-21. JavaScript dalam ekspresi conditional.
-22. JavaScript dalam ekspresi nested.
-23. Perbedaan deklarasi dan pemanggilan fungsi.
-24. Perbedaan property value dan property binding.
-
-Contoh:
-
-```
-import QtQuick
-
-Rectangle {
-    id: root
-
-    property bool active: false
-    color: active ? "green" : "gray"
-
-    function toggle() {
-        active = !active;
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: root.toggle()
-    }
-}
-```
-
-Pahami bahwa `color: active ? ...` merupakan ekspresi JavaScript yang digunakan sebagai property binding QML, sedangkan `onClicked` merupakan handler untuk signal.
-
-Kompetensi akhir: mampu membaca kode JavaScript yang ditempatkan di berbagai bagian dokumen QML dan memahami konteks eksekusinya.
-
-## Fase 10 — QML global object dan API JavaScript
-
-Tujuan: mengenal objek serta fungsi yang disediakan oleh Qt untuk digunakan dari JavaScript.
-
-### 10.1 Global objects
-
-- `Qt`.
-- `console`.
-- `print()`.
-- `gc()`.
-- `qsTr()`.
-- `qsTranslate()`.
-- `qsTrId()`.
-- Fungsi dan macro translasi yang tersedia di lingkungan QML.
-
-### 10.2 Qt object
-
-Pelajari fungsi dan property yang disediakan objek `Qt`, termasuk:
-
-- Pembuatan nilai QML seperti `Qt.point()`, `Qt.size()`, `Qt.rect()`, dan `Qt.vector3d()`.
-- `Qt.binding()`.
-- `Qt.createComponent()`.
-- `Qt.createQmlObject()`.
-- `Qt.callLater()`.
-- `Qt.openUrlExternally()`.
-- Fungsi warna dan konversi terkait.
-- Fungsi informasi aplikasi dan platform yang tersedia pada versi Qt yang digunakan.
-
-Jangan hanya menghafal nama API. Untuk setiap API, pelajari tujuan, parameter, tipe return, efek samping, batasan, dan contoh penggunaan.
-
-### 10.3 Console API
-
-- `console.log()`.
-- `console.info()`.
-- `console.warn()`.
-- `console.error()`.
-- `console.debug()`.
-- `console.trace()` apabila tersedia.
-- Penggunaan logging untuk menelusuri alur program.
-- Membaca pesan warning dan error QML.
-
-### 10.4 Built-in JavaScript API yang digunakan
-
-- `Math`.
-- `JSON`.
-- `Date`.
-- `Object`.
-- `Array`.
-- `String`.
-- `Number`.
-- `RegExp`.
-- `Error`.
-- `Promise` jika digunakan oleh fitur yang didukung pada versi Qt sasaran.
-
-### 10.5 API khusus lingkungan QML
-
-- `XMLHttpRequest`.
-- `DOMException`.
-- Fitur tambahan pada prototype `String`.
-- Fitur tambahan pada prototype `Date` dan `Number`.
-- Perilaku `instanceof` untuk QML types.
-- Perbedaan API global QML dengan browser API.
-
-Kompetensi akhir: mampu mengenali API bawaan QML dan mengetahui kapan menggunakan API Qt dibandingkan built-in JavaScript.
-
-Referensi: [QML Global Object](https://doc.qt.io/qt-6/qtqml-javascript-qmlglobalobject.html?utm_source=chatgpt.com) dan [JavaScript Host Environment](https://doc.qt.io/qt-6.10/qtqml-javascript-hostenvironment.html?utm_source=chatgpt.com).
-
-## Fase 11 — Property binding dan ekspresi deklaratif
-
-Tujuan: memahami interaksi terpenting antara JavaScript dan sistem reaktivitas QML.
-
-Property binding bukan sekadar ekspresi JavaScript biasa. QML engine mengawasi dependency dari ekspresi binding dan mengevaluasinya kembali ketika dependency berubah.&#x20;
-
-[image](https://www.google.com/s2/favicons?domain=https://doc.qt.io\&sz=32)
-
-Qt 6.12.0+1
-
-
-
-### 11.1 Binding fundamentals
-
-- Property assignment.
-- Property initialization.
-- Property binding.
-- Binding expression.
-- Binding dependency.
-- Dependency tracking.
-- Binding evaluation.
-- Binding reevaluation.
-- Binding lifetime.
-- Binding removal.
-- Binding restoration.
-
-### 11.2 Dependency tracking
-
-- Membaca property sebagai dependency.
-- Dependency langsung.
-- Dependency tidak langsung.
-- Nested property dependency.
-- Dependency dalam fungsi.
-- Dependency dari objek lain.
-- Dependency yang berubah.
-- Dependency yang tidak terdeteksi karena pola akses tertentu.
-
-### 11.3 JavaScript dalam binding
-
-- Arithmetic expression.
-- Conditional expression.
-- Function call.
-- Array access.
-- Object property access.
-- Ternary expression.
-- Logical expression.
-- Multiple dependencies.
-- Nested expressions.
-- Penggunaan fungsi helper.
-
-### 11.4 Imperative assignment versus binding
-
-- Binding deklaratif.
-- Assignment imperatif.
-- Perbedaan `property: expression` dan `property = value`.
-- Bagaimana assignment dapat menggantikan binding.
-- Cara mempertahankan binding.
-- `Qt.binding()`.
-- Binding melalui `Binding` type.
-- Binding yang bergantung pada kondisi.
-
-### 11.5 Binding pitfalls
-
-- Binding loop.
-- Binding hilang.
-- Binding yang tidak dievaluasi ulang sesuai harapan.
-- Efek samping di dalam binding.
-- Pemanggilan fungsi yang mengubah state.
-- Ekspresi mahal.
-- Ketergantungan tersembunyi.
-- Binding yang terlalu kompleks.
-
-### 11.6 Desain binding
-
-- Binding sederhana.
-- Binding berantai.
-- Pemisahan ekspresi kompleks.
-- Menggunakan property perantara.
-- Memisahkan kalkulasi dari perubahan state.
-- Menghindari imperative logic yang tidak perlu.
-
-Contoh:
-
-```
-Item {
-    id: root
-
-    property int screenWidth: 1200
-    property int panelWidth: screenWidth * 0.25
-
-    property bool compact:
-        screenWidth < 800
-
-    property int effectiveWidth:
-        compact ? 80 : panelWidth
-}
-```
-
-Kompetensi akhir: mampu menjelaskan kapan suatu binding dievaluasi, apa dependency-nya, mengapa binding terputus, dan bagaimana memperbaikinya.
-
-Referensi: [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html?utm_source=chatgpt.com).
-
-## Fase 12 — Signal, handler, dan event-driven JavaScript
-
-Tujuan: memahami bagaimana JavaScript bereaksi terhadap peristiwa dalam sistem objek QML.
-
-### 12.1 Signal fundamentals
-
-- Pengertian signal.
-- Signal declaration.
-- Signal emission.
-- Signal parameters.
-- Signal handler.
-- Handler naming convention.
-- Signal connection.
-- Signal-to-function connection.
-
-### 12.2 Signal handler
-
-- `onClicked`.
-- `onPressed`.
-- `onReleased`.
-- `onTriggered`.
-- `onCompleted`.
-- `onDestruction`.
-- Handler dengan parameter.
-- Handler tanpa parameter.
-- Handler dengan blok JavaScript.
-- Memanggil fungsi dari handler.
-
-### 12.3 Connections
-
-- `Connections` type.
-- `target`.
-- Signal handler pada `Connections`.
-- `ignoreUnknownSignals`.
-- Hubungan signal dengan object yang tidak berada dalam hierarki langsung.
-- Menghubungkan dan memisahkan komunikasi antarobjek.
-
-### 12.4 Event-driven logic
-
-- Event source.
-- Event handler.
-- Callback.
-- State transition.
-- Event sequencing.
-- Event propagation sebagai konsep pembeda dari DOM.
-- Re-entrancy.
-- Multiple signal listeners.
-- Event-driven architecture.
-
-### 12.5 Attached dan lifecycle signals
-
-- `Component.onCompleted`.
-- `Component.onDestruction`.
-- `Timer.onTriggered`.
-- Signal dari Qt Quick Controls.
-- Signal dari model dan delegate.
-- Signal dari custom QML component.
-
-### 12.6 Desain komunikasi
-
-- Signal untuk pemberitahuan.
-- Function untuk permintaan tindakan.
-- Property untuk state.
-- Signal untuk loose coupling.
-- Menghindari ketergantungan antarobjek yang berlebihan.
-
-Kompetensi akhir: mampu membaca jalur komunikasi antarobjek dan memahami bagaimana interaksi pengguna memicu logika JavaScript.
-
-## Fase 13 — JavaScript resources dan modularisasi
-
-Tujuan: memahami cara memisahkan logika JavaScript dari dokumen QML agar kode dapat dikelola dan digunakan kembali.
-
-### 13.1 JavaScript resource
-
-- Pengertian JavaScript resource.
-- File `.js`.
-- File `.mjs`.
-- Inline JavaScript.
-- Code-behind resource.
-- Shared JavaScript library.
-- Stateless library.
-- Stateful resource.
-
-### 13.2 Import JavaScript
-
-- `import "file.js" as Logic`.
-- Namespace qualifier.
-- Pemanggilan fungsi melalui qualifier.
-- Relative URL.
-- Absolute URL.
-- Import JavaScript dari QML.
-- Import JavaScript dari JavaScript.
-- Import QML module dari JavaScript.
-- ECMAScript module import dan export.
-- Perbedaan `.import` dan `import` ECMAScript.
-- Penggunaan `.mjs` dalam QML.
-
-### 13.3 JavaScript pragmas
-
-- `.pragma library`.
-- Dampak shared library.
-- Shared state.
-- Stateless library.
-- Perbedaan import biasa dan shared library.
-- Pengaruh import terhadap scope.
-- Batasan penggunaan global variable.
-
-### 13.4 Resource architecture
-
-- Pemisahan UI dan logic.
-- Utility functions.
-- Data transformation modules.
-- Configuration modules.
-- Validation modules.
-- Reusable business logic.
-- Modul yang bergantung pada QML.
-- Modul JavaScript yang independen dari objek QML.
-- Dependency organization.
-- Circular dependency sebagai masalah desain.
-
-### 13.5 Lifecycle dan instance isolation
-
-- Satu resource untuk banyak komponen.
-- Isolasi state setiap instance.
-- Shared state antar-instance.
-- Kapan menggunakan `.pragma library`.
-- Kapan menghindari shared mutable state.
-- Pengaruh instance component terhadap state JavaScript.
-
-Contoh:
-
-```
-import QtQuick
-import "MathUtils.js" as MathUtils
-
-Item {
-    property int result: MathUtils.add(10, 20)
-}
-```
-
-```
-// MathUtils.js
-
-function add(a, b) {
-    return a + b;
-}
-```
-
-Kompetensi akhir: mampu menentukan apakah logika sebaiknya ditulis inline, dipisahkan menjadi `.js`, atau dibuat sebagai modul `.mjs`.
-
-Referensi: [Importing JavaScript Resources in QML](https://doc.qt.io/qt-6/qtqml-javascript-imports.html?utm_source=chatgpt.com) dan [Defining JavaScript Resources in QML](https://doc.qt.io/qt-6.8/qtqml-javascript-resources.html?utm_source=chatgpt.com).
-
-## Fase 14 — QML data types dan konversi nilai
-
-Tujuan: memahami bagaimana JavaScript berinteraksi dengan sistem tipe QML dan tipe data Qt.
-
-Materi:
-
-1. JavaScript primitive dan QML value types.
-2. QML `int`, `real`, `bool`, dan `string`.
-3. QML `url`.
-4. QML `color`.
-5. QML `date`.
-6. QML `point`, `size`, dan `rect`.
-7. QML vector types.
-8. QML `var`.
-9. QML `list<T>`.
-10. JavaScript Array.
-11. JavaScript Object.
-12. QML object reference.
-13. QObject reference.
-14. QVariant.
-15. QVariantList.
-16. QVariantMap.
-17. QDateTime dan JavaScript Date.
-18. QByteArray dan ArrayBuffer.
-19. Konversi parameter fungsi.
-20. Konversi nilai return.
-21. Perbedaan nilai JavaScript dan nilai QML.
-22. Perbedaan object JavaScript dan QObject.
-23. Mutasi data hasil konversi.
-24. Batasan konversi tipe.
-
-Kompetensi akhir: mampu memahami tipe data yang dikirim dan diterima dari QML maupun C++, serta mengetahui risiko konversinya.
-
-Referensi: [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html?utm_source=chatgpt.com).
-
-## Fase 15 — Asynchronous dan pemrosesan berbasis event
-
-Tujuan: memahami bagaimana kode JavaScript menangani pekerjaan yang tidak langsung menghasilkan hasil, khususnya ketika berhubungan dengan jaringan, resource, dan operasi yang berjalan kemudian.
-
-### 15.1 Dasar asynchronous
-
-- Synchronous execution.
-- Asynchronous execution.
-- Call stack.
-- Event loop secara konseptual.
-- Callback.
-- Callback nesting.
-- Callback error.
-- Event-driven execution.
-- Urutan eksekusi.
-
-### 15.2 Promise
-
-- Promise.
-- Pending.
-- Fulfilled.
-- Rejected.
-- `then()`.
-- `catch()`.
-- `finally()`.
-- Promise chaining.
-- Promise error propagation.
-- Promise composition.
-- `Promise.all()` dan metode lain jika didukung oleh runtime sasaran.
-
-### 15.3 Async dan await
-
-- `async` function.
-- `await`.
-- Return value.
-- Error handling.
-- `try...catch`.
-- Asynchronous function composition.
-- Batasan dukungan `async`/`await` pada versi Qt dan konteks eksekusi yang digunakan.
-
-### 15.4 Timer
-
-- QML `Timer`.
-- `interval`.
-- `repeat`.
-- `running`.
-- `triggeredOnStart`.
-- `onTriggered`.
-- Start, stop, dan restart.
-- Timer sebagai mekanisme penjadwalan UI.
-- Perbedaan QML Timer dengan browser timer.
-
-### 15.5 Network
-
-- `XMLHttpRequest` yang tersedia dalam QML.
-- `open()`.
-- `send()`.
-- `onreadystatechange`.
-- `onload`.
-- `onerror`.
-- HTTP response.
-- Status code.
-- JSON response.
-- Network error.
-- Request lifecycle.
-
-### 15.6 Operasi asynchronous QML
-
-- `Qt.callLater()`.
-- `Component` asynchronous loading.
-- `Loader`.
-- Status loading.
-- Resource loading.
-- `WorkerScript`.
-- Pengiriman pesan antarthread melalui WorkerScript.
-- Pembatasan objek yang dapat diakses dari WorkerScript.
-- Cancellation dan timeout sebagai persoalan desain.
-- Race condition.
-- Stale result.
-- Penanganan request berulang.
-
-### 15.7 Memilih API asynchronous
-
-| Kebutuhan                      | API yang dipelajari                           |
-| ------------------------------ | --------------------------------------------- |
-| Menjadwalkan aksi UI           | `Qt.callLater()`                              |
-| Menjalankan kode berkala       | QML `Timer`                                   |
-| Memuat komponen                | `Component` dan `Loader`                      |
-| HTTP sederhana dari JavaScript | `XMLHttpRequest`                              |
-| Jaringan aplikasi Qt           | `QNetworkAccessManager` melalui integrasi C++ |
-| Pekerjaan terpisah             | `WorkerScript` atau fasilitas threading Qt    |
-
-Kompetensi akhir: mampu memahami urutan eksekusi, mengelola hasil operasi asynchronous, dan mencegah kesalahan akibat operasi yang selesai tidak berurutan.
-
-Catatan: jangan mengasumsikan semua API browser atau semua fitur ECMAScript modern tersedia dalam setiap versi Qt. Periksa versi runtime dan dokumentasi API yang menjadi target.
-
-## Fase 16 — Integrasi JavaScript dengan Qt dan C++
-
-Tujuan: memahami batas antara JavaScript yang berjalan di QML dan objek native yang berasal dari Qt/C++.
-
-Fase ini tidak bertujuan menjadikan peserta ahli C++. Fokusnya adalah memahami bagaimana kode JavaScript QML memanggil dan menerima data dari kode native.
-
-### 16.1 QObject fundamentals
-
-- QObject.
-- Object instance.
-- Object property.
-- Object method.
-- Signal dan slot.
-- Meta-object system.
-- Q_PROPERTY.
-- Q_INVOKABLE.
-- Q_ENUM.
-- QML type registration.
-- Object ownership.
-
-### 16.2 JavaScript memanggil C++
-
-- Mengakses QObject dari QML.
-- Membaca property C++.
-- Mengubah property C++.
-- Memanggil method C++.
-- Menerima return value.
-- Memanggil method dengan parameter.
-- Menangani signal C++.
-- Memahami enum C++ dari QML.
-
-### 16.3 Data conversion
-
-- `QVariant`.
-- `QJSValue`.
-- `QVariantList`.
-- `QVariantMap`.
-- `QString`.
-- `QUrl`.
-- `QDateTime`.
-- `QByteArray`.
-- Array dan object JavaScript.
-- Konversi dua arah.
-- Custom value types.
-
-### 16.4 JavaScript engine
-
-- `QJSEngine`.
-- `QJSValue`.
-- Evaluasi JavaScript dari C++.
-- Pembuatan object JavaScript.
-- Pemanggilan fungsi JavaScript dari C++.
-- Pertukaran data.
-- Error dan exception.
-- Engine ownership.
-- Perbedaan `QJSEngine` dengan `QQmlEngine`.
-
-### 16.5 Desain integrasi
-
-- Logika UI di QML.
-- Logika sistem di C++.
-- Business logic.
-- Native service.
-- API boundary.
-- Data contract.
-- Pemisahan tanggung jawab.
-- Validasi data lintas bahasa.
-- Error propagation.
-
-Kompetensi akhir: mampu membaca kode JavaScript yang berkomunikasi dengan objek C++ dan memahami kontrak data yang digunakan.
-
-Referensi: [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html?utm_source=chatgpt.com) dan dokumentasi [QJSEngine](https://doc.qt.io/qt-6/qjsengine.html?utm_source=chatgpt.com) serta [QJSValue](https://doc.qt.io/qt-6/qjsvalue.html?utm_source=chatgpt.com).
-
-## Fase 17 — Object lifecycle dan memory management
-
-Tujuan: memahami bagaimana object JavaScript dan QML dibuat, digunakan, dan dilepaskan.
-
-Materi:
-
-1. JavaScript object creation.
-2. Object references.
-3. Reference assignment.
-4. Object reachability.
-5. Garbage collection.
-6. Garbage collection dalam JavaScript engine QML.
-7. `gc()`.
-8. QObject ownership.
-9. Parent-child ownership.
-10. QML object lifecycle.
-11. Component creation.
-12. Dynamic object creation.
-13. `Component.createObject()`.
-14. `Qt.createQmlObject()`.
-15. `destroy()`.
-16. Object references yang masih tersimpan.
-17. Memory retention.
-18. Circular references sebagai konsep.
-19. Shared JavaScript state.
-20. Resource lifecycle.
-21. Perbedaan lifecycle JavaScript object dan QObject.
-22. Risiko menyimpan referensi objek yang sudah tidak relevan.
-
-### Perbandingan penting
-
-| Aspek                 | JavaScript object              | QObject                                        |
-| --------------------- | ------------------------------ | ---------------------------------------------- |
-| Pengelolaan memori    | Garbage collection JavaScript  | Qt object ownership dan mekanisme QObject      |
-| Identitas             | Referensi JavaScript           | Identitas objek native                         |
-| Lifecycle             | Bergantung pada reachability   | Bergantung pada ownership dan lifecycle native |
-| Hubungan parent-child | Tidak otomatis seperti QObject | Memiliki parent-child ownership                |
-| Penghapusan           | Dikelola engine                | Dapat dipengaruhi parent dan pemilik objek     |
-
-Kompetensi akhir: dapat memahami risiko penggunaan object reference dan lifecycle ketika JavaScript bekerja dengan objek QML/native.
-
-## Fase 18 — Debugging, analisis, dan optimasi JavaScript QML
-
-Tujuan: dapat menemukan penyebab kesalahan dan meningkatkan kualitas kode JavaScript dalam aplikasi QML.
-
-### 18.1 Error handling
-
-- Syntax error.
-- Reference error.
-- Type error.
-- Range error.
-- Runtime error.
-- `try`.
-- `catch`.
-- `finally`.
-- `throw`.
-- Error object.
-- Error propagation.
-- Error dalam signal handler.
-- Error dalam callback.
-- Error dalam file JavaScript.
-
-### 18.2 Debugging
-
-- `console.log()`.
-- `console.warn()`.
-- `console.error()`.
-- Menelusuri pemanggilan fungsi.
-- Menelusuri perubahan property.
-- Memeriksa nilai parameter.
-- Memeriksa return value.
-- Mendeteksi identifier yang tidak ditemukan.
-- Mendeteksi binding loop.
-- Mendeteksi binding yang terputus.
-- Menganalisis error pada JavaScript resource.
-
-### 18.3 Qt tooling
-
-- QML debugging.
-- Qt Creator debugger.
-- QML Profiler.
-- `qmllint`.
-- `qmlls`.
-- `qmlformat`.
-- Qt Quick debugging.
-- Logging kategori Qt.
-- QML warnings.
-- Static analysis.
-
-### 18.4 Performance
-
-- Biaya pemanggilan fungsi.
-- Ekspresi binding yang mahal.
-- Loop besar.
-- Array transformation.
-- Object creation.
-- Repeated calculation.
-- Excessive signal handling.
-- Excessive property mutation.
-- Memory allocation.
-- Garbage collection overhead.
-- Memisahkan pekerjaan berat dari UI thread.
-- Memilih C++ untuk pekerjaan yang lebih tepat dilakukan secara native.
-
-### 18.5 Code quality
-
-- Naming convention.
-- Single responsibility.
-- Reusable functions.
-- Data validation.
-- Error boundary.
-- Modularization.
-- Avoiding hidden side effects.
-- Consistent return values.
-- Readability.
-- Maintainability.
-- Testability.
-
-Kompetensi akhir: mampu menganalisis kode JavaScript QML yang bermasalah, mencari sumber error, dan memperbaiki struktur serta performanya.
-
-## Fase 19 — Arsitektur dan rekayasa logika JavaScript QML
-
-Tujuan: mencapai kemampuan merancang sistem logika JavaScript yang dapat digunakan dalam proyek QML berskala besar.
-
-### 19.1 Arsitektur kode
-
-- Inline logic architecture.
-- Code-behind architecture.
-- JavaScript resource architecture.
-- Shared library architecture.
-- Stateless utility architecture.
-- Stateful module architecture.
-- Singleton integration.
-- Service-oriented logic.
-- Component-oriented logic.
-- Data-driven architecture.
-
-### 19.2 Separation of concerns
-
-- UI presentation.
-- UI state.
-- Data transformation.
-- Validation.
-- Business logic.
-- Native service.
-- Configuration.
-- Event handling.
-- Persistence.
-- Network access.
-
-### 19.3 State management
-
-- Local state.
-- Shared state.
-- Global state.
-- Singleton state.
-- State ownership.
-- State synchronization.
-- State mutation.
-- State consistency.
-- Derived state.
-- State transition.
-- Avoiding duplicated state.
-
-### 19.4 Reusable logic
-
-- Reusable function.
-- Reusable JavaScript module.
-- Utility library.
-- Validation library.
-- Data formatter.
-- Configuration parser.
-- Component helper.
-- Service wrapper.
-- Error handler.
-- Shared constants.
-
-### 19.5 Advanced QML JavaScript
-
-- QML-specific JavaScript extensions.
-- QML type checking.
-- Dynamic component creation.
-- Dynamic object interaction.
-- Runtime type inspection.
-- Custom QML types.
-- JavaScript and custom C++ types.
-- Engine configuration.
-- QML engine restrictions.
-- Compatibility across Qt 6 versions.
-
-### 19.6 Source code investigation
-
-- Membaca dokumentasi Qt.
-- Membaca QML type reference.
-- Menelusuri API implementation.
-- Memeriksa Qt source code.
-- Memahami perubahan API antarversi.
-- Membaca release notes.
-- Membuat minimal reproducible example.
-- Menguji asumsi melalui eksperimen.
-- Menulis dokumentasi teknis.
-- Melakukan code review.
-
-Kompetensi akhir: mampu merancang, mengorganisasi, menguji, dan memelihara sistem JavaScript QML yang modular, konsisten, dan dapat dikembangkan.
-
-## 3. Materi tambahan yang wajib dipahami lintas fase
-
-Ada beberapa konsep yang tidak cukup dipelajari hanya dalam satu fase. Konsep ini harus dipahami berulang kali karena menjadi dasar membaca kode QML yang kompleks.
-
-| Konsep              | Harus dikuasai sampai tingkat                                   |
-| ------------------- | --------------------------------------------------------------- |
-| Function            | Bisa menelusuri parameter, scope, pemanggilan, dan return value |
-| Object              | Bisa memahami struktur dan referensi object                     |
-| Array               | Bisa membaca dan memodifikasi koleksi data                      |
-| Scope               | Bisa menentukan asal setiap identifier                          |
-| Closure             | Bisa memahami fungsi yang mengakses variabel dari scope luar    |
-| Binding             | Bisa mengetahui dependency dan mekanisme evaluasi ulang         |
-| Signal handler      | Bisa menelusuri komunikasi dan urutan event                     |
-| JavaScript resource | Bisa memahami import, shared state, dan isolasi instance        |
-| QML global object   | Bisa mengenali API bawaan Qt                                    |
-| Type conversion     | Bisa memahami perpindahan data antara JavaScript, QML, dan C++  |
-| Asynchronous        | Bisa memahami urutan operasi yang tidak langsung selesai        |
-| Object lifecycle    | Bisa memahami masa hidup object dan referensinya                |
-| Debugging           | Bisa menemukan penyebab kesalahan tanpa menebak                 |
-
-## 4. Tools dan lingkungan pembelajaran
-
-Tidak diperlukan lingkungan JavaScript browser maupun Node.js. Gunakan lingkungan Qt 6 secara langsung.
-
-| Tools          | Kegunaan                                               | Status                   |
-| -------------- | ------------------------------------------------------ | ------------------------ |
-| Qt 6 SDK       | Menyediakan runtime dan library QML                    | Wajib                    |
-| Qt Declarative | Modul implementasi QML                                 | Wajib                    |
-| Qt Quick       | Membuat aplikasi visual untuk eksperimen               | Wajib                    |
-| `qml`          | Menjalankan dokumen QML, jika tersedia dalam instalasi | Wajib untuk workflow CLI |
-| `qmllint`      | Menganalisis kesalahan dan kualitas QML                | Wajib                    |
-| `qmlls`        | Language Server untuk QML                              | Sangat disarankan        |
-| `qmlformat`    | Memformat kode QML                                     | Disarankan               |
-| Qt Creator     | Debugging dan profiling                                | Opsional                 |
-| Neovim         | Editor dan integrasi LSP                               | Opsional                 |
-| Git            | Melacak eksperimen dan perubahan kode                  | Disarankan               |
-
-Catatan implementasi: Qt ditulis terutama menggunakan C++, sedangkan JavaScript yang digunakan di dalam QML dijalankan oleh JavaScript engine Qt. Untuk mengembangkan library JavaScript QML sendiri, cukup kuasai JavaScript yang relevan, QML, struktur modul, dan API Qt. C++ baru diperlukan ketika ingin membuat integrasi native, custom QObject, atau memperluas kemampuan engine dan framework.
-
-### Workflow belajar yang disarankan
-
-```
-qml-js-lab/
-├── 00-basics/
-│   ├── variables.qml
-│   ├── expressions.qml
-│   └── functions.qml
-├── 01-data/
-│   ├── arrays.qml
-│   ├── objects.qml
-│   └── json.qml
-├── 02-scope/
-│   ├── scope.qml
-│   └── closure.qml
-├── 03-binding/
-│   ├── basic.qml
-│   ├── dependencies.qml
-│   └── binding-loss.qml
-├── 04-signals/
-│   ├── handlers.qml
-│   └── connections.qml
-├── 05-resources/
-│   ├── main.qml
-│   └── js/
-│       ├── utilities.js
-│       └── calculations.js
-├── 06-async/
-│   ├── timer.qml
-│   └── network.qml
-├── 07-integration/
-│   └── native.qml
-└── 08-architecture/
-    └── main.qml
-```
-
-Untuk setiap materi, buat eksperimen kecil yang hanya menguji satu konsep. Jangan langsung membuat aplikasi besar karena kesalahan satu konsep dapat bercampur dengan kesalahan konsep lainnya.
-
-## 5. Urutan kompetensi dan evaluasi
-
-Berikut target yang harus dicapai sebelum melanjutkan ke tahap berikutnya.
-
-| Evaluasi           | Kriteria kelulusan                                                         |
-| ------------------ | -------------------------------------------------------------------------- |
-| Fondasi sintaks    | Mampu membaca dan menjelaskan kode tanpa bantuan                           |
-| Data dan fungsi    | Mampu memproses object, array, dan fungsi                                  |
-| Scope              | Mampu menjelaskan asal setiap variabel dan property                        |
-| QML integration    | Mampu memahami JavaScript dalam berbagai bagian `.qml`                     |
-| Binding            | Mampu menjelaskan dependency dan perubahan binding                         |
-| Signal             | Mampu menelusuri event dari sumber hingga handler                          |
-| Resources          | Mampu mengorganisasi kode ke beberapa file                                 |
-| Asynchronous       | Mampu memahami callback, Promise, dan operasi berbasis event yang didukung |
-| Native integration | Mampu membaca interaksi JavaScript dan C++                                 |
-| Advanced           | Mampu menganalisis, mengoptimalkan, dan merancang arsitektur               |
-
-
-
-Target akhir
-
-&#x20;JavaScript QML Mastery
-
-
-
-Pada akhir kurikulum, kamu harus mampu:
-
-1. Membaca kode JavaScript dalam dokumen QML tanpa kebingungan mengenai sintaksnya.
-2. Memahami seluruh struktur fungsi, object, array, dan ekspresi.
-3. Memahami bagaimana JavaScript mengakses dan memodifikasi objek QML.
-4. Memahami sistem scope dan resolusi identifier.
-5. Memahami property binding beserta dependency-nya.
-6. Memahami signal handler dan event-driven logic.
-7. Memahami JavaScript resources dan sistem modularisasi.
-8. Mengenali API bawaan Qt yang dapat digunakan dari JavaScript.
-9. Memahami asynchronous operation dalam batas kemampuan runtime Qt.
-10. Memahami pertukaran data antara JavaScript, QML, dan C++.
-11. Menganalisis error, debugging, dan performa.
-12. Merancang sistem logika JavaScript QML yang modular.
-
-## 6. Referensi dokumentasi resmi
-
-Berikut dokumentasi yang menjadi sumber utama kurikulum. Prioritaskan dokumentasi Qt 6, bukan dokumentasi Qt 5 atau tutorial JavaScript browser.
-
-Fondasi dan lingkungan JavaScript
-
-- [Integrating QML and JavaScript](https://doc.qt.io/qt-6.10/qtqml-javascript-topic.html?utm_source=chatgpt.com)
-- [JavaScript Host Environment](https://doc.qt.io/qt-6.10/qtqml-javascript-hostenvironment.html?utm_source=chatgpt.com)
-- [JavaScript Expressions in QML Documents](https://doc.qt.io/qt-6.10/qtqml-javascript-expressions.html?utm_source=chatgpt.com)
-- [QML Global Object](https://doc.qt.io/qt-6/qtqml-javascript-qmlglobalobject.html?utm_source=chatgpt.com)
-- [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html?utm_source=chatgpt.com)
-
-Property binding dan sistem QML
-
-- [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html?utm_source=chatgpt.com)
-- [The QML Language](https://doc.qt.io/qt-6/qtqml-language-topic.html?utm_source=chatgpt.com)
-
-Modularisasi JavaScript
-
-- [Defining JavaScript Resources in QML](https://doc.qt.io/qt-6.8/qtqml-javascript-resources.html?utm_source=chatgpt.com)
-- [Importing JavaScript Resources in QML](https://doc.qt.io/qt-6/qtqml-javascript-imports.html?utm_source=chatgpt.com)
-- [Import Statements](https://doc.qt.io/qt-6/qtqml-syntax-imports.html?utm_source=chatgpt.com)
-
-Integrasi native
-
-- [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html?utm_source=chatgpt.com)
-- [QJSEngine](https://doc.qt.io/qt-6/qjsengine.html?utm_source=chatgpt.com)
-- [QJSValue](https://doc.qt.io/qt-6/qjsvalue.html?utm_source=chatgpt.com)
-
-Referensi tambahan
-
-- [Qt QML Documentation](https://doc.qt.io/qt-6/qtqml-index.html?utm_source=chatgpt.com)
-- [List of JavaScript Objects and Functions](https://doc.qt.io/qt-6/qtqml-javascript-functionlist.html?utm_source=chatgpt.com)
-- [Qt QML Tools](https://doc.qt.io/qt-6/qtqml-index.html?utm_source=chatgpt.com#tools)
-
-## 7. Catatan penting mengenai versi Qt 6
-
-Jangan menganggap semua versi Qt 6 memiliki kemampuan JavaScript yang identik. Contohnya:
-
-| Fitur                                               | Dukungan mulai |
-| --------------------------------------------------- | -------------- |
-| Nullish coalescing `??`                             | Qt 5.15        |
-| Optional chaining `?.`                              | Qt 6.2         |
-| Numeric literal separators seperti `1_000_000`      | Qt 6.8         |
-| Perubahan in-place `QVariantList` property dari QML | Qt 6.5         |
-| Perubahan in-place `QVariantMap` property dari QML  | Qt 6.9         |
-
-Selain itu, dokumentasi Qt menjelaskan bahwa runtime QML mempunyai batasan tersendiri terhadap global object dan host environment. Karena itu, jangan menjadikan dokumentasi JavaScript umum sebagai acuan utama untuk menentukan apakah suatu API dapat digunakan dalam QML.&#x20;
-
-[image](https://www.google.com/s2/favicons?domain=https://doc.qt.io\&sz=32)
-
-Qt 6.10.3+2
-
-
-
-Rekomendasi urutan pelaksanaan: selesaikan Fase 0–8 sebelum mempelajari JavaScript yang terintegrasi langsung dengan objek QML secara mendalam. Setelah itu, Fase 9–14 menjadi inti penguasaan JavaScript QML. Fase 15–19 membangun kemampuan tingkat lanjut.
-
-Satu hal yang perlu ditegaskan: kurikulum ini tidak mengharuskan kamu menguasai seluruh JavaScript secara universal. Targetnya adalah penguasaan menyeluruh terhadap sintaks, perilaku, API, dan integrasi JavaScript yang relevan dengan Qt QML. Untuk menjaga kurikulum tetap akurat, setiap fitur yang bergantung pada versi harus divalidasi terhadap dokumentasi versi Qt yang benar-benar digunakan.
-</details>
-
----
-
-
-
-<details>
-  <summary>Mastery Qt 6 — QML & Qt Quick</summary>
-
-# Kurikulum Mastery Qt 6 — QML & Qt Quick
-
-FOUNDATION → INTERMEDIATE → ADVANCED → EXPERT → ENTERPRISE
-
-# Qt 6 QML & Qt Quick Engineering
-
-Tujuan utama: membangun penguasaan mendalam terhadap QML dan Qt Quick, mulai dari fondasi bahasa deklaratif, sistem objek, reaktivitas, rendering grafis, arsitektur komponen, hingga integrasi native, optimasi performa, dan pengembangan framework berskala besar.
-
-Kurikulum ini secara khusus membatasi pembahasan pada ekosistem Qt 6, QML, dan Qt Quick. Tidak ada materi dari framework desktop lain yang dimasukkan sebagai bagian pembelajaran.
-
-# 1. Identitas teknologi dan ruang lingkup
-
-Sebelum memulai, terdapat tiga istilah yang harus dibedakan.
-
-[QT: Cross-platform Software Development](https://images.openai.com/static-rsc-4/fnge3tsEpN2vR6cvyI2tMlqDfLf1fja2DdHySNdMuDsZ64VHagTet1gpy7gFuiU_grT6k251vKS7VlT7uIWvDPnvznUj8TMQHrVLyFu6ub7VrkgGOtwHx5jLEq-XrCQSZyJUSjR84wgRLJXdiKxRg2eB88geYyH3m7eAs8GKwDg?purpose=inline)
-
-Qt
-
-Framework pengembangan aplikasi lintas platform. Qt menyediakan sistem objek, event handling, jaringan, filesystem, multimedia, grafis, dan berbagai fasilitas aplikasi.
-
-[Qt for MCUs 2.6 released](https://images.openai.com/static-rsc-4/32eKNGM9wO6ycRingaPMWGmLs-U74YHf2psl4rg1p6KGB3rUJv1M-VKnoYqoxMeuFZpeXMmyN04OAf9bnYW6lZme4pyDubAqQDk6JVnlfVuV6Do_EXuxbGM16BhQe6nbk9ntZ_F-ilg2q1yM-GcUvVSbDXMH77XQYNrfmEru0UU?purpose=inline)
-
-QML
-
-Bahasa deklaratif untuk mendeskripsikan objek, properti, hubungan antarnilai, hierarki komponen, dan perilaku antarmuka. QML menggunakan sintaks yang menyerupai JSON atau JavaScript, tetapi bukan JSON dan bukan JavaScript biasa.
-
-[Preview a QML file on desktop | Qt Creator Documentation](https://images.openai.com/static-rsc-4/_VT0WApFbLdO8x9AzPXyADQYwyxH4ltv_azwtwc-GMGFkIjiVdrbzqkpnJ5GKsozlBtEs1tod95Gu24CA-YkmBeWZORrF5IT3nhZsIeRdrjDZyTMkQ5zLA-ZxcHm_ucG0siCewuw9K4w5ZSEOiLiseRMj1QoW05coKYylK63fjc?purpose=inline)
-
-Qt Quick
-
-Framework antarmuka grafis berbasis QML. Menyediakan visual items, input handling, animasi, model-view, layout, dan scene graph.
-
-### Hubungan ketiganya
-
-| Teknologi | Tanggung jawab                                           |
-| --------- | -------------------------------------------------------- |
-| Qt        | Fondasi framework dan layanan aplikasi                   |
-| QML       | Bahasa untuk mendeskripsikan objek dan perilakunya       |
-| Qt Quick  | Sistem untuk membangun dan merender antarmuka deklaratif |
-
-### Teknologi pembentuk ekosistem
-
-| Teknologi             | Peran                                                           |
-| --------------------- | --------------------------------------------------------------- |
-| C++                   | Bahasa native utama Qt                                          |
-| JavaScript            | Bahasa imperatif yang didukung di lingkungan QML                |
-| QML                   | Bahasa deklaratif                                               |
-| CMake                 | Sistem konfigurasi dan pembangunan proyek                       |
-| Qt Meta-Object System | Infrastruktur introspeksi, properti, sinyal, slot, dan refleksi |
-| Qt Quick Scene Graph  | Sistem representasi dan rendering grafis                        |
-| Graphics API          | Backend grafis seperti OpenGL, Vulkan, Metal, dan Direct3D      |
-
-Hal penting: QML bukan pengganti C++, dan Qt Quick bukan sekadar kumpulan komponen visual. Ketiganya bekerja dalam satu arsitektur yang memungkinkan deklarasi UI, logika aplikasi, sistem reaktif, dan rendering grafis beroperasi secara terintegrasi.
-
-Referensi dasar:
-
-- [Qt 6 Documentation](https://doc.qt.io/qt-6/?utm_source=chatgpt.com)
-- [QML Documentation](https://doc.qt.io/qt-6/qtqml-index.html?utm_source=chatgpt.com)
-- [Qt Quick Documentation](https://doc.qt.io/qt-6/qtquick-index.html?utm_source=chatgpt.com)
-- [Qt Architecture](https://doc.qt.io/qt-6/qt-intro.html?utm_source=chatgpt.com)
-
-# 2. Peta perjalanan pembelajaran
-
-## Learning Roadmap
-
-1. Fase 0 — Environment & Development Foundation
-
-   Foundation
-
-   Persiapan toolchain, lingkungan, struktur proyek dan workflow.
-2. Fase 1 — QML Language Fundamentals
-
-   Foundation
-
-   Sintaks, objek, tipe data, properti dan deklarasi.
-3. Fase 2 — JavaScript for QML
-
-   Foundation
-
-   Ekspresi, fungsi, kontrol alur, scope dan modul JavaScript.
-4. Fase 3 — QML Object Model & Reactivity
-
-   Intermediate
-
-   Property binding, signal-slot, lifecycle dan sistem objek.
-5. Fase 4 — Qt Quick Visual Fundamentals
-
-   Intermediate
-
-   Item, koordinat, geometri, warna, gambar dan input.
-6. Fase 5 — Components, Layouts & Styling
-
-   Intermediate
-
-   Reusable components, layout engine dan desain visual.
-7. Fase 6 — Interaction, States & Animation
-
-   Intermediate
-
-   Event, gesture, state machine dan animasi.
-8. Fase 7 — Models, Views & Data Architecture
-
-   Advanced
-
-   Data model, delegates, repeater dan dynamic data.
-9. Fase 8 — QML Modules & Software Architecture
-
-   Advanced
-
-   Module system, imports, namespaces dan dependency management.
-10. Fase 9 — Qt Quick Controls & Advanced UI
-
-    Advanced
-
-    Controls, customization, accessibility dan advanced interface.
-11. Fase 10 — C++ / QML Interoperability
-
-    Expert
-
-    QObject, properties, registration, models dan native APIs.
-12. Fase 11 — Rendering, Graphics & Performance
-
-    Expert
-
-    Scene graph, render loop, GPU, profiling dan optimasi.
-13. Fase 12 — Testing, Debugging & Quality Engineering
-
-    Expert
-
-    Automated testing, linting, profiling dan reliability.
-14. Fase 13 — Security, Deployment & Enterprise Engineering
-
-    Expert / Enterprise
-
-    Security boundaries, packaging, deployment, maintainability dan distribusi.
-15. Fase 14 — Mastery & Independent Framework Engineering
-
-    Mastery
-
-    Membangun sistem komponen, API, plugin architecture dan framework mandiri.
-
-## Estimasi waktu
-
-Estimasi berikut mengasumsikan pembelajaran mandiri sekitar 15–25 jam per minggu. Waktu dapat bertambah apabila C++ dan konsep pemrograman masih benar-benar baru.
-
-| Tahapan            | Estimasi     |
-| ------------------ | ------------ |
-| Foundation (0–2)   | 4–7 minggu   |
-| Intermediate (3–6) | 7–11 minggu  |
-| Advanced (7–9)     | 6–10 minggu  |
-| Expert (10–12)     | 8–13 minggu  |
-| Enterprise (13–14) | 6–10 minggu  |
-| Total              | 31–51 minggu |
-
-Ini adalah estimasi penguasaan kompetensi, bukan jaminan bahwa seluruh materi akan dikuasai hanya dengan menyelesaikan waktu tersebut.
-
-# 3. Prasyarat pembelajaran
-
-Tidak semua prasyarat harus dikuasai sebelum memulai. Beberapa akan dipelajari secara bertahap.
-
-| Kompetensi                | Status         | Keterangan                                   |
-| ------------------------- | -------------- | -------------------------------------------- |
-| Penggunaan Linux terminal | Wajib          | Navigasi, filesystem, proses dan environment |
-| Dasar pemrograman         | Wajib          | Variabel, fungsi, kondisi, perulangan        |
-| OOP                       | Bertahap       | Class, object, inheritance, encapsulation    |
-| JavaScript                | Bertahap       | Dasar hingga intermediate                    |
-| C++                       | Untuk fase 10+ | QObject, memory, template, concurrency       |
-| Matematika dasar          | Wajib          | Koordinat, persentase, geometri              |
-| Graphics programming      | Opsional awal  | Diperlukan pada fase rendering lanjutan      |
-| CMake                     | Bertahap       | Dibutuhkan dalam pembangunan proyek          |
-
-## 3.1 Penyesuaian terhadap kemampuan bahasa pemrograman
-
-Jangan mencampur semua bahasa sekaligus.
-
-Urutan yang direkomendasikan:
-
-1. QML sebagai bahasa utama yang dipelajari.
-2. JavaScript sebagai bahasa pendamping untuk logika QML.
-3. C++ ketika mulai memahami batas kemampuan QML dan membutuhkan native integration.
-4. GLSL ketika memasuki pengembangan shader dan rendering khusus.
-
-Lua dan Bash tidak perlu dijadikan prasyarat QML. Keduanya dapat tetap digunakan sebagai alat bantu otomatisasi, konfigurasi lingkungan, dan workflow pengembangan.
-
-# 4. Alat esensial dan lingkungan pengembangan
-
-Lingkungan yang digunakan sebaiknya mendukung pengembangan sepenuhnya melalui terminal. IDE grafis bukan persyaratan untuk menguasai QML.
-
-## 4.1 Toolchain utama
-
-[File:Qt logo 2016.svg - Wikimedia Commons](https://images.openai.com/static-rsc-4/kSwJpWhubwAHI5eO8y376pDK8AhbdhpxMmetZvKhySBBAOnqPXyQLC47-lhq99Ol_TqD_w0r6OzrqPENwFDpjnO9PGD6WfM-MxGRgX7mjSkFDmzcKM2uUhQ-uXLs49Zst83fF060eFOSVj3EQEZ20BfginWPibZIt7jKpY6vRn4?purpose=inline)
-
-Qt 6 SDK
-
-Menyediakan library, QML engine, Qt Quick, Qt Quick Controls, dan tool pengembangan.
-
-[Qt installation documentation](https://doc.qt.io/qt-6/get-and-install-qt.html?utm_source=chatgpt.com)
-
-[File:CMake logo.svg - Wikimedia Commons](https://images.openai.com/static-rsc-4/xUEqZe4gQMrwn_1uC0RB5GYc2TBCGT1hec1nqG4hnTApAVKUygI8LTxFXCrdCAYRvVtjRKgCRQ0UfK7dJOtH0NSpEQw5sMlqkkyRMrRkXNTo5FatXAW8MV9m0Zd1nh5ykD-pF6PJE0B7nPRRr9Vhg9KF-nMQwDi1OAfnC18D94o?purpose=inline)
-
-CMake
-
-Mengelola konfigurasi proyek, dependency, target executable, library dan QML module.
-
-[CMake documentation](https://cmake.org/documentation/?utm_source=chatgpt.com)
-
-[GitHub - ninja-build/ninja: a small build system with a focus on speed · GitHub](https://images.openai.com/static-rsc-4/hTjQ1J2aDHyXqw3H4lJgmBifcAHyNU1lV2JZam5vVWcV3VnlTb3BsWzeleyJRfAUwKNVWxKFNyNSorgO5oFGNK7HDShNjlLI-2OXbI8TaQ_GMs0bPRQoflPEdJ6oLy6FXvn3gkUjWGcKSQVorpwKxbeuzmegenG3LBdMg0qayAo?purpose=inline)
-
-Ninja
-
-Build backend yang ringan dan cepat.
-
-[Ninja manual](https://ninja-build.org/manual.html?utm_source=chatgpt.com)
-
-[Neovim Logo PNG Vector (SVG) Free Download](https://images.openai.com/static-rsc-4/gleIAvIc_JqLkRG0GKkSPpgmdFjX6Qa8y1ZW3-J70nMB9rstd50hoBr0EVZOekc_aOAOp3w48DJTLbHVbgCeq52SDebMTUG3TMl_MorufgP9lKD3SJwbz6q5DEP2v7nsa6s3dtNNj7jv1oaxKiQXaMyygvlU1TZS_rAsKIVgO3w?purpose=inline)
-
-Neovim
-
-Editor utama untuk QML, C++, CMake, dan JavaScript.
-
-[Neovim documentation](https://neovim.io/doc/user/?utm_source=chatgpt.com)
-
-## 4.2 Tool yang perlu dikuasai
-
-| Tool               | Fungsi                                                                |
-| ------------------ | --------------------------------------------------------------------- |
-| `qml`              | Menjalankan aplikasi atau dokumen QML                                 |
-| `qmlscene`         | Tool untuk menampilkan dokumen QML pada instalasi yang menyediakannya |
-| `qmllint`          | Analisis kesalahan dan pola buruk QML                                 |
-| `qmlformat`        | Memformat kode QML                                                    |
-| `qmlcachegen`      | Menghasilkan cache kompilasi QML                                      |
-| `qmltyperegistrar` | Menghasilkan informasi registrasi tipe QML dari metadata C++          |
-| `qmltestrunner`    | Menjalankan pengujian QML                                             |
-| `qmlls`            | QML Language Server                                                   |
-| `qmlprofiler`      | Komponen tooling profiling QML, umumnya diakses melalui Qt Creator    |
-| `cmake`            | Konfigurasi build                                                     |
-| `ninja`            | Eksekusi build                                                        |
-| `gdb`              | Debugging aplikasi native                                             |
-| `g++`              | Compiler C++                                                          |
-
-Ketersediaan nama executable tertentu bergantung pada versi dan paket Qt yang dipasang. Pelajari fungsi tool, kemudian verifikasi nama executable melalui `command -v` dan `--help`.
-
-## 4.3 Rekomendasi instalasi Arch Linux
+QML bukan pengganti C++, dan Qt Quick bukan sekadar kumpulan komponen visual: keduanya bekerja dalam satu arsitektur.
+
+| Teknologi | Peran |
+| --- | --- |
+| C++ | Bahasa native Qt untuk backend dan tipe kustom |
+| JavaScript | Logika imperatif di dalam QML |
+| CMake | Konfigurasi dan build |
+| Meta-Object System | Introspeksi, properti, signal, slot |
+| Scene Graph + RHI | Representasi dan rendering grafis lintas backend |
+
+Referensi: [Qt 6](https://doc.qt.io/qt-6/) · [Qt QML](https://doc.qt.io/qt-6/qtqml-index.html) · [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html)
+
+## 2. Peta perjalanan
+
+Estimasi mengasumsikan 15–25 jam per minggu. Angka di bawah adalah jumlah dari estimasi tiap fase, sehingga tabel tahap dan tabel fase selalu sinkron. Jalur A menambah sekitar 1,5–2 kali lipat waktu.
+
+| Fase | Tingkat | Estimasi | Fokus |
+| --- | --- | --- | --- |
+| 0 Fondasi lingkungan | Foundation | 1–2 mgg | Orientasi, ekosistem, build, runtime |
+| 1 Bahasa QML | Foundation | 2–3 mgg | Sintaks, tipe, properti, komponen |
+| 2 JavaScript untuk QML | Foundation | 2–3 mgg | Ekspresi, fungsi, modul, batas eksekusi |
+| 3 Model objek & reaktivitas | Intermediate | 2–3 mgg | Binding, signal, lifecycle, scope |
+| 4 Dasar visual Qt Quick | Intermediate | 2–3 mgg | Item, geometri, resource, input |
+| 5 Komponen, layout, styling | Intermediate | 2 mgg | Komponen, positioner, layout, tema |
+| 6 Interaksi, state, animasi | Intermediate | 2–3 mgg | State, animasi, input lanjut, ekstra |
+| 7 Model, view, arsitektur data | Advanced | 2–3 mgg | Model, delegate, objek dinamis, data async |
+| 8 Modul QML & arsitektur | Advanced | 2–3 mgg | Modul, arsitektur, CMake |
+| 9 Controls & UI lanjut | Advanced | 2–3 mgg | Controls, kustomisasi, navigasi, aksesibilitas |
+| 10 Interoperabilitas C++/QML | Expert | 3–4 mgg | QObject, registrasi, model, API native, thread |
+| 11 Rendering & performa | Expert | 3–4 mgg | Scene graph, RHI, shader, profiling, kompilasi |
+| 12 Testing & kualitas | Expert | 2–3 mgg | Debug, analisis statis, uji, profiling |
+| 13 Keamanan & deployment | Enterprise | 3–4 mgg | Keamanan, integrasi OS, paket, rekayasa |
+| 14 Mastery | Mastery | 3–6 mgg | Tipe, QQuickItem, plugin, framework, proyek asing |
+
+| Tahap | Fase | Estimasi |
+| --- | --- | --- |
+| Foundation | 0–2 | 5–8 mgg |
+| Intermediate | 3–6 | 8–11 mgg |
+| Advanced | 7–9 | 6–9 mgg |
+| Expert | 10–12 | 8–11 mgg |
+| Enterprise & Mastery | 13–14 | 6–10 mgg |
+| **Total** | 0–14 | **33–49 mgg** |
+
+**Jalur C++ paralel.** C++ tidak boleh dipaksa masuk dalam 3–4 minggu Fase 10. Mulai Fase 4, sisihkan 3–5 jam per minggu untuk C++ dasar (Modul 10.1). Bila C++ benar-benar baru, tambahkan 4–8 minggu pada total.
+
+**Pemetaan Bagian B (pendalaman JavaScript).**
+
+| Bagian B | Dibaca bersama |
+| --- | --- |
+| B0–B7 (sintaks, tipe, fungsi, array, objek) | Modul 2.1 |
+| B8 (scope, closure) | Modul 3.4 |
+| B9 (JavaScript dalam dokumen QML) | Modul 2.2 |
+| B10 (global object, API) | Modul 2.4 |
+| B11 (binding) | Modul 3.1 |
+| B12 (signal) | Modul 3.2 |
+| B13 (resource, modul `.js`) | Modul 2.3 |
+| B14 (tipe data, konversi) | Modul 1.2 |
+| B15 (asinkron) | Modul 7.4 |
+| B16 (JavaScript ↔ C++) | Modul 10.4 |
+| B17 (lifecycle, memori) | Modul 3.3 dan 7.3 |
+| B18 (debug, optimasi) | Modul 12.1, 12.2, 11.4 |
+| B19 (arsitektur logika) | Modul 8.2 dan 14.6 |
+
+## 3. Prasyarat
+
+| Kompetensi | Jalur A | Jalur B | Keterangan |
+| --- | --- | --- | --- |
+| Terminal Linux | Diajarkan di Modul 0.0 | Wajib | Navigasi, path, proses, environment |
+| Dasar pemrograman | Diajarkan bertahap (Fase 1–2, Bagian B) | Wajib | Variabel, fungsi, kondisi, perulangan |
+| Matematika dasar | Wajib | Wajib | Koordinat, persentase, geometri |
+| JavaScript | Bertahap | Bertahap | Hanya bagian yang dipakai QML |
+| OOP | Bertahap | Bertahap | Class, object, inheritance |
+| C++ | Tidak perlu sampai Fase 10 | Jalur paralel mulai Fase 4 | QObject, memori, template, thread |
+| CMake | Bertahap (Modul 0.2) | Bertahap | Dibutuhkan untuk proyek multi-file |
+| Grafis | Tidak perlu | Opsional, perlu di Fase 11 | Shader, GPU |
+
+Urutan bahasa yang disarankan: QML dulu, JavaScript sebagai pendamping, C++ saat batas QML terasa, GLSL saat masuk shader. Bash dan Lua boleh dipakai sebagai alat bantu, bukan prasyarat.
+
+## 4. Lingkungan pengembangan (Arch Linux)
+
+IDE grafis bukan syarat. Seluruh kurikulum bisa dikerjakan dari terminal dan editor modal.
 
 ```
 sudo pacman -Syu
-
-sudo pacman -S --needed \
-    qt6-base \
-    qt6-declarative \
-    qt6-tools \
-    qt6-shadertools \
-    cmake \
-    ninja \
-    gcc \
-    gdb \
-    git \
-    pkgconf \
-    python
+sudo pacman -S --needed qt6-base qt6-declarative qt6-tools qt6-shadertools cmake ninja gcc gdb git pkgconf
 ```
 
-Paket tambahan yang dapat dipertimbangkan:
+Paket opsional, pasang sesuai kebutuhan modul: `qt6-5compat`, `qt6-svg`, `qt6-imageformats`, `qt6-wayland`, `qt6-multimedia`.
 
-```
-sudo pacman -S --needed \
-    qt6-5compat \
-    qt6-multimedia \
-    qt6-svg \
-    qt6-imageformats \
-    qt6-wayland
-```
-
-Paket tambahan tersebut bukan seluruhnya prasyarat Qt Quick. Pasang berdasarkan kebutuhan modul yang dipelajari.
-
-Verifikasi:
+**Nama executable berbeda antar distro dan versi.** Jangan menebak. Periksa:
 
 ```
 qmake6 --version
 cmake --version
-ninja --version
-g++ --version
-```
-
-Untuk memeriksa komponen Qt:
-
-```
 pacman -Q | grep '^qt6-'
+pacman -Ql qt6-declarative qt6-tools | grep '/bin/'
 ```
 
-Perhatikan bahwa `qmake6` hanya dipakai di sini sebagai salah satu cara memeriksa instalasi Qt; jalur build yang diprioritaskan dalam kurikulum ini adalah CMake.
+Bila `qml` tidak ditemukan, cari namanya dari daftar terakhir (misalnya `qml6`) dan pakai nama itu di seluruh kurikulum.
 
-## 4.4 Workflow pengembangan
+| Tool | Fungsi | Catatan |
+| --- | --- | --- |
+| `qml` | Menjalankan dokumen QML tanpa proyek C++ | Jalur eksperimen utama. Pengganti `qmlscene`. |
+| `qmlscene` | Peninjau QML warisan | **Deprecated di Qt 6**: mencetak peringatan agar memakai `qml`. Jangan dipakai. |
+| `qmllint` | Analisis statis | Wajib; dijalankan sebelum commit |
+| `qmlformat` | Pemformat kode | `qmlformat -i Main.qml` |
+| `qmlls` | Language server | Hubungkan ke editor Anda; baca dokumentasi qmlls untuk informasi build yang dibutuhkan |
+| `qmlcachegen` | Kompiler cache/bytecode | Dipanggil otomatis oleh CMake |
+| `qmltc` | Kompiler tipe QML ke C++ | Lanjutan (Modul 11.5) |
+| `qmltestrunner` | Menjalankan Qt Quick Test | Modul 12.3 |
+| `qmlpreview` | Pratinjau langsung (hot reload) dari CLI | Qt 6.12 menjadikan hot reload fitur bawaan engine |
+| `qmlprofiler` | Profiler QML | Dapat dipakai dari CLI atau Qt Creator |
+| `cmake`, `ninja` | Konfigurasi dan eksekusi build |  |
+| `gdb` | Debugging native |  |
+
+**Variabel lingkungan yang wajib dikenal.**
+
+| Variabel | Fungsi |
+| --- | --- |
+| `QT_QPA_PLATFORM` | Memilih platform plugin: `wayland`, `xcb`, `offscreen` |
+| `QT_QUICK_BACKEND=software` | Memaksa renderer software (untuk diagnosa GPU/driver) |
+| `QSG_RHI_BACKEND` | Memilih backend RHI: `opengl`, `vulkan`, dan lainnya |
+| `QSG_INFO=1` | Mencetak informasi scene graph dan renderer |
+| `QSG_VISUALIZE` | Visualisasi batching, clipping, overdraw (`batches`, `clip`, `changes`, `overdraw`) |
+| `QSG_RENDER_LOOP` | Memilih render loop: `basic` atau `threaded` |
+| `QML_IMPORT_TRACE=1` | Melacak pencarian import |
+| `QML_IMPORT_PATH` | Menambah jalur pencarian modul QML |
+| `QT_LOGGING_RULES` | Mengaktifkan kategori log, mis. `qt.qml.binding.removal.info=true` |
+| `QT_QUICK_CONTROLS_STYLE` | Memilih style Controls |
+| `QML_XHR_ALLOW_FILE_READ=1` | Mengizinkan XMLHttpRequest membaca file lokal (default mati) |
+| `QML_DISABLE_DISK_CACHE=1` | Mematikan cache disk QML saat mendiagnosa |
+| `QT_DEBUG_PLUGINS=1` | Melacak pemuatan plugin |
+
+**Alur kerja.** Mulai dari satu file, naik ke proyek hanya saat perlu.
 
 ```
-
-# Membuat direktori proyek
-mkdir -p ~/Development/qt-learning
-cd ~/Development/qt-learning
-
-# Konfigurasi
-cmake -S . -B build -G Ninja \
-    -DCMAKE_BUILD_TYPE=Debug
-
-# Build
-cmake --build build
-
-# Menjalankan aplikasi
-./build/myapp
-
-# Pemeriksaan QML
-qmllint .
-
-# Format QML
+# Tahap 1: eksperimen satu file
+qml Main.qml
+qmllint Main.qml
 qmlformat -i Main.qml
 
+# Tahap 2: proyek CMake (Modul 0.2)
+mkdir -p ~/Development/qt-learning && cd ~/Development/qt-learning
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+./build/hello
 ```
 
-# 5. Kurikulum inti
+`qt_add_qml_module` otomatis membuat target `<nama>_qmllint` dan `all_qmllint`, sehingga analisis statis ikut dalam build.
 
-## FASE 0 — Environment & Development Foundation
+## Glosarium
 
+| Istilah | Arti singkat |
+| --- | --- |
+| Binding | Hubungan yang membuat sebuah properti selalu mengikuti hasil ekspresi |
+| Property | Atribut objek yang menyimpan keadaan |
+| Alias | Properti yang meneruskan akses ke properti lain |
+| Signal | Pemberitahuan bahwa sesuatu terjadi |
+| Slot | Fungsi penerima signal di sisi C++ |
+| Handler | Kode yang berjalan saat signal dipancarkan (`onClicked`) |
+| Item | Objek visual dasar di Qt Quick |
+| Component | Definisi objek yang bisa dibuat berulang kali |
+| Instance | Satu objek hasil pembuatan dari sebuah component |
+| Model | Penyedia data untuk view |
+| View | Penampil data berbentuk daftar atau grid |
+| Delegate | Template visual untuk satu entri data |
+| Role | Nama atribut data dalam model |
+| Scope | Wilayah tempat sebuah nama dikenali |
+| Context | Lingkungan nama yang dibawa sebuah komponen saat dibuat |
+| ID | Nama objek yang berlaku di dalam satu dokumen QML |
+| Attached property | Properti yang ditempelkan pada objek lain (`Layout.fillWidth`) |
+| Singleton | Objek yang hanya dibuat satu kali per engine |
+| QObject | Kelas dasar Qt yang mendukung signal, properti, dan hierarki objek |
+| Meta-object | Metadata kelas yang dibuat saat build untuk introspeksi |
+| MOC | Meta-Object Compiler, pembuat meta-object |
+| Event loop | Putaran yang menunggu dan memproses kejadian |
+| Scene graph | Pohon node grafis yang dirender GPU |
+| RHI | Rendering Hardware Interface, lapisan abstraksi API grafis Qt |
+| Shader | Program kecil yang berjalan di GPU |
+| `qsb` | Format dan alat shader terkompilasi Qt |
+| Compiler | Penerjemah kode sumber menjadi kode mesin |
+| Linker | Penghubung hasil kompilasi dengan library |
+| Build system | Pengatur proses pembuatan aplikasi (CMake) |
+| Target | Hasil build: executable atau library |
+| URI | Nama unik modul QML (`MyCompany.Controls`) |
+| Import path | Lokasi pencarian modul QML |
+| Plugin | Library yang dimuat saat runtime untuk menambah kemampuan |
+| Thread affinity | Thread tempat sebuah QObject hidup |
+| Garbage collector | Pembersih memori otomatis untuk objek JavaScript |
+| LSP | Language Server Protocol: layanan analisis kode untuk editor |
+| Linter | Alat analisis statis yang mencari pola buruk |
+| Hot reload | Perubahan kode tampil di aplikasi yang sedang berjalan |
 
+## Fase 0 — Fondasi Lingkungan
 
-Foundation
+*Tujuan: memahami ekosistem, membangun dan menjalankan aplikasi pertama, dan mampu mendiagnosa lingkungan. Estimasi: 1–2 minggu.*
 
-&#x20;Estimasi: 1–2 minggu
+### Modul 0.0 — Orientasi untuk Pemula (Jalur A)
 
+**Deskripsi.** Mengajarkan empat konsep yang biasanya dianggap sudah dikenal: apa itu program, apa itu compiler dan runtime, apa itu event loop, dan cara bekerja di terminal (path, proses, environment, git).
 
+**Konsep & analogi.** Program adalah resep: urutan instruksi yang bisa dijalankan komputer. Compiler menerjemahkan seluruh resep ke bahasa mesin sebelum memasak; interpreter membaca resep sambil memasak. Event loop adalah pelayan restoran yang terus berkeliling: pelanggan memanggil (klik, ketikan, timer), pelayan segera menanggapi, lalu kembali berkeliling. Aplikasi grafis hidup di dalam putaran itu. Bila pelayan terjebak lama di satu meja (kode yang berjalan lama), semua meja lain menunggu dan jendela tampak macet.
 
-Tujuan: memahami lingkungan kerja, bagaimana Qt diinstal, bagaimana proyek dibangun, dan bagaimana QML dijalankan.
-
-### Modul 0.1 — Qt Ecosystem & Development Environment
-
-Deskripsi konkret
-
-Mengenali komponen Qt 6, perbedaan Qt Core, Qt Qml, Qt Quick, Qt Quick Controls, dan bagaimana semua komponen tersebut saling berhubungan.
-
-Konsep dan filosofi
-
-Qt menggunakan arsitektur modular. Artinya, aplikasi tidak harus menggunakan seluruh kemampuan Qt sekaligus.
-
-Contohnya:
-
-- Qt Core untuk fasilitas dasar aplikasi.
-- Qt Qml untuk QML engine dan sistem bahasa.
-- Qt Quick untuk UI deklaratif.
-- Qt Quick Controls untuk kontrol antarmuka.
-- Qt Network untuk komunikasi jaringan.
-
-Contoh pemeriksaan:
-
-```
-pkg-config --list-all | grep -i qt6
-```
-
-Terminologi:
-
-- SDK: kumpulan perangkat pengembangan.
-- Runtime: komponen yang diperlukan ketika aplikasi dijalankan.
-- Library: kode yang dapat digunakan kembali.
-- Framework: kumpulan library beserta struktur dan aturan penggunaannya.
-- Module: bagian fungsional yang dapat digunakan secara terpisah.
-
-Daftar isi:
-
-1. Sejarah dan evolusi Qt.
-2. Qt 5 versus Qt 6.
-3. Qt Framework architecture.
-4. Qt Core, Qml, Quick dan Controls.
-5. SDK, runtime, library dan module.
-6. Static versus shared libraries.
-7. Qt licensing overview.
-8. Instalasi dan verifikasi lingkungan.
-9. Environment variables.
-10. Qt platform plugins.
-
-Referensi:
-
-- [Qt Introduction](https://doc.qt.io/qt-6/qt-intro.html?utm_source=chatgpt.com)
-- [Qt Modules](https://doc.qt.io/qt-6/qtmodules.html?utm_source=chatgpt.com)
-- [Getting Started](https://doc.qt.io/qt-6/get-and-install-qt.html?utm_source=chatgpt.com)
-
-### Modul 0.2 — Project Structure & Build Fundamentals
-
-Deskripsi konkret
-
-Mempelajari bagaimana proyek Qt disusun dan bagaimana source code berubah menjadi aplikasi yang dapat dieksekusi.
-
-Konsep dan filosofi
-
-Source code bukan aplikasi yang langsung dapat dijalankan. Ada tahapan konfigurasi, generasi build, kompilasi, linking, dan packaging.
-
-Qt 6 modern menggunakan CMake sebagai jalur utama.
-
-Contoh struktur:
+**Contoh minimal.**
 
 ```
-hello-qt/
+pwd                 # di mana saya sekarang
+ls -la              # isi folder
+mkdir -p ~/Development/qt-learning && cd ~/Development/qt-learning
+echo $PATH          # daftar folder tempat program dicari
+git init && git status
+```
+
+Cara menjalankan: ketik baris demi baris di terminal dan amati keluaran tiap perintah.
+
+**Terminologi.** Path (alamat file); proses (program yang sedang berjalan); environment variable (pengaturan bernama yang diwariskan ke proses); repository (folder yang riwayat perubahannya dilacak git); commit (satu titik simpan riwayat).
+
+**Daftar isi.** 0.0.1 Program, compiler, interpreter · 0.0.2 Event loop dan mengapa UI bisa macet · 0.0.3 Terminal: path, proses, environment · 0.0.4 Git minimum: init, add, commit, diff, log · 0.0.5 Membaca pesan error
+
+**Kesalahan umum.** Menyalin perintah berawalan `sudo` tanpa memahaminya; menganggap pesan error sebagai kegagalan pribadi, padahal ia petunjuk; bekerja tanpa git sehingga tidak bisa kembali.
+
+**Latihan 15 menit.** Buat folder `qt-learning`, inisialisasi git, buat `catatan.md`, commit, ubah satu baris, lihat `git diff`, lalu commit lagi.
+
+**Cek pemahaman.** (1) Mengapa jendela aplikasi bisa tampak macet ketika satu fungsi berjalan lama? (2) Apa beda compiler dan interpreter?
+
+**Referensi.** [Pro Git](https://git-scm.com/book/en/v2) · [Arch Wiki: Command-line shell](https://wiki.archlinux.org/title/Command-line_shell)
+
+### Modul 0.1 — Ekosistem Qt, QML, dan Qt Quick
+
+**Deskripsi.** Memetakan hubungan Qt, QML, JavaScript, Qt Quick, Qt Quick Controls, dan C++ (diagram di Bagian 1), serta mengenali lisensi dan siklus rilis.
+
+**Konsep & analogi.** Qt adalah dapur lengkap; QML adalah menu yang menyatakan hidangan apa yang diinginkan; C++ adalah koki yang menguasai teknik sulit; JavaScript adalah catatan kecil pelayan untuk kasus khusus. Sebagian besar waktu Anda menulis menu (QML) dan memanggil koki (C++) hanya saat perlu.
+
+**Contoh minimal.** Simpan sebagai `Main.qml`, jalankan `qml Main.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    width: 300
+    height: width / 2     // selalu setengah lebar; engine menjaganya otomatis
+    color: 'steelblue'
+}
+```
+
+Gaya imperatif (konsep): hitung tinggi sekali, lalu ubah manual setiap kali lebar berubah. Gaya deklaratif memindahkan tugas pelacakan itu ke engine.
+
+**Terminologi.** Deklaratif (menyatakan hubungan); imperatif (menyatakan langkah); runtime; LTS (Long Term Support, versi yang dipelihara lebih lama, mis. 6.8 dan 6.12); lisensi (Qt tersedia secara open source dan komersial; beberapa add-on, seperti `qmlsc`, hanya komersial).
+
+**Daftar isi.** 0.1.1 Qt vs QML vs Qt Quick · 0.1.2 Modul inti dan add-on · 0.1.3 Lisensi dan edisi · 0.1.4 Siklus rilis dan LTS · 0.1.5 Membaca dokumentasi Qt 6 (hindari halaman Qt 5)
+
+**Kesalahan umum.** Mencampur dokumentasi Qt 5 dan Qt 6 (Qt 5 memakai `import QtQuick 2.15`; Qt 6 cukup `import QtQuick`); mengira QML sama dengan JavaScript; mengabaikan syarat lisensi saat mendistribusikan aplikasi.
+
+**Latihan 15 menit.** Ubah tinggi menjadi dua pertiga lebar, lalu jelaskan dengan kata sendiri mengapa Anda tidak perlu menghitung ulang di mana pun.
+
+**Cek pemahaman.** (1) Mana yang deklaratif: `height: width / 2` atau `tinggi = lebar / 2` di dalam fungsi yang dipanggil manual? (2) Mengapa import Qt 6 tidak lagi memakai nomor versi?
+
+**Referensi.** [Qt QML](https://doc.qt.io/qt-6/qtqml-index.html) · [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html) · [Lisensi Qt](https://www.qt.io/licensing/) · [Blog Qt](https://www.qt.io/blog)
+
+### Modul 0.2 — Build Pertama: Dari Satu File ke Proyek CMake
+
+**Deskripsi.** Membangun aplikasi Qt Quick minimal dengan CMake, dari struktur file sampai eksekusi, dan memahami peran setiap bagian.
+
+**Konsep & analogi.** CMake adalah perencana: ia menulis daftar tugas, bukan memasak. Ninja memasak sesuai daftar itu. `qt_add_qml_module` mengemas file QML menjadi modul bernama (URI) yang dapat dimuat engine.
+
+**Contoh minimal.** Struktur:
+
+```
+hello/
 ├── CMakeLists.txt
 ├── main.cpp
 └── Main.qml
 ```
 
-Contoh `CMakeLists.txt`:
+`CMakeLists.txt`:
 
-```
-cmake_minimum_required(VERSION 3.16)
-
+```cmake
+cmake_minimum_required(VERSION 3.21)
 project(HelloQt LANGUAGES CXX)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.8)
 
-qt_standard_project_setup()
-
-qt_add_executable(hello
-    main.cpp
-)
+qt_add_executable(hello main.cpp)
 
 qt_add_qml_module(hello
     URI Hello
     VERSION 1.0
-    QML_FILES
-        Main.qml
+    QML_FILES Main.qml
 )
 
-target_link_libraries(hello
-    PRIVATE Qt6::Quick
-)
+target_link_libraries(hello PRIVATE Qt6::Quick)
 ```
 
-Contoh `Main.qml`:
+`main.cpp`:
 
+```cpp
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+    QQmlApplicationEngine engine;
+    QObject::connect(
+        &engine, &QQmlApplicationEngine::objectCreationFailed,
+        &app, []() { QCoreApplication::exit(-1); },
+        Qt::QueuedConnection);
+    engine.loadFromModule("Hello", "Main");   // [≥6.5]
+    return app.exec();
+}
 ```
+
+`Main.qml`:
+
+```qml
 import QtQuick
 
 Window {
     visible: true
-    width: 800
-    height: 600
+    width: 640
+    height: 360
+    title: qsTr('Hello Qt 6')
 
-    Text {
-        anchors.centerIn: parent
-        text: "Hello Qt 6"
-    }
+    Text { anchors.centerIn: parent; text: 'Hello Qt 6' }
 }
 ```
 
-Terminologi:
-
-- Source: kode sumber.
-- Build system: sistem yang mengatur pembangunan aplikasi.
-- Compiler: penerjemah kode menjadi bentuk yang dapat dieksekusi.
-- Linker: penghubung objek hasil kompilasi dengan library.
-- Target: executable atau library yang dibangun.
-- Generator: pembentuk file build berdasarkan konfigurasi proyek.
-
-Daftar isi:
-
-1. Struktur proyek Qt.
-2. CMakeLists.txt.
-3. `find_package`.
-4. `qt_standard_project_setup`.
-5. `qt_add_executable`.
-6. `qt_add_qml_module`.
-7. Target dan linking.
-8. Build directory.
-9. Debug dan release build.
-10. Build dependency.
-11. Resource embedding.
-12. Instalasi dan build reproducibility.
-
-Referensi:
-
-- [Building a QML Application](https://doc.qt.io/qt-6/cmake-build-qml-application.html?utm_source=chatgpt.com)
-- [CMake Integration for QML](https://doc.qt.io/qt-6/qtqml-cmake-integration.html?utm_source=chatgpt.com)
-- [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html?utm_source=chatgpt.com)
-
-Visualisasi direkomendasikan: diagram alur `Source → CMake → Ninja → Compiler → Linker → Executable`.
-
-## FASE 1 — QML Language Fundamentals
-
-
-
-Foundation
-
-&#x20;Estimasi: 2–3 minggu
-
-
-
-Ini merupakan fondasi paling penting. Jangan melanjutkan terlalu cepat sebelum memahami bagaimana QML mendeskripsikan objek.
-
-### Modul 1.1 — QML Language Structure & Syntax
-
-Deskripsi konkret
-
-Memahami bentuk dasar dokumen QML, struktur deklarasi objek, blok properti, nested objects, dan aturan penulisan.
-
-Konsep dan filosofi
-
-QML adalah bahasa deklaratif.
-
-Dalam pemrograman imperatif, kita umumnya memberikan instruksi tentang bagaimana sesuatu harus dikerjakan.
-
-Dalam pemrograman deklaratif, kita mendeskripsikan keadaan atau hubungan yang diinginkan.
-
-Contoh:
+Cara menjalankan (nama executable mengikuti target `hello`):
 
 ```
-Rectangle {
-    width: 300
-    height: 200
-    color: "red"
-}
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+./build/hello
 ```
 
-Deklarasi tersebut menyatakan bahwa objek yang dibuat merupakan Rectangle dengan ukuran dan warna tertentu.
+Sebelum CMake, Anda tetap dapat menguji `Main.qml` langsung dengan `qml Main.qml`.
 
-Bandingkan:
+**Terminologi.** `qt_add_executable` (membuat target executable); `qt_add_qml_module` (membuat modul QML dan meregistrasikan file); URI (nama unik modul; di sini `Hello`); `loadFromModule` (memuat tipe `Main` dari modul `Hello`); tahap configure vs build; build directory (folder terpisah dari source).
 
-```
-let width = 300
-let height = 200
-let color = "red"
-```
+**Daftar isi.** 0.2.1 Struktur proyek · 0.2.2 `CMakeLists.txt` baris demi baris · 0.2.3 `main.cpp` dan engine · 0.2.4 Modul QML dan URI · 0.2.5 Configure, build, run · 0.2.6 Mendaftarkan file baru (QML\_FILES, SOURCES, RESOURCES)
 
-Contoh kedua hanya membuat variabel JavaScript. Ia belum mendeskripsikan objek visual Qt Quick.
+**Kesalahan umum.** Nama executable tidak sama dengan nama target (`hello`, bukan `myapp`); URI di CMake berbeda dengan URI di `loadFromModule`; lupa memasukkan file QML baru ke `QML_FILES`; membangun di dalam folder source.
 
-Terminologi:
+**Latihan 15 menit.** Tambahkan `Panel.qml` (satu `Rectangle`), daftarkan di `QML_FILES`, pakai di `Main.qml`, lalu `cmake --build build` dan jalankan.
 
-- Declarative: mendeskripsikan hasil atau keadaan.
-- Imperative: mendeskripsikan langkah-langkah tindakan.
-- Object declaration: deklarasi objek.
-- Object hierarchy: hubungan induk dan anak antarobjek.
-- Root object: objek utama dalam sebuah dokumen QML.
-- Nested object: objek yang berada di dalam deklarasi objek lain.
+**Cek pemahaman.** (1) Di mana tipe `Main` didefinisikan dan bagaimana C++ menemukannya? (2) Apa yang terjadi bila `Panel.qml` tidak didaftarkan?
 
-Daftar isi:
+**Referensi.** [Building a QML application](https://doc.qt.io/qt-6/cmake-build-qml-application.html) · [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html) · [qt\_standard\_project\_setup](https://doc.qt.io/qt-6/qt-standard-project-setup.html) · [Tutorial CMake](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
 
-1. Struktur dokumen `.qml`.
-2. Import statements.
-3. Root object.
-4. Object declaration.
-5. Nested objects.
-6. Property declarations.
-7. Property assignments.
-8. Object hierarchy.
-9. Comments.
-10. Syntax rules.
-11. Case sensitivity.
-12. QML coding conventions.
+### Modul 0.3 — Runtime, Bootstrap, dan Diagnosa Lingkungan *(baru)*
 
-Referensi:
+**Deskripsi.** Memahami apa yang terjadi dari `main()` sampai jendela tampil, memilih platform dan renderer, dan mendiagnosa masalah dengan variabel lingkungan.
 
-- [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html?utm_source=chatgpt.com)
-- [QML Syntax](https://doc.qt.io/qt-6/qtqml-syntax-basics.html?utm_source=chatgpt.com)
-- [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html?utm_source=chatgpt.com)
+**Konsep & analogi.** Membuka toko: (1) `QGuiApplication` menyiapkan toko (event loop, platform); (2) `QQmlApplicationEngine` menyewa penerjemah QML; (3) `loadFromModule` memuat menu; (4) scene graph menggambar etalase lewat RHI yang memilih jalur (OpenGL, Vulkan, software). Bila etalase kosong, periksa tiap tahap berurutan.
 
-### Modul 1.2 — QML Types & Basic Data Types
-
-Deskripsi konkret
-
-Mempelajari seluruh jenis data yang dapat digunakan untuk mendefinisikan properti dan nilai objek.
-
-Konsep dan filosofi
-
-Setiap properti mempunyai tipe data tertentu. Tipe data menentukan nilai apa yang dapat disimpan dan operasi apa yang relevan untuk nilai tersebut.
-
-Contoh:
+**Contoh minimal.**
 
 ```
-Item {
-    property int count: 10
-    property real opacityValue: 0.5
-    property bool enabled: true
-    property string title: "Dashboard"
-
-    property color background: "black"
-    property url iconPath: "icons/home.svg"
-}
+QT_QPA_PLATFORM=wayland qml Main.qml
+QT_QPA_PLATFORM=xcb qml Main.qml
+QT_QUICK_BACKEND=software qml Main.qml
+QSG_INFO=1 qml Main.qml
+QML_IMPORT_TRACE=1 qml Main.qml 2>&1 | head -50
 ```
 
-Terminologi:
+| Gejala | Dugaan awal | Uji |
+| --- | --- | --- |
+| Jendela tidak muncul / crash | Platform plugin atau driver GPU | Ganti `QT_QPA_PLATFORM`, coba `QT_QUICK_BACKEND=software` |
+| `module is not installed` | Import path salah | `QML_IMPORT_TRACE=1`, periksa `QML_IMPORT_PATH` |
+| Tampilan rusak hanya di satu mesin | Backend RHI | Bandingkan `QSG_INFO=1` dan `QSG_RHI_BACKEND` |
+| Plugin tidak termuat | Jalur plugin atau dependensi | `QT_DEBUG_PLUGINS=1` |
 
-- Primitive type: tipe data dasar.
-- Strong typing: pembatasan tipe nilai.
-- Type conversion: konversi tipe.
-- Enumeration: kumpulan nilai bernama.
-- Variant: tipe yang dapat merepresentasikan berbagai nilai.
+**Terminologi.** Platform plugin (QPA, lapisan antara Qt dan sistem jendela); RHI (abstraksi API grafis); backend (OpenGL, Vulkan, software, dst.); render loop (`basic` atau `threaded`); import trace (log pencarian modul).
 
-Daftar isi:
+**Daftar isi.** 0.3.1 Urutan startup aplikasi Qt Quick · 0.3.2 Platform plugin: Wayland vs X11 · 0.3.3 Renderer dan backend RHI, termasuk software · 0.3.4 Variabel lingkungan diagnostik · 0.3.5 Membaca log dan kategori logging
 
-1. `int`.
-2. `real`.
-3. `double`.
-4. `bool`.
-5. `string`.
-6. `color`.
-7. `url`.
-8. `date`.
-9. `time`.
-10. `rect`.
-11. `point`.
-12. `size`.
-13. `vector2d`, `vector3d`, `vector4d`.
-14. `var`.
-15. `list<T>`.
-16. Enumerations.
-17. Null dan undefined.
-18. Type conversion.
-19. Type annotations.
-20. Value types dan object types.
+**Kesalahan umum.** Menganggap aplikasi rusak padahal masalahnya driver atau platform plugin; mengatur variabel lingkungan di shell lain dari tempat aplikasi dijalankan; mengubah banyak variabel sekaligus sehingga penyebab tidak terisolasi.
 
-Referensi:
+**Latihan 15 menit.** Jalankan satu `Main.qml` dengan tiga kombinasi platform atau backend dan catat keluaran `QSG_INFO=1` untuk masing-masing.
 
-- [QML Basic Types](https://doc.qt.io/qt-6/qtqml-typesystem-basictypes.html?utm_source=chatgpt.com)
-- [QML Type System](https://doc.qt.io/qt-6/qtqml-typesystem-topic.html?utm_source=chatgpt.com)
+**Cek pemahaman.** (1) Bagaimana membuktikan bahwa masalah tampilan berasal dari GPU, bukan dari QML? (2) Apa fungsi `QML_IMPORT_TRACE`?
 
-### Modul 1.3 — Properties, IDs & Object Attributes
+**Referensi.** [Qt Quick Scene Graph](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html) · [Debugging QML Applications](https://doc.qt.io/qt-6/qtquick-debugging.html) · [Prototyping, Debugging, and Profiling](https://doc.qt.io/qt-6/qtqml-prototyping-debugging-profiling.html) · [Arch Wiki: Qt](https://wiki.archlinux.org/title/Qt)
 
-Deskripsi konkret
+## Fase 1 — Bahasa QML
 
-Memahami bagaimana setiap objek mempunyai identitas dan atribut yang dapat digunakan untuk mengontrol perilakunya.
+*Tujuan: membaca dan menulis dokumen QML dengan benar. Estimasi: 2–3 minggu.*
 
-Konsep dan filosofi
+### Modul 1.1 — Sintaks Dasar dan Struktur Dokumen
 
-Properti merupakan salah satu pusat dari QML. Objek tidak hanya mempunyai tampilan, tetapi juga menyimpan keadaan yang dapat dibaca dan diubah.
+**Deskripsi.** Struktur file `.qml`: import, object tree, properti, `id`, komentar, dan konvensi nama file.
 
-Contoh:
+**Konsep & analogi.** Satu file `.qml` mendefinisikan satu tipe. Nama file berawalan huruf besar menjadi nama tipe, dan file hanya punya satu root object. Anggap file QML sebagai denah satu ruangan: root adalah ruangannya, anak-anaknya adalah isinya. Di QML Anda mendeskripsikan keadaan, bukan memerintahkan langkah.
 
-```
-Rectangle {
-    id: panel
+**Contoh minimal.**
 
-    width: 400
-    height: 200
-    color: "black"
+```qml
+import QtQuick
 
-    property string panelTitle: "Terminal"
-    property bool active: true
-}
-```
-
-`id` merupakan identifier internal dalam dokumen QML, bukan properti biasa dan bukan pengganti `objectName`.
-
-Terminologi:
-
-- Property: atribut objek.
-- `id`: identifier objek dalam dokumen.
-- `objectName`: nama objek yang dapat diakses melalui mekanisme QObject.
-- Property alias: properti yang meneruskan akses ke properti lain.
-- Read-only property: properti yang tidak dapat ditulis dari QML.
-- Default property: properti yang menerima objek anak tanpa nama properti eksplisit.
-
-Daftar isi:
-
-1. Built-in properties.
-2. Custom properties.
-3. `property`.
-4. `readonly property`.
-5. `required property`.
-6. `property alias`.
-7. Object IDs.
-8. Object names.
-9. Default properties.
-10. Grouped properties.
-11. Attached properties.
-12. Enumeration attributes.
-13. Property visibility.
-14. Property initialization.
-15. Property access.
-
-Contoh alias:
-
-```
-Item {
+Rectangle {                // root object
     id: root
+    width: 300; height: 200
+    color: '#1e1e2e'
 
-    Rectangle {
-        id: background
-        color: "black"
-    }
-
-    property alias backgroundColor: background.color
-}
-```
-
-Referensi:
-
-- [QML Object Attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html?utm_source=chatgpt.com)
-- [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html?utm_source=chatgpt.com)
-
-### Modul 1.4 — Object Types & Component Fundamentals
-
-Deskripsi konkret
-
-Memahami bagaimana dokumen QML dapat menjadi tipe objek baru yang bisa digunakan kembali.
-
-Konsep dan filosofi
-
-Satu file QML pada dasarnya dapat mendefinisikan sebuah reusable object type.
-
-Contoh:
-
-`Panel.qml`
-
-```
-import QtQuick
-
-Rectangle {
-    width: 300
-    height: 150
-    radius: 8
-    color: "#202020"
-}
-```
-
-`Main.qml`
-
-```
-import QtQuick
-
-Window {
-    visible: true
-
-    Panel {
-        x: 20
-        y: 20
+    Text {                 // child object
+        anchors.centerIn: parent
+        text: 'Halo QML'
+        color: 'white'
     }
 }
 ```
 
-Di sini `Panel` dapat digunakan seperti tipe objek lainnya.
+**Terminologi.** Object (instance sebuah tipe); property (atribut bernilai); id (nama objek di dalam satu dokumen); root object (objek paling luar); child (objek di dalam); import (memuat modul); pragma (arahan dokumen, ditulis sebelum import).
 
-Terminologi:
+**Daftar isi.** 1.1.1 Struktur dokumen (pragma, import, root) · 1.1.2 Objek dan hierarki · 1.1.3 Properti dasar · 1.1.4 `id` dan referensi · 1.1.5 Komentar dan `qmlformat` · 1.1.6 Konvensi nama file
 
-- Component: definisi objek yang dapat diinstansiasi.
-- Instance: objek yang dibuat dari definisi tipe.
-- Reusability: kemampuan menggunakan kembali komponen.
-- Encapsulation: pembatasan detail internal.
-- Composition: membangun objek dari komponen lain.
+**Kesalahan umum.** Dua root object dalam satu file; nama file berawalan huruf kecil yang diharapkan menjadi tipe; lupa `import QtQuick`.
 
-Daftar isi:
+**Latihan 15 menit.** Ubah warna dan teks, jalankan dengan `qml`, rapikan dengan `qmlformat -i`, lalu jalankan `qmllint`.
 
-1. QML documents as types.
-2. Component instances.
-3. Reusable components.
-4. Component inheritance.
-5. Component composition.
-6. Component boundaries.
-7. Public interface.
-8. Private implementation.
-9. Component scope.
-10. Naming conventions.
-11. Component organization.
+**Cek pemahaman.** (1) Apa yang terjadi bila file bernama `button.qml`? (2) Mengapa satu file hanya boleh punya satu root?
 
-Referensi:
+**Referensi.** [QML Syntax Basics](https://doc.qt.io/qt-6/qtqml-syntax-basics.html) · [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html)
 
-- [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html?utm_source=chatgpt.com)
-- [QML Components](https://doc.qt.io/qt-6/qml-qtqml-component.html?utm_source=chatgpt.com)
+### Modul 1.2 — Tipe Data dan Sistem Tipe
 
-## FASE 2 — JavaScript for QML
+**Deskripsi.** Tipe dasar QML dan cara memilih tipe yang tepat untuk sebuah properti.
 
+**Konsep & analogi.** Tipe adalah label pada kotak: ia menentukan isi yang boleh masuk dan bagaimana isi diubah bentuk. `var` adalah kotak tanpa label; fleksibel, tetapi engine dan linter tidak bisa membantu Anda.
 
+| Tipe | Isi | Catatan |
+| --- | --- | --- |
+| `bool`, `int`, `real` / `double`, `string` | Nilai primitif | `real` dan `double` setara |
+| `url` | Alamat file atau jaringan | Relatif terhadap dokumen |
+| `color` | Warna | `'red'`, `'#rrggbb'`, `Qt.rgba(...)` |
+| `date` | Tanggal dan waktu | Berbasis `Date` JavaScript. **Tidak ada tipe `time` terpisah**; QTime menjadi `Date` |
+| `font` | Kelompok properti font | `font.pixelSize` |
+| `point`, `size`, `rect` | Geometri | `Qt.point`, `Qt.size`, `Qt.rect` |
+| `vector2d`, `vector3d`, `vector4d`, `matrix4x4`, `quaternion` | Matematika 2D/3D | Banyak dipakai di Qt Quick 3D dan shader |
+| `list<T>`, `var`, enum | Koleksi, nilai bebas, pencacahan | Utamakan tipe terketik |
 
-Foundation
+**Contoh minimal.**
 
-&#x20;Estimasi: 2–3 minggu
+```qml
+import QtQuick
 
-
-
-QML menyediakan lingkungan JavaScript untuk ekspresi, fungsi, event handler, dan operasi tertentu.
-
-Tujuannya bukan menjadikan seluruh aplikasi sebagai JavaScript, tetapi memahami batas antara deklarasi QML dan logika imperatif.
-
-### Modul 2.1 — JavaScript Core Language
-
-Deskripsi konkret
-
-Menguasai dasar JavaScript yang relevan dengan lingkungan QML.
-
-Konsep dan filosofi
-
-QML menggunakan JavaScript sebagai bahasa ekspresi dan logika imperatif. Namun, JavaScript di dalam QML berjalan dalam lingkungan yang dikelola QML engine dan tidak identik dengan browser.
-
-Contoh:
-
-```
 Item {
-    property int count: 0
+    property int jumlah: 3
+    property real harga: 12.5
+    property string nama: 'Kopi'
+    property bool aktif: true
+    property color warna: '#2a9d8f'
+    property point posisi: Qt.point(10, 20)
+    property rect area: Qt.rect(0, 0, 100, 50)
+    property var bebas: ({ kunci: 'nilai' })
+    property list<Item> daftar
 
-    function increment() {
-        count += 1
+    Component.onCompleted: console.log(jumlah * harga, nama, warna, posisi.x)
+}
+```
+
+**Terminologi.** Basic type (tipe bawaan nilai); value type; object type; `var` (tipe longgar); enumeration; konversi implisit (engine mengubah tipe otomatis).
+
+**Daftar isi.** 1.2.1 Primitif · 1.2.2 Geometri dan warna · 1.2.3 `date` dan konversi QDate/QTime · 1.2.4 `list` dan `var` · 1.2.5 Enum · 1.2.6 Konversi dan jebakan
+
+**Jebakan konversi.** Bulan JavaScript bernomor 0–11, sedangkan Qt 1–12. Konversi QDate dan Date bergantung pada UTC. Array-like hasil konversi dari C++ tidak lolos `Array.isArray()`. Perbandingan `real` memakai `===` rawan galat pecahan (`0.1 + 0.2`).
+
+**Kesalahan umum.** Memakai `var` untuk semuanya; mencari tipe `time`; mengabaikan jebakan konversi di atas.
+
+**Latihan 15 menit.** Tulis delapan properti dengan tipe berbeda, cetak nilai dan `typeof` masing-masing.
+
+**Cek pemahaman.** (1) Apa pengganti tipe `time`? (2) Mengapa properti terketik lebih baik daripada `var`?
+
+**Referensi.** [QML Basic Types](https://doc.qt.io/qt-6/qtqml-typesystem-basictypes.html) · [Data Type Conversion QML↔C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html)
+
+### Modul 1.3 — Properti, Alias, dan Atribut Objek
+
+**Deskripsi.** Deklarasi properti, `readonly`, `required`, `default`, alias, group properties, dan attached properties.
+
+**Konsep & analogi.** Properti adalah kotak bernama yang mengumumkan setiap perubahan isinya. Alias adalah pintu pintas ke kotak lain; ia tidak menyimpan nilai sendiri.
+
+**Contoh minimal.** `Panel.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+    required property string judul          // wajib diisi pemakai
+    readonly property int minimum: 10       // tidak bisa diubah setelah inisialisasi
+    property alias warnaLatar: root.color   // pintu pintas ke properti sendiri
+    default property alias isi: kolom.data  // anak langsung masuk ke kolom
+
+    width: 240; height: 120
+    Column {
+        id: kolom
+        anchors.fill: parent
+        Text { text: root.judul }
     }
 }
 ```
 
-Daftar isi:
+Pemakaian: `Panel { judul: 'Satu'; Text { text: 'anak' } }`.
 
-1. Variables: `let`, `const`, `var`.
-2. Primitive values.
-3. Strings.
-4. Numbers.
-5. Boolean.
-6. Arrays.
-7. Objects.
-8. Operators.
-9. Conditions.
-10. Loops.
-11. Functions.
-12. Parameters.
-13. Return values.
-14. Scope.
-15. Closures.
-16. Destructuring.
-17. Array methods.
-18. Object methods.
-19. Error handling.
-20. Strict mode dan batasan runtime.
+QML tidak punya modifier `private`. Pola umum: simpan keadaan internal dalam anak `QtObject` ber-id `d`, mis. `QtObject { id: d; property int hitung: 0 }`.
 
-Terminologi:
+**Terminologi.** `required property` (harus diberi nilai pemakai); `readonly`; alias; default property; group property (`font.pixelSize`); attached property (`Layout.fillWidth`); change signal (`onJudulChanged`).
 
-- Scope: wilayah tempat identifier dapat diakses.
-- Closure: fungsi yang mempertahankan akses terhadap lexical environment.
-- Expression: ekspresi yang menghasilkan nilai.
-- Statement: instruksi yang menjalankan suatu tindakan.
-- Runtime: lingkungan eksekusi kode.
+**Daftar isi.** 1.3.1 Deklarasi dan tipe · 1.3.2 `readonly` dan `required` · 1.3.3 Alias dan default property · 1.3.4 Group properties · 1.3.5 Attached properties · 1.3.6 Handler perubahan `onXChanged` · 1.3.7 Pola private lewat `QtObject`
 
-Referensi:
+**Kesalahan umum.** Mengira `readonly` bisa diubah dari luar; alias ke properti yang tidak ada; menimpa binding dengan assignment (dibahas di Modul 3.1).
 
-- [JavaScript Expressions in QML](https://doc.qt.io/qt-6/qtqml-javascript-expressions.html?utm_source=chatgpt.com)
-- [ECMAScript Documentation](https://tc39.es/ecma262/?utm_source=chatgpt.com)
+**Latihan 15 menit.** Buat `Panel.qml` seperti di atas dan pakai dua kali dengan judul berbeda, satu berisi anak `Text`.
 
-### Modul 2.2 — JavaScript Expressions in QML
+**Cek pemahaman.** (1) Apa beda properti biasa dan alias? (2) Mengapa `required` lebih aman daripada nilai default kosong?
 
-Deskripsi konkret
+**Referensi.** [Object Attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
 
-Mempelajari bagaimana ekspresi JavaScript digunakan di dalam properti QML.
+### Modul 1.4 — Komponen dan Reuse
 
-Contoh:
+**Deskripsi.** File QML sebagai tipe, instansiasi berulang, dan inline component.
 
-```
-Rectangle {
-    width: parent.width / 2
-    height: width * 0.5
+**Konsep & analogi.** Komponen adalah cetakan kue; instance adalah kuenya. Satu cetakan, banyak kue, dan mengubah cetakan mengubah semuanya.
 
-    color: width > 200 ? "green" : "red"
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    component Chip: Rectangle {
+        property string label
+        width: 80; height: 28; radius: 14
+        color: 'lightsteelblue'
+        Text { anchors.centerIn: parent; text: parent.label }
+    }
+
+    Row { spacing: 8; Chip { label: 'A' } Chip { label: 'B' } }
 }
 ```
 
-Konsep dan filosofi
+**Terminologi.** Komponen; instance; inline component (`component Nama: Tipe { }`); type name; tipe `Component` (dibahas di Modul 7.3).
 
-Ekspresi dalam properti dapat menjadi bagian dari sistem reaktif QML. Perubahan dependency dapat memicu evaluasi ulang.
+**Daftar isi.** 1.4.1 File sebagai tipe · 1.4.2 Inline component · 1.4.3 Properti sebagai antarmuka komponen · 1.4.4 Kapan memecah komponen
 
-Tidak semua ekspresi memiliki karakteristik yang sama. Ekspresi properti yang bergantung pada nilai lain dapat membentuk property binding, sedangkan operasi imperatif biasa tidak otomatis membentuk binding.
+**Kesalahan umum.** Menyalin-tempel blok yang sama alih-alih membuat tipe; komponen yang mengakses `id` di luar dokumennya (tidak bisa); antarmuka komponen terlalu bocor.
 
-Daftar isi:
+**Latihan 15 menit.** Ekstrak blok berulang dari Main.qml ke `Chip.qml` dan ke inline component; bandingkan keduanya.
 
-1. Arithmetic expressions.
-2. Logical expressions.
-3. Comparison operators.
-4. Ternary operators.
-5. String interpolation.
-6. Object expressions.
-7. Property references.
-8. Function calls.
-9. Binding expressions.
-10. Expression evaluation.
-11. Side effects.
-12. Binding preservation.
+**Cek pemahaman.** Kapan inline component lebih tepat dari file terpisah?
 
-Referensi:
+**Referensi.** [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html)
 
-- [JavaScript Expressions](https://doc.qt.io/qt-6/qtqml-javascript-expressions.html?utm_source=chatgpt.com)
-- [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html?utm_source=chatgpt.com)
+## Fase 2 — JavaScript untuk QML (Fondasi)
 
-### Modul 2.3 — JavaScript Modules & Libraries
+*Tujuan: memakai JavaScript secukupnya dan benar di dalam QML. Estimasi: 2–3 minggu. Pendalaman lengkap ada di Bagian B.*
 
-Deskripsi konkret
+JavaScript di QML berjalan di lingkungan khusus, bukan peramban: tidak ada `document`, `window`, atau DOM. Runtime mengimplementasikan ECMAScript edisi ke-7 dengan beberapa tambahan. `??` tersedia sejak Qt 5.15, `?.` sejak 6.2, dan pemisah numerik sejak 6.8.
 
-Memisahkan logika JavaScript dari dokumen visual.
+### Modul 2.1 — Dasar JavaScript yang Dipakai QML
 
-Contoh:
+**Deskripsi.** Bagian JavaScript yang benar-benar dipakai: `const`/`let`, tipe primitif, fungsi dan arrow function, array, objek, template literal, destructuring, `??`, `?.`, dan `try/catch`.
 
-`MathUtils.js`
+**Konsep & analogi.** JavaScript adalah catatan tangan di margin menu QML: dipakai secukupnya untuk logika yang tidak bisa dinyatakan sebagai hubungan.
 
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    function format(item) {
+        const { nama, harga = 0 } = item          // destructuring dengan nilai default
+        return `${nama}: ${harga}`                // template literal
+    }
+
+    Component.onCompleted: {
+        const data = [{ nama: 'Kopi', harga: 15000 }, { nama: 'Teh' }]
+        console.log(data.map(format).join(' | '))
+        console.log(data[1]?.alias ?? 'tanpa alias')  // ?. dan ??
+    }
+}
 ```
+
+**Terminologi.** `const`/`let`/`var`; arrow function; destructuring; template literal; nullish coalescing (`??`); optional chaining (`?.`); temporal dead zone (akses `let`/`const` sebelum deklarasi).
+
+**Daftar isi.** 2.1.1 Variabel dan scope · 2.1.2 Tipe dan konversi · 2.1.3 Fungsi dan arrow function · 2.1.4 Array: `map`, `filter`, `reduce`, `find` · 2.1.5 Objek dan destructuring · 2.1.6 String dan template literal · 2.1.7 `??` dan `?.` · 2.1.8 `try/catch` · 2.1.9 Fitur yang harus diuji dulu
+
+**Fitur yang harus diuji dulu \[uji dulu\].** Object spread `{...obj}` adalah fitur ES2018, di luar edisi ke-7. BigInt tidak saya temukan di daftar objek resmi. `async/await` tidak didukung menurut sumber yang saya temukan (diskusi milis Qt untuk Qt 6.4.1 dan QTBUG-58620) dan belum ada konfirmasi untuk 6.12. `setTimeout` tidak bawaan di QML; pakai `Timer` atau `Qt.callLater`. Buktikan masing-masing dengan satu file uji di `qml` sebelum mengandalkannya. Sebaliknya, `Map`, `Set`, `WeakMap`, `WeakSet`, `Symbol`, dan `Promise` tercantum di daftar resmi.
+
+**Kesalahan umum.** Memakai API peramban; `==` alih-alih `===`; mengira mengubah isi array otomatis memicu pembaruan binding (lihat Modul 3.1).
+
+**Latihan 15 menit.** Tulis fungsi yang menyaring daftar produk berharga di atas 10000 lalu mencetak namanya.
+
+**Cek pemahaman.** Apa beda `??` dan `||`? (`??` hanya untuk `null`/`undefined`; `||` juga untuk `0`, `''`, `false`.)
+
+**Referensi.** [JavaScript Expressions in QML](https://doc.qt.io/qt-6/qtqml-javascript-expressions.html) · [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [List of JavaScript Objects and Functions](https://doc.qt.io/qt-6/qtqml-javascript-functionlist.html) · [MDN JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)
+
+### Modul 2.2 — JavaScript di dalam Dokumen QML
+
+**Deskripsi.** Tiga tempat JavaScript hidup di QML: ekspresi binding, signal handler, dan fungsi pada objek, plus aturan `this` dan scope.
+
+**Konsep & analogi.** Binding adalah rumus sel spreadsheet (dihitung ulang otomatis). Handler adalah tombol jalankan (sekali per kejadian). Fungsi adalah makro bernama.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+    property int hitungan: 0
+    width: 200; height: width / 2                       // ekspresi binding
+    color: hitungan % 2 === 0 ? 'tomato' : 'seagreen'   // binding bersyarat
+
+    function tambah(n = 1) { hitungan += n }            // fungsi pada objek
+
+    MouseArea { anchors.fill: parent; onClicked: root.tambah() }  // signal handler
+}
+```
+
+**Aturan `this`.** Menurut dokumentasi resmi, `this` bernilai `undefined` di sebagian besar konteks QML. Hanya di binding, signal handler, dan fungsi yang dideklarasikan di QML ia merujuk ke scope object. Akibatnya jangan bergantung pada `this`; rujuk objek lewat `id`.
+
+**Terminologi.** Binding expression; signal handler; method; scope object; `this`; blok JavaScript.
+
+**Daftar isi.** 2.2.1 Binding expression · 2.2.2 Signal handler dan blok · 2.2.3 Fungsi (parameter default, anotasi tipe) · 2.2.4 `this` dan scope · 2.2.5 Fungsi pembantu · 2.2.6 `Component.onCompleted`
+
+**Kesalahan umum.** Assignment `hitungan = 5` di handler yang memutus binding (Modul 3.1); mengandalkan `this`; menaruh logika berat di binding yang dievaluasi berulang.
+
+**Latihan 15 menit.** Tambahkan `Text` yang menampilkan `hitungan` lewat binding dan perhatikan ia ikut berubah saat diklik.
+
+**Cek pemahaman.** Kapan sebuah binding dievaluasi ulang? (Saat salah satu properti yang dibacanya berubah.)
+
+**Referensi.** [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html) · [Signal and Handler Event System](https://doc.qt.io/qt-6/qtqml-syntax-signals.html) · [JavaScript Expressions in QML](https://doc.qt.io/qt-6/qtqml-javascript-expressions.html)
+
+### Modul 2.3 — File JavaScript dan Pragma
+
+**Deskripsi.** File `.js`, `.pragma library`, import JavaScript, dan pragma dokumen QML. Dua jenis pragma ini sering tertukar.
+
+**Konsep & analogi.** `.pragma library` (dengan titik) menjadikan file `.js` perpustakaan bersama: satu salinan, tanpa akses ke scope pengimpor. Tanpa itu, setiap import mendapat salinan sendiri. `pragma ...` (tanpa titik) adalah arahan untuk dokumen `.qml`.
+
+**Contoh minimal.** `MathUtils.js`:
+
+```js
 .pragma library
 
-function clamp(value, minimum, maximum) {
-    return Math.max(
-        minimum,
-        Math.min(value, maximum)
-    )
+function clamp(nilai, min, max) {
+    return Math.min(Math.max(nilai, min), max)
 }
 ```
 
-Penggunaan:
+`Main.qml`:
 
-```
-import "MathUtils.js" as MathUtils
+```qml
+import QtQuick
+import 'MathUtils.js' as MathUtils
 
 Item {
-    property real normalizedValue:
-        MathUtils.clamp(150, 0, 100)
+    Component.onCompleted: console.log(MathUtils.clamp(15, 0, 10))   // 10
 }
 ```
 
-Konsep dan filosofi
+Dalam proyek CMake, daftarkan `MathUtils.js` di `QML_FILES`.
 
-Pemisahan kode memungkinkan satu fungsi digunakan oleh banyak komponen tanpa menduplikasi implementasinya.
+| Pragma dokumen QML | Fungsi |
+| --- | --- |
+| `pragma Singleton` | Menjadikan tipe singleton (butuh pendaftaran di CMake, Modul 5.3) |
+| `pragma ComponentBehavior: Bound` `[≥6.4]` | Komponen inline terikat ke konteks pembuatnya; delegate harus memakai `required property` |
+| `pragma FunctionSignatureBehavior` `[≥6.5]` | Mengatur penanganan signature fungsi |
+| `pragma ListPropertyAssignBehavior`, `NativeMethodBehavior`, `ValueTypeBehavior` | Mengatur perilaku assignment list, pemanggilan method native, dan value type |
+| `pragma Translator` `[≥6.7]` | Menentukan objek penerjemah |
 
-Daftar isi:
+**Terminologi.** `.pragma library`; `pragma` dokumen; singleton; shared state (keadaan bersama).
 
-1. JavaScript file imports.
-2. `.pragma library`.
-3. `.import`.
-4. `.pragma ComponentBehavior`.
-5. JavaScript resources.
-6. Module namespaces.
-7. Shared state.
-8. Function libraries.
-9. Pure functions.
-10. Dependency management.
+**Daftar isi.** 2.3.1 File `.js` · 2.3.2 `.pragma library` · 2.3.3 `import ... as` · 2.3.4 `.import` di dalam `.js` · 2.3.5 Pragma dokumen QML · 2.3.6 JavaScript vs QML vs C++
 
-Terminologi:
+**Kesalahan umum.** Menulis `.pragma ComponentBehavior` (yang benar: `pragma ComponentBehavior: Bound` di file `.qml`); `.pragma library` yang mencoba mengakses `id` QML; lupa mendaftarkan `.js` di CMake.
 
-- Library: kumpulan fungsi yang dapat digunakan kembali.
-- Namespace: ruang nama untuk mengelompokkan identifier.
-- Pure function: fungsi yang tidak mengubah state eksternal dan menghasilkan output berdasarkan input.
-- Shared state: keadaan yang digunakan bersama beberapa bagian aplikasi.
+**Latihan 15 menit.** Buat `MathUtils.js`, panggil dari `Main.qml`, lalu jelaskan konsekuensi konsep bila `.pragma library` dihapus.
 
-Referensi:
+**Cek pemahaman.** Apa beda `.pragma library` dan `pragma Singleton`?
 
-- [QML JavaScript Resources](https://doc.qt.io/qt-6/qtqml-javascript-resources.html?utm_source=chatgpt.com)
-- [QML Import Statements](https://doc.qt.io/qt-6/qtqml-syntax-imports.html?utm_source=chatgpt.com)
+**Referensi.** [Defining JavaScript Resources](https://doc.qt.io/qt-6/qtqml-javascript-resources.html) · [Importing JavaScript Resources](https://doc.qt.io/qt-6/qtqml-javascript-imports.html) · [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html)
 
-### Modul 2.4 — QML and JavaScript Execution Boundaries
+### Modul 2.4 — Lingkungan Host JavaScript dan Batasnya
 
-Deskripsi konkret
+**Deskripsi.** Apa yang tersedia (objek global QML, `Qt`, `console`, `XMLHttpRequest`, `JSON`, `Math`, `Date`, `Promise`, `Map`, `Set`), apa yang tidak (DOM, `window`, `document`), dan di mana data disimpan (`Settings`, `QtQuick.LocalStorage`).
 
-Memahami batas antara JavaScript yang berjalan dalam QML engine dan fitur JavaScript yang tersedia pada browser atau Node.js.
+**Konsep & analogi.** JavaScript di QML adalah tamu di rumah engine: boleh memakai perabot Qt, tetapi ini bukan peramban.
 
-Konsep dan filosofi
+**Contoh minimal.**
 
-QML bukan browser. API seperti `document`, `window` browser, `localStorage`, dan Node.js `process` tidak otomatis tersedia.
+```qml
+import QtQuick
 
-Pelajari juga keterbatasan operasi sinkron yang berat dan bagaimana pekerjaan asinkron sebaiknya ditangani melalui API Qt yang sesuai.
-
-Daftar isi:
-
-1. QML JavaScript engine.
-2. Global objects.
-3. Available JavaScript APIs.
-4. Unsupported browser APIs.
-5. Unsupported Node.js APIs.
-6. JavaScript garbage collection.
-7. Script execution.
-8. Asynchronous operations.
-9. Promise support.
-10. QML JavaScript restrictions.
-11. Engine ownership.
-12. Script performance.
-
-Referensi:
-
-- [QML JavaScript Environment](https://doc.qt.io/qt-6/qtqml-javascript-topic.html?utm_source=chatgpt.com)
-- [QML JavaScript Expressions](https://doc.qt.io/qt-6/qtqml-javascript-expressions.html?utm_source=chatgpt.com)
-
-## FASE 3 — QML Object Model & Reactivity
-
-
-
-Intermediate
-
-&#x20;Estimasi: 2–3 minggu
-
-
-
-Ini merupakan fase transisi dari sekadar memahami sintaks menuju memahami bagaimana QML bekerja sebagai sebuah sistem objek reaktif.
-
-### Modul 3.1 — Property Binding System
-
-Deskripsi konkret
-
-Memahami sistem hubungan antarnilai properti.
-
-Konsep dan filosofi
-
-Property binding adalah mekanisme yang membuat sebuah properti mengikuti hasil ekspresi yang bergantung pada properti lain.
-
-Contoh:
-
-```
 Item {
-    width: 800
+    Timer {
+        interval: 1000; running: true
+        onTriggered: console.log('satu detik berlalu')
+    }
 
-    Rectangle {
-        width: parent.width / 2
+    Component.onCompleted: {
+        // dugaan: undefined undefined function. Buktikan sendiri di versi Qt Anda.
+        console.log(typeof document, typeof fetch, typeof XMLHttpRequest)
     }
 }
 ```
 
-Jika ukuran induk berubah, ukuran Rectangle akan dihitung ulang.
+| Kebutuhan | Pakai di QML |
+| --- | --- |
+| Menunda aksi | `Timer`, `Qt.callLater` |
+| Permintaan HTTP | `XMLHttpRequest` |
+| Penyimpanan kecil | `Settings` (modul `QtCore`, `[≥6.5]`; sebelumnya `Qt.labs.settings`) atau `QtQuick.LocalStorage` (antarmuka JavaScript ke SQLite) |
+| Baca/tulis file | API Qt lewat C++ (XHR file lokal dimatikan secara default) |
+| Data terstruktur | `JSON.parse`, `JSON.stringify` |
 
-Hal yang sangat penting adalah memahami perbedaan antara binding dan assignment imperatif.
+**Terminologi.** Host environment; global object; DOM; XMLHttpRequest (XHR); Promise; event loop.
 
-```
-Rectangle {
-    width: parent.width / 2
+**Daftar isi.** 2.4.1 Yang tersedia · 2.4.2 Yang tidak ada · 2.4.3 Objek `Qt` · 2.4.4 `console` · 2.4.5 XHR dan `QML_XHR_ALLOW_FILE_READ` · 2.4.6 Penyimpanan data · 2.4.7 `Timer` vs penunda lain
 
-    function resize() {
-        width = 300
+**Kesalahan umum.** Menulis kode gaya peramban; mencoba `localStorage` global; membaca file lokal lewat XHR tanpa mengaktifkan variabel lingkungannya (dan tanpa menimbang risikonya, lihat Modul 13.1).
+
+**Latihan 15 menit.** Jalankan contoh; ubah agar aplikasi keluar setelah satu detik memakai `Qt.quit()`.
+
+**Cek pemahaman.** Bagaimana menunda aksi satu detik di QML? Bagaimana menyimpan preferensi pengguna?
+
+**Referensi.** [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [List of JavaScript Objects and Functions](https://doc.qt.io/qt-6/qtqml-javascript-functionlist.html) · [Qt (global object)](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Settings](https://doc.qt.io/qt-6/qml-qtcore-settings.html)
+
+## Fase 3 — Model Objek dan Reaktivitas
+
+*Tujuan: memahami bagaimana QML menjaga nilai tetap sinkron: binding, signal, lifecycle, dan scope. Estimasi: 2–3 minggu.*
+
+### Modul 3.1 — Property Binding
+
+**Deskripsi.** Cara kerja binding, pelacakan dependensi, perbedaan binding dan assignment, tipe `Binding`, `Qt.binding()`, dan binding loop.
+
+**Konsep & analogi.** Binding adalah rumus sel spreadsheet: engine mencatat sel mana yang dibaca dan menghitung ulang otomatis. Assignment adalah menimpa rumus dengan angka mati: sel berhenti mengikuti.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    property int a: 2
+    property int b: 3
+    property int total: a + b                  // binding
+
+    Component.onCompleted: {
+        console.log(total)                     // 5
+        a = 10; console.log(total)             // 13: binding ikut berubah
+        total = 100                            // assignment: binding DIPUTUS
+        a = 20; console.log(total)             // tetap 100
+        total = Qt.binding(function() { return a + b })  // pulihkan binding
+        console.log(total)                     // 23
     }
 }
 ```
 
-Assignment imperatif tersebut dapat menggantikan binding yang sebelumnya terpasang.
+Untuk mengikat properti dari luar objeknya atau secara bersyarat, pakai elemen `Binding`:
 
-Daftar isi:
-
-1. Reactive programming.
-2. Property dependencies.
-3. Binding expressions.
-4. Binding evaluation.
-5. Binding updates.
-6. Binding loops.
-7. Binding removal.
-8. `Qt.binding()`.
-9. Imperative assignments.
-10. Binding debugging.
-11. Binding performance.
-12. Binding best practices.
-
-Terminologi:
-
-- Reactive system: sistem yang bereaksi terhadap perubahan data.
-- Dependency graph: hubungan ketergantungan antarproperti.
-- Binding loop: kondisi ketika properti saling bergantung secara melingkar.
-- Evaluation: proses menghitung hasil ekspresi.
-
-Referensi:
-
-- [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html?utm_source=chatgpt.com)
-- [Debugging Property Bindings](https://doc.qt.io/qt-6/qtqml-debugging.html?utm_source=chatgpt.com)
-
-### Modul 3.2 — Signals & Slots
-
-Deskripsi konkret
-
-Mempelajari komunikasi antarkomponen melalui event dan notifikasi.
-
-Konsep dan filosofi
-
-Sebuah objek tidak harus mengetahui seluruh detail objek lain untuk memberi tahu bahwa suatu peristiwa telah terjadi.
-
-Signal menjadi mekanisme komunikasi yang mengurangi ketergantungan langsung antarobjek.
-
-Contoh:
-
+```qml
+Binding { target: label; property: 'text'; value: input.text; when: input.activeFocus }
 ```
+
+Binding loop terjadi saat dua properti saling bergantung (`width: height` dan `height: width`); engine mencetak peringatan *Binding loop detected*. Selesaikan dengan memutus salah satu arah.
+
+**Jebakan array dan objek.** `daftar.push(x)` mengubah isi tanpa memicu notifikasi. Isi ulang propertinya: `daftar = [...daftar, x]` agar binding yang bergantung padanya dievaluasi ulang.
+
+**Terminologi.** Binding; dependensi; breaking a binding; binding loop; `Binding`; `Qt.binding`; change notification.
+
+**Daftar isi.** 3.1.1 Cara engine melacak dependensi · 3.1.2 Binding vs assignment · 3.1.3 `Binding` dan `Qt.binding` · 3.1.4 Binding loop · 3.1.5 Array dan objek · 3.1.6 Biaya binding (logika berat, evaluasi berulang)
+
+**Kesalahan umum.** Memakai assignment di handler lalu heran binding berhenti; menaruh fungsi mahal di binding; mengira `push` memicu pembaruan.
+
+**Latihan 15 menit.** Jalankan contoh, lalu sebabkan binding loop dengan sengaja dan baca peringatannya.
+
+**Cek pemahaman.** (1) Mengapa `total = 100` memutus binding? (2) Bagaimana memulihkannya?
+
+**Referensi.** [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html) · [Binding](https://doc.qt.io/qt-6/qml-qtqml-binding.html)
+
+### Modul 3.2 — Signal, Handler, dan Connections
+
+**Deskripsi.** Mendeklarasikan signal, menanganinya, menyambungkan antarobjek, dan memakai `Connections`.
+
+**Konsep & analogi.** Signal adalah bel pintu: pemilik tidak peduli siapa yang akan membuka. Handler adalah orang yang menanggapi bel. Satu bel bisa didengar banyak orang.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
 Item {
     id: root
+    signal pesanTerkirim(string isi)
 
-    signal messageSent(string message)
+    onPesanTerkirim: (isi) => console.log('diterima:', isi)
 
-    function sendMessage() {
-        messageSent("Hello")
+    Connections {
+        target: root
+        function onPesanTerkirim(isi) { console.log('connections:', isi) }
     }
 
     Component.onCompleted: {
-        messageSent.connect(function(message) {
-            console.log(message)
-        })
-
-        sendMessage()
+        pesanTerkirim.connect(function(isi) { console.log('connect():', isi) })
+        pesanTerkirim('halo')
     }
 }
 ```
 
-Daftar isi:
+Gunakan parameter eksplisit pada handler (`(isi) => ...` atau `function(isi)`). Injeksi parameter implisit sudah ditinggalkan di Qt 6, dan sintaks lama `onSinyal:` di dalam `Connections` juga usang; pakai `function onSinyal() { }`.
 
-1. Signal declaration.
-2. Signal parameters.
-3. Signal emission.
-4. Signal handlers.
-5. `onClicked`.
-6. Custom signal handlers.
-7. Signal connections.
-8. `Connections`.
-9. Signal forwarding.
-10. Signal disconnection.
-11. Signal-to-signal communication.
-12. Signal and slot architecture.
+**Terminologi.** Signal; handler (`onNama`); `Connections`; `connect()` / `disconnect()`; change signal (`onXChanged`).
 
-Terminologi:
+**Daftar isi.** 3.2.1 Deklarasi signal dan parameter · 3.2.2 Handler · 3.2.3 `Connections` modern · 3.2.4 `connect`/`disconnect` dan rantai signal · 3.2.5 Signal dari C++ (pratinjau Fase 10) · 3.2.6 Rekursi tak sengaja pada change handler
 
-- Signal: pemberitahuan bahwa suatu kejadian berlangsung.
-- Slot: fungsi atau mekanisme penerima signal dalam sistem Qt.
-- Signal handler: fungsi penanganan signal.
-- Event-driven: arsitektur yang merespons kejadian.
-- Loose coupling: hubungan antarkomponen yang tidak terlalu bergantung satu sama lain.
+**Kesalahan umum.** Mengubah properti di dalam change handler-nya sendiri sehingga rekursi; `Connections` tanpa `target` yang valid; lupa `disconnect` pada koneksi manual.
 
-Referensi:
+**Latihan 15 menit.** Buat komponen dengan signal `selesai(int hasil)`, sambungkan ke dua handler berbeda, dan cetak urutan pemanggilannya.
 
-- [Signals and Handlers](https://doc.qt.io/qt-6/qtqml-syntax-signals.html?utm_source=chatgpt.com)
-- [Connections](https://doc.qt.io/qt-6/qml-qtqml-connections.html?utm_source=chatgpt.com)
+**Cek pemahaman.** Mengapa `Connections` lebih rapi daripada `connect()` manual untuk target yang berubah-ubah?
 
-### Modul 3.3 — QML Object Lifecycle
+**Referensi.** [Signal and Handler Event System](https://doc.qt.io/qt-6/qtqml-syntax-signals.html) · [Connections](https://doc.qt.io/qt-6/qml-qtqml-connections.html)
 
-Deskripsi konkret
+### Modul 3.3 — Lifecycle Objek
 
-Memahami bagaimana objek dibuat, diinisialisasi, ditampilkan, diubah, dan dihancurkan.
+**Deskripsi.** Urutan pembuatan dan penghancuran objek, `Component.onCompleted`, `Component.onDestruction`, `destroy()`, dan `Qt.callLater`.
 
-Konsep dan filosofi
+**Konsep & analogi.** Objek seperti tamu pesta: datang (dibuat), menyiapkan diri (properti dan binding diinisialisasi), lalu dinyatakan siap (`onCompleted`), dan akhirnya pulang (`onDestruction`).
 
-Objek QML memiliki lifecycle. Tidak semua objek dibuat pada waktu aplikasi dimulai. Ada objek yang dibuat ketika dibutuhkan dan dihancurkan ketika tidak lagi diperlukan.
+**Contoh minimal.**
 
-Contoh:
+```qml
+import QtQuick
 
-```
 Item {
-    Component.onCompleted: {
-        console.log("Object created")
-    }
+    Component.onCompleted: console.log('induk siap')
+    Component.onDestruction: console.log('induk dihancurkan')
 
-    Component.onDestruction: {
-        console.log("Object destroyed")
+    Rectangle {
+        Component.onCompleted: console.log('anak siap')
     }
 }
 ```
 
-Daftar isi:
+Urutan `onCompleted` antarobjek tidak boleh diandalkan. Jika perlu menunda pekerjaan sampai pembuatan selesai, gunakan `Qt.callLater(fungsi)`, yang juga menggabungkan panggilan berulang menjadi satu.
 
-1. Object construction.
-2. Property initialization.
-3. Component completion.
-4. `Component.onCompleted`.
-5. `Component.onDestruction`.
-6. Object ownership.
-7. Parent-child relationships.
-8. Dynamic creation.
-9. Dynamic destruction.
-10. Object garbage collection.
-11. Deferred initialization.
-12. Lifecycle debugging.
+**Terminologi.** Lifecycle; `Component.onCompleted`; `Component.onDestruction`; `destroy()`; `Qt.callLater`.
 
-Referensi:
+**Daftar isi.** 3.3.1 Fase pembuatan objek · 3.3.2 `onCompleted` dan sifat urutannya · 3.3.3 Penghancuran dan `destroy()` · 3.3.4 `Qt.callLater` · 3.3.5 `Loader` dan objek yang dibuat tertunda (dasar)
 
-- [QML Object Attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html?utm_source=chatgpt.com)
-- [Component Lifecycle](https://doc.qt.io/qt-6/qml-qtqml-component.html?utm_source=chatgpt.com)
+**Kesalahan umum.** Mengandalkan urutan `onCompleted` antarsibling; melakukan pekerjaan berat di `onCompleted` sehingga startup lambat; mengakses objek yang sudah dihancurkan.
 
-### Modul 3.4 — Context, Scope & Component Boundaries
+**Latihan 15 menit.** Jalankan contoh, tambahkan dua anak lagi, dan amati bahwa Anda tidak boleh berasumsi urutan keluarannya.
 
-Deskripsi konkret
+**Cek pemahaman.** Kapan `Qt.callLater` lebih tepat daripada memanggil fungsi langsung?
 
-Memahami bagaimana identifier, properti, objek, dan data dapat diakses dari berbagai bagian dokumen QML.
+**Referensi.** [Component](https://doc.qt.io/qt-6/qml-qtqml-component.html) · [Dynamic QML Object Creation](https://doc.qt.io/qt-6/qtqml-javascript-dynamicobjectcreation.html)
 
-Konsep dan filosofi
+### Modul 3.4 — Scope, ID, dan Konteks
 
-QML memiliki aturan scope dan context yang memengaruhi bagaimana sebuah nama diinterpretasikan.
+**Deskripsi.** Bagaimana sebuah nama di ekspresi QML dicari, apa itu `id`, dan mengapa akses berkualifikasi lebih aman.
 
-Sistem ini sangat penting untuk mencegah konflik identifier, akses properti yang ambigu, dan kesalahan arsitektur.
+**Konsep & analogi.** Mencari nama seperti mencari barang: pertama di saku sendiri (variabel lokal), lalu di meja kerja (properti objek), lalu di ruangan (id dan root komponen), baru di gudang (konteks global).
 
-Daftar isi:
+**Contoh minimal.**
 
-1. Lexical scope.
-2. Object scope.
-3. Component scope.
-4. ID visibility.
-5. Parent context.
-6. Creation context.
-7. Context properties.
-8. Context objects.
-9. Context hierarchy.
-10. Qualified property access.
-11. Required properties.
-12. Scope debugging.
+```qml
+import QtQuick
 
-Referensi:
+Item {
+    id: root
+    property int nilai: 1
 
-- [QML Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html?utm_source=chatgpt.com)
-- [QML Context and Scope](https://doc.qt.io/qt-6/qtqml-cppintegration-contextproperties.html?utm_source=chatgpt.com)
-
-## FASE 4 — Qt Quick Visual Fundamentals
-
-
-
-Intermediate
-
-&#x20;Estimasi: 2–3 minggu
-
-
-
-Pada fase ini, fokus berpindah dari bahasa menuju sistem visual.
-
-### Modul 4.1 — Qt Quick Item System
-
-Deskripsi konkret
-
-Memahami objek visual dasar yang menjadi fondasi seluruh antarmuka Qt Quick.
-
-Konsep dan filosofi
-
-`Item` merupakan tipe dasar untuk sebagian besar objek visual Qt Quick.
-
-Ia menyediakan geometri, transformasi, opacity, visibility, dan hubungan parent-child.
-
-Contoh:
-
+    Rectangle {
+        property int nilai: 2          // menutupi (shadow) properti root
+        Text { text: root.nilai + ' vs ' + parent.nilai }   // 1 vs 2
+    }
+}
 ```
+
+Akses tanpa kualifikasi (`nilai` saja) bergantung pada urutan pencarian, lebih lambat, dan diperingatkan oleh `qmllint`. Context property (`setContextProperty`) masih tersedia tetapi menyulitkan compiler dan alat analisis statis; hindari untuk kode baru.
+
+**Terminologi.** Scope chain; shadowing; unqualified access (akses tanpa kualifikasi); `id`; context property.
+
+**Daftar isi.** 3.4.1 Urutan pencarian nama · 3.4.2 `id` dan batasnya (satu dokumen) · 3.4.3 Shadowing · 3.4.4 Akses berkualifikasi · 3.4.5 Context property dan alternatifnya · 3.4.6 Closure di JavaScript (Bagian B8)
+
+**Kesalahan umum.** Nama properti sama di anak dan induk; memakai `id` dari dokumen lain; mengandalkan context property global.
+
+**Latihan 15 menit.** Ubah contoh agar `Text` menampilkan `nilai` dari tiga tingkat, dan lihat apa yang dikeluhkan `qmllint` bila kualifikasi dihilangkan.
+
+**Cek pemahaman.** Mengapa `root.nilai` lebih baik daripada `nilai`?
+
+**Referensi.** [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [Exposing C++ Attributes (context property)](https://doc.qt.io/qt-6/qtqml-cppintegration-contextproperties.html)
+
+## Fase 4 — Dasar Visual Qt Quick
+
+*Tujuan: membangun tampilan dasar dengan item, geometri, resource, dan input. Estimasi: 2–3 minggu. Mulai jalur C++ paralel di fase ini (Modul 10.1).*
+
+### Modul 4.1 — Item dan Primitif Visual
+
+**Deskripsi.** `Item` sebagai wadah tak terlihat dan primitif visual: `Rectangle`, `Text`, `Image`, serta hubungan `Window` dengan item.
+
+**Konsep & analogi.** `Item` adalah papan kosong yang bisa diisi; `Rectangle` papan berwarna; `Text` papan bertulisan. Hierarki induk-anak menentukan posisi relatif, urutan gambar, dan visibilitas. `Window` bukan `Item`: ia jendela yang menampung item akar.
+
+**Contoh minimal.**
+
+```qml
 import QtQuick
 
 Window {
-    visible: true
-    width: 800
-    height: 600
-
+    visible: true; width: 360; height: 240
     Item {
-        width: 400
-        height: 300
-
-        Rectangle {
-            anchors.fill: parent
-            color: "#222222"
-        }
-    }
-}
-```
-
-Daftar isi:
-
-1. `Item`.
-2. `Rectangle`.
-3. `Window`.
-4. `Text`.
-5. `Image`.
-6. `BorderImage`.
-7. `AnimatedImage`.
-8. `Canvas`.
-9. `ShaderEffect`.
-10. Parent-child visual hierarchy.
-11. Visual stacking.
-12. Visibility.
-13. Opacity.
-14. Clipping.
-15. Z ordering.
-
-Terminologi:
-
-- Visual item: objek yang berpartisipasi dalam tampilan grafis.
-- Parent: objek induk.
-- Child: objek anak.
-- Z-order: urutan kedalaman penggambaran.
-- Clipping: pembatasan area penggambaran.
-- Opacity: tingkat transparansi.
-
-Referensi:
-
-- [Qt Quick Overview](https://doc.qt.io/qt-6/qtquick-index.html?utm_source=chatgpt.com)
-- [Item](https://doc.qt.io/qt-6/qml-qtquick-item.html?utm_source=chatgpt.com)
-- [Rectangle](https://doc.qt.io/qt-6/qml-qtquick-rectangle.html?utm_source=chatgpt.com)
-
-### Modul 4.2 — Geometry & Coordinate Systems
-
-Deskripsi konkret
-
-Mempelajari posisi, ukuran, koordinat, transformasi dan hubungan geometri antarobjek.
-
-Konsep dan filosofi
-
-Qt Quick menggunakan sistem koordinat lokal untuk objek visual. Posisi sebuah child umumnya ditentukan relatif terhadap sistem koordinat parent.
-
-Contoh:
-
-```
-Rectangle {
-    width: 500
-    height: 300
-
-    Rectangle {
-        x: 50
-        y: 40
-        width: 100
-        height: 100
-        color: "red"
-    }
-}
-```
-
-Daftar isi:
-
-1. X/Y coordinates.
-2. Width and height.
-3. Local coordinate systems.
-4. Parent coordinate systems.
-5. Anchors.
-6. Margins.
-7. Center alignment.
-8. Scale.
-9. Rotation.
-10. Transform origin.
-11. Transformations.
-12. Mapping coordinates.
-13. Geometry calculations.
-14. High-DPI scaling.
-15. Device-independent pixels.
-
-Referensi:
-
-- [Positioning](https://doc.qt.io/qt-6/qtquick-positioning-topic.html?utm_source=chatgpt.com)
-- [Anchors](https://doc.qt.io/qt-6/qtquick-positioning-anchors.html?utm_source=chatgpt.com)
-- [Item API](https://doc.qt.io/qt-6/qml-qtquick-item.html?utm_source=chatgpt.com)
-
-### Modul 4.3 — Colors, Images, Fonts & Visual Resources
-
-Deskripsi konkret
-
-Memahami bagaimana elemen grafis dan resource visual digunakan dalam aplikasi.
-
-Konsep dan filosofi
-
-Resource visual tidak hanya berkaitan dengan tampilan. Format gambar, resolusi, ukuran file, font, dan strategi pemuatan memengaruhi kualitas serta performa.
-
-Contoh:
-
-```
-Image {
-    source: "assets/icons/home.png"
-    width: 64
-    height: 64
-    fillMode: Image.PreserveAspectFit
-}
-```
-
-Daftar isi:
-
-1. Color values.
-2. Hexadecimal colors.
-3. RGBA.
-4. Gradients.
-5. Image loading.
-6. Image providers.
-7. Image fill modes.
-8. SVG resources.
-9. Font loading.
-10. Font families.
-11. Font weights.
-12. Text rendering.
-13. Resource aliases.
-14. Resource URLs.
-15. Qt Resource System.
-16. Asset optimization.
-
-Referensi:
-
-- [Image](https://doc.qt.io/qt-6/qml-qtquick-image.html?utm_source=chatgpt.com)
-- [Text](https://doc.qt.io/qt-6/qml-qtquick-text.html?utm_source=chatgpt.com)
-- [Gradients](https://doc.qt.io/qt-6/qtquick-gradient.html?utm_source=chatgpt.com)
-- [Qt Resource System](https://doc.qt.io/qt-6/resources.html?utm_source=chatgpt.com)
-
-### Modul 4.4 — Input Events & Hit Testing
-
-Deskripsi konkret
-
-Mempelajari bagaimana objek visual menerima input dari pengguna.
-
-Konsep dan filosofi
-
-Antarmuka tidak hanya menampilkan elemen. Ia harus mampu mendeteksi interaksi dan menentukan objek yang menerima input.
-
-Contoh:
-
-```
-Rectangle {
-    width: 200
-    height: 100
-    color: "blue"
-
-    MouseArea {
         anchors.fill: parent
-
-        onClicked: {
-            console.log("Clicked")
-        }
+        Rectangle { x: 20; y: 20; width: 120; height: 80; color: 'goldenrod'; radius: 8 }
+        Text { x: 20; y: 120; text: 'Item, Rectangle, Text'; font.pixelSize: 18 }
     }
 }
 ```
 
-Daftar isi:
+**Terminologi.** Item; hierarki visual; `visible` dan `opacity`; `clip`; `z`; item akar.
 
-1. Mouse events.
-2. Keyboard events.
-3. Focus.
-4. Focus scopes.
-5. Tab navigation.
-6. Hit testing.
-7. Pointer events.
-8. MouseArea.
-9. HoverHandler.
-10. TapHandler.
-11. DragHandler.
-12. WheelHandler.
-13. Multi-touch.
-14. Event propagation.
-15. Input acceptance.
-16. Input priority.
+**Daftar isi.** 4.1.1 `Item` dan hierarki · 4.1.2 `Rectangle`, `Text`, `Image` · 4.1.3 `visible`, `opacity`, `enabled` · 4.1.4 `clip` dan biayanya · 4.1.5 `Window` dan item akar
 
-Referensi:
+**Kesalahan umum.** Mengira `visible: false` sama dengan `opacity: 0` untuk input (keduanya berbeda efeknya); menumpuk item tak terlihat yang tetap diproses; `clip: true` di mana-mana.
 
-- [Qt Quick Input](https://doc.qt.io/qt-6/qtquick-input-topic.html?utm_source=chatgpt.com)
-- [MouseArea](https://doc.qt.io/qt-6/qml-qtquick-mousearea.html?utm_source=chatgpt.com)
-- [Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html?utm_source=chatgpt.com)
+**Latihan 15 menit.** Susun tiga persegi bertumpuk dengan `z` berbeda dan ubah urutannya hanya lewat `z`.
 
-## FASE 5 — Components, Layouts & Styling
+**Cek pemahaman.** Apa bedanya `Item` dan `Rectangle`? Mengapa `Window` bukan `Item`?
 
+**Referensi.** [Item](https://doc.qt.io/qt-6/qml-qtquick-item.html) · [Rectangle](https://doc.qt.io/qt-6/qml-qtquick-rectangle.html) · [Text](https://doc.qt.io/qt-6/qml-qtquick-text.html)
 
+### Modul 4.2 — Geometri, Anchors, dan Z-Order
 
-Intermediate
+**Deskripsi.** Menentukan posisi dan ukuran dengan `x`, `y`, `width`, `height`, `implicitWidth`, dan `anchors`.
 
-&#x20;Estimasi: 2 minggu
+**Konsep & analogi.** Koordinat adalah alamat mutlak; anchors adalah janji relatif (“selalu 16 piksel di kanan tetangga saya”). Janji relatif bertahan saat ukuran jendela berubah.
 
+**Contoh minimal.**
 
-
-### Modul 5.1 — Component Architecture
-
-Deskripsi konkret
-
-Membangun antarmuka menggunakan komponen independen yang memiliki tanggung jawab jelas.
-
-Konsep dan filosofi
-
-Komponen yang baik memiliki kontrak penggunaan yang jelas. Pengguna komponen seharusnya tidak perlu mengetahui detail internal implementasinya.
-
-Contoh:
-
-```
-// Card.qml
+```qml
 import QtQuick
 
 Rectangle {
-    required property string title
+    width: 320; height: 200; color: '#222'
 
-    width: 250
-    height: 120
-    radius: 8
-
-    Text {
-        anchors.centerIn: parent
-        text: parent.title
+    Rectangle {
+        id: kotak
+        width: 80; height: 80; color: 'tomato'
+        anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 16 }
+    }
+    Rectangle {
+        width: 80; height: 80; color: 'seagreen'
+        anchors { left: kotak.right; verticalCenter: kotak.verticalCenter; leftMargin: 8 }
     }
 }
 ```
 
-Daftar isi:
+**Terminologi.** Anchors; margin; `implicitWidth`/`implicitHeight` (ukuran yang diinginkan item sendiri); `anchors.fill`; `anchors.centerIn`.
 
-1. Component decomposition.
-2. Reusable components.
-3. Required properties.
-4. Public properties.
-5. Private implementation.
-6. Component contracts.
-7. Composition.
-8. Component inheritance.
-9. Default properties.
-10. Property aliases.
-11. Slots menggunakan `default property` dan `Component`.
-12. Component testing.
-13. Component documentation.
+**Daftar isi.** 4.2.1 Koordinat dan ukuran · 4.2.2 `implicitWidth`/`implicitHeight` · 4.2.3 Anchors dan margin · 4.2.4 Aturan anchors (hanya ke induk atau saudara) · 4.2.5 `z` dan urutan gambar
 
-Referensi:
+**Kesalahan umum.** Memadukan `anchors.left` dengan `x` pada item yang sama (`x` diabaikan); menjangkar ke item yang bukan induk atau saudara; membuat binding loop lewat anchors.
 
-- [QML Components](https://doc.qt.io/qt-6/qtqml-typesystem-components.html?utm_source=chatgpt.com)
-- [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html?utm_source=chatgpt.com)
+**Latihan 15 menit.** Susun tiga kotak sejajar yang tetap berjarak 8 piksel saat jendela diubah ukurannya.
 
-### Modul 5.2 — Positioners & Layout Management
+**Cek pemahaman.** Item mana saja yang boleh menjadi target anchors?
 
-Deskripsi konkret
+**Referensi.** [Positioning with Anchors](https://doc.qt.io/qt-6/qtquick-positioning-anchors.html) · [Important Concepts In Qt Quick: Positioning](https://doc.qt.io/qt-6/qtquick-positioning-topic.html)
 
-Mengatur posisi dan ukuran elemen secara otomatis tanpa menghitung seluruh koordinat secara manual.
+### Modul 4.3 — Resource: Gambar, Font, dan URL
 
-Konsep dan filosofi
+**Deskripsi.** Memuat gambar dan font, memahami resolusi URL, dan memasukkan resource ke modul QML lewat CMake.
 
-Positioner dan Layout mempunyai tujuan berbeda.
+**Konsep & analogi.** URL relatif dihitung dari lokasi file QML yang menulisnya, seperti alamat relatif terhadap rumah, bukan terhadap kota. Di dalam modul, resource dikemas ke dalam binary dan dirujuk dengan path relatif dari file QML.
 
-Positioner mengatur susunan objek berdasarkan aturan posisi. Layout mengelola ruang dan ukuran komponen berdasarkan kebijakan layout.
+**Contoh minimal.**
 
-Contoh positioner:
-
-```
-Row {
-    spacing: 10
-
-    Rectangle { width: 80; height: 80 }
-    Rectangle { width: 80; height: 80 }
-    Rectangle { width: 80; height: 80 }
+```qml
+Image {
+    source: 'images/logo.png'
+    asynchronous: true
+    fillMode: Image.PreserveAspectFit
+    sourceSize.width: 128
 }
 ```
 
-Contoh layout:
+CMake: tambahkan `RESOURCES images/logo.png` pada `qt_add_qml_module`.
 
+**Terminologi.** URL relatif; resource (file yang dikemas ke binary); `asynchronous`; `sourceSize` (ukuran decode); `FontLoader`; `Qt.resolvedUrl`.
+
+**Daftar isi.** 4.3.1 `Image` dan `fillMode` · 4.3.2 Pemuatan asinkron dan cache · 4.3.3 `sourceSize` dan memori · 4.3.4 `FontLoader` dan `font` · 4.3.5 URL dan `Qt.resolvedUrl` · 4.3.6 `RESOURCES` di CMake
+
+**Kesalahan umum.** Memakai path absolut ke file lokal; lupa mendaftarkan resource; memuat gambar besar tanpa `sourceSize` sehingga memori membengkak.
+
+**Latihan 15 menit.** Tambahkan satu gambar sebagai resource modul, tampilkan dengan `sourceSize` kecil, dan bandingkan pemakaian memori dengan dan tanpa `sourceSize`.
+
+**Cek pemahaman.** Mengapa `sourceSize` penting untuk gambar besar?
+
+**Referensi.** [Image](https://doc.qt.io/qt-6/qml-qtquick-image.html) · [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html)
+
+### Modul 4.4 — Input Dasar: Pointer, Tap, dan Keyboard
+
+**Deskripsi.** Menangani klik, sentuhan, hover, dan tombol keyboard dengan `MouseArea`, input handlers, dan `Keys`.
+
+**Konsep & analogi.** Input handler seperti pengintai yang ditempel pada item: ia hanya memperhatikan kejadian jenisnya sendiri dan tidak mengganggu pengintai lain. Fokus keyboard hanya dimiliki satu item pada satu waktu.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 320; height: 160
+
+    Rectangle {
+        anchors.centerIn: parent
+        width: 120; height: 60
+        color: tap.pressed ? 'darkorange' : 'orange'
+        Text { anchors.centerIn: parent; text: 'Tekan' }
+        TapHandler { id: tap; onTapped: console.log('tap') }
+    }
+
+    Item {
+        focus: true
+        Keys.onPressed: (event) => { if (event.key === Qt.Key_Q) Qt.quit() }
+    }
+}
 ```
+
+**Terminologi.** `MouseArea`; input handler (`TapHandler`, `HoverHandler`, `DragHandler`); fokus; `Keys`; event.
+
+**Daftar isi.** 4.4.1 `MouseArea` · 4.4.2 `TapHandler` dan `HoverHandler` · 4.4.3 Fokus dan `Keys` · 4.4.4 Propagasi dan penerimaan event · 4.4.5 Pointer vs sentuhan
+
+**Kesalahan umum.** Item penerima key tidak punya `focus`; `MouseArea` menumpuk dan saling menelan event; menaruh logika berat di handler input.
+
+**Latihan 15 menit.** Buat persegi yang berubah warna saat di-hover dan keluar dari aplikasi saat tombol `Q` ditekan.
+
+**Cek pemahaman.** Mengapa tombol tidak merespons bila item tidak memegang fokus?
+
+**Referensi.** [Important Concepts In Qt Quick: Input](https://doc.qt.io/qt-6/qtquick-input-topic.html) · [Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html)
+
+## Fase 5 — Komponen, Layout, dan Styling
+
+*Tujuan: merancang komponen dengan antarmuka bersih, menata tampilan responsif, dan memusatkan tema. Estimasi: 2 minggu.*
+
+### Modul 5.1 — Komponen sebagai API
+
+**Deskripsi.** Merancang komponen yang antarmukanya jelas: properti sebagai masukan, signal sebagai keluaran, internal tersembunyi.
+
+**Konsep & analogi.** Komponen seperti stopkontak: pemakai hanya tahu bentuk lubangnya (properti dan signal), bukan kabel di dalam dinding. Komponen yang membaca `parent.apa-pun` terpaku pada satu tempat pemasangan.
+
+**Contoh minimal.** `AppButton.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+    required property string label
+    signal clicked()
+
+    implicitWidth: teks.implicitWidth + 32
+    implicitHeight: 40
+    radius: 6
+    color: tap.pressed ? '#1d4ed8' : '#2563eb'
+
+    Text { id: teks; anchors.centerIn: parent; text: root.label; color: 'white' }
+    TapHandler { id: tap; onTapped: root.clicked() }
+}
+```
+
+Pemakaian: `AppButton { label: 'Simpan'; onClicked: console.log('disimpan') }`.
+
+**Terminologi.** Antarmuka komponen; enkapsulasi; `required property`; signal keluaran; `implicitWidth`.
+
+**Daftar isi.** 5.1.1 Prinsip: properti masuk, signal keluar · 5.1.2 `root` sebagai id konvensional · 5.1.3 Ukuran implisit · 5.1.4 Menghindari akses ke induk · 5.1.5 Konvensi penamaan dan gaya kode
+
+**Kesalahan umum.** Komponen yang mengubah properti induknya langsung; terlalu banyak properti publik; tidak memberi `implicitWidth` sehingga layout tak tahu ukurannya.
+
+**Latihan 15 menit.** Tambahkan properti `enabled` visual (warna abu saat nonaktif) tanpa mengubah cara pemakaian yang ada.
+
+**Cek pemahaman.** Mengapa komponen tidak boleh membaca `parent.width`?
+
+**Referensi.** [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [Defining Object Types](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html)
+
+### Modul 5.2 — Positioner dan Layouts
+
+**Deskripsi.** `Row`, `Column`, `Grid`, `Flow` (positioner) dan `RowLayout`, `ColumnLayout`, `GridLayout` (Layouts), serta kapan memakai masing-masing.
+
+**Konsep & analogi.** Positioner adalah rak yang hanya menata barang apa adanya. Layout adalah pengatur ruangan yang juga mengubah ukuran barang agar muat. Aturan praktis: bila ukuran anak harus ikut menyesuaikan ruang, pakai Layout.
+
+**Contoh minimal.**
+
+```qml
 import QtQuick
 import QtQuick.Layouts
 
-RowLayout {
-    spacing: 10
+Window {
+    visible: true; width: 400; height: 120
 
-    Rectangle {
-        Layout.fillWidth: true
-        Layout.preferredHeight: 80
-    }
-
-    Rectangle {
-        Layout.preferredWidth: 120
-        Layout.preferredHeight: 80
+    RowLayout {
+        anchors.fill: parent; anchors.margins: 12; spacing: 8
+        Rectangle { color: 'tomato'; Layout.preferredWidth: 80; Layout.fillHeight: true }
+        Rectangle { color: 'seagreen'; Layout.fillWidth: true; Layout.fillHeight: true }
     }
 }
 ```
 
-Daftar isi:
+**Terminologi.** Positioner; Layout; attached property `Layout.*` (`fillWidth`, `fillHeight`, `preferredWidth`, `minimumWidth`, `alignment`); spacing.
 
-1. Row.
-2. Column.
-3. Grid.
-4. Flow.
-5. RowLayout.
-6. ColumnLayout.
-7. GridLayout.
-8. Layout attached properties.
-9. Spacing.
-10. Margins.
-11. Alignment.
-12. Fill width/height.
-13. Preferred dimensions.
-14. Minimum and maximum dimensions.
-15. Responsive layouts.
-16. Nested layouts.
-17. Layout performance.
-18. Positioner versus Layout.
+**Daftar isi.** 5.2.1 `Row`/`Column`/`Grid`/`Flow` · 5.2.2 `RowLayout`/`ColumnLayout`/`GridLayout` · 5.2.3 Attached property `Layout` · 5.2.4 Positioner vs Layout · 5.2.5 Responsif terhadap ukuran jendela
 
-Referensi:
+**Kesalahan umum.** Memakai `anchors` pada anak langsung Layout (pakai `Layout.*`); mengharapkan `Row` mengubah ukuran anak; layout bersarang berlebihan.
 
-- [Qt Quick Positioners](https://doc.qt.io/qt-6/qtquick-positioning-topic.html?utm_source=chatgpt.com)
-- [Qt Quick Layouts](https://doc.qt.io/qt-6/qtquicklayouts-index.html?utm_source=chatgpt.com)
+**Latihan 15 menit.** Buat form dua kolom yang melebar mengikuti jendela dengan `GridLayout`.
 
-### Modul 5.3 — Styling & Visual Design Architecture
+**Cek pemahaman.** Kapan `Row` cukup dan kapan perlu `RowLayout`?
 
-Deskripsi konkret
+**Referensi.** [Qt Quick Layouts](https://doc.qt.io/qt-6/qtquicklayouts-index.html) · [Item Positioners](https://doc.qt.io/qt-6/qtquick-positioning-topic.html)
 
-Membangun sistem tampilan konsisten yang dapat digunakan oleh banyak komponen.
+### Modul 5.3 — Tema dan Singleton
 
-Konsep dan filosofi
+**Deskripsi.** Memusatkan warna, ukuran, dan spasi dalam satu singleton, termasuk pendaftarannya di CMake.
 
-Styling yang baik tidak menyimpan seluruh keputusan desain secara terpisah pada setiap objek. Gunakan token desain, tema, dan komponen visual bersama.
+**Konsep & analogi.** Tema adalah satu buku panduan gaya yang dibaca semua komponen. Mengubah satu entri mengubah seluruh aplikasi, tanpa mencari angka yang tersebar.
 
-Contoh:
+**Contoh minimal.** `Theme.qml`:
 
-```
-// Theme.qml
+```qml
 pragma Singleton
 import QtQuick
 
 QtObject {
-    readonly property color background: "#111111"
-    readonly property color surface: "#202020"
-    readonly property color foreground: "#ffffff"
-    readonly property color accent: "#80cbc4"
-
-    readonly property int radius: 8
-    readonly property int spacing: 12
+    readonly property color primary: '#2563eb'
+    readonly property int spacing: 8
+    readonly property int radius: 6
 }
 ```
 
-Daftar isi:
-
-1. Design tokens.
-2. Color systems.
-3. Typography systems.
-4. Spacing systems.
-5. Border systems.
-6. Elevation and shadows.
-7. Themes.
-8. Light and dark modes.
-9. Singleton-based theme.
-10. Reusable style components.
-11. Style inheritance limitations.
-12. Runtime theme switching.
-13. Design consistency.
-14. Component visual contracts.
-
-Referensi:
-
-- [QML Singletons](https://doc.qt.io/qt-6/qml-singleton.html?utm_source=chatgpt.com)
-- [Qt Quick Controls Styling](https://doc.qt.io/qt-6/qtquickcontrols-styles.html?utm_source=chatgpt.com)
-
-## FASE 6 — Interaction, States & Animation
-
-
-
-Intermediate
-
-&#x20;Estimasi: 2–3 minggu
-
-
-
-### Modul 6.1 — State Management
-
-Deskripsi konkret
-
-Mengelola keadaan objek ketika aplikasi mengalami perubahan kondisi.
-
-Konsep dan filosofi
-
-State menggambarkan kondisi sebuah objek. State yang berbeda dapat menghasilkan perubahan properti, posisi, ukuran, atau tampilan.
-
-Contoh:
-
-```
-Rectangle {
-    id: panel
-
-    width: 200
-    height: 100
-    color: "blue"
-
-    states: [
-        State {
-            name: "expanded"
-
-            PropertyChanges {
-                panel.width: 400
-                panel.height: 200
-                panel.color: "green"
-            }
-        }
-    ]
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            panel.state =
-                panel.state === "expanded"
-                ? ""
-                : "expanded"
-        }
-    }
-}
-```
-
-Daftar isi:
-
-1. Object state.
-2. Default state.
-3. State definitions.
-4. State transitions.
-5. PropertyChanges.
-6. State groups.
-7. State selection.
-8. State restoration.
-9. State conflicts.
-10. State machines.
-11. State-driven UI.
-12. State debugging.
-
-Referensi:
-
-\- [Qt Quick States](https://doc.qt.io/qt-6/qtquick-statesanimations-states.html?utm_source=chatgpt.com)
-
-### Modul 6.2 — Animation System
-
-Deskripsi konkret
-
-Mempelajari bagaimana properti berubah secara bertahap dalam rentang waktu tertentu.
-
-Konsep dan filosofi
-
-Animasi adalah interpolasi nilai dari kondisi awal menuju kondisi akhir.
-
-Contoh:
-
-```
-Rectangle {
-    id: box
-
-    width: 100
-    height: 100
-    color: "red"
-
-    NumberAnimation on x {
-        from: 0
-        to: 400
-        duration: 1000
-        running: true
-    }
-}
-```
-
-Daftar isi:
-
-1. Animation fundamentals.
-2. NumberAnimation.
-3. ColorAnimation.
-4. RotationAnimation.
-5. SequentialAnimation.
-6. ParallelAnimation.
-7. PropertyAnimation.
-8. Behavior.
-9. Transition.
-10. Easing curves.
-11. Animation loops.
-12. Animation groups.
-13. Animation interruption.
-14. Animation performance.
-15. Frame synchronization.
-
-Terminologi:
-
-- Interpolation: perhitungan nilai antara dua kondisi.
-- Easing: kurva pengaturan percepatan dan perlambatan.
-- Frame: satu gambar dalam rangkaian rendering.
-- Duration: durasi animasi.
-- Transition: perubahan antarstate dengan animasi.
-
-Referensi:
-
-- [Qt Quick Animations](https://doc.qt.io/qt-6/qtquick-statesanimations-animations.html?utm_source=chatgpt.com)
-- [Animation Types](https://doc.qt.io/qt-6/qtquick-animation-overview.html?utm_source=chatgpt.com)
-
-### Modul 6.3 — Advanced Input & Interaction
-
-Deskripsi konkret
-
-Membuat interaksi yang lebih kompleks daripada klik sederhana.
-
-Daftar isi:
-
-1. Drag and drop.
-2. Multi-touch.
-3. Gesture recognition.
-4. Pointer handlers.
-5. Event filtering.
-6. Input propagation.
-7. Keyboard shortcuts.
-8. Focus management.
-9. Mouse capture.
-10. Wheel interaction.
-11. Touchpad gestures.
-12. Interaction state.
-13. Input latency.
-
-Contoh:
-
-```
-Rectangle {
-    width: 150
-    height: 150
-
-    DragHandler {
-        target: parent
-    }
-}
-```
-
-Referensi:
-
-- [Qt Quick Input](https://doc.qt.io/qt-6/qtquick-input-topic.html?utm_source=chatgpt.com)
-- [Pointer Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html?utm_source=chatgpt.com)
-
-## FASE 7 — Models, Views & Data Architecture
-
-
-
-Advanced
-
-&#x20;Estimasi: 2–3 minggu
-
-
-
-Fase ini penting untuk membangun antarmuka yang menampilkan data dinamis.
-
-### Modul 7.1 — Models & Data Sources
-
-Deskripsi konkret
-
-Mempelajari bagaimana data direpresentasikan sebelum ditampilkan pada antarmuka.
-
-Konsep dan filosofi
-
-Model bertugas menyediakan data. View bertugas menampilkan data. Delegate bertugas menentukan representasi visual setiap elemen.
-
-Contoh:
-
-```
-ListModel {
-    id: people
-
-    ListElement {
-        name: "Alice"
-        age: 24
-    }
-
-    ListElement {
-        name: "Bob"
-        age: 30
-    }
-}
-```
-
-Daftar isi:
-
-1. Data model.
-2. ListModel.
-3. ListElement.
-4. JavaScript arrays.
-5. Object models.
-6. String models.
-7. Dynamic data.
-8. Model roles.
-9. Model updates.
-10. Model notifications.
-11. Data ownership.
-12. Model-view separation.
-
-Referensi:
-
-- [Qt Quick Models and Views](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html?utm_source=chatgpt.com)
-- [ListModel](https://doc.qt.io/qt-6/qml-qtqml-models-listmodel.html?utm_source=chatgpt.com)
-
-### Modul 7.2 — Views & Delegates
-
-Deskripsi konkret
-
-Membangun daftar, tabel, grid, dan koleksi elemen visual berdasarkan model.
-
-Konsep dan filosofi
-
-View tidak perlu mengetahui bagaimana seluruh data dibuat. Ia hanya membutuhkan model yang menyediakan struktur data yang dapat diakses.
-
-Contoh:
-
-```
-ListView {
-    width: 300
-    height: 400
-
-    model: people
-
-    delegate: Rectangle {
-        width: ListView.view.width
-        height: 50
-
-        Text {
-            anchors.centerIn: parent
-            text: model.name
-        }
-    }
-}
-```
-
-Daftar isi:
-
-1. ListView.
-2. GridView.
-3. TableView.
-4. Repeater.
-5. Delegate.
-6. Delegate context.
-7. Model roles.
-8. Delegate lifecycle.
-9. Delegate reuse.
-10. View positioning.
-11. View transitions.
-12. Section headers.
-13. Header and footer.
-14. Virtualization.
-15. View performance.
-
-Terminologi:
-
-- View: komponen yang menampilkan data.
-- Delegate: komponen visual untuk setiap entri data.
-- Role: nama atribut dalam model.
-- Virtualization: membuat elemen visual hanya ketika diperlukan.
-- Recycling: menggunakan kembali objek visual yang sudah ada.
-
-Referensi:
-
-- [Qt Quick Views](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html?utm_source=chatgpt.com)
-- [ListView](https://doc.qt.io/qt-6/qml-qtquick-listview.html?utm_source=chatgpt.com)
-- [GridView](https://doc.qt.io/qt-6/qml-qtquick-gridview.html?utm_source=chatgpt.com)
-- [TableView](https://doc.qt.io/qt-6/qml-qtquick-tableview.html?utm_source=chatgpt.com)
-- [Repeater](https://doc.qt.io/qt-6/qml-qtquick-repeater.html?utm_source=chatgpt.com)
-
-### Modul 7.3 — Dynamic Object Creation
-
-Deskripsi konkret
-
-Mempelajari cara membuat dan menghancurkan objek ketika aplikasi sedang berjalan.
-
-Konsep dan filosofi
-
-Tidak seluruh komponen perlu dibuat saat aplikasi pertama kali dimulai. Dynamic creation membantu mengendalikan penggunaan resource dan struktur objek.
-
-Contoh:
-
-```
-Component {
-    id: dynamicRectangle
-
-    Rectangle {
-        width: 100
-        height: 100
-        color: "red"
-    }
-}
-
-function createRectangle() {
-    const object = dynamicRectangle.createObject(
-        parent,
-        { x: 100, y: 100 }
-    )
-}
-```
-
-Daftar isi:
-
-1. Component.
-2. Component.createObject.
-3. Component.incubateObject.
-4. Qt.createComponent.
-5. Qt.createQmlObject.
-6. Dynamic properties.
-7. Object ownership.
-8. Creation context.
-9. Asynchronous incubation.
-10. Object destruction.
-11. Dynamic component loading.
-12. Error handling.
-
-Referensi:
-
-- [Dynamic QML Object Creation](https://doc.qt.io/qt-6/qtqml-javascript-dynamicobjectcreation.html?utm_source=chatgpt.com)
-- [Component](https://doc.qt.io/qt-6/qml-qtqml-component.html?utm_source=chatgpt.com)
-
-### Modul 7.4 — Data Transformation & Asynchronous Data
-
-Deskripsi konkret
-
-Mengelola data yang berasal dari proses asynchronous, pemrosesan eksternal, atau sumber yang berubah sewaktu-waktu.
-
-Daftar isi:
-
-1. JavaScript promises.
-2. Timers.
-3. XMLHttpRequest.
-4. Network responses.
-5. Data parsing.
-6. JSON.
-7. Data validation.
-8. Loading states.
-9. Error states.
-10. Cancellation.
-11. Asynchronous object creation.
-12. Data synchronization.
-13. Stale data.
-14. Update notifications.
-
-Referensi:
-
-- [QML JavaScript](https://doc.qt.io/qt-6/qtqml-javascript-topic.html?utm_source=chatgpt.com)
-- [Qt Network](https://doc.qt.io/qt-6/qtnetwork-index.html?utm_source=chatgpt.com)
-- [JSON Support](https://doc.qt.io/qt-6/json.html?utm_source=chatgpt.com)
-
-## FASE 8 — QML Modules & Software Architecture
-
-
-
-Advanced
-
-&#x20;Estimasi: 2–3 minggu
-
-
-
-Pada fase ini, pembelajaran beralih dari membangun aplikasi kecil menuju menyusun sistem komponen yang dapat dikembangkan dan digunakan kembali.
-
-### Modul 8.1 — QML Module System
-
-Deskripsi konkret
-
-Memahami bagaimana QML mengelompokkan tipe objek dan resource menjadi module yang dapat diimpor.
-
-Konsep dan filosofi
-
-QML module adalah unit logis yang menyediakan kumpulan tipe dan resource dalam namespace tertentu.
-
-Contoh:
-
-```
-import QtQuick
-import MyCompany.Controls
-import MyCompany.Theme
-```
-
-Dengan pendekatan ini, aplikasi dapat menggunakan modul internal maupun eksternal.
-
-Daftar isi:
-
-1. QML module concepts.
-2. Module URI.
-3. Module imports.
-4. Import aliases.
-5. Versioning.
-6. `qmldir`.
-7. `qmltypes`.
-8. Import paths.
-9. Resource paths.
-10. Module dependencies.
-11. Module discovery.
-12. Local imports.
-13. Plugin modules.
-14. Static modules.
-15. Shared modules.
-
-Terminologi:
-
-- URI: identifier unik untuk namespace modul.
-- Import path: lokasi pencarian modul.
-- Module dependency: ketergantungan satu modul terhadap modul lainnya.
-- Type namespace: ruang nama yang menyediakan tipe tertentu.
-- Plugin: library yang menyediakan implementasi tambahan yang dapat dimuat sistem.
-
-Referensi:
-
-- [QML Modules](https://doc.qt.io/qt-6/qtqml-modules-topic.html?utm_source=chatgpt.com)
-- [Import Statements](https://doc.qt.io/qt-6/qtqml-syntax-imports.html?utm_source=chatgpt.com)
-- [QML Module Directory](https://doc.qt.io/qt-6/qtqml-modules-qmldir.html?utm_source=chatgpt.com)
-
-### Modul 8.2 — Advanced QML Component Architecture
-
-Deskripsi konkret
-
-Membangun sistem komponen berskala besar dengan pembagian tanggung jawab yang terukur.
-
-Konsep dan filosofi
-
-Arsitektur yang baik memisahkan:
-
-- Visual representation.
-- Application state.
-- Business logic.
-- Data access.
-- Infrastructure.
-
-Contoh struktur:
-
-```
-application/
-├── CMakeLists.txt
-├── src/
-│   ├── main.cpp
-│   ├── backend/
-│   └── services/
-├── qml/
-│   ├── Main.qml
-│   ├── components/
-│   ├── layouts/
-│   ├── pages/
-│   ├── themes/
-│   └── models/
-├── assets/
-└── tests/
-```
-
-Daftar isi:
-
-1. Separation of concerns.
-2. Modular architecture.
-3. Component contracts.
-4. Dependency boundaries.
-5. Reusable UI libraries.
-6. Feature modules.
-7. Shared components.
-8. Application services.
-9. State ownership.
-10. Data flow.
-11. Event communication.
-12. Dependency inversion.
-13. Composition over inheritance.
-14. Naming and API conventions.
-15. Architectural documentation.
-
-Referensi:
-
-- [QML Modules](https://doc.qt.io/qt-6/qtqml-modules-topic.html?utm_source=chatgpt.com)
-- [QML Best Practices](https://doc.qt.io/qt-6/qtqml-best-practices.html?utm_source=chatgpt.com)
-
-### Modul 8.3 — CMake & QML Module Engineering
-
-Deskripsi konkret
-
-Menguasai bagaimana proyek Qt 6 modern dibangun dan bagaimana modul internal disusun menggunakan CMake.
-
-Konsep dan filosofi
-
-`qt_add_qml_module()` merupakan API utama untuk mendefinisikan QML module modern.
-
-Ia mengatur banyak pekerjaan yang sebelumnya harus dilakukan secara manual, termasuk registrasi tipe, resource embedding, plugin dan integrasi tooling.
-
-Contoh:
-
-```
-qt_add_qml_module(controls
-    URI MyCompany.Controls
-
-    QML_FILES
-        Button.qml
-        Panel.qml
-        Card.qml
-
-    RESOURCES
-        icons/home.svg
-        icons/settings.svg
+CMake (properti file harus diatur **sebelum** `qt_add_qml_module`):
+
+```cmake
+set_source_files_properties(Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+qt_add_qml_module(hello
+    URI Hello
+    VERSION 1.0
+    QML_FILES Main.qml AppButton.qml Theme.qml
 )
 ```
 
-Daftar isi:
+Pemakaian: `color: Theme.primary`. Untuk tema gelap/terang, buat properti `dark` pada singleton dan turunkan warna lewat binding; ikuti skema warna sistem lewat `Qt.styleHints.colorScheme` `[≥6.5]`.
 
-1. CMake targets.
-2. Executable targets.
-3. Library targets.
-4. `qt_add_qml_module`.
-5. `qt_add_executable`.
-6. `qt_add_library`.
-7. QML source registration.
-8. C++ source registration.
-9. Resource registration.
-10. Module URI.
-11. Plugin generation.
-12. Type information.
-13. Resource prefix.
-14. Import paths.
-15. Static versus shared module.
-16. Build configurations.
-17. CMake policies.
-18. Build dependency management.
+**Terminologi.** Singleton; `pragma Singleton`; `QT_QML_SINGLETON_TYPE`; design token (nilai gaya bernama); skema warna.
 
-Referensi:
+**Daftar isi.** 5.3.1 `pragma Singleton` · 5.3.2 Mendaftarkan singleton di CMake · 5.3.3 Design token (warna, spasi, radius, tipografi) · 5.3.4 Tema gelap/terang · 5.3.5 Singleton dari C++ (`QML_SINGLETON`, Modul 10.3)
 
-- [CMake Integration for QML](https://doc.qt.io/qt-6/qtqml-cmake-integration.html?utm_source=chatgpt.com)
-- [qt_add_qml_module](https://doc.qt.io/qt-6/qt-add-qml-module.html?utm_source=chatgpt.com)
-- [Writing QML Modules](https://doc.qt.io/qt-6/qtqml-writing-a-module.html?utm_source=chatgpt.com)
+**Kesalahan umum.** Lupa `QT_QML_SINGLETON_TYPE` sehingga singleton tidak terdaftar; mengatur properti file sesudah `qt_add_qml_module`; menaruh keadaan aplikasi (bukan gaya) di singleton tema.
 
-## FASE 9 — Qt Quick Controls & Advanced UI Engineering
+**Latihan 15 menit.** Buat `Theme.qml`, ganti seluruh warna di `AppButton` dengan token, lalu ubah satu token dan lihat efeknya di seluruh aplikasi.
 
+**Cek pemahaman.** Mengapa `Theme.qml` butuh dua hal: `pragma Singleton` dan properti file di CMake?
 
+**Referensi.** [qt\_target\_qml\_sources](https://doc.qt.io/qt-6/qt-target-qml-sources.html) · [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html)
 
-Advanced
+## Fase 6 — Interaksi, State, dan Animasi
 
-&#x20;Estimasi: 2–3 minggu
+*Tujuan: membuat antarmuka hidup dan bisa dikendalikan penuh lewat pointer maupun keyboard. Estimasi: 2–3 minggu.*
 
+### Modul 6.1 — State dan Transition
 
+**Deskripsi.** Mengelompokkan perubahan properti ke dalam `State` bernama dan menganimasikan perpindahannya dengan `Transition`.
 
-Fase ini berfokus pada komponen antarmuka siap pakai dan bagaimana memodifikasi perilakunya sampai tingkat implementasi internal.
+**Konsep & analogi.** State adalah pengaturan panggung untuk satu adegan (lampu, posisi, warna). Transition adalah cara panggung berubah antaradegan. Anda mendeskripsikan adegan, engine mengurus perpindahannya.
 
-### Modul 9.1 — Qt Quick Controls Fundamentals
+**Contoh minimal.**
 
-Deskripsi konkret
+```qml
+import QtQuick
 
-Menguasai komponen antarmuka yang disediakan Qt Quick Controls.
+Rectangle {
+    id: kotak
+    width: 120; height: 120; color: 'tomato'
 
-Konsep dan filosofi
+    states: State {
+        name: 'aktif'
+        PropertyChanges { target: kotak; color: 'seagreen'; scale: 1.2 }
+    }
+    transitions: Transition {
+        ColorAnimation { duration: 250 }
+        NumberAnimation { property: 'scale'; duration: 250; easing.type: Easing.OutBack }
+    }
 
-Qt Quick menyediakan primitive visual, sedangkan Qt Quick Controls menyediakan komponen UI tingkat lebih tinggi.
+    TapHandler { onTapped: kotak.state = (kotak.state === 'aktif' ? '' : 'aktif') }
+}
+```
 
-Perbedaannya:
+`State` mengatur keadaan visual sebuah item. Ini berbeda dari kerangka mesin keadaan terbatas (`StateMachine`, `SignalTransition`) di modul `QtQml.StateMachine`, yang dipakai untuk alur logika aplikasi.
 
-- `Rectangle` adalah primitive visual.
-- `Button` adalah kontrol antarmuka.
-- `TextField` adalah kontrol input teks.
-- `Slider` adalah kontrol untuk memilih nilai dalam rentang tertentu.
+**Terminologi.** `State`; `PropertyChanges`; `Transition`; state default (string kosong); `when` (kondisi otomatis); finite state machine.
 
-Contoh:
+**Daftar isi.** 6.1.1 `states` dan `PropertyChanges` · 6.1.2 Berpindah state (`state`, `when`) · 6.1.3 `transitions` · 6.1.4 `StateChangeScript` dan `AnchorChanges` · 6.1.5 `State` vs `StateMachine`
+
+**Kesalahan umum.** Mengubah properti di state yang juga dikendalikan binding lain; transition yang tidak cocok dengan perubahan sehingga tidak berjalan; memakai `State` untuk alur bisnis kompleks.
+
+**Latihan 15 menit.** Tambahkan state kedua `'nonaktif'` dengan warna abu dan transisi yang berbeda.
+
+**Cek pemahaman.** Kapan `StateMachine` lebih tepat daripada `State`?
+
+**Referensi.** [Qt Quick States](https://doc.qt.io/qt-6/qtquick-statesanimations-states.html) · [Qt State Machine QML Types](https://doc.qt.io/qt-6/qtqml-statemachine-qmlmodule.html)
+
+### Modul 6.2 — Animasi
+
+**Deskripsi.** `Behavior`, `NumberAnimation` dan kerabatnya, animasi berurutan dan paralel, easing, serta animator yang berjalan di render thread.
+
+**Konsep & analogi.** Animasi adalah interpolasi: Anda menyebut tujuan dan durasi, engine mengisi langkah di antaranya. `Behavior` adalah aturan tetap: setiap kali properti ini berubah, tempuh dengan animasi.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: bola
+    width: 40; height: 40; radius: 20; color: 'steelblue'
+
+    Behavior on x { NumberAnimation { duration: 400; easing.type: Easing.InOutQuad } }
+
+    SequentialAnimation on y {
+        loops: Animation.Infinite
+        NumberAnimation { to: 100; duration: 600 }
+        NumberAnimation { to: 0; duration: 600 }
+    }
+
+    TapHandler { onTapped: bola.x = bola.x === 0 ? 200 : 0 }
+}
+```
+
+Untuk properti tertentu, animator (`XAnimator`, `YAnimator`, `OpacityAnimator`, `ScaleAnimator`, `RotationAnimator`) berjalan di render thread sehingga tetap mulus saat thread utama sibuk.
+
+**Terminologi.** `Animation`; `Behavior`; easing; `SequentialAnimation`/`ParallelAnimation`; animator; `loops`.
+
+**Daftar isi.** 6.2.1 `NumberAnimation`, `ColorAnimation`, `PropertyAnimation` · 6.2.2 `Behavior` · 6.2.3 Easing · 6.2.4 Animasi berurutan dan paralel · 6.2.5 Animator di render thread · 6.2.6 `SpringAnimation` · 6.2.7 Biaya animasi
+
+**Kesalahan umum.** Menganimasikan `width`/`height` di dalam Layout (memicu penataan ulang tiap frame); `Behavior` bertabrakan dengan binding; animasi tak berhenti pada item tak terlihat.
+
+**Latihan 15 menit.** Ganti `NumberAnimation` pada `y` dengan `YAnimator` dan bandingkan kehalusannya saat Anda membebani thread utama dengan loop berat.
+
+**Cek pemahaman.** Mengapa animator lebih tahan beban dibanding animation biasa?
+
+**Referensi.** [Animation and Transitions](https://doc.qt.io/qt-6/qtquick-statesanimations-animations.html) · [Animator](https://doc.qt.io/qt-6/qml-qtquick-animator.html)
+
+### Modul 6.3 — Input Lanjut dan Kendali Keyboard
+
+**Deskripsi.** `DragHandler`, `PinchHandler`, `WheelHandler`, `Flickable`, `FocusScope`, `KeyNavigation`, dan `Shortcut`.
+
+**Konsep & analogi.** Fokus adalah sorotan lampu panggung: satu item memegangnya dan menerima tombol. `FocusScope` adalah panggung kecil dengan sorotannya sendiri, sehingga komponen bisa mengelola fokus internalnya tanpa merebut fokus dari luar.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 360; height: 240
+
+    Shortcut { sequence: 'Ctrl+Q'; onActivated: Qt.quit() }
+
+    Rectangle {
+        width: 80; height: 80; color: 'orchid'
+        DragHandler { xAxis.minimum: 0; xAxis.maximum: 280 }
+    }
+
+    Row {
+        y: 150; spacing: 8
+        Rectangle {
+            id: a; width: 60; height: 40; focus: true
+            color: activeFocus ? 'gold' : 'gray'
+            KeyNavigation.right: b
+        }
+        Rectangle {
+            id: b; width: 60; height: 40
+            color: activeFocus ? 'gold' : 'gray'
+            KeyNavigation.left: a
+        }
+    }
+}
+```
+
+**Terminologi.** Input handler; `activeFocus`; `FocusScope`; `KeyNavigation`; `Shortcut`; gestur.
+
+**Daftar isi.** 6.3.1 `DragHandler`, `PinchHandler`, `WheelHandler` · 6.3.2 `Flickable` · 6.3.3 Fokus, `FocusScope`, `forceActiveFocus()` · 6.3.4 `KeyNavigation` dan `Keys` · 6.3.5 `Shortcut` dan pemetaan tombol · 6.3.6 Rancangan antarmuka yang bisa dioperasikan penuh dari keyboard
+
+**Kesalahan umum.** Fokus hilang karena beberapa item mengklaimnya; `Shortcut` konflik antarkonteks; antarmuka hanya bisa dipakai dengan pointer.
+
+**Latihan 15 menit.** Tambahkan item ketiga ke baris navigasi dan buat urutan Tab/panah yang lengkap tanpa menyentuh mouse.
+
+**Cek pemahaman.** Apa fungsi `FocusScope` dalam komponen yang dipakai ulang?
+
+**Referensi.** [Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html) · [Shortcut](https://doc.qt.io/qt-6/qml-qtquick-shortcut.html)
+
+### Modul 6.4 — Qt Quick Ekstra *(baru)*
+
+**Deskripsi.** Modul tambahan yang sering dibutuhkan proyek nyata: `Shapes`, `MultiEffect`, `Particles`, `Dialogs`, `Settings`, `LocalStorage`, dan opsi menggambar 2D.
+
+**Konsep & analogi.** Qt Quick inti memberi bahan dasar; modul ekstra adalah peralatan khusus di gudang. Kenali apa yang ada agar tidak menulis ulang dari nol.
+
+**Contoh minimal.** Bentuk vektor dengan `Shapes`:
+
+```qml
+import QtQuick
+import QtQuick.Shapes
+
+Shape {
+    width: 120; height: 120
+    ShapePath {
+        strokeColor: 'white'; strokeWidth: 3; fillColor: 'royalblue'
+        startX: 10; startY: 110
+        PathLine { x: 60; y: 10 }
+        PathLine { x: 110; y: 110 }
+        PathLine { x: 10; y: 110 }
+    }
+}
+```
+
+Efek gambar `[≥6.5]`: `import QtQuick.Effects`, lalu `MultiEffect { source: gambar; anchors.fill: gambar; blurEnabled: true; blur: 0.6; blurMax: 32 }`.
+
+Preferensi pengguna (`QtCore`, `[≥6.5]`): `Settings { id: pref; category: 'ui'; property string tema: 'gelap' }`. Atur `QCoreApplication::setOrganizationName` dan `setApplicationName` di C++ agar lokasi penyimpanannya benar.
+
+| Kebutuhan | Pilihan |
+| --- | --- |
+| Bentuk vektor | `Shapes` |
+| Blur, bayangan, warna | `MultiEffect` |
+| Partikel | `QtQuick.Particles` |
+| Dialog file/pesan | `QtQuick.Dialogs` |
+| Preferensi | `Settings` (`QtCore`) |
+| Data tabular kecil | `QtQuick.LocalStorage` (SQLite) |
+| Menggambar imperatif 2D | `Canvas`; Qt 6.12 menambah Qt Canvas Painter yang dipercepat GPU `[≥6.12]` (baca catatan rilis) |
+
+**Terminologi.** `Shape`/`ShapePath`; `MultiEffect`; `Particles`; dialog native; `Settings`.
+
+**Daftar isi.** 6.4.1 `Shapes` · 6.4.2 `MultiEffect` · 6.4.3 `Particles` · 6.4.4 `Dialogs` · 6.4.5 `Settings` dan `LocalStorage` · 6.4.6 `Canvas` dan opsi baru Qt 6.12
+
+**Kesalahan umum.** Memakai `Canvas` untuk hal yang cukup dengan `Shapes`; blur pada area besar yang membebani GPU; lupa nama organisasi sehingga `Settings` menulis ke tempat tak terduga.
+
+**Latihan 15 menit.** Gambar segitiga di atas lalu simpan warna isinya dengan `Settings` dan pulihkan saat aplikasi dibuka lagi.
+
+**Cek pemahaman.** Kapan `Shapes` lebih baik daripada `Canvas`?
+
+**Referensi.** [Qt Quick Shapes](https://doc.qt.io/qt-6/qtquick-shapes-qmlmodule.html) · [Qt Quick Effects](https://doc.qt.io/qt-6/qtquick-effects-qmlmodule.html) · [Settings](https://doc.qt.io/qt-6/qml-qtcore-settings.html) · [Blog Qt](https://www.qt.io/blog)
+
+## Fase 7 — Model, View, dan Arsitektur Data
+
+*Tujuan: menampilkan dan mengelola data dinamis dengan benar. Estimasi: 2–3 minggu.*
+
+### Modul 7.1 — Model Data
+
+**Deskripsi.** Sumber data untuk view: `ListModel`, array JavaScript, angka, `ObjectModel`, dan model C++ (pratinjau Modul 10.5).
+
+**Konsep & analogi.** Model adalah gudang berlabel: setiap rak (baris) punya kotak bernama (role). View hanyalah etalase yang menampilkan isi rak tanpa tahu cara gudang diisi.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    ListModel {
+        id: produk
+        ListElement { nama: 'Kopi'; harga: 15000 }
+        ListElement { nama: 'Teh'; harga: 8000 }
+    }
+
+    Component.onCompleted: {
+        produk.append({ nama: 'Susu', harga: 12000 })
+        produk.setProperty(0, 'harga', 16000)
+        console.log(produk.count, produk.get(0).nama)
+    }
+}
+```
+
+Jaga tipe tiap role tetap konsisten antarbaris; `ListModel` menentukan tipe role dari data yang pertama kali masuk.
+
+**Terminologi.** Model; role; `ListModel`/`ListElement`; `count`; model C++ (`QAbstractListModel`).
+
+**Daftar isi.** 7.1.1 `ListModel` dan API (`append`, `insert`, `remove`, `set`, `setProperty`, `move`, `clear`, `get`) · 7.1.2 Array dan angka sebagai model · 7.1.3 `ObjectModel` · 7.1.4 Kapan model harus pindah ke C++ · 7.1.5 Memfilter dan mengurutkan (proxy model dari C++)
+
+**Kesalahan umum.** Role bertipe campuran; memodifikasi array JavaScript lalu berharap view berubah (reassign propertinya); memasukkan data besar langsung dari JavaScript.
+
+**Latihan 15 menit.** Tambah, ubah, dan hapus baris dari kode, lalu cetak `count` setelah tiap operasi.
+
+**Cek pemahaman.** Mengapa model besar sebaiknya berada di C++?
+
+**Referensi.** [Models and Views in Qt Quick](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html) · [ListModel](https://doc.qt.io/qt-6/qml-qtqml-models-listmodel.html)
+
+### Modul 7.2 — View dan Delegate
+
+**Deskripsi.** `ListView`, `GridView`, `PathView`, `TableView`, `Repeater`, dan delegate yang benar di Qt 6.
+
+**Konsep & analogi.** View adalah mesin cetak halaman: ia hanya mencetak baris yang tampak dan mendaur ulang cetakan saat Anda menggulir. Delegate adalah cetakan satu baris.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+ListView {
+    width: 300; height: 200; clip: true
+
+    model: ListModel {
+        ListElement { nama: 'Kopi'; harga: 15000 }
+        ListElement { nama: 'Teh'; harga: 8000 }
+    }
+
+    delegate: Rectangle {
+        id: baris
+        required property string nama
+        required property int harga
+        required property int index
+
+        width: ListView.view.width; height: 40
+        color: index % 2 === 0 ? '#eeeeee' : '#dddddd'
+
+        Text {
+            anchors.verticalCenter: parent.verticalCenter
+            x: 12
+            text: baris.nama + ' — ' + baris.harga
+        }
+    }
+}
+```
+
+Delegate modern memakai `required property` untuk setiap role. Pola lama `model.nama` gagal bila dokumen memakai `pragma ComponentBehavior: Bound` dan memicu peringatan `qmllint`.
+
+**Terminologi.** View; delegate; `required property`; `index`; attached `ListView.view` dan `ListView.isCurrentItem`; `highlight`; `cacheBuffer`; `reuseItems`.
+
+**Daftar isi.** 7.2.1 `ListView` dan `GridView` · 7.2.2 `PathView` dan `Repeater` · 7.2.3 `TableView` · 7.2.4 Delegate dengan `required property` · 7.2.5 `currentIndex` dan `highlight` · 7.2.6 `cacheBuffer` dan `reuseItems` · 7.2.7 Delegate ringan
+
+**Kesalahan umum.** Memakai `model.nama` tanpa kualifikasi; delegate berat (banyak anak, gambar besar); `clip` terlupa sehingga isi keluar dari view; memakai `Repeater` untuk daftar panjang.
+
+**Latihan 15 menit.** Tambahkan `highlight` dan navigasi keyboard (`Keys.onUpPressed`/`onDownPressed` mengubah `currentIndex`).
+
+**Cek pemahaman.** Mengapa `ListView` dapat menangani ribuan baris sedangkan `Repeater` tidak?
+
+**Referensi.** [ListView](https://doc.qt.io/qt-6/qml-qtquick-listview.html) · [TableView](https://doc.qt.io/qt-6/qml-qtquick-tableview.html) · [Models and Views](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html)
+
+### Modul 7.3 — Objek Dinamis: Loader, Component, dan Instantiator
+
+**Deskripsi.** Membuat objek QML saat runtime dengan `Loader`, `Component.createObject()`, `Qt.createComponent()`, dan `Instantiator`, serta menghancurkannya dengan benar.
+
+**Konsep & analogi.** Pembuatan dinamis seperti memesan kue dari cetakan sesuai kebutuhan, bukan menyiapkan semua kue sebelumnya. Anda juga bertanggung jawab membuangnya.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 300; height: 200
+
+    Component {
+        id: kotakKomponen
+        Rectangle { width: 40; height: 40; color: 'tomato' }
+    }
+
+    function tambahKotak(posisiX) {
+        const obj = kotakKomponen.createObject(root, { x: posisiX, y: 20 })
+        if (!obj) console.warn('gagal membuat objek')
+        return obj
+    }
+
+    Component.onCompleted: {
+        const k = tambahKotak(30)
+        tambahKotak(100)
+        k.destroy(500)      // dihancurkan setelah 500 ms
+    }
+
+    Loader { active: false; asynchronous: true; sourceComponent: kotakKomponen }
+}
+```
+
+`Qt.createQmlObject()` mengeksekusi teks sebagai kode QML. Jangan pernah memberinya string dari sumber tak tepercaya (lihat Modul 13.1).
+
+**Terminologi.** `Loader` (`active`, `source`, `sourceComponent`, `asynchronous`); `Component`; `createObject`; `Instantiator`; parent vs owner; `destroy()`.
+
+**Daftar isi.** 7.3.1 `Loader` · 7.3.2 `Component.createObject()` · 7.3.3 `Qt.createComponent()` dan status loading · 7.3.4 `Instantiator` · 7.3.5 `destroy()` dan kepemilikan · 7.3.6 Risiko `Qt.createQmlObject`
+
+**Kesalahan umum.** Fungsi pembuat ditulis di luar objek (bukan QML valid; harus berada di dalam objek); tidak memeriksa hasil `createObject`; kebocoran objek karena tidak pernah dihancurkan.
+
+**Latihan 15 menit.** Buat tombol yang menambah kotak baru dengan `createObject` dan tombol lain yang menghapus kotak terakhir.
+
+**Cek pemahaman.** Apa bedanya `Loader` dan `createObject`? Siapa pemilik objek yang dibuat dengan `createObject(parent)`?
+
+**Referensi.** [Dynamic QML Object Creation](https://doc.qt.io/qt-6/qtqml-javascript-dynamicobjectcreation.html) · [Loader](https://doc.qt.io/qt-6/qml-qtquick-loader.html) · [Instantiator](https://doc.qt.io/qt-6/qml-qtqml-models-instantiator.html)
+
+### Modul 7.4 — Data Asinkron: XHR, JSON, dan Pekerjaan Berat
+
+**Deskripsi.** Mengambil data jaringan dengan `XMLHttpRequest`, mengurai JSON, menangani galat, dan memindahkan pekerjaan berat dari thread UI.
+
+**Konsep & analogi.** Permintaan jaringan seperti memesan makanan lewat kurir: Anda tidak berdiri menunggu di pintu (UI tetap berjalan), kurir mengabari saat tiba (callback). Pekerjaan berat di thread UI sama dengan pelayan yang berhenti melayani selama memasak.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    function ambilJson(url, sukses, gagal) {
+        const req = new XMLHttpRequest()
+        req.onreadystatechange = function() {
+            if (req.readyState !== XMLHttpRequest.DONE) return
+            if (req.status === 200) {
+                try { sukses(JSON.parse(req.responseText)) }
+                catch (e) { gagal('JSON tidak valid: ' + e) }
+            } else {
+                gagal('HTTP ' + req.status)
+            }
+        }
+        req.open('GET', url)
+        req.send()
+    }
+
+    Component.onCompleted: ambilJson('https://example.com/data.json', console.log, console.warn)
+}
+```
+
+`Promise` tersedia di lingkungan QML, tetapi pola yang paling terbukti tetap callback dan signal. `async/await` **\[uji dulu\]** (lihat Modul 2.1). Untuk pekerjaan berat, pakai `WorkerScript` atau pindahkan ke C++ (Modul 10.7).
+
+**Terminologi.** `XMLHttpRequest`; `readyState`; status HTTP; `JSON.parse`; callback; `WorkerScript`; thread UI.
+
+**Daftar isi.** 7.4.1 XHR dan siklus `readyState` · 7.4.2 `JSON.parse` dan validasi · 7.4.3 Penanganan galat (jaringan, HTTP, parsing) · 7.4.4 `Promise` dan keterbatasan `async/await` · 7.4.5 `WorkerScript` · 7.4.6 Kapan ke C++
+
+**Kesalahan umum.** Tidak menangani `status` selain 200; menganggap respons selalu JSON valid; parsing data besar di thread UI hingga antarmuka macet; memasukkan hasil jaringan langsung ke `Qt.createQmlObject`.
+
+**Latihan 15 menit.** Ubah `ambilJson` agar mengembalikan galat berbeda untuk jaringan putus, HTTP 404, dan JSON rusak.
+
+**Cek pemahaman.** Mengapa respons jaringan harus divalidasi sebelum dipakai?
+
+**Referensi.** [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [WorkerScript](https://doc.qt.io/qt-6/qml-qtqml-workerscript-workerscript.html) · [MDN: XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
+
+## Fase 8 — Modul QML dan Arsitektur Aplikasi
+
+*Tujuan: menyusun proyek yang bisa tumbuh tanpa berantakan. Estimasi: 2–3 minggu.*
+
+### Modul 8.1 — Modul QML, URI, dan Import
+
+**Deskripsi.** Memecah aplikasi menjadi modul QML bernama dan mengatur cara modul ditemukan.
+
+**Konsep & analogi.** Modul adalah buku di perpustakaan: punya judul unik (URI), daftar isi (tipe yang diekspor), dan lokasi di rak (import path). Aplikasi meminjam dengan `import`.
+
+**Contoh minimal.** Dua modul dalam satu proyek:
 
 ```
+app/
+├── CMakeLists.txt
+├── main.cpp
+├── App/Main.qml                 # modul MyApp.App
+└── Components/AppButton.qml     # modul MyApp.Components
+```
+
+Di `Main.qml`: `import MyApp.Components` lalu `AppButton { label: 'OK' }`. Di CMake, satu `qt_add_qml_module` per modul, dan aplikasi menautkan pustaka modul sesuai pola backing library dan plugin yang dijelaskan di dokumentasi `qt_add_qml_module`.
+
+```
+App  →  Features  →  Components  →  Core
+(tidak boleh ada panah balik; tidak ada siklus)
+```
+
+**Terminologi.** URI; `qmldir`; import path (`QML_IMPORT_PATH`); import tanpa versi; backing library; plugin modul; dependensi siklik.
+
+**Daftar isi.** 8.1.1 Anatomi modul · 8.1.2 URI dan struktur folder · 8.1.3 `qmldir` dan pembuatannya otomatis · 8.1.4 Import path dan `QML_IMPORT_TRACE` · 8.1.5 Modul statis vs plugin · 8.1.6 Aturan dependensi antarmodul
+
+**Kesalahan umum.** URI tidak cocok dengan struktur folder; modul saling mengimpor (siklus); lupa menautkan target modul statis.
+
+**Latihan 15 menit.** Pindahkan `AppButton.qml` dan `Theme.qml` ke modul `MyApp.Components` dan impor dari modul aplikasi.
+
+**Cek pemahaman.** Bagaimana `QML_IMPORT_TRACE` membantu saat modul tidak ditemukan?
+
+**Referensi.** [QML Modules](https://doc.qt.io/qt-6/qtqml-modules-topic.html) · [qmldir](https://doc.qt.io/qt-6/qtqml-modules-qmldir.html) · [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html)
+
+### Modul 8.2 — Arsitektur Aplikasi
+
+**Deskripsi.** Memisahkan tampilan, logika presentasi, domain, dan data; memilih tempat menyimpan keadaan.
+
+**Konsep & analogi.** Aplikasi seperti restoran: ruang makan (UI), kasir dan pelayan (logika presentasi), dapur (domain), gudang (data). Pelanggan tidak masuk gudang, dan dapur tidak peduli warna taplak meja. Aturan praktis: properti turun, signal naik, satu sumber kebenaran.
+
+**Contoh minimal.** Store sederhana sebagai singleton:
+
+```qml
+// Store.qml
+pragma Singleton
+import QtQuick
+
+QtObject {
+    property var daftarTugas: []
+    signal tugasBerubah()
+
+    function tambah(judul) {
+        daftarTugas = [...daftarTugas, { judul, selesai: false }]
+        tugasBerubah()
+    }
+}
+```
+
+Untuk aplikasi nyata, ganti `var` dengan model bertipe (`ListModel` atau model C++) agar tooling dan performa terbantu.
+
+**Terminologi.** Layering; MVC/MVVM; single source of truth; controller/store; dependency direction.
+
+**Daftar isi.** 8.2.1 Layering · 8.2.2 MVC/MVVM di QML · 8.2.3 Store/state terpusat · 8.2.4 Navigasi sebagai tanggung jawab tersendiri · 8.2.5 Penanganan galat lintas layer · 8.2.6 Logika di QML vs di C++
+
+**Kesalahan umum.** Logika bisnis di delegate; keadaan tersebar di banyak komponen; UI mengubah data langsung tanpa melalui layer yang bertanggung jawab.
+
+**Latihan 15 menit.** Pindahkan logika tambah/hapus tugas dari delegate ke `Store.qml` dan biarkan delegate hanya memanggil fungsi store.
+
+**Cek pemahaman.** Mengapa satu sumber kebenaran mengurangi bug sinkronisasi?
+
+**Referensi.** [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [Qt Quick Best Practices](https://doc.qt.io/qt-6/qtquick-bestpractices.html)
+
+### Modul 8.3 — Struktur Proyek dan CMake Lanjutan
+
+**Deskripsi.** Menata folder, target, dan alat bantu build untuk proyek multi-modul.
+
+**Konsep & analogi.** Proyek yang rapi seperti dapur yang tertata: orang baru langsung tahu di mana pisau dan di mana piring.
+
+**Contoh minimal.**
+
+```
+app/
+├── CMakeLists.txt
+├── CMakePresets.json
+├── src/            # C++
+├── qml/
+│   ├── App/
+│   └── Components/
+└── tests/
+```
+
+Build lewat preset: `cmake --preset debug && cmake --build --preset debug`. Aktifkan `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` agar `clangd` memahami kode C++. Jalankan `cmake --build build --target all_qmllint` untuk analisis statis seluruh modul QML.
+
+**Terminologi.** Target; preset (`CMakePresets.json`); out-of-source build; `compile_commands.json`; `QML_FILES`, `SOURCES`, `RESOURCES`.
+
+**Daftar isi.** 8.3.1 Tata letak folder · 8.3.2 `QML_FILES`, `SOURCES`, `RESOURCES` · 8.3.3 Banyak modul dan target · 8.3.4 Preset dan konfigurasi Debug/Release · 8.3.5 `compile_commands.json` untuk clangd · 8.3.6 `qmllint` sebagai target build
+
+**Kesalahan umum.** Semua file di satu folder; build di dalam source; tidak memisahkan konfigurasi Debug dan Release.
+
+**Latihan 15 menit.** Tambahkan preset `debug`, jalankan lewat `cmake --preset`, lalu jalankan `all_qmllint`.
+
+**Cek pemahaman.** Mengapa build di luar source direktori lebih aman?
+
+**Referensi.** [Building a QML application](https://doc.qt.io/qt-6/cmake-build-qml-application.html) · [CMake Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html)
+
+### Modul 8.4 — Konvensi, Linting, dan Disiplin Kualitas
+
+**Deskripsi.** Menjaga kode konsisten dengan `qmlformat`, `qmllint`, dan pemeriksaan otomatis sebelum commit.
+
+**Konsep & analogi.** Linter adalah korektor naskah yang tidak pernah lelah: ia menangkap kesalahan sebelum pembaca melihatnya.
+
+**Contoh minimal.** Hook `pre-commit` sederhana (simpan sebagai `.git/hooks/pre-commit` dan buat executable):
+
+```
+#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.qml$')
+[ -z "$files" ] && exit 0
+qmllint $files || exit 1
+```
+
+Konvensi inti: `id: root` untuk akar komponen; urutan atribut (id, properti, signal, handler, fungsi, anak); akses berkualifikasi; tanpa logika berat di binding.
+
+**Terminologi.** Linter; formatter; hook; CI (continuous integration); konvensi gaya.
+
+**Daftar isi.** 8.4.1 Urutan atribut dan penamaan · 8.4.2 `qmlformat` · 8.4.3 `qmllint` dan peringatan umum · 8.4.4 Hook git · 8.4.5 CI sederhana
+
+**Kesalahan umum.** Mengabaikan peringatan `qmllint` karena aplikasi tetap jalan; tidak menyepakati format sehingga diff penuh derau.
+
+**Latihan 15 menit.** Pasang hook di atas pada repo latihan dan coba commit file dengan peringatan `qmllint`.
+
+**Cek pemahaman.** Mengapa peringatan `qmllint` perlu diperlakukan serius walau aplikasi berjalan?
+
+**Referensi.** [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [qmlformat](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html)
+
+## Fase 9 — Qt Quick Controls dan UI Lanjut
+
+*Tujuan: membangun antarmuka aplikasi lengkap yang konsisten, bisa dikustomisasi, dan dapat diakses. Estimasi: 2–3 minggu.*
+
+### Modul 9.1 — Controls Dasar
+
+**Deskripsi.** Komponen siap pakai di `QtQuick.Controls`: `ApplicationWindow`, `Button`, `TextField`, `CheckBox`, `Switch`, `ComboBox`, `Slider`, `ScrollView`, dan kerabatnya.
+
+**Konsep & analogi.** Controls adalah perabot pabrikan: sudah punya perilaku (fokus, hover, keyboard) dan tampilan. Anda hanya menyusunnya, lalu menyesuaikannya bila perlu (Modul 9.2).
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+ApplicationWindow {
+    visible: true; width: 360; height: 220; title: 'Controls'
+
+    ColumnLayout {
+        anchors.fill: parent; anchors.margins: 16; spacing: 8
+
+        TextField { id: nama; Layout.fillWidth: true; placeholderText: 'Nama' }
+        Switch { id: aktif; text: 'Aktif' }
+        Button {
+            text: 'Kirim'
+            enabled: nama.text.length > 0
+            onClicked: console.log(nama.text, aktif.checked)
+        }
+    }
+}
+```
+
+**Terminologi.** `Control`; `ApplicationWindow`; `checked`/`down`/`hovered`; `activeFocusOnTab`; `contentItem` dan `background`.
+
+**Daftar isi.** 9.1.1 `ApplicationWindow` dan `Page` · 9.1.2 Tombol dan pilihan · 9.1.3 Input teks · 9.1.4 `Slider`, `SpinBox`, `ComboBox` · 9.1.5 `ScrollView` · 9.1.6 Controls dengan Layouts · 9.1.7 Urutan Tab
+
+**Kesalahan umum.** Mengubah ukuran Controls tanpa `implicitWidth`; memakai `Rectangle` + `TapHandler` untuk tombol sehingga kehilangan perilaku keyboard dan aksesibilitas; mengabaikan urutan Tab.
+
+**Latihan 15 menit.** Tambahkan `ComboBox` pilihan peran dan tampilkan nilainya di log saat tombol ditekan.
+
+**Cek pemahaman.** Mengapa `Button` lebih baik daripada `Rectangle` dengan `TapHandler`?
+
+**Referensi.** [Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-index.html) · [Qt Quick Layouts](https://doc.qt.io/qt-6/qtquicklayouts-index.html)
+
+### Modul 9.2 — Style dan Kustomisasi Controls
+
+**Deskripsi.** Memilih style, mengganti tampilan satu kontrol, dan memahami dampaknya pada performa.
+
+**Konsep & analogi.** Style adalah kostum seluruh pemain; kustomisasi adalah mengubah kostum satu pemain. Kostum pabrikan tertentu (native) tidak boleh dijahit ulang.
+
+| Style | Catatan |
+| --- | --- |
+| Basic | Dasar yang ringan dan ideal untuk dikustomisasi |
+| Fusion | Bawaan di Linux desktop |
+| Material, Universal, Imagine | Style siap pakai yang dapat dikustomisasi |
+| FluentWinUI3 `[≥6.7]` | Gaya Windows 11 |
+| Windows, macOS, iOS (native) | Mengikuti platform; **tidak mendukung kustomisasi** |
+
+Qt 6.12 juga mengenalkan style Native baru dan StyleKit eksperimental (Qt Labs); baca catatan rilis sebelum mengandalkannya.
+
+Cara memilih style: variabel lingkungan `QT_QUICK_CONTROLS_STYLE`; argumen `-style`; file `qtquickcontrols2.conf`; atau memanggil `QQuickStyle::setStyle()` di C++ sebelum engine dibuat (tautkan `Qt6::QuickControls2`).
+
+```
+[Controls]
+Style=Basic
+```
+
+Pemilihan style saat runtime membuat compiler QML tidak bisa menghasilkan C++ untuk binding properti Controls. Bila Anda berkustomisasi, impor style secara eksplisit, misalnya `import QtQuick.Controls.Basic`.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+import QtQuick.Controls.Basic
+
+Button {
+    id: control
+    text: 'Simpan'
+
+    contentItem: Text {
+        text: control.text; color: 'white'
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+    }
+    background: Rectangle {
+        implicitWidth: 100; implicitHeight: 40; radius: 6
+        color: control.down ? '#1d4ed8' : control.hovered ? '#3b82f6' : '#2563eb'
+    }
+}
+```
+
+**Terminologi.** Style; `QQuickStyle`; `qtquickcontrols2.conf`; `contentItem`; `background`; palette; impor style eksplisit.
+
+**Daftar isi.** 9.2.1 Daftar style dan karakternya · 9.2.2 Empat cara memilih style · 9.2.3 Kustomisasi `contentItem` dan `background` · 9.2.4 Palette dan font · 9.2.5 Dampak ke performa dan kompilasi QML · 9.2.6 Membuat style sendiri
+
+**Kesalahan umum.** Mencoba mengustomisasi style native; mengira style Default dan Basic dua hal berbeda di Qt 6 (Default lama telah menjadi Basic); mengatur style setelah engine dibuat.
+
+**Latihan 15 menit.** Jalankan contoh Controls di Modul 9.1 dengan tiga style berbeda lewat `QT_QUICK_CONTROLS_STYLE` dan bandingkan.
+
+**Cek pemahaman.** Mengapa style native tidak boleh dikustomisasi, dan apa dampak memilih style saat runtime?
+
+**Referensi.** [Styling Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-styles.html) · [Customizing Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-customize.html)
+
+### Modul 9.3 — Navigasi dan Popup
+
+**Deskripsi.** `StackView`, `SwipeView`, `TabBar`, `Drawer`, dan `Popup`/`Dialog`/`Menu`.
+
+**Konsep & analogi.** `StackView` seperti tumpukan kartu: membuka halaman baru menaruh kartu di atas, kembali mengambilnya. `SwipeView` seperti deretan kartu yang digeser sejajar.
+
+**Contoh minimal.**
+
+```qml
 import QtQuick
 import QtQuick.Controls
 
 ApplicationWindow {
-    visible: true
-    width: 800
-    height: 600
-
-    Column {
-        anchors.centerIn: parent
-        spacing: 12
-
-        Button {
-            text: "Execute"
-            onClicked: console.log("Executed")
-        }
-
-        TextField {
-            placeholderText: "Enter command"
-        }
-
-        Switch {
-            text: "Enable service"
-        }
-
-        Slider {
-            from: 0
-            to: 100
-        }
-    }
-}
-```
-
-Daftar isi:
-
-1. ApplicationWindow.
-2. Button.
-3. AbstractButton.
-4. ToolButton.
-5. CheckBox.
-6. RadioButton.
-7. Switch.
-8. Slider.
-9. Dial.
-10. SpinBox.
-11. TextField.
-12. TextArea.
-13. ComboBox.
-14. Menu.
-15. Popup.
-16. Dialog.
-17. Drawer.
-18. ScrollView.
-19. ScrollBar.
-20. TabBar.
-21. StackView.
-22. SwipeView.
-23. SplitView.
-24. ToolTip.
-25. BusyIndicator.
-26. ProgressBar.
-
-Terminologi:
-
-- Control: komponen antarmuka yang menyediakan perilaku interaktif.
-- Abstract control: kelas dasar yang menyediakan perilaku umum untuk kontrol turunannya.
-- Popup: komponen yang muncul di atas antarmuka utama.
-- Dialog: jendela interaksi yang meminta perhatian atau input pengguna.
-- Navigation: mekanisme perpindahan antartampilan.
-
-Referensi:
-
-- [Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-index.html?utm_source=chatgpt.com)
-- [Qt Quick Controls Types](https://doc.qt.io/qt-6/qtquickcontrols-qmlmodule.html?utm_source=chatgpt.com)
-
-### Modul 9.2 — Controls Customization & Styling
-
-Deskripsi konkret
-
-Mengubah tampilan dan perilaku kontrol standar sampai menghasilkan komponen yang memiliki identitas visual sendiri.
-
-Konsep dan filosofi
-
-Salah satu kekuatan Qt Quick Controls adalah pemisahan antara:
-
-1. Control: logika dan perilaku.
-2. Delegate: representasi visual.
-3. Style: aturan tampilan dan interaksi visual.
-
-Contoh pendekatan custom Button:
-
-```
-Button {
-    id: control
-
-    text: "Launch"
-
-    background: Rectangle {
-        radius: 8
-
-        color: control.down
-            ? "#333333"
-            : control.hovered
-                ? "#555555"
-                : "#222222"
-    }
-
-    contentItem: Text {
-        text: control.text
-        color: "white"
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-    }
-}
-```
-
-Daftar isi:
-
-1. Control customization.
-2. Background customization.
-3. Content item customization.
-4. Indicator customization.
-5. Delegate customization.
-6. Control properties.
-7. Control inheritance.
-8. Custom Control.
-9. Custom style.
-10. Default style.
-11. Basic style.
-12. Fusion style.
-13. Material style.
-14. Universal style.
-15. Imagine style.
-16. Style selection.
-17. Runtime style considerations.
-18. Palette and theme.
-19. Style deployment.
-20. Reusable control library.
-
-Referensi:
-
-- [Customizing Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-customize.html?utm_source=chatgpt.com)
-- [Qt Quick Controls Styles](https://doc.qt.io/qt-6/qtquickcontrols-styles.html?utm_source=chatgpt.com)
-- [Creating Custom Controls](https://doc.qt.io/qt-6/qtquickcontrols-customize.html?utm_source=chatgpt.com)
-
-### Modul 9.3 — Advanced Navigation & Multi-Window Interfaces
-
-Deskripsi konkret
-
-Membangun antarmuka dengan banyak halaman, navigasi bertingkat, popup, dialog, dan beberapa window.
-
-Konsep dan filosofi
-
-Aplikasi yang kompleks membutuhkan pengelolaan tampilan yang terstruktur. Perpindahan antartampilan sebaiknya tidak dilakukan dengan membuat ulang seluruh aplikasi tanpa kebutuhan.
-
-Daftar isi:
-
-1. ApplicationWindow.
-2. Window.
-3. DialogWindow.
-4. Multiple windows.
-5. Window ownership.
-6. Window visibility.
-7. StackView navigation.
-8. Page transitions.
-9. Navigation state.
-10. Popup positioning.
-11. Drawer navigation.
-12. Overlay.
-13. Modal and non-modal dialogs.
-14. Window activation.
-15. Window lifecycle.
-16. Multi-screen considerations.
-
-Contoh:
-
-```
-ApplicationWindow {
-    visible: true
+    visible: true; width: 360; height: 240
 
     StackView {
-        id: navigation
-
+        id: stack
         anchors.fill: parent
-        initialItem: "HomePage.qml"
+        initialItem: Page {
+            title: 'Beranda'
+            Button { anchors.centerIn: parent; text: 'Buka detail'; onClicked: stack.push(detail) }
+        }
     }
 
-    function openSettings() {
-        navigation.push("SettingsPage.qml")
+    Component {
+        id: detail
+        Page {
+            title: 'Detail'
+            Button { anchors.centerIn: parent; text: 'Kembali'; onClicked: stack.pop() }
+        }
     }
 }
 ```
 
-Referensi:
+**Terminologi.** `StackView` (`push`, `pop`, `replace`); `SwipeView`; `Drawer`; `Popup`; modal; navigasi.
 
-- [StackView](https://doc.qt.io/qt-6/qml-qtquick-controls-stackview.html?utm_source=chatgpt.com)
-- [Window](https://doc.qt.io/qt-6/qml-qtquick-window.html?utm_source=chatgpt.com)
-- [ApplicationWindow](https://doc.qt.io/qt-6/qml-qtquick-controls-applicationwindow.html?utm_source=chatgpt.com)
+**Daftar isi.** 9.3.1 `StackView` · 9.3.2 `SwipeView` dan `TabBar` · 9.3.3 `Drawer` · 9.3.4 `Popup`, `Dialog`, `Menu` · 9.3.5 Tombol Escape dan navigasi keyboard · 9.3.6 Pemisahan logika navigasi (Modul 8.2)
 
-### Modul 9.4 — Accessibility & Internationalization
+**Kesalahan umum.** Menumpuk halaman tanpa batas; memuat semua halaman di awal; navigasi yang tak bisa dioperasikan dari keyboard.
 
-Deskripsi konkret
+**Latihan 15 menit.** Tambahkan halaman ketiga dan tombol Escape yang memanggil `stack.pop()`.
 
-Membangun UI yang dapat digunakan melalui berbagai metode input dan oleh pengguna dengan kebutuhan aksesibilitas berbeda.
+**Cek pemahaman.** Kapan `SwipeView` lebih tepat dari `StackView`?
 
-Konsep dan filosofi
+**Referensi.** [StackView](https://doc.qt.io/qt-6/qml-qtquick-controls-stackview.html) · [Popup](https://doc.qt.io/qt-6/qml-qtquick-controls-popup.html)
 
-Antarmuka yang dapat digunakan secara visual belum tentu dapat diakses melalui keyboard atau teknologi bantu.
+### Modul 9.4 — Aksesibilitas, Internasionalisasi, dan DPI
 
-Accessibility harus menjadi bagian dari desain komponen, bukan tambahan terakhir.
+**Deskripsi.** Membuat aplikasi dapat dipakai semua orang, dalam banyak bahasa, di layar mana pun.
 
-Daftar isi:
+**Konsep & analogi.** Aksesibilitas adalah pintu yang bisa dilalui kursi roda sekaligus orang berdiri. Internasionalisasi adalah menu yang bisa diganti bahasa tanpa membongkar dapur. Antarmuka yang penuh kendali keyboard sekaligus menjadi dasar aksesibilitas.
 
-1. Accessible roles.
-2. Accessible names.
-3. Accessible descriptions.
-4. Accessible properties.
-5. Keyboard navigation.
-6. Focus order.
-7. Screen reader support.
-8. Semantic UI.
-9. Contrast.
-10. Text scaling.
-11. Localization.
-12. Translation files.
-13. Plural forms.
-14. Unicode.
-15. Right-to-left layouts.
-16. International date and number formatting.
+**Contoh minimal.**
 
-Referensi:
-
-- [Qt Accessibility](https://doc.qt.io/qt-6/accessible.html?utm_source=chatgpt.com)
-- [Qt Linguist](https://doc.qt.io/qt-6/qtlinguist-index.html?utm_source=chatgpt.com)
-- [Internationalization](https://doc.qt.io/qt-6/internationalization.html?utm_source=chatgpt.com)
-
-## FASE 10 — C++ / QML Interoperability
-
-
-
-Expert
-
-&#x20;Estimasi: 3–4 minggu
-
-
-
-Ini merupakan salah satu fase terpenting untuk mencapai penguasaan Qt secara mendalam.
-
-QML dapat membangun UI tanpa C++, tetapi kemampuan integrasinya dengan C++ membuka akses terhadap sistem native Qt dan berbagai library eksternal.
-
-### Modul 10.1 — C++ Fundamentals for Qt
-
-Deskripsi konkret
-
-Mempelajari bagian C++ yang diperlukan untuk membangun komponen native yang dapat digunakan oleh QML.
-
-Konsep dan filosofi
-
-C++ menyediakan kontrol lebih besar terhadap tipe data, object lifetime, memory management, thread, performa, dan akses library native.
-
-Materi yang perlu dikuasai:
-
-Daftar isi:
-
-1. C++ compilation model.
-2. Header and source files.
-3. Namespaces.
-4. Classes and objects.
-5. Constructors and destructors.
-6. Access modifiers.
-7. Inheritance.
-8. Polymorphism.
-9. Virtual functions.
-10. Pointers.
-11. References.
-12. Smart pointers.
-13. RAII.
-14. Const correctness.
-15. Templates.
-16. STL.
-17. Containers.
-18. Lambda expressions.
-19. Move semantics.
-20. Memory management.
-21. Exception handling.
-22. C++17/C++20 fundamentals.
-
-Terminologi:
-
-- RAII: teknik pengelolaan resource berdasarkan lifetime objek.
-- Pointer: variabel yang menyimpan alamat memori.
-- Reference: alias untuk objek yang sudah ada.
-- Template: mekanisme membuat kode generik berdasarkan tipe.
-- STL: Standard Template Library.
-- Smart pointer: objek yang mengelola kepemilikan pointer.
-
-Referensi:
-
-- [C++ Documentation](https://en.cppreference.com/w/?utm_source=chatgpt.com)
-- [Learn C++](https://www.learncpp.com/?utm_source=chatgpt.com)
-- [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines?utm_source=chatgpt.com)
-
-### Modul 10.2 — Qt Object Model & Meta-Object System
-
-Deskripsi konkret
-
-Memahami sistem objek fundamental Qt yang memungkinkan komunikasi dinamis dan integrasi dengan QML.
-
-Konsep dan filosofi
-
-Qt menggunakan Meta-Object System untuk menyediakan informasi tentang kelas, properti, signal, slot, dan metadata objek ketika runtime.
-
-Contoh:
-
+```qml
+Button {
+    text: qsTr('Simpan')
+    Accessible.name: qsTr('Simpan dokumen')
+    Accessible.description: qsTr('Menyimpan perubahan ke disk')
+}
 ```
+
+Di CMake, buat berkas terjemahan dengan `qt_add_translations(hello TS_FILES hello_id.ts)`; ekstrak teks dengan `lupdate`, terjemahkan di Qt Linguist, kompilasi dengan `lrelease`.
+
+Qt 6 selalu menyalakan penskalaan high-DPI: gunakan ukuran independen-perangkat dan jangan menulis piksel mutlak untuk jarak penting. Uji aksesibilitas di Linux dengan pembaca layar Orca.
+
+**Terminologi.** `Accessible` (`name`, `description`, `role`); `qsTr`; file `.ts` dan `.qm`; high-DPI; AT-SPI.
+
+**Daftar isi.** 9.4.1 Atribut `Accessible` · 9.4.2 Navigasi keyboard penuh · 9.4.3 `qsTr` dan alur terjemahan · 9.4.4 Format tanggal, angka, dan pluralisasi · 9.4.5 High-DPI dan font · 9.4.6 Uji dengan Orca
+
+**Kesalahan umum.** Teks tanpa `qsTr`; string digabung manual sehingga tak bisa diterjemahkan; ikon tanpa nama aksesibel; mengandalkan warna saja untuk menyampaikan status.
+
+**Latihan 15 menit.** Bungkus semua teks di contoh Controls dengan `qsTr`, buat `hello_id.ts`, dan terjemahkan satu string.
+
+**Cek pemahaman.** Mengapa navigasi keyboard penuh termasuk aksesibilitas?
+
+**Referensi.** [Accessibility](https://doc.qt.io/qt-6/accessible.html) · [Internationalization](https://doc.qt.io/qt-6/internationalization.html) · [Qt Linguist](https://doc.qt.io/qt-6/qtlinguist-index.html)
+
+## Fase 10 — Interoperabilitas C++ dan QML
+
+*Tujuan: menghubungkan backend C++ dengan antarmuka QML secara bersih, aman, dan cepat. Estimasi: 3–4 minggu, dengan syarat Modul 10.1 sudah dikerjakan di jalur paralel sejak Fase 4.*
+
+### Modul 10.1 — C++ Dasar untuk Qt (jalur paralel)
+
+**Deskripsi.** Kompetensi C++ minimum untuk membaca dan menulis backend Qt: nilai vs referensi, pointer, RAII, smart pointer, `const`, lambda, template dasar.
+
+**Konsep & analogi.** RAII adalah kunci kamar hotel dengan kartu: sumber daya (kamar) otomatis dikembalikan ketika kartu (objek) keluar dari jangkauan. Di Qt, `QObject` punya mekanisme tambahan: induk menghancurkan anaknya.
+
+**Contoh minimal.**
+
+```cpp
+#include <QString>
+#include <QDebug>
+#include <memory>
+
+struct Produk { QString nama; int harga; };
+
+int main()
+{
+    auto p = std::make_unique<Produk>(Produk{QStringLiteral("Kopi"), 15000});
+    qDebug() << p->nama << p->harga;   // pemilik tunggal; dibebaskan otomatis
+}
+```
+
+**Terminologi.** RAII; `std::unique_ptr`; `const` correctness; lambda; implicit sharing (`QString`, `QList`); parent ownership.
+
+**Daftar isi.** 10.1.1 Tipe, nilai, referensi, pointer · 10.1.2 RAII dan smart pointer · 10.1.3 `const` dan referensi `const&` · 10.1.4 Lambda dan fungsi sebagai nilai · 10.1.5 Template dasar · 10.1.6 Header vs sumber dan build · 10.1.7 Gaya Qt: `QString`, `QList`, `QStringLiteral`
+
+**Kesalahan umum.** `new` tanpa pemilik jelas; menyimpan pointer ke objek sementara; mengira C++ dapat dipelajari dalam beberapa hari. Bila C++ baru bagi Anda, sisihkan 8–12 minggu paruh waktu.
+
+**Latihan 15 menit.** Ubah contoh agar menyimpan tiga produk di `QList<Produk>` dan mencetak yang harganya di atas 10000.
+
+**Cek pemahaman.** Mengapa `std::unique_ptr` lebih aman daripada `new` mentah?
+
+**Referensi.** [learncpp.com](https://www.learncpp.com/) · [cppreference](https://en.cppreference.com/w/) · [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
+
+### Modul 10.2 — QObject, Meta-Object, Properti, dan Signal/Slot
+
+**Deskripsi.** Fondasi yang membuat objek C++ bisa dipakai QML: `Q_OBJECT`, `Q_PROPERTY`, signal, slot, `Q_INVOKABLE`, dan kepemilikan induk-anak.
+
+**Konsep & analogi.** MOC membaca kelas Anda dan membuat “kartu identitas” (meta-object) yang memberi tahu QML nama properti, signal, dan method. Tanpa kartu itu, QML tidak bisa melihat apa pun di dalam kelas.
+
+**Contoh minimal.** `backend.h`:
+
+```cpp
+#pragma once
 #include <QObject>
 #include <QString>
 
 class Backend : public QObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(
-        QString message
-        READ message
-        NOTIFY messageChanged
-    )
+    Q_PROPERTY(QString pesan READ pesan WRITE setPesan NOTIFY pesanChanged FINAL)
 
 public:
-    explicit Backend(QObject *parent = nullptr)
-        : QObject(parent)
+    explicit Backend(QObject *parent = nullptr) : QObject(parent) {}
+
+    QString pesan() const { return m_pesan; }
+    void setPesan(const QString &p)
     {
+        if (m_pesan == p) return;
+        m_pesan = p;
+        emit pesanChanged();
     }
 
-    QString message() const
-    {
-        return m_message;
-    }
+    Q_INVOKABLE void muatUlang() { setPesan(QStringLiteral("dimuat")); }
 
 signals:
-    void messageChanged();
+    void pesanChanged();
 
 private:
-    QString m_message = "Hello from C++";
+    QString m_pesan;
 };
 ```
 
-Daftar isi:
+**Terminologi.** `Q_OBJECT`; MOC; `Q_PROPERTY` (`READ`, `WRITE`, `NOTIFY`, `FINAL`); `Q_INVOKABLE`; signal dan slot; parent ownership; jenis koneksi (direct, queued).
 
-1. QObject.
-2. Q_OBJECT.
-3. Meta-object.
-4. QMetaObject.
-5. QMetaProperty.
-6. QMetaMethod.
-7. Q_PROPERTY.
-8. Q_ENUM.
-9. Signals.
-10. Slots.
-11. Q_INVOKABLE.
-12. Dynamic introspection.
-13. Object ownership.
-14. Parent-child ownership.
-15. QObject destruction.
-16. QPointer.
-17. Property notifications.
-18. Meta-type system.
-19. MOC.
-20. Runtime metadata.
+**Daftar isi.** 10.2.1 `Q_OBJECT` dan MOC · 10.2.2 `Q_PROPERTY` lengkap dengan `NOTIFY` · 10.2.3 Signal dan slot · 10.2.4 `Q_INVOKABLE` · 10.2.5 Hierarki objek dan kepemilikan · 10.2.6 Jenis koneksi dan thread affinity (Modul 10.7)
 
-Terminologi:
+**Kesalahan umum.** Menulis setter tanpa memeriksa nilai sama (memicu sinyal berlebih); properti tanpa `NOTIFY` sehingga binding tak pernah diperbarui; lupa `Q_OBJECT`.
 
-- QObject: kelas dasar penting dalam object model Qt.
-- Meta-object: metadata tentang struktur sebuah kelas.
-- MOC: Meta-Object Compiler.
-- Introspection: kemampuan memeriksa struktur objek saat runtime.
-- `Q_PROPERTY`: macro untuk mendefinisikan properti Qt.
-- `Q_INVOKABLE`: macro yang menandai metode agar dapat dipanggil melalui mekanisme meta-object.
+**Latihan 15 menit.** Tambahkan properti `int hitungan` dengan `NOTIFY` dan method `Q_INVOKABLE tambah()`.
 
-Referensi:
+**Cek pemahaman.** Apa yang terjadi di QML bila `Q_PROPERTY` tidak punya `NOTIFY`?
 
-- [Qt Object Model](https://doc.qt.io/qt-6/object.html?utm_source=chatgpt.com)
-- [Meta-Object System](https://doc.qt.io/qt-6/metaobjects.html?utm_source=chatgpt.com)
-- [QObject](https://doc.qt.io/qt-6/qobject.html?utm_source=chatgpt.com)
+**Referensi.** [The Meta-Object System](https://doc.qt.io/qt-6/metaobjects.html) · [The Property System](https://doc.qt.io/qt-6/properties.html) · [Signals & Slots](https://doc.qt.io/qt-6/signalsandslots.html) · [QObject](https://doc.qt.io/qt-6/qobject.html)
 
-### Modul 10.3 — Exposing C++ to QML
+### Modul 10.3 — Registrasi Tipe C++ ke QML
 
-Deskripsi konkret
+**Deskripsi.** Mengekspos kelas C++ sebagai tipe QML dengan `QML_ELEMENT` dan kawan-kawannya, tanpa `qmlRegisterType` dan tanpa context property.
 
-Mengekspos objek, fungsi, properti, signal, enum, dan data dari C++ agar dapat digunakan oleh QML.
+**Konsep & analogi.** Registrasi adalah mendaftarkan nama dagang: setelah terdaftar di modul, QML memesan objek C++ semudah memesan tipe QML.
 
-Konsep dan filosofi
+**Contoh minimal.** Tambahkan dua baris ke `Backend`:
 
-Integrasi harus memiliki batas yang jelas.
-
-QML sebaiknya mengelola presentasi, sedangkan C++ menangani pekerjaan yang membutuhkan kemampuan native, sistem objek Qt, dan integrasi eksternal.
-
-Contoh registrasi modern:
-
+```cpp
+#include <QtQml/qqmlregistration.h>
+// di dalam class Backend, setelah Q_OBJECT:
+QML_ELEMENT
 ```
-#include <QObject>
+
+Daftarkan header di CMake:
+
+```cmake
+qt_add_qml_module(hello
+    URI Hello
+    VERSION 1.0
+    QML_FILES Main.qml
+    SOURCES backend.h
+)
+```
+
+Di QML (modul yang sama atau dengan `import Hello`): `Backend { id: backend }`.
+
+| Makro | Fungsi |
+| --- | --- |
+| `QML_ELEMENT` / `QML_NAMED_ELEMENT` | Tipe yang bisa dibuat di QML (dengan nama kelas atau nama kustom) |
+| `QML_SINGLETON` | Satu instance per engine |
+| `QML_UNCREATABLE` | Dapat dirujuk tetapi tidak bisa dibuat dari QML |
+| `QML_ATTACHED` | Properti tempelan (`Tipe.properti`) |
+| `QML_EXTENDED`, `QML_FOREIGN` | Memperluas atau mengekspos kelas yang tak bisa diubah |
+
+**Terminologi.** `QML_ELEMENT`; modul QML; URI; `QML_SINGLETON`; attached type; foreign type.
+
+**Daftar isi.** 10.3.1 `QML_ELEMENT` dan modul · 10.3.2 Mendaftarkan header dan sumber di CMake · 10.3.3 Singleton C++ · 10.3.4 Tipe yang tak dapat dibuat (`QML_UNCREATABLE`) · 10.3.5 Attached, extended, dan foreign type · 10.3.6 Mengapa `qmlRegisterType` dan context property ditinggalkan
+
+**Kesalahan umum.** Lupa menaruh header di `SOURCES`; URI di CMake berbeda dari yang diimpor; tetap memakai `setContextProperty` untuk kode baru.
+
+**Latihan 15 menit.** Daftarkan `Backend`, buat `Backend { id: backend }` di `Main.qml`, dan tampilkan `backend.pesan` di sebuah `Text`.
+
+**Cek pemahaman.** Mengapa registrasi tipe lebih baik dari context property?
+
+**Referensi.** [Defining QML Types from C++](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html) · [Overview: QML and C++ Integration](https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html) · [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html)
+
+### Modul 10.4 — Memakai Objek C++ dari QML dan Sebaliknya
+
+**Deskripsi.** Membaca properti, memanggil method, menyambung signal C++ dari QML, dan (sedapat mungkin) menghindari C++ mengutak-atik pohon QML.
+
+**Konsep & analogi.** Antarmuka antara dua dunia harus berupa pintu sempit yang jelas: C++ mengekspos objek, QML memakainya. Jangan biarkan C++ menyelinap ke ruang QML mencari anak dengan nama tertentu.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+import Hello
+
+Item {
+    Backend { id: backend }
+
+    Text { text: backend.pesan }
+    TapHandler { onTapped: backend.muatUlang() }
+
+    Connections {
+        target: backend
+        function onPesanChanged() { console.log('pesan:', backend.pesan) }
+    }
+}
+```
+
+**Pemetaan tipe.** `QString` ↔ `string`; `int`/`double` ↔ `int`/`real`; `QVariantList` ↔ array JavaScript (dapat diubah di tempat sejak 6.5); `QVariantMap` ↔ objek (diubah di tempat sejak 6.9); `QDate`/`QDateTime` ↔ `Date` (berbasis UTC); `QTime` ↔ `Date`. Array-like dari C++ tidak lolos `Array.isArray()`.
+
+**Terminologi.** Konversi tipe; `QVariant`; `QJSValue`; `QMetaObject::invokeMethod`; `QQmlProperty`; `Connections`.
+
+**Daftar isi.** 10.4.1 Properti dan binding ke objek C++ · 10.4.2 Memanggil `Q_INVOKABLE` · 10.4.3 `Connections` ke signal C++ · 10.4.4 Konversi tipe dan jebakannya · 10.4.5 Memanggil QML dari C++ (`invokeMethod`, `QQmlProperty`) · 10.4.6 Prinsip: C++ tidak mencari anak QML
+
+**Kesalahan umum.** Mengandalkan `findChild` pada pohon QML; mengabaikan jebakan `Array.isArray`; mengirim struktur besar bolak-balik tiap frame.
+
+**Latihan 15 menit.** Tambahkan signal `selesai(int hasil)` di `Backend` dan tangani di QML lewat `Connections`.
+
+**Cek pemahaman.** Mengapa C++ sebaiknya tidak memanggil `findChild` di pohon QML?
+
+**Referensi.** [Data Type Conversion](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html) · [Exposing Attributes of C++ Classes](https://doc.qt.io/qt-6/qtqml-cppintegration-exposecppattributes.html)
+
+### Modul 10.5 — Model C++ dengan QAbstractListModel
+
+**Deskripsi.** Membuat model data berkinerja tinggi di C++ untuk `ListView` dan kawan-kawan.
+
+**Konsep & analogi.** Model C++ adalah pustakawan yang memegang katalog: view menanyakan “berapa baris?” dan “apa isi baris ke-n untuk role ini?”, dan pustakawan wajib mengabari bila ada buku masuk atau keluar.
+
+**Contoh minimal.** `perangkatmodel.h`:
+
+```cpp
+#pragma once
+#include <QAbstractListModel>
+#include <QList>
 #include <QtQml/qqmlregistration.h>
 
-class Backend : public QObject
+class PerangkatModel : public QAbstractListModel
 {
     Q_OBJECT
     QML_ELEMENT
 
-    Q_PROPERTY(
-        int value
-        READ value
-        NOTIFY valueChanged
-    )
-
 public:
-    int value() const
+    enum Role { NamaRole = Qt::UserRole + 1, AktifRole };
+    struct Item { QString nama; bool aktif; };
+
+    explicit PerangkatModel(QObject *parent = nullptr) : QAbstractListModel(parent) {}
+
+    int rowCount(const QModelIndex &parent = {}) const override
     {
-        return m_value;
+        return parent.isValid() ? 0 : static_cast<int>(m_data.size());
     }
 
-signals:
-    void valueChanged();
+    QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (!index.isValid() || index.row() >= m_data.size()) return {};
+        const Item &it = m_data.at(index.row());
+        switch (role) {
+        case NamaRole: return it.nama;
+        case AktifRole: return it.aktif;
+        }
+        return {};
+    }
+
+    QHash<int, QByteArray> roleNames() const override
+    {
+        return { { NamaRole, "nama" }, { AktifRole, "aktif" } };
+    }
+
+    Q_INVOKABLE void tambah(const QString &nama)
+    {
+        const int n = static_cast<int>(m_data.size());
+        beginInsertRows({}, n, n);
+        m_data.append({ nama, true });
+        endInsertRows();
+    }
 
 private:
-    int m_value = 42;
+    QList<Item> m_data;
 };
 ```
 
-CMake:
+Di QML, delegate memakai `required property string nama` dan `required property bool aktif` (Modul 7.2).
 
-```
-qt_add_qml_module(myapp
-    URI MyApp
+**Terminologi.** `QAbstractListModel`; role dan `roleNames`; `beginInsertRows`/`endInsertRows`; `dataChanged`; proxy model (`QSortFilterProxyModel`).
 
-    QML_FILES
-        Main.qml
+**Daftar isi.** 10.5.1 Kerangka `QAbstractListModel` · 10.5.2 `roleNames` dan `data` · 10.5.3 Menambah dan menghapus baris yang benar · 10.5.4 `setData` dan `dataChanged` · 10.5.5 Sortir dan filter dengan proxy model · 10.5.6 Model besar dan pembaruan bertahap
 
-    SOURCES
-        backend.h
-)
-```
+**Kesalahan umum.** Mengubah data tanpa `beginInsertRows`/`endInsertRows` sehingga view tidak sinkron; role yang tidak terdaftar di `roleNames`; mengembalikan `QVariant` kosong lalu heran delegate kosong.
 
-QML:
+**Latihan 15 menit.** Tambahkan `Q_INVOKABLE void hapus(int baris)` dengan `beginRemoveRows`/`endRemoveRows`.
 
-```
-import QtQuick
-import MyApp
+**Cek pemahaman.** Apa yang rusak bila Anda mengubah `m_data` tanpa memanggil `beginInsertRows`?
 
-Window {
-    visible: true
+**Referensi.** [QAbstractListModel](https://doc.qt.io/qt-6/qabstractlistmodel.html) · [QAbstractItemModel](https://doc.qt.io/qt-6/qabstractitemmodel.html) · [Model/View Programming](https://doc.qt.io/qt-6/model-view-programming.html)
 
-    Backend {
-        id: backend
-    }
+### Modul 10.6 — API Native dan Integrasi Sistem
 
-    Text {
-        text: backend.value
-    }
-}
-```
+**Deskripsi.** Mengakses proses, file, jaringan, dan layanan sistem lewat API Qt, termasuk D-Bus yang sentral di desktop Linux.
 
-Daftar isi:
+**Konsep & analogi.** API Qt adalah penerjemah ke sistem operasi: Anda berbicara satu bahasa, penerjemah mengurus dialek Linux, Windows, atau macOS. Pendekatan Qt menjaga portabilitas; pemanggilan POSIX langsung hanya bila Qt tak menyediakannya.
 
-1. QML type registration.
-2. `QML_ELEMENT`.
-3. `QML_NAMED_ELEMENT`.
-4. `QML_UNCREATABLE`.
-5. `QML_ANONYMOUS`.
-6. `QML_SINGLETON`.
-7. `QML_VALUE_TYPE`.
-8. QObject exposure.
-9. Properties.
-10. Signals.
-11. Slots.
-12. Q_INVOKABLE.
-13. Enumerations.
-14. Singleton registration.
-15. Value types.
-16. Type revisions.
-17. QML module registration.
-18. C++ ownership.
-19. Error handling.
-20. C++ API design.
+**Contoh minimal.**
 
-Referensi:
+```cpp
+#include <QProcess>
+#include <QDebug>
 
-- [C++ and QML Integration](https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html?utm_source=chatgpt.com)
-- [Defining QML Types from C++](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html?utm_source=chatgpt.com)
-- [Exposing Attributes of C++ Types](https://doc.qt.io/qt-6/qtqml-cppintegration-exposecppattributes.html?utm_source=chatgpt.com)
-
-### Modul 10.4 — QML-to-C++ and C++-to-QML Communication
-
-Deskripsi konkret
-
-Menguasai komunikasi dua arah antara kedua lingkungan.
-
-Konsep dan filosofi
-
-Ada beberapa mekanisme integrasi. Setiap mekanisme mempunyai karakteristik dan tujuan berbeda.
-
-| Mekanisme           | Penggunaan                               |
-| ------------------- | ---------------------------------------- |
-| Registered QML type | Objek C++ yang diinstansiasi melalui QML |
-| Singleton           | Akses terhadap layanan bersama           |
-| Context property    | Mengekspos objek melalui context         |
-| Q_PROPERTY          | Properti C++ yang dapat diakses QML      |
-| Q_INVOKABLE         | Metode yang dapat dipanggil QML          |
-| Signals             | Notifikasi perubahan atau kejadian       |
-| QAbstractItemModel  | Penyedia data terstruktur                |
-| QJSValue            | Pertukaran nilai JavaScript              |
-
-Contoh komunikasi QML ke C++:
-
-```
-Backend {
-    id: backend
-}
-
-Button {
-    text: "Execute"
-
-    onClicked: {
-        backend.execute()
-    }
-}
-```
-
-Contoh komunikasi C++ ke QML dilakukan melalui signal:
-
-```
-signals:
-    void statusChanged(QString status);
-```
-
-```
-Connections {
-    target: backend
-
-    function onStatusChanged(status) {
-        console.log(status)
-    }
-}
-```
-
-Daftar isi:
-
-1. Registered types.
-2. Singleton objects.
-3. Context properties.
-4. Context objects.
-5. Properties.
-6. Methods.
-7. Signals.
-8. Slots.
-9. Q_INVOKABLE.
-10. QJSValue.
-11. QJSManagedValue.
-12. QVariant conversion.
-13. QMetaType.
-14. Object ownership.
-15. API boundaries.
-16. Thread affinity.
-17. Async communication.
-18. Error propagation.
-
-Catatan arsitektur: untuk pengembangan modern, prioritaskan registered types dan API yang eksplisit. Context properties mempunyai keterbatasan terkait discoverability dan analisis statis sehingga dokumentasi Qt menyarankan menghindarinya jika terdapat pendekatan yang lebih baik.
-
-Referensi:
-
-- [C++ and QML Integration](https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html?utm_source=chatgpt.com)
-- [Context Properties](https://doc.qt.io/qt-6/qtqml-cppintegration-contextproperties.html?utm_source=chatgpt.com)
-- [QML Singleton](https://doc.qt.io/qt-6/qml-singleton.html?utm_source=chatgpt.com)
-
-### Modul 10.5 — Advanced Models & Native Data Providers
-
-Deskripsi konkret
-
-Membuat model native yang dapat memberikan data dinamis ke QML.
-
-Konsep dan filosofi
-
-Untuk dataset yang lebih kompleks, C++ dapat menjadi penyedia data dengan implementasi model yang sesuai dengan kebutuhan.
-
-Contoh kerangka:
-
-```
-class DeviceModel : public QAbstractListModel
+void contoh()
 {
-    Q_OBJECT
-
-public:
-    enum Roles {
-        NameRole = Qt::UserRole + 1,
-        StatusRole
-    };
-
-    int rowCount(
-        const QModelIndex &parent = {}
-    ) const override;
-
-    QVariant data(
-        const QModelIndex &index,
-        int role
-    ) const override;
-
-    QHash<int, QByteArray> roleNames()
-        const override;
-};
-```
-
-Daftar isi:
-
-1. QAbstractItemModel.
-2. QAbstractListModel.
-3. QAbstractTableModel.
-4. QModelIndex.
-5. Model roles.
-6. Role names.
-7. `data()`.
-8. `rowCount()`.
-9. `columnCount()`.
-10. `setData()`.
-11. `flags()`.
-12. `beginInsertRows()`.
-13. `endInsertRows()`.
-14. `beginRemoveRows()`.
-15. `dataChanged()`.
-16. Model notifications.
-17. Sorting.
-18. Filtering.
-19. Proxy models.
-20. Thread-safe data updates.
-
-Referensi:
-
-- [Model/View Programming](https://doc.qt.io/qt-6/model-view-programming.html?utm_source=chatgpt.com)
-- [QAbstractItemModel](https://doc.qt.io/qt-6/qabstractitemmodel.html?utm_source=chatgpt.com)
-- [QAbstractListModel](https://doc.qt.io/qt-6/qabstractlistmodel.html?utm_source=chatgpt.com)
-
-### Modul 10.6 — Native APIs & External Libraries
-
-Deskripsi konkret
-
-Menghubungkan antarmuka QML dengan kemampuan sistem operasi dan library eksternal.
-
-Konsep dan filosofi
-
-QML bukan tempat untuk mengimplementasikan seluruh fungsi sistem. Ia dapat menjadi lapisan antarmuka yang mengakses layanan native melalui API yang dirancang secara eksplisit.
-
-Daftar isi:
-
-1. Qt Core.
-2. Qt Network.
-3. Qt DBus.
-4. Qt Concurrent.
-5. Qt Multimedia.
-6. Qt SQL.
-7. Qt Serial Port.
-8. Qt Bluetooth.
-9. Qt System APIs.
-10. POSIX interoperability.
-11. External C++ libraries.
-12. C ABI interoperability.
-13. Dynamic libraries.
-14. Native process execution.
-15. Filesystem APIs.
-16. IPC fundamentals.
-17. Data serialization.
-18. API abstraction.
-19. Error handling.
-20. Resource lifecycle.
-
-Referensi:
-
-- [Qt Core](https://doc.qt.io/qt-6/qtcore-index.html?utm_source=chatgpt.com)
-- [Qt Network](https://doc.qt.io/qt-6/qtnetwork-index.html?utm_source=chatgpt.com)
-- [Qt D-Bus](https://doc.qt.io/qt-6/qtdbus-index.html?utm_source=chatgpt.com)
-- [Qt Concurrent](https://doc.qt.io/qt-6/qtconcurrent-index.html?utm_source=chatgpt.com)
-- [Qt SQL](https://doc.qt.io/qt-6/qtsql-index.html?utm_source=chatgpt.com)
-- [Qt Multimedia](https://doc.qt.io/qt-6/qtmultimedia-index.html?utm_source=chatgpt.com)
-
-## FASE 11 — Rendering, Graphics & Performance Engineering
-
-
-
-Expert
-
-&#x20;Estimasi: 3–4 minggu
-
-
-
-Fase ini membawa pembelajaran menuju tingkat internal framework dan rendering engine.
-
-### Modul 11.1 — Qt Quick Scene Graph Architecture
-
-Deskripsi konkret
-
-Memahami bagaimana objek QML visual diterjemahkan menjadi representasi grafis yang akhirnya ditampilkan pada layar.
-
-Konsep dan filosofi
-
-Qt Quick menggunakan scene graph sebagai representasi grafis yang dapat dioptimalkan sebelum dirender.
-
-Scene graph memisahkan struktur objek visual dari pekerjaan rendering grafis.
-
-Alur konseptual:
-
-QML Visual Items
-
-Rectangle, Text, Image, custom items
-
-Qt Quick Scene Graph
-
-Node tree dan visual representation
-
-Renderer
-
-Batching, state changes, draw preparation
-
-Graphics Backend
-
-OpenGL, Vulkan, Metal atau Direct3D
-
-GPU / Display
-
-Daftar isi:
-
-1. Scene graph fundamentals.
-2. QSGNode.
-3. QSGGeometryNode.
-4. QSGTransformNode.
-5. QSGOpacityNode.
-6. QSGTexture.
-7. QSGMaterial.
-8. QSGMaterialShader.
-9. QQuickItem.
-10. `updatePaintNode()`.
-11. Scene graph lifecycle.
-12. Rendering pipeline.
-13. Batching.
-14. Draw calls.
-15. Graphics state changes.
-16. Texture management.
-17. Render loop.
-18. Basic render loop.
-19. Threaded render loop.
-20. GUI/render synchronization.
-
-Terminologi:
-
-- Scene graph: struktur data yang merepresentasikan objek grafis.
-- GPU: prosesor khusus untuk pemrosesan grafis.
-- Draw call: instruksi untuk menggambar objek atau kelompok objek.
-- Batching: pengelompokan pekerjaan rendering untuk mengurangi overhead.
-- Render loop: siklus yang mengatur proses persiapan dan penggambaran frame.
-- Node: unit dalam struktur scene graph.
-
-Referensi:
-
-- [Qt Quick Scene Graph](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html?utm_source=chatgpt.com)
-- [Scene Graph Default Renderer](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph-renderer.html?utm_source=chatgpt.com)
-- [QSGNode](https://doc.qt.io/qt-6/qsgnode.html?utm_source=chatgpt.com)
-
-### Modul 11.2 — Graphics API & Rendering Backend
-
-Deskripsi konkret
-
-Memahami hubungan Qt Quick dengan API grafis yang digunakan untuk menggambar antarmuka.
-
-Konsep dan filosofi
-
-Qt Quick tidak mengharuskan aplikasi menulis kode OpenGL atau Vulkan untuk seluruh elemen UI.
-
-Qt menyediakan abstraction layer sehingga renderer dapat menggunakan backend grafis yang tersedia.
-
-Daftar isi:
-
-1. Graphics API fundamentals.
-2. OpenGL.
-3. Vulkan.
-4. Direct3D.
-5. Metal.
-6. QRhi.
-7. QSGRendererInterface.
-8. Graphics contexts.
-9. GPU resources.
-10. Textures.
-11. Buffers.
-12. Framebuffers.
-13. Synchronization.
-14. Graphics memory.
-15. Backend selection.
-16. Graphics debugging.
-17. GPU compatibility.
-
-Terminologi:
-
-- Graphics API: antarmuka untuk mengendalikan perangkat grafis.
-- Backend: implementasi di belakang sebuah abstraction.
-- Shader: program kecil yang berjalan pada GPU.
-- Texture: data gambar yang digunakan dalam rendering.
-- Framebuffer: target tempat hasil rendering ditulis.
-
-Referensi:
-
-- [Qt Rendering Hardware Interface](https://doc.qt.io/qt-6/qrhi.html?utm_source=chatgpt.com)
-- [Qt Quick Graphics](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html?utm_source=chatgpt.com)
-- [Vulkan Documentation](https://docs.vulkan.org/?utm_source=chatgpt.com)
-
-### Modul 11.3 — Shader Programming & Visual Effects
-
-Deskripsi konkret
-
-Membuat efek grafis yang tidak cukup direpresentasikan oleh properti visual standar.
-
-Konsep dan filosofi
-
-Shader merupakan program yang dijalankan pada GPU. Shader memungkinkan pengolahan warna, tekstur, pencahayaan, distorsi, dan efek visual lainnya.
-
-Contoh penggunaan QML:
-
-```
-ShaderEffect {
-    width: 200
-    height: 200
-
-    property color tint: "red"
-
-    fragmentShader: "qrc:/shaders/tint.frag.qsb"
+    QProcess proses;
+    proses.start(QStringLiteral("uname"), { QStringLiteral("-r") });  // argumen terpisah, tanpa shell
+    proses.waitForFinished(2000);   // hanya untuk demo; di UI pakai sinyal finished
+    qDebug() << proses.readAllStandardOutput().trimmed();
 }
 ```
 
-Daftar isi:
+Jelajahi layanan D-Bus dari terminal: `busctl --user list` dan `busctl --user tree <nama-layanan>`. Di C++, `QtDBus` (`QDBusInterface`, adaptor) memakai konsep yang sama.
 
-1. Shader fundamentals.
-2. Vertex shaders.
-3. Fragment shaders.
-4. GLSL.
-5. Shader inputs.
-6. Shader uniforms.
-7. Textures.
-8. UV coordinates.
-9. Color manipulation.
-10. Blur.
-11. Distortion.
-12. Masking.
-13. Noise.
-14. Gradient effects.
-15. Multi-pass effects.
-16. Shader compilation.
-17. QShader.
-18. `qsb`.
-19. Shader portability.
-20. GPU profiling.
+**Terminologi.** `QProcess`; `QFile`/`QDir`/`QStandardPaths`; `QSettings`; `QNetworkAccessManager`; D-Bus (bus pesan antarproses di Linux); `QFileSystemWatcher`.
 
-Terminologi:
+**Daftar isi.** 10.6.1 `QProcess` dan eksekusi aman · 10.6.2 `QFile`, `QDir`, `QStandardPaths` · 10.6.3 `QSettings` · 10.6.4 Jaringan (`QNetworkAccessManager`) · 10.6.5 D-Bus · 10.6.6 Pemantauan file · 10.6.7 Kapan POSIX langsung layak
 
-- GLSL: bahasa pemrograman shader yang digunakan dalam ekosistem OpenGL dan berbagai workflow terkait.
-- Vertex shader: program untuk memproses vertex.
-- Fragment shader: program untuk menghitung warna fragment.
-- Uniform: nilai input yang dikirimkan ke shader.
-- UV: koordinat tekstur.
-- QSB: format shader terkompilasi Qt.
+**Kesalahan umum.** Merakit string perintah shell dari input pengguna (rentan injeksi); memblokir thread UI dengan `waitFor...`; mengabaikan kode keluar dan galat proses.
 
-Referensi:
+**Latihan 15 menit.** Bungkus `QProcess` dalam `Q_INVOKABLE` yang memancarkan signal saat proses selesai, tanpa memblokir UI.
 
-- [ShaderEffect](https://doc.qt.io/qt-6/qml-qtquick-shadereffect.html?utm_source=chatgpt.com)
-- [Qt Shader Tools](https://doc.qt.io/qt-6/qtshadertools-index.html?utm_source=chatgpt.com)
-- [Qt Shader Baking](https://doc.qt.io/qt-6/qtshadertools-qsb.html?utm_source=chatgpt.com)
-- [GLSL Reference](https://registry.khronos.org/OpenGL-Refpages/gl4/?utm_source=chatgpt.com)
+**Cek pemahaman.** Mengapa argumen `QProcess` diberikan sebagai daftar, bukan satu string?
 
-### Modul 11.4 — Performance Engineering
+**Referensi.** [QProcess](https://doc.qt.io/qt-6/qprocess.html) · [Qt D-Bus](https://doc.qt.io/qt-6/qtdbus-index.html) · [Qt Network](https://doc.qt.io/qt-6/qtnetwork-index.html)
 
-Deskripsi konkret
+### Modul 10.7 — Threading dan Konkurensi *(baru)*
 
-Mendiagnosis dan memperbaiki masalah performa yang berkaitan dengan QML engine, JavaScript, scene graph, rendering, dan penggunaan resource.
+**Deskripsi.** Menjalankan pekerjaan berat tanpa membekukan UI, dan aturan thread yang tidak boleh dilanggar.
 
-Konsep dan filosofi
+**Konsep & analogi.** Thread UI adalah pelayan tunggal di ruang makan. Pekerjaan berat dikirim ke dapur belakang (thread lain). Dapur tidak boleh keluar menata meja sendiri; hasilnya diantar lewat pesan (signal).
 
-Performa tidak boleh dinilai hanya berdasarkan seberapa cepat aplikasi terbuka.
+**Aturan inti.** Objek QML dan objek GUI hidup di thread utama. Jangan menyentuhnya dari thread lain. Komunikasi lintas thread lewat signal (koneksi queued).
 
-Pengukuran harus mencakup:
+**Contoh minimal.** Potongan di dalam kelas `Backend` (anggap `setHasil(int)` sudah ada; tautkan `Qt6::Concurrent`):
 
-- Startup time.
-- Memory usage.
-- CPU usage.
-- GPU usage.
-- Frame time.
-- Frame drops.
-- Input latency.
-- Resource loading.
+```cpp
+#include <QtConcurrent>
+#include <QFutureWatcher>
 
-Daftar isi:
+void Backend::hitungBerat()
+{
+    auto *watcher = new QFutureWatcher<int>(this);
+    connect(watcher, &QFutureWatcher<int>::finished, this, [this, watcher] {
+        setHasil(watcher->result());      // kembali ke thread utama lewat watcher
+        watcher->deleteLater();
+    });
+    watcher->setFuture(QtConcurrent::run([] {
+        int s = 0;
+        for (int i = 0; i < 100000000; ++i) s += i % 7;
+        return s;
+    }));
+}
+```
 
-1. Performance fundamentals.
-2. QML binding overhead.
-3. Binding loops.
-4. JavaScript execution cost.
-5. Object creation cost.
-6. Object destruction cost.
-7. Component loading.
-8. Lazy initialization.
-9. List virtualization.
-10. Delegate recycling.
-11. Image caching.
-12. Texture memory.
-13. Render batching.
-14. Shader performance.
-15. Thread synchronization.
-16. Memory profiling.
-17. CPU profiling.
-18. GPU profiling.
-19. Startup optimization.
-20. Performance regression testing.
+**Terminologi.** Thread affinity; `QThread`; worker object (`moveToThread`); `QtConcurrent::run`; `QFutureWatcher`; koneksi queued; `WorkerScript` (untuk JavaScript).
 
-Referensi:
+**Daftar isi.** 10.7.1 Thread utama dan aturan UI · 10.7.2 `QtConcurrent::run` dan `QFutureWatcher` · 10.7.3 `QThread` dan worker object · 10.7.4 `QThreadPool` · 10.7.5 Signal lintas thread · 10.7.6 `WorkerScript` · 10.7.7 Race condition dan penguncian dasar
 
-- [Qt Quick Performance](https://doc.qt.io/qt-6/qtquick-performance.html?utm_source=chatgpt.com)
-- [Qt Quick Tools and Utilities](https://doc.qt.io/qt-6/qtquick-tools-and-utilities.html?utm_source=chatgpt.com)
-- [QML Profiling](https://doc.qt.io/qt-6/qtquick-profiling.html?utm_source=chatgpt.com)
+**Kesalahan umum.** Mengubah properti QML dari thread kerja; mewarisi `QThread` lalu menaruh slot di dalamnya; berbagi data tanpa sinkronisasi.
 
-## FASE 12 — Testing, Debugging & Quality Engineering
+**Latihan 15 menit.** Panggil `hitungBerat()` dari tombol, lalu tampilkan hasilnya di `Text` sambil memastikan animasi di layar tetap mulus.
 
+**Cek pemahaman.** Mengapa hasil perhitungan tidak boleh langsung menulis ke objek QML dari thread kerja?
 
+**Referensi.** [Threading and Concurrent Programming](https://doc.qt.io/qt-6/thread-basics.html) · [Qt Concurrent](https://doc.qt.io/qt-6/qtconcurrent-index.html) · [QThread](https://doc.qt.io/qt-6/qthread.html)
 
-Expert
+## Fase 11 — Rendering dan Performa
 
-&#x20;Estimasi: 2–3 minggu
+*Tujuan: memahami bagaimana frame digambar, lalu mengukur dan memperbaiki performa berdasarkan data. Estimasi: 3–4 minggu. Aturan utama: ukur dulu, baru ubah.*
 
+### Modul 11.1 — Scene Graph dan Render Loop
 
+**Deskripsi.** Bagaimana item QML menjadi node scene graph, bagaimana node digabung (batching), dan bagaimana thread GUI dan thread render bekerja sama.
 
-### Modul 12.1 — QML Debugging
+**Konsep & analogi.** Thread GUI adalah penulis naskah: ia memutuskan apa yang tampil. Thread render adalah panggung: ia menggambar berdasarkan salinan naskah. Fase sinkronisasi adalah momen singkat saat naskah diserahkan; hanya di momen itu kedua thread bersentuhan.
 
-Deskripsi konkret
+```
+Thread GUI    : event → binding → polish → sync ─┐
+Thread render :                                   └→ render → swap (vsync)
+```
 
-Mempelajari cara menemukan kesalahan pada struktur objek, properti, JavaScript, signal, dan komponen visual.
+**Contoh minimal (diagnosa dari terminal).**
 
-Konsep dan filosofi
+```
+QSG_INFO=1 qml Main.qml
+QSG_VISUALIZE=batches qml Main.qml
+QSG_RENDER_LOOP=basic qml Main.qml
+```
 
-Debugging bukan sekadar membaca error. Tujuannya menemukan penyebab utama sebuah masalah.
+**Terminologi.** Scene graph; node; batch (penggabungan perintah gambar); material; polish; sync; render loop (`basic` atau `threaded`); frame time (pada 60 Hz anggaran 16,6 ms).
 
-Daftar isi:
+**Daftar isi.** 11.1.1 Dari item ke node · 11.1.2 Batching dan hal yang memecahnya · 11.1.3 Render loop `basic` dan `threaded` · 11.1.4 Polish dan sync · 11.1.5 Visualisasi (`QSG_VISUALIZE`) · 11.1.6 Layer, clip, dan opacity
 
-1. Syntax errors.
-2. Runtime errors.
-3. Import errors.
-4. Binding errors.
-5. Binding loops.
-6. Signal errors.
-7. Component loading errors.
-8. Object lifecycle errors.
-9. JavaScript exceptions.
-10. QML logging.
-11. `console.log`.
-12. `console.warn`.
-13. `console.error`.
-14. Qt logging categories.
-15. QML debugging protocol.
-16. Debugger integration.
-17. Runtime inspection.
+**Kesalahan umum.** Mengira semua kode QML berjalan di thread render; memakai `clip` dan `layer.enabled` di mana-mana; mengoptimalkan tanpa melihat `QSG_VISUALIZE`.
 
-Referensi:
+**Latihan 15 menit.** Jalankan `QSG_VISUALIZE=batches` pada layar daftar dan catat berapa batch yang terbentuk sebelum dan sesudah menghapus `clip`.
 
-- [QML Debugging](https://doc.qt.io/qt-6/qtqml-debugging.html?utm_source=chatgpt.com)
-- [Qt Logging](https://doc.qt.io/qt-6/qloggingcategory.html?utm_source=chatgpt.com)
+**Cek pemahaman.** Pada fase mana thread GUI dan render bersentuhan?
 
-### Modul 12.2 — Static Analysis & Code Quality
+**Referensi.** [Qt Quick Scene Graph](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html) · [Scene Graph Renderer](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph-renderer.html)
 
-Deskripsi konkret
+### Modul 11.2 — Backend Grafis (RHI) dan Renderer Software
 
-Membuat workflow pemeriksaan otomatis agar kesalahan ditemukan sebelum aplikasi dijalankan.
+**Deskripsi.** Qt Quick menggambar lewat RHI yang dapat memakai OpenGL, Vulkan, Metal, Direct3D 11/12, atau renderer software.
 
-Konsep dan filosofi
+**Konsep & analogi.** RHI adalah juru bahasa grafis: Qt berbicara satu bahasa, RHI menerjemahkan ke dialek API yang tersedia. Renderer software adalah jalur darurat tanpa GPU.
 
-Semakin besar aplikasi, semakin tidak efisien jika semua masalah harus ditemukan melalui pengujian manual.
+**Contoh minimal.**
 
-Daftar isi:
+```
+QSG_RHI_BACKEND=opengl qml Main.qml
+QSG_RHI_BACKEND=vulkan qml Main.qml
+QT_QUICK_BACKEND=software qml Main.qml
+```
 
-1. qmllint.
-2. QML Language Server.
-3. qmlformat.
-4. QML type annotations.
-5. Type checking.
-6. Unqualified access.
-7. Deprecated API.
-8. Unused imports.
-9. Naming conventions.
-10. Formatting conventions.
-11. Static analysis.
-12. C++ static analysis.
-13. Build warnings.
-14. Compiler diagnostics.
-15. Continuous integration.
+Di C++, `QQuickWindow::setGraphicsApi()` memilih API secara eksplisit dan harus dipanggil sebelum jendela dibuat. Renderer software tidak mendukung fitur berbasis shader (misalnya `ShaderEffect`) dan berguna untuk diagnosa atau perangkat tanpa GPU.
 
-Contoh:
+**Terminologi.** RHI; backend (OpenGL, Vulkan, Metal, Direct3D, software); `QQuickWindow::setGraphicsApi`; driver GPU; fallback.
+
+**Daftar isi.** 11.2.1 Peran RHI · 11.2.2 Memilih backend (variabel lingkungan dan C++) · 11.2.3 Perilaku antar-backend · 11.2.4 Renderer software dan batasannya · 11.2.5 Diagnosa masalah driver
+
+**Kesalahan umum.** Menganggap bug rendering pasti bug QML padahal berasal dari driver; memanggil `setGraphicsApi` terlambat; tidak menyiapkan fallback software.
+
+**Latihan 15 menit.** Bandingkan tampilan dan keluaran `QSG_INFO=1` pada dua backend berbeda, lalu pada renderer software.
+
+**Cek pemahaman.** Fitur apa yang hilang pada renderer software?
+
+**Referensi.** [Qt Quick Scene Graph](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html) · [Qt RHI](https://doc.qt.io/qt-6/qrhi.html)
+
+### Modul 11.3 — Shader dan Efek Kustom
+
+**Deskripsi.** `ShaderEffect` dan pipeline shader Qt 6: menulis shader, mengompilasinya ke format `.qsb`, dan memakainya dari QML.
+
+**Konsep & analogi.** Shader adalah resep kecil yang dijalankan GPU untuk setiap piksel secara paralel. Qt 6 tidak memakai GLSL OpenGL mentah: shader ditulis dalam GLSL gaya Vulkan lalu dikompilasi `qsb` menjadi format yang dipahami tiap backend.
+
+**Contoh minimal.** `tint.frag`:
+
+```glsl
+#version 440
+layout(location = 0) in vec2 qt_TexCoord0;
+layout(location = 0) out vec4 fragColor;
+
+layout(std140, binding = 0) uniform buf {
+    mat4 qt_Matrix;
+    float qt_Opacity;
+    vec4 tint;
+};
+layout(binding = 1) uniform sampler2D source;
+
+void main() {
+    vec4 c = texture(source, qt_TexCoord0);
+    fragColor = vec4(mix(c.rgb, tint.rgb, tint.a), c.a) * qt_Opacity;
+}
+```
+
+Kompilasi (nama executable `qsb` berasal dari `qt6-shadertools`; periksa dengan `pacman -Ql qt6-shadertools | grep /bin/`):
+
+```
+qsb --qt6 -o tint.frag.qsb tint.frag
+```
+
+`Main.qml` (jalankan dari folder yang sama dengan `qml Main.qml`; ganti `foto.png` dengan gambar Anda):
+
+```qml
+import QtQuick
+
+ShaderEffect {
+    width: 200; height: 200
+    property variant source: Image { source: 'foto.png'; visible: false }
+    property color tint: Qt.rgba(1, 0.4, 0, 0.5)
+    fragmentShader: 'tint.frag.qsb'
+}
+```
+
+Di proyek CMake, gunakan `qt_add_shaders` agar kompilasi shader menjadi bagian build, dan rujuk hasilnya lewat path resource.
+
+**Terminologi.** Shader; fragment dan vertex shader; uniform; sampler; SPIR-V; `.qsb`; `std140` (aturan tata letak uniform).
+
+**Daftar isi.** 11.3.1 Alur shader di Qt 6 · 11.3.2 Menulis fragment shader · 11.3.3 `qsb` dan `qt_add_shaders` · 11.3.4 `ShaderEffect` dan properti sebagai uniform · 11.3.5 Vertex shader dasar · 11.3.6 Batas: renderer software
+
+**Kesalahan umum.** Memakai shader OpenGL lama tanpa konversi; urutan uniform tidak sesuai urutan properti; memakai `ShaderEffect` untuk efek sederhana yang dapat dilakukan `MultiEffect`.
+
+**Latihan 15 menit.** Ubah shader agar menghasilkan gambar hitam-putih, kompilasi ulang, dan jalankan.
+
+**Cek pemahaman.** Mengapa shader Qt 6 harus dikompilasi menjadi `.qsb`?
+
+**Referensi.** [ShaderEffect](https://doc.qt.io/qt-6/qml-qtquick-shadereffect.html) · [Qt Shader Tools](https://doc.qt.io/qt-6/qtshadertools-index.html) · [qsb](https://doc.qt.io/qt-6/qtshadertools-qsb.html)
+
+### Modul 11.4 — Profiling dan Optimasi
+
+**Deskripsi.** Mengukur dengan profiler, membaca hasilnya, dan memperbaiki sumber masalah yang sebenarnya.
+
+**Konsep & analogi.** Optimasi tanpa profiler seperti menebak penyakit tanpa pemeriksaan. Siklusnya: ukur → buat hipotesis → ubah satu hal → ukur lagi.
+
+**Contoh minimal.** Siapkan build yang boleh diprofil (infrastruktur debug dan profil hanya untuk lingkungan pengembangan):
+
+```
+cmake -S . -B build-profil -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo
+```
+
+Tambahkan definisi `QT_QML_DEBUG` pada target untuk build ini saja, jalankan aplikasi dari Qt Creator atau dengan `qmlprofiler`, lalu baca timeline binding, JavaScript, dan rendering.
+
+| Gejala | Penyebab umum | Perbaikan |
+| --- | --- | --- |
+| Scroll tersendat | Delegate berat, gambar besar | Delegate ringan, `sourceSize`, `reuseItems` |
+| Frame time naik saat animasi | Layout dihitung ulang | Animasikan properti non-layout, pakai animator |
+| CPU tinggi saat diam | Binding atau timer berlebih | Hapus evaluasi yang tak perlu |
+| Banyak batch | `clip`, `layer`, opacity bertingkat | Kurangi pemecah batch (`QSG_VISUALIZE=batches`) |
+
+**Terminologi.** Profiler; frame time; evaluasi binding; overdraw; `layer.enabled`; hot path.
+
+**Daftar isi.** 11.4.1 Menyiapkan build untuk profil · 11.4.2 QML Profiler · 11.4.3 Membaca timeline · 11.4.4 Pemicu umum (binding, delegate, gambar) · 11.4.5 Memori dan kebocoran objek · 11.4.6 Disiplin: satu perubahan, satu pengukuran
+
+**Kesalahan umum.** Mengoptimalkan berdasarkan firasat; profil di build Debug (angka tidak representatif); mengaktifkan infrastruktur debug di build rilis.
+
+**Latihan 15 menit.** Profil daftar 1000 baris dengan dan tanpa `reuseItems`, lalu bandingkan.
+
+**Cek pemahaman.** Mengapa build untuk profil harus berbeda dari build Debug dan juga dari build rilis?
+
+**Referensi.** [Prototyping, Debugging, and Profiling](https://doc.qt.io/qt-6/qtqml-prototyping-debugging-profiling.html) · [Qt Quick Performance](https://doc.qt.io/qt-6/qtquick-performance.html)
+
+### Modul 11.5 — Kompilasi QML *(baru)*
+
+**Deskripsi.** Bagaimana QML dikompilasi menjadi bytecode atau C++, dan cara menulis QML yang dapat dikompilasi.
+
+**Konsep & analogi.** QML yang diinterpretasi seperti membaca resep sambil memasak; QML yang dikompilasi seperti resep yang sudah dihafal. Semakin jelas tipe yang Anda tulis, semakin banyak yang bisa dihafal engine.
+
+| Alat | Fungsi | Catatan |
+| --- | --- | --- |
+| `qmlcachegen` | Bytecode dan cache | Otomatis lewat CMake; gratis |
+| `qmltc` | Kompilasi tipe QML ke C++ | Lihat dokumentasi untuk status dan batasannya |
+| `qmlsc` | Kompilasi skrip (menghasilkan kode native) | **Hanya di add-on komersial** Qt Quick Compiler Extensions |
+
+Aturan menulis QML yang ramah kompilasi: beri anotasi tipe pada fungsi dan parameter (anotasi tipe ditegakkan sejak Qt 6.7), pakai `required property`, akses berkualifikasi, `pragma ComponentBehavior: Bound`, hindari context property dan pemilihan style saat runtime untuk binding Controls.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    function kuadrat(x: real): real { return x * x }
+    function lebarDari(obj: QtObject): real { return (obj as Item)?.width ?? 0 }
+}
+```
+
+**Terminologi.** Bytecode; cache; `qmlcachegen`; `qmltc`; `qmlsc`; anotasi tipe; type assertion (`as`).
+
+**Daftar isi.** 11.5.1 Jalur kompilasi QML · 11.5.2 `qmlcachegen` dan CMake · 11.5.3 `qmltc` · 11.5.4 `qmlsc` dan lisensinya · 11.5.5 Anotasi tipe dan `as` · 11.5.6 Aturan QML ramah kompilasi · 11.5.7 Membaca peringatan `qmllint`
+
+**Kesalahan umum.** Mengandalkan `qmlsc` tanpa lisensi komersial; fungsi tanpa anotasi tipe; akses tanpa kualifikasi yang menggagalkan optimasi.
+
+**Latihan 15 menit.** Beri anotasi tipe pada tiga fungsi di proyek latihan dan jalankan `all_qmllint` sebelum dan sesudah.
+
+**Cek pemahaman.** Mengapa `qmlsc` tidak tersedia untuk semua pengguna Qt?
+
+**Referensi.** [Qt Quick Compiler](https://doc.qt.io/qt-6/qtqml-qtquick-compiler-tech.html) · [QML Script Compiler](https://doc.qt.io/qt-6/qtqml-qml-script-compiler.html)
+
+## Fase 12 — Testing dan Kualitas
+
+*Tujuan: menemukan masalah lebih awal dan menjaga kualitas dengan proses yang bisa diulang. Estimasi: 2–3 minggu.*
+
+### Modul 12.1 — Debugging QML
+
+**Deskripsi.** Teknik mencari bug di QML dan di perbatasan C++.
+
+**Konsep & analogi.** Debugging adalah investigasi: kumpulkan bukti (log, jejak), persempit lokasi, uji hipotesis. `console.trace()` adalah kamera pengawas yang menunjukkan siapa memanggil siapa.
+
+**Contoh minimal.**
+
+```qml
+import QtQuick
+
+Item {
+    property int a: 1
+    onAChanged: console.trace()      // jejak pemanggilan setiap perubahan
+
+    Component.onCompleted: {
+        console.time('uji')
+        a = 2
+        console.timeEnd('uji')
+        console.assert(a === 2, 'a harus 2')
+    }
+}
+```
+
+Alat tambahan: `QML_IMPORT_TRACE=1` (modul tak ditemukan), `QT_LOGGING_RULES='qt.qml.binding.removal.info=true'` (binding yang tak sengaja terputus), pratinjau langsung lewat `qmlpreview` dan, di Qt 6.12, hot reload bawaan; `gdb` untuk sisi C++. Infrastruktur debug QML membuka layanan debug, jadi hanya aktifkan di lingkungan aman.
+
+**Terminologi.** `console.*` (`log`, `warn`, `error`, `assert`, `trace`, `time`); breakpoint; jejak tumpukan; kategori logging; hot reload.
+
+**Daftar isi.** 12.1.1 API `console` · 12.1.2 Membaca peringatan runtime (binding loop, tipe) · 12.1.3 Kategori logging · 12.1.4 Debugger di Qt Creator · 12.1.5 Pratinjau dan hot reload · 12.1.6 Debugging sisi C++ dengan `gdb` · 12.1.7 Keamanan infrastruktur debug
+
+**Kesalahan umum.** Meninggalkan `console.log` di jalur panas; menebak tanpa log; mengaktifkan debug port di build rilis.
+
+**Latihan 15 menit.** Sebabkan binding terputus karena assignment, lalu temukan kejadiannya dengan `QT_LOGGING_RULES`.
+
+**Cek pemahaman.** Mengapa debug port QML tidak boleh aktif di build rilis?
+
+**Referensi.** [Debugging QML Applications](https://doc.qt.io/qt-6/qtquick-debugging.html) · [Prototyping, Debugging, and Profiling](https://doc.qt.io/qt-6/qtqml-prototyping-debugging-profiling.html) · [GDB](https://sourceware.org/gdb/documentation/)
+
+### Modul 12.2 — Analisis Statis dan Pemformatan
+
+**Deskripsi.** `qmllint`, `qmlformat`, `qmlls`, dan peringatan compiler C++.
+
+**Konsep & analogi.** Linter adalah inspektur bangunan: ia mencari retakan sebelum penghuni masuk. Peringatan yang diabaikan hari ini adalah bug besok.
+
+**Contoh minimal.**
 
 ```
 qmllint Main.qml
-```
-
-```
+qmllint --help          # lihat kategori peringatan yang tersedia
 qmlformat -i Main.qml
+cmake --build build --target all_qmllint
 ```
 
-Referensi:
+Hubungkan `qmlls` ke editor Anda agar peringatan muncul saat mengetik. Untuk C++, aktifkan `-Wall -Wextra` dan pertimbangkan `clang-tidy` lewat `compile_commands.json`.
 
-- [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html?utm_source=chatgpt.com)
-- [QML Tooling](https://doc.qt.io/qt-6/qtquick-tools-and-utilities.html?utm_source=chatgpt.com)
-- [QML Language Server](https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html?utm_source=chatgpt.com)
+**Terminologi.** Linter; formatter; language server; peringatan vs galat; unqualified access.
 
-### Modul 12.3 — Unit Testing & Integration Testing
+**Daftar isi.** 12.2.1 `qmllint` dan kategori peringatan · 12.2.2 Peringatan paling sering (akses tanpa kualifikasi, import tak terpakai, tipe tak dikenal) · 12.2.3 `qmlformat` · 12.2.4 `qmlls` di editor · 12.2.5 Analisis statis C++ · 12.2.6 Mengintegrasikan ke build dan hook git
 
-Deskripsi konkret
+**Kesalahan umum.** Memadamkan peringatan dengan menyembunyikannya, bukan memperbaikinya; tidak memperbaiki import sehingga alat tak mengenali tipe.
 
-Menguji perilaku komponen dan interaksi antarbagiannya secara otomatis.
+**Latihan 15 menit.** Jalankan `all_qmllint` pada proyek latihan dan perbaiki tiga peringatan teratas.
 
-Konsep dan filosofi
+**Cek pemahaman.** Mengapa akses tanpa kualifikasi dipermasalahkan oleh `qmllint`?
 
-Pengujian harus membuktikan bahwa komponen berperilaku sesuai kontraknya, bukan sekadar memastikan aplikasi dapat dibuka.
+**Referensi.** [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [qmlformat](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html) · [qmlls](https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html)
 
-Contoh:
+### Modul 12.3 — Qt Quick Test
 
-```
+**Deskripsi.** Menguji komponen QML dengan `TestCase`, `compare`, `verify`, `tryCompare`, simulasi input, dan `SignalSpy`.
+
+**Konsep & analogi.** Uji otomatis adalah jaring pengaman akrobat: Anda boleh bereksperimen berani karena ada yang menangkap bila jatuh.
+
+**Contoh minimal.** `tst_math.qml`:
+
+```qml
 import QtQuick
 import QtTest
 
 TestCase {
-    name: "MathTests"
+    name: 'Matematika'
 
-    function test_addition() {
-        compare(2 + 2, 4)
+    function test_tambah() { compare(2 + 2, 4) }
+    function test_panjang() { verify('qml'.length === 3, 'panjang harus 3') }
+}
+```
+
+Jalankan cepat dengan `qmltestrunner -input tst_math.qml` (periksa nama executable di sistem Anda). Untuk proyek, buat executable uji dengan:
+
+```cpp
+#include <QtQuickTest>
+QUICK_TEST_MAIN(contoh)
+```
+
+dan daftarkan lewat `add_test` di CMake dengan tautan ke `Qt6::QuickTest`.
+
+**Terminologi.** `TestCase`; `compare`/`verify`/`tryCompare`; `SignalSpy`; `mouseClick`/`keyClick`; `QUICK_TEST_MAIN`; `ctest`.
+
+**Daftar isi.** 12.3.1 `TestCase` dan penamaan fungsi `test_` · 12.3.2 Assertion · 12.3.3 `tryCompare` dan sifat asinkron · 12.3.4 Simulasi input · 12.3.5 `SignalSpy` · 12.3.6 `QUICK_TEST_MAIN` dan `ctest`
+
+**Kesalahan umum.** Tes yang bergantung pada waktu (pakai `tryCompare`); tes yang berbagi keadaan; tidak membuat objek sementara untuk tiap tes.
+
+**Latihan 15 menit.** Tulis uji untuk `AppButton` (Modul 5.1) yang memeriksa bahwa signal `clicked` dipancarkan saat tap disimulasikan.
+
+**Cek pemahaman.** Kapan memakai `tryCompare` alih-alih `compare`?
+
+**Referensi.** [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html) · [CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
+
+### Modul 12.4 — Strategi Pengujian dan Kualitas
+
+**Deskripsi.** Menyusun lapisan uji dan proses yang menjaga kualitas dari waktu ke waktu.
+
+**Konsep & analogi.** Piramida uji: banyak uji kecil yang cepat di dasar (unit), sedikit uji menyeluruh yang lambat di puncak (antarmuka). Terbalik berarti lambat dan rapuh.
+
+**Contoh minimal.** Jalankan seluruh uji tanpa jendela (headless):
+
+```
+QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
+```
+
+| Lapisan | Contoh | Alat |
+| --- | --- | --- |
+| Unit | Logika C++, fungsi JavaScript murni | Qt Test, `qmltestrunner` |
+| Komponen | Satu komponen QML dengan input simulasi | Qt Quick Test |
+| Integrasi | Backend + UI bersama | Qt Quick Test, uji end-to-end terskrip |
+| Manual terarah | Aksesibilitas, tampilan lintas platform | Daftar periksa, Orca |
+
+**Terminologi.** Piramida uji; mock; flaky test; headless; cakupan (coverage); CI.
+
+**Daftar isi.** 12.4.1 Piramida uji · 12.4.2 Mock dan data uji · 12.4.3 Uji headless dengan `offscreen` · 12.4.4 Menangani tes yang tidak stabil · 12.4.5 Cakupan kode · 12.4.6 Review kode dan definisi selesai
+
+**Kesalahan umum.** Hanya uji manual; tes yang bergantung pada urutan eksekusi; mengejar angka cakupan alih-alih perilaku penting.
+
+**Latihan 15 menit.** Jalankan seluruh uji dengan `offscreen` dan catat berapa lama waktunya; tandai satu uji yang paling lambat.
+
+**Cek pemahaman.** Mengapa uji antarmuka sebaiknya sedikit dibanding uji unit?
+
+**Referensi.** [Qt Test](https://doc.qt.io/qt-6/qtest-overview.html) · [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html)
+
+## Fase 13 — Keamanan, Integrasi, dan Deployment
+
+*Tujuan: membuat aplikasi aman, terintegrasi dengan sistem, dan dapat didistribusikan. Estimasi: 3–4 minggu.*
+
+### Modul 13.1 — Keamanan Aplikasi Qt/QML
+
+**Deskripsi.** Memodelkan ancaman dan menutup celah yang khas di aplikasi Qt/QML.
+
+**Konsep & analogi.** Keamanan adalah mengunci pintu yang benar-benar dipakai penyusup, bukan semua pintu secara merata. Mulailah dengan bertanya: apa yang berharga, siapa yang menginginkannya, dan lewat mana mereka bisa masuk?
+
+**Contoh minimal.** Membatasi `Loader` agar hanya memuat dari resource internal:
+
+```qml
+import QtQuick
+
+Loader {
+    function muat(u: url) {
+        if (!u.toString().startsWith('qrc:/')) {
+            console.warn('ditolak:', u)
+            return
+        }
+        source = u
     }
 }
 ```
 
-Daftar isi:
+| Risiko | Mitigasi |
+| --- | --- |
+| Eksekusi kode dari string tak tepercaya (`Qt.createQmlObject`, `eval`, `Loader` dengan URL pengguna) | Jangan pernah mengeksekusi input mentah; whitelist sumber |
+| Infrastruktur debug QML aktif di rilis | Hanya aktifkan di build pengembangan |
+| Pembacaan file lokal lewat XHR | Biarkan `QML_XHR_ALLOW_FILE_READ` mati kecuali benar-benar perlu |
+| Injeksi lewat `QML_IMPORT_PATH`, `QT_PLUGIN_PATH` | Jangan percaya environment dari proses yang tidak tepercaya; kunci jalur plugin pada aplikasi istimewa |
+| Eksekusi perintah dari input pengguna | `QProcess` dengan daftar argumen, bukan string shell |
+| Rahasia di kode atau konfigurasi | Simpan di keyring sistem; jangan commit ke git |
+| Lalu lintas jaringan | TLS dengan verifikasi sertifikat aktif; jangan pernah mematikan verifikasi |
+| Aplikasi berhak besar | Prinsip hak minimum, isolasi (bubblewrap, firejail, Flatpak) |
+| Isolasi tampilan | Wayland memisahkan klien dengan lebih baik daripada X11, tempat klien dapat memantau input klien lain |
 
-1. Testing fundamentals.
-2. Unit tests.
-3. Component tests.
-4. Integration tests.
-5. Qt Quick Test.
-6. TestCase.
-7. SignalSpy.
-8. Test data.
-9. Test setup.
-10. Test cleanup.
-11. Asynchronous tests.
-12. Mouse simulation.
-13. Keyboard simulation.
-14. Touch simulation.
-15. Visual regression.
-16. Test isolation.
-17. Mock objects.
-18. Test coverage.
-19. CI testing.
-20. Failure analysis.
+**Terminologi.** Threat model; trust boundary; least privilege; injeksi; sandbox; supply chain.
 
-Referensi:
+**Daftar isi.** 13.1.1 Threat modeling sederhana · 13.1.2 Input tak tepercaya dan eksekusi kode · 13.1.3 Debug, XHR, dan jalur import · 13.1.4 Jaringan dan TLS · 13.1.5 Rahasia dan penyimpanan · 13.1.6 Isolasi dan sandbox · 13.1.7 Rantai pasok dependensi
 
-- [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html?utm_source=chatgpt.com)
-- [TestCase](https://doc.qt.io/qt-6/qml-qttest-testcase.html?utm_source=chatgpt.com)
-- [SignalSpy](https://doc.qt.io/qt-6/qml-qttest-signalspy.html?utm_source=chatgpt.com)
+**Kesalahan umum.** Menganggap aplikasi desktop lokal tidak perlu validasi input; membiarkan opsi debug; mematikan verifikasi TLS demi kemudahan pengujian.
 
-### Modul 12.4 — Profiling & Runtime Diagnostics
+**Latihan 15 menit.** Gambar threat model satu halaman untuk proyek latihan Anda: aset, aktor, batas kepercayaan, tiga ancaman teratas, dan mitigasinya.
 
-Deskripsi konkret
+**Cek pemahaman.** Mengapa `Qt.createQmlObject` dengan string dari pengguna berbahaya?
 
-Mengukur aktivitas aplikasi ketika berjalan untuk menemukan bottleneck.
+**Referensi.** [OWASP Threat Modeling](https://owasp.org/www-community/Threat_Modeling) · [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/) · [Arch Wiki: Security](https://wiki.archlinux.org/title/Security) · [Arch Wiki: Bubblewrap](https://wiki.archlinux.org/title/Bubblewrap) · [Qt Network](https://doc.qt.io/qt-6/qtnetwork-index.html)
 
-Daftar isi:
+### Modul 13.2 — Integrasi Platform Desktop Linux
 
-1. QML Profiler.
-2. CPU profiling.
-3. Memory profiling.
-4. Binding profiling.
-5. JavaScript profiling.
-6. Frame rendering.
-7. Scene graph diagnostics.
-8. Qt logging categories.
-9. GammaRay.
-10. GDB.
-11. Valgrind.
-12. AddressSanitizer.
-13. UndefinedBehaviorSanitizer.
-14. ThreadSanitizer.
-15. Performance benchmarks.
-16. Regression monitoring.
+**Deskripsi.** Terintegrasi dengan lingkungan desktop: notifikasi, ikon tray, entri aplikasi, portal, layanan systemd, dan direktori XDG.
 
-Referensi:
+**Konsep & analogi.** Aplikasi yang baik adalah tetangga yang baik: ia memakai fasilitas bersama (D-Bus, XDG, portal) alih-alih membangun sendiri di halaman orang.
 
-- [QML Profiling](https://doc.qt.io/qt-6/qtquick-profiling.html?utm_source=chatgpt.com)
-- [Qt Quick Tools](https://doc.qt.io/qt-6/qtquick-tools-and-utilities.html?utm_source=chatgpt.com)
-- [GDB Documentation](https://sourceware.org/gdb/documentation/?utm_source=chatgpt.com)
-- [Valgrind Documentation](https://valgrind.org/docs/manual/?utm_source=chatgpt.com)
+| Kebutuhan | Pendekatan |
+| --- | --- |
+| Notifikasi | D-Bus `org.freedesktop.Notifications` (Modul 10.6) |
+| Ikon tray | StatusNotifierItem lewat D-Bus |
+| Entri menu aplikasi | Berkas `.desktop` dan ikon |
+| Akses file dengan izin | xdg-desktop-portal |
+| Layanan latar | systemd user service |
+| Lokasi data | `QStandardPaths` (direktori XDG) |
+| Konfigurasi | `QSettings` atau berkas terstruktur (JSON, TOML) atau SQLite |
+| Shell/panel Wayland | Toolkit berbasis QML seperti Quickshell (bahas di dokumen Quickshell) |
 
-## FASE 13 — Security, Deployment & Enterprise Engineering
-
-
-
-Expert / Enterprise
-
-&#x20;Estimasi: 3–4 minggu
-
-
-
-Fase ini menggabungkan keamanan, isolasi, keandalan dan proses distribusi.
-
-### Modul 13.1 — QML Security Architecture
-
-Deskripsi konkret
-
-Memahami risiko keamanan pada QML engine, JavaScript execution, resource loading, C++ integration, dan komunikasi eksternal.
-
-Konsep dan filosofi
-
-Antarmuka bukan security boundary.
-
-Jika QML dapat memanggil fungsi native yang memiliki hak istimewa, maka kemampuan tersebut harus dibatasi melalui desain API.
-
-Prinsip utamanya adalah least privilege: setiap komponen hanya mendapatkan kemampuan yang memang diperlukan.
-
-Daftar isi:
-
-1. Threat modeling.
-2. Attack surface.
-3. Trust boundaries.
-4. Least privilege.
-5. QML engine isolation.
-6. JavaScript execution boundaries.
-7. Untrusted QML sources.
-8. Dynamic component loading.
-9. Import path security.
-10. Resource URL validation.
-11. File access control.
-12. Network security.
-13. TLS.
-14. Certificate validation.
-15. IPC security.
-16. Native API exposure.
-17. Input validation.
-18. Path traversal.
-19. Dependency security.
-20. Supply-chain security.
-21. Secrets management.
-22. Logging sensitive data.
-23. Sandboxing limitations.
-24. Secure update strategy.
-
-Contoh prinsip pembatasan API:
-
-Jangan mengekspos API sistem dengan kemampuan tanpa batas:
+**Contoh minimal.** `hello.desktop`:
 
 ```
-Q_INVOKABLE
-void executeArbitraryCommand(QString command);
+[Desktop Entry]
+Type=Application
+Name=Hello Qt
+Exec=hello
+Icon=hello
+Categories=Utility;
 ```
 
-Lebih baik menyediakan API dengan fungsi terbatas dan tervalidasi:
+**Terminologi.** XDG; `.desktop`; portal; StatusNotifierItem; unit systemd; layer-shell.
 
-```
-Q_INVOKABLE
-bool setDisplayBrightness(int value);
-```
+**Daftar isi.** 13.2.1 Direktori XDG dan `QStandardPaths` · 13.2.2 Berkas `.desktop` dan ikon · 13.2.3 Notifikasi dan tray lewat D-Bus · 13.2.4 Portal · 13.2.5 Layanan systemd user · 13.2.6 Perbedaan Wayland dan X11 untuk aplikasi
 
-Contoh tersebut tetap membutuhkan validasi rentang, pemeriksaan otorisasi dan penanganan error pada implementasi C++.
+**Kesalahan umum.** Menulis file ke `$HOME` langsung alih-alih direktori XDG; mengandalkan fitur X11 (mis. posisi jendela mutlak) di Wayland.
 
-Terminologi:
+**Latihan 15 menit.** Pasang `hello.desktop` di `~/.local/share/applications` dan pastikan aplikasi muncul di peluncur Anda.
 
-- Threat model: analisis ancaman terhadap sistem.
-- Attack surface: seluruh titik yang dapat menjadi jalur serangan.
-- Trust boundary: batas antara komponen dengan tingkat kepercayaan berbeda.
-- Least privilege: pemberian hak akses minimum.
-- Sandboxing: pembatasan lingkungan eksekusi.
-- Supply chain: rantai komponen, library, dan alat yang digunakan untuk menghasilkan aplikasi.
+**Cek pemahaman.** Apa fungsi portal bagi aplikasi yang disandbox?
 
-Referensi:
+**Referensi.** [Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry-spec/latest/) · [XDG Base Directory](https://specifications.freedesktop.org/basedir-spec/latest/) · [Arch Wiki: Qt](https://wiki.archlinux.org/title/Qt) · [Quickshell](https://quickshell.org/)
 
-- [Qt Security](https://doc.qt.io/qt-6/security.html?utm_source=chatgpt.com)
-- [Qt Network Security](https://doc.qt.io/qt-6/qtnetwork-security.html?utm_source=chatgpt.com)
-- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/?utm_source=chatgpt.com)
-- [OWASP Threat Modeling](https://owasp.org/www-community/Threat_Modeling?utm_source=chatgpt.com)
+### Modul 13.3 — Packaging dan Deployment
 
-### Modul 13.2 — Operating System Integration
+**Deskripsi.** Mengemas aplikasi menjadi paket yang bisa dipasang: paket distro (PKGBUILD), AppImage, Flatpak, dan skrip deploy Qt.
 
-Deskripsi konkret
+**Konsep & analogi.** Packaging adalah memasukkan masakan ke kotak antar lengkap dengan petunjuk: pelanggan tidak perlu tahu cara memasak.
 
-Menghubungkan aplikasi Qt dengan layanan sistem operasi dan memahami konsekuensi keamanan integrasi tersebut.
+**Contoh minimal.** Aturan instalasi CMake (tambahkan ke `CMakeLists.txt`):
 
-Konsep dan filosofi
-
-Aplikasi desktop modern sering kali perlu berkomunikasi dengan sistem operasi. Namun, akses sistem harus memiliki pembatasan yang jelas.
-
-Daftar isi:
-
-1. Process management.
-2. QProcess.
-3. Environment variables.
-4. Filesystem permissions.
-5. QFile.
-6. QDir.
-7. QStandardPaths.
-8. QSettings.
-9. QLockFile.
-10. QTemporaryFile.
-11. QSaveFile.
-12. IPC fundamentals.
-13. D-Bus.
-14. Unix domain sockets.
-15. Local sockets.
-16. Named pipes.
-17. Shared memory.
-18. System services.
-19. Permission boundaries.
-20. Sandboxing and confinement.
-
-Alternatif API berdasarkan kebutuhan:
-
-| Kebutuhan   | Pilihan Qt            | Alternatif                       |
-| ----------- | --------------------- | -------------------------------- |
-| File access | QFile                 | POSIX `open/read/write`          |
-| Direktori   | QDir                  | POSIX `opendir/readdir`          |
-| Process     | QProcess              | POSIX `fork/exec`, `posix_spawn` |
-| IPC message | QLocalSocket          | Unix domain sockets              |
-| IPC service | Qt D-Bus              | D-Bus C API                      |
-| Settings    | QSettings             | TOML, JSON, SQLite               |
-| Async tasks | Qt Concurrent         | C++ threads, `std::async`        |
-| Networking  | QNetworkAccessManager | POSIX sockets, standalone Asio   |
-
-Alternatif tersebut tidak selalu setara. Pilih berdasarkan kebutuhan portability, event loop, ownership, dan batas keamanan.
-
-Referensi:
-
-- [Qt Core](https://doc.qt.io/qt-6/qtcore-index.html?utm_source=chatgpt.com)
-- [QProcess](https://doc.qt.io/qt-6/qprocess.html?utm_source=chatgpt.com)
-- [QFile](https://doc.qt.io/qt-6/qfile.html?utm_source=chatgpt.com)
-- [Qt D-Bus](https://doc.qt.io/qt-6/qtdbus-index.html?utm_source=chatgpt.com)
-- [Qt Local Sockets](https://doc.qt.io/qt-6/qlocalsocket.html?utm_source=chatgpt.com)
-
-### Modul 13.3 — Application Deployment & Packaging
-
-Deskripsi konkret
-
-Mempersiapkan aplikasi agar dapat dipasang, dijalankan, diperbarui, dan didistribusikan.
-
-Konsep dan filosofi
-
-Aplikasi yang berjalan pada mesin pengembang belum tentu dapat dijalankan pada mesin lain.
-
-Deployment harus mempertimbangkan library, QML modules, plugins, resource, graphics backend, dan dependency runtime.
-
-Daftar isi:
-
-1. Application packaging.
-2. Qt runtime dependencies.
-3. Shared libraries.
-4. QML import deployment.
-5. Plugin deployment.
-6. Resource embedding.
-7. Static deployment.
-8. Dynamic deployment.
-9. CMake install.
-10. `qt_generate_deploy_qml_app_script`.
-11. Linux deployment.
-12. AppImage.
-13. Flatpak.
-14. Distribution packages.
-15. Runtime dependency analysis.
-16. Versioning.
-17. Release builds.
-18. Signing.
-19. Update mechanisms.
-20. Reproducible builds.
-
-Contoh pemeriksaan dependency:
-
-```
-ldd ./build/myapp
+```cmake
+install(TARGETS hello RUNTIME DESTINATION bin)
+install(FILES hello.desktop DESTINATION share/applications)
 ```
 
-Referensi:
-
-- [Deploying QML Applications](https://doc.qt.io/qt-6/qtquick-deployment.html?utm_source=chatgpt.com)
-- [Qt CMake Deployment](https://doc.qt.io/qt-6/cmake-deployment.html?utm_source=chatgpt.com)
-- [Flatpak Documentation](https://docs.flatpak.org/?utm_source=chatgpt.com)
-- [AppImage Documentation](https://docs.appimage.org/?utm_source=chatgpt.com)
-
-### Modul 13.4 — Enterprise Software Engineering
-
-Deskripsi konkret
-
-Membangun proses pengembangan yang mampu mempertahankan kualitas proyek ketika jumlah modul, kontributor dan kompleksitas meningkat.
-
-Konsep dan filosofi
-
-Enterprise engineering tidak sekadar berarti aplikasi besar. Fokusnya adalah konsistensi, pemeliharaan, kemampuan pengujian, kontrol perubahan dan keberlanjutan pengembangan.
-
-Daftar isi:
-
-1. Software architecture.
-2. Architectural decision records.
-3. API versioning.
-4. Semantic versioning.
-5. Backward compatibility.
-6. Module ownership.
-7. Dependency governance.
-8. Code review.
-9. Git workflows.
-10. Branch protection.
-11. Continuous integration.
-12. Continuous delivery.
-13. Build reproducibility.
-14. Release management.
-15. Automated testing.
-16. Security scanning.
-17. Dependency auditing.
-18. Documentation generation.
-19. Issue tracking.
-20. Technical debt management.
-21. Observability.
-22. Long-term maintenance.
-
-Referensi:
-
-- [Qt Quality Assurance](https://wiki.qt.io/Quality_Assurance?utm_source=chatgpt.com)
-- [Git Documentation](https://git-scm.com/doc?utm_source=chatgpt.com)
-- [CMake Documentation](https://cmake.org/documentation/?utm_source=chatgpt.com)
-- [Semantic Versioning](https://semver.org/?utm_source=chatgpt.com)
-
-## FASE 14 — Mastery & Independent Framework Engineering
-
-
-
-Mastery
-
-&#x20;Estimasi: 3–6 minggu atau lebih
-
-
-
-Fase terakhir bukan hanya mempelajari API yang tersedia. Tujuannya adalah mengembangkan kemampuan merancang sistem yang memanfaatkan seluruh pengetahuan sebelumnya.
-
-### Modul 14.1 — Advanced QML Type System Engineering
-
-Deskripsi konkret
-
-Memahami bagaimana mendefinisikan tipe baru yang mempunyai API konsisten, metadata, properti, signal, dan aturan instansiasi.
-
-Konsep dan filosofi
-
-Ketika membuat framework atau library, kita tidak hanya membuat objek. Kita sedang merancang kontrak penggunaan bagi developer lain.
-
-Daftar isi:
-
-1. QML type registration.
-2. Object types.
-3. Value types.
-4. Singleton types.
-5. Uncreatable types.
-6. Anonymous types.
-7. Default properties.
-8. Attached properties.
-9. Attached signals.
-10. Type revisions.
-11. Property revisions.
-12. Enum exposure.
-13. API compatibility.
-14. Type metadata.
-15. Generated qmltypes.
-16. QML type compiler.
-17. Module API design.
-18. Public and private types.
-19. API documentation.
-20. Framework extensibility.
-
-Referensi:
-
-- [QML Type System](https://doc.qt.io/qt-6/qtqml-typesystem-topic.html?utm_source=chatgpt.com)
-- [Defining QML Types from C++](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html?utm_source=chatgpt.com)
-- [QML Type Compiler](https://doc.qt.io/qt-6/qtqml-type-compiler.html?utm_source=chatgpt.com)
-
-### Modul 14.2 — Custom QQuickItem Development
-
-Deskripsi konkret
-
-Membangun objek visual native yang dapat digunakan sebagai tipe QML.
-
-Konsep dan filosofi
-
-Tidak semua kebutuhan visual dapat diselesaikan secara efisien dengan menyusun primitive QML.
-
-Untuk kasus tertentu, membuat custom `QQuickItem` memungkinkan pengendalian perilaku visual dan integrasi rendering yang lebih spesifik.
-
-Contoh kerangka:
+`PKGBUILD` minimal untuk Arch (ganti `source` dan checksum dengan nilai nyata):
 
 ```
-#include <QQuickItem>
+pkgname=hello-qt
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Aplikasi contoh Qt Quick'
+arch=('x86_64')
+license=('MIT')
+depends=('qt6-base' 'qt6-declarative')
+makedepends=('cmake' 'ninja')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cmake -S "$pkgname-$pkgver" -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}
+```
+
+Untuk platform tanpa manajer paket sistem, `qt_generate_deploy_qml_app_script` `[≥6.3]` membuat skrip yang mengumpulkan dependensi Qt. Di Linux, pilihan lain adalah AppImage atau Flatpak dengan runtime KDE.
+
+**Terminologi.** `PKGBUILD`; `makepkg`; AppImage; Flatpak; runtime; skrip deploy; build reprodusibel.
+
+**Daftar isi.** 13.3.1 Aturan `install` CMake · 13.3.2 `PKGBUILD` dan `makepkg` · 13.3.3 Skrip deploy Qt · 13.3.4 AppImage · 13.3.5 Flatpak · 13.3.6 Pembuatan build rilis dan pengujian paket
+
+**Kesalahan umum.** Checksum `SKIP` untuk rilis publik; lupa dependensi runtime di `depends`; tidak menguji paket di lingkungan bersih.
+
+**Latihan 15 menit.** Bangun paket dengan `makepkg` dari sumber lokal, pasang, dan jalankan dari peluncur.
+
+**Cek pemahaman.** Mengapa paket harus diuji di lingkungan bersih?
+
+**Referensi.** [Arch Wiki: Creating packages](https://wiki.archlinux.org/title/Creating_packages) · [Arch Wiki: PKGBUILD](https://wiki.archlinux.org/title/PKGBUILD) · [qt\_generate\_deploy\_qml\_app\_script](https://doc.qt.io/qt-6/qt-generate-deploy-qml-app-script.html) · [Flatpak docs](https://docs.flatpak.org/) · [AppImage docs](https://docs.appimage.org/)
+
+### Modul 13.4 — Rekayasa Perangkat Lunak
+
+**Deskripsi.** Praktik yang menjaga proyek tetap sehat: versi, git, logging, dokumentasi, dan rilis.
+
+**Konsep & analogi.** Kode adalah taman: tanpa perawatan rutin ia menjadi hutan. Praktik rekayasa adalah jadwal perawatan.
+
+**Contoh minimal.** Logging terkategori di C++:
+
+```cpp
+#include <QLoggingCategory>
+Q_LOGGING_CATEGORY(lcBackend, "app.backend")
+
+void mulai() { qCInfo(lcBackend) << "dimulai"; }
+```
+
+Aktifkan hanya kategori yang diperlukan: `QT_LOGGING_RULES='app.backend.debug=true'`.
+
+**Terminologi.** Semantic versioning; branch; code review; changelog; ADR (catatan keputusan arsitektur); kategori logging; CI.
+
+**Daftar isi.** 13.4.1 Versi semantik · 13.4.2 Alur git dan commit yang bersih · 13.4.3 Logging terkategori · 13.4.4 Dokumentasi dan ADR · 13.4.5 CI sederhana · 13.4.6 Proses rilis dan changelog · 13.4.7 Kebijakan dependensi
+
+**Kesalahan umum.** Commit besar tanpa pesan jelas; log tak terkategori sehingga tak bisa disaring; tidak mencatat alasan keputusan arsitektur.
+
+**Latihan 15 menit.** Tulis satu ADR (konteks, keputusan, konsekuensi) untuk pilihan arsitektur di proyek latihan Anda.
+
+**Cek pemahaman.** Apa manfaat kategori logging dibanding `qDebug` biasa?
+
+**Referensi.** [Semantic Versioning](https://semver.org/) · [Pro Git](https://git-scm.com/book/en/v2) · [Qt Logging](https://doc.qt.io/qt-6/qloggingcategory.html)
+
+## Fase 14 — Mastery
+
+*Tujuan: mampu memperluas Qt itu sendiri dan menambahkan fitur pada proyek apa pun, termasuk yang bukan buatan Anda. Estimasi: 3–6 minggu, bersifat iteratif.*
+
+### Modul 14.1 — Tipe Kustom Tingkat Lanjut
+
+**Deskripsi.** Value type, attached type, extended type, foreign type, enum, `QQmlParserStatus`, `QQmlListProperty`, dan properti bindable Qt 6.
+
+**Konsep & analogi.** Tipe kustom adalah kosakata baru yang Anda tambahkan ke bahasa QML. Properti bindable seperti sel spreadsheet di sisi C++: ia ikut dalam sistem binding, tidak hanya memancarkan signal.
+
+**Contoh minimal.** Properti bindable:
+
+```cpp
+#include <QObject>
+#include <QProperty>
+#include <QBindable>
 #include <QtQml/qqmlregistration.h>
 
-class CustomItem : public QQuickItem
+class Penghitung : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(int nilai READ nilai WRITE setNilai NOTIFY nilaiChanged BINDABLE bindableNilai)
+
+public:
+    int nilai() const { return m_nilai; }
+    void setNilai(int v) { m_nilai = v; }
+    QBindable<int> bindableNilai() { return &m_nilai; }
+
+signals:
+    void nilaiChanged();
+
+private:
+    Q_OBJECT_BINDABLE_PROPERTY(Penghitung, int, m_nilai, &Penghitung::nilaiChanged)
+};
+```
+
+Value type sederhana: struct dengan `Q_GADGET`, `QML_VALUE_TYPE(titik)` (nama diawali huruf kecil), dan `Q_PROPERTY(double x MEMBER x)`.
+
+**Terminologi.** Value type (`Q_GADGET`); attached type (`QML_ATTACHED`); extended type (`QML_EXTENDED`); foreign type (`QML_FOREIGN`); `Q_ENUM`; `QQmlListProperty`; bindable property.
+
+**Daftar isi.** 14.1.1 Value type dengan `Q_GADGET` · 14.1.2 Enum di QML (`Q_ENUM`) · 14.1.3 Attached type · 14.1.4 Extended dan foreign type · 14.1.5 `QQmlListProperty` · 14.1.6 `QQmlParserStatus` · 14.1.7 Properti bindable (`QProperty`)
+
+**Kesalahan umum.** Nama value type berawalan huruf besar; lupa `NOTIFY` atau `BINDABLE` sehingga binding tak terpicu; menyalahgunakan `QML_FOREIGN` untuk kelas yang sebenarnya bisa diubah.
+
+**Latihan 15 menit.** Tambahkan `Penghitung` ke modul Anda dan ikat nilainya ke `Text` di QML.
+
+**Cek pemahaman.** Apa kelebihan `QProperty` dibanding properti biasa dengan `emit` manual?
+
+**Referensi.** [Defining QML Types from C++](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html) · [Qt Bindable Properties](https://doc.qt.io/qt-6/bindableproperties.html)
+
+### Modul 14.2 — QQuickItem Kustom dan Scene Graph
+
+**Deskripsi.** Membuat item visual sendiri di C++: dari `QQuickPaintedItem` yang sederhana sampai `updatePaintNode` dengan node scene graph.
+
+**Konsep & analogi.** `QQuickPaintedItem` adalah melukis dengan kuas di kanvas lalu menempelkan kanvas itu ke panggung: mudah, tetapi lebih berat. `updatePaintNode` adalah menyusun properti panggung langsung: lebih rumit, tetapi paling efisien.
+
+**Contoh minimal.**
+
+```cpp
+#include <QQuickPaintedItem>
+#include <QPainter>
+#include <QtQml/qqmlregistration.h>
+
+class Lingkaran : public QQuickPaintedItem
 {
     Q_OBJECT
     QML_ELEMENT
 
 public:
-    explicit CustomItem(
-        QQuickItem *parent = nullptr
-    ) : QQuickItem(parent)
+    explicit Lingkaran(QQuickItem *parent = nullptr) : QQuickPaintedItem(parent) {}
+
+    void paint(QPainter *painter) override
     {
-        setFlag(ItemHasContents, true);
+        painter->setRenderHint(QPainter::Antialiasing);
+        painter->setBrush(QColor(70, 130, 180));
+        painter->drawEllipse(boundingRect());
     }
 };
 ```
 
-Daftar isi:
+Tautkan `Qt6::Quick`. Di QML: `Lingkaran { width: 100; height: 100 }`.
 
-1. QQuickItem.
-2. Custom visual items.
-3. Geometry updates.
-4. `update()`.
-5. `updatePaintNode()`.
-6. Scene graph nodes.
-7. Node ownership.
-8. Texture nodes.
-9. Geometry nodes.
-10. Material systems.
-11. Rendering lifecycle.
-12. Thread restrictions.
-13. Resource synchronization.
-14. Custom rendering.
-15. Custom item testing.
-16. Performance considerations.
+**Terminologi.** `QQuickItem`; `QQuickPaintedItem`; `updatePaintNode`; `QSGNode`; `ItemHasContents`; `update()`; thread render.
 
-Referensi:
+**Daftar isi.** 14.2.1 Subclass `QQuickItem` · 14.2.2 `QQuickPaintedItem` dan batasannya · 14.2.3 `updatePaintNode` dan node (`QSGGeometryNode`, material) · 14.2.4 Properti dan `update()` · 14.2.5 Aturan thread render · 14.2.6 Input pada item kustom
 
-- [QQuickItem](https://doc.qt.io/qt-6/qquickitem.html?utm_source=chatgpt.com)
-- [Qt Quick Scene Graph](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html?utm_source=chatgpt.com)
-- [Scene Graph Custom Rendering](https://doc.qt.io/qt-6/qtquick-scenegraph-customrendernode-example.html?utm_source=chatgpt.com)
+**Kesalahan umum.** Mengakses objek GUI dari `updatePaintNode` selain di fase sinkronisasi; lupa `setFlag(ItemHasContents)` pada item berbasis node; memakai `QQuickPaintedItem` untuk gambar besar yang sering diperbarui.
 
-### Modul 14.3 — Plugin & Extension Architecture
+**Latihan 15 menit.** Tambahkan properti `warna` ke `Lingkaran` dengan `NOTIFY` dan panggil `update()` saat berubah.
 
-Deskripsi konkret
+**Cek pemahaman.** Mengapa `QQuickPaintedItem` lebih lambat daripada node scene graph?
 
-Membangun library dan plugin yang dapat menyediakan kemampuan baru kepada aplikasi atau modul lain.
+**Referensi.** [QQuickItem](https://doc.qt.io/qt-6/qquickitem.html) · [QQuickPaintedItem](https://doc.qt.io/qt-6/qquickpainteditem.html) · [Qt Quick Scene Graph](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html)
 
-Konsep dan filosofi
+### Modul 14.3 — Plugin dan Arsitektur Modular
 
-Plugin architecture memungkinkan aplikasi diperluas tanpa harus menggabungkan seluruh implementasi ke dalam satu komponen monolitik.
+**Deskripsi.** Plugin modul QML dan plugin C++ aplikasi: antarmuka, pemuatan, versi, dan risiko keamanannya.
 
-Ada beberapa model ekstensi yang perlu dibedakan:
+**Konsep & analogi.** Plugin adalah stopkontak tambahan di dinding aplikasi: siapa pun yang mencolokkan perangkat harus mengikuti bentuk stopkontaknya. Perangkat yang dicolok bisa menjalankan kode apa saja di rumah Anda, jadi percayai hanya yang Anda kenal.
 
-| Model                     | Tujuan                                  |
-| ------------------------- | --------------------------------------- |
-| QML module                | Berbagi tipe dan resource QML           |
-| QML plugin                | Memuat tipe dan implementasi native     |
-| Qt plugin                 | Menyediakan implementasi interface Qt   |
-| Dynamic library           | Berbagi implementasi native             |
-| Static library            | Menggabungkan implementasi saat linking |
-| Application extension API | Kontrak khusus yang dirancang aplikasi  |
+**Contoh minimal.** Antarmuka plugin C++:
 
-Daftar isi:
+```cpp
+#include <QString>
+#include <QtPlugin>
 
-1. Plugin fundamentals.
-2. QML plugins.
-3. Qt plugins.
-4. QPluginLoader.
-5. Q_DECLARE_INTERFACE.
-6. Q_INTERFACES.
-7. Q_PLUGIN_METADATA.
-8. Dynamic loading.
-9. Static plugins.
-10. Plugin discovery.
-11. Plugin metadata.
-12. Dependency resolution.
-13. Version compatibility.
-14. Plugin lifecycle.
-15. Failure isolation.
-16. Security boundaries.
-17. Extension API.
-18. Plugin testing.
-19. Plugin distribution.
-20. Plugin documentation.
-
-Contoh konseptual:
-
-```
-class ExtensionInterface
+class IModul
 {
 public:
-    virtual ~ExtensionInterface() = default;
-
-    virtual QString name() const = 0;
+    virtual ~IModul() = default;
+    virtual QString nama() const = 0;
 };
+
+Q_DECLARE_INTERFACE(IModul, "id.contoh.IModul/1.0")
 ```
 
-Referensi:
-
-- [Qt Plugins](https://doc.qt.io/qt-6/plugins-howto.html?utm_source=chatgpt.com)
-- [QPluginLoader](https://doc.qt.io/qt-6/qpluginloader.html?utm_source=chatgpt.com)
-- [QML Modules](https://doc.qt.io/qt-6/qtqml-modules-topic.html?utm_source=chatgpt.com)
-
-### Modul 14.4 — Framework Design & API Engineering
-
-Deskripsi konkret
-
-Membangun framework internal yang dapat dipakai berulang kali untuk menghasilkan aplikasi dengan kemampuan yang konsisten.
-
-Konsep dan filosofi
-
-Framework berbeda dari aplikasi biasa.
-
-Aplikasi menggunakan framework. Framework menyediakan struktur, abstraksi, dan aturan yang digunakan untuk membangun banyak aplikasi.
-
-Prinsip utama:
-
-- Modularity.
-- Composition.
-- Abstraction.
-- Encapsulation.
-- Extensibility.
-- API stability.
-- Dependency control.
-- Explicit ownership.
-
-Daftar isi:
-
-1. Framework architecture.
-2. Core abstractions.
-3. Public APIs.
-4. Internal APIs.
-5. Extension points.
-6. Component registries.
-7. Dependency injection.
-8. Service abstraction.
-9. Plugin contracts.
-10. Module boundaries.
-11. Configuration architecture.
-12. State management.
-13. Event architecture.
-14. Error handling strategy.
-15. Resource management.
-16. API stability.
-17. Compatibility guarantees.
-18. Documentation.
-19. Versioning.
-20. Framework testing.
-
-Referensi:
-
-- [Qt QML Best Practices](https://doc.qt.io/qt-6/qtqml-best-practices.html?utm_source=chatgpt.com)
-- [Qt Object Model](https://doc.qt.io/qt-6/object.html?utm_source=chatgpt.com)
-- [QML Modules](https://doc.qt.io/qt-6/qtqml-modules-topic.html?utm_source=chatgpt.com)
-
-### Modul 14.5 — Independent Engineering & Research
-
-Deskripsi konkret
-
-Mengembangkan kemampuan membaca source code, memahami implementasi internal, menganalisis perubahan API, dan membuat keputusan teknologi secara mandiri.
-
-Konsep dan filosofi
-
-Penguasaan tingkat tinggi tidak cukup hanya dengan mengetahui cara memakai API. Developer harus mampu memahami alasan sebuah API dirancang demikian, keterbatasannya, dan alternatif implementasinya.
-
-Daftar isi:
-
-1. Qt source code exploration.
-2. Qt Git repository.
-3. Reading C++ headers.
-4. Reading implementation files.
-5. API evolution.
-6. Release notes.
-7. Deprecation tracking.
-8. Internal architecture.
-9. Debugging framework behavior.
-10. Benchmark design.
-11. Experimental development.
-12. API prototyping.
-13. Performance experiments.
-14. Security research.
-15. Technical documentation.
-16. Upstream contribution.
-17. Bug reporting.
-18. Patch development.
-19. Code review.
-20. Independent framework development.
+Plugin mengimplementasikan antarmuka itu dan menandai dirinya dengan `Q_PLUGIN_METADATA(IID "id.contoh.IModul/1.0")`; aplikasi memuatnya dengan `QPluginLoader`.
 
-Referensi:
+**Terminologi.** Plugin; `QPluginLoader`; `Q_DECLARE_INTERFACE`; IID; plugin modul QML; ABI.
 
-- [Qt Source Code](https://code.qt.io/?utm_source=chatgpt.com)
-- [Qt GitHub](https://github.com/qt?utm_source=chatgpt.com)
-- [Qt Development Mailing Lists](https://lists.qt-project.org/?utm_source=chatgpt.com)
-- [Qt Bug Tracker](https://bugreports.qt.io/?utm_source=chatgpt.com)
-- [Qt Contribution Guidelines](https://wiki.qt.io/Qt_Contribution_Guidelines?utm_source=chatgpt.com)
+**Daftar isi.** 14.3.1 Plugin modul QML (dinamis vs statis) · 14.3.2 Antarmuka plugin C++ · 14.3.3 `QPluginLoader` · 14.3.4 Versi API dan kompatibilitas · 14.3.5 Keamanan plugin (kode tak tepercaya) · 14.3.6 Kapan tidak memakai plugin
 
-# 6. Interoperabilitas dan teknologi pendukung
+**Kesalahan umum.** Memuat plugin dari direktori yang bisa ditulis pengguna lain; mengubah antarmuka tanpa menaikkan versi; plugin untuk hal yang cukup dengan modul statis.
 
-Penguasaan QML akan jauh lebih luas jika memahami teknologi yang dapat berkomunikasi dengannya.
+**Latihan 15 menit.** Rancang (di atas kertas) antarmuka plugin untuk fitur ekspor di proyek Anda dan tentukan aturan versinya.
 
-Berikut peta integrasi yang perlu dikuasai.
+**Cek pemahaman.** Mengapa direktori plugin harus dilindungi dari penulisan oleh pihak lain?
 
-| Teknologi      | Peran                                | Prioritas                 |
-| -------------- | ------------------------------------ | ------------------------- |
-| C++            | Native backend dan custom types      | Wajib tingkat lanjut      |
-| JavaScript     | Logic dan expression QML             | Wajib                     |
-| CMake          | Build dan module engineering         | Wajib                     |
-| Qt Core        | Sistem dasar Qt                      | Wajib tingkat lanjut      |
-| Qt Network     | Komunikasi jaringan                  | Lanjutan                  |
-| Qt D-Bus       | IPC pada sistem yang mendukung D-Bus | Lanjutan                  |
-| Qt Concurrent  | Pekerjaan paralel                    | Lanjutan                  |
-| Qt SQL         | Database                             | Opsional sesuai kebutuhan |
-| Qt Multimedia  | Audio dan video                      | Opsional sesuai kebutuhan |
-| Qt Serial Port | Komunikasi serial                    | Opsional sesuai kebutuhan |
-| Qt Bluetooth   | Bluetooth                            | Opsional sesuai kebutuhan |
-| GLSL           | Custom shader                        | Expert                    |
-| Vulkan         | Low-level graphics API               | Expert                    |
-| OpenGL         | Graphics API                         | Lanjutan                  |
-| Python         | Tooling dan otomasi eksternal        | Opsional                  |
-| Lua            | Otomasi dan integrasi eksternal      | Opsional                  |
+**Referensi.** [How to Create Qt Plugins](https://doc.qt.io/qt-6/plugins-howto.html) · [QPluginLoader](https://doc.qt.io/qt-6/qpluginloader.html)
 
-## 6.1 Perbedaan API yang harus dipahami
+### Modul 14.4 — Membangun Pustaka UI dan Design System
 
-Jangan menganggap satu API dapat menggantikan API lainnya hanya karena hasil akhirnya terlihat sama.
+**Deskripsi.** Mengemas komponen menjadi pustaka yang bisa dipakai banyak aplikasi: API stabil, tema, dokumentasi, tes, dan versi.
 
-Contohnya, komunikasi antarkomponen dapat dilakukan dengan beberapa pendekatan:
+**Konsep & analogi.** Pustaka UI adalah toko perabot dengan katalog: pembeli (pengembang lain) memilih dari katalog, tidak membongkar pabrik. Katalog yang berubah-ubah merugikan semua pembeli.
 
-- QML Signals and Handlers.
-- Qt Signals and Slots.
-- Q_PROPERTY notification.
-- QAbstractItemModel notifications.
-- QLocalSocket.
-- D-Bus.
-- Unix domain sockets.
+| Aspek | Praktik |
+| --- | --- |
+| API | Properti masuk, signal keluar, `required property` untuk yang wajib |
+| Tema | Token di singleton (Modul 5.3), tidak ada nilai mentah di komponen |
+| Aksesibilitas | Navigasi keyboard dan `Accessible` sebagai syarat dasar komponen |
+| Tes | Satu berkas Qt Quick Test per komponen |
+| Dokumentasi | Satu halaman per komponen: tujuan, properti, contoh |
+| Versi | Semantic versioning dan changelog |
 
-Perbedaannya terletak pada batas komunikasi, kepemilikan objek, kebutuhan proses, dan mekanisme pertukaran data.
+**Terminologi.** Design system; design token; API stabil; breaking change; galeri contoh.
 
-Contoh klasifikasi:
+**Daftar isi.** 14.4.1 Prinsip desain API · 14.4.2 Modul pustaka dan token · 14.4.3 Aksesibilitas bawaan · 14.4.4 Tes per komponen · 14.4.5 Dokumentasi dan galeri contoh · 14.4.6 Versi dan pensiun fitur
 
-| Kebutuhan                              | API utama                | Alternatif                               |
-| -------------------------------------- | ------------------------ | ---------------------------------------- |
-| Komunikasi objek dalam satu QML engine | Signals                  | C++ signals/slots                        |
-| Property notification                  | Q_PROPERTY + NOTIFY      | QML property binding                     |
-| Data collection                        | QAbstractItemModel       | QML ListModel                            |
-| Proses eksternal                       | QProcess                 | POSIX process APIs                       |
-| IPC antaraplikasi                      | D-Bus                    | Unix sockets                             |
-| Data persistent                        | QSettings                | SQLite, JSON                             |
-| Network HTTP                           | QNetworkAccessManager    | Standalone Asio, libcurl                 |
-| Background computation                 | Qt Concurrent            | std::thread, std::async                  |
-| Rendering custom                       | QQuickItem + Scene Graph | ShaderEffect untuk kasus visual tertentu |
+**Kesalahan umum.** Komponen yang bergantung pada struktur aplikasi tertentu; perubahan API tanpa peringatan; tidak ada contoh sehingga pemakai menebak.
 
-Hasil yang diharapkan: mampu menentukan kapan harus menggunakan API QML, kapan menggunakan API C++, dan kapan membutuhkan fasilitas sistem operasi.
+**Latihan 15 menit.** Pilih tiga komponen dari proyek latihan, tulis halaman dokumentasi singkat untuk masing-masing, dan perbaiki API yang terasa janggal.
 
-# 7. Strategi proyek praktik bertahap
+**Cek pemahaman.** Apa yang dimaksud breaking change pada komponen UI?
 
-Kurikulum ini tidak cukup dipelajari hanya dengan membaca dokumentasi. Setiap fase harus menghasilkan proyek kecil yang membuktikan bahwa konsepnya sudah dipahami.
+**Referensi.** [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [Semantic Versioning](https://semver.org/)
 
-Proyek berikut disusun dari tingkat sederhana hingga kompleks.
+### Modul 14.5 — Membaca dan Belajar dari Source Qt
 
-[Building UI layouts with Qt Quick, QML, and C++ in Qt 6.x | Aksh Singh posted on the topic | LinkedIn](https://images.openai.com/static-rsc-4/ot-X0Tpay6iOZDoOVWOTsJ1XW-_6q9zAyv1vz1fsKQKhqF76MrAhJh8bcJPzxWsOFXf7noxnpsqkuPhwjXtT3O14DDPeWxi4s41VPxK1OpXAFR1KxddtBnKtETxxp0TwKQ2vTnmdlGHOCz1mH9E3Ikdeu3bCaSAhMBHOR30ut88?purpose=inline)
+**Deskripsi.** Menelusuri implementasi Qt untuk memahami perilaku yang tak terjelaskan dokumentasi, dan berkontribusi balik.
 
-Project 01 — Basic QML Window
+**Konsep & analogi.** Dokumentasi adalah peta; source code adalah medan sebenarnya. Pada saat peta kurang jelas, medanlah yang menjawab.
 
-Foundation
+**Contoh minimal.**
 
-- Membuat Window.
-- Memahami Item dan Rectangle.
-- Menggunakan Text, Image, dan properti.
-- Mengatur geometri dan warna.
+```
+git clone https://code.qt.io/qt/qtdeclarative.git
+cd qtdeclarative
+ls src                       # qml, quick, quickcontrols, ...
+rg -n 'class QQuickRectangle' src/quick
+```
 
-Kriteria: dapat membangun tampilan dasar tanpa menyalin tutorial.
+Pola membaca: mulai dari halaman dokumentasi tipe, buka headernya, lalu berkas `.cpp`; baca juga uji di `tests/auto` untuk melihat perilaku yang dijamin.
 
-[Preferences – Linear Docs](https://images.openai.com/static-rsc-4/Q6hz8xBs4VVdIPF2ULCG-9HN3lHm6-mFybfCIOvwN9IcoOf1HLV62t90xF9lg5dazXbRCddc0JXE22r8KHyTaAQkMOsonJGe5tkb71IhIFgSg8HorV2QC5mlUca-bnJQ3XIiq7MspMYKdKqZUH8Sxr6LxgwZ0aY6IyI0hIz_H-A?purpose=inline)
+**Terminologi.** Repository; `qtdeclarative`; header publik vs privat (`_p.h`); uji otomatis; Gerrit; laporan bug.
 
-Project 02 — Interactive Settings Interface
+**Daftar isi.** 14.5.1 Peta repository Qt · 14.5.2 Alat bantu (ripgrep, clangd) · 14.5.3 Dari dokumentasi ke implementasi · 14.5.4 Membaca uji sebagai spesifikasi · 14.5.5 Melaporkan bug yang baik (reproduksi minimal) · 14.5.6 Panduan kontribusi
 
-Foundation
+**Kesalahan umum.** Mengandalkan detail implementasi yang tidak dijamin; memakai header privat di aplikasi; melaporkan bug tanpa contoh minimal.
 
-- Button, Slider, Switch.
-- Property binding.
-- Signal handlers.
-- JavaScript functions.
-- Component composition.
+**Latihan 15 menit.** Telusuri bagaimana `Rectangle` diimplementasikan dan tulis catatan satu paragraf tentang jalur dari properti `color` sampai node scene graph.
 
-Kriteria: setiap kontrol mempunyai perilaku yang benar.
+**Cek pemahaman.** Mengapa melaporkan bug dengan contoh minimal mempercepat perbaikannya?
 
-[Core Panel Dashboard (Light & Dark) by Iqbal Tahir for Portal Studios on Dribbble](https://images.openai.com/static-rsc-4/TysQmvhUnXJwEcJEVFuxLkGOTcNdr-YQYb3tD2xJkz6ximjZvrgR0LcFwYgeIKX8TVr4bQ9JBYNyWI5gzpiWVQe7zT6j9Xda3ps42FI2ykMRyq7PYdN8KvZFpNEir-5_OCmYoh3eZ_DzGtdWpZGN_hqFiit-SgkoLXEJyWT5TQ8?purpose=inline)
+**Referensi.** [qtdeclarative di GitHub](https://github.com/qt/qtdeclarative) · [Qt Bug Tracker](https://bugreports.qt.io/) · [Qt Forum](https://forum.qt.io/)
 
-Project 03 — Modular Dashboard
+### Modul 14.6 — Menambah Fitur pada Proyek Asing *(baru)*
 
-Intermediate
+**Deskripsi.** Metodologi terstruktur untuk menambahkan atau memperbaiki fitur di basis kode QML/Qt yang bukan buatan Anda, tanpa merusak yang sudah ada. Ini modul kunci bagi tujuan “bisa menambah fitur pada proyek apa pun”.
 
-- Reusable components.
-- Layout management.
-- Themes.
-- State management.
-- Navigation.
+**Konsep & analogi.** Seperti dokter di rumah sakit baru: periksa dulu, jangan langsung operasi. Pahami arsitektur, temukan titik ekstensi, buat prototipe terisolasi, lalu operasi sekecil mungkin dan tinggalkan catatan rapi.
 
-Kriteria: komponen dapat digunakan kembali tanpa duplikasi implementasi.
-
-[Dashboard // Free Templates](https://images.openai.com/static-rsc-4/TLNIlsiCucMIE8y4_lG-vqzCFhVBrjOPQ74PEcsqrw9Jj1Fr5bkwJcdor1HLZ7lkIGh4pN7Ite69vliyQmnvOGFURyq03FmmeC4_Iow9PF1WySqmAKWHrnY_IK8jtawTFikXOS9AsW_1nT50POImSTKLMbLpkGeBqJ3_AhUwv2g?purpose=inline)
-
-Project 04 — Dynamic Data Dashboard
-
-Advanced
-
-- Models and views.
-- Dynamic delegates.
-- Asynchronous data.
-- C++ integration.
-- Native data providers.
-
-Kriteria: UI mampu menampilkan dan memperbarui data dinamis.
-
-[AtomGit - 全球开发者的开源社区,开源代码托管平台](https://images.openai.com/static-rsc-4/jUawhtN9exETdAdkmSjk_UOE4fAIJJbFpWGEv25Yd_dw5sdy8fO6e26ERiqD3cm9bkUs_JvBwthbVQ1sbxmsh_qXqTWlHgXPnO62ktjkQsCIzdhJcAiTpNQOBTf5DEPy9kHd3124Kl5kEhX0a7dAWVHB96OTFEKkOkLsmM4EJgI?purpose=inline)
-
-Project 05 — Custom Visual Component Library
-
-Expert
-
-- Custom QML types.
-- Custom Controls.
-- C++ integration.
-- Shader effects.
-- Module architecture.
-
-Kriteria: library memiliki API yang terdokumentasi dan dapat digunakan proyek lain.
-
-[Desarrollo de software a medida | Cero Ideas | Cero ideas](https://images.openai.com/static-rsc-4/MOJ3twaqgKkKS1j3OjZ6aW5zOYSUYeJX-SDvYMiJOtJMCVdUazZVvwkrB_xtQg0yf9p9GVk771XuZXuqn2JHvprpbWY8F7kUXOt6VAJU2LfM0-YU79Xaij3HbXAVAj3_dbMijCUCOcOcy0-MIRrDHEXptFNyUlZzKUao8tT60G0?purpose=inline)
-
-Project 06 — Independent Qt UI Framework
-
-Mastery
-
-- Modular architecture.
-- Component registry.
-- Theme engine.
-- Plugin system.
-- Configuration API.
-- Security boundaries.
-- Automated testing.
-- Deployment.
-
-Kriteria: developer lain dapat menggunakan framework tanpa perlu memahami seluruh implementasi internalnya.
-
-# 8. Sumber dokumentasi resmi dan komunitas
-
-Dokumentasi resmi harus menjadi sumber utama. Tutorial komunitas berfungsi sebagai pendamping, bukan pengganti dokumentasi API.
-
-## 8.1 Dokumentasi resmi Qt
-
-| Sumber                                                                                              | Kegunaan                |
-| --------------------------------------------------------------------------------------------------- | ----------------------- |
-| [Qt 6 Documentation](https://doc.qt.io/qt-6/?utm_source=chatgpt.com)                                | Dokumentasi keseluruhan |
-| [Qt QML](https://doc.qt.io/qt-6/qtqml-index.html?utm_source=chatgpt.com)                            | Bahasa dan engine QML   |
-| [Qt Quick](https://doc.qt.io/qt-6/qtquick-index.html?utm_source=chatgpt.com)                        | Visual system           |
-| [Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-index.html?utm_source=chatgpt.com)       | Komponen UI             |
-| [Qt Core](https://doc.qt.io/qt-6/qtcore-index.html?utm_source=chatgpt.com)                          | Fundamental Qt          |
-| [C++ Integration](https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html?utm_source=chatgpt.com) | Integrasi native        |
-| [Performance](https://doc.qt.io/qt-6/qtquick-performance.html?utm_source=chatgpt.com)               | Optimasi                |
-| [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html?utm_source=chatgpt.com)               | Pengujian               |
-
-## 8.2 Tutorial dan contoh resmi
-
-- [Qt Examples and Tutorials](https://doc.qt.io/qt-6/qtexamplesandtutorials.html?utm_source=chatgpt.com)
-- [Qt QML Examples](https://doc.qt.io/qt-6/qtqml-examples.html?utm_source=chatgpt.com)
-- [Qt Quick Examples](https://doc.qt.io/qt-6/qtquick-examples.html?utm_source=chatgpt.com)
-- [Qt Quick Controls Examples](https://doc.qt.io/qt-6/qtquickcontrols-examples.html?utm_source=chatgpt.com)
-- [Qt QML C++ Integration Examples](https://doc.qt.io/qt-6/qtqml-cppintegration-examples.html?utm_source=chatgpt.com)
-
-## 8.3 Komunitas
-
-[image](https://www.google.com/s2/favicons?domain=https://forum.qt.io\&sz=32)
-
-[Qt Forum](https://forum.qt.io/?utm_source=chatgpt.com)
-
-Forum diskusi resmi komunitas Qt.
-
-[image](https://www.google.com/s2/favicons?domain=https://stackoverflow.com\&sz=32)
-
-[Stack Overflow — Qt](https://stackoverflow.com/questions/tagged/qt?utm_source=chatgpt.com)
-
-Diskusi teknis, debugging dan pemecahan masalah.
-
-[image](https://www.google.com/s2/favicons?domain=https://github.com\&sz=32)
-
-[Qt GitHub Organization](https://github.com/qt?utm_source=chatgpt.com)
-
-Source code, repository dan kontribusi.
-
-[image](https://www.google.com/s2/favicons?domain=https://wiki.qt.io\&sz=32)
-
-[Qt Wiki](https://wiki.qt.io/?utm_source=chatgpt.com)
-
-Artikel dan pengetahuan komunitas Qt.
-
-[image](https://www.google.com/s2/favicons?domain=https://www.kdab.com\&sz=32)
-
-[KDAB](https://www.kdab.com/?utm_source=chatgpt.com)
-
-Artikel teknis tingkat lanjut mengenai C++, Qt, profiling dan arsitektur.
-
-## 8.4 Repository untuk pembelajaran source code
-
-| Repository                                                                        | Fokus                            |
-| --------------------------------------------------------------------------------- | -------------------------------- |
-| [qtdeclarative](https://github.com/qt/qtdeclarative?utm_source=chatgpt.com)       | QML engine dan Qt Quick          |
-| [qtquickcontrols2](https://github.com/qt/qtquickcontrols2?utm_source=chatgpt.com) | Implementasi Qt Quick Controls 2 |
-| [qtbase](https://github.com/qt/qtbase?utm_source=chatgpt.com)                     | Fondasi Qt                       |
-| [qtshadertools](https://github.com/qt/qtshadertools?utm_source=chatgpt.com)       | Shader tools                     |
-| [qttools](https://github.com/qt/qttools?utm_source=chatgpt.com)                   | Berbagai development tools       |
-
-Catatan: beberapa repository merupakan bagian dari implementasi Qt yang lebih luas. Gunakan dokumentasi modul untuk mengetahui struktur source dan dependensinya.
-
-# 9. Sertifikasi dan validasi kompetensi
-
-Penguasaan Qt/QML lebih tepat divalidasi melalui kombinasi proyek, kemampuan membaca source code, pengujian, dan kontribusi.
-
-Tidak perlu menganggap sertifikasi sebagai satu-satunya bukti kompetensi.
-
-| Validasi                       | Target                |
-| ------------------------------ | --------------------- |
-| QML fundamentals project       | Foundation            |
-| Reusable component library     | Intermediate          |
-| Modular QML application        | Advanced              |
-| Native C++ integration project | Expert                |
-| Custom QQuickItem              | Expert                |
-| Custom QML module              | Expert                |
-| Automated test suite           | Expert                |
-| Public framework repository    | Mastery               |
-| Upstream Qt contribution       | Advanced professional |
-
-Untuk jalur pelatihan formal, periksa:
-
-- [Qt Training](https://www.qt.io/qt-training?utm_source=chatgpt.com)
-- [Qt Professional Services](https://www.qt.io/services?utm_source=chatgpt.com)
-
-Ketersediaan pelatihan, ujian, dan sertifikasi dapat berubah. Verifikasi program yang benar-benar ditawarkan sebelum menjadikannya target.
-
-# 10. Hasil pembelajaran akhir (Learning Outcomes)
-
-Setelah menyelesaikan seluruh fase, peserta seharusnya memiliki kompetensi berikut.
-
-| Kompetensi            | Hasil yang diharapkan                                |
-| --------------------- | ---------------------------------------------------- |
-| QML Language          | Mampu memahami dan menulis QML secara mandiri        |
-| JavaScript            | Mampu mengimplementasikan logika yang diperlukan QML |
-| Object Model          | Memahami struktur, lifecycle, scope dan ownership    |
-| Reactivity            | Memahami binding dan dependency graph                |
-| Qt Quick              | Mampu membangun visual interface                     |
-| Component Engineering | Mampu membuat komponen reusable                      |
-| Layout Engineering    | Menguasai positioning dan layout system              |
-| Animation             | Mampu membangun interaksi dan animasi                |
-| Data Architecture     | Menguasai model, view dan delegate                   |
-| Module Engineering    | Mampu membuat modul QML                              |
-| Controls              | Mampu memodifikasi dan membangun kontrol             |
-| C++ Integration       | Mampu mengekspos API native ke QML                   |
-| Rendering             | Memahami scene graph dan render pipeline             |
-| Shader                | Mampu membangun efek visual GPU                      |
-| Performance           | Mampu melakukan profiling dan optimasi               |
-| Testing               | Mampu mengembangkan automated test                   |
-| Security              | Mampu merancang batas keamanan                       |
-| Deployment            | Mampu mendistribusikan aplikasi                      |
-| Framework Design      | Mampu membangun library dan framework sendiri        |
-
-# 11. Standar kelulusan setiap fase
-
-Jangan berpindah fase hanya karena sudah membaca seluruh materi.
-
-Gunakan standar berikut.
-
-| Level        | Standar kelulusan                                                                         |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| Foundation   | Dapat menjelaskan konsep dan menulis implementasi dasar tanpa menyalin                    |
-| Intermediate | Dapat menggabungkan beberapa konsep menjadi aplikasi                                      |
-| Advanced     | Dapat merancang struktur modular dan menyelesaikan masalah kompleks                       |
-| Expert       | Dapat memahami implementasi internal, melakukan debugging mendalam dan membuat API native |
-| Enterprise   | Dapat membangun sistem yang aman, teruji, terdokumentasi, dapat diperluas dan dipelihara  |
-
-## Sistem penilaian
-
-Gunakan penilaian 100 poin untuk setiap fase.
-
-| Aspek                         | Bobot |
-| ----------------------------- | ----- |
-| Pemahaman konsep              | 25    |
-| Kemampuan menjelaskan kembali | 15    |
-| Implementasi mandiri          | 25    |
-| Debugging dan problem solving | 15    |
-| Struktur dan kualitas kode    | 10    |
-| Dokumentasi dan pengujian     | 10    |
-| Total                         | 100   |
-
-Interpretasi:
-
-- 90–100: Sangat menguasai.
-- 80–89: Menguasai.
-- 70–79: Cukup, perlu penguatan.
-- 60–69: Belum stabil.
-- Di bawah 60: Perlu mengulang materi inti.
-
-Untuk fase yang belum melibatkan C++, jangan memberikan penalti karena belum menguasai C++ tingkat lanjut. Penilaian harus sesuai kompetensi fase tersebut.
-
-# 12. Rekomendasi strategi belajar
-
-Ada beberapa prinsip yang sebaiknya diterapkan selama mengikuti kurikulum ini.
-
-1\. Dokumentasi sebelum tutorial.
-
-Mulailah dari dokumentasi resmi. Baca bagian Overview, Concepts, Properties, Methods, Signals, dan Examples dari setiap tipe yang dipelajari.
-
-2\. Pahami API sampai tingkat atributnya.
-
-Misalnya ketika mempelajari `Rectangle`, jangan berhenti pada cara membuat kotak. Pelajari:
-
-- Superclass.
-- Properties.
-- Signals.
-- Inherited properties.
-- Default values.
-- Property types.
-- Performance implications.
-- Related types.
-
-Lakukan pendekatan serupa pada setiap API penting.
-
-3\. Bedakan QML API dengan C++ API.
-
-Contohnya:
-
-- `ListView` adalah QML type.
-- `QQuickItem` adalah C++ class.
-- `QAbstractListModel` adalah C++ model class.
-- `property alias` adalah fitur bahasa QML.
-
-Memahami perbedaan kategori tersebut sangat penting agar tidak mencampur konsep bahasa, framework, dan implementasi native.
-
-4\. Gunakan pendekatan eksperimen.
-
-Setiap mempelajari satu properti atau API:
-
-1. Baca dokumentasi.
-2. Buat contoh terkecil.
-3. Ubah satu parameter.
-4. Amati hasil.
-5. Periksa error.
-6. Bandingkan dengan perilaku yang didokumentasikan.
-7. Buat kesimpulan sendiri.
-
-5\. Pelajari keterbatasan API, bukan hanya kemampuannya.
-
-Developer yang memahami API secara mendalam mengetahui kapan API tersebut tepat digunakan, kapan tidak, dan alternatif apa yang tersedia.
-
-
-| Fase | Progres | Kompetensi |
-|---|---|---|
-| **Fase 0 — Environment & Foundation** | 0/4 | - [ ] Memahami ekosistem Qt 6 <br> - [ ] Memahami SDK dan module <br> - [ ] Menguasai CMake dasar <br> - [ ] Membangun aplikasi QML pertama |
-| **Fase 1 — QML Language** | 0/4 | - [ ] Sintaks dan struktur dokumen <br> - [ ] Tipe data dan properti <br> - [ ] Object attributes dan IDs <br> - [ ] Components dan object types |
-| **Fase 2 — JavaScript** | 0/4 | - [ ] JavaScript fundamentals <br> - [ ] Expressions dan functions <br> - [ ] JavaScript resources <br> - [ ] Execution boundaries |
-| **Fase 10 — C++ Interoperability** | 0/6 | - [ ] C++ fundamentals <br> - [ ] Qt object model <br> - [ ] Exposing C++ to QML <br> - [ ] Two-way communication <br> - [ ] Native data models <br> - [ ] External libraries |
-| **Fase 14 — Mastery** | 0/5 | - [ ] Advanced type system <br> - [ ] Custom QQuickItem <br> - [ ] Plugin architecture <br> - [ ] Framework design <br> - [ ] Independent research |
-
-# 14. Kesimpulan akademis
-
-Kurikulum ini sengaja membedakan lima lapisan penguasaan:
-
-1. Language mastery: memahami QML sebagai bahasa deklaratif.
-2. Framework mastery: memahami Qt Quick sebagai sistem UI dan rendering.
-3. Architecture mastery: memahami bagaimana aplikasi dan modul disusun.
-4. Native engineering: memahami C++, Meta-Object System, dan integrasi sistem.
-5. Framework engineering: mampu merancang API, plugin, library, dan abstraksi yang dapat digunakan kembali.
-
-Ada satu hal yang sangat penting: menguasai QML tidak sama dengan menguasai seluruh Qt Quick, dan menguasai Qt Quick tidak otomatis berarti menguasai arsitektur internal Qt.
-
-Karena itu, jangan melewatkan fase 3, 8, 10, dan 11. Keempat fase tersebut menjadi fondasi penting untuk memahami bagaimana sistem deklaratif, modularitas, integrasi native, dan rendering bekerja secara mendalam.
-
-Target akhir bukan sekadar mampu membuat tampilan desktop yang bagus, melainkan mampu membaca dokumentasi API, memahami implementasinya, merancang abstraksi sendiri, membuat komponen baru, dan memodifikasi sistem secara mandiri.
-
-Sumber utama yang harus terus digunakan sepanjang pembelajaran adalah [Qt 6 Documentation](https://doc.qt.io/qt-6/?utm_source=chatgpt.com). Dokumentasi tersebut bersifat hidup dan diperbarui mengikuti perkembangan Qt. Saat mempelajari API, selalu periksa versi Qt yang digunakan karena ketersediaan fitur dan perilakunya dapat berbeda antarversi.
-
-</details>
-
----
-
-<details>
-  <summary>Audit Kurikulum</summary>
-
-
-# Audit Kurikulum Qt 6: JavaScript dalam QML dan Mastery QML & Qt Quick
-
-Laporan audit kurikulum · 4 November 2026
-
-## Ringkasan hasil audit
-
-Dokumen “Mastery QML & Qt Quick” sudah berfungsi sebagai peta jalan yang solid untuk programmer. Dokumen “JavaScript dalam QML” masih berupa indeks topik, belum sumber belajar. Akurasi teknis umumnya baik dan tidak ada kesalahan fatal, tetapi ada beberapa koreksi nyata. Dua persyaratan awal belum terpenuhi: template per-modul yang konsisten (terutama Dokumen 1) dan keterbacaan untuk non-IT. Penilaian subjektif: sekitar 8/10 untuk programmer yang baru di Qt, sekitar 4/10 untuk non-IT.
-
-## Poin kuat
-
-- Batas lingkup Dokumen 1 tegas dan benar. Tabel browser vs QML dan peringatan “jangan samakan dengan browser” sesuai dokumentasi resmi.
-- Tabel dukungan fitur per versi akurat. `??` didukung sejak Qt 5.15, `?.` sejak 6.2, dan separator numerik sejak 6.8, di atas basis ECMAScript edisi ke-7. `QVariantList` bisa diubah in-place sejak 6.5 dan `QVariantMap` sejak 6.9.
-- Contoh `PropertyChanges { panel.width: 400 }` benar. Bentuk dengan ID memang yang direkomendasikan, sedangkan bentuk `target:` dipertahankan untuk kompatibilitas Qt 5.
-- Praktik Qt 6 modern dipakai konsisten: `qt_add_qml_module`, `QML_ELEMENT`, hindari context property, `required property`.
-- Struktur kelulusan berbasis proyek, rubrik 100 poin (bobotnya benar berjumlah 100), strategi “dokumentasi dulu, pelajari keterbatasan API”, dan prinsip least privilege di Modul 13.1.
-
-## Area peningkatan
-
-### A. Koreksi akurasi
-
-1. **Modul 2.3:** `.pragma ComponentBehavior` keliru. `.pragma library` adalah direktif file `.js`, sedangkan `pragma ComponentBehavior: Bound` (tanpa titik) adalah pragma dokumen `.qml`. Pisahkan keduanya, dan sebutkan juga `pragma FunctionSignatureBehavior`, yang mengatur perilaku anotasi tipe fungsi.
-2. **Modul 1.2:** `time` bukan value type QML. QTime dikonversi menjadi JavaScript `Date`, dan tabel tipe dasar resmi tidak memuat `time`. Tipe yang justru hilang dari daftar adalah `font`, `matrix4x4`, dan `quaternion`.
-3. **Modul 9.2:** “Default style” dan “Basic style” dipisah. Di Qt 6 “Default” diganti nama menjadi “Basic”, dan style bawaan di Linux adalah Fusion. Tambahkan juga pemilihan style lewat `QQuickStyle`, argumen `-style`, env `QT_QUICK_CONTROLS_STYLE`, atau `qtquickcontrols2.conf`, serta konsekuensi run-time selection: compiler QML tidak bisa menghasilkan kode C++ untuk binding pada properti kontrol.
-4. **Modul 4.2:** `qmlscene` tidak boleh disajikan sebagai alat Qt 6. Di Qt 6 ia sudah deprecated dan mencetak peringatan agar memakai `qml`.
-5. **Dokumen 1, Fase 2.2:** BigInt tidak ada di daftar objek global yang didukung engine, sedangkan Symbol dan Promise tercantum. Hapus atau tandai tidak didukung. Untuk object spread (`{...obj}`, Fase 1 dan 7.1): itu fitur ES2018, sedangkan engine berbasis ES7 dan halaman Host Environment hanya menyebut tiga tambahan di atas. Tandai sebagai “uji dulu dengan `qml`”.
-6. **Dokumen 1, Fase 8.4 (`this`):** `this` tidak terdefinisi di sebagian besar konteks QML. Hanya di binding, signal handler, dan fungsi yang dideklarasikan di QML ia merujuk ke scope object. Mulai dari aturan ini, bukan dari perbandingan arrow vs regular function ala browser.
-7. **Dokumen 1, Fase 15.3 (`async`/`await`):** dokumentasi resmi tidak menyebut dukungannya. Sejauh yang diketahui belum didukung. Jadikan eksperimen pembuktian, bukan materi pokok.
-8. **Modul 5.3 (Theme singleton):** contoh tidak lengkap. Di CMake, file harus ditandai `QT_QML_SINGLETON_TYPE TRUE`, kalau tidak singleton tidak terdaftar. Ini jebakan klasik.
-9. **Modul 0.2/4.4:** `main.cpp` tidak ditampilkan, dan target `hello` dijalankan sebagai `./build/myapp`. Pembelajar tidak bisa menjalankan contoh pertama. Beri `main.cpp` minimal (`QGuiApplication` + `QQmlApplicationEngine` + `loadFromModule`).
-10. **Minor:**
-    - Modul 7.3: `function createRectangle()` berada di luar objek, jadi bukan QML valid.
-    - Modul 5.1: `parent.title` rapuh, ganti dengan `id: root`.
-    - §8.4: repo `qtquickcontrols2` adalah warisan Qt 5, karena sejauh yang diketahui kontrol Qt 6 sudah berada di `qtdeclarative`.
-    - Estimasi Foundation tertulis 4–7 minggu, padahal jumlah Fase 0–2 adalah 5–8.
-
-### B. Topik penting yang belum tercakup atau terlalu tipis
-
-- **Runtime dan bootstrap:** `QT_QPA_PLATFORM` (wayland/xcb), `QT_QUICK_BACKEND=software`, `QSG_RHI_BACKEND`, `QSG_INFO`, `QSG_VISUALIZE`, `QML_IMPORT_TRACE`, `QT_LOGGING_RULES`. Ini sangat relevan di Arch dengan WM.
-- **Kompilasi QML Qt 6:** `qmlcachegen`, `qmlsc`, `qmltc`, dan anotasi tipe fungsi. Sejak Qt 6.7 anotasi tipe selalu ditegakkan saat fungsi dipanggil, tetapi di kurikulum ia hanya muncul sebagai kata kunci. Tambahkan juga `as` type assertion.
-- **Threading:** `QThread`/worker object, thread affinity, `QtConcurrent`/`QFuture`, `WorkerScript`. Saat ini hanya disebut di daftar, tanpa modul.
-- **C++ Qt 6 modern:** bindable properties (`QProperty`), `QQmlListProperty`, attached dan extension types (`QML_ATTACHED`, `QML_EXTENDED`, `QML_FOREIGN`), `QQmlParserStatus`, `QQmlComponent` dari sisi C++.
-- **Qt Quick:** Shapes, MultiEffect, Particles, Qt Quick Dialogs, persistensi `Settings`. `QtQml.StateMachine` juga perlu dibedakan dari `State` Qt Quick, karena Modul 6.1 menyebut “state machines” tanpa membedakan.
-- **Jebakan tipe data dari dokumentasi resmi:** array-like hasil konversi dari C++ tetap mengembalikan `false` pada `Array.isArray()`, konversi `QDate`↔`Date` bergantung pada UTC, dan penomoran bulan JavaScript 0–11 sedangkan Qt 1–12. Masukkan ke Dokumen 1 Fase 2.8, 6.5, dan 14.
-- **Dokumen 1:**
-  - Sintaks Connections modern `function onX()`, karena bentuk lama `onX:` sudah deprecated.
-  - `required property` dan `pragma ComponentBehavior: Bound` untuk delegate (Fase 8/9).
-  - Pendaftaran file `.js` di `QML_FILES` agar ikut ter-embed (Fase 13).
-- **Keamanan (13.1):**
-  - Gerbang baca file lokal oleh XHR (`QML_XHR_ALLOW_FILE_READ`).
-  - Injeksi lewat `QML_IMPORT_PATH` dan `QT_PLUGIN_PATH`.
-  - `Qt.createQmlObject` atau `Loader` dari URL tak tepercaya sama dengan eksekusi kode.
-  - Isolasi proses (bubblewrap/firejail/Flatpak) dan perbedaan model isolasi Wayland vs X11.
-- **Tooling dan distribusi:** target CMake `all_qmllint`, konfigurasi `qmlls` untuk Neovim, dan `PKGBUILD` (Arch) yang belum disebut eksplisit.
-
-### C. Kepatuhan terhadap persyaratan per modul
-
-| Persyaratan | Dokumen 2 (Mastery) | Dokumen 1 (JS dalam QML) |
+| Langkah | Tindakan | Keluaran |
 | --- | --- | --- |
-| Deskripsi konkret dan konsep mendalam | Baik | Tidak ada. Fase berisi daftar kata kunci tanpa kalimat penjelas (mis. “Function execution context.”) |
-| Contoh kode | Belasan modul tanpa contoh (mis. 2.4, 3.4, 7.4, 9.4, 10.1, 10.6, 11.1, 11.2, 12.1, 12.4, 13.4, 14.1, 14.4, 14.5) | Fase 10, 12, 14–19 tanpa kode |
-| Terminologi | Kurang dari separuh modul | Hanya Fase 1 |
-| Daftar isi | Ada | Berupa poin tanpa struktur |
-| Referensi | Ada | Hanya 8 dari 20 fase punya referensi inline |
-| Indikasi visual | Hanya 2 (0.2 dan 11.1) | Nol |
+| 1. Pahami tujuan | Tulis satu paragraf: apa yang harus berubah dan kriteria selesai | Kriteria penerimaan |
+| 2. Petakan repo | Baca README dan struktur folder; `rg` untuk kata kunci; `qmllint` dan `QML_IMPORT_TRACE=1` untuk melihat modul | Peta singkat arsitektur |
+| 3. Temukan titik ekstensi | Cari akar komponen, singleton, model, registrasi C++ terkait | Daftar berkas yang harus disentuh |
+| 4. Prototipe terisolasi | Buat satu berkas QML yang menjalankan ide Anda dengan `qml` | Prototipe yang berjalan |
+| 5. Implementasi kecil | Ubah seminimal mungkin; ikuti gaya yang ada; satu perubahan logis per commit | Commit bersih |
+| 6. Uji | Jalankan uji yang ada, tambah uji baru, jalankan `qmllint` | Uji hijau, tanpa peringatan baru |
+| 7. Dokumentasikan | Perbarui dokumen dan changelog; tulis alasan keputusan | Pull request yang bisa ditinjau |
 
-Kandidat visual yang paling bernilai: scope chain (Dokumen 1 F8), dependency graph binding (F11), alur signal (F12), event loop (F15), batas JS↔C++ (F16), dan lifecycle objek (F17).
+**Contoh minimal (jalur kerja).**
 
-### D. Aksesibilitas bagi non-IT
+```
+git switch -c fitur-salin-tombol
+rg -n 'ListView' qml/
+QML_IMPORT_TRACE=1 qml prototipe.qml 2>&1 | head -30
+git add -p && git commit
+```
 
-- Prasyarat “terminal Linux dan dasar pemrograman wajib” (Dokumen 2 §3) bertentangan dengan target non-IT.
-- Tidak ada fase orientasi tentang program, compiler, event loop, GUI, path, dan git.
-- Jargon muncul sebelum definisi (`QObject`, meta-object, scene graph), tanpa analogi dan tanpa glosarium terpusat.
-- Tidak ada latihan atau cek pemahaman per modul.
-- Saran: tambahkan Fase 0 “orientasi”, glosarium, dan template modul tetap: Analogi → Contoh minimal → Cara menjalankan → Kesalahan umum → Latihan 15 menit → Cek pemahaman. Untuk eksekusi, ajarkan `qml berkas.qml` sebagai jalur eksperimen satu file sebelum CMake.
+**Terminologi.** Titik ekstensi; reproduksi minimal; kriteria penerimaan; regresi; diff yang fokus.
 
-### E. Tujuan “menambah fitur di proyek apa pun” dan penguasaan
+**Daftar isi.** 14.6.1 Memahami tujuan dan kriteria selesai · 14.6.2 Memetakan proyek asing · 14.6.3 Menemukan titik ekstensi · 14.6.4 Prototipe terisolasi · 14.6.5 Perubahan kecil dan commit bersih · 14.6.6 Uji dan pencegahan regresi · 14.6.7 Dokumentasi dan tinjauan
 
-- Jalur C++ integration, 14.5 (membaca source), dan framework design sudah mengarah ke penguasaan.
-- Belum ada metodologi menambah fitur ke codebase asing: membaca arsitektur, menemukan titik ekstensi, reproduksi minimal, patch, uji.
-- Proyek 01–06 belum punya spesifikasi dan kriteria penerimaan yang terukur.
-- Perlu “peta keputusan” modul Qt lain (Quick 3D, Charts/Graphs, WebEngine, Multimedia, Wayland compositor). Klaim “segala kebutuhan” hanya realistis jika kurikulum mengajarkan cara belajar modul baru.
-- Opsional, jika tujuannya UI desktop terminal-centric: capstone berupa komponen shell (bar atau launcher) di Wayland.
+**Kesalahan umum.** Memformat ulang seluruh berkas sehingga diff tak terbaca; mengubah arsitektur untuk fitur kecil; tidak menjalankan uji yang sudah ada.
 
-### F. Struktur
+**Latihan 15 menit.** Pilih proyek QML open source kecil, tambahkan satu fitur kecil (mis. tombol salin) mengikuti tujuh langkah di atas, dan tulis deskripsi perubahan satu paragraf.
 
-- Dokumen 1 dan Fase 2 Dokumen 2 tumpang tindih (2–3 minggu vs 12–18 minggu). Jadikan Dokumen 1 sebagai jalur pendalaman Fase 1–3 dengan tabel pemetaan fase.
-- Urutan ketergantungan bermasalah di dua tempat. Dokumen 1 Fase 16 butuh C++ yang baru muncul di Dokumen 2 Fase 10. Modul 5.3 butuh CMake dan modul QML yang baru diajarkan di Fase 8.
-- Tabel progres hanya mencakup 5 dari 15 fase, dan penomoran bab loncat dari 12 ke 14.
+**Cek pemahaman.** Mengapa prototipe terisolasi dibuat sebelum mengubah proyek asli?
 
-### G. Format dan tautan
+**Referensi.** [Pro Git](https://git-scm.com/book/en/v2) · [Qt Contribution Guidelines](https://wiki.qt.io/Qt_Contribution_Guidelines) · [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html)
 
-- Hapus `?utm_source=chatgpt.com` dari semua tautan.
-- Bersihkan artefak ekspor: `[image](...favicon...)`, label “Qt 6.10.3+2” dan “Qt 6.12.0+1”, dan `&#x20;`.
-- Gambar Proyek 01–06 di-hotlink dari `images.openai.com`. Isinya thumbnail halaman acak yang tidak relevan dan akan mati. Ganti dengan diagram buatan sendiri (Mermaid atau ASCII).
-- Versi tautan tercampur (`qt-6.10`, `qt-6.8`, `qt-6`). Pakai `/qt-6/` tanpa versi atau pin satu versi.
-- Modul 9.2 memuat dua referensi dengan URL identik.
-- Tiga pola tautan yang diragukan dan perlu dicek manual: `qtqml-debugging.html`, `qtqml-type-compiler.html`, `qtquick-gradient.html`.
+### Modul 14.7 — Peta Keputusan Modul Qt *(baru)*
 
-## Urutan perbaikan yang disarankan
+**Deskripsi.** Memilih modul Qt yang tepat untuk kebutuhan di luar Qt Quick inti, dan cara mempelajari modul baru dengan cepat.
 
-1. Terapkan koreksi A1–A9.
-2. Tetapkan template modul, lalu isi Dokumen 1, mulai Fase 10, 12, dan 14–19.
-3. Tambahkan Fase 0 non-IT dan glosarium.
-4. Tambahkan modul yang hilang: runtime/bootstrap, kompilasi QML Qt 6, threading, dan metodologi memodifikasi proyek asing.
-5. Bersihkan format dan tautan.
+**Konsep & analogi.** Qt adalah kota dengan banyak distrik. Anda tidak perlu mengenal semuanya, tetapi harus tahu cara membaca peta dan bertanya arah.
 
-## Sumber verifikasi
+| Kebutuhan | Modul | Catatan |
+| --- | --- | --- |
+| 3D | Qt Quick 3D | Terintegrasi dengan Qt Quick |
+| Grafik dan visualisasi data | Qt Graphs, Qt Charts | Periksa lisensi masing-masing |
+| Konten web | Qt WebEngine | Berbasis Chromium; berat |
+| Audio dan video | Qt Multimedia | Backend bergantung platform |
+| Wayland compositor | Qt Wayland Compositor | Untuk membangun compositor |
+| Serial dan Bluetooth | Qt SerialPort, Qt Bluetooth |  |
+| Basis data | Qt SQL |  |
+| Lokasi dan peta | Qt Positioning, Qt Location |  |
 
-- [JavaScript Host Environment (Qt 6.10)](https://doc.qt.io/qt-6.10/qtqml-javascript-hostenvironment.html)
-- [List of JavaScript Objects and Functions](https://doc.qt.io/qt-6/qtqml-javascript-functionlist.html)
-- [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html)
-- [PropertyChanges QML Type](https://doc.qt.io/qt-6/qml-qtquick-propertychanges.html)
-- [Changes to Qt Quick Controls (migrasi Qt 6)](https://doc.qt.io/Qt-6/qtquickcontrols-changes-qt6.html)
-- [Styling Qt Quick Controls (Qt 6.5)](https://doc.qt.io/qt-6.5/qtquickcontrols-styles.html)
-- [Qt Forum: qmlscene issues](https://forum.qt.io/topic/163731/qmlscene-issues/3)
+Beberapa modul add-on dilisensikan GPLv3 atau komersial saja. Periksa lisensi modul sebelum memakainya di aplikasi tertutup.
 
-</details>
+**Protokol mempelajari modul baru (30–60 menit).** (1) Baca halaman overview modul dan daftar tipe QML-nya. (2) Jalankan satu contoh resmi dari terminal. (3) Tulis prototipe satu berkas yang memakai satu fitur. (4) Baca header atau API untuk celah yang tak terjawab. (5) Ukur dampak performa, ukuran binary, dan lisensi sebelum memutuskan.
 
-[Quickshell](./quickshell/quickshell.md)
+**Terminologi.** Modul add-on; backend; lisensi (LGPL, GPL, komersial); overview; example.
+
+**Daftar isi.** 14.7.1 Peta modul Qt · 14.7.2 Lisensi dan dampaknya · 14.7.3 Protokol 30–60 menit · 14.7.4 Menilai biaya (ukuran, performa, dependensi) · 14.7.5 Kapan membangun sendiri vs memakai modul
+
+**Kesalahan umum.** Menambahkan modul berat untuk kebutuhan kecil; melewatkan pemeriksaan lisensi; tidak menguji di platform target.
+
+**Latihan 15 menit.** Pilih satu modul yang belum Anda kenal, jalankan satu contoh resminya, dan tulis tiga kalimat tentang kapan Anda akan memakainya.
+
+**Cek pemahaman.** Mengapa lisensi modul perlu diperiksa sebelum dipakai?
+
+**Referensi.** [All Qt Modules](https://doc.qt.io/qt-6/qtmodules.html) · [Lisensi Qt](https://www.qt.io/licensing/)
+
+## Bagian B — Jalur Pendalaman: JavaScript dalam QML
+
+Bagian ini menggantikan dokumen pertama (20 fase berisi daftar kata kunci). Setiap fase kini memiliki konsep, contoh, jebakan, dan latihan. Format ringkas: **Tujuan · Konsep · Contoh · Jebakan · Latihan · Dibaca bersama**. Istilah ada di Glosarium dan di modul padanannya (lihat tabel pemetaan di Bagian 2). Contoh dijalankan dengan `qml Main.qml`. Estimasi total jalur ini: 12–18 minggu paruh waktu, dikerjakan paralel dengan fase utama.
+
+### Fase B0 — Orientasi
+
+**Tujuan.** Memahami peran JavaScript di QML. **Konsep.** QML menyatakan struktur; JavaScript menambahkan perilaku. Di QML ia bukan peramban: tanpa DOM dan tanpa `window`. **Contoh.**
+
+```qml
+import QtQuick
+Item { Component.onCompleted: console.log(1 + 1) }
+```
+
+**Jebakan.** Mencari tutorial peramban dan menyalin API-nya. **Latihan.** Jalankan contoh dan cetak hasil tiga ekspresi berbeda. **Dibaca bersama.** Modul 2.1.
+
+### Fase B1 — Sintaks Dasar
+
+**Tujuan.** Membaca dan menulis pernyataan JavaScript dengan benar. **Konsep.** Pernyataan dan ekspresi, komentar, peka huruf besar-kecil, titik koma opsional (tetapi konsistenlah). **Contoh.**
+
+```js
+const nama = 'Qt'   // pernyataan
+let n = 2 + 3       // ekspresi di sisi kanan
+```
+
+**Jebakan.** Baris yang diawali tanda kurung atau backtick tanpa titik koma bisa tersambung ke baris sebelumnya. **Latihan.** Tulis lima pernyataan dan beri komentar penjelasan. **Dibaca bersama.** Modul 2.1.
+
+### Fase B2 — Tipe Data dan Konversi
+
+**Tujuan.** Memahami tipe primitif dan aturan konversi. **Konsep.** `number` (floating point), `string`, `boolean`, `null`, `undefined`, `Symbol`. `typeof` menyebut tipe. Nilai falsy: `0`, `''`, `false`, `null`, `undefined`, `NaN`. **Contoh.**
+
+```js
+console.log(typeof 3, typeof 'a', typeof null, 0.1 + 0.2 === 0.3, 0 == '', 0 === '')
+```
+
+**Jebakan.** `==` melakukan konversi diam-diam; selalu pakai `===`. BigInt **\[uji dulu\]**. **Latihan.** Tebak lalu verifikasi hasil contoh. **Dibaca bersama.** Modul 1.2.
+
+### Fase B3 — Operator dan Alur Kontrol
+
+**Tujuan.** Mengendalikan alur program. **Konsep.** Aritmetika (termasuk `**`), logika, ternary, `??`, `?.`, `if`/`switch`, `for`, `for...of`, `while`. **Contoh.**
+
+```js
+for (const x of [1, 2, 3]) if (x % 2) console.log(x ** 2)
+const alias = pengguna?.profil?.alias ?? 'anonim'
+```
+
+**Jebakan.** `for...in` pada array menghasilkan indeks sebagai string; pakai `for...of`. **Latihan.** Tulis FizzBuzz memakai `for...of`. **Dibaca bersama.** Modul 2.1.
+
+### Fase B4 — Fungsi
+
+**Tujuan.** Menulis fungsi yang bersih. **Konsep.** Deklarasi, ekspresi, arrow function, parameter default, rest parameter. Di QML, fungsi pada objek bisa diberi anotasi tipe. **Contoh.**
+
+```qml
+Item {
+    function jumlah(...angka) { return angka.reduce((a, b) => a + b, 0) }
+    function sapa(nama = 'dunia') { return `halo ${nama}` }
+}
+```
+
+**Jebakan.** Mengandalkan `this` (Modul 2.2). **Latihan.** Tulis fungsi `rata(...angka)` dan uji dengan tiga kasus. **Dibaca bersama.** Modul 2.2.
+
+### Fase B5 — Array
+
+**Tujuan.** Mengolah koleksi data secara fungsional. **Konsep.** `map`, `filter`, `reduce`, `find`, `some`, `every`, `includes`, spread array. Mengubah isi array di tempat tidak memicu binding. **Contoh.**
+
+```js
+const harga = [15000, 8000, 12000]
+const mahal = harga.filter(h => h > 10000).map(h => h * 1.1)
+let daftar = [1, 2]; daftar = [...daftar, 3]   // reassign agar binding terpicu
+```
+
+**Jebakan.** `sort()` tanpa pembanding mengurutkan sebagai string; `flat`/`flatMap` **\[uji dulu\]**. **Latihan.** Urutkan angka menurun dengan pembanding. **Dibaca bersama.** Modul 3.1.
+
+### Fase B6 — Objek dan JSON
+
+**Tujuan.** Memodelkan data dengan objek. **Konsep.** Literal, shorthand, kunci terhitung, `Object.keys/values/entries/assign`, destructuring, `JSON.parse/stringify`. **Contoh.**
+
+```js
+const p = { nama: 'Kopi', harga: 15000 }
+const { nama, ...sisa } = p            // rest pada destructuring
+console.log(JSON.stringify(p), Object.entries(p))
+```
+
+**Jebakan.** Object spread `{...a}` **\[uji dulu\]**; `JSON.parse` melempar galat pada JSON rusak. **Latihan.** Parse JSON dengan `try/catch` dan tangani galat. **Dibaca bersama.** Modul 2.1 dan 7.4.
+
+### Fase B7 — String dan Template Literal
+
+**Tujuan.** Mengolah teks dan menyusun pesan. **Konsep.** `slice`, `split`, `replace`, `startsWith`, `includes`, `padStart`, template literal, dan `qsTr('Halo %1').arg(nama)` untuk teks yang diterjemahkan. **Contoh.**
+
+```js
+const pesan = qsTr('Halo %1, ada %2 pesan').arg('Jon').arg(3)
+```
+
+**Jebakan.** Menyusun kalimat dengan `+` membuat terjemahan mustahil. **Latihan.** Format tabel harga rata kanan dengan `padStart`. **Dibaca bersama.** Modul 9.4.
+
+### Fase B8 — Scope dan Closure
+
+**Tujuan.** Memahami umur dan jangkauan variabel. **Konsep.** `let`/`const` berlingkup blok; `var` berlingkup fungsi; hoisting; temporal dead zone; closure adalah fungsi yang membawa variabel lingkungannya. **Contoh.**
+
+```js
+function buatPenghitung() { let n = 0; return () => ++n }
+const a = buatPenghitung(); a(); console.log(a())   // 2
+```
+
+**Jebakan.** Closure di handler yang menahan objek besar sehingga tak pernah dibebaskan. **Latihan.** Buat dua penghitung independen dan buktikan keadaannya tak saling memengaruhi. **Dibaca bersama.** Modul 3.4.
+
+### Fase B9 — JavaScript di Dalam Dokumen QML
+
+**Tujuan.** Menempatkan JavaScript pada tempat yang tepat. **Konsep.** Ekspresi binding, signal handler, fungsi pada objek; aturan `this`; `Component.onCompleted`. **Contoh.**
+
+```qml
+Rectangle {
+    id: root
+    property int n: 0
+    color: n > 2 ? 'tomato' : 'steelblue'
+    TapHandler { onTapped: root.n++ }
+}
+```
+
+**Jebakan.** Assignment memutus binding. **Latihan.** Ubah contoh agar warna berubah setiap tiga ketukan. **Dibaca bersama.** Modul 2.2.
+
+### Fase B10 — Global Object dan API Bawaan
+
+**Tujuan.** Mengenal perkakas yang sudah tersedia. **Konsep.** Objek global `Qt` (`Qt.callLater`, `Qt.binding`, `Qt.rgba`, `Qt.resolvedUrl`, `Qt.formatDateTime`, `Qt.quit`), `console`, `Math`, `Date`, `JSON`, `RegExp`, `Map`, `Set`. Tidak ada DOM. **Contoh.**
+
+```js
+console.log(Qt.formatDateTime(new Date(), 'yyyy-MM-dd HH:mm'))
+Qt.callLater(() => console.log('nanti'))
+```
+
+**Jebakan.** Bulan `Date` bernomor 0–11; format tanggal dipengaruhi locale. **Latihan.** Cetak tanggal hari ini dalam tiga format berbeda. **Dibaca bersama.** Modul 2.4.
+
+### Fase B11 — JavaScript dan Reaktivitas
+
+**Tujuan.** Memahami bagaimana JavaScript ikut dalam sistem binding. **Konsep.** Fungsi yang dipanggil dari sebuah binding juga mencatat dependensi: setiap properti yang dibaca selama evaluasi dianggap dependensi. **Contoh.**
+
+```qml
+Item {
+    property int a: 1
+    property int b: 2
+    function jumlah() { return a + b }
+    property int hasil: jumlah()      // bergantung pada a dan b
+}
+```
+
+**Jebakan.** Efek samping (assignment) di dalam binding; dependensi yang berubah dinamis karena cabang kondisi. **Latihan.** Ubah `a` dari handler dan amati `hasil`. **Dibaca bersama.** Modul 3.1.
+
+### Fase B12 — JavaScript dan Signal
+
+**Tujuan.** Menangani dan memancarkan signal dari JavaScript. **Konsep.** Handler dengan parameter eksplisit, `connect`/`disconnect`, memanggil signal seperti fungsi, dan sifat reentrant-nya. **Contoh.**
+
+```qml
+Item {
+    id: root
+    signal hitung(int n)
+    onHitung: (n) => { if (n < 3) hitung(n + 1); console.log(n) }
+    Component.onCompleted: hitung(0)
+}
+```
+
+**Jebakan.** Rekursi tak terbatas antar-handler. **Latihan.** Prediksi urutan keluaran contoh (jawabannya 3, 2, 1, 0) lalu verifikasi dan jelaskan alasannya. **Dibaca bersama.** Modul 3.2.
+
+### Fase B13 — Modul dan Resource JavaScript
+
+**Tujuan.** Memecah logika ke berkas `.js`. **Konsep.** `.pragma library` untuk pustaka bersama, `import 'x.js' as X` dari QML, dan `.import` di dalam berkas `.js`. Berkas `.mjs` memakai sintaks ES module (`export`/`import`) **\[uji dulu\]** pada versi Qt Anda. **Contoh.**
+
+```js
+// util.mjs
+export function kuadrat(x) { return x * x }
+// pemakai.mjs
+import { kuadrat } from './util.mjs'
+```
+
+**Jebakan.** Mengira `.pragma library` dapat mengakses `id` QML; lupa mendaftarkan berkas di CMake. **Latihan.** Pecah fungsi bantu dari satu proyek ke `Logic.js`. **Dibaca bersama.** Modul 2.3.
+
+### Fase B14 — Tipe Data dan Konversi QML ↔ JavaScript
+
+**Tujuan.** Menghindari kejutan tipe antar dua dunia. **Konsep.** `int`/`real` ↔ number; `string` ↔ string; `bool` ↔ boolean; `url` dan `color` perlu `toString()` untuk teks; `point`, `rect`, `size` adalah value type; `var` yang berisi objek menyimpan referensi. **Contoh.**
+
+```qml
+Item {
+    property point p: Qt.point(1, 2)
+    Component.onCompleted: {
+        let q = p
+        q.x = 99
+        console.log(p.x, q.x)    // dugaan: 1 99 (value type disalin). Buktikan di versi Qt Anda.
+    }
+}
+```
+
+**Jebakan.** Array-like dari C++ tidak lolos `Array.isArray()`; QDate dan Date berbasis UTC; bulan 0–11 vs 1–12. **Latihan.** Buat tabel tipe QML dan wujudnya di JavaScript berdasarkan percobaan Anda sendiri. **Dibaca bersama.** Modul 1.2 dan 10.4.
+
+### Fase B15 — Pemrograman Asinkron
+
+**Tujuan.** Menangani pekerjaan yang selesai kelak tanpa membekukan UI. **Konsep.** Event loop, callback, `Timer`, XHR, `Promise` (tercantum di daftar objek resmi), `WorkerScript`. `async/await` **\[uji dulu\]**. **Contoh.**
+
+```qml
+Item {
+    function ambil(url) {
+        return new Promise((resolve, reject) => {
+            const r = new XMLHttpRequest()
+            r.onreadystatechange = () => {
+                if (r.readyState !== XMLHttpRequest.DONE) return
+                if (r.status === 200) resolve(r.responseText)
+                else reject(new Error('HTTP ' + r.status))
+            }
+            r.open('GET', url)
+            r.send()
+        })
+    }
+
+    Component.onCompleted: ambil('https://example.com/data.json')
+        .then(JSON.parse)
+        .then(console.log)
+        .catch(e => console.warn(e))
+}
+```
+
+**Jebakan.** Lupa menangani galat; pekerjaan berat di thread UI. **Latihan.** Tambahkan batas waktu dengan `Timer` yang menolak janji bila terlalu lama. **Dibaca bersama.** Modul 7.4.
+
+### Fase B16 — JavaScript dan C++
+
+**Tujuan.** Menjembatani JavaScript dan C++ dengan aman. **Konsep.** Konversi tipe lewat `QVariant`; callback JavaScript diterima C++ sebagai `QJSValue`; `QJSEngine` dipakai bila Anda menanamkan mesin skrip tanpa QML. **Contoh.**
+
+```cpp
+Q_INVOKABLE void ambilData(const QJSValue &callback)
+{
+    if (!callback.isCallable()) return;
+    QJSValue cb = callback;                       // salinan agar bisa dipanggil
+    cb.call({ QJSValue(QStringLiteral("selesai")) });
+}
+```
+
+**Jebakan.** Memanggil callback setelah objek pemiliknya dihancurkan; memanggil dari thread selain thread engine. **Latihan.** Panggil callback itu dari QML dengan fungsi anonim dan cetak hasilnya. **Dibaca bersama.** Modul 10.4.
+
+### Fase B17 — Lifecycle dan Memori
+
+**Tujuan.** Menghindari kebocoran dan akses ke objek yang sudah hilang. **Konsep.** Objek JavaScript dibersihkan garbage collector. Objek `QObject` punya kepemilikan: dimiliki C++ atau dimiliki JavaScript (`QQmlEngine::ObjectOwnership`); objek hasil `createObject(parent)` dimiliki `parent`. Closure dan koneksi yang tersisa dapat menahan objek. **Contoh.**
+
+```qml
+Item {
+    Component.onCompleted: {
+        for (let i = 0; i < 1000; i++) { const o = {}; o.self = o }   // siklus objek JS aman
+        gc()                                                          // hanya untuk eksperimen
+    }
+}
+```
+
+**Jebakan.** Handler yang menahan objek besar; `destroy()` tanpa memutus rujukan. **Latihan.** Buat dan hancurkan 1000 objek dinamis, lalu pantau memori sebelum dan sesudah. **Dibaca bersama.** Modul 3.3 dan 7.3.
+
+### Fase B18 — Debug dan Optimasi JavaScript
+
+**Tujuan.** Menemukan dan memperbaiki JavaScript yang lambat atau salah. **Konsep.** Ukur dengan `console.time` dan profiler, hindari binding berat, memoisasi, gabungkan pembaruan dengan `Qt.callLater`, beri anotasi tipe, dan pindahkan pekerjaan berat ke `WorkerScript` atau C++. **Contoh.**
+
+```js
+const cache = new Map()
+function mahal(n) {
+    if (!cache.has(n)) cache.set(n, hitung(n))
+    return cache.get(n)
+}
+```
+
+**Jebakan.** Optimasi dini tanpa pengukuran; cache yang tidak pernah dibersihkan. **Latihan.** Ukur sebuah fungsi dengan dan tanpa cache memakai `console.time`. **Dibaca bersama.** Modul 12.1, 12.2, dan 11.4.
+
+### Fase B19 — Arsitektur Logika
+
+**Tujuan.** Menempatkan logika di tempat yang dapat diuji dan dirawat. **Konsep.** Fungsi murni di `Logic.js` (`.pragma library`), keadaan di store, I/O di tepi, dan uji dengan Qt Quick Test. **Contoh.**
+
+```js
+// Logic.js
+.pragma library
+function totalKeranjang(item) {
+    return item.reduce((jml, i) => jml + i.harga * i.jumlah, 0)
+}
+```
+
+```qml
+// tst_logic.qml
+import QtQuick
+import QtTest
+import 'Logic.js' as Logic
+
+TestCase {
+    name: 'Logic'
+    function test_total() { compare(Logic.totalKeranjang([{ harga: 10, jumlah: 2 }]), 20) }
+}
+```
+
+**Jebakan.** Logika tersebar di delegate dan handler; fungsi dengan efek samping tersembunyi. **Latihan.** Ekstrak tiga fungsi murni dari proyek Anda dan tulis uji untuk masing-masing. **Dibaca bersama.** Modul 8.2 dan 14.6.
+
+## Bagian C — Proyek Praktik
+
+Setiap proyek memuat spesifikasi, hasil yang diserahkan, dan kriteria penerimaan yang dapat diperiksa dengan perintah atau pengukuran. Proyek dikerjakan berurutan dan masing-masing bertumpu pada yang sebelumnya.
+
+| Proyek | Fase | Intisari |
+| --- | --- | --- |
+| 01 | 0–2 | Konverter Satuan |
+| 02 | 3–5 | Pustaka Komponen dan Dasbor |
+| 03 | 6–7 | Pencatat Tugas Penuh-Keyboard |
+| 04 | 8–10 | Penampil Layanan systemd User dengan Backend C++ |
+| 05 | 11–12 | Optimasi dan Kualitas |
+| 06 | 13–14 | Capstone: Rilis, Keamanan, dan Kontribusi |
+
+### Proyek 01 — Konverter Satuan (Fase 0–2)
+
+**Spesifikasi.** Satu berkas `Main.qml` berisi empat konversi (suhu, panjang, massa, data), input angka lewat `TextInput`, validasi input, hasil real-time lewat binding, dan logika di fungsi murni.
+
+**Kriteria penerimaan.** (1) `qml Main.qml` berjalan tanpa peringatan. (2) `qmllint Main.qml` bersih. (3) Input tidak valid tidak membuat aplikasi rusak dan menampilkan pesan. (4) Tabel sedikitnya 10 kasus uji manual dengan hasil benar. (5) Properti bertipe jelas tidak memakai `var`.
+
+### Proyek 02 — Pustaka Komponen dan Dasbor (Fase 3–5)
+
+**Spesifikasi.** Modul `MyApp.Components` berisi `AppButton`, `Card`, `StatTile`, dan singleton `Theme`; dasbor responsif memakai `RowLayout` dan `GridLayout`.
+
+**Kriteria penerimaan.** (1) Dibangun dengan CMake sebagai modul terpisah. (2) Mengubah satu token di `Theme` mengubah seluruh tampilan. (3) Tampilan benar pada lebar jendela 320, 800, dan 1280 piksel. (4) `all_qmllint` bersih. (5) Setiap komponen memakai `required property` dan tidak membaca `parent`.
+
+### Proyek 03 — Pencatat Tugas Penuh-Keyboard (Fase 6–7)
+
+**Spesifikasi.** `ListModel` dan `ListView` untuk tambah, ubah, hapus, dan tandai selesai; animasi masuk-keluar; persistensi dengan `Settings` atau `LocalStorage`.
+
+**Kriteria penerimaan.** (1) Semua fungsi dapat dilakukan tanpa mouse. (2) Data bertahan setelah aplikasi dimulai ulang. (3) Tidak ada peringatan *binding loop*. (4) Delegate memakai `required property`. (5) Dengan 1000 item, scroll tetap mulus: tidak ada frame yang melebihi anggaran 16,6 ms pada mesin Anda, dicatat dengan profiler.
+
+### Proyek 04 — Penampil Layanan systemd User dengan Backend C++ (Fase 8–10)
+
+**Spesifikasi.** Model C++ (`QAbstractListModel`) yang diisi dari keluaran `systemctl --user list-units --type=service --no-legend --plain` lewat `QProcess`; antarmuka Controls dengan filter dan tombol muat ulang. Hanya baca, tanpa mengubah layanan.
+
+**Kriteria penerimaan.** (1) UI tidak membeku saat memuat: tidak ada frame lebih dari 33 ms selama pemuatan. (2) Parser keluaran diuji, minimal lima kasus termasuk keluaran kosong dan baris rusak. (3) `QProcess` memakai daftar argumen, tidak ada string shell. (4) Tidak ada context property; tipe didaftarkan dengan `QML_ELEMENT`. (5) Seluruh peringatan `qmllint` dan compiler C++ nol.
+
+### Proyek 05 — Optimasi dan Kualitas (Fase 11–12)
+
+**Spesifikasi.** Ambil Proyek 03 atau 04, profil, temukan tiga hambatan, perbaiki, dan tambahkan pengujian.
+
+**Kriteria penerimaan.** (1) Laporan sebelum/sesudah dengan angka (frame time, CPU, memori). (2) Sedikitnya satu perbaikan menurunkan metrik pilihan Anda minimal 20 persen. (3) Sedikitnya sepuluh uji otomatis; `QT_QPA_PLATFORM=offscreen ctest --test-dir build` hijau. (4) `all_qmllint` tanpa peringatan. (5) Build profil terpisah dari build rilis dan `QT_QML_DEBUG` tidak ada di rilis.
+
+### Proyek 06 — Capstone: Rilis, Keamanan, dan Kontribusi (Fase 13–14)
+
+**Spesifikasi.** (a) Paketkan Proyek 04 dengan `PKGBUILD` dan `.desktop`. (b) Tulis threat model satu halaman. (c) Tambahkan satu fitur pada proyek QML open source mengikuti Modul 14.6. (d) Opsional: varian Quickshell.
+
+**Kriteria penerimaan.** (1) Paket terpasang dan berjalan di lingkungan bersih (chroot atau container). (2) Threat model memuat aset, aktor, batas kepercayaan, tiga ancaman, dan mitigasinya. (3) Patch fitur lolos uji proyek asal dan `qmllint`. (4) Deskripsi perubahan menjelaskan tujuan, pendekatan, dan pengujian.
+
+### Varian Quickshell (opsional untuk Proyek 04–06)
+
+Quickshell adalah toolkit berbasis QML untuk membangun komponen shell desktop seperti bar, peluncur, dan pusat notifikasi. Seluruh fondasi kurikulum ini (binding, signal, komponen, model, performa) berlaku langsung. Kerjakan varian ini dengan menggantikan antarmuka Proyek 04 oleh komponen shell yang menampilkan data yang sama, lalu pelajari tipe khususnya dari dokumentasi resminya.
+
+**Referensi.** [Quickshell](https://quickshell.org/)
+
+## Bagian D — Validasi Kompetensi dan Kelulusan
+
+### Hasil belajar per tahap
+
+| Tahap | Setelah menyelesaikannya, Anda mampu |
+| --- | --- |
+| Foundation (Fase 0–2) | Membaca dan menulis QML dan JavaScript dasar; menjalankan dan mendiagnosa aplikasi kecil dengan `qml`; menjelaskan beda binding dan assignment |
+| Intermediate (Fase 3–6) | Merancang komponen dengan API bersih; menata layout responsif; membuat state dan animasi; memusatkan tema; mengoperasikan antarmuka penuh dari keyboard |
+| Advanced (Fase 7–9) | Memakai model dan view dengan benar; membuat objek dinamis dengan aman; menyusun modul QML dan arsitektur; membangun aplikasi Controls yang dapat diakses dan diterjemahkan |
+| Expert (Fase 10–12) | Menghubungkan backend C++ dengan QML; menjalankan pekerjaan berat di thread terpisah; memprofil dan mengoptimalkan; menulis uji otomatis |
+| Enterprise dan Mastery (Fase 13–14) | Mengamankan, memaketkan, dan merilis aplikasi; memperluas Qt dengan tipe kustom; menambah fitur pada proyek yang bukan buatan Anda |
+
+### Standar kelulusan
+
+Anda dinyatakan lulus bila semua syarat berikut terpenuhi:
+
+1. Keenam proyek (Bagian C) memenuhi seluruh kriteria penerimaan masing-masing.
+2. Skor rubrik rata-rata sedikitnya 75 dari 100 pada Proyek 04–06.
+3. Lulus **ujian kemandirian**: dalam 8 jam kerja, tanpa bantuan langsung, tambahkan satu fitur sesuai spesifikasi pada proyek QML open source yang belum pernah Anda lihat, mengikuti Modul 14.6, dengan uji baru dan `qmllint` tanpa peringatan baru.
+4. Dapat menjelaskan secara lisan, tanpa catatan, lima topik pilihan penguji dari Fase 3, 7, 10, 11, dan 13.
+
+### Rubrik penilaian (100 poin)
+
+| Aspek | Bobot | Indikator |
+| --- | --- | --- |
+| Fungsionalitas | 25 | Seluruh kriteria penerimaan terpenuhi; kasus tepi ditangani |
+| Kualitas kode | 20 | `qmllint` dan peringatan compiler nol; konvensi diikuti; tidak ada duplikasi |
+| Arsitektur | 15 | Layering jelas; antarmuka komponen bersih; dependensi satu arah |
+| Performa | 10 | Anggaran frame dipenuhi; tidak ada pekerjaan berat di thread UI |
+| Keamanan | 10 | Input divalidasi; tidak ada eksekusi dari sumber tak tepercaya; hak minimum |
+| Pengujian | 10 | Uji otomatis bermakna; dapat dijalankan headless |
+| Dokumentasi | 10 | README, keputusan arsitektur, dan cara menjalankan |
+
+Interpretasi skor: 90–100 mastery; 75–89 mahir; 60–74 cakap; di bawah 60 ulangi fase yang lemah.
+
+### Tabel progres
+
+| Fase | Selesai | Proyek terkait | Tanggal |
+| --- | --- | --- | --- |
+| 0 Fondasi lingkungan | ☐ | 01 |  |
+| 1 Bahasa QML | ☐ | 01 |  |
+| 2 JavaScript untuk QML | ☐ | 01 |  |
+| 3 Model objek dan reaktivitas | ☐ | 02 |  |
+| 4 Dasar visual | ☐ | 02 |  |
+| 5 Komponen, layout, styling | ☐ | 02 |  |
+| 6 Interaksi, state, animasi | ☐ | 03 |  |
+| 7 Model, view, data | ☐ | 03 |  |
+| 8 Modul dan arsitektur | ☐ | 04 |  |
+| 9 Controls dan UI lanjut | ☐ | 04 |  |
+| 10 Interoperabilitas C++/QML | ☐ | 04 |  |
+| 11 Rendering dan performa | ☐ | 05 |  |
+| 12 Testing dan kualitas | ☐ | 05 |  |
+| 13 Keamanan dan deployment | ☐ | 06 |  |
+| 14 Mastery | ☐ | 06 + ujian kemandirian |  |
+| Bagian B (B0–B9) | ☐ | dibaca bersama Fase 1–4 |  |
+| Bagian B (B10–B19) | ☐ | dibaca bersama Fase 7–12 |  |
+
+## Strategi Belajar
+
+- **Jalankan sebelum membaca.** Ketik dan jalankan contoh lebih dulu, baru baca penjelasannya. Pengalaman lebih dulu membuat penjelasan melekat.
+- **Pola 70/30.** Sekitar 70 persen waktu untuk praktik dan 30 persen untuk membaca.
+- **Aturan tiga langkah.** Baca, tiru, ubah, lalu bangun ulang dari nol tanpa melihat.
+- **Jurnal belajar di git.** Catat setiap galat, penyebabnya, dan perbaikannya. Jurnal itu menjadi referensi pribadi yang paling berharga.
+- **Pengulangan berjarak.** Ulangi *Cek pemahaman* pada hari ke-1, ke-7, dan ke-30 setelah menyelesaikan sebuah modul.
+- **Baca source Qt mingguan.** Satu tipe per minggu, dengan pola di Modul 14.5.
+- **Latih kendali keyboard.** Kuasai pintasan editor dan terminal Anda; antarmuka yang Anda bangun juga harus bisa dioperasikan penuh dari keyboard.
+- **Ukur sebelum mengoptimalkan.** Jangan mengubah apa pun berdasarkan firasat.
+- **Minta bantuan dengan reproduksi minimal.** Saat bertanya di forum atau melapor bug, sertakan satu berkas QML terkecil yang memperlihatkan masalah.
+- **Jalur A.** Mulai dari Modul 0.0, sediakan 1,5–2 kali waktu, dan belajarlah berpasangan bila memungkinkan.
+
+## Bagian E — Kontrol Kualitas Dokumen
+
+### Batas verifikasi (baca dulu)
+
+Konsep, perilaku, dan versi fitur yang dicantumkan telah dicocokkan dengan dokumentasi resmi Qt pada bagian yang memuat klaim yang diaudit. Namun **contoh kode belum dikompilasi atau dijalankan** oleh penyusun pada Qt 6.12, dan **tautan belum diuji otomatis**. Jalankan setiap contoh sekali pada versi Qt target Anda dan jalankan skrip tautan di bawah sebelum mengandalkannya. Hal yang diketahui belum pasti ditandai **\[uji dulu\]**.
+
+### Skrip validasi tautan
+
+Unduh dokumen ini sebagai Markdown (misalnya `kurikulum.md`), lalu jalankan:
+
+```
+grep -oE 'https?://[^ )>]+' kurikulum.md | sort -u | xargs -P8 -I{} curl -s -o /dev/null -L --max-time 15 -w '%{http_code} {}\n' {} | grep -v '^200'
+```
+
+Hasil selain 200 perlu diperiksa manual; sebagian situs menolak `curl` meski halamannya valid.
+
+### Kebijakan versi dokumentasi
+
+Tautan memakai `/qt-6/` yang selalu mengarah ke rilis terbaru. Bila Anda memerlukan keterulangan, pin ke versi tertentu (misalnya `/qt-6.12/`) di seluruh dokumen sekaligus, jangan sebagian.
+
+### Daftar periksa tiap rilis dokumen
+
+1. Tidak ada parameter pelacak (`utm_source`) di tautan.
+2. Setiap contoh kode sudah dijalankan pada versi Qt target.
+3. Setiap modul memuat sembilan unsur template.
+4. Estimasi per fase dan tabel tahap sinkron.
+5. Tanggal dan versi target di bagian atas diperbarui setiap kali Qt merilis versi LTS baru.
+6. Penanda **\[uji dulu\]** ditinjau ulang: hapus bila sudah terbukti, pertahankan bila belum.
+
+## Bagian F — Jejak Perbaikan Audit
+
+| Temuan audit | Perbaikan | Lokasi |
+| --- | --- | --- |
+| `.pragma ComponentBehavior` keliru | Dibedakan dari `.pragma library`; tabel pragma dokumen | Modul 2.3 |
+| `time` bukan tipe dasar; `font`, `matrix4x4`, `quaternion` hilang | Tabel tipe dasar diperbaiki | Modul 1.2 |
+| `qmlscene` deprecated | Ditandai deprecated; `qml` jalur utama | Bagian 4 |
+| Daftar style Controls usang | Style diperbarui, FluentWinUI3, kustomisasi native, dampak kompilasi | Modul 9.2 |
+| Delegate memakai `model.x` | Memakai `required property` | Modul 7.2 |
+| Singleton tanpa sisi CMake | Properti `QT_QML_SINGLETON_TYPE` | Modul 5.3 |
+| `main.cpp` tidak ada, nama target salah | `main.cpp` lengkap, nama target konsisten | Modul 0.2 |
+| Fungsi di luar objek | Dipindah ke dalam objek | Modul 7.3 |
+| Aturan `this` | Mengikuti dokumentasi resmi | Modul 2.2, Fase B9 |
+| `async/await`, BigInt, object spread | Ditandai **\[uji dulu\]** | Modul 2.1, 7.4, Fase B6, B13, B15 |
+| Tautan kompiler dan debugging tidak valid | URL diganti ke halaman yang terverifikasi | Modul 11.4, 11.5, 12.1 |
+| `qmlsc` disarankan tanpa menyebut lisensi | Dinyatakan hanya komersial; `qmlcachegen` sebagai jalur gratis | Modul 11.5 |
+| Runtime dan variabel lingkungan | Modul baru dan tabel variabel | Modul 0.3, Bagian 4 |
+| Kompilasi QML | Modul baru | Modul 11.5 |
+| Threading | Modul baru | Modul 10.7 |
+| C++ Qt 6 modern | Bindable, value type, attached, extended, foreign | Modul 14.1 |
+| Modul Qt Quick ekstra, fitur Qt 6.12 | Modul baru dan penanda versi | Modul 6.4, 9.2, 12.1 |
+| Keamanan debug, XHR, jalur import, isolasi | Tabel risiko dan mitigasi | Modul 13.1 |
+| Distribusi Arch | `PKGBUILD` dan `.desktop` | Modul 13.2, 13.3 |
+| Jebakan konversi tipe | Dimasukkan ke modul terkait | Modul 1.2, 10.4, Fase B14 |
+| Template tidak konsisten | Sembilan unsur di setiap modul | Seluruh modul |
+| Dokumen 1 berupa daftar kata kunci | Ditulis ulang dengan konsep, contoh, jebakan, latihan | Bagian B |
+| Tidak ramah non-IT | Modul 0.0, Jalur A, glosarium, template dengan analogi | Bagian Cara memakai, Modul 0.0, Glosarium |
+| Tidak ada metodologi memodifikasi proyek asing | Modul dan ujian kemandirian | Modul 14.6, Bagian D |
+| Tidak ada peta modul Qt lain | Modul baru | Modul 14.7 |
+| Proyek tanpa kriteria terukur | Spesifikasi dan kriteria penerimaan | Bagian C |
+| Tumpang tindih dokumen, urutan, estimasi, C++ | Pemetaan, jalur C++ paralel, estimasi disinkronkan | Bagian 2 |
+| Tabel progres hanya sebagian fase | Mencakup seluruh fase | Bagian D |
+| Tautan berparameter pelacak, gambar eksternal, versi campur | Tautan bersih, tanpa gambar, kebijakan versi | Seluruh dokumen, Bagian E |
+
+## Penutup
+
+Kurikulum ini memandang penguasaan sebagai kemampuan membuktikan, bukan menghafal: setiap konsep punya contoh yang bisa dijalankan, setiap fase punya latihan dan pengukuran, dan setiap proyek punya kriteria yang bisa diperiksa dengan perintah. Tujuan akhirnya adalah kemandirian: bila Anda sanggup membuka proyek yang belum pernah Anda lihat, memahami arsitekturnya, dan menambahkan fitur dengan aman, Anda telah melewati batas dari mahir menuju mastery.
