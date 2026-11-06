@@ -240,7 +240,7 @@ cmake --build build
 | Linter | Alat analisis statis yang mencari pola buruk |
 | Hot reload | Perubahan kode tampil di aplikasi yang sedang berjalan |
 
-## Fase 0 — Fondasi Lingkungan
+## [Fase 0 — Fondasi Lingkungan][0]
 
 *Tujuan: memahami ekosistem, membangun dan menjalankan aplikasi pertama, dan mampu mendiagnosa lingkungan. Estimasi: 1–2 minggu.*
 
@@ -432,7 +432,7 @@ QML_IMPORT_TRACE=1 qml Main.qml 2>&1 | head -50
 
 **Referensi.** [Qt Quick Scene Graph](https://doc.qt.io/qt-6/qtquick-visualcanvas-scenegraph.html) · [Debugging QML Applications](https://doc.qt.io/qt-6/qtquick-debugging.html) · [Prototyping, Debugging, and Profiling](https://doc.qt.io/qt-6/qtqml-prototyping-debugging-profiling.html) · [Arch Wiki: Qt](https://wiki.archlinux.org/title/Qt)
 
-## Fase 1 — Bahasa QML
+## [Fase 1 — Bahasa QML][1]
 
 *Tujuan: membaca dan menulis dokumen QML dengan benar. Estimasi: 2–3 minggu.*
 
@@ -601,7 +601,7 @@ Item {
 
 **Referensi.** [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html)
 
-## Fase 2 — JavaScript untuk QML (Fondasi)
+## [Fase 2 — JavaScript untuk QML (Fondasi)][2]
 
 *Tujuan: memakai JavaScript secukupnya dan benar di dalam QML. Estimasi: 2–3 minggu. Pendalaman lengkap ada di Bagian B.*
 
@@ -3478,3 +3478,19 @@ Tautan memakai `/qt-6/` yang selalu mengarah ke rilis terbaru. Bila Anda memerlu
 ## Penutup
 
 Kurikulum ini memandang penguasaan sebagai kemampuan membuktikan, bukan menghafal: setiap konsep punya contoh yang bisa dijalankan, setiap fase punya latihan dan pengukuran, dan setiap proyek punya kriteria yang bisa diperiksa dengan perintah. Tujuan akhirnya adalah kemandirian: bila Anda sanggup membuka proyek yang belum pernah Anda lihat, memahami arsitekturnya, dan menambahkan fitur dengan aman, Anda telah melewati batas dari mahir menuju mastery.
+
+[0]: ./bagian-1/README.md
+[1]: ./bagian-2/README.md
+[2]: ./bagian-3/README.md
+[3]: ./bagian-4/README.md
+[4]: ./bagian-5/README.md
+[5]: ./bagian-6/README.md
+[6]: ./bagian-7/README.md
+[7]: ./bagian-8/README.md
+[8]: ./bagian-9/README.md
+[9]: ./bagian-10/README.md
+[10]: ./bagian-11/README.md
+[11]: ./bagian-12/README.md
+[12]: ./bagian-13/README.md
+[13]: ./bagian-14/README.md
+[14]: ./bagian-15/README.md
