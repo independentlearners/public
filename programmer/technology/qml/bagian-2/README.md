@@ -11,7 +11,7 @@ Dokumen ini melanjutkan dokumen Fase 0 dengan pola yang sama: audit singkat, pen
 | 1. Audit Fase 1 dan Modul 1.1 | Pemeriksaan sebelum materi | Selesai |
 | 2. Fase 1 (tingkat fase) | Peran, filosofi, peta, hubungan | Selesai |
 | 3. Modul 1.1 — Sintaks Dasar dan Struktur Dokumen | Sub-bagian 1.1.1 sampai 1.1.7 | Ditulis di dokumen ini |
-| Modul 1.2, 1.3, 1.4 | Tipe data, properti, komponen | Menunggu konfirmasi Anda |
+| Modul 1.2, 1.3, 1.4 | Tipe data, properti, komponen | Selanjutnya |
 
 **Konvensi** sama dengan Fase 0: baris berawalan `$` adalah perintah; tabel **Kata demi kata** menerangkan kode; **\[TAMBAHAN\]** menandai materi di luar kurikulum asli beserta alasannya; **\[amati\]** berarti hasil bergantung mesin Anda dan harus dibuktikan sendiri. Tautan berasal dari dokumentasi resmi, dan belum diuji otomatis.
 
@@ -1721,6 +1721,2178 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 | Modul 1.4 — Komponen dan Reuse | Setelah 1.3 |
 
 ---
+
+## 4. Modul 1.2 — Tipe Data dan Sistem Tipe
+
+**Daftar isi bagian ini:** 4.1 Audit Modul 1.2 · 4.2 Deskripsi dan peran · 4.3 Filosofi modul · 4.4 Visual: peta tipe · 4.5 Estimasi waktu · lalu 1.2.1 sampai 1.2.8 · 4.6 Penutup Modul 1.2
+
+### 4.1 Audit Modul 1.2
+
+Diperiksa pada 7 November 2026 terhadap dokumentasi Qt (*QML Value Types*, *QML Object Attributes*, *Data Type Conversion Between QML and C++*, *QML Enumerations*, *Structure of a QML Document*). Kurikulum Modul 1.2 saya baca ulang sebelum audit ini.
+
+**Terverifikasi (tidak perlu diubah):**
+
+- **Tidak ada tipe `time`.** Konversi `QTime` ke JavaScript menghasilkan `Date`; karena `QTime` tidak punya komponen tanggal, tanggalnya dibuat hanya untuk konversi dan **tidak boleh diandalkan**. Sebaliknya, `Date` ke `QTime` dilakukan lewat `QDateTime` dalam waktu lokal.
+- **`QDate` dan `Date` dipetakan lewat awal hari dalam UTC.** String tanggal-saja di JavaScript (`'2026-11-07'`) ditafsirkan sebagai awal hari **UTC**, sedangkan `new Date(2026, 10, 7)` memakai awal hari **lokal**. Di zona di belakang UTC, hasilnya bisa mundur satu hari. Dokumentasi menyarankan getter UTC atau memakai properti `QDateTime`.
+- **Bulan JavaScript 0–11, Qt 1–12.**
+- **Array-like dari `QVariantList`:** `Array.isArray()` bernilai `false`, tetapi objeknya menyediakan metode array umum dan menyinkronkan `length` otomatis. Sejak Qt 6.5 properti `QVariantList` dapat diubah di tempat dari QML; sejak 6.9 juga `QVariantMap`.
+- **`enumeration` tidak bisa dipakai sebagai tipe properti**; nilai enum adalah bilangan bulat dan disimpan sebagai `int`.
+- **Tipe properti ditegakkan.** Menugaskan nilai bertipe salah saat inisialisasi menghasilkan galat dan objeknya tidak dimuat; salah tipe saat runtime membuat nilai baru tidak ditugaskan beserta galat.
+- Kelas GUI Qt (`QColor`, `QFont`, `QQuaternion`, `QMatrix4x4`) hanya tersedia di QML bila `QtQuick` diimpor.
+
+**Perlu dikoreksi atau dilengkapi:**
+
+1. **Nama istilah dan tautan.** Mulai Qt 6.6/6.7, halaman *QML Basic Types* menjadi *QML Value Types* (`qtqml-typesystem-valuetypes.html`) dan istilah “basic type” menjadi “value type”. Tautan referensi kurikulum (`...basictypes.html`) sebaiknya diganti.
+2. **Tabel tipe belum lengkap.** Belum ada `easingCurve` (tipe nilai dari QtQml, berguna untuk animasi), `variant` (generik lama; pakai `var`), dan `void`. Perlu kolom penyedia: `date`, `string`, `url`, `var`, dan sebagainya disediakan bahasa; `point`, `rect`, `size`, `easingCurve` dari QtQml; `color`, `font`, `vector2d/3d/4d`, `matrix4x4`, `quaternion` dari QtQuick (perlu `import QtQuick`).
+3. **Tiga kelompok tipe tak punya sub-bagian:** `url`, `font`, dan tipe matematika (vektor, matriks, kuaternion). Daftar isi diperluas (`url` ke 1.2.1, `font` ke 1.2.2) dan 1.2.7 ditambahkan.
+4. **`list<T>`.** Contoh kurikulum (`list<Item>`) benar. Dokumentasi *Object Attributes* menyebut `list` untuk **tipe objek** dan menyarankan `var` untuk nilai bebas; dokumentasi *Value Types* terbaru menyebut elemen dapat berupa tipe objek atau tipe nilai. Karena dokumen berbeda, uji sendiri `property list<int>` pada versi Anda **\[uji dulu\]**.
+5. **Jebakan konversi perlu dilengkapi:** string tanggal-saja = UTC; pembagian selalu riil di JavaScript (`5 / 2` adalah `2.5`); perbandingan `real` dengan toleransi; `'5' + 3` menghasilkan `'53'`; teks tidak otomatis menjadi angka pada properti `int`.
+6. **Tidak ada bagian tentang menegakkan tipe.** Sejak Qt 6.7, anotasi tipe pada fungsi **ditegakkan** oleh interpreter dan JIT, dan pragma `FunctionSignatureBehavior` serta `ValueTypeBehavior` (nilai `Assertable` sejak 6.8) mengaturnya. Ditambahkan sebagai 1.2.8.
+7. **Jawaban cek pemahaman.** (1) Pengganti `time`: tipe `date` (JavaScript `Date`) dengan memakai komponen jam-menitnya, atau `int` detik sejak tengah malam bila hanya durasi. (2) Properti terketik lebih baik karena kesalahan tertangkap dini (galat saat nilai salah), tooling (`qmllint`, `qmlls`) dapat menalar, dan kompiler QML dapat menghasilkan kode lebih efisien.
+8. **`typeof` pada tipe nilai** (`color`, `point`, `url`) tidak selalu bernilai seperti dugaan; hasilnya diamati di lab, bukan dihafal.
+
+**Daftar isi Modul 1.2 yang diperbarui:**
+
+| No. | Judul | Asal |
+| --- | --- | --- |
+| 1.2.1 | Primitif dan `url` | Asli 1.2.1, diperluas |
+| 1.2.2 | Geometri, warna, dan font | Asli 1.2.2, diperluas |
+| 1.2.3 | `date` dan konversi `QDate`/`QTime` | Asli 1.2.3 |
+| 1.2.4 | `list` dan `var` | Asli 1.2.4 |
+| 1.2.5 | Enum | Asli 1.2.5 |
+| 1.2.6 | Konversi dan jebakan | Asli 1.2.6, diperluas |
+| 1.2.7 | Vektor, matriks, dan kuaternion | **\[TAMBAHAN\]** |
+| 1.2.8 | Memeriksa dan menegakkan tipe | **\[TAMBAHAN\]** |
+
+### 4.2 Deskripsi dan peran dalam kurikulum
+
+Modul ini mengajarkan tipe-tipe nilai yang dapat dipegang sebuah properti, bagaimana memilih yang tepat, dan bagaimana engine mengonversi antartipe. Pemilihan tipe adalah keputusan desain yang menentukan: seberapa banyak kesalahan ditangkap sebelum aplikasi dijalankan, seberapa cepat kode berjalan, dan seberapa mudah Anda menjembatani QML dengan C++ (Fase 10).
+
+### 4.3 Filosofi modul
+
+**Tipe adalah kontrak.** Properti bertipe berjanji “hanya menerima angka bulat”; engine menjaga janji itu dan memberi tahu bila dilanggar. `var` membatalkan kontrak: fleksibel, tetapi tanpa jaminan dan tanpa bantuan alat. Pilihlah tipe seketat yang masuk akal, longgarkan hanya dengan alasan.
+
+### 4.4 Visual: peta tipe
+
+```
+  TIPE NILAI QML  (disalin saat ditugaskan; diakses di JS lewat "referensi tipe nilai")
+
+  disediakan BAHASA          : bool  int  real/double  string  url  date  var  list<T>  enum  void
+  disediakan QtQml           : point  rect  size  easingCurve
+  disediakan QtQuick (import): color  font  vector2d/3d/4d  matrix4x4  quaternion
+
+  TIPE OBJEK QML (disalin sebagai RUJUKAN)
+                             : Item  Rectangle  Text  ... dan tipe dari berkas .qml Anda
+
+  var = wadah apa saja  -->  fleksibel tetapi tanpa jaminan tipe
+```
+
+### 4.5 Estimasi waktu
+
+Jalur A: 8–10 jam; Jalur B: 3–4 jam.
+
+---
+
+## 1.2.1 Primitif dan url
+
+*Semangat: di balik setiap aplikasi besar ada angka dan teks yang dipilih dengan cermat.*
+
+**Daftar isi 1.2.1:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: lima tipe dasar · d. Contoh 2: tipe ditegakkan · e. Contoh 3: pembagian dan pecahan · f. `url` dan jalur relatif · g. Memilih tipe angka · h. Opsi lain · i. Visual · j. Terminologi · k. Tips · l. Kesalahan umum · m. Hubungan · n. Latihan dan cek · o. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini membahas tipe yang paling sering Anda pakai: `bool`, `int`, `real` dan `double`, `string`, serta `url`. Hampir seluruh properti di aplikasi Anda akan berupa salah satunya.
+
+### b. Konsep dan filosofi
+
+| Tipe | Isi | Catatan |
+| --- | --- | --- |
+| `bool` | `true` atau `false` | Hasil perbandingan |
+| `int` | Bilangan bulat (32-bit bertanda) | Hitungan, indeks, jumlah |
+| `real`, `double` | Bilangan dengan pecahan, presisi ganda | Ukuran, harga, koordinat; keduanya setara |
+| `string` | Teks bebas | Bertipe teks Unicode |
+| `url` | Alamat sumber daya (berkas atau jaringan) | Jalur relatif dihitung dari dokumen |
+
+Semua ini adalah **tipe nilai**: ketika Anda menugaskannya ke properti lain, yang disalin adalah nilainya, bukan rujukannya. Dalam JavaScript, nilai-nilai ini muncul sebagai *primitif* dan angka adalah bilangan ganda IEEE 754 (`typeof` bernilai `'number'` untuk `int`, `real`, dan `double`).
+
+**Filosofi:** pilih tipe yang menyatakan **maksud**. `int` berkata “ini dihitung dalam satuan utuh”; `real` berkata “ini bisa berpecahan”. Alat dan pembaca mendapat informasi gratis dari pilihan Anda.
+
+### c. Contoh 1: lima tipe dasar
+
+Simpan sebagai `Primitif.qml`, jalankan `qml Primitif.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    property bool aktif: true
+    property int jumlah: 3
+    property real harga: 12.5
+    property double ukuran: 0.1
+    property string nama: 'Kopi'
+    property url gambar: 'img/logo.png'
+
+    Component.onCompleted: {
+        console.log('aktif', aktif, typeof aktif);
+        console.log('jumlah', jumlah, typeof jumlah);
+        console.log('harga', harga, typeof harga);
+        console.log('nama', nama, typeof nama, nama.length);
+        console.log('total', jumlah * harga);
+        console.log('gambar', gambar, typeof gambar);
+        console.log(`Beli ${jumlah} ${nama} seharga ${harga}`);
+    }
+}
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `property bool aktif: true` | Deklarasi properti baru bertipe `bool` dengan nilai awal (Modul 1.3). |
+| `property int jumlah: 3` | Bilangan bulat. |
+| `property real harga: 12.5`, `property double ukuran: 0.1` | Bilangan berpecahan; `real` dan `double` setara. |
+| `property string nama: 'Kopi'` | Teks; `nama.length` adalah panjangnya. |
+| `property url gambar: 'img/logo.png'` | Teks yang diubah engine menjadi alamat; relatif terhadap dokumen. |
+| `Component.onCompleted: { ... }` | Blok yang dijalankan sekali setelah objek selesai dibuat (Fase 2). |
+| `console.log(..., typeof aktif)` | Mencetak nilai dan jenis JavaScript-nya; hasil tampil di terminal berawalan `qml:`. |
+| `jumlah * harga` | Ekspresi angka: `3 * 12.5` menghasilkan `37.5`. |
+| `` `Beli ${jumlah} ... ` `` | *Template literal*: teks dengan sisipan ekspresi di dalam `${...}`. |
+
+Catat hasil `typeof gambar` dan bentuk cetak `gambar` **\[amati\]**: nilai `url` biasanya tampil sebagai alamat lengkap, bukan teks yang Anda tulis.
+
+### d. Contoh 2: tipe ditegakkan
+
+Simpan sebagai `Salah.qml` dan jalankan:
+
+```qml
+import QtQuick
+
+Item {
+    property int volume: 'empat'
+}
+```
+
+Menurut dokumentasi, menugaskan nilai bertipe salah pada saat inisialisasi **menghasilkan galat dan objeknya tidak dimuat**; bila salah tipe terjadi saat runtime, nilai baru tidak ditugaskan dan galat dicetak. Catat pesan dan exit code Anda di `galat.md` (1.1.7) **\[amati\]**. Perhatikan bahwa **teks tidak otomatis menjadi angka**: `'empat'` ditolak, dan menurut aturan yang sama `'5'` pada properti `int` juga bukan nilai yang cocok (uji, jangan asumsikan).
+
+### e. Contoh 3: pembagian dan pecahan
+
+Simpan sebagai `Angka.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    Component.onCompleted: {
+        console.log('5 / 2 =', 5 / 2);
+        console.log('floor =', Math.floor(5 / 2));
+        console.log('0.1 + 0.2 =', 0.1 + 0.2);
+        console.log('sama persis?', 0.1 + 0.2 === 0.3);
+        console.log('hampir sama?', Math.abs(0.1 + 0.2 - 0.3) < 1e-9);
+        console.log('NaN:', Number('abc'), Number.isNaN(Number('abc')));
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `5 / 2` | JavaScript tidak punya pembagian bulat: hasilnya `2.5`. |
+| `Math.floor(5 / 2)` | Pembulatan ke bawah untuk mendapat hasil bulat (`2`). |
+| `0.1 + 0.2` | Dalam bilangan ganda hasilnya `0.30000000000000004`, bukan `0.3`. |
+| `... === 0.3` | `false`: jangan membandingkan bilangan berpecahan dengan `===`. |
+| `Math.abs(a - b) < 1e-9` | Bandingkan dengan **toleransi** yang sesuai skala masalah. |
+| `Number('abc')`, `Number.isNaN(...)` | Konversi gagal menghasilkan `NaN` (*bukan angka*); periksa dengan `Number.isNaN`. |
+
+### f. url dan jalur relatif
+
+`url` adalah tipe tersendiri, bukan sekadar `string`. Ketika Anda menugaskan teks ke properti `url` (misalnya `Image.source`), engine menghitung alamatnya **relatif terhadap dokumen** yang berisi penugasan itu, sehingga `'img/logo.png'` benar di aplikasi yang dibangun (resource) maupun saat dijalankan dengan `qml` (berkas). Fungsi `Qt.resolvedUrl('img/logo.png')` melakukan hitungan yang sama secara eksplisit di JavaScript.
+
+```qml
+import QtQuick
+
+Item {
+    property url gambar: 'img/logo.png'
+
+    Component.onCompleted: {
+        console.log('url   :', gambar);
+        console.log('teks  :', gambar.toString());
+        console.log('resolv:', Qt.resolvedUrl('img/logo.png'));
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `gambar.toString()` | Mengubah `url` menjadi teks. |
+| `Qt.resolvedUrl('img/logo.png')` | Menghitung alamat penuh relatif terhadap dokumen saat ini. |
+
+Pada aplikasi yang dibangun (Modul 0.2), hasilnya berbentuk alamat resource (`qrc:/qt/qml/...`); di `qml` berbentuk `file:///...` **\[amati\]**.
+
+### g. Memilih tipe angka
+
+| Pertanyaan | Pilih |
+| --- | --- |
+| Dihitung satuan utuh (jumlah, indeks, banyaknya baris)? | `int` |
+| Bisa berpecahan (ukuran, harga, kecepatan, skala)? | `real` |
+| Berupa urutan bit atau status berhingga? | `int` dengan enum (1.2.5) |
+| Tidak yakin? | `real`, bukan `var` |
+
+### h. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Angka bebas tipe | `property var x` | Hilang jaminan tipe; hindari |
+| Tipe JavaScript `number` | Hanya di dalam blok JS | Bukan tipe properti |
+| Teks yang berisi angka dari pengguna | `Number(teks)` atau `parseFloat(teks)` | Periksa `NaN` |
+| Mata uang atau pecahan yang harus tepat | Simpan satuan terkecil sebagai `int` (mis. sen) | Hindari galat pecahan |
+| Alamat sebagai teks | `string` | Kehilangan perhitungan relatif otomatis |
+| Alamat sebagai alamat | `url` | Disarankan untuk `source` dan sejenisnya |
+
+### i. Visual
+
+```
+  nilai --> properti bertipe
+
+  3        --> int      OK
+  3.7      --> int      ?   (periksa perilaku: dipotong atau ditolak) [amati]
+  'empat'  --> int      GALAT: nilai bertipe salah, objek tidak dimuat
+  12.5     --> real     OK
+  'a.png'  --> url      OK  (dihitung relatif terhadap dokumen)
+  'a.png'  --> string   OK  (tetap teks biasa)
+```
+
+### j. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Tipe nilai (value type) | Tipe yang disalin saat ditugaskan |
+| Primitif | Nilai sederhana di JavaScript (angka, teks, boolean) |
+| `NaN` | *Not a Number*, hasil konversi angka yang gagal |
+| Template literal | Teks berkutip balik dengan sisipan `${...}` |
+| Presisi ganda (double) | Bilangan pecahan 64-bit IEEE 754 |
+| Epsilon / toleransi | Selisih terkecil yang masih dianggap sama |
+| Alamat relatif | Alamat yang dihitung dari lokasi dokumen |
+
+### k. Tips dan praktik terbaik
+
+- Beri tipe pada **setiap** properti. `var` hanya untuk data yang memang bebas bentuk.
+- Bandingkan bilangan pecahan dengan toleransi; bandingkan bilangan bulat dengan `===`.
+- Gunakan `url` untuk sumber daya, bukan `string`.
+- Untuk keuangan, simpan satuan terkecil dalam `int`.
+
+### l. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Galat `Unable to assign ...` saat memuat | Nilai bertipe salah | Periksa tipe properti dan nilai |
+| `0.1 + 0.2 !== 0.3` | Pecahan biner | Toleransi |
+| `5 / 2` bukan `2` | Tidak ada pembagian bulat | `Math.floor` atau `Math.trunc` |
+| `NaN` merambat ke tampilan | Konversi teks gagal | `Number.isNaN` dan nilai cadangan |
+| Gambar tidak ditemukan di aplikasi, ada di `qml` | Jalur relatif berbeda atau berkas tak terdaftar | `Qt.resolvedUrl`, `RESOURCES` (0.2.6) |
+| `typeof` mengejutkan | Salah menduga | Amati dan catat |
+
+### m. Hubungan dengan modul lain
+
+Prasyarat untuk 1.2.2 (tipe bernilai majemuk), Modul 1.3 (mendeklarasikan properti), Fase 2 (JavaScript: angka dan teks), Modul 4.3 (gambar dan `url`), dan Modul 10.2 (pemetaan tipe C++).
+
+### n. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Primitif.qml`, `Salah.qml`, `Angka.qml`, dan contoh `url`. Lalu: (1) tulis `property int bagi: 5 / 2` dan catat nilainya **\[amati\]**; (2) tulis `property int pecah: 3.7` dan catat hasilnya atau galatnya **\[amati\]**; (3) ubah `0.1 + 0.2` menjadi perbandingan dengan toleransi sendiri; (4) catat semua pesan baru di `galat.md`.
+
+**Cek pemahaman.** (1) Mengapa `===` tidak cocok untuk membandingkan bilangan berpecahan? (2) Apa bedanya `url` dan `string`? (3) Kapan memilih `int` dan kapan `real`?
+
+### o. Referensi
+
+- [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html) · [QML Object Attributes: property attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+- [JavaScript Host Environment (Qt)](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [Qt global object](https://doc.qt.io/qt-6/qml-qtqml-qt.html)
+- [MDN: Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number) · [IEEE 754 (Wikipedia)](https://en.wikipedia.org/wiki/IEEE_754)
+
+---
+
+## 1.2.2 Geometri, warna, dan font
+
+*Semangat: setiap piksel yang Anda tata dimulai dari titik, ukuran, dan warna.*
+
+**Daftar isi 1.2.2:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: geometri dan warna · d. Warna dalam berbagai bentuk · e. Font · f. Tipe nilai disalin · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini membahas tipe nilai berstruktur yang menyusun tampilan: `point`, `size`, `rect` (titik dan ukuran), `color` (warna), dan `font` (tipografi). Mereka punya atribut (`x`, `width`, `r`, `pixelSize`) dan dibuat dengan fungsi objek global `Qt`.
+
+### b. Konsep dan filosofi
+
+| Tipe | Atribut | Dibuat dengan | Penyedia |
+| --- | --- | --- | --- |
+| `point` | `x`, `y` | `Qt.point(x, y)` | QtQml |
+| `size` | `width`, `height` | `Qt.size(w, h)` | QtQml |
+| `rect` | `x`, `y`, `width`, `height` | `Qt.rect(x, y, w, h)` | QtQml |
+| `color` | `r`, `g`, `b`, `a` (0–1) | `'#rrggbb'`, `Qt.rgba(...)` | QtQuick |
+| `font` | `family`, `pixelSize`, `bold`, `italic`, ... | `Qt.font({...})` atau `font { ... }` | QtQuick |
+
+`color` dan `font` hanya tersedia bila `QtQuick` diimpor. Selain tipe-tipe ini, objek `Qt` menyediakan banyak fungsi bantu untuk memanipulasi tipe nilai.
+
+**Filosofi:** tipe majemuk membungkus **satu gagasan** menjadi satu nilai (“posisi” bukan dua angka lepas), sehingga bisa dioper, disalin, dan diikat sebagai satu kesatuan.
+
+### c. Contoh 1: geometri dan warna
+
+Simpan sebagai `Geometri.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    property point titik: Qt.point(40, 30)
+    property size ukuran: Qt.size(120, 80)
+    property rect area: Qt.rect(titik.x, titik.y, ukuran.width, ukuran.height)
+    property color warna: Qt.rgba(0.16, 0.62, 0.56, 1.0)
+
+    width: 300
+    height: 160
+
+    Rectangle {
+        x: area.x
+        y: area.y
+        width: area.width
+        height: area.height
+        color: warna
+        border.color: Qt.lighter(warna, 1.5)
+        border.width: 3
+
+        Text {
+            anchors.centerIn: parent
+            text: 'rect ' + area.x + ',' + area.y
+            color: 'white'
+            font { pixelSize: 16; bold: true }
+        }
+    }
+
+    Component.onCompleted: console.log(warna, warna.r, area)
+}
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `property point titik: Qt.point(40, 30)` | Properti bertipe `point`, diisi dengan fungsi pembuat. |
+| `Qt.rect(titik.x, ..., ukuran.height)` | Menyusun `rect` dari atribut `point` dan `size` lain; binding yang ikut berubah bila keduanya berubah. |
+| `Qt.rgba(0.16, 0.62, 0.56, 1.0)` | Warna dari merah, hijau, biru, alfa, masing-masing 0–1. |
+| `x: area.x` ... | Memakai atribut `rect` untuk mengatur posisi dan ukuran. |
+| `Qt.lighter(warna, 1.5)` | Fungsi bantu: warna yang 1,5 kali lebih terang. |
+| `font { pixelSize: 16; bold: true }` | Properti grup `font` (1.1.3). |
+| `console.log(warna, warna.r, area)` | Mencetak warna, komponen merahnya, dan `rect` **\[amati bentuk cetaknya\]**. |
+
+### d. Warna dalam berbagai bentuk
+
+| Bentuk | Contoh | Catatan |
+| --- | --- | --- |
+| Nama | `'steelblue'`, `'red'` | Nama warna SVG |
+| Heksa RGB | `'#2a9d8f'` | `#rrggbb` |
+| Heksa ARGB | `'#802a9d8f'` | **Alfa di depan**: `#aarrggbb`. Jebakan: CSS memakai `#rrggbbaa` |
+| Komponen | `Qt.rgba(r, g, b, a)` | Nilai 0–1 |
+| HSL | `Qt.hsla(h, s, l, a)` | Nilai 0–1 |
+| Manipulasi | `Qt.lighter`, `Qt.darker`, `Qt.alpha`, `Qt.tint` | Fungsi bantu pada objek `Qt` |
+
+Teks seperti `'red'` pada properti `color` dikonversi otomatis; sebuah properti `color` menyimpan **warna**, bukan teks, sehingga Anda dapat membaca `warna.r`.
+
+### e. Font
+
+```qml
+Text {
+    text: 'Halo'
+    font.family: 'monospace'
+    font.pixelSize: 24
+    font.bold: true
+}
+```
+
+| Atribut | Arti |
+| --- | --- |
+| `family` | Nama keluarga huruf |
+| `pixelSize` | Ukuran dalam piksel |
+| `pointSize` | Ukuran dalam poin (bergantung DPI) |
+| `bold`, `italic`, `underline` | Gaya |
+| `weight` | Ketebalan numerik |
+
+Setel **salah satu** dari `pixelSize` atau `pointSize`, bukan keduanya. Menurut dokumentasi, perubahan atribut apa pun pada `font` memicu **satu** handler `onFontChanged`; handler untuk atribut individu seperti `onFont.pixelSizeChanged` **tidak valid**. Nilai bawaan dan daftar lengkap ada di halaman `font` di dokumentasi.
+
+### f. Tipe nilai disalin
+
+Tipe nilai bersifat **disalin**: menugaskannya ke properti lain membuat salinan terpisah.
+
+```qml
+import QtQuick
+
+Item {
+    property point a: Qt.point(1, 2)
+    property point b
+
+    Component.onCompleted: {
+        b = a;
+        b.x = 99;
+        console.log(a.x, b.x);
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `b = a;` | Penugasan imperatif: `b` berisi **salinan** nilai `a`. |
+| `b.x = 99;` | Mengubah salinan `b` saja. |
+| `console.log(a.x, b.x)` | Dugaan: `1 99`; `a` tidak ikut berubah **\[amati\]**. |
+
+Bandingkan dengan **tipe objek** (`Item`, `Rectangle`): menugaskan dua properti ke objek yang sama berarti keduanya merujuk satu objek, dan mengubah objek tampak di keduanya.
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| `size` dari teks | `sourceSize: '100x200'` | Teks berbentuk `lebarxtinggi` dikonversi otomatis |
+| Warna dengan transparansi | `Qt.rgba(...)`, `'#aarrggbb'`, atau properti `opacity` | `opacity` memengaruhi seluruh objek, bukan hanya warna |
+| Font bersama | Satu `QtObject` atau tipe sendiri berisi `property font` | Konsistensi tipografi (Fase 5) |
+| Warna tema | Palet dan style Controls | Fase 9 |
+| Titik dan ukuran di C++ | `QPointF`, `QSizeF`, `QRectF` | Dipetakan otomatis ke `point`, `size`, `rect` |
+
+### h. Visual
+
+```
+  point  (x,y)            size (w,h)           rect = point + size
+     .---------> x           +------+             (x,y) +---------+
+     |                       |  h   |                   |         | height
+     v y                     +--w---+                   +---width-+
+
+  color:  ARGB  a r g b      Qt.rgba(r,g,b,a)  0..1       '#aarrggbb'  (alfa DI DEPAN)
+  font :  family pixelSize bold italic ...   (satu nilai; satu handler onFontChanged)
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| `point`, `size`, `rect` | Tipe nilai geometri |
+| `color` | Tipe warna ARGB |
+| ARGB | Urutan alfa, merah, hijau, biru |
+| `font` | Tipe nilai tipografi |
+| `pixelSize` / `pointSize` | Ukuran font dalam piksel / poin |
+| Tipe nilai dan tipe objek | Disalin / dirujuk |
+| Fungsi pembuat | `Qt.point`, `Qt.size`, `Qt.rect`, `Qt.rgba` |
+
+### j. Tips dan praktik terbaik
+
+- Pakai `Qt.rgba` atau heksa untuk warna eksplisit; nama warna hanya untuk percobaan cepat.
+- Gunakan `rect` ketika empat nilai berhubungan sebagai satu kotak.
+- Tentukan satu satuan ukuran font (`pixelSize` atau `pointSize`) untuk seluruh aplikasi.
+- Ingat `#aarrggbb`, bukan `#rrggbbaa`.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Warna transparan tak terduga | Menulis `#rrggbbaa` seperti CSS | Pakai `#aarrggbb` atau `Qt.rgba` |
+| Dua `font` berbeda ukuran | Menyetel `pixelSize` dan `pointSize` bersamaan | Pilih satu |
+| `onFont.pixelSizeChanged` galat | Atribut tipe nilai tak punya signal sendiri | Pakai `onFontChanged` |
+| Salinan tak ikut berubah | Tipe nilai disalin | Rujuk tipe objek, atau tugaskan ulang |
+| `color` tak dikenali | `QtQuick` belum diimpor | `import QtQuick` |
+| `Qt.rect(...)` tidak dikenal | Salah ejaan atau lupa objek `Qt` | `Qt.rect` |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 4 (`Item`, posisi, `Rectangle`, `Text`), Fase 5 (layout dan style), Fase 6 (animasi pada properti), dan Fase 9 (tema dan palet).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Geometri.qml`. (1) Ganti `Qt.rgba` dengan `'#802a9d8f'` dan amati transparansinya; (2) tambahkan `font.italic`; (3) buat dua properti `point` dengan `b = a` dan buktikan salinan; (4) tulis handler `onFontChanged` pada sebuah `Text` dan ubah `font.pixelSize` lewat `MouseArea`; catat kapan handler berjalan.
+
+**Cek pemahaman.** (1) Apa arti `#802a9d8f` pada Qt? (2) Mengapa mengubah `b.x` tidak mengubah `a.x`? (3) Mengapa `onFont.pixelSizeChanged` tidak valid?
+
+### n. Referensi
+
+- [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html) · [Qt global object](https://doc.qt.io/qt-6/qml-qtqml-qt.html)
+- [font (QML value type)](https://doc.qt.io/qt-6/qml-font.html) · [Item](https://doc.qt.io/qt-6/qml-qtquick-item.html)
+- [Text](https://doc.qt.io/qt-6/qml-qtquick-text.html) · [Rectangle](https://doc.qt.io/qt-6/qml-qtquick-rectangle.html)
+
+---
+
+## 1.2.3 date dan konversi QDate/QTime
+
+*Semangat: waktu adalah bagian tersulit dari pemrograman, dan Anda memilih untuk memahaminya dengan benar.*
+
+**Daftar isi 1.2.3:** a. Deskripsi dan peran · b. Konsep: satu momen, banyak tampilan · c. Contoh: bulan, zona, dan UTC · d. Konversi dengan C++ · e. Menghitung dan memformat · f. Memilih representasi waktu · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Tipe `date` menyimpan tanggal dan waktu, dan di QML ia adalah **objek `Date` JavaScript**. Tidak ada tipe `time` terpisah. Bagian ini menjelaskan cara memakainya dengan benar, dan jebakan zona waktu dan penomoran bulan yang membuat banyak aplikasi menampilkan hari yang salah.
+
+### b. Konsep: satu momen, banyak tampilan
+
+- `Date` menyimpan **satu momen absolut**: jumlah milidetik sejak 1 Januari 1970 UTC. Tampilannya (tanggal dan jam) bergantung pada **zona waktu** yang dipakai untuk membacanya.
+- Pembuatan menentukan zona: `new Date(2026, 10, 7)` memakai **waktu lokal** (awal hari di zona Anda), sedangkan `new Date('2026-11-07')` (teks tanggal-saja) ditafsirkan sebagai awal hari **UTC**. Di zona yang tidak sama dengan UTC, keduanya adalah momen **berbeda**.
+- **Bulan JavaScript 0 sampai 11** (Januari = 0); Qt menomori bulan 1 sampai 12. Hari (`getDate()`) dimulai dari 1.
+- **Pengganti tipe `time`:** gunakan `date` dan baca komponen jam, menit, dan detiknya (`getHours()`, `getMinutes()`), atau simpan `int` detik sejak tengah malam bila Anda hanya butuh durasi atau jam dalam sehari.
+
+### c. Contoh: bulan, zona, dan UTC
+
+Simpan sebagai `Tanggal.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    property date sekarang: new Date()
+    property date lahir: new Date(2000, 0, 31)
+
+    Component.onCompleted: {
+        const d1 = new Date('2026-11-07');
+        const d2 = new Date(2026, 10, 7);
+
+        console.log('d1 UTC   :', d1.toISOString());
+        console.log('d2 lokal :', d2.toISOString());
+        console.log('bulan JS :', d2.getMonth(), '-> bulan Qt:', d2.getMonth() + 1);
+        console.log('d1 sama d2?', d1.getTime() === d2.getTime());
+        console.log(Qt.formatDate(d1, 'yyyy-MM-dd'));
+        console.log(Qt.formatTime(d2, 'hh:mm'));
+        console.log(Qt.formatDateTime(sekarang, 'dd/MM/yyyy hh:mm'));
+        console.log(Math.round((sekarang - lahir) / 86400000), 'hari sejak lahir');
+    }
+}
+```
+
+```bash
+$ qml Tanggal.qml
+$ TZ=UTC qml Tanggal.qml
+$ TZ=Asia/Jakarta qml Tanggal.qml
+$ TZ=America/Los_Angeles qml Tanggal.qml
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `property date sekarang: new Date()` | Properti `date` berisi saat ini. |
+| `new Date(2000, 0, 31)` | 31 **Januari** 2000, waktu lokal (bulan 0). |
+| `new Date('2026-11-07')` | Teks tanggal-saja: awal hari **UTC**. |
+| `new Date(2026, 10, 7)` | 7 **November** 2026 (bulan 10), awal hari **lokal**. |
+| `toISOString()` | Mencetak momen dalam UTC (akhiran `Z`). |
+| `getMonth()` | Bulan 0–11; `+ 1` mengubahnya ke penomoran Qt. |
+| `getTime()` | Milidetik sejak epoch; dipakai untuk membandingkan momen. |
+| `Qt.formatDate/formatTime/formatDateTime` | Memformat `Date` memakai pola (`yyyy`, `MM`, `dd`, `hh`, `mm`) dalam waktu lokal. |
+| `(sekarang - lahir) / 86400000` | Selisih dua `Date` dalam milidetik dibagi milidetik per hari. |
+| `TZ=... qml ...` | Prefiks variabel (0.0.3) yang mengubah zona waktu proses. |
+
+**Yang akan Anda lihat \[amati\].** Pada `TZ=UTC`, `d1` dan `d2` adalah momen yang sama. Pada zona UTC+7 (mis. `Asia/Jakarta`), `d2` (tengah malam lokal) adalah pukul 17.00 UTC hari sebelumnya, tujuh jam sebelum `d1`, sehingga `getTime()` berbeda. Pada zona di belakang UTC (mis. `America/Los_Angeles`), `d1` jatuh pada sore hari **sebelumnya** di waktu lokal, dan `Qt.formatDate(d1, ...)` menampilkan tanggal yang mundur satu hari. Inilah jebakan yang diperingatkan dokumentasi Qt.
+
+### d. Konversi dengan C++
+
+Tabel berikut dari dokumentasi *Data Type Conversion Between QML and C++*:
+
+| C++ | JavaScript (QML) | Catatan |
+| --- | --- | --- |
+| `QDateTime` | `Date` | Konversi dua arah otomatis; **paling kokoh** untuk pertukaran |
+| `QDate` | `Date` | Diwakili **awal hari dalam UTC**. Kembali ke `QDate` lewat `QDateTime::date()` dalam waktu lokal, kecuali bila bentuk UTC-nya bertepatan dengan awal hari berikutnya, yang memakai bentuk UTC |
+| `QTime` | `Date` | Tanggal dibuat **hanya untuk konversi**; jangan andalkan komponen tanggalnya |
+| `Date` | `QTime` | Dikonversi lewat `QDateTime` lokal, lalu `time()` |
+
+Akibat praktis: bila properti C++ berupa `QDate`, bacalah di QML dengan `getUTCFullYear()`, `getUTCMonth()`, dan `getUTCDate()`, bukan getter lokal. Namun cara paling aman adalah **menghindari `QDate` dan `QTime` di antarmuka QML** dan memakai `QDateTime` (atau epoch/ISO) sehingga satu standar waktu jelas di kedua sisi.
+
+### e. Menghitung dan memformat
+
+```qml
+import QtQuick
+
+Item {
+    function tambahHari(d, n) {
+        const x = new Date(d);
+        x.setDate(x.getDate() + n);
+        return x;
+    }
+
+    Component.onCompleted: {
+        const awal = new Date(2026, 10, 7, 9, 30);
+        const nanti = tambahHari(awal, 30);
+        console.log(Qt.formatDateTime(nanti, 'yyyy-MM-dd hh:mm'));
+        console.log(nanti > awal, nanti.getTime() - awal.getTime());
+        console.log(awal.toLocaleDateString(), awal.toLocaleTimeString());
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `new Date(d)` | Menyalin `Date`, supaya aslinya tidak berubah. |
+| `x.setDate(x.getDate() + n)` | Menambah hari secara kalender (mengurus pergantian bulan dan tahun). |
+| `nanti > awal` | `Date` dapat dibandingkan dengan `<` dan `>`; untuk kesamaan, bandingkan `getTime()`, bukan `===`. |
+| `toLocaleDateString()` | Format sesuai lokal sistem; dibahas lebih jauh bersama `Qt.locale()` di Fase 9. |
+
+Waspadai **peralihan DST**: menambah 24 jam (`getTime() + 86400000`) tidak sama dengan menambah satu hari kalender di zona dengan DST; gunakan `setDate`.
+
+### f. Memilih representasi waktu
+
+| Kebutuhan | Representasi | Catatan |
+| --- | --- | --- |
+| Momen yang dikirim atau disimpan | Epoch milidetik sebagai `real` atau `double` | **Bukan `int`**: sekitar `1.7e12` melampaui rentang 32-bit |
+| Epoch dalam detik | `real` atau `double` | `int` 32-bit berhenti sekitar tahun 2038 |
+| Dibaca manusia atau antarsistem | Teks ISO 8601 (`'2026-11-07T09:30:00Z'`) | Jelas dan dapat diurutkan sebagai teks |
+| Pertukaran dengan C++ | `QDateTime` | Satu standar zona di kedua sisi |
+| Tanggal kalender tanpa jam (ulang tahun) | Tiga bilangan `int` (tahun, bulan, hari) atau teks `'2000-01-31'` | Hindari `Date` yang tak sengaja bergeser zona |
+| Durasi atau jam dalam sehari | `int` detik | Pengganti `time` |
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Format bersama locale | `Qt.locale().toString(date, format)` | Fase 9 |
+| Pustaka tanggal JavaScript | `.js` pustaka (mis. dayjs) di `QML_FILES` | Ikuti lisensinya; kecil dan murni JS |
+| Perhitungan berat | Di C++ memakai `QDateTime` dan `QTimeZone` | Fase 10 |
+| Waktu sekarang berulang | `Timer` dan `new Date()` | Fase 6 |
+| Zona waktu tertentu | Hitung di C++ (`QTimeZone`) | JavaScript hanya lokal dan UTC |
+
+### h. Visual
+
+```
+  satu momen (epoch ms)  ------------------+
+                                           |
+   dibaca di UTC        ----> 2026-11-06 17:00  (zona UTC+7: tengah malam 7 Nov lokal)
+   dibaca di UTC+7      ----> 2026-11-07 00:00
+   dibaca di UTC-8      ----> 2026-11-06 09:00
+
+   new Date(2026, 10, 7)    = awal hari LOKAL     (bulan 10 = November)
+   new Date('2026-11-07')   = awal hari UTC       (teks tanggal-saja)
+   bulan: JS 0..11   |   Qt 1..12
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Epoch | Titik awal hitungan waktu: 1 Januari 1970 UTC |
+| UTC | Waktu universal terkoordinasi |
+| Waktu lokal | Waktu menurut zona pengguna |
+| ISO 8601 | Standar penulisan tanggal-waktu teks |
+| DST | Waktu musim panas; menggeser jam di beberapa zona |
+| `QDateTime`, `QDate`, `QTime` | Tipe tanggal-waktu di C++ |
+| Momen absolut | Titik pada garis waktu, tidak bergantung zona |
+
+### j. Tips dan praktik terbaik
+
+- Simpan dan kirim momen sebagai epoch atau ISO UTC; ubah ke waktu lokal hanya saat menampilkan.
+- Tulis `new Date(tahun, bulan - 1, hari)` dengan komentar jelas, dan dokumentasikan penomoran bulan di mana pun Anda mengubah.
+- Hindari `QDate` dan `QTime` di antarmuka C++/QML.
+- Selalu uji logika tanggal dengan `TZ=UTC` dan satu zona lain.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Tanggal mundur satu hari | Teks tanggal-saja = UTC, dibaca lokal | Getter UTC, atau `new Date(y, m, d)` |
+| Bulan salah satu | Lupa 0–11 | `bulan - 1` saat membuat, `+ 1` saat menampilkan |
+| `time` tidak dikenal | Tipe tidak ada | Pakai `date` atau `int` detik |
+| Epoch tidak muat di `int` | 32-bit | `real` atau `double` |
+| Jam bergeser pada peralihan DST | Menambah 24 jam | `setDate` |
+| Membandingkan `Date` dengan `===` | Dua objek berbeda | Bandingkan `getTime()` |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk 1.2.6 (jebakan konversi), Fase 2 (objek `Date`), Fase 6 (`Timer`), Fase 7 (data dari jaringan), dan Fase 10 (jembatan `QDateTime`).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Tanggal.qml` dengan empat zona di bagian c dan catat keluaran `d1`/`d2`/`formatDate`. Lalu buat fungsi `umurTahun(lahir)` yang menghitung umur dengan benar sampai hari ini dan ujilah dengan `TZ=UTC` dan satu zona lain.
+
+**Cek pemahaman.** (1) Apa pengganti tipe `time`? (2) Mengapa `new Date('2026-11-07')` dan `new Date(2026, 10, 7)` bisa berbeda? (3) Mengapa epoch milidetik tidak boleh disimpan di `int`?
+
+### n. Referensi
+
+- [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html) · [Qt global object: formatDate, formatTime, formatDateTime](https://doc.qt.io/qt-6/qml-qtqml-qt.html)
+- [MDN: Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) · [ISO 8601 (Wikipedia)](https://en.wikipedia.org/wiki/ISO_8601)
+- [JavaScript Host Environment (Qt)](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html)
+
+---
+
+## 1.2.4 list dan var
+
+*Semangat: kelonggaran adalah alat yang kuat, dan kekuatan menuntut kehati-hatian.*
+
+**Daftar isi 1.2.4:** a. Deskripsi dan peran · b. Konsep: tiga jenis koleksi · c. Contoh: perilaku nyata · d. Mengubah isi dan pemberitahuan · e. Pola pembaruan yang aman · f. `list` dari C++ dan sequence type · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini membahas dua tipe fleksibel: `list<T>` (koleksi objek QML bertipe) dan `var` (wadah serba bisa). Memahami perilakunya, terutama **kapan perubahan isi diberitahukan**, mencegah bug tampilan yang “diam”.
+
+### b. Konsep: tiga jenis koleksi
+
+| Jenis | Isi | Ciri |
+| --- | --- | --- |
+| `list<T>` | Daftar objek QML bertipe `T` (mis. `list<Item>`) | Terketik; menjadi nilai `default property` (`data`, `children`, `states`); bukan `Array` JavaScript |
+| `var` | Nilai JavaScript apa pun: angka, teks, objek `{}`, larik `[]` | Tanpa jaminan tipe; sangat fleksibel |
+| Larik JavaScript (di dalam fungsi) | `[1, 2, 3]` | Metode array lengkap; bukan properti |
+
+Dokumentasi menyatakan: bila Anda ingin menyimpan daftar **nilai yang tidak harus berupa objek QML**, deklarasikan properti `var`. Catatan: dokumentasi tipe nilai terbaru menyebut `list` boleh berelemen tipe objek atau tipe nilai; uji `property list<int>` pada versi Anda **\[uji dulu\]**.
+
+`var` menyimpan **apa saja**, tetapi dengan harga: engine dan `qmllint` tidak tahu isinya, dan `onXChanged` hanya terpancar ketika **properti itu sendiri** ditugaskan ulang (bagian d).
+
+### c. Contoh: perilaku nyata
+
+Simpan sebagai `Daftar.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+
+    property var bebas: ({ kunci: 'nilai', angka: 7 })
+    property var larik: [1, 2, 3]
+    property list<Item> daftar: [
+        Item { objectName: 'satu' },
+        Item { objectName: 'dua' }
+    ]
+
+    onBebasChanged: console.log('onBebasChanged')
+    onLarikChanged: console.log('onLarikChanged')
+
+    Component.onCompleted: {
+        console.log(daftar.length, daftar[0].objectName);
+        console.log('larik isArray:', Array.isArray(larik), typeof bebas);
+
+        bebas.kunci = 'baru';
+        console.log('--- isi objek diubah');
+
+        bebas = { kunci: 'ganti', angka: 8 };
+        console.log('--- objek diganti');
+
+        larik.push(4);
+        console.log('--- push selesai, panjang', larik.length);
+
+        larik = larik.concat([5]);
+        console.log('--- larik diganti, panjang', larik.length);
+    }
+}
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `property var bebas: ({ kunci: 'nilai', angka: 7 })` | Objek JavaScript di `var`. **Kurung** `( ... )` wajib: tanpa kurung, `{ ... }` dibaca sebagai blok kode. |
+| `property var larik: [1, 2, 3]` | Larik di `var`. |
+| `property list<Item> daftar: [ Item {...}, Item {...} ]` | Daftar dua objek `Item`; kurung siku dan koma. |
+| `onBebasChanged`, `onLarikChanged` | Handler yang dipanggil bila **properti** `bebas` atau `larik` ditugaskan nilai baru (1.3.6). |
+| `daftar.length`, `daftar[0].objectName` | `list` dapat dibaca lewat `length` dan indeks. |
+| `Array.isArray(larik)` | `true` untuk larik JavaScript di `var`. |
+| `bebas.kunci = 'baru'` | Mengubah **isi** objek. |
+| `bebas = { ... }` | **Menugaskan ulang** properti. |
+| `larik.push(4)` | Menambah elemen pada larik yang sama (mengubah isi). |
+| `larik.concat([5])` | Menghasilkan larik **baru**, lalu ditugaskan ulang. |
+
+**Dugaan yang harus Anda buktikan \[amati\].** `onBebasChanged` terpanggil **hanya** pada penugasan ulang (`bebas = {...}`), tidak pada `bebas.kunci = 'baru'`; `onLarikChanged` terpanggil hanya pada `larik = larik.concat(...)`, tidak pada `push`. Itulah inti jebakan: mengubah **isi** sebuah `var` tidak memberi tahu pihak yang bergantung padanya.
+
+### d. Mengubah isi dan pemberitahuan
+
+- Ikatan (binding) dan handler perubahan bereaksi terhadap **penugasan properti**. Untuk `var` berisi objek atau larik, mengubah isi di tempat tidak menugaskan properti, sehingga tampilan yang terikat tidak diperbarui.
+- Solusinya: **buat nilai baru dan tugaskan ulang** (pola di bagian e), atau memakai model yang memang memancarkan pemberitahuan perubahan (`ListModel`, model C++; Fase 7).
+- `list<T>` juga bukan `Array`: baca dengan `length` dan indeks; operasi mengubah (menambah/menghapus) dilakukan lewat tugas ulang seluruh daftar atau lewat API pemiliknya. Bila metode array tersedia atau tidak pada `list` di versi Anda, buktikan dengan percobaan (`daftar.push(...)`) **\[amati\]**.
+
+### e. Pola pembaruan yang aman
+
+```qml
+property var larik: [1, 2, 3]
+
+function tambah(x) {
+    larik = larik.concat([x]);
+}
+
+function hapusPertama() {
+    larik = larik.slice(1);
+}
+
+function gandakan() {
+    larik = larik.map(v => v * 2);
+}
+
+function ubahKunci(k, nilai) {
+    bebas = Object.assign({}, bebas, { [k]: nilai });
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `larik.concat([x])` | Larik baru dengan tambahan `x`; asli tidak berubah. |
+| `larik.slice(1)` | Larik baru tanpa elemen pertama. |
+| `larik.map(v => v * 2)` | Larik baru hasil transformasi tiap elemen; `=>` adalah fungsi panah (Fase 2). |
+| `Object.assign({}, bebas, { [k]: nilai })` | Objek baru berisi salinan `bebas` dengan satu kunci diganti. |
+| Penugasan ulang di tiap fungsi | Memicu `onLarikChanged` dan binding yang bergantung padanya. |
+
+### f. list dari C++ dan sequence type
+
+- Daftar dari C++ (`QVariantList`) tampil di QML sebagai **array-like**: dapat dipakai seperti larik JavaScript (metode array tersedia dan `length` tersinkron), tetapi `Array.isArray()` bernilai **`false`**. Sejak Qt 6.5 properti `QVariantList` pada tipe C++ dapat diubah di tempat dari QML.
+- *Sequence type* (mis. `QList<int>`, `QList<qreal>`, `QList<bool>`, `QStringList`) juga berperilaku seperti larik JavaScript.
+- Untuk mendapatkan larik JavaScript sungguhan: `Array.from(x)` (karena array-like punya `length` dan indeks).
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Daftar yang diamati perubahannya | `ListModel` | Fase 7 |
+| Daftar besar dari C++ | Model C++ (`QAbstractListModel`) | Fase 10 |
+| Satu “baris” data bernama | Tipe sendiri (`QtObject` dengan properti terketik) | Lebih aman daripada objek `var` |
+| Menyimpan beberapa nilai tetap | `readonly property var` | Tidak boleh diganti, isi boleh dibaca |
+| JSON dari jaringan | `var` lalu validasi | Fase 7 |
+| Tipe untuk daftar objek | `list<Tipe>` | Terketik dan terbaca alat |
+
+### h. Visual
+
+```
+  var bebas = { a: 1 }
+       |
+       |  bebas.a = 2        isi berubah, properti TIDAK ditugaskan  --> TIDAK ada onBebasChanged
+       |  bebas = { a: 2 }   properti ditugaskan ulang                --> onBebasChanged  (binding ikut)
+
+  list<Item>  : [Item, Item]   baca: length, indeks     (bukan Array JavaScript)
+  QVariantList: array-like     metode array ya, Array.isArray -> false
+  Array.from(x) -> larik JavaScript sungguhan
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| `list<T>` | Properti berisi daftar objek QML bertipe `T` |
+| `var` | Tipe serba bisa |
+| Array-like | Objek mirip larik (indeks dan `length`) |
+| Penugasan ulang | Mengganti nilai properti seluruhnya |
+| Mutasi (mengubah di tempat) | Mengubah isi tanpa mengganti nilai |
+| Sequence type | Tipe urutan C++ yang tampil seperti larik |
+| Immutable (tak berubah) | Gaya membuat salinan baru alih-alih mengubah |
+
+### j. Tips dan praktik terbaik
+
+- Utamakan `list<T>` untuk daftar objek, dan model untuk data yang berubah.
+- Perlakukan isi `var` sebagai **tak berubah**: buat nilai baru dan tugaskan ulang.
+- Jangan memakai `var` hanya karena malas memilih tipe (1.2).
+- Bungkus data berstruktur dalam tipe sendiri bila bentuknya tetap.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Tampilan tidak berubah setelah `push` | Mutasi tidak memicu pemberitahuan | Tugaskan ulang (`concat`, `slice`, `map`) |
+| `{ ... }` dibaca sebagai blok | Objek tanpa kurung di binding | `({ ... })` |
+| `Array.isArray()` salah pada data C++ | Array-like | `Array.from(x)` |
+| `list<int>` ditolak | Dokumentasi lama membatasi tipe objek | Uji versi Anda, atau pakai `var` |
+| Menulis `daftar.push(...)` pada `list` | `list` bukan `Array` | Tugaskan ulang atau gunakan API pemilik |
+| Data bentuk bebas di mana-mana | `var` merajalela | Tipe sendiri dan `required property` |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.3 (properti dan handler perubahan), Fase 2 (metode Array), Fase 3 (binding dan pemberitahuan), Fase 7 (model dan view), dan Fase 10 (data dari C++).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Daftar.qml` dan cocokkan dugaan di bagian c dengan hasil Anda. Lalu: (1) coba `daftar.push(Item {})` dan catat hasilnya; (2) coba `property list<int> angka: [1, 2, 3]` dan catat hasilnya **\[uji dulu\]**; (3) buat tombol yang menambah elemen ke `larik` dengan `concat` dan tampilkan `larik.length` di `Text` yang terikat.
+
+**Cek pemahaman.** (1) Mengapa `larik.push(4)` tidak memicu `onLarikChanged`? (2) Mengapa objek literal di binding perlu kurung? (3) Apa pengganti `list` bila isinya bukan objek QML?
+
+### n. Referensi
+
+- [QML Object Attributes: list properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html)
+- [Data Type Conversion: sequence types](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html) · [QML Sequence Types](https://doc.qt.io/qt-6/qml-sequence-types.html)
+- [MDN: Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) · [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html)
+
+---
+
+## 1.2.5 Enum
+
+*Semangat: nama yang bermakna mengalahkan angka ajaib, setiap saat.*
+
+**Daftar isi 1.2.5:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: enum milik Qt · d. Contoh 2: enum buatan sendiri · e. Pembantu `Qt.enum...` · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Enum memberi **nama** pada sekumpulan nilai bulat yang terbatas (status, mode, arah). Kode `status === 1` tidak menjelaskan apa-apa; `status === Status.Mode.Loading` menjelaskan segalanya. Anda akan memakai enum bawaan Qt (`Text.AlignRight`, `Image.Ready`) setiap hari dan membuat sendiri bila sebuah komponen punya keadaan berhingga.
+
+### b. Konsep dan filosofi
+
+- Menurut dokumentasi, **enum bukan tipe tersendiri di QML**: ia adalah **properti dari tipe pembungkusnya**, dan nilainya diwakili oleh tipe dasarnya (bilangan bulat). Untuk nilai dalam rentang bilangan bulat 32-bit bertanda, `int` aman untuk menyimpannya.
+- Karena itu **`enumeration` tidak dapat dipakai sebagai tipe properti**: deklarasikan `property int mode`.
+- Enum harus dipegang oleh **tipe bernama**; namespace QML juga tipe yang boleh menampung enum. Dari luar, nilai diacu sebagai `<Tipe>.<Nilai>`; untuk enum yang dideklarasikan di QML, gunakan juga nama enumnya agar jelas: `Status.Mode.Loading`.
+- Enum dapat didefinisikan di **QML** (kata kunci `enum`, sejak Qt 5.10) atau di **C++** (`Q_ENUM`, Fase 10).
+
+**Filosofi:** keadaan berhingga sebaiknya dinyatakan dengan **himpunan nama**, bukan angka dan teks lepas. Salah ketik nama enum dikenali alat; salah ketik angka tidak.
+
+### c. Contoh 1: enum milik Qt
+
+Simpan sebagai `EnumQt.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    width: 300
+    height: 100
+
+    property int nilai: teks.horizontalAlignment
+
+    Text {
+        id: teks
+        anchors.fill: parent
+        text: 'Rata kanan'
+        horizontalAlignment: Text.AlignRight
+    }
+
+    Component.onCompleted: console.log(nilai, Text.AlignRight, Text.AlignLeft)
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `Text.AlignRight` | Nilai enum milik tipe `Text`; ditulis `<Tipe>.<Nilai>`. |
+| `horizontalAlignment: Text.AlignRight` | Memberi properti `Text` nilai enum. |
+| `property int nilai: teks.horizontalAlignment` | Enum disimpan di properti `int`: bukti bahwa ia berwujud bilangan bulat. |
+| `console.log(nilai, Text.AlignRight, Text.AlignLeft)` | Mencetak nilai angka sebenarnya **\[amati\]**. |
+
+### d. Contoh 2: enum buatan sendiri
+
+Buat dua berkas di folder yang sama. `Status.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+
+    enum Mode {
+        Idle,
+        Loading,
+        Error = 10
+    }
+
+    property int mode: Status.Mode.Idle
+
+    function nama() {
+        switch (root.mode) {
+        case Status.Mode.Idle:
+            return 'idle';
+        case Status.Mode.Loading:
+            return 'loading';
+        case Status.Mode.Error:
+            return 'error';
+        default:
+            return 'tidak dikenal';
+        }
+    }
+}
+```
+
+`UjiStatus.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    Status { id: s }
+
+    Component.onCompleted: {
+        console.log(s.mode, s.nama());
+        s.mode = Status.Mode.Loading;
+        console.log(s.mode, s.nama());
+        s.mode = Status.Mode.Error;
+        console.log(s.mode, s.nama());
+        console.log(Status.Mode.Idle, Status.Mode.Loading, Status.Mode.Error);
+    }
+}
+```
+
+```bash
+$ qml UjiStatus.qml
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `enum Mode { ... }` | Deklarasi enum di dalam tipe `Status`. Nama enum dan nilainya **diawali huruf besar**. |
+| `Idle, Loading, Error = 10` | Tanpa angka, nilai berurutan dari 0 (`Idle` 0, `Loading` 1); `Error = 10` menetapkan angka eksplisit. |
+| `property int mode: Status.Mode.Idle` | Properti `int` berisi nilai enum; nilai awal diacu dengan nama bertingkat. |
+| `switch (root.mode) { case ...: return ...; }` | Percabangan menurut nilai (Fase 2); tiap nilai punya nama. |
+| `Status { id: s }` | Memakai tipe `Status` (berkas sama folder, 1.1.6). |
+| `s.mode = Status.Mode.Loading` | Mengubah status dengan nama, bukan angka. |
+
+Dugaan keluaran: `0 idle`, `1 loading`, `10 error`, dan `0 1 10` **\[amati\]**. Coba juga acuan `Status.Loading` (tanpa nama enum) dan catat apakah ia berfungsi di versi Anda **\[amati\]**; bentuk bertingkat `Status.Mode.Loading` selalu lebih jelas.
+
+### e. Pembantu Qt.enum...
+
+Objek global `Qt` menyediakan tiga pembantu untuk memetakan **nama kunci** dan **nilai angka**:
+
+| Fungsi | Fungsi |
+| --- | --- |
+| `Qt.enumStringToValue` | Teks nama kunci menjadi nilai angkanya |
+| `Qt.enumValueToString` | Nilai angka menjadi nama kunci yang bernilai itu |
+| `Qt.enumValueToStrings` | Nilai angka menjadi daftar nama kunci yang bernilai itu |
+
+Mereka berguna untuk log dan untuk membaca enum dari teks (mis. berkas konfigurasi). Bentuk argumen persisnya ada di dokumentasi `Qt`; baca dan coba sendiri **\[uji dulu\]**.
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Keadaan berhingga dalam satu komponen | `enum` di QML | Disarankan |
+| Konstanta terkumpul tanpa tipe | `QtObject` berisi `readonly property int ...` | Mudah, tetapi tanpa jaminan keanggotaan |
+| Konstanta bersama seluruh aplikasi | Singleton QML (`pragma Singleton`) | Fase 8 |
+| Keadaan sebagai teks | `readonly property string idle: 'idle'` | Mudah dibaca, rentan salah ketik |
+| Enum yang juga dipakai C++ | `Q_ENUM` pada tipe C++ | Fase 10 |
+| Keadaan visual | `State` dan `states` | Fase 6 (berbeda tujuan) |
+
+### g. Visual
+
+```
+  Status.qml                         pemakai
+  +----------------------+           +-----------------------------------+
+  | enum Mode {          |           | s.mode = Status.Mode.Loading      |
+  |   Idle      (0)      |  nama     |   ^                               |
+  |   Loading   (1)      | <-------- |   '-- nama dikenali alat          |
+  |   Error     (10)     |           | console.log(s.mode)   -->  1      |
+  | }                    |           +-----------------------------------+
+  | property int mode    |   enum = bilangan bulat di balik layar (simpan di int)
+  +----------------------+
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Enumerasi (enum) | Himpunan nama bagi nilai bulat |
+| Enumerator / kunci | Satu nama dalam enum |
+| Tipe pembungkus | Tipe bernama yang memegang enum |
+| `<Tipe>.<Enum>.<Nilai>` | Bentuk acuan penuh |
+| `Q_ENUM` | Makro C++ untuk mengekspos enum ke QML |
+| Magic number | Angka tak bernama di kode |
+
+### i. Tips dan praktik terbaik
+
+- Ganti setiap angka ajaib yang menyatakan keadaan dengan enum.
+- Selalu tulis bentuk bertingkat (`Status.Mode.Loading`).
+- Tambahkan penjaga `default:` pada `switch` untuk nilai tak dikenal.
+- Untuk keadaan antarmuka yang berubah visual, pertimbangkan `State` (Fase 6) selain enum.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Galat saat memakai `Mode` sebagai tipe properti | Enum bukan tipe | `property int mode` |
+| Enum berawalan huruf kecil ditolak | Aturan penamaan | Awali dengan huruf besar |
+| Enum di dokumen tanpa nama tipe tidak bisa diacu | Enum harus dipegang tipe bernama | Letakkan di berkas bertipe, atau namespace |
+| Nilai enum 64-bit rusak | Melampaui rentang aman | Hindari nilai di luar rentang 32-bit |
+| Perbandingan dengan angka telanjang | Menghilangkan makna | Selalu bandingkan dengan nama enum |
+| Mengacu `Status.Loading` gagal | Bentuk tak bertingkat | Pakai `Status.Mode.Loading` |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.3 (properti bertipe `int` yang memakai enum), Fase 2 (`switch`), Fase 6 (state dan animasi), Fase 8 (singleton konstanta), dan Fase 10 (`Q_ENUM`).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `EnumQt.qml` dan `UjiStatus.qml`. Lalu tambahkan nilai baru `Selesai` ke `Mode`, perbarui `nama()`, dan jalankan ulang. Coba acuan `Status.Loading` dan `Qt.enumValueToString` dan catat hasilnya.
+
+**Cek pemahaman.** (1) Mengapa `enumeration` tidak bisa menjadi tipe properti? (2) Apa nilai `Loading` bila tidak diberi angka? (3) Mengapa bentuk bertingkat lebih baik?
+
+### m. Referensi
+
+- [QML Enumerations](https://doc.qt.io/qt-6/qtqml-typesystem-enumerations.html) · [QML Object Attributes: enumeration attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+- [Qt global object: enum helpers](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Defining enumerations in C++](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html)
+
+---
+
+## 1.2.6 Konversi dan jebakan
+
+*Semangat: jebakan yang sudah Anda kenal tidak lagi menjebak.*
+
+**Daftar isi 1.2.6:** a. Deskripsi dan peran · b. Apa yang dikonversi engine · c. Daftar jebakan lengkap · d. Contoh 1: konversi JavaScript · e. Contoh 2: konversi pada properti bertipe · f. Strategi aman · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini menyatukan semua jebakan konversi yang tersebar di 1.2.1 sampai 1.2.5 menjadi satu peta, dan menambah jebakan umum JavaScript yang akan Anda temui setiap hari di QML.
+
+### b. Apa yang dikonversi engine
+
+- **Teks ke tipe bernilai** pada properti bertipe: engine mengubah string menjadi tipenya secara otomatis untuk tipe yang tidak punya representasi natural, misalnya `'red'` menjadi `color`, `'100x200'` menjadi `size` (`Image.sourceSize`), dan `'img/a.png'` menjadi `url`.
+- **Tipe C++ ke tipe QML** dan sebaliknya (Fase 10): `QDateTime` ke `Date`, `QVariantList` ke array-like, `QString` ke `string`, dan seterusnya.
+- **Tipe salah ditolak:** nilai yang tak cocok dengan tipe properti menghasilkan galat; pada inisialisasi objek tidak dimuat, pada runtime nilai tidak ditugaskan.
+- **JavaScript sendiri mengonversi diam-diam** pada operator (`+`, `==`, `if`). Konversi ini berasal dari bahasa, bukan dari QML, dan merupakan sumber jebakan paling banyak.
+
+### c. Daftar jebakan lengkap
+
+| No. | Jebakan | Gejala | Solusi | Dibahas |
+| --- | --- | --- | --- | --- |
+| 1 | Bulan JavaScript 0–11, Qt 1–12 | Bulan salah satu | `bulan - 1` dan `+ 1` | 1.2.3 |
+| 2 | Teks tanggal-saja = UTC; `new Date(y, m, d)` = lokal | Tanggal mundur satu hari | Getter UTC atau satu standar | 1.2.3 |
+| 3 | `QDate` lewat awal hari UTC; `QTime` membuat tanggal buatan | Hari bergeser, tanggal tak bermakna | `QDateTime` | 1.2.3 |
+| 4 | `Array.isArray()` salah pada array-like C++ | Pemeriksaan tipe gagal | `Array.from(x)` | 1.2.4 |
+| 5 | Mengubah isi `var` tak memicu pemberitahuan | Tampilan tak berubah | Tugaskan ulang | 1.2.4 |
+| 6 | `0.1 + 0.2 !== 0.3` | Perbandingan salah | Toleransi | 1.2.1 |
+| 7 | `5 / 2` adalah `2.5` | Hasil bukan bulat | `Math.floor` atau `Math.trunc` | 1.2.1 |
+| 8 | `'5' + 3` adalah `'53'` | Penjumlahan jadi sambungan teks | `Number('5') + 3` | di sini |
+| 9 | `Number('abc')` adalah `NaN`; `NaN !== NaN` | Nilai `NaN` merambat | `Number.isNaN` | di sini |
+| 10 | `0 == ''` benar; `==` mengonversi | Kesamaan mengejutkan | Selalu `===` | di sini |
+| 11 | `0`, `''`, `NaN`, `null`, `undefined` bernilai salah dalam `if` | Memeriksa “ada nilainya” keliru | Bandingkan eksplisit (`x !== undefined`) | di sini |
+| 12 | `typeof null` adalah `'object'` | Pemeriksaan `null` salah | `x === null` | di sini |
+| 13 | Epoch milidetik tak muat di `int` | Angka rusak | `real` atau `double` | 1.2.3 |
+| 14 | `#aarrggbb`, bukan `#rrggbbaa` | Transparansi salah | Format Qt atau `Qt.rgba` | 1.2.2 |
+| 15 | Tipe nilai disalin | Ubah salinan tak mengubah asli | Tugaskan ulang | 1.2.2 |
+| 16 | `enumeration` tak bisa menjadi tipe properti | Galat deklarasi | `int` | 1.2.5 |
+
+### d. Contoh 1: konversi JavaScript
+
+Simpan sebagai `Konversi.qml`. **Tulis dulu dugaan Anda untuk tiap baris, baru jalankan.**
+
+```qml
+import QtQuick
+
+Item {
+    Component.onCompleted: {
+        console.log('5' + 3, Number('5') + 3, '5' * 3);
+        console.log(parseInt('42px', 10), parseFloat('3.14abc'), Number('42px'));
+        console.log(0 == '', 0 === '', null == undefined, null === undefined);
+        console.log(Boolean(0), Boolean(''), Boolean('0'), Boolean([]), Boolean(NaN));
+        console.log(typeof null, typeof undefined, typeof [], typeof {});
+        console.log(NaN === NaN, Number.isNaN(NaN));
+        console.log(Number.MAX_SAFE_INTEGER, Math.pow(2, 31));
+    }
+}
+```
+
+| Ekspresi | Hasil menurut standar JavaScript | Pelajaran |
+| --- | --- | --- |
+| `'5' + 3` | `'53'` | `+` dengan teks menyambung |
+| `Number('5') + 3` | `8` | Konversi eksplisit |
+| `'5' * 3` | `15` | `*` memaksa angka; `+` tidak |
+| `parseInt('42px', 10)` | `42` | Selalu beri radix 10 |
+| `parseFloat('3.14abc')` | `3.14` | Berhenti di karakter tak valid |
+| `Number('42px')` | `NaN` | `Number` ketat |
+| `0 == ''` | `true` | `==` mengonversi |
+| `0 === ''` | `false` | `===` tidak |
+| `null == undefined` | `true` | Tetapi `null === undefined` adalah `false` |
+| `Boolean(0)`, `Boolean('')`, `Boolean(NaN)` | `false` | Nilai “salah” |
+| `Boolean('0')`, `Boolean([])` | `true` | Teks dan larik apa pun tak kosong, termasuk `'0'` |
+| `typeof null` | `'object'` | Keanehan bahasa |
+| `NaN === NaN` | `false` | Pakai `Number.isNaN` |
+| `Number.MAX_SAFE_INTEGER` | `9007199254740991` | Batas bilangan bulat aman |
+| `Math.pow(2, 31)` | `2147483648` | Satu di atas rentang `int` 32-bit |
+
+Cocokkan hasil di terminal Anda dengan kolom tengah; bila ada yang berbeda, catat di `galat.md`.
+
+### e. Contoh 2: konversi pada properti bertipe
+
+Simpan sebagai `Tebak.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    property int bulat: 0
+    property real pecah: 0
+    property string teks: ''
+    property bool benar: false
+    property size ukuran: Qt.size(0, 0)
+
+    Component.onCompleted: {
+        bulat = 3.7;
+        console.log('bulat  =', bulat);
+        pecah = 5 / 2;
+        console.log('pecah  =', pecah);
+        teks = 42;
+        console.log('teks   =', teks, typeof teks);
+        benar = 1;
+        console.log('benar  =', benar);
+        ukuran = '100x200';
+        console.log('ukuran =', ukuran.width, ukuran.height);
+    }
+}
+```
+
+| Baris | Menguji | Hasil |
+| --- | --- | --- |
+| `bulat = 3.7` | Pecahan ke `int` | **\[amati\]** dipotong, dibulatkan, atau ditolak |
+| `pecah = 5 / 2` | Hasil bagi ke `real` | `2.5` |
+| `teks = 42` | Angka ke `string` | **\[amati\]** |
+| `benar = 1` | Angka ke `bool` | **\[amati\]** |
+| `ukuran = '100x200'` | Teks ke `size` | Dikonversi otomatis (didokumentasikan): `100` dan `200` |
+
+Bagian terpenting latihan ini adalah **mencatat** perilaku sebenarnya di versi Qt Anda; jangan mengandalkan konversi diam-diam yang tidak Anda uji.
+
+### f. Strategi aman
+
+1. **Konversi di perbatasan.** Ubah data mentah (teks, JSON, nilai C++) ke tipe yang tepat **sekali**, di tempat ia masuk.
+2. **Konversi eksplisit:** `Number(x)`, `String(x)`, `Boolean(x)`, `Math.round`, `Math.floor`.
+3. **Bandingkan dengan `===`** dan periksa `undefined`, `null`, dan `NaN` secara eksplisit.
+4. **Properti bertipe sebagai pagar:** biarkan engine menolak nilai yang salah, bukan `var` yang menerima segalanya.
+5. **Satu standar waktu** (epoch atau ISO UTC) di seluruh aplikasi.
+6. **Catat temuan** di `galat.md` (1.1.7).
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Validasi masukan pengguna | `Number.isFinite(Number(x))` | Menolak `NaN` dan tak hingga |
+| Konversi teks ke bulat | `parseInt(x, 10)` | Menerima akhiran non-angka |
+| Konversi ketat | `Number(x)` | `NaN` bila ada karakter salah |
+| Pembulatan | `Math.round`, `Math.floor`, `Math.trunc`, `toFixed(n)` | `toFixed` menghasilkan teks |
+| Validasi bentuk data | Skema atau fungsi pemeriksa | Fase 7 |
+| Konversi dari C++ | Tipe terketik di `Q_PROPERTY` | Fase 10 |
+
+### h. Visual
+
+```
+  masukan mentah (teks / JSON / C++)
+          |
+   [KONVERSI EKSPLISIT di perbatasan]   Number() String() Date parse  Array.from()
+          |
+   properti BERTIPE (pagar)  --salah-->  galat, nilai ditolak
+          |
+   logika aplikasi (=== , toleransi, UTC)
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Konversi implisit | Perubahan tipe otomatis oleh bahasa atau engine |
+| Konversi eksplisit | Perubahan tipe yang Anda tulis |
+| Truthy / falsy | Nilai yang dianggap benar / salah dalam kondisi |
+| `NaN` | Bukan angka |
+| Koersi (coercion) | Pemaksaan tipe oleh operator |
+| Perbatasan (boundary) | Tempat data dari luar masuk ke aplikasi |
+
+### j. Tips dan praktik terbaik
+
+- Jadikan `===` sebagai satu-satunya operator kesamaan Anda.
+- Setelah membaca data luar, langsung konversi ke tipe terketik.
+- Tulis uji kecil untuk tiap konversi yang Anda andalkan (Modul 12.3).
+- Simpan daftar jebakan ini di `catatan.md` sebagai daftar periksa.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Penjumlahan menghasilkan sambungan teks | Salah satu operan `string` | `Number(...)` |
+| `if (jumlah)` salah untuk `0` yang sah | Truthiness | `jumlah !== undefined` |
+| `NaN` di layar | Konversi gagal tak diperiksa | `Number.isNaN` dan nilai cadangan |
+| Hasil beda antar zona | Waktu lokal vs UTC | Standar tunggal |
+| Mengabaikan jebakan di tabel | Menganggap “tidak akan terjadi” | Jadikan daftar periksa |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 2 (operator dan tipe JavaScript), Fase 3 (binding yang bergantung pada tipe), Fase 7 (data jaringan), Fase 10 (jembatan C++), dan Modul 12.3 (menguji konversi).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** (dari kurikulum, dilengkapi) Jalankan `Konversi.qml` dan `Tebak.qml`. Tulis dugaan Anda sebelum menjalankan, lalu bandingkan dan catat setiap selisih di `galat.md`. Pilih tiga jebakan dari tabel dan tulis satu uji kecil untuk masing-masing.
+
+**Cek pemahaman.** (1) Mengapa `'5' + 3` menghasilkan `'53'` dan `'5' * 3` menghasilkan `15`? (2) Mengapa `==` sebaiknya dihindari? (3) Di mana tempat terbaik mengonversi data mentah?
+
+### n. Referensi
+
+- [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html) · [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html)
+- [MDN: Equality comparisons and sameness](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness) · [MDN: Falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+- [JavaScript Host Environment (Qt)](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html)
+
+---
+
+## 1.2.7 Vektor, matriks, dan kuaternion \[TAMBAHAN\]
+
+**Mengapa ditambahkan:** kurikulum menyebut tipe-tipe ini di tabel Modul 1.2 (“banyak dipakai di Qt Quick 3D dan shader”), tetapi tidak ada sub-bagian yang memperkenalkannya. Anda akan bertemu `Qt.vector3d` pada properti `axis` sebuah rotasi, pada uniform shader, dan di Qt Quick 3D; lebih baik mengenalnya sekarang secukupnya.
+
+*Semangat: matematika di balik gerak dimulai dari satu anak panah.*
+
+**Daftar isi 1.2.7:** a. Deskripsi dan peran · b. Konsep · c. Contoh 1: vektor dan matriks · d. Contoh 2: rotasi 3D pada item 2D · e. Presisi tunggal · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Tipe-tipe ini adalah tipe nilai dari modul QtQuick untuk matematika spasial. Anda tidak akan sering menulisnya sekarang, tetapi mengenali bentuknya mencegah kebingungan ketika membaca kode transformasi, shader, dan 3D.
+
+### b. Konsep
+
+| Tipe | Isi | Pembuat |
+| --- | --- | --- |
+| `vector2d` | `x`, `y` | `Qt.vector2d(x, y)` |
+| `vector3d` | `x`, `y`, `z` | `Qt.vector3d(x, y, z)` |
+| `vector4d` | `x`, `y`, `z`, `w` | `Qt.vector4d(x, y, z, w)` |
+| `matrix4x4` | Matriks 4 baris 4 kolom | `Qt.matrix4x4(...)` |
+| `quaternion` | `scalar`, `x`, `y`, `z` | `Qt.quaternion(s, x, y, z)` |
+
+Metode umumnya (nama persisnya ada di dokumentasi tiap tipe **\[amati\]**): vektor (`length()`, `normalized()`, `dotProduct()`, `crossProduct()` pada `vector3d`, `plus()`, `minus()`, `times()`), matriks (`translate()`, `rotate()`, `scale()`, `times()`, `inverted()`, `transposed()`), dan kuaternion (konversi dari dan ke sudut Euler). Seperti tipe nilai lain, semuanya **disalin** saat ditugaskan.
+
+### c. Contoh 1: vektor dan matriks
+
+Simpan sebagai `Vektor.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    Component.onCompleted: {
+        const a = Qt.vector3d(1, 0, 0);
+        const b = Qt.vector3d(0, 1, 0);
+        console.log('dot    :', a.dotProduct(b));
+        console.log('cross  :', a.crossProduct(b));
+        console.log('panjang:', Qt.vector3d(3, 4, 0).length());
+        console.log('normal :', Qt.vector3d(3, 4, 0).normalized());
+
+        const m = Qt.matrix4x4();
+        m.translate(Qt.vector3d(10, 0, 0));
+        console.log('matriks:', m);
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `Qt.vector3d(1, 0, 0)` | Vektor tiga dimensi (sumbu x). |
+| `a.dotProduct(b)` | Hasil kali titik; `0` bila tegak lurus. |
+| `a.crossProduct(b)` | Hasil kali silang: vektor tegak lurus keduanya (`(0, 0, 1)`). |
+| `.length()`, `.normalized()` | Panjang (`5` untuk `(3, 4, 0)`) dan vektor satuan searah. |
+| `Qt.matrix4x4()` | Matriks identitas bila tanpa argumen. |
+| `m.translate(...)` | Menggeser matriks sejauh vektor itu. |
+
+Hasil persis dan bentuk cetaknya **\[amati\]**.
+
+### d. Contoh 2: rotasi 3D pada item 2D
+
+Simpan sebagai `Putar.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    width: 240
+    height: 160
+
+    Rectangle {
+        id: kartu
+        anchors.centerIn: parent
+        width: 120
+        height: 80
+        color: '#89b4fa'
+
+        transform: Rotation {
+            origin.x: kartu.width / 2
+            origin.y: kartu.height / 2
+            axis: Qt.vector3d(0, 1, 0)
+            angle: 45
+        }
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `transform: Rotation { ... }` | Menerapkan transformasi pada item (Fase 4 dan 6). |
+| `origin.x`, `origin.y` | Titik pusat putaran: tengah kartu. |
+| `axis: Qt.vector3d(0, 1, 0)` | Sumbu putar: sumbu y; kartu tampak berputar seperti pintu. |
+| `angle: 45` | Sudut putar dalam derajat. |
+
+Ubah `axis` menjadi `Qt.vector3d(1, 0, 0)` dan `angle` menjadi `-30` untuk melihat sumbu lain.
+
+### e. Presisi tunggal
+
+Tipe vektor dan matriks ini dipetakan ke tipe Qt C++ yang menyimpan komponen sebagai bilangan **berpresisi tunggal (float)**, berbeda dari `real` yang berpresisi ganda. Akibatnya nilai seperti `0.1` dapat tampak sebagai `0.10000000149...` saat dicetak dari komponennya. Jangan membandingkan komponen vektor dengan `===`; pakai toleransi (1.2.1) **\[amati\]**.
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Posisi 2D sederhana | `point`, `Qt.point(x, y)` | Presisi ganda |
+| Perhitungan berat | Di C++ (`QVector3D`, `QMatrix4x4`, `QQuaternion`) | Fase 10 |
+| Scene 3D | Qt Quick 3D | Fase 11; modul ber-lisensi GPLv3 pada Qt open source (0.1.3) |
+| Transformasi 2D | `Translate`, `Rotation`, `Scale`, `Matrix4x4` | Fase 4 dan 6 |
+| Uniform shader | Properti `vector4d`, `matrix4x4` pada `ShaderEffect` | Modul 11.3 |
+
+### g. Visual
+
+```
+  vector3d a = (1,0,0)    vector3d b = (0,1,0)
+  a . b  = 0   (tegak lurus)        a x b = (0,0,1)  (tegak lurus keduanya)
+
+        y ^
+          |  b
+          +------> x
+         /  a
+        v z (a x b)
+
+  Rotation { axis: (0,1,0); angle: 45 }  -> item berputar mengitari sumbu y
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Vektor | Besaran dengan arah dan panjang |
+| Hasil kali titik / silang | Operasi antarvektor (skalar / vektor baru) |
+| Normalisasi | Menjadikan panjang vektor 1 |
+| Matriks transformasi | Matriks yang menggeser, memutar, atau menskalakan |
+| Kuaternion | Representasi rotasi 3D tanpa gimbal lock |
+| Presisi tunggal / ganda | float 32-bit / double 64-bit |
+
+### i. Tips dan praktik terbaik
+
+- Mulailah dengan `Rotation` dan `axis` pada item 2D sebelum menyentuh matriks.
+- Jangan menyimpan koordinat layar dalam vektor presisi tunggal bila perlu ketepatan; pakai `point` atau `real`.
+- Bacalah halaman tipe sebelum memakai metode; nama dapat bergeser antar versi.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| `Qt.vector3d` tak dikenal | `QtQuick` belum diimpor | `import QtQuick` |
+| Perbandingan komponen gagal | Presisi tunggal | Toleransi |
+| Rotasi tak tampak | Sudut atau sumbu salah, pusat di pojok | Atur `origin` |
+| Mengira kuaternion sama dengan sudut Euler | Dua representasi berbeda | Konversi eksplisit |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 4 (transformasi item), Fase 6 (animasi sudut), Modul 11.3 (shader), Fase 11 (Qt Quick 3D), dan Fase 10 (tipe C++ padanan).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Vektor.qml` dan `Putar.qml`. Cocokkan hasil dot dan cross dengan hitungan tangan; ubah `axis` dan `angle`; lalu cetak `Qt.vector3d(0.1, 0, 0).x` dan catat presisinya **\[amati\]**.
+
+**Cek pemahaman.** (1) Apa arti hasil kali titik nol? (2) Mengapa komponen vektor tak boleh dibandingkan dengan `===`? (3) Di mana tipe ini paling sering muncul?
+
+### m. Referensi
+
+- [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html) · [Qt global object: pembuat vektor dan matriks](https://doc.qt.io/qt-6/qml-qtqml-qt.html)
+- [Rotation](https://doc.qt.io/qt-6/qml-qtquick-rotation.html) · [Qt Quick 3D](https://doc.qt.io/qt-6/qtquick3d-index.html)
+- [Wikipedia: Quaternion](https://en.wikipedia.org/wiki/Quaternion) · [3Blue1Brown: Essence of linear algebra](https://www.3blue1brown.com/topics/linear-algebra)
+
+---
+
+## 1.2.8 Memeriksa dan menegakkan tipe \[TAMBAHAN\]
+
+**Mengapa ditambahkan:** kurikulum menyatakan bahwa tipe terketik lebih baik, tetapi belum membekali alat untuk **memeriksa** tipe sebuah nilai dan **menegakkan** tipe pada fungsi. Sejak Qt 6.7, anotasi tipe pada fungsi ditegakkan oleh engine, dan pragma tertentu mengatur perilakunya (1.1.1-d). Bagian ini menjadikannya kebiasaan.
+
+*Semangat: kepastian tidak datang dari harapan, melainkan dari kontrak yang ditegakkan.*
+
+**Daftar isi 1.2.8:** a. Deskripsi dan peran · b. Tiga lapis tipe · c. Contoh 1: anotasi fungsi · d. Contoh 2: memeriksa dengan `typeof`, `instanceof`, `as` · e. Alat statis: `qmllint` · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini menutup Modul 1.2 dengan pertanyaan praktis: *bagaimana saya tahu bahwa nilai ini bertipe yang saya kira, dan bagaimana saya membuat kode menolak tipe yang salah?*
+
+### b. Tiga lapis tipe
+
+| Lapis | Mekanisme | Kapan bekerja |
+| --- | --- | --- |
+| 1. Properti terketik | `property int jumlah` | Saat penugasan (galat bila salah; 1.2.1) |
+| 2. Anotasi fungsi dan pernyataan tipe | `function f(a: int): string`, `x as Item` | Saat fungsi dipanggil atau saat pernyataan dievaluasi |
+| 3. Analisis statis | `qmllint`, `qmlls`, kompiler QML | Sebelum program dijalankan |
+
+Dokumentasi menyatakan bahwa anotasi pada fungsi **ditegakkan** oleh interpreter dan JIT sejak Qt 6.7; pragma `FunctionSignatureBehavior` (`Enforced` bawaan, `Ignored`) mengaturnya. Anotasi juga membantu alat dan kompiler QML (Qt Quick Compiler) menalar kode dan menghasilkan hasil yang lebih efisien.
+
+### c. Contoh 1: anotasi fungsi
+
+Simpan sebagai `Anotasi.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    function tambah(a: int, b: int): int {
+        return a + b;
+    }
+
+    function sapa(nama: string): string {
+        return 'Halo, ' + nama;
+    }
+
+    Component.onCompleted: {
+        console.log(tambah(2, 3));
+        console.log(sapa('QML'));
+        console.log(tambah('x', 3));
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `function tambah(a: int, b: int): int` | Fungsi dengan **tipe parameter** (`: int` setelah nama) dan **tipe hasil** (`: int` setelah tanda kurung). |
+| `return a + b;` | Hasil harus cocok dengan tipe hasil. |
+| `tambah(2, 3)` | Panggilan yang benar: `5`. |
+| `sapa('QML')` | Parameter dan hasil bertipe `string`. |
+| `tambah('x', 3)` | **Melanggar** anotasi: `'x'` bukan `int`. Pada Qt 6.7 ke atas, ia ditegakkan; catat apakah muncul galat, hasil apa yang keluar, dan apakah program berlanjut **\[amati\]**. |
+
+Coba juga menambah `pragma FunctionSignatureBehavior: Ignored` di baris pertama dan ulangi; catat bedanya **\[amati\]**.
+
+### d. Contoh 2: memeriksa dengan typeof, instanceof, as
+
+Simpan sebagai `Periksa.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    Rectangle { id: kotak; width: 10; height: 10 }
+
+    Component.onCompleted: {
+        console.log(kotak instanceof Rectangle, kotak instanceof Item, kotak instanceof Text);
+
+        const t = kotak as Text;
+        const r = kotak as Rectangle;
+        console.log(t, r === kotak);
+
+        console.log(typeof kotak, typeof kotak.width, typeof kotak.color);
+        console.log(typeof Qt.point(1, 2), typeof Qt.rgba(0, 0, 0, 1), typeof new Date());
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `kotak instanceof Rectangle` | Apakah objek turunan tipe itu (mewarisi juga dihitung): dugaan `true`, `true`, `false`. |
+| `kotak as Text` | **Pernyataan tipe**: bila objek bukan `Text`, hasilnya `null` (dugaan). |
+| `kotak as Rectangle` | Bila cocok, hasilnya objek itu sendiri (`r === kotak`). |
+| `typeof x` | Jenis nilai menurut JavaScript. Untuk angka `'number'`; untuk objek QML `'object'`; untuk tipe nilai seperti `color` dan `point` hasilnya perlu diamati **\[amati\]**. |
+
+Sejak Qt 6.8, pragma `ValueTypeBehavior: Assertable` mengizinkan pernyataan tipe `as` juga pada tipe nilai (1.1.1-d). Hasil `typeof` untuk tipe nilai adalah salah satu hal yang paling baik **dicatat sendiri** di `galat.md`, bukan dihafal.
+
+### e. Alat statis: qmllint
+
+Tipe yang jelas membuat `qmllint` jauh lebih berguna. Bandingkan dua berkas:
+
+```qml
+import QtQuick
+
+Item {
+    property var nilai: 5
+
+    function dobel(x) {
+        return x * 2;
+    }
+
+    Component.onCompleted: console.log(dobel(nilai))
+}
+```
+
+```qml
+import QtQuick
+
+Item {
+    property int nilai: 5
+
+    function dobel(x: int): int {
+        return x * 2;
+    }
+
+    Component.onCompleted: console.log(dobel(nilai))
+}
+```
+
+```bash
+$ qmllint TakTerketik.qml
+$ qmllint Terketik.qml
+```
+
+Simpan berturut-turut sebagai `TakTerketik.qml` dan `Terketik.qml`, jalankan keduanya, lalu catat peringatan yang muncul untuk masing-masing dan beda keduanya **\[amati\]**. Dalam proyek CMake, `qmlcachegen` dan target `all_qmllint` (0.2.7) memanfaatkan tipe yang sama; semakin terketik kode Anda, semakin sedikit yang harus ditebak alat.
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Mematikan penegakan sementara (migrasi kode lama) | `pragma FunctionSignatureBehavior: Ignored` | Hanya sementara; bersihkan kodenya |
+| Data yang memang bebas bentuk | `var` | Bungkus dalam fungsi terketik pada tepinya |
+| Memeriksa bentuk objek `var` | Fungsi pemeriksa kecil (`typeof x.kunci === 'string'`) | Fase 7 |
+| Tipe pada properti dari luar | `required property int x` | Modul 1.3 |
+| Penjagaan tipe yang kuat | Tipe C++ terdaftar | Fase 10 |
+
+### g. Visual
+
+```
+  nilai masuk --> [properti bertipe]   galat bila salah tipe
+              --> [parameter bertipe]  ditegakkan sejak Qt 6.7 (FunctionSignatureBehavior)
+              --> [x as Tipe]          null bila bukan Tipe
+              --> [qmllint / qmlls]    peringatan SEBELUM dijalankan
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Anotasi tipe | Penulisan tipe pada parameter dan hasil fungsi |
+| Type assertion | Pernyataan bahwa nilai bertipe tertentu (`as`) |
+| `instanceof` | Memeriksa keturunan tipe objek |
+| `typeof` | Jenis nilai menurut JavaScript |
+| Enforced / Ignored | Anotasi ditegakkan / diabaikan |
+| Analisis statis | Pemeriksaan tanpa menjalankan |
+| Kompiler QML | Pembuat bytecode atau C++ dari QML (Modul 11.5) |
+
+### i. Tips dan praktik terbaik
+
+- Beri anotasi tipe pada semua fungsi baru, dan pada fungsi lama saat Anda menyentuhnya.
+- Perlakukan `var` sebagai perbatasan: terima di tepi, konversi ke tipe terketik, lalu gunakan di dalam.
+- Bersihkan peringatan `qmllint` sampai nol sebagai kebiasaan (1.1.5).
+- Catat hasil `typeof` tipe nilai di `galat.md`.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Galat saat memanggil fungsi dengan tipe salah | Anotasi ditegakkan sejak 6.7 | Perbaiki pemanggil, atau konversi dulu |
+| `x as Tipe` bernilai `null` | Objek bukan tipe itu | Periksa `instanceof`, atau perbaiki asumsi |
+| `typeof` mengejutkan pada tipe nilai | Tipe nilai tak selalu “primitif” | Catat dan jangan bergantung padanya |
+| Peringatan lint tentang tipe tak dikenal | Modul belum diimpor atau tipe belum terdaftar | Periksa import dan `QML_FILES` |
+| Mematikan penegakan lalu lupa | Pragma `Ignored` tertinggal | Cabut setelah migrasi |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.3 (`required property` dan alias), Fase 2 (fungsi JavaScript), Fase 3 (handler dan binding terketik), Modul 10 (tipe C++), Modul 11.5 (kompiler QML), dan Modul 12.2 (`qmllint`).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Anotasi.qml` dan `Periksa.qml`, lalu bandingkan `TakTerketik.qml` dan `Terketik.qml` dengan `qmllint`. Tulis tiga fungsi baru lengkap dengan anotasi, panggil masing-masing dengan argumen benar dan salah, dan catat perilaku sebenarnya di `galat.md`.
+
+**Cek pemahaman.** (1) Apa tiga lapis penegakan tipe? (2) Apa yang dilakukan `x as Tipe` bila objek bukan tipe itu? (3) Mengapa menambah anotasi membantu `qmllint`?
+
+### m. Referensi
+
+- [Structure of a QML Document: pragma](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [QML Coding Conventions: type annotations](https://doc.qt.io/qt-6/qml-codingconventions.html)
+- [Qt Quick Compiler](https://doc.qt.io/qt-6/qtqml-qtquick-compiler-tech.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html)
+- [MDN: typeof](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof) · [MDN: instanceof](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof)
+
+---
+
+## 4.6 Penutup Modul 1.2
+
+**Daftar isi bagian ini:** 4.6.1 Peta konsep · 4.6.2 Latihan terpadu · 4.6.3 Cek pemahaman modul · 4.6.4 Hubungan ke modul berikutnya · 4.6.5 Pembaruan yang diusulkan untuk kurikulum · 4.6.6 Status
+
+### 4.6.1 Peta konsep
+
+```
+   1.2.1 Primitif + url   -->  1.2.2 Geometri, warna, font
+        |                        |
+        +----------+-------------+
+                   v
+   1.2.3 date (UTC vs lokal)    1.2.4 list dan var (penugasan ulang)
+                   |                 |
+                   +--------+--------+
+                            v
+                      1.2.5 Enum  (int di balik layar)
+                            |
+                      1.2.6 Konversi dan jebakan  (daftar 16)
+                            |
+          1.2.7 Vektor / matriks / kuaternion     1.2.8 Menegakkan tipe
+                            |
+                            v
+                  Modul 1.3 (properti, alias, atribut)
+```
+
+### 4.6.2 Latihan terpadu
+
+Di folder `~/Development/qt-learning/fase1/tipe/` (30–45 menit), tanpa menyalin dari dokumen: (1) buat `Profil.qml` dengan properti terketik `string nama`, `int umur`, `real tinggi`, `date lahir`, `color warna`, `url foto`, dan satu `enum Peran`; (2) tulis fungsi beranotasi `umurDari(lahir)` yang menghitung umur dengan benar lintas zona waktu (uji `TZ=UTC` dan satu zona lain); (3) sengaja salahkan tiga tipe dan catat galatnya di `galat.md`; (4) jalankan `qmlformat`, `qmllint`, dan `qml Profil.qml` sampai bersih; (5) tulis `Konversi` dengan lima jebakan dari daftar dan perilaku nyata di mesin Anda; (6) commit dengan pesan bermakna.
+
+### 4.6.3 Cek pemahaman modul
+
+1. Sebut lima tipe nilai dan penyedianya (bahasa, QtQml, atau QtQuick).
+2. Mengapa `0.1 + 0.2 === 0.3` salah, dan bagaimana membandingkannya?
+3. Apa beda `url` dan `string` untuk `Image.source`?
+4. Mengapa tidak ada tipe `time`, dan apa penggantinya?
+5. Mengapa `new Date('2026-11-07')` dan `new Date(2026, 10, 7)` bisa berbeda?
+6. Mengapa epoch milidetik tidak boleh disimpan di `int`?
+7. Mengapa mengubah isi `var` tidak memicu `onXChanged`, dan apa pola aman untuk memperbaruinya?
+8. Mengapa `enumeration` tidak bisa menjadi tipe properti, dan bagaimana menyimpannya?
+9. Sebutkan empat jebakan konversi JavaScript dan cara menghindarinya.
+10. Apa yang dilakukan anotasi tipe pada fungsi sejak Qt 6.7, dan bagaimana `qmllint` memanfaatkannya?
+
+### 4.6.4 Hubungan ke modul berikutnya
+
+| Modul | Mengandalkan dari 1.2 |
+| --- | --- |
+| 1.3 Properti, alias, atribut | Tipe untuk deklarasi `property`, `required`, `readonly`, `alias` (1.2.1–1.2.5) |
+| 1.4 Komponen dan reuse | Properti terketik sebagai antarmuka komponen (1.2.8) |
+| Fase 2 JavaScript | Tipe JavaScript, `Date`, `Array`, jebakan konversi (1.2.3, 1.2.4, 1.2.6) |
+| Fase 3 Reaktivitas | Binding bertipe dan pemberitahuan perubahan (1.2.4) |
+| Fase 4 dan 6 Visual dan animasi | `color`, `font`, `point`, `rect`, `easingCurve`, `Rotation` (1.2.2, 1.2.7) |
+| Fase 7 Model dan data | `list`, `var`, `Array.from`, konversi data luar (1.2.4, 1.2.6) |
+| Fase 10 Jembatan C++ | Konversi tipe, `QDateTime`, sequence type, `Q_ENUM` (1.2.3, 1.2.5) |
+
+### 4.6.5 Pembaruan yang diusulkan untuk kurikulum
+
+Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.2.
+
+```markdown
+**Terminologi (pengganti).** Mulai Qt 6.6/6.7 istilah dokumentasi adalah *value type* (tipe nilai), bukan *basic type*: tipe nilai disalin saat ditugaskan, dan tipe objek dirujuk. Penyedia: bahasa QML (`bool`, `int`, `real`, `double`, `string`, `url`, `date`, `var`, `variant`, `list`, `void`), QtQml (`point`, `rect`, `size`, `easingCurve`), dan QtQuick (`color`, `font`, `vector2d`, `vector3d`, `vector4d`, `matrix4x4`, `quaternion`; perlu `import QtQuick`).
+
+**Daftar isi.** 1.2.1 Primitif dan `url` · 1.2.2 Geometri, warna, dan font · 1.2.3 `date` dan konversi `QDate`/`QTime` · 1.2.4 `list` dan `var` · 1.2.5 Enum · 1.2.6 Konversi dan jebakan · 1.2.7 Vektor, matriks, dan kuaternion · 1.2.8 Memeriksa dan menegakkan tipe
+
+**Jebakan konversi (tambahan).** Teks tanggal-saja di JavaScript = awal hari UTC, sedangkan `new Date(y, m, d)` = lokal; `5 / 2` adalah `2.5`; `'5' + 3` adalah `'53'`; epoch milidetik tidak muat di `int`; bandingkan bilangan pecahan dengan toleransi; mengubah isi `var` tidak memicu pemberitahuan (tugaskan ulang); `#aarrggbb`, bukan `#rrggbbaa`.
+
+**Cek pemahaman (jawaban lebih presisi).** (1) Pengganti `time`: gunakan `date` dan baca jam-menitnya, atau `int` detik bila hanya durasi. (2) Properti terketik lebih baik karena kesalahan tertangkap dini (galat saat nilai salah), tooling (`qmllint`, `qmlls`) dapat menalar, dan kompiler QML dapat menghasilkan kode lebih efisien.
+
+**Referensi (ganti dan tambah).** [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html) (menggantikan `...basictypes.html`) · [QML Enumerations](https://doc.qt.io/qt-6/qtqml-typesystem-enumerations.html) · [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html)
+```
+
+### 4.6.6 Status
+
+| Bagian | Status |
+| --- | --- |
+| Audit Fase 1 dan Modul 1.1 | Selesai |
+| Modul 1.1 (1.1.1–1.1.7) | Selesai |
+| Modul 1.2 (1.2.1–1.2.8) | **Selesai** |
+| Modul 1.3 — Properti, Alias, dan Atribut Objek | Selanjutnya |
+| Modul 1.4 — Komponen dan Reuse | Setelah 1.3 |
+
+---
+
+## 5. Modul 1.3 — Properti, Alias, dan Atribut Objek
+
+**Daftar isi bagian ini:** 5.1 Audit Modul 1.3 · 5.2 Deskripsi dan peran · 5.3 Filosofi modul · 5.4 Visual: anatomi atribut · 5.5 Estimasi waktu · lalu 1.3.1 sampai 1.3.9 · 5.6 Penutup Modul 1.3
+
+### 5.1 Audit Modul 1.3
+
+Diperiksa pada 7 November 2026 terhadap dokumentasi *QML Object Attributes* (Qt 6.12), *Property Shadowing and Override Semantics*, dan catatan komunitas. Kurikulum Modul 1.3 saya baca ulang sebelum audit ini.
+
+**Terverifikasi (tidak perlu diubah):**
+
+- Sintaks deklarasi properti, kini dengan tiga kata kunci tambahan: `[default] [virtual] [override] [final] [required] [readonly] property <tipe> <nama>`.
+- Deklarasi properti otomatis membuat **signal perubahan** dan handler `on<Nama>Changed` (huruf pertama nama menjadi besar).
+- `readonly` harus diberi nilai tetap atau binding saat inisialisasi dan tidak dapat diubah sesudahnya; penugasan menghasilkan `TypeError: Cannot assign to read-only property`. Properti `readonly` **tidak boleh** sekaligus `default`.
+- `required` harus diisi saat instans dibuat. Menurut dokumentasi, pelanggaran yang dapat dideteksi statis membuat aplikasi tidak mau mulai; pada instansiasi dinamis (`Qt.createComponent`) hasilnya peringatan dan nilai `null`. **Nilai awal untuk properti `required` tidak boleh ditetapkan dari QML.**
+- Alias tidak mengalokasikan penyimpanan baru; ia langsung merujuk properti lain, dan menulis ke alias berarti menulis ke targetnya.
+- Sebuah objek hanya punya **satu** default property; objek anak yang ditulis langsung dalam objek lain masuk ke sana.
+- Attached property dipasang **hanya pada objek yang bersangkutan**, tidak pada anak-anaknya.
+- QML tidak punya modifier `private` (tidak ada dalam sintaks deklarasi); pola `QtObject` dengan `id` adalah pola umum, dan memang tidak ditegakkan oleh bahasa.
+
+**Perlu dikoreksi atau dilengkapi:**
+
+1. **Kata kunci `virtual`, `override`, `final` belum ada.** Sejak versi terbaru, menimpa properti dari tipe dasar tanpa penanda memunculkan peringatan, dan Qt menyarankan memakai nama yang unik. Ditambahkan sebagai 1.3.8.
+2. **Bentuk `required <namaProperti>`** untuk menjadikan properti yang **sudah ada** (mis. `color` pada `Rectangle`) wajib diisi, belum disebut. Ditambahkan di 1.3.2.
+3. **Batasan alias belum diajarkan.** Alias hanya boleh merujuk objek atau properti dalam cakupan tipenya; tidak boleh berisi ekspresi JavaScript; tidak boleh merujuk attached property; tidak boleh merujuk properti pada kedalaman tiga tingkat atau lebih (dua tingkat boleh); dan tidak memiliki tipe eksplisit, sehingga properti tambahan yang dideklarasikan inline pada objek sasaran tidak terlihat lewat alias. Ditambahkan di 1.3.3.
+4. **Aturan default property perlu dilengkapi.** Ia hanya berguna untuk tipe `var`, tipe objek, dan tipe urutan; menulis anak secara implisit **dan** eksplisit pada default list property dalam satu objek menghasilkan urutan tak terdefinisi. Ditambahkan di 1.3.3.
+5. **Group properties:** dokumentasi menyatakan bahwa notasi titik dan kurung hanya notasi, bukan jenis properti berbeda, dengan aturan berbeda bagi tipe nilai (harus dapat ditulis) dan tipe objek (objek tidak boleh null). Kedua bentuk tidak boleh dicampur untuk properti yang sama dalam satu objek. Ditambahkan di 1.3.4.
+6. **Attached property pada anak** adalah kesalahan paling umum; solusinya mengaksesnya lewat `id` objek pemilik (`delegateItem.ListView.isCurrentItem`). Ditambahkan di 1.3.5.
+7. **Pola `QtObject` ber-id `d` punya batas.** Ia bekerja bila akar komponen memiliki default property (mis. `Item`). Bila akarnya sendiri `QtObject`, laporan pengembang menyebut galat `Cannot assign to non-existent default property` **\[uji dulu\]**. Ditambahkan di 1.3.7.
+8. **Cakupan sub-bagian.** Properti bertipe objek (`property Item target`), deklarasi signal, dan anotasi tipe pada metode belum punya tempat; ditambahkan di 1.3.1 dan 1.3.6.
+9. **Koreksi untuk 1.2.5 (dokumen ini).** Saya sempat menulis bahwa acuan `Status.Loading` (tanpa nama enum) mungkin gagal. Dokumentasi menyatakan **kedua bentuk sah**: `<Tipe>.<Enum>.<Nilai>` dan `<Tipe>.<Nilai>`. Teks di 1.2.5 diperbaiki.
+10. **Sub-bagian tambahan:** 1.3.8 (bayangan properti) dan 1.3.9 (lab galat properti, mengikuti pola 1.1.7).
+
+**Daftar isi Modul 1.3 yang diperbarui:**
+
+| No. | Judul | Asal |
+| --- | --- | --- |
+| 1.3.1 | Deklarasi dan tipe | Asli 1.3.1, diperluas |
+| 1.3.2 | `readonly` dan `required` | Asli 1.3.2, diperluas |
+| 1.3.3 | Alias dan default property | Asli 1.3.3, diperluas |
+| 1.3.4 | Group properties | Asli 1.3.4, diperluas |
+| 1.3.5 | Attached properties | Asli 1.3.5, diperluas |
+| 1.3.6 | Handler perubahan `onXChanged`, signal, dan metode | Asli 1.3.6, diperluas |
+| 1.3.7 | Pola private lewat `QtObject` | Asli 1.3.7, diperluas |
+| 1.3.8 | Bayangan properti: `virtual`, `override`, `final` | **\[TAMBAHAN\]** |
+| 1.3.9 | Lab galat properti | **\[TAMBAHAN\]** |
+
+### 5.2 Deskripsi dan peran dalam kurikulum
+
+Modul ini mengajarkan cara **mendefinisikan antarmuka sebuah tipe**: properti baru, properti yang wajib diisi dan yang tak boleh diubah, pintu pintas ke bagian dalam (alias), anak default, kelompok sub-properti, dan properti yang “ditempelkan” dari luar. Pada Modul 1.4 Anda akan memakai semuanya untuk membangun komponen yang rapi, dan di Fase 3 untuk menyambungkan perubahan antarobjek.
+
+### 5.3 Filosofi modul
+
+**Properti adalah kontrak antara sebuah tipe dan pemakainya.** Ia menyatakan apa yang boleh dibaca, apa yang boleh diubah, apa yang wajib diberikan, dan apa yang diumumkan ketika berubah. Semakin jelas kontraknya, semakin sedikit kejutan. Karena QML tidak punya `private`, **disiplin pengembanglah** yang menjaga batas antara antarmuka dan isi dalam.
+
+### 5.4 Visual: anatomi atribut
+
+```
+  Panel.qml  (satu tipe)
+ +--------------------------------------------------------------+
+ | Rectangle {                                                    |
+ |   id: root                              <- id (nama lokal)     |
+ |   required property string judul        <- properti baru WAJIB  |
+ |   readonly property int minimum: 10     <- properti baru TETAP  |
+ |   property alias warnaLatar: root.color <- alias (pintu pintas) |
+ |   default property alias isi: kolom.data <- anak masuk ke sini  |
+ |   signal diklik                         <- signal               |
+ |   function sapa() { }                   <- metode               |
+ |   width: 240                            <- penugasan properti   |
+ |   border { color: 'white'; width: 2 }   <- group property       |
+ |   Layout.fillWidth: true                <- attached property    |
+ |   onJudulChanged: console.log(judul)    <- handler perubahan    |
+ |   Column { id: kolom }                  <- objek anak           |
+ | }                                                              |
+ +--------------------------------------------------------------+
+```
+
+### 5.5 Estimasi waktu
+
+Jalur A: 10–12 jam; Jalur B: 4–5 jam.
+
+---
+
+## 1.3.1 Deklarasi dan tipe
+
+*Semangat: setiap properti yang Anda deklarasikan adalah janji kepada pemakai tipe Anda.*
+
+**Daftar isi 1.3.1:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh: berbagai tipe properti · d. Nilai awal dan perubahan · e. Tipe objek dan `var` · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini mengajarkan cara **menambah properti baru** pada sebuah tipe: sintaksnya, tipe yang boleh, nilai awal, dan fakta bahwa setiap properti baru otomatis mengumumkan perubahannya.
+
+### b. Konsep dan filosofi
+
+Sintaks lengkap (dokumentasi Qt 6.12):
+
+```
+[default] [virtual] [override] [final] [required] [readonly] property <tipe> <nama> [: <nilai>]
+```
+
+- **Nama** diawali huruf kecil, hanya huruf, angka, dan garis bawah, bukan kata cadangan JavaScript.
+- **Tipe** dapat berupa tipe nilai apa pun kecuali `enumeration` (1.2), tipe objek QML (`Item`, `Rectangle`, atau tipe dari berkas Anda sendiri), atau `var`. Tipe yang disediakan QtQuick (mis. `color`, `font`) memerlukan `import QtQuick`.
+- **Nilai awal** boleh digabung pada deklarasi (`property int jumlah: 3`) dan boleh berupa nilai tetap atau binding.
+- Setiap properti yang dideklarasikan **otomatis** menciptakan signal perubahan dan handler `on<Nama>Changed`.
+- Properti biasa **menyimpan nilainya sendiri** (berbeda dengan alias, 1.3.3).
+
+**Filosofi:** properti adalah bagian dari **antarmuka publik** tipe Anda. Beri nama menurut peran, beri tipe sepersempit mungkin, dan pikirkan apakah pemakai boleh mengubahnya (`readonly`) atau wajib mengisinya (`required`).
+
+### c. Contoh: berbagai tipe properti
+
+Simpan sebagai `Deklarasi.qml`, jalankan `qml Deklarasi.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    property string judul: 'Kartu'
+    property int jumlah: 3
+    property real harga: 12.5
+    property real total: jumlah * harga
+    property bool aktif: false
+    property color aksen: '#89b4fa'
+    property url ikon
+    property date dibuat: new Date()
+    property Item target
+    property var bebas: ({ a: 1 })
+    property list<Rectangle> kotak: [
+        Rectangle { color: 'red' },
+        Rectangle { color: 'blue' }
+    ]
+
+    width: 320
+    height: 120
+    color: root.aksen
+
+    Text {
+        anchors.centerIn: parent
+        text: root.judul + ': ' + root.total
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: root.jumlah += 1
+    }
+
+    onJumlahChanged: console.log('jumlah ->', jumlah, 'total ->', total)
+
+    Component.onCompleted: {
+        console.log('ikon:', ikon, '| target:', target, '| bebas.a:', bebas.a);
+        console.log('kotak:', kotak.length, '| aktif:', aktif, '| tahun:', dibuat.getFullYear());
+    }
+}
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `property string judul: 'Kartu'` | Properti teks baru dengan nilai awal. |
+| `property real total: jumlah * harga` | Properti yang nilainya **binding**: otomatis dihitung ulang saat `jumlah` atau `harga` berubah. |
+| `property url ikon` | Tanpa nilai awal: nilai bawaan tipenya (untuk `url`, kosong). |
+| `property Item target` | Properti bertipe **objek**; bawaannya `null`. |
+| `property var bebas: ({ a: 1 })` | Properti serbabisa; tanda kurung membuat objek literal (1.2.4). |
+| `property list<Rectangle> kotak: [ ... ]` | Daftar objek `Rectangle`. |
+| `onJumlahChanged: ...` | Handler signal perubahan `jumlahChanged`; terpanggil tiap `jumlah` berubah. |
+| `MouseArea { onClicked: root.jumlah += 1 }` | Klik menambah `jumlah`; `total` ikut berubah karena binding. |
+| `Component.onCompleted` | Mencetak nilai bawaan properti tanpa nilai awal. |
+
+Nilai bawaan yang akan Anda lihat: `ikon` kosong, `target` `null`, `kotak.length` `2`, `aktif` `false` **\[amati\]**. Klik jendela dan perhatikan baris `jumlah -> ...` yang tercetak.
+
+### d. Nilai awal dan perubahan
+
+- Signal perubahan terpancar saat **nilai berubah**, bukan saat penugasan ulang dengan nilai yang sama.
+- Pada pembuatan objek, nilai awal ditetapkan sebelum objek selesai; handler perubahan mungkin terpanggil beberapa kali pada tahap awal, sehingga logika yang bergantung pada “berubah” sebaiknya tidak mengandaikan urutan tertentu (Fase 3).
+- Binding dan nilai tetap dapat diberikan lagi oleh pemakai tipe: `Deklarasi { jumlah: 5; harga: 20 }`.
+
+### e. Tipe objek dan var
+
+Menurut dokumentasi, tipe objek QML apa pun boleh menjadi tipe properti: `property Item target`, atau bahkan tipe dari berkas Anda sendiri (`property ColorfulButton tombol`). Keuntungannya: alat tahu isinya (`qmllint`, penyelesaian kode), dan nilai yang tidak cocok ditolak. `var` dapat menyimpan apa saja, termasuk daftar dan objek:
+
+```qml
+property var someNumber: 1.5
+property var someList: [1, 2, 'tiga', 'empat']
+property var someObject: Rectangle { width: 100; height: 100; color: 'red' }
+```
+
+Bila isinya sudah diketahui bentuknya, pilih tipe yang spesifik (1.2).
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Nilai yang hanya dibaca pemakai | `readonly property` | 1.3.2 |
+| Nilai yang wajib diisi pemakai | `required property` | 1.3.2 |
+| Meneruskan properti objek lain | `property alias` | 1.3.3 |
+| Menyimpan keadaan internal | Properti pada `QtObject` ber-id | 1.3.7 |
+| Properti yang berasal dari C++ | `Q_PROPERTY` | Fase 10 |
+| Menggabungkan beberapa nilai | Tipe majemuk (`point`, `rect`) atau tipe objek sendiri | 1.2.2 |
+
+### g. Visual
+
+```
+  property int jumlah: 3          jumlahChanged()  --------+
+       |                                                    |
+       v                                                    v
+  [ penyimpanan jumlah = 3 ]   <-- diubah:  root.jumlah += 1      onJumlahChanged: ...
+       ^                                                    |
+       |                                           binding yang membaca jumlah
+  property real total: jumlah * harga   <---------  dihitung ulang otomatis
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Properti kustom | Properti yang Anda deklarasikan di dokumen QML |
+| Signal perubahan | `<nama>Changed`, terpancar saat nilai berubah |
+| Handler perubahan | `on<Nama>Changed`, kode yang menanggapinya |
+| Tipe objek | Tipe QML sebagai tipe properti (`Item`) |
+| Nilai bawaan | Nilai bila tidak ada nilai awal |
+| Penyimpanan | Tempat nilai disimpan; alias tidak punya penyimpanan sendiri |
+
+### i. Tips dan praktik terbaik
+
+- Beri tipe pada setiap properti; `var` hanya untuk data yang memang bebas bentuk.
+- Urutkan deklarasi sesuai konvensi: `id`, properti, signal, fungsi, lalu penugasan (1.1.5).
+- Beri nama berdasarkan peran, bukan bentuk.
+- Gunakan binding untuk nilai turunan (`total`), bukan menghitungnya secara manual di banyak tempat.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Galat saat memuat: nilai bertipe salah | Tipe properti dan nilai tidak cocok | Periksa tipe (1.2.1) |
+| `enumeration` ditolak sebagai tipe | Enum bukan tipe | `property int` (1.2.5) |
+| `color` tak dikenal sebagai tipe | `QtQuick` belum diimpor | `import QtQuick` |
+| Handler perubahan terpanggil terlalu sering | Menghitung ulang di setiap perubahan | Pakai binding, atau gabungkan |
+| Nama properti diawali huruf besar | Salah penamaan | Mulai huruf kecil |
+| Mengira nilai selalu `undefined` bila tidak diisi | Setiap tipe punya bawaan sendiri | Amati dan catat (`galat.md`) |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk 1.3.2 sampai 1.3.9, Modul 1.4 (properti sebagai antarmuka komponen), Fase 3 (binding dan handler), dan Fase 10 (`Q_PROPERTY`).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Deklarasi.qml`, klik beberapa kali, dan catat baris `jumlah -> ...`. Lalu: (1) tambahkan properti `property string label: judul + '!'` dan amati saat `judul` diubah; (2) tambahkan `property list<int> angka: [1, 2]` dan catat hasilnya **\[uji dulu\]**; (3) catat nilai bawaan properti yang tidak Anda beri nilai awal.
+
+**Cek pemahaman.** (1) Apa yang otomatis terbentuk saat Anda mendeklarasikan properti? (2) Mengapa `enumeration` tidak bisa menjadi tipe properti? (3) Apa bedanya `property Item target` dan `property var target`?
+
+### m. Referensi
+
+- [QML Object Attributes: property attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html)
+- [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html) · [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html)
+
+---
+
+## 1.3.2 readonly dan required
+
+*Semangat: batas yang jelas membuat kolaborasi, bahkan dengan diri sendiri, menjadi mudah.*
+
+**Daftar isi 1.3.2:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh: Kartu dengan `required` dan `readonly` · d. `required` pada properti yang sudah ada · e. `required` dan delegate · f. Memilih: nilai bawaan, `required`, `readonly` · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+`required` menyatakan *“pemakai wajib mengisi ini”*; `readonly` menyatakan *“pemakai tidak boleh mengubah ini”*. Keduanya adalah cara bahasa menjaga kontrak sebuah tipe.
+
+### b. Konsep dan filosofi
+
+| Kata kunci | Artinya | Konsekuensi bila dilanggar |
+| --- | --- | --- |
+| `required` | Properti **harus** diberi nilai saat instans dibuat | Aplikasi tidak mau mulai bila terdeteksi statis; pada instansiasi dinamis: peringatan dan hasil `null` |
+| `readonly` | Properti ditetapkan sekali (nilai tetap atau binding) dan **tak dapat diganti** | `TypeError: Cannot assign to read-only property` |
+
+Aturan penting dari dokumentasi:
+
+- Properti `required` **tidak boleh diberi nilai awal** dari QML (bertentangan dengan tujuannya).
+- `readonly` harus diberi nilai tetap atau binding **pada deklarasi**. Binding tetap berjalan (nilainya mengikuti dependensinya), tetapi ekspresinya tak bisa diganti.
+- `readonly` **tidak boleh** sekaligus `default`.
+
+**Filosofi:** `required` lebih aman daripada nilai bawaan kosong (`''` atau `0`), karena nilai kosong **diam-diam sah** dan bug baru muncul belakangan; `required` memaksa kesalahan muncul **sejak awal** dan dengan pesan yang jelas.
+
+### c. Contoh: Kartu dengan required dan readonly
+
+Buat dua berkas. `Kartu.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    required property string judul
+    readonly property int minimum: 10
+    readonly property int lebarDalam: width - 2 * minimum
+
+    width: 240
+    height: 90
+    radius: 8
+    color: '#89b4fa'
+
+    Text {
+        anchors.centerIn: parent
+        text: root.judul + ' (dalam: ' + root.lebarDalam + ')'
+    }
+}
+```
+
+`UjiKartu.qml`:
+
+```qml
+import QtQuick
+
+Column {
+    spacing: 8
+
+    Kartu { judul: 'Satu' }
+    Kartu { judul: 'Dua'; width: 300 }
+}
+```
+
+```bash
+$ qml UjiKartu.qml
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `required property string judul` | Pemakai **wajib** mengisi `judul`; tanpa nilai awal. |
+| `readonly property int minimum: 10` | Konstanta tipe; tak dapat diubah dari luar maupun dalam. |
+| `readonly property int lebarDalam: width - 2 * minimum` | `readonly` dengan **binding**: tetap mengikuti perubahan `width`, tetapi pemakai tak bisa menimpanya. |
+| `Kartu { judul: 'Satu' }` | Pemakaian benar: `required` terpenuhi. |
+| `Kartu { judul: 'Dua'; width: 300 }` | `width` biasa boleh diubah; `lebarDalam` ikut menjadi 280. |
+
+**Dua percobaan salah \[amati pesan dan exit code\]:**
+
+```qml
+// SalahRequired.qml
+import QtQuick
+
+Kartu { }
+```
+
+```qml
+// SalahReadonly.qml
+import QtQuick
+
+Kartu {
+    judul: 'Tiga'
+    Component.onCompleted: minimum = 5
+}
+```
+
+| Berkas | Dugaan |
+| --- | --- |
+| `SalahRequired.qml` | Gagal dimuat karena `judul` wajib belum diisi |
+| `SalahReadonly.qml` | Jalan, lalu `TypeError: Cannot assign to read-only property` saat penugasan |
+
+### d. required pada properti yang sudah ada
+
+Bentuk `required <namaProperti>` menjadikan properti **yang sudah ada** wajib diisi:
+
+```qml
+// ColorRectangle.qml
+import QtQuick
+
+Rectangle {
+    required color
+}
+```
+
+Setiap pemakai `ColorRectangle` kini **wajib** menetapkan `color`. Berguna untuk komponen yang tidak masuk akal tanpa nilai tertentu.
+
+### e. required dan delegate
+
+Menurut dokumentasi, `required property` memainkan peran khusus pada model-view: bila delegate sebuah view punya properti `required` yang **namanya sama** dengan nama *role* model, properti itu otomatis diisi dari model. Ini cara modern dan aman untuk delegate (Fase 7). Dari C++, properti `required` dapat diisi lewat `QQmlComponent::createWithInitialProperties`, `QQmlApplicationEngine::setInitialProperties`, atau `QQuickView::setInitialProperties`.
+
+### f. Memilih: nilai bawaan, required, readonly
+
+| Situasi | Pilihan |
+| --- | --- |
+| Nilai masuk akal sebagai bawaan (ukuran, warna) | Properti biasa dengan nilai awal |
+| Tanpa nilai dari luar komponen tidak bermakna (judul, data utama) | `required` |
+| Nilai turunan yang tak boleh ditimpa (`lebarDalam`) | `readonly` dengan binding |
+| Konstanta (`minimum`) | `readonly` |
+| Hanya komponen sendiri yang boleh mengubah, tetapi pemakai boleh membaca | `readonly` + ubah lewat metode atau alias ke properti terpisah (1.3.7) |
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Wajib diisi, dengan nilai bawaan | Tidak didukung bersama | Pilih salah satu |
+| Validasi nilai yang masuk | `onXChanged` yang menolak atau menormalkan | Fase 3 |
+| Properti hanya dibaca dari C++ | `Q_PROPERTY` tanpa setter (`READ` saja) | Fase 10 |
+| Menyembunyikan dari pemakai | Properti pada `QtObject` ber-id (konvensi) | 1.3.7 |
+
+### h. Visual
+
+```
+  Kartu { }                       -->  required judul belum diisi  --> GAGAL (aplikasi tak mulai)
+  Kartu { judul: 'Satu' }         -->  OK
+  Kartu { judul: 'x'
+          Component.onCompleted: minimum = 5 }
+                                  -->  TypeError: Cannot assign to read-only property
+
+  required  = "WAJIB diisi"        readonly = "TIDAK boleh diubah"
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| `required property` | Properti yang wajib diisi pemakai |
+| `readonly property` | Properti yang tak dapat diganti setelah inisialisasi |
+| Nilai awal | Nilai pada deklarasi |
+| Role (model) | Nama bidang data pada baris model |
+| Instansiasi dinamis | Membuat objek saat berjalan (`Qt.createComponent`) |
+| Kontrak | Aturan penggunaan sebuah tipe |
+
+### j. Tips dan praktik terbaik
+
+- Jadikan data utama sebuah komponen `required`; beri nilai bawaan hanya bila masuk akal.
+- Gunakan `readonly` untuk konstanta dan nilai turunan; beri komentar bila alasannya tidak jelas.
+- Biasakan menulis `required` di baris atas deklarasi agar kontrak terbaca sekilas.
+- Gunakan `required` pada delegate (Fase 7), bukan akses implisit ke `modelData`.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Aplikasi tidak mau mulai | Properti `required` belum diisi | Isi pada setiap pemakaian |
+| Nilai awal pada `required` ditolak | Dokumentasi melarangnya | Hapus nilai awal |
+| `Cannot assign to read-only property` | Mengubah `readonly` dari luar atau dalam | Ubah desain: gunakan properti biasa, atau ubah lewat jalur lain |
+| `readonly default property` galat | Kombinasi terlarang | Pilih salah satu |
+| Mengira `readonly` mencegah baca | Hanya mencegah **menulis** | Gunakan `QtObject` internal untuk menyembunyikan (1.3.7) |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.4 (antarmuka komponen), Fase 3 (binding yang memicu perubahan), Fase 7 (delegate dengan `required`), dan Fase 10 (properti read-only dari C++).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Buat `Kartu.qml` dan `UjiKartu.qml`, jalankan, lalu jalankan `SalahRequired.qml` dan `SalahReadonly.qml` dan catat pesan serta exit code di `galat.md`. Tambahkan `ColorRectangle.qml` dengan `required color` dan pakai tanpa dan dengan `color`.
+
+**Cek pemahaman.** (1) Mengapa `required` lebih aman daripada nilai bawaan kosong? (2) Apakah `readonly` mencegah pemakai membaca nilainya? (3) Apa fungsi `required color` pada `Rectangle`?
+
+### n. Referensi
+
+- [QML Object Attributes: required properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [Read-Only Properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+- [Models and Views in Qt Quick](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html) · [QQmlComponent::createWithInitialProperties](https://doc.qt.io/qt-6/qqmlcomponent.html#createWithInitialProperties)
+
 
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
