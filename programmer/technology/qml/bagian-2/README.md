@@ -1716,7 +1716,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 | Audit Fase 1 dan Modul 1.1 | Selesai |
 | Fase 1 (tingkat fase) | Selesai |
 | Modul 1.1 (1.1.1–1.1.7) | **Selesai** |
-| Modul 1.2 — Tipe Data dan Sistem Tipe | Berikutnya, menunggu konfirmasi |
+| Modul 1.2 — Tipe Data dan Sistem Tipe | Berikutnya |
 | Modul 1.3 — Properti, Alias, dan Atribut Objek | Setelah 1.2 |
 | Modul 1.4 — Komponen dan Reuse | Setelah 1.3 |
 
