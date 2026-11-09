@@ -11,7 +11,7 @@ Dokumen ini melanjutkan dokumen Fase 0 dengan pola yang sama: audit singkat, pen
 | 1. Audit Fase 1 dan Modul 1.1 | Pemeriksaan sebelum materi | Selesai |
 | 2. Fase 1 (tingkat fase) | Peran, filosofi, peta, hubungan | Selesai |
 | 3. Modul 1.1 — Sintaks Dasar dan Struktur Dokumen | Sub-bagian 1.1.1 sampai 1.1.7 | Ditulis di dokumen ini |
-| Modul 1.2, 1.3, 1.4 | Tipe data, properti, komponen | Selanjutnya |
+| Modul 1.2, 1.3, 1.4 | Tipe data, properti, komponen | Menunggu konfirmasi Anda |
 
 **Konvensi** sama dengan Fase 0: baris berawalan `$` adalah perintah; tabel **Kata demi kata** menerangkan kode; **\[TAMBAHAN\]** menandai materi di luar kurikulum asli beserta alasannya; **\[amati\]** berarti hasil bergantung mesin Anda dan harus dibuktikan sendiri. Tautan berasal dari dokumentasi resmi, dan belum diuji otomatis.
 
@@ -1554,11 +1554,9 @@ Untuk tiap berkas catat: apakah `qmllint` menangkapnya **sebelum** dijalankan? P
 
 Simpan sebagai `galat.md` di repositori belajar dan isi dari hasil lab Anda:
 
-```markdown
 | Berkas | Kerusakan | Kelas | Pesan pertama (salin utuh) | Exit | Tertangkap qmllint? | Perbaikan |
 | --- | --- | --- | --- | --- | --- | --- |
 | e01 | dua akar | ? | ... | ? | ? | bungkus dalam satu akar |
-```
 
 Tambahkan baris baru **setiap kali Anda bertemu galat baru** sepanjang kurikulum. Dalam beberapa bulan, ia menjadi referensi paling berharga milik Anda, karena ia berisi pesan dari versi Qt dan lingkungan **Anda**.
 
@@ -1693,7 +1691,6 @@ Di folder `~/Development/qt-learning/fase1/terpadu/` (30–45 menit), tanpa meny
 
 Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 
-```markdown
 **Daftar isi.** 1.1.1 Struktur dokumen: pragma, import, root · 1.1.2 Objek dan hierarki · 1.1.3 Properti dasar · 1.1.4 `id` dan referensi · 1.1.5 Komentar, `qmlformat`, dan konvensi penulisan · 1.1.6 Konvensi nama berkas · 1.1.7 Lab merusak dokumen dan kamus galat
 
 **Terminologi (tambahan).** Pragma (arahan engine, ditulis sebelum import; contoh: `Singleton` sejak 5.2, `ComponentBehavior` sejak 6.4); tiga jenis import (modul, direktori, JavaScript) dan `as` untuk namespace lokal; default property (pada `Item`: `data`); unqualified access (merujuk properti tanpa menyebut objeknya); urutan atribut Qt (id, properti, signal, fungsi, properti objek, objek anak).
@@ -1707,7 +1704,6 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 **Referensi (tambahan).** [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [Import Statements](https://doc.qt.io/qt-6/qtqml-syntax-imports.html) · [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [qmlformat](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html)
 
 **Estimasi.** Fase 1 secara keseluruhan: Jalur A sekitar 3 minggu.
-```
 
 ### 3.7.6 Status dan langkah berikutnya
 
@@ -1716,7 +1712,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 | Audit Fase 1 dan Modul 1.1 | Selesai |
 | Fase 1 (tingkat fase) | Selesai |
 | Modul 1.1 (1.1.1–1.1.7) | **Selesai** |
-| Modul 1.2 — Tipe Data dan Sistem Tipe | Berikutnya |
+| Modul 1.2 — Tipe Data dan Sistem Tipe | Berikutnya, menunggu konfirmasi |
 | Modul 1.3 — Properti, Alias, dan Atribut Objek | Setelah 1.2 |
 | Modul 1.4 — Komponen dan Reuse | Setelah 1.3 |
 
@@ -2782,7 +2778,7 @@ Mereka berguna untuk log dan untuk membaca enum dari teks (mis. berkas konfigura
 | Enum di dokumen tanpa nama tipe tidak bisa diacu | Enum harus dipegang tipe bernama | Letakkan di berkas bertipe, atau namespace |
 | Nilai enum 64-bit rusak | Melampaui rentang aman | Hindari nilai di luar rentang 32-bit |
 | Perbandingan dengan angka telanjang | Menghilangkan makna | Selalu bandingkan dengan nama enum |
-| Mengacu `Status.Loading` gagal | Bentuk tak bertingkat | Pakai `Status.Mode.Loading` |
+| Mengacu `Status.Loading` gagal | Anggapan keliru: dokumentasi menyatakan kedua bentuk sah (koreksi di 5.1 butir 9) | Pakai `Status.Mode.Loading` |
 
 ### k. Hubungan dengan modul lain
 
@@ -3415,7 +3411,6 @@ Di folder `~/Development/qt-learning/fase1/tipe/` (30–45 menit), tanpa menyali
 
 Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.2.
 
-```markdown
 **Terminologi (pengganti).** Mulai Qt 6.6/6.7 istilah dokumentasi adalah *value type* (tipe nilai), bukan *basic type*: tipe nilai disalin saat ditugaskan, dan tipe objek dirujuk. Penyedia: bahasa QML (`bool`, `int`, `real`, `double`, `string`, `url`, `date`, `var`, `variant`, `list`, `void`), QtQml (`point`, `rect`, `size`, `easingCurve`), dan QtQuick (`color`, `font`, `vector2d`, `vector3d`, `vector4d`, `matrix4x4`, `quaternion`; perlu `import QtQuick`).
 
 **Daftar isi.** 1.2.1 Primitif dan `url` · 1.2.2 Geometri, warna, dan font · 1.2.3 `date` dan konversi `QDate`/`QTime` · 1.2.4 `list` dan `var` · 1.2.5 Enum · 1.2.6 Konversi dan jebakan · 1.2.7 Vektor, matriks, dan kuaternion · 1.2.8 Memeriksa dan menegakkan tipe
@@ -3425,7 +3420,6 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.2.
 **Cek pemahaman (jawaban lebih presisi).** (1) Pengganti `time`: gunakan `date` dan baca jam-menitnya, atau `int` detik bila hanya durasi. (2) Properti terketik lebih baik karena kesalahan tertangkap dini (galat saat nilai salah), tooling (`qmllint`, `qmlls`) dapat menalar, dan kompiler QML dapat menghasilkan kode lebih efisien.
 
 **Referensi (ganti dan tambah).** [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html) (menggantikan `...basictypes.html`) · [QML Enumerations](https://doc.qt.io/qt-6/qtqml-typesystem-enumerations.html) · [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html)
-```
 
 ### 4.6.6 Status
 
@@ -3434,7 +3428,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.2.
 | Audit Fase 1 dan Modul 1.1 | Selesai |
 | Modul 1.1 (1.1.1–1.1.7) | Selesai |
 | Modul 1.2 (1.2.1–1.2.8) | **Selesai** |
-| Modul 1.3 — Properti, Alias, dan Atribut Objek | Selanjutnya |
+| Modul 1.3 — Properti, Alias, dan Atribut Objek | Menunggu konfirmasi Anda |
 | Modul 1.4 — Komponen dan Reuse | Setelah 1.3 |
 
 ---
@@ -3892,6 +3886,1600 @@ Prasyarat untuk Modul 1.4 (antarmuka komponen), Fase 3 (binding yang memicu peru
 
 - [QML Object Attributes: required properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [Read-Only Properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
 - [Models and Views in Qt Quick](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html) · [QQmlComponent::createWithInitialProperties](https://doc.qt.io/qt-6/qqmlcomponent.html#createWithInitialProperties)
+
+---
+
+## 1.3.3 Alias dan default property
+
+*Semangat: pintu yang dirancang baik membuat rumah terasa luas.*
+
+**Daftar isi 1.3.3:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: alias · d. Batasan alias · e. Alias dan tipe · f. Default property · g. Contoh 2: `Panel.qml` dari kurikulum · h. Opsi lain · i. Visual · j. Terminologi · k. Tips · l. Kesalahan umum · m. Hubungan · n. Latihan dan cek · o. Referensi
+
+### a. Deskripsi dan peran
+
+Alias memungkinkan sebuah komponen **membuka sebagian isi dalamnya** sebagai properti publik, tanpa menyalin nilainya. Default property memungkinkan pemakai komponen menulis anak langsung di dalam kurung, tanpa menyebut properti tujuan. Keduanya adalah kunci komponen yang enak dipakai.
+
+### b. Konsep dan filosofi
+
+- **Alias adalah referensi, bukan penyimpanan.** Menurut dokumentasi, properti biasa mengalokasikan ruang penyimpanan baru; alias menghubungkan properti baru (*aliasing property*) langsung ke properti yang sudah ada (*aliased property*). Karena itu, **menulis ke alias berarti menulis ke targetnya.**
+- Sintaks: `property alias <nama>: <rujukan alias>`; kata kunci `alias` menggantikan tipe, dan **rujukan wajib ada** saat deklarasi (tidak ada nilai awal opsional seperti properti biasa).
+- **Default property** menerima objek yang ditulis langsung di dalam objek tanpa menyebut properti. Sebuah objek punya **satu** default property.
+
+**Filosofi:** tulis komponen dengan **pintu yang sedikit dan jelas**: alias untuk bagian yang memang pantas dibuka, bukan untuk membongkar seluruh dalam komponen.
+
+### c. Contoh 1: alias
+
+Buat `Tombol.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    property alias teksTombol: label.text
+    property alias warnaTeks: label.color
+
+    width: 140
+    height: 40
+    radius: 8
+    color: '#89b4fa'
+
+    Text {
+        id: label
+        anchors.centerIn: parent
+    }
+}
+```
+
+Dan `UjiTombol.qml`:
+
+```qml
+import QtQuick
+
+Row {
+    spacing: 10
+
+    Tombol { teksTombol: 'Simpan' }
+    Tombol { teksTombol: 'Batal'; warnaTeks: 'white'; color: '#f38ba8' }
+}
+```
+
+```bash
+$ qml UjiTombol.qml
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `property alias teksTombol: label.text` | Properti baru `teksTombol` yang **menunjuk** `label.text`. Tidak ada salinan teks tersimpan di `Tombol`. |
+| `property alias warnaTeks: label.color` | Alias kedua, ke warna teks. |
+| `Text { id: label }` | Anak yang dirujuk alias lewat `id` (1.1.4). |
+| `Tombol { teksTombol: 'Simpan' }` | Pemakai mengatur teks **tanpa mengetahui** adanya `Text` di dalam. |
+| `color: '#f38ba8'` | `color` adalah properti `Rectangle` sendiri, bukan alias. |
+
+Dokumentasi menegaskan perbedaannya: bila `teksTombol` bukan alias melainkan properti biasa, mengubahnya **tidak** mengubah teks yang tampil, karena binding tidak dua arah. Dengan alias, mengubah `teksTombol` langsung mengubah `label.text`.
+
+**Percobaan \[amati\]:** tambahkan di `UjiTombol.qml` sebuah handler `onTeksTombolChanged` pada salah satu `Tombol` dan ubah teksnya lewat `MouseArea`; catat apakah handler terpanggil.
+
+### d. Batasan alias
+
+Menurut dokumentasi Qt 6.12, alias:
+
+| Batasan | Arti |
+| --- | --- |
+| Hanya merujuk objek atau properti **dalam cakupan tipenya** | Tidak boleh merujuk objek di luar berkas komponennya |
+| Tidak boleh berisi ekspresi JavaScript sembarang | Hanya rujukan: `label.text`, bukan `label.text + '!'` |
+| Rujukan **wajib** ada saat deklarasi | Tidak ada alias “kosong” |
+| Tidak boleh merujuk **attached property** | Lihat 1.3.5 |
+| Tidak boleh merujuk properti pada kedalaman **tiga tingkat atau lebih** | `a.b.c.d` ditolak; hingga dua tingkat (`rectangle.border.color`) boleh |
+| Tidak boleh memiliki tipe eksplisit | Tipenya adalah tipe terdeklarasi dari targetnya |
+
+Contoh batasan kedalaman dari dokumentasi:
+
+```qml
+property alias color: myItem.myRect.border.color   // tidak bekerja (tiga tingkat)
+property alias color: rectangle.border.color       // bekerja (dua tingkat)
+```
+
+### e. Alias dan tipe
+
+Karena alias tidak punya tipe sendiri, **properti tambahan** yang dideklarasikan inline pada objek sasaran tidak terlihat lewat alias:
+
+```qml
+// MyItem.qml
+Item {
+    property alias inner: innerItem
+
+    Item {
+        id: innerItem
+        property int extraProperty
+    }
+}
+```
+
+```qml
+// pemakai
+MyItem {
+    inner.extraProperty: 5   // GAGAL: inner hanya bertipe Item
+}
+```
+
+Solusi menurut dokumentasi: jadikan objek dalam itu **komponen berkas sendiri** (misalnya `ExtraItem.qml` yang mendeklarasikan `extraProperty`), lalu `ExtraItem { id: innerItem }`; kini alias merujuk `ExtraItem` dan semua propertinya tersedia. Anda akan membuktikan kegagalan ini di lab 1.3.9.
+
+### f. Default property
+
+- Sebuah objek punya paling banyak **satu** default property. Objek yang ditulis langsung di dalam objek lain tanpa menyebut properti **otomatis** masuk ke sana.
+- Menandai properti dengan `default` paling berguna untuk tipe `var`, **tipe objek**, dan tipe urutan; menandai `string` sebagai default tidak berguna karena hanya objek yang bisa ditugaskan secara implisit.
+- Pada `Item`, default property adalah `data` (1.1.2); itulah sebabnya anak dapat ditulis tanpa `children:`.
+- Pola umum: `default property alias isi: wadah.children` (dokumentasi) atau `.data` (kurikulum): objek anak yang ditulis pemakai dialihkan ke wadah di dalam komponen.
+- **Peringatan dokumentasi:** pada satu definisi objek, jangan campur penugasan **implisit** dan **eksplisit** ke default list property; urutannya tidak terdefinisi.
+
+```qml
+Item {
+    // Pakai salah satu: implisit ATAU eksplisit, bukan keduanya
+    Rectangle { width: 40 }              // implisit
+    data: [ Rectangle { width: 100 } ]   // eksplisit
+}
+```
+
+### g. Contoh 2: Panel.qml dari kurikulum
+
+Simpan sebagai `Panel.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    required property string judul
+    readonly property int minimum: 10
+    property alias warnaLatar: root.color
+    default property alias isi: kolom.data
+
+    width: 240
+    height: 120
+
+    Column {
+        id: kolom
+        anchors.fill: parent
+
+        Text { text: root.judul }
+    }
+}
+```
+
+`UjiPanel.qml`:
+
+```qml
+import QtQuick
+
+Row {
+    spacing: 12
+
+    Panel { judul: 'Satu'; warnaLatar: '#89b4fa' }
+
+    Panel {
+        judul: 'Dua'
+        warnaLatar: '#a6e3a1'
+
+        Text { text: 'anak masuk ke kolom' }
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `required property string judul` | Wajib diisi (1.3.2). |
+| `readonly property int minimum: 10` | Konstanta tipe (1.3.2). |
+| `property alias warnaLatar: root.color` | Alias ke properti **milik root sendiri**; sah karena `root` berada dalam cakupan tipe ini. |
+| `default property alias isi: kolom.data` | Anak yang ditulis pemakai dialihkan ke `kolom.data`. |
+| `Column { id: kolom ... }` | Wadah yang menerima anak itu. |
+| `Panel { judul: 'Dua' ... Text { ... } }` | `Text` pemakai **otomatis** ke dalam `kolom`, di bawah judul. |
+
+Anak dialihkan ke `data`, bukan `children`: `data` menerima objek visual **dan** non-visual (mis. `Timer`), sedangkan `children` hanya objek visual. Pilih sesuai kebutuhan.
+
+Catat apakah `Panel` yang mendeklarasikan default property baru sambil berakar `Rectangle` berjalan mulus di versi Anda **\[amati\]**.
+
+### h. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Membuka satu bagian dalam | `property alias` | Paling ringan |
+| Membuka bagian dalam yang bisa diganti pemakai | Properti bertipe `Component` atau `Item` | Fase 5 dan 9 (pola `contentItem`) |
+| Anak pemakai ke satu tempat | `default property alias isi: wadah.data` | Pola panel |
+| Anak pemakai ke beberapa tempat | Beberapa properti objek bernama (`header`, `footer`) | Pemakai mengisi satu per satu |
+| Menyalin nilai, bukan meneruskan | Properti biasa dengan binding | Satu arah |
+| Meneruskan banyak properti sekaligus | Beberapa alias, atau jadikan bagian dalam komponen publik | Hindari membongkar semuanya |
+
+### i. Visual
+
+```
+  Tombol.qml                                          pemakai
+ +------------------------------------------+         +------------------------------+
+ |  property alias teksTombol: label.text    | <-----> |  Tombol { teksTombol: 'OK' } |
+ |        |                                  |  menulis|                              |
+ |        '------ referensi -------+         |  tembus |                              |
+ |  Text { id: label; text: ...  <-'         |         +------------------------------+
+ +------------------------------------------+
+
+  alias  = pintu ke SATU tempat (tanpa salinan)
+  default property alias = "anak pemakai masuk ke wadah ini"
+```
+
+### j. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Alias (aliasing property) | Properti yang merujuk properti lain |
+| Aliased property | Properti yang dirujuk |
+| Rujukan alias | Ekspresi sederhana di sisi kanan deklarasi alias |
+| Default property | Properti penerima anak yang ditulis tanpa nama properti |
+| Penugasan implisit / eksplisit | Menulis anak langsung / menulis `data: [...]` |
+| Cakupan tipe | Isi satu berkas komponen |
+
+### k. Tips dan praktik terbaik
+
+- Buka lewat alias hanya yang pemakai **perlu**; setiap alias adalah janji yang harus dijaga.
+- Beri nama alias menurut peran bagi pemakai (`teksTombol`), bukan menurut asal (`labelText`).
+- Gunakan satu default property per komponen, untuk anak pemakai.
+- Bila alias terlalu banyak, pertimbangkan membuka satu objek bertipe jelas.
+
+### l. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Alias ke properti yang tidak ada | Salah eja atau `id` salah | Periksa nama dan `id` |
+| Alias berisi ekspresi | Mengira alias seperti binding | Pakai properti biasa dengan binding |
+| Alias ke tiga tingkat | Melampaui batas | Jadikan bagian itu komponen sendiri, atau alias bertahap |
+| Properti tambahan tak terlihat lewat alias | Alias tak bertipe | Komponen berkas sendiri |
+| Campur anak implisit dan `data:` | Urutan tak terdefinisi | Pilih satu gaya |
+| Default `string` tak berfungsi | Hanya objek yang masuk secara implisit | Tulis nama properti |
+
+### m. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.4 (komponen), Fase 5 (komponen dan layout), Fase 8 (modul), dan Fase 9 (pola `contentItem` pada kendali).
+
+### n. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Buat `Tombol.qml` dan `Panel.qml`, dan pakai masing-masing dua kali; satu `Panel` berisi anak `Text`. Lalu: (1) ubah `default property alias` menjadi `.children` dan tambahkan sebuah `Timer` sebagai anak, catat hasilnya **\[amati\]**; (2) coba alias dengan ekspresi (`label.text + '!'`) dan catat galatnya **\[amati\]**.
+
+**Cek pemahaman.** (1) Apa beda properti biasa dan alias? (2) Apa arti “menulis ke alias menulis ke targetnya”? (3) Mengapa `default property string` tidak berguna?
+
+### o. Referensi
+
+- [QML Object Attributes: property aliases](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [default properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+- [Item: data dan children](https://doc.qt.io/qt-6/qml-qtquick-item.html) · [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html)
+
+---
+
+## 1.3.4 Group properties
+
+*Semangat: yang tersusun rapi di dalam, terbaca rapi di luar.*
+
+**Daftar isi 1.3.4:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: titik dan kurung · d. Tipe nilai dan tipe objek · e. Membuat group property sendiri · f. Aturan dan batasan · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Banyak properti punya **sub-properti**: `font` punya `pixelSize` dan `bold`; `border` punya `color` dan `width`; `anchors` punya `left` dan `margins`. Bagian ini menjelaskan cara menulisnya, apa yang terjadi di baliknya, dan cara membuat kelompok sendiri.
+
+### b. Konsep dan filosofi
+
+Menurut dokumentasi, notasi grup tersedia untuk **properti apa pun yang tipenya punya sub-properti**; ia adalah **notasi**, bukan jenis properti tersendiri. Dua bentuk:
+
+```qml
+Text { font.pixelSize: 12; font.bold: true }       // notasi titik
+Text { font { pixelSize: 12; bold: true } }        // notasi kurung (grup)
+```
+
+**Filosofi:** kelompokkan hal yang berhubungan sebagai satu gagasan; baca dan tulis sebagai satu kesatuan.
+
+### c. Contoh 1: titik dan kurung
+
+Simpan sebagai `Grup.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    width: 320
+    height: 140
+    color: '#1e1e2e'
+
+    Rectangle {
+        border.color: 'white'
+        border.width: 2
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.verticalCenter: parent.verticalCenter
+        width: 100
+        height: 60
+        color: '#89b4fa'
+    }
+
+    Rectangle {
+        border { color: 'white'; width: 2 }
+        anchors {
+            right: parent.right
+            rightMargin: 20
+            verticalCenter: parent.verticalCenter
+        }
+        width: 100
+        height: 60
+        color: '#f38ba8'
+    }
+
+    Text {
+        anchors.centerIn: parent
+        color: 'white'
+        text: 'Grup'
+        font { pixelSize: 18; bold: true }
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `border.color`, `border.width` | Dua sub-properti `border` dengan notasi titik. |
+| `border { color: 'white'; width: 2 }` | Hasil yang sama dengan notasi kurung. |
+| `anchors { right: ...; rightMargin: 20; verticalCenter: ... }` | Notasi kurung yang rapi untuk banyak sub-properti. |
+| `font { pixelSize: 18; bold: true }` | Grup `font`. |
+
+### d. Tipe nilai dan tipe objek
+
+Notasinya sama, tetapi yang terjadi di baliknya berbeda (dokumentasi):
+
+| Jenis isi properti | Contoh | Perilaku engine | Syarat |
+| --- | --- | --- | --- |
+| **Tipe nilai** | `font` | Engine **membaca** nilai, **mengubahnya**, lalu **menulis kembali** | Properti harus **dapat ditulis** |
+| **Tipe objek** | `border`, `anchors` | Penugasan **ditulis ke objek** yang saat itu dipegang properti | Objek **tidak boleh null**; propertinya boleh read-only |
+
+Menjadikan properti objek read-only adalah cara bagus mencegah kode QML mengganti objek tempat sub-properti berada; dokumentasi menyebutnya umumnya ide yang baik. Nama sub-properti diselesaikan menurut **tipe yang dideklarasikan** untuk properti, bukan tipe objek yang kebetulan dipegang saat runtime.
+
+### e. Membuat group property sendiri
+
+Anda dapat membuat kelompok sendiri dengan menjadikan sebuah **tipe objek** sebagai tipe properti. `Estetika.qml`:
+
+```qml
+import QtQuick
+
+QtObject {
+    property color warna: '#89b4fa'
+    property int radius: 8
+}
+```
+
+`KartuGaya.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    readonly property Estetika estetika: Estetika { }
+
+    width: 200
+    height: 80
+    color: estetika.warna
+    radius: estetika.radius
+}
+```
+
+`UjiGaya.qml`:
+
+```qml
+import QtQuick
+
+Row {
+    spacing: 10
+
+    KartuGaya { }
+    KartuGaya { estetika.warna: '#f38ba8'; estetika.radius: 20 }
+    KartuGaya { estetika { warna: '#a6e3a1'; radius: 0 } }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `Estetika.qml` | Tipe objek berisi sub-properti `warna` dan `radius`. |
+| `readonly property Estetika estetika: Estetika { }` | Properti bertipe `Estetika`, diisi objek; `readonly` mencegah penggantian objeknya, tetapi sub-propertinya tetap dapat diatur. |
+| `estetika.warna: '#f38ba8'` | Pemakai menulis sub-properti dengan notasi titik **ke objek yang dipegang**. |
+| `estetika { warna: ...; radius: 0 }` | Notasi kurung yang setara. |
+
+Perhatikan: karena nama sub-properti diselesaikan menurut tipe **terdeklarasi**, properti harus bertipe `Estetika`, bukan `QtObject`; bila tidak, `warna` tidak dikenal (bandingkan dengan masalah alias di 1.3.3-e).
+
+### f. Aturan dan batasan
+
+- **Jangan campur** penugasan objek utuh **dan** sub-properti untuk properti yang sama dalam satu definisi objek: pilih salah satu. Uji gabungan `font: Qt.font({ pixelSize: 20 })` dengan `font.bold: true` dan catat galatnya **\[amati\]**.
+- Properti tipe nilai harus **dapat ditulis**; properti tipe objek boleh read-only.
+- Objek yang dituju harus **tidak null** saat penugasan diterapkan.
+- Untuk perubahan: perubahan satu sub-properti pada tipe **nilai** (seperti `font`) dicatat sebagai **satu** perubahan properti induk (1.2.2-e).
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Satu sub-properti | Notasi titik | Paling ringkas |
+| Banyak sub-properti | Notasi kurung | Lebih terbaca; konvensi Qt |
+| Kelompok buatan sendiri | Tipe objek sebagai tipe properti | Bagian e |
+| Menyalin seluruh kelompok | Tugaskan objek utuh (mis. `font: Qt.font({...})`) | Jangan campur dengan sub-properti |
+| Kelompok dari C++ | `Q_PROPERTY` bertipe `QObject*` | Fase 10 |
+
+### h. Visual
+
+```
+  Text {                                    Text {
+      font.pixelSize: 12                        font { pixelSize: 12
+      font.bold: true                                  bold: true }
+  }                                         }
+            \______________ sama ______________/
+
+  font    (tipe NILAI)  : baca -> ubah -> tulis kembali      (properti harus dapat ditulis)
+  border  (tipe OBJEK)  : tulis ke objek yang dipegang       (objek tidak boleh null)
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Group property | Properti yang memiliki sub-properti |
+| Sub-properti | Atribut di dalam sebuah group property |
+| Notasi titik / kurung | Dua cara menulis sub-properti |
+| Tipe nilai / tipe objek | Disalin / dirujuk |
+| Tipe terdeklarasi | Tipe yang dinyatakan pada deklarasi properti |
+
+### j. Tips dan praktik terbaik
+
+- Pakai notasi kurung bila menulis dua sub-properti atau lebih.
+- Jadikan properti objek kelompok `readonly` bila pemakai tak perlu menggantinya.
+- Bangun kelompok sendiri hanya bila ada beberapa properti yang memang satu gagasan.
+- Beri nama kelompok menurut peran (`estetika`, `batas`).
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Sub-properti kelompok sendiri tidak dikenal | Properti bertipe `QtObject` | Tipe terdeklarasi harus tipe yang punya sub-properti |
+| Galat saat mencampur objek utuh dan sub-properti | Dua bentuk pada properti yang sama | Pilih satu bentuk |
+| Galat karena objek null | Properti objek belum diisi | Beri nilai awal objek |
+| Galat menulis ke group tipe nilai | Properti read-only | Jadikan dapat ditulis |
+| Menulis `onFont.pixelSizeChanged` | Tidak ada signal per sub-properti pada tipe nilai | `onFontChanged` |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 4 (`anchors`, `border`), Fase 5 (layout dan style), Fase 9 (tema dan palet), dan Fase 10 (properti objek dari C++).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Grup.qml` dan `UjiGaya.qml`. Lalu: (1) ubah `Estetika` menjadi bertipe `QtObject` pada `KartuGaya` dan catat galatnya; (2) tambahkan sub-properti `batas` ke `Estetika` dan pakai; (3) lakukan uji campuran di bagian f dan catat galatnya.
+
+**Cek pemahaman.** (1) Apa bedanya group properti bertipe nilai dan bertipe objek? (2) Mengapa sub-properti diselesaikan menurut tipe terdeklarasi? (3) Mengapa properti objek kelompok sebaiknya `readonly`?
+
+### n. Referensi
+
+- [QML Object Attributes: grouped properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html)
+- [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html) · [QML Coding Conventions: grouped properties](https://doc.qt.io/qt-6/qml-codingconventions.html)
+
+---
+
+## 1.3.5 Attached properties
+
+*Semangat: kadang yang dibutuhkan sebuah objek datang dari tempat ia berada, bukan dari dirinya.*
+
+**Daftar isi 1.3.5:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: `ListView.isCurrentItem` · d. Kesalahan paling umum: anak tidak punya attached · e. Yang sering Anda temui · f. Batasan · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+**Attached properties** dan **attached signal handlers** memungkinkan sebuah objek “dianotasi” dengan properti atau signal tambahan yang bukan miliknya, tetapi relevan karena **tempat ia berada**: sebuah delegate dalam `ListView` mengetahui apakah ia item terpilih; sebuah `Item` di dalam layout menyatakan perilaku ukurannya lewat `Layout`.
+
+### b. Konsep dan filosofi
+
+Bentuk penulisan (dokumentasi):
+
+```
+<TipeLekat>.<namaProperti>
+<TipeLekat>.on<NamaSignal>
+```
+
+Sebuah tipe QML (biasanya dibuat di C++) dapat menyediakan **attaching type**; instansnya dipasang ke objek tertentu saat berjalan, sehingga objek itu dapat mengakses properti dan signalnya dengan awalan nama attaching type. Contoh yang paling sering: `Component.onCompleted` (attached signal handler dari tipe `Component`).
+
+**Filosofi:** informasi yang bergantung pada **konteks** (bukan sifat bawaan objek) diberikan oleh konteksnya, sehingga objek yang sama dapat dipakai di konteks berbeda tanpa mengubah tipenya.
+
+### c. Contoh 1: ListView.isCurrentItem
+
+Simpan sebagai `Attached.qml`:
+
+```qml
+import QtQuick
+
+ListView {
+    width: 240
+    height: 200
+    model: 3
+    currentIndex: 1
+
+    delegate: Item {
+        id: baris
+        required property int index
+
+        width: 220
+        height: 40
+
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: 4
+            color: baris.ListView.isCurrentItem ? '#a6e3a1' : '#89b4fa'
+
+            Text {
+                anchors.centerIn: parent
+                text: 'baris ' + baris.index
+            }
+        }
+    }
+}
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `ListView { model: 3 ... }` | Daftar dengan tiga baris; `model: 3` hanya membuat tiga entri bernomor (Fase 7). |
+| `currentIndex: 1` | Baris kedua menjadi baris terpilih. |
+| `delegate: Item { ... }` | Cetakan tiap baris; `Item` adalah **akar delegate**. |
+| `required property int index` | `index` diisi otomatis dari model (1.3.2-e). |
+| `baris.ListView.isCurrentItem` | **Attached property**: `ListView` adalah attaching type; `isCurrentItem` menyatakan apakah baris ini terpilih. Diakses lewat `id` pemilik. |
+| `color: ... ? '#a6e3a1' : '#89b4fa'` | Operator kondisional: warna hijau untuk baris terpilih. |
+
+### d. Kesalahan paling umum: anak tidak punya attached
+
+Menurut dokumentasi, kesalahan paling umum adalah mengira attached property tersedia langsung pada **anak-anak** objek tempat ia dipasang. Itu **tidak benar**: instans attaching type hanya dipasang pada objek tertentu itu, bukan pada seluruh anaknya.
+
+Ubah `Attached.qml` menjadi `SalahAttached.qml` dengan satu perubahan: ganti `baris.ListView.isCurrentItem` menjadi `ListView.isCurrentItem` di dalam `Rectangle` anak. Dokumentasi menyatakan versi itu **tidak bekerja** karena `ListView.isCurrentItem` hanya dipasang pada akar delegate **\[amati\]**: catat apa yang tampil (warna selalu sama) dan pesan galat atau peringatannya.
+
+Perbaikannya sudah ada di contoh benar: beri `id` pada **akar delegate** dan akses lewat `id.Tipe.properti` (`baris.ListView.isCurrentItem`).
+
+### e. Yang sering Anda temui
+
+| Attached | Contoh | Dipakai untuk |
+| --- | --- | --- |
+| `Component` | `Component.onCompleted`, `Component.onDestruction` | Aksi setelah objek selesai dibuat atau sebelum dihancurkan |
+| `ListView` | `ListView.isCurrentItem`, `ListView.view` | Informasi tentang delegate dalam daftar (Fase 7) |
+| `Layout` | `Layout.fillWidth`, `Layout.preferredWidth` | Perilaku ukuran dalam layout (Fase 5; `import QtQuick.Layouts`) |
+| `Keys` | `Keys.onPressed` | Penanganan tombol (Fase 6; butuh fokus) |
+
+Contoh pemakaian `Layout` (Fase 5):
+
+```qml
+import QtQuick
+import QtQuick.Layouts
+
+RowLayout {
+    width: 300
+    height: 60
+
+    Rectangle { Layout.fillWidth: true; Layout.fillHeight: true; color: '#89b4fa' }
+    Rectangle { Layout.preferredWidth: 80; Layout.fillHeight: true; color: '#f38ba8' }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `RowLayout` | Layout mendatar; menetapkan konteks bagi `Layout`. |
+| `Layout.fillWidth: true` | Isi sisa lebar. |
+| `Layout.preferredWidth: 80` | Lebar yang disukai 80. |
+| `Layout.fillHeight: true` | Isi tinggi. |
+
+### f. Batasan
+
+- Attached property **tidak** tersedia pada anak pemilik (bagian d).
+- **Alias tidak boleh** merujuk attached property (1.3.3-d).
+- Attached property hanya bermakna di konteks yang menyediakannya: `Layout.fillWidth` di luar layout tidak berefek.
+- Anda tidak mendefinisikan attached property di QML; ia disediakan oleh tipe C++ (Fase 10).
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Mengetahui posisi dalam view | `ListView.isCurrentItem`, atau `required property bool current` dari model | Fase 7 |
+| Mengatur perilaku dalam layout | Properti `Layout.*` | Fase 5 |
+| Menjalankan kode setelah dibuat | `Component.onCompleted` | Hindari logika berat (0.0.2) |
+| Mengirim informasi ke anak | Properti biasa pada pemilik, dirujuk lewat `id` | Jelas dan terketik |
+| Menghindari attached | Properti `required` yang diisi model | Disarankan pada delegate |
+
+### h. Visual
+
+```
+  ListView
+    '-- delegate: Item { id: baris }        <-- ListView.* DIPASANG DI SINI
+            '-- Rectangle                    <-- anak: TIDAK ada ListView.*  (salah: ListView.isCurrentItem)
+                      benar:  baris.ListView.isCurrentItem   (lewat id pemilik)
+
+  <TipeLekat>.<properti>      Layout.fillWidth     ListView.isCurrentItem
+  <TipeLekat>.on<Signal>      Component.onCompleted
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Attached property | Properti yang dipasang ke objek oleh konteksnya |
+| Attaching type | Tipe yang menyediakan properti itu (`ListView`, `Layout`) |
+| Attached signal handler | Handler signal yang dipasang serupa (`Component.onCompleted`) |
+| Akar delegate | Objek paling luar sebuah delegate |
+| Konteks | Tempat objek berada (view, layout) |
+
+### j. Tips dan praktik terbaik
+
+- Beri `id` pada akar delegate dan rujuk attached lewat `id.Tipe.properti`.
+- Pada delegate, utamakan `required property` untuk data dari model; pakai attached hanya untuk informasi view.
+- Hindari `Component.onCompleted` untuk logika yang dapat dinyatakan dengan binding.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| `ListView.isCurrentItem` tidak bekerja di anak | Attached hanya pada akar delegate | `id` akar, lalu `id.ListView.isCurrentItem` |
+| `Layout.fillWidth` tak berefek | Bukan anak langsung layout, atau `QtQuick.Layouts` tak diimpor | Periksa induk dan import |
+| Alias ke attached ditolak | Larangan alias | Properti biasa dengan binding |
+| `Component.onCompleted` berjalan terlalu dini | Komponen lain belum siap | Hindari bergantung urutan |
+| Mengira attached dapat dideklarasikan di QML | Disediakan C++ | Fase 10 |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 5 (`Layout`), Fase 6 (`Keys`), Fase 7 (`ListView`, delegate, `required`), dan Fase 10 (membuat attached type di C++).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Attached.qml`, lalu `SalahAttached.qml`, dan catat bedanya. Ubah `currentIndex` dan amati. Jalankan contoh `RowLayout` dan ubah `Layout.preferredWidth` menjadi 160.
+
+**Cek pemahaman.** (1) Mengapa `ListView.isCurrentItem` tidak bekerja di anak delegate? (2) Bagaimana mengaksesnya dengan benar? (3) Mengapa alias tidak boleh merujuk attached property?
+
+### n. Referensi
+
+- [QML Object Attributes: attached properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [ListView](https://doc.qt.io/qt-6/qml-qtquick-listview.html)
+- [Component (attached signals)](https://doc.qt.io/qt-6/qml-qtqml-component.html) · [Layout](https://doc.qt.io/qt-6/qml-qtquick-layouts-layout.html)
+- [Providing attached properties (C++)](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html)
+
+---
+
+## 1.3.6 Handler perubahan onXChanged, signal, dan metode
+
+*Semangat: yang tahu kapan sesuatu berubah, tahu kapan harus bertindak.*
+
+**Daftar isi 1.3.6:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh: level yang berubah · d. Mendeklarasikan signal · e. Metode · f. Properti dengan “on” (modifier) · g. Binding atau handler? · h. Opsi lain · i. Visual · j. Terminologi · k. Tips · l. Kesalahan umum · m. Hubungan · n. Latihan dan cek · o. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini mengajarkan tiga atribut yang berhubungan dengan **peristiwa dan tindakan**: handler perubahan (`onXChanged`), signal buatan sendiri, dan metode (fungsi). Ketiganya menjadikan sebuah tipe tidak hanya menyimpan data, tetapi juga **bereaksi** dan **berbicara**.
+
+### b. Konsep dan filosofi
+
+- Setiap properti mengumumkan perubahannya lewat signal `<nama>Changed`. Handlernya bernama `on<Nama>Changed` (huruf pertama nama menjadi besar). Ini berlaku juga untuk properti bawaan yang tidak didokumentasikan signalnya: `TextInput` yang punya `text` otomatis punya `onTextChanged`.
+- Di dalam handler, Anda dapat memakai nama properti langsung (`text`), tetapi menyebut objeknya (`root.level`) lebih jelas.
+- **Signal** adalah pemberitahuan bahwa sesuatu terjadi; **handler** adalah kode yang menanggapinya; **metode** adalah blok JavaScript yang dapat dipanggil.
+
+**Filosofi:** objek **mengumumkan** apa yang terjadi padanya (signal), dan pihak lain **memilih** menanggapinya (handler). Objek tidak perlu tahu siapa yang mendengarkan: itulah yang membuat komponen terlepas satu sama lain (Fase 3).
+
+### c. Contoh: level yang berubah
+
+Simpan sebagai `Perubahan.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    property int level: 0
+    property string status: level > 5 ? 'tinggi' : 'rendah'
+
+    signal naik(dari: int, ke: int)
+
+    function ubah(delta: int) {
+        root.level = Math.max(0, root.level + delta);
+    }
+
+    width: 280
+    height: 120
+    color: root.level > 5 ? '#f38ba8' : '#89b4fa'
+
+    onLevelChanged: console.log('level ->', root.level, root.status)
+    onNaik: (dari, ke) => console.log('naik dari', dari, 'ke', ke)
+
+    Text {
+        anchors.centerIn: parent
+        text: 'level ' + root.level + ' (' + root.status + ')'
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            const lama = root.level;
+            root.ubah(1);
+            root.naik(lama, root.level);
+        }
+    }
+}
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `property string status: level > 5 ? ... : ...` | Nilai turunan lewat **binding**; tidak perlu handler. |
+| `signal naik(dari: int, ke: int)` | Deklarasi signal dengan dua parameter bertipe; gaya titik dua yang disarankan dokumentasi. |
+| `function ubah(delta: int) { ... }` | Metode dengan parameter bertipe; `Math.max(0, ...)` menjaga level tak negatif. |
+| `onLevelChanged: console.log(...)` | Handler perubahan: terpanggil tiap `level` berubah. |
+| `onNaik: (dari, ke) => console.log(...)` | Handler signal buatan sendiri. Parameternya disebut pada fungsi panah; tipenya tidak perlu (signal sudah menentukan); fungsi panah tidak mendukung anotasi tipe. |
+| `root.naik(lama, root.level)` | **Memancarkan** signal dengan memanggilnya seperti metode. |
+| `const lama = root.level;` | Menyimpan nilai lama sebelum diubah. |
+
+Klik jendela berkali-kali; amati urutan baris `level -> ...` dan `naik dari ... ke ...` di terminal, dan perubahan warna setelah level melewati 5.
+
+### d. Mendeklarasikan signal
+
+Sintaks (dokumentasi Qt 6.12):
+
+```
+signal <nama>[([<parameter>: <tipe>[, ...]])]
+```
+
+```qml
+Item {
+    signal clicked
+    signal hovered()
+    signal actionPerformed(action: string, actionResult: int)
+}
+```
+
+- Tanda kurung boleh dihilangkan bila tidak ada parameter. Bila ada parameter, **tipenya wajib** dideklarasikan; tipe yang diizinkan sama dengan tipe properti.
+- Gaya `signal batal(string aksi)` (tipe di depan, seperti properti) juga sah; untuk konsistensi dengan metode, utamakan gaya titik dua.
+- Mendeklarasikan dua signal atau metode **bernama sama** dalam satu blok adalah galat; menggunakan kembali nama signal yang sudah ada pada tipe dasar diperbolehkan tetapi dapat menyembunyikannya (hati-hati).
+- Menambah signal otomatis menambah handler `on<Signal>` dengan implementasi kosong.
+
+### e. Metode
+
+Sintaks:
+
+```
+function <nama>([<parameter>[: <tipe>][, ...]]) [: <tipeHasil>] { <badan> }
+```
+
+```qml
+Rectangle {
+    id: rect
+
+    function hitungTinggi(): real {
+        return rect.width / 2;
+    }
+
+    width: 100
+    height: hitungTinggi()
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `function hitungTinggi(): real` | Metode tanpa parameter dengan tipe hasil `real`. |
+| `height: hitungTinggi()` | Memanggil metode di dalam binding: `height` akan dihitung ulang bila `width` berubah, karena `rect.width` dibaca di dalamnya. |
+
+Menurut dokumentasi, parameter metode tanpa tipe dianggap `var`; **deklarasikan tipenya** untuk membantu `qmlcachegen` menghasilkan kode yang lebih cepat dan agar mudah dipelihara (1.2.8). Metode dapat dipanggil dari dalam komponen maupun dari objek lain yang memegang rujukannya.
+
+### f. Properti dengan “on” (modifier)
+
+Sintaks `Tipe on properti { ... }` membuat objek yang **bekerja pada properti yang sudah ada**:
+
+```qml
+Rectangle {
+    width: 40
+    height: 40
+    NumberAnimation on x { from: 0; to: 200; duration: 1500; loops: Animation.Infinite }
+}
+```
+
+`NumberAnimation on x` adalah deklarasi objek biasa yang menganimasikan `x` (Fase 6; sudah Anda pakai di 0.0.2). Bila properti sasaran bukan numerik, animasi tidak menghasilkan galat tetapi juga tidak menganimasikan apa pun; perilakunya ditentukan implementasi tipe itu.
+
+### g. Binding atau handler?
+
+| Situasi | Pilih |
+| --- | --- |
+| Nilai yang **selalu** merupakan fungsi dari nilai lain | **Binding** (`status: level > 5 ? ...`) |
+| Aksi yang terjadi **ketika** sesuatu berubah (log, memanggil API, memulai animasi) | **Handler** (`onLevelChanged`) |
+| Mengubah properti lain berdasarkan perubahan | Binding bila mungkin; handler bila perlu efek samping |
+| Mengubah banyak properti sebagai respons satu kejadian | Handler atau fungsi |
+
+Handler yang menugaskan properti lain **secara imperatif** dapat memutus binding yang ada (1.1.3-g); dan dua handler yang saling mengubah properti masing-masing dapat membentuk lingkaran tanpa akhir. Bila Anda mencobanya, jalankan dengan `timeout 3` (0.3.1) **\[amati\]**.
+
+### h. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Menanggapi perubahan dari luar objek | `Connections { target: x; ... }` | Fase 3 |
+| Menunda aksi sampai loop berikutnya | `Qt.callLater(fungsi)` | Fase 3 |
+| Binding kondisional | `Binding { }` | Modul 3.1 |
+| Menanggapi signal dari objek lain | Sambungkan lewat `Connections` atau `signalName.connect(...)` | Fase 3 |
+| Logika panjang | Pindahkan ke fungsi atau berkas `.js` | 1.1.5 |
+
+### i. Visual
+
+```
+  root.level = 6                              klik MouseArea
+       |                                           |
+       v                                           v
+  levelChanged()  ---->  onLevelChanged: log      root.ubah(1);  root.naik(lama, baru)
+       |                                                                |
+       +--> binding: status, color, Text.text  (otomatis)               +--> onNaik: (dari, ke) => ...
+```
+
+### j. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Signal | Pemberitahuan bahwa sesuatu terjadi |
+| Handler | Kode yang menanggapi signal (`onNaik`) |
+| Signal perubahan | `<nama>Changed`, otomatis untuk tiap properti |
+| Memancarkan (emit) | Memanggil signal seperti metode |
+| Metode | Fungsi milik objek |
+| Fungsi panah | Penulisan fungsi `(a, b) => ...` |
+| Modifier property (“on”) | Objek yang bekerja pada properti yang ada |
+
+### k. Tips dan praktik terbaik
+
+- Dahulukan binding; pakai handler untuk **aksi**, bukan untuk menghitung nilai.
+- Beri nama signal sebagai kata kerja lampau atau peristiwa (`naik`, `diklik`).
+- Deklarasikan tipe parameter signal dan metode.
+- Jangan menaruh logika berat di handler perubahan; ia berjalan di thread GUI (0.0.2).
+
+### l. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Handler tak terpanggil | Nama salah (`onlevelChanged`) | Huruf pertama nama menjadi besar: `onLevelChanged` |
+| Binding “hilang” setelah handler | Penugasan imperatif memutusnya | Pakai binding, atau `Binding {}` (Modul 3.1) |
+| Lingkaran perubahan tanpa akhir | Dua handler saling mengubah | Satu arah, atau penjaga nilai |
+| Parameter signal tanpa tipe galat | Tipe wajib | Tulis `nama: tipe` |
+| Dua signal atau metode sama nama | Dilarang dalam satu blok | Ganti nama |
+| Fungsi panah dengan anotasi tipe ditolak | Tidak didukung | Tulis tipe di deklarasi signal, bukan di handler |
+
+### m. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 3 (model objek dan reaktivitas: signal, `Connections`, binding), Fase 6 (interaksi dan animasi), Fase 2 (fungsi dan fungsi panah), dan Fase 10 (signal dan slot C++).
+
+### n. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Perubahan.qml` dan klik. Lalu: (1) tambahkan `onStatusChanged` dan catat kapan ia terpanggil; (2) ubah `status` menjadi properti biasa yang diubah di `onLevelChanged` dan bandingkan perilakunya; (3) tambahkan signal `turun(dari: int, ke: int)` dan tombol yang menurunkan level.
+
+**Cek pemahaman.** (1) Siapa yang membuat handler `onLevelChanged`? (2) Kapan memilih binding dan kapan handler? (3) Bagaimana memancarkan signal buatan sendiri?
+
+### o. Referensi
+
+- [QML Object Attributes: signals, handlers, methods](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [Signal and Handler Event System](https://doc.qt.io/qt-6/qtqml-syntax-signals.html)
+- [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html) · [MDN: Arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)
+
+---
+
+## 1.3.7 Pola private lewat QtObject
+
+*Semangat: batas yang Anda jaga sendiri adalah batas yang paling dapat dipercaya.*
+
+**Daftar isi 1.3.7:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh: penghitung dengan keadaan internal · d. Batas pola ini · e. Tingkat enkapsulasi · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini menjawab: *bagaimana menyembunyikan keadaan internal sebuah komponen dari pemakainya?* QML tidak punya `private`, tetapi ada pola yang efektif dalam batas tertentu.
+
+### b. Konsep dan filosofi
+
+Sintaks deklarasi properti di dokumentasi tidak memuat modifier `private`; semua properti sebuah tipe terlihat oleh pemakainya. Pola yang lazim:
+
+- Simpan keadaan internal dalam sebuah anak `QtObject` ber-`id` pendek (mis. `d`).
+- `id` hanya terlihat **di dalam satu dokumen** (1.1.4), sehingga pemakai di dokumen lain **tidak dapat** merujuk `d`.
+- Ekspos hanya yang perlu lewat properti `readonly` dan metode publik.
+
+**Filosofi:** enkapsulasi di QML adalah **perjanjian ditambah ruang lingkup**. Tidak ada penjaga, tetapi `id` yang tak terlihat dari luar memberi batas nyata antardokumen.
+
+### c. Contoh: penghitung dengan keadaan internal
+
+Simpan sebagai `Penghitung.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    readonly property int jumlah: d.hitung
+    readonly property bool penuh: d.hitung >= d.batas
+
+    function tambah() {
+        d.naikkan();
+    }
+
+    width: 220
+    height: 80
+    color: root.penuh ? '#f38ba8' : '#a6e3a1'
+
+    QtObject {
+        id: d
+
+        readonly property int batas: 3
+        property int hitung: 0
+
+        function naikkan() {
+            if (d.hitung < d.batas)
+                d.hitung += 1;
+        }
+    }
+
+    Text {
+        anchors.centerIn: parent
+        text: 'jumlah ' + root.jumlah
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: root.tambah()
+    }
+}
+```
+
+`UjiPenghitung.qml`:
+
+```qml
+import QtQuick
+
+Penghitung {
+    Component.onCompleted: {
+        console.log(jumlah, penuh);
+        console.log(typeof d);
+    }
+}
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `QtObject { id: d ... }` | Objek non-visual tanpa tampilan yang menampung keadaan internal. |
+| `readonly property int batas: 3` dan `property int hitung: 0` | Data internal di dalam `d`. |
+| `function naikkan() { ... }` | Logika internal yang menjaga batas. |
+| `readonly property int jumlah: d.hitung` | Antarmuka publik: **hanya baca**, mengikuti keadaan internal lewat binding. |
+| `function tambah()` | Satu-satunya cara publik mengubah keadaan. |
+| `typeof d` di `UjiPenghitung.qml` | Dugaan: `'undefined'`, karena `d` tidak terlihat di dokumen lain; **\[amati pesan atau hasil\]**. |
+
+### d. Batas pola ini
+
+- Pola ini bekerja karena akar komponen (`Rectangle`) punya **default property** yang menerima objek anak. Bila akar sendiri adalah `QtObject`, yang tidak punya default property, laporan pengembang menyebut anak `QtObject` langsung ditolak dengan galat `Cannot assign to non-existent default property` **\[uji dulu\]**. Solusinya: jadikan akar `Item`, atau deklarasikan properti bertipe objek (`property QtObject d: QtObject { ... }`) yang **terlihat** oleh pemakai (konvensi garis bawah `_d` hanya menandai niat).
+- `d` bukan “private” sungguhan: tidak ada penjaga bahasa di **dalam** dokumen; semua kode di berkas itu dapat mengubahnya.
+- Pemakai tetap dapat merusak hal-hal yang Anda ekspos sebagai properti biasa; karena itu jadikan antarmuka `readonly` bila mungkin.
+
+### e. Tingkat enkapsulasi
+
+| Tingkat | Mekanisme | Ditegakkan oleh |
+| --- | --- | --- |
+| Antardokumen | `id` hanya terlihat di dokumennya | Bahasa |
+| Dalam dokumen | `QtObject` ber-`id` pendek (`d`) | Disiplin |
+| Konvensi nama | Awalan garis bawah (`_hitung`) | Hanya konvensi; tidak ditegakkan |
+| Antarmodul | Tipe internal dalam modul | Modul (Fase 8; periksa dokumentasi `qmldir`) |
+| Sungguhan | Kelas C++ dengan anggota `private` | Kompiler (Fase 10) |
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Keadaan internal sederhana | `QtObject` ber-`id` | Bagian c |
+| Fungsi internal | Fungsi di dalam `QtObject` `d` | Tidak muncul di antarmuka tipe |
+| Menyembunyikan seluruh tipe | Tipe internal modul | Fase 8 |
+| Enkapsulasi kuat | Backend C++ | Fase 10 |
+| Menandai “jangan sentuh” | Nama berawalan `_` | Hanya komunikasi antarpengembang |
+
+### g. Visual
+
+```
+  Penghitung.qml  (satu dokumen)
+  +---------------------------------------------------------+
+  |  PUBLIK:   readonly jumlah   readonly penuh   tambah()    |
+  |                  ^                ^              |       |
+  |                  |  binding       |              v       |
+  |  INTERNAL:  QtObject { id: d  hitung  batas  naikkan() } |
+  +---------------------------------------------------------+
+        ^
+        |  id "d" TIDAK terlihat dari dokumen lain
+  pemakai (UjiPenghitung.qml) hanya melihat antarmuka PUBLIK
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Enkapsulasi | Menyembunyikan isi dalam di balik antarmuka |
+| Antarmuka publik | Bagian yang boleh dipakai pemakai |
+| Keadaan internal | Data milik komponen yang tak seharusnya disentuh |
+| `QtObject` | Objek non-visual dasar QML |
+| Konvensi | Kesepakatan yang tidak ditegakkan oleh alat |
+
+### i. Tips dan praktik terbaik
+
+- Beri `id: d` pada objek keadaan internal dan jangan menamainya dengan nama yang mengundang pemakaian dari luar.
+- Ekspos data hanya lewat `readonly property` dan perubahan hanya lewat metode.
+- Jangan mengekspos `d` lewat alias atau properti publik.
+- Untuk komponen penting, tulis di komentar atas file apa antarmuka publiknya.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Galat saat menaruh `QtObject` di akar `QtObject` | Akar tak punya default property | Akar `Item`, atau properti bertipe objek |
+| Pemakai mengubah keadaan internal | Mengekspos properti biasa | `readonly` dan metode |
+| Mengira `d` private sungguhan | Salah paham | Anggap sebagai konvensi ditambah scope |
+| `d` terlihat di alias | Alias ke `d` | Jangan membuat alias ke objek internal |
+| Terlalu banyak keadaan internal | Komponen terlalu besar | Pecah komponen (1.4) |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.4 (antarmuka komponen), Fase 3 (reaktivitas dan keadaan), Fase 8 (tipe internal modul), dan Fase 10 (enkapsulasi di C++).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Penghitung.qml` dan `UjiPenghitung.qml`. Lalu: (1) catat hasil `typeof d` di pemakai **\[amati\]**; (2) coba mengubah `jumlah` dari pemakai dan catat galatnya; (3) ubah akar menjadi `QtObject` dan catat galat atau keberhasilannya **\[uji dulu\]**.
+
+**Cek pemahaman.** (1) Mengapa QML tidak punya `private` namun pola `QtObject` tetap berguna? (2) Mengapa `d` tidak terlihat dari dokumen lain? (3) Mengapa antarmuka sebaiknya `readonly`?
+
+### m. Referensi
+
+- [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [QML Object Attributes: property attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+- [QtObject](https://doc.qt.io/qt-6/qml-qtqml-qtobject.html) · [Qt Interest: Best software engineering practices for QML (diskusi)](https://lists.qt-project.org/pipermail/interest/2024-September/039906.html)
+
+---
+
+## 1.3.8 Bayangan properti: virtual, override, final \[TAMBAHAN\]
+
+**Mengapa ditambahkan:** deklarasi properti di Qt 6.12 kini mengenal kata kunci `virtual`, `override`, dan `final`, dan `qmllint` serta engine memperingatkan bila Anda **menimpa** properti dari tipe dasar tanpa penanda. Kurikulum belum menyebutnya, padahal dokumentasi menyatakan sebagian besar peringatan itu **akan menjadi galat** di masa depan.
+
+*Semangat: nama yang unik menghindarkan kebingungan yang tidak perlu.*
+
+**Daftar isi 1.3.8:** a. Deskripsi dan peran · b. Apa itu bayangan (*shadowing*) · c. Tiga kata kunci · d. Contoh · e. Aturan kombinasi · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Saat sebuah tipe turunan mendeklarasikan ulang properti yang sudah dimiliki tipe dasarnya, terjadi *shadowing*. Bagian ini menjelaskan mengapa itu dihindari dan cara menyatakannya dengan sengaja bila memang perlu.
+
+### b. Apa itu bayangan (shadowing)
+
+Menurut dokumentasi, secara bawaan properti **dapat dibayangi**: Anda mendeklarasikan ulang properti di tipe turunan, mungkin dengan tipe dan atribut baru. Hasilnya **dua properti bernama sama**, dan hanya satu yang dapat diakses pada satu konteks. Dokumentasi menilai ini jarang diinginkan: sering tidak disengaja, efeknya membingungkan, dan buruk bagi alat. Karena itu, **utamakan nama yang unik** daripada menimpa.
+
+### c. Tiga kata kunci
+
+| Kata kunci | Arti |
+| --- | --- |
+| `virtual` | Properti **dimaksudkan untuk ditimpa** oleh tipe turunan |
+| `override` | Properti ini **sengaja** menimpa properti `virtual` dari tipe dasar |
+| `final` | Deklarasi ini **final**: boleh menimpa properti tipe dasar, tetapi **tidak boleh ditimpa lagi** |
+
+Penimpaan secara otomatis mewarisi sifat virtual properti yang ditimpa. Dokumentasi menyarankan memakai `final` daripada `override` bila memungkinkan.
+
+### d. Contoh
+
+Buat tiga berkas. `Dasar.qml`:
+
+```qml
+import QtQuick
+
+QtObject {
+    virtual property int a: 1
+    property int b: 2
+    final property int c: 3
+}
+```
+
+`Turunan.qml`:
+
+```qml
+import QtQuick
+
+Dasar {
+    override property int a: 10
+    property int b: 20
+}
+```
+
+`UjiTurunan.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    Turunan { id: t }
+
+    Component.onCompleted: console.log(t.a, t.b, t.c)
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `virtual property int a: 1` | Properti yang boleh ditimpa. |
+| `property int b: 2` | Properti biasa (tidak virtual). |
+| `final property int c: 3` | Properti yang **tidak boleh** ditimpa. |
+| `override property int a: 10` | Menimpa `a` secara sah dan sengaja. |
+| `property int b: 20` | Menimpa properti yang bukan virtual: **peringatan** menurut dokumentasi. |
+
+Jalankan `qml UjiTurunan.qml` dan `qmllint Turunan.qml`; catat peringatan dan kategori pesannya **\[amati\]**: dokumentasi `qmllint` mencantumkan kategori seperti *Property already exists in base type*, *Member shadows member*, dan *Member overrides a non-virtual member*. Lalu coba (satu per satu): tambahkan `property int c: 30` pada `Turunan` (menimpa properti `final`: galat), dan ganti `override` pada `a` menjadi `final` (sah).
+
+### e. Aturan kombinasi
+
+| Penulisan | Akibat (menurut dokumentasi) |
+| --- | --- |
+| `override property` pada properti yang tidak menimpa apa pun | Galat |
+| `override` pada properti yang tidak `virtual` | Galat saat runtime atau lint |
+| Menimpa properti `virtual` tanpa `override` atau `final` | Peringatan |
+| Menimpa properti non-virtual tanpa penanda | Peringatan |
+| Menimpa properti `final` | Galat |
+| `virtual override` bersamaan | Galat penguraian (hapus `override`) |
+| `virtual final` bersamaan | Galat penguraian (saling eksklusif) |
+| `override final` bersamaan | Galat penguraian (hapus `override`) |
+
+Dokumentasi menambahkan: sebagian besar peringatan akan menjadi galat di masa depan; tidak dijadikan galat sekarang demi kompatibilitas.
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Menghindari bentrok | Beri nama unik (`lantaiBangunan`) | Disarankan |
+| Mengubah nilai bawaan properti dasar | Tetapkan nilainya di turunan tanpa mendeklarasikan ulang | `width: 200` |
+| Sengaja mengganti perilaku | `virtual` di dasar, `override` di turunan | Hanya bila perlu |
+| Mengunci API | `final` | Mencegah penimpaan |
+| Menyatakan properti wajib pada tipe dasar | `required color` | 1.3.2-d |
+
+### g. Visual
+
+```
+  Dasar:    virtual a   |  b (biasa)   |  final c
+                |            |             |
+  Turunan:  override a    property b    (c tak boleh ditimpa)
+               sah         PERINGATAN        GALAT bila dicoba
+
+  prinsip:  nama UNIK  >  shadowing  ;  final  >  override
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Shadowing (bayangan) | Mendeklarasikan ulang properti dengan nama yang sama di tipe turunan |
+| Override | Penimpaan yang disengaja dan dinyatakan |
+| `virtual` | Dapat ditimpa |
+| `final` | Tidak dapat ditimpa lagi |
+| Tipe dasar / turunan | Tipe yang diwarisi / yang mewarisi |
+
+### i. Tips dan praktik terbaik
+
+- Pilih nama unik; hindari menimpa.
+- Tandai `final` pada properti yang tak ingin Anda izinkan ditimpa.
+- Bersihkan peringatan `qmllint` tentang penimpaan hari ini; besok bisa menjadi galat.
+- Dokumentasikan di komentar mengapa sebuah properti `virtual`.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Peringatan “property already exists in base type” | Mendeklarasikan ulang properti tipe dasar | Ganti nama, atau tandai `virtual`/`override`/`final` |
+| Dua properti bernama sama dengan nilai berbeda | Shadowing tak disengaja | Nama unik |
+| Galat menimpa properti `final` | Dilarang | Ganti nama |
+| Kombinasi kata kunci ditolak | `virtual override`, `virtual final`, `override final` | Pakai satu penanda sesuai tabel |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.4 (komponen dengan turunan), Fase 5 dan 9 (menurunkan kendali), Fase 8 (API modul), dan Modul 12.2 (peringatan `qmllint`).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Buat tiga berkas di bagian d, jalankan `qml UjiTurunan.qml` dan `qmllint Turunan.qml`, catat peringatan, lalu perbaiki dengan salah satu cara (ganti nama, atau `final`). Catat pesan di `galat.md`.
+
+**Cek pemahaman.** (1) Apa itu shadowing dan mengapa dihindari? (2) Apa bedanya `override` dan `final`? (3) Mengapa dokumentasi menyarankan nama unik?
+
+### m. Referensi
+
+- [Property Shadowing and Override Semantics](https://doc.qt.io/qt-6/qtqml-syntax-overridesemantics.html) · [qmllint: property override warnings](https://doc.qt.io/qt-6/qmllint-warnings-and-errors-property-override.html)
+- [QML Object Attributes: override semantics](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+
+---
+
+## 1.3.9 Lab galat properti \[TAMBAHAN\]
+
+**Mengapa ditambahkan:** kontrak sebuah tipe (`required`, `readonly`, alias, default property) baru terasa nyata ketika Anda **melanggarnya** dan membaca pesannya. Lab ini melanjutkan 1.1.7 untuk topik properti. Seperti sebelumnya, kolom dugaan adalah hipotesis, bukan jawaban.
+
+*Semangat: batas yang pernah Anda uji adalah batas yang Anda pahami.*
+
+**Daftar isi 1.3.9:** a. Deskripsi dan peran · b. Membuat berkas rusak · c. Menjalankan dan mencatat · d. Dugaan dan hasil · e. Memperluas `galat.md` · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Lima belas pelanggaran kontrak properti yang paling umum, dijalankan satu per satu. Anda akan mencatat pesan galat, exit code, dan apakah `qmllint` menangkapnya sebelum dijalankan.
+
+### b. Membuat berkas rusak
+
+Simpan sebagai `buat-lab-properti.sh` di `~/Development/qt-learning/fase1/`, lalu `bash buat-lab-properti.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -eu
+mkdir -p lab-properti
+cd lab-properti
+
+cat > Kartu.qml << 'EOF'
+import QtQuick
+
+Rectangle {
+    id: root
+    required property string judul
+    readonly property int minimum: 10
+    width: 200
+    height: 60
+    Text { anchors.centerIn: parent; text: root.judul }
+}
+EOF
+
+cat > MyItem.qml << 'EOF'
+import QtQuick
+
+Item {
+    property alias inner: innerItem
+    Item {
+        id: innerItem
+        property int extraProperty
+    }
+}
+EOF
+
+cat > p01-required-hilang.qml << 'EOF'
+import QtQuick
+
+Kartu { }
+EOF
+
+cat > p02-readonly-ubah.qml << 'EOF'
+import QtQuick
+
+Kartu {
+    judul: 'x'
+    Component.onCompleted: minimum = 5
+}
+EOF
+
+cat > p03-required-nilai-awal.qml << 'EOF'
+import QtQuick
+
+Item { required property int nilai: 5 }
+EOF
+
+cat > p04-alias-ekspresi.qml << 'EOF'
+import QtQuick
+
+Item {
+    property alias teks: label.text + '!'
+    Text { id: label }
+}
+EOF
+
+cat > p05-alias-tiga-tingkat.qml << 'EOF'
+import QtQuick
+
+Item {
+    property alias warna: myItem.myRect.border.color
+    Item {
+        id: myItem
+        property Rectangle myRect: Rectangle { }
+    }
+}
+EOF
+
+cat > p06-alias-tanpa-rujukan.qml << 'EOF'
+import QtQuick
+
+Item { property alias nama }
+EOF
+
+cat > p07-alias-attached.qml << 'EOF'
+import QtQuick
+
+Item {
+    id: root
+    property alias kunciAktif: root.Keys.enabled
+}
+EOF
+
+cat > p08-alias-properti-tambahan.qml << 'EOF'
+import QtQuick
+
+MyItem {
+    inner.extraProperty: 5
+}
+EOF
+
+cat > p09-dua-default.qml << 'EOF'
+import QtQuick
+
+Item {
+    default property alias satu: a.data
+    default property alias dua: b.data
+    Item { id: a }
+    Item { id: b }
+}
+EOF
+
+cat > p10-campur-implisit-eksplisit.qml << 'EOF'
+import QtQuick
+
+Item {
+    Rectangle { width: 40; height: 40 }
+    data: [ Rectangle { width: 100; height: 100 } ]
+}
+EOF
+
+cat > p11-group-campur.qml << 'EOF'
+import QtQuick
+
+Text {
+    text: 'x'
+    font: Qt.font({ pixelSize: 20 })
+    font.bold: true
+}
+EOF
+
+cat > p12-attached-di-anak.qml << 'EOF'
+import QtQuick
+
+ListView {
+    width: 200
+    height: 100
+    model: 2
+    delegate: Item {
+        width: 100
+        height: 40
+        Rectangle {
+            anchors.fill: parent
+            color: ListView.isCurrentItem ? 'green' : 'gray'
+        }
+    }
+}
+EOF
+
+cat > p13-signal-ganda.qml << 'EOF'
+import QtQuick
+
+Item {
+    signal naik
+    signal naik(x: int)
+}
+EOF
+
+cat > p14-properti-kapital.qml << 'EOF'
+import QtQuick
+
+Item { property int Jumlah: 1 }
+EOF
+
+cat > p15-handler-salah-nama.qml << 'EOF'
+import QtQuick
+
+Item {
+    property int level: 0
+    onlevelChanged: console.log('berubah')
+}
+EOF
+
+echo 'lab-properti/ dibuat: Kartu.qml, MyItem.qml, dan lima belas berkas p*.qml'
+```
+
+### c. Menjalankan dan mencatat
+
+Simpan sebagai `jalankan-lab-properti.sh`:
+
+```bash
+#!/usr/bin/env bash
+cd lab-properti || exit 1
+mkdir -p log
+for f in p*.qml; do
+    timeout 3 qml "$f" &> "log/$f.log"
+    kode=$?
+    printf '%-34s exit=%s\n' "$f" "$kode"
+    head -n 2 "log/$f.log" | sed 's/^/    /'
+done
+echo '--- qmllint ---'
+for f in p*.qml; do
+    echo "== $f"
+    qmllint "$f" 2>&1 | head -n 3
+done
+```
+
+```bash
+$ bash buat-lab-properti.sh
+$ bash jalankan-lab-properti.sh
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `Kartu.qml`, `MyItem.qml` | Komponen pendukung untuk beberapa percobaan; berkas `p*.qml` menjalankannya. |
+| Loop pertama | Menjalankan tiap berkas maksimal 3 detik, menyimpan log, dan mencetak exit code serta dua baris pertama log (1.1.7-d). |
+| Loop kedua | Menjalankan `qmllint` pada tiap berkas, tiga baris pertama keluarannya. |
+
+Exit code `124` berarti `qml` bertahan sampai `timeout` (aplikasi jalan); kode lain berarti berhenti sendiri.
+
+### d. Dugaan dan hasil
+
+Salin tabel ke `galat.md`, isi kolom **Hasil** dari terminal Anda, dan nilai tebakan Anda sendiri sebelum menjalankan:
+
+| Berkas | Pelanggaran | Dugaan menurut dokumentasi | Hasil Anda |
+| --- | --- | --- | --- |
+| `p01-required-hilang` | Properti `required` tak diisi | Dimuat gagal (kelas 3) |  |
+| `p02-readonly-ubah` | Menulis `readonly` | Jalan, lalu `TypeError: Cannot assign to read-only property` (kelas 4) |  |
+| `p03-required-nilai-awal` | Nilai awal pada `required` | Ditolak |  |
+| `p04-alias-ekspresi` | Alias berisi ekspresi | Ditolak (alias hanya rujukan) |  |
+| `p05-alias-tiga-tingkat` | Alias tiga tingkat | Ditolak (batas dua tingkat) |  |
+| `p06-alias-tanpa-rujukan` | Alias tanpa rujukan | Ditolak (rujukan wajib) |  |
+| `p07-alias-attached` | Alias ke attached property | Ditolak |  |
+| `p08-alias-properti-tambahan` | Properti tambahan lewat alias | Properti tidak dikenal (alias bertipe `Item`) |  |
+| `p09-dua-default` | Dua default property | Ditolak (satu default) |  |
+| `p10-campur-implisit-eksplisit` | Anak implisit dan `data:` bersamaan | Urutan tak terdefinisi; mungkin peringatan |  |
+| `p11-group-campur` | `font:` utuh dan `font.bold` bersamaan | Belum diketahui **\[amati\]** |  |
+| `p12-attached-di-anak` | `ListView` attached pada anak | Tak bekerja; amati warna dan pesan |  |
+| `p13-signal-ganda` | Dua signal bernama sama | Ditolak |  |
+| `p14-properti-kapital` | Nama properti berawalan huruf besar | Ditolak |  |
+| `p15-handler-salah-nama` | `onlevelChanged` (huruf kecil) | Properti tidak dikenal |  |
+
+Kelas galat bertambah satu untuk topik ini: **kelas 5, pelanggaran kontrak properti** (`required`, `readonly`, alias, default, group). Beberapa dari kelas 5 terdeteksi sebelum dijalankan (statis), beberapa baru saat runtime; catat di kolom “tertangkap qmllint?”.
+
+### e. Memperluas galat.md
+
+Tambahkan kolom **Kelas (1 sampai 5)** dan **Kontrak yang dilanggar** pada `galat.md` (1.1.7-f). Dalam beberapa bulan, tabel ini menjadi alat utama Anda membaca galat dengan cepat: *“ini kelas berapa, kontrak apa, perbaikan apa”*.
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Mengulang lab setelah memperbarui Qt | Jalankan skrip dan `diff` terhadap log lama | Mendeteksi perubahan pesan |
+| Lab untuk modul sendiri | Salin pola ke kontrak komponen Anda | Uji bahwa pelanggaran memang ditolak |
+| Mengotomatiskan | Skrip di CI | Modul 12.3 |
+| Menambah kasus | Tambah `p16-...` dan seterusnya | Satu pelanggaran per berkas |
+
+### g. Visual
+
+```
+  kontrak properti dilanggar
+       |
+   [required hilang]        --> gagal dimuat            (statis atau saat memuat)
+   [readonly ditulis]       --> TypeError saat runtime
+   [alias melanggar batas]  --> galat deklarasi         (ekspresi, 3 tingkat, tanpa rujukan, attached)
+   [dua default]            --> galat deklarasi
+   [campur implisit/eksplisit] --> urutan tak terdefinisi / peringatan
+   [attached di anak]       --> tak bekerja (diam atau peringatan)
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Kontrak properti | Aturan penggunaan: `required`, `readonly`, alias, default |
+| Pelanggaran kontrak | Penggunaan yang ditolak atau memberi peringatan |
+| Statis / runtime | Terdeteksi sebelum dijalankan / saat berjalan |
+| Regresi pesan | Pesan galat berubah antar versi |
+
+### i. Tips dan praktik terbaik
+
+- Tulis dugaan **sebelum** menjalankan; belajar terbesar ada pada dugaan yang salah.
+- Simpan lab dan log di repositori (kecuali `lab-properti/log/` yang masuk `.gitignore`).
+- Ulangi lab setelah memperbarui Qt.
+- Tambahkan kasus baru tiap bertemu galat kontrak yang belum tercatat.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Semua berkas keluar 124 | Berkas sah bertahan sampai `timeout` | Periksa log untuk peringatan |
+| `p10` tampak normal | Hanya urutan yang tak terdefinisi | Bandingkan beberapa kali |
+| Pesan berbeda dari dugaan | Dugaan hanya hipotesis | Catat pesan sebenarnya |
+| Skrip berhenti | `set -eu` menangkap kesalahan | Baca pesan skrip |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk Modul 1.4 (komponen yang kontraknya Anda tulis sendiri), Fase 3 (reaktivitas), dan Modul 12.2 sampai 12.3 (lint dan uji otomatis untuk kontrak).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 30 menit.** Buat dan jalankan lab, isi tabel dengan dugaan lebih dulu, lalu isi hasil, dan commit skrip dan `galat.md`. Pilih tiga pelanggaran dan tulis bagaimana desain komponen yang baik mencegahnya.
+
+**Cek pemahaman.** (1) Pelanggaran mana yang terdeteksi saat memuat dan mana saat runtime? (2) Mengapa nilai awal pada `required` ditolak? (3) Mengapa alias tak boleh berisi ekspresi?
+
+### m. Referensi
+
+- [QML Object Attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html)
+- [Property Shadowing and Override Semantics](https://doc.qt.io/qt-6/qtqml-syntax-overridesemantics.html) · [Debugging QML Applications](https://doc.qt.io/qt-6/qtquick-debugging.html)
+
+---
+
+## 5.6 Penutup Modul 1.3
+
+**Daftar isi bagian ini:** 5.6.1 Peta konsep · 5.6.2 Latihan terpadu · 5.6.3 Cek pemahaman modul · 5.6.4 Hubungan ke modul berikutnya · 5.6.5 Pembaruan yang diusulkan untuk kurikulum · 5.6.6 Status
+
+### 5.6.1 Peta konsep
+
+```
+   1.3.1 Deklarasi dan tipe  (properti baru, signal perubahan otomatis)
+        |
+   1.3.2 readonly / required  (kontrak: tak boleh diubah / wajib diisi)
+        |
+   1.3.3 Alias dan default property  (pintu ke dalam, anak ke wadah)
+        |
+   1.3.4 Group properties   1.3.5 Attached properties
+        |                         |
+        +------------+------------+
+                     v
+   1.3.6 Handler perubahan, signal, metode   1.3.7 Pola QtObject d
+                     |
+   1.3.8 Shadowing / virtual / override / final
+                     |
+   1.3.9 Lab galat properti --> galat.md (kelas 5)
+                     |
+                     v
+               Modul 1.4 (komponen dan reuse)
+```
+
+### 5.6.2 Latihan terpadu
+
+Di folder `~/Development/qt-learning/fase1/komponen/` (45–60 menit), tanpa menyalin: (1) tulis `KartuProfil.qml` dengan `required property string nama`, `readonly property int minimum`, `property alias foto: gambar.source`, dan `default property alias isi: kolom.data`; (2) beri satu group property buatan sendiri (`estetika`, 1.3.4-e); (3) simpan keadaan internal di `QtObject { id: d }`; (4) deklarasikan satu signal dan satu metode beranotasi; (5) tulis `UjiKartuProfil.qml` yang memakai komponen itu tiga kali (dengan dan tanpa anak, dengan nilai berbeda); (6) jalankan `qmlformat`, `qmllint`, dan `qml`; (7) sengaja langgar dua kontrak, catat di `galat.md`; (8) commit dengan pesan bermakna.
+
+### 5.6.3 Cek pemahaman modul
+
+1. Tulis sintaks deklarasi properti lengkap dan jelaskan tiap kata kuncinya.
+2. Apa yang otomatis terbentuk saat properti dideklarasikan?
+3. Apa bedanya `required` dan `readonly`? Mengapa nilai awal pada `required` ditolak?
+4. Apa bedanya alias dan properti biasa? Sebutkan empat batasan alias.
+5. Mengapa `property alias warna: myItem.myRect.border.color` ditolak, dan apa penggantinya?
+6. Apa itu default property, dan mengapa tidak boleh mencampur anak implisit dan eksplisit?
+7. Apa bedanya group property bertipe nilai dan bertipe objek?
+8. Mengapa `ListView.isCurrentItem` tidak bekerja di anak delegate, dan bagaimana mengaksesnya?
+9. Kapan memakai binding, dan kapan handler `onXChanged`?
+10. Bagaimana pola `QtObject` ber-`id: d` menyembunyikan keadaan internal, dan apa batasnya?
+
+### 5.6.4 Hubungan ke modul berikutnya
+
+| Modul | Mengandalkan dari 1.3 |
+| --- | --- |
+| 1.4 Komponen dan reuse | Antarmuka komponen: `required`, alias, default property, group, `d` (1.3.2–1.3.7) |
+| Fase 3 Reaktivitas | Binding, handler perubahan, signal, `Connections` (1.3.1, 1.3.6) |
+| Fase 5 dan 9 | Properti `Layout` (attached), pola `contentItem`, menurunkan kendali (1.3.5, 1.3.8) |
+| Fase 7 Model dan view | `required property` pada delegate, `ListView.*` (1.3.2, 1.3.5) |
+| Fase 8 Modul | Tipe internal, API modul, `final` (1.3.7, 1.3.8) |
+| Fase 10 C++ | `Q_PROPERTY`, attached type di C++, enkapsulasi sungguhan (1.3.5, 1.3.7) |
+| Modul 12.2 | Peringatan `qmllint` tentang shadowing dan akses (1.3.8) |
+
+### 5.6.5 Pembaruan yang diusulkan untuk kurikulum
+
+Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.3.
+
+
+**Daftar isi.** 1.3.1 Deklarasi dan tipe · 1.3.2 `readonly` dan `required` · 1.3.3 Alias dan default property · 1.3.4 Group properties · 1.3.5 Attached properties · 1.3.6 Handler perubahan `onXChanged`, signal, dan metode · 1.3.7 Pola private lewat `QtObject` · 1.3.8 Bayangan properti: `virtual`, `override`, `final` · 1.3.9 Lab galat properti
+
+**Terminologi (tambahan).** Sintaks deklarasi: `[default] [virtual] [override] [final] [required] [readonly] property <tipe> <nama>`; `required <properti>` (menjadikan properti yang sudah ada wajib diisi); shadowing (mendeklarasikan ulang properti tipe dasar); attached property hanya dipasang pada objek bersangkutan, bukan anak-anaknya.
+
+**Batasan alias (tambahan).** Alias hanya merujuk objek atau properti dalam cakupan tipenya; tidak boleh berisi ekspresi JavaScript; rujukan wajib ada; tidak boleh merujuk attached property; maksimal dua tingkat; tidak bertipe eksplisit sehingga properti tambahan pada objek sasaran tidak terlihat lewat alias.
+
+**Kesalahan umum (tambahan).** Mengira attached property tersedia pada anak (akses lewat `id` pemilik); mencampur anak implisit dan `data:` eksplisit pada default property; mencampur penugasan objek utuh dan sub-properti pada group property yang sama; menimpa properti tipe dasar tanpa `virtual`/`override`/`final`; menaruh `QtObject` sebagai anak dari akar `QtObject`; memberi nilai awal pada properti `required`.
+
+**Referensi (tambahan).** [QML Object Attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [Property Shadowing and Override Semantics](https://doc.qt.io/qt-6/qtqml-syntax-overridesemantics.html)
+
+### 5.6.6 Status
+
+| Bagian | Status |
+| --- | --- |
+| Audit Fase 1 dan Modul 1.1 | Selesai |
+| Modul 1.1 (1.1.1–1.1.7) | Selesai |
+| Modul 1.2 (1.2.1–1.2.8) | Selesai |
+| Modul 1.3 (1.3.1–1.3.9) | **Selesai** |
+| Modul 1.4 — Komponen dan Reuse | Menunggu konfirmasi Anda |
+
+
 
 
 > - **[⬆️ Ke Atas](#)**

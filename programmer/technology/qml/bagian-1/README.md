@@ -1840,7 +1840,6 @@ Di folder `~/Development/qt-learning` (15–30 menit): (1) atur identitas git da
 
 Tempelkan ke README Anda (blok untuk Modul 0.0). Bagian lain tidak berubah.
 
-```markdown
 **Deskripsi.** Mengajarkan lima konsep inti yang biasanya dianggap sudah dikenal (program, compiler dan interpreter, event loop, terminal, git) ditambah empat keterampilan pendukung (pipe dan redirect, izin dan sudo, bantuan dan editor modal, kebiasaan aman).
 
 **Daftar isi.** 0.0.1 Program, compiler, interpreter · 0.0.2 Event loop dan mengapa UI bisa macet · 0.0.3 Terminal: path, proses, environment · 0.0.4 Pipe, redirect, dan penyaring teks · 0.0.5 Izin file, pengguna, dan sudo · 0.0.6 Git minimum: config, init, add, commit, diff, log, restore · 0.0.7 Membaca pesan error · 0.0.8 Mencari bantuan sendiri dan editor modal · 0.0.9 Kebiasaan aman: sumber paket dan skrip
@@ -1850,7 +1849,6 @@ Tempelkan ke README Anda (blok untuk Modul 0.0). Bagian lain tidak berubah.
 **Latihan 15 menit.** Atur identitas git; buat folder `qt-learning`; `git init`; buat `.gitignore` berisi `build/`; buat `catatan.md`; commit; ubah satu baris; lihat `git diff`; commit lagi.
 
 **Estimasi Fase 0.** Jalur B: 1–2 minggu. Jalur A: 2–3 minggu.
-```
 
 ### 4.6 Status dan langkah berikutnya
 
@@ -3236,7 +3234,6 @@ Di `~/Development/qt-learning/01-ekosistem` (30 menit): (1) jalankan contoh bind
 
 Tempelkan ke README Anda sebagai pengganti bagian yang sesuai pada Modul 0.1.
 
-```markdown
 **Deskripsi.** Memetakan hubungan Qt, QML, JavaScript, Qt Quick, Qt Quick Controls, dan C++ (diagram di Bagian 1), kategori modul dan statusnya (Essentials, Add-Ons, Technology Preview, Deprecated), lisensi, siklus rilis dan LTS, serta cara membaca dokumentasi Qt 6.
 
 **Terminologi (pengganti LTS dan lisensi).** LTS (Long-Term Support): setiap minor keempat sejak Qt 6.8, dukungan komersial lima tahun; patch LTS lanjutan segera hanya untuk pelanggan komersial (mis. Qt 6.8.8). Lisensi: Qt tersedia secara komersial, LGPLv3, dan GPLv3; pada Qt open source, empat belas modul (antara lain Quick 3D, Graphs, Canvas Painter, Quick Timeline, Lottie, Virtual Keyboard) hanya tersedia di bawah GPLv3. Di antara kompiler QML, qmltc dan qmlcachegen tersedia untuk semua; qmlsc hanya komersial.
@@ -3246,7 +3243,6 @@ Tempelkan ke README Anda sebagai pengganti bagian yang sesuai pada Modul 0.1.
 **Kesalahan umum (tambahan).** Mengira semua modul LGPL; mengira LTS berarti patch gratis; memakai modul Technology Preview atau Labs di produk; mencampur Qt dari dua sumber; memakai QtGraphicalEffects atau proyek qmake untuk proyek baru.
 
 **Cek pemahaman (koreksi no. 2).** Mengapa nomor versi pada import Qt 6 bersifat opsional, dan kapan masih berguna menuliskannya?
-```
 
 ### 5.7.6 Status dan langkah berikutnya
 
@@ -4750,7 +4746,6 @@ Di folder baru `~/Development/qt-learning/02-build` (30–45 menit), **tanpa men
 
 Tempelkan ke README Anda sebagai pengganti bagian yang sesuai pada Modul 0.2. Tambahan: ganti `./build/hello` menjadi `./build/apphello` di bagian lain kurikulum (mis. Modul 0.3), dan perbarui Cek pemahaman nomor 1 pada Modul 0.1.
 
-````markdown
 **Contoh minimal.** Struktur proyek `hello/`: `CMakeLists.txt`, `main.cpp`, `Main.qml`. Nama target sengaja berbeda dari URI modul (`apphello` dan `Hello`): dokumentasi Qt menyatakan URI harus berbeda dari nama target agar tidak bertabrakan di folder build, dan pada sistem berkas yang tidak peka huruf besar-kecil `hello` dan `Hello` bertabrakan.
 
 `CMakeLists.txt`:
@@ -4790,7 +4785,6 @@ cmake --build build
 **Kesalahan umum (tambahan).** URI sama dengan nama target (hanya beda huruf besar-kecil); `build/` ikut ter-commit; mengubah QML tanpa membangun ulang; mengira `qml Main.qml` dan aplikasi yang dibangun berperilaku sama; menjalankan `sudo cmake`; mengukur performa pada Debug.
 
 **Estimasi.** Jalur A 10–14 jam; Jalur B 4–5 jam.
-````
 
 ### 6.7.6 Status dan langkah berikutnya
 
@@ -5934,7 +5928,6 @@ $ cat lingkungan.txt
 
 ### g. Templat laporan masalah
 
-```markdown
 ## Ringkasan
 Satu kalimat: apa yang terjadi dan apa yang diharapkan.
 
@@ -5958,7 +5951,6 @@ Satu kalimat: apa yang terjadi dan apa yang diharapkan.
 
 ## Log relevan
 (dipotong dan dibersihkan dari data pribadi)
-```
 
 Laporkan ke tempat yang tepat: masalah di Qt ke [bug tracker Qt](https://bugreports.qt.io/); masalah pemaketan atau integrasi distro ke pelacak Arch (lihat panduan di Arch Wiki). Cari laporan serupa dulu.
 
@@ -6254,7 +6246,6 @@ Di folder proyek `hello` (45–60 menit): (1) jalankan `Plugin.qml` dan `Gpu.qml
 
 Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 0.3.
 
-````markdown
 **Konsep & analogi (tambahan).** Tujuh tahap: proses lahir, platform, engine, memuat QML, jendela dan RHI, render loop, event loop. Periksa berurutan dan berhenti pada tahap pertama yang gagal.
 
 **Contoh minimal (pengganti).**
@@ -6282,7 +6273,6 @@ Pola yang sama berlaku untuk `./build/apphello`.
 **Cek pemahaman (tambahan).** (3) Apa beda backend RHI dan adaptasi software? (4) Bagaimana membuktikan variabel apa yang diterima suatu proses?
 
 **Referensi (tambahan).** [Qt Platform Abstraction](https://doc.qt.io/qt-6/qpa.html) · [Scene Graph Adaptations](https://doc.qt.io/qt-6/qtquick-visualcanvas-adaptations.html) · [QLoggingCategory](https://doc.qt.io/qt-6/qloggingcategory.html)
-````
 
 ### 7.7.6 Status
 
