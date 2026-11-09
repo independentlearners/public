@@ -76,24 +76,24 @@ Empat gagasan yang mendasari seluruh fase:
  FASE 0 — FONDASI LINGKUNGAN
 
  +------------------------------------------------------------+
- | 0.0 ORIENTASI                      "cara bekerja"            |
- |   program | event loop | terminal | pipe | izin | git       |
+ | 0.0 ORIENTASI                      "cara bekerja"          |
+ |   program | event loop | terminal | pipe | izin | git      |
  |   baca error | bantuan & editor | kebiasaan aman           |
  +----------------------------+-------------------------------+
                               v
  +------------------------------------------------------------+
- | 0.1 EKOSISTEM                      "apa yang saya pelajari"  |
- |   Qt vs QML vs Qt Quick | modul | lisensi | rilis            |
+ | 0.1 EKOSISTEM                      "apa yang saya pelajari"|
+ |   Qt vs QML vs Qt Quick | modul | lisensi | rilis          |
  +----------------------------+-------------------------------+
                               v
  +------------------------------------------------------------+
- | 0.2 BUILD PERTAMA                  "membuat sesuatu jalan"   |
- |   satu file -> CMake -> executable -> modul QML (URI)       |
+ | 0.2 BUILD PERTAMA                  "membuat sesuatu jalan" |
+ |   satu file -> CMake -> executable -> modul QML (URI)      |
  +----------------------------+-------------------------------+
                               v
  +------------------------------------------------------------+
- | 0.3 RUNTIME & DIAGNOSA             "bila tidak jalan, mengapa"|
- |   startup | platform plugin | RHI | variabel diagnostik     |
+ | 0.3 RUNTIME & DIAGNOSA          "bila tidak jalan, mengapa"|
+ |  startup | platform plugin | RHI | variabel diagnostik     |
  +------------------------------------------------------------+
 ```
 
@@ -6374,7 +6374,7 @@ Saya tidak memiliki akses ke mesin dan GPU Anda, dan tautan belum diuji otomatis
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[kurikulum]: ../qml.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->

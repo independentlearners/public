@@ -776,7 +776,7 @@ Item {
 
 **Referensi.** [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [List of JavaScript Objects and Functions](https://doc.qt.io/qt-6/qtqml-javascript-functionlist.html) · [Qt (global object)](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Settings](https://doc.qt.io/qt-6/qml-qtcore-settings.html)
 
-## Fase 3 — Model Objek dan Reaktivitas
+## [Fase 3 — Model Objek dan Reaktivitas][3]
 
 *Tujuan: memahami bagaimana QML menjaga nilai tetap sinkron: binding, signal, lifecycle, dan scope. Estimasi: 2–3 minggu.*
 
@@ -943,8 +943,7 @@ Akses tanpa kualifikasi (`nilai` saja) bergantung pada urutan pencarian, lebih l
 
 **Referensi.** [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [Exposing C++ Attributes (context property)](https://doc.qt.io/qt-6/qtqml-cppintegration-contextproperties.html)
 
-## Fase 4 — Dasar Visual Qt Quick
-
+## [Fase 4 — Dasar Visual Qt Quick][4]
 *Tujuan: membangun tampilan dasar dengan item, geometri, resource, dan input. Estimasi: 2–3 minggu. Mulai jalur C++ paralel di fase ini (Modul 10.1).*
 
 ### Modul 4.1 — Item dan Primitif Visual
@@ -1090,7 +1089,7 @@ Window {
 
 **Referensi.** [Important Concepts In Qt Quick: Input](https://doc.qt.io/qt-6/qtquick-input-topic.html) · [Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html)
 
-## Fase 5 — Komponen, Layout, dan Styling
+## [Fase 5 — Komponen, Layout, dan Styling][5]
 
 *Tujuan: merancang komponen dengan antarmuka bersih, menata tampilan responsif, dan memusatkan tema. Estimasi: 2 minggu.*
 
@@ -1214,8 +1213,7 @@ Pemakaian: `color: Theme.primary`. Untuk tema gelap/terang, buat properti `dark`
 
 **Referensi.** [qt\_target\_qml\_sources](https://doc.qt.io/qt-6/qt-target-qml-sources.html) · [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html)
 
-## Fase 6 — Interaksi, State, dan Animasi
-
+## [Fase 6 — Interaksi, State, dan Animasi][6]
 *Tujuan: membuat antarmuka hidup dan bisa dikendalikan penuh lewat pointer maupun keyboard. Estimasi: 2–3 minggu.*
 
 ### Modul 6.1 — State dan Transition
@@ -1400,7 +1398,7 @@ Preferensi pengguna (`QtCore`, `[≥6.5]`): `Settings { id: pref; category: 'ui'
 
 **Referensi.** [Qt Quick Shapes](https://doc.qt.io/qt-6/qtquick-shapes-qmlmodule.html) · [Qt Quick Effects](https://doc.qt.io/qt-6/qtquick-effects-qmlmodule.html) · [Settings](https://doc.qt.io/qt-6/qml-qtcore-settings.html) · [Blog Qt](https://www.qt.io/blog)
 
-## Fase 7 — Model, View, dan Arsitektur Data
+## [Fase 7 — Model, View, dan Arsitektur Data][7]
 
 *Tujuan: menampilkan dan mengelola data dinamis dengan benar. Estimasi: 2–3 minggu.*
 
@@ -1590,7 +1588,7 @@ Item {
 
 **Referensi.** [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [WorkerScript](https://doc.qt.io/qt-6/qml-qtqml-workerscript-workerscript.html) · [MDN: XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
 
-## Fase 8 — Modul QML dan Arsitektur Aplikasi
+## [Fase 8 — Modul QML dan Arsitektur Aplikasi][8]
 
 *Tujuan: menyusun proyek yang bisa tumbuh tanpa berantakan. Estimasi: 2–3 minggu.*
 
@@ -1729,7 +1727,7 @@ Konvensi inti: `id: root` untuk akar komponen; urutan atribut (id, properti, sig
 
 **Referensi.** [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [qmlformat](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html)
 
-## Fase 9 — Qt Quick Controls dan UI Lanjut
+## [Fase 9 — Qt Quick Controls dan UI Lanjut][9]
 
 *Tujuan: membangun antarmuka aplikasi lengkap yang konsisten, bisa dikustomisasi, dan dapat diakses. Estimasi: 2–3 minggu.*
 
@@ -1912,7 +1910,7 @@ Qt 6 selalu menyalakan penskalaan high-DPI: gunakan ukuran independen-perangkat 
 
 **Referensi.** [Accessibility](https://doc.qt.io/qt-6/accessible.html) · [Internationalization](https://doc.qt.io/qt-6/internationalization.html) · [Qt Linguist](https://doc.qt.io/qt-6/qtlinguist-index.html)
 
-## Fase 10 — Interoperabilitas C++ dan QML
+## [Fase 10 — Interoperabilitas C++ dan QML][10]
 
 *Tujuan: menghubungkan backend C++ dengan antarmuka QML secara bersih, aman, dan cepat. Estimasi: 3–4 minggu, dengan syarat Modul 10.1 sudah dikerjakan di jalur paralel sejak Fase 4.*
 
@@ -2236,7 +2234,7 @@ void Backend::hitungBerat()
 
 **Referensi.** [Threading and Concurrent Programming](https://doc.qt.io/qt-6/thread-basics.html) · [Qt Concurrent](https://doc.qt.io/qt-6/qtconcurrent-index.html) · [QThread](https://doc.qt.io/qt-6/qthread.html)
 
-## Fase 11 — Rendering dan Performa
+## [Fase 11 — Rendering dan Performa][11]
 
 *Tujuan: memahami bagaimana frame digambar, lalu mengukur dan memperbaiki performa berdasarkan data. Estimasi: 3–4 minggu. Aturan utama: ukur dulu, baru ubah.*
 
@@ -2428,7 +2426,7 @@ Item {
 
 **Referensi.** [Qt Quick Compiler](https://doc.qt.io/qt-6/qtqml-qtquick-compiler-tech.html) · [QML Script Compiler](https://doc.qt.io/qt-6/qtqml-qml-script-compiler.html)
 
-## Fase 12 — Testing dan Kualitas
+## [Fase 12 — Testing dan Kualitas][12]
 
 *Tujuan: menemukan masalah lebih awal dan menjaga kualitas dengan proses yang bisa diulang. Estimasi: 2–3 minggu.*
 
@@ -2571,7 +2569,7 @@ QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
 
 **Referensi.** [Qt Test](https://doc.qt.io/qt-6/qtest-overview.html) · [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html)
 
-## Fase 13 — Keamanan, Integrasi, dan Deployment
+## [Fase 13 — Keamanan, Integrasi, dan Deployment][13]
 
 *Tujuan: membuat aplikasi aman, terintegrasi dengan sistem, dan dapat didistribusikan. Estimasi: 3–4 minggu.*
 
@@ -2741,7 +2739,7 @@ Aktifkan hanya kategori yang diperlukan: `QT_LOGGING_RULES='app.backend.debug=tr
 
 **Referensi.** [Semantic Versioning](https://semver.org/) · [Pro Git](https://git-scm.com/book/en/v2) · [Qt Logging](https://doc.qt.io/qt-6/qloggingcategory.html)
 
-## Fase 14 — Mastery
+## [Fase 14 — Mastery][14]
 
 *Tujuan: mampu memperluas Qt itu sendiri dan menambahkan fitur pada proyek apa pun, termasuk yang bukan buatan Anda. Estimasi: 3–6 minggu, bersifat iteratif.*
 
@@ -3478,6 +3476,8 @@ Tautan memakai `/qt-6/` yang selalu mengarah ke rilis terbaru. Bila Anda memerlu
 ## Penutup
 
 Kurikulum ini memandang penguasaan sebagai kemampuan membuktikan, bukan menghafal: setiap konsep punya contoh yang bisa dijalankan, setiap fase punya latihan dan pengukuran, dan setiap proyek punya kriteria yang bisa diperiksa dengan perintah. Tujuan akhirnya adalah kemandirian: bila Anda sanggup membuka proyek yang belum pernah Anda lihat, memahami arsitekturnya, dan menambahkan fitur dengan aman, Anda telah melewati batas dari mahir menuju mastery.
+
+[Quickshell](./quickshell/quickshell.md)
 
 [0]: ./bagian-1/README.md
 [1]: ./bagian-2/README.md
