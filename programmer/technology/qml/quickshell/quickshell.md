@@ -109,7 +109,7 @@ Keamanan tidak boleh baru muncul di Fase 4. Sejak awal, pegang peta ini dan tany
 
 ---
 
-## Fase −1 — Literasi Dasar untuk Pemula (Opsional)
+## Literasi Dasar untuk Pemula (Opsional)
 
 **Level:** Prapemula · **Estimasi:** 3–4 minggu · **Prasyarat:** komputer yang mampu menjalankan mesin virtual.
 
