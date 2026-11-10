@@ -1633,6 +1633,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 
 - **[Dart CLI][dartcli]**
 - **[Dart TUI][tui]**
+- **[Logika Pemrograman][logic]**
 - **[Dart Imports-Export][die]**
 - **[Cara Baca Docs APIs][api]**
 - **[Saran Mental Logika][mental]**
@@ -1652,6 +1653,7 @@ Dengan peta pembelajaran yang jelas dan pemanfaatan sumber di atas, seorang pemu
 [syarat-flutter]: ../../README.md
 [dartcli]: ../dart/nich/cli/README.md
 [tui]: ../dart/nich/tui/README.md
+[logic]: ./logic/logic.md
 [api]: ./cara_baca_dart_api_doc.html
 [detailkurikulum]: ../dart/laporan-dart/README.md
 [sayadart]: ../../../saya/dart/README.md
