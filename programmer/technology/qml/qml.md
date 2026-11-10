@@ -3000,7 +3000,7 @@ Beberapa modul add-on dilisensikan GPLv3 atau komersial saja. Periksa lisensi mo
 
 Bagian ini menggantikan dokumen pertama (20 fase berisi daftar kata kunci). Setiap fase kini memiliki konsep, contoh, jebakan, dan latihan. Format ringkas: **Tujuan · Konsep · Contoh · Jebakan · Latihan · Dibaca bersama**. Istilah ada di Glosarium dan di modul padanannya (lihat tabel pemetaan di Bagian 2). Contoh dijalankan dengan `qml Main.qml`. Estimasi total jalur ini: 12–18 minggu paruh waktu, dikerjakan paralel dengan fase utama.
 
-### Fase B0 — Orientasi
+### [Fase B0 — Orientasi][16]
 
 **Tujuan.** Memahami peran JavaScript di QML. **Konsep.** QML menyatakan struktur; JavaScript menambahkan perilaku. Di QML ia bukan peramban: tanpa DOM dan tanpa `window`. **Contoh.**
 
@@ -3011,7 +3011,7 @@ Item { Component.onCompleted: console.log(1 + 1) }
 
 **Jebakan.** Mencari tutorial peramban dan menyalin API-nya. **Latihan.** Jalankan contoh dan cetak hasil tiga ekspresi berbeda. **Dibaca bersama.** Modul 2.1.
 
-### Fase B1 — Sintaks Dasar
+### [Fase B1 — Sintaks Dasar][17]
 
 **Tujuan.** Membaca dan menulis pernyataan JavaScript dengan benar. **Konsep.** Pernyataan dan ekspresi, komentar, peka huruf besar-kecil, titik koma opsional (tetapi konsistenlah). **Contoh.**
 
@@ -3022,7 +3022,7 @@ let n = 2 + 3       // ekspresi di sisi kanan
 
 **Jebakan.** Baris yang diawali tanda kurung atau backtick tanpa titik koma bisa tersambung ke baris sebelumnya. **Latihan.** Tulis lima pernyataan dan beri komentar penjelasan. **Dibaca bersama.** Modul 2.1.
 
-### Fase B2 — Tipe Data dan Konversi
+### [Fase B2 — Tipe Data dan Konversi][18]
 
 **Tujuan.** Memahami tipe primitif dan aturan konversi. **Konsep.** `number` (floating point), `string`, `boolean`, `null`, `undefined`, `Symbol`. `typeof` menyebut tipe. Nilai falsy: `0`, `''`, `false`, `null`, `undefined`, `NaN`. **Contoh.**
 
@@ -3032,7 +3032,7 @@ console.log(typeof 3, typeof 'a', typeof null, 0.1 + 0.2 === 0.3, 0 == '', 0 ===
 
 **Jebakan.** `==` melakukan konversi diam-diam; selalu pakai `===`. BigInt **\[uji dulu\]**. **Latihan.** Tebak lalu verifikasi hasil contoh. **Dibaca bersama.** Modul 1.2.
 
-### Fase B3 — Operator dan Alur Kontrol
+### [Fase B3 — Operator dan Alur Kontrol][19]
 
 **Tujuan.** Mengendalikan alur program. **Konsep.** Aritmetika (termasuk `**`), logika, ternary, `??`, `?.`, `if`/`switch`, `for`, `for...of`, `while`. **Contoh.**
 
@@ -3043,7 +3043,7 @@ const alias = pengguna?.profil?.alias ?? 'anonim'
 
 **Jebakan.** `for...in` pada array menghasilkan indeks sebagai string; pakai `for...of`. **Latihan.** Tulis FizzBuzz memakai `for...of`. **Dibaca bersama.** Modul 2.1.
 
-### Fase B4 — Fungsi
+### [Fase B4 — Fungsi][20]
 
 **Tujuan.** Menulis fungsi yang bersih. **Konsep.** Deklarasi, ekspresi, arrow function, parameter default, rest parameter. Di QML, fungsi pada objek bisa diberi anotasi tipe. **Contoh.**
 
@@ -3056,7 +3056,7 @@ Item {
 
 **Jebakan.** Mengandalkan `this` (Modul 2.2). **Latihan.** Tulis fungsi `rata(...angka)` dan uji dengan tiga kasus. **Dibaca bersama.** Modul 2.2.
 
-### Fase B5 — Array
+### [Fase B5 — Array][21]
 
 **Tujuan.** Mengolah koleksi data secara fungsional. **Konsep.** `map`, `filter`, `reduce`, `find`, `some`, `every`, `includes`, spread array. Mengubah isi array di tempat tidak memicu binding. **Contoh.**
 
@@ -3068,7 +3068,7 @@ let daftar = [1, 2]; daftar = [...daftar, 3]   // reassign agar binding terpicu
 
 **Jebakan.** `sort()` tanpa pembanding mengurutkan sebagai string; `flat`/`flatMap` **\[uji dulu\]**. **Latihan.** Urutkan angka menurun dengan pembanding. **Dibaca bersama.** Modul 3.1.
 
-### Fase B6 — Objek dan JSON
+### [Fase B6 — Objek dan JSON][22]
 
 **Tujuan.** Memodelkan data dengan objek. **Konsep.** Literal, shorthand, kunci terhitung, `Object.keys/values/entries/assign`, destructuring, `JSON.parse/stringify`. **Contoh.**
 
@@ -3080,7 +3080,7 @@ console.log(JSON.stringify(p), Object.entries(p))
 
 **Jebakan.** Object spread `{...a}` **\[uji dulu\]**; `JSON.parse` melempar galat pada JSON rusak. **Latihan.** Parse JSON dengan `try/catch` dan tangani galat. **Dibaca bersama.** Modul 2.1 dan 7.4.
 
-### Fase B7 — String dan Template Literal
+### [Fase B7 — String dan Template Literal][23]
 
 **Tujuan.** Mengolah teks dan menyusun pesan. **Konsep.** `slice`, `split`, `replace`, `startsWith`, `includes`, `padStart`, template literal, dan `qsTr('Halo %1').arg(nama)` untuk teks yang diterjemahkan. **Contoh.**
 
@@ -3090,7 +3090,7 @@ const pesan = qsTr('Halo %1, ada %2 pesan').arg('Jon').arg(3)
 
 **Jebakan.** Menyusun kalimat dengan `+` membuat terjemahan mustahil. **Latihan.** Format tabel harga rata kanan dengan `padStart`. **Dibaca bersama.** Modul 9.4.
 
-### Fase B8 — Scope dan Closure
+### [Fase B8 — Scope dan Closure][24]
 
 **Tujuan.** Memahami umur dan jangkauan variabel. **Konsep.** `let`/`const` berlingkup blok; `var` berlingkup fungsi; hoisting; temporal dead zone; closure adalah fungsi yang membawa variabel lingkungannya. **Contoh.**
 
@@ -3101,7 +3101,7 @@ const a = buatPenghitung(); a(); console.log(a())   // 2
 
 **Jebakan.** Closure di handler yang menahan objek besar sehingga tak pernah dibebaskan. **Latihan.** Buat dua penghitung independen dan buktikan keadaannya tak saling memengaruhi. **Dibaca bersama.** Modul 3.4.
 
-### Fase B9 — JavaScript di Dalam Dokumen QML
+### [Fase B9 — JavaScript di Dalam Dokumen QML][25]
 
 **Tujuan.** Menempatkan JavaScript pada tempat yang tepat. **Konsep.** Ekspresi binding, signal handler, fungsi pada objek; aturan `this`; `Component.onCompleted`. **Contoh.**
 
@@ -3116,7 +3116,7 @@ Rectangle {
 
 **Jebakan.** Assignment memutus binding. **Latihan.** Ubah contoh agar warna berubah setiap tiga ketukan. **Dibaca bersama.** Modul 2.2.
 
-### Fase B10 — Global Object dan API Bawaan
+### [Fase B10 — Global Object dan API Bawaan][26]
 
 **Tujuan.** Mengenal perkakas yang sudah tersedia. **Konsep.** Objek global `Qt` (`Qt.callLater`, `Qt.binding`, `Qt.rgba`, `Qt.resolvedUrl`, `Qt.formatDateTime`, `Qt.quit`), `console`, `Math`, `Date`, `JSON`, `RegExp`, `Map`, `Set`. Tidak ada DOM. **Contoh.**
 
@@ -3127,7 +3127,7 @@ Qt.callLater(() => console.log('nanti'))
 
 **Jebakan.** Bulan `Date` bernomor 0–11; format tanggal dipengaruhi locale. **Latihan.** Cetak tanggal hari ini dalam tiga format berbeda. **Dibaca bersama.** Modul 2.4.
 
-### Fase B11 — JavaScript dan Reaktivitas
+### [Fase B11 — JavaScript dan Reaktivitas][27]
 
 **Tujuan.** Memahami bagaimana JavaScript ikut dalam sistem binding. **Konsep.** Fungsi yang dipanggil dari sebuah binding juga mencatat dependensi: setiap properti yang dibaca selama evaluasi dianggap dependensi. **Contoh.**
 
@@ -3142,7 +3142,7 @@ Item {
 
 **Jebakan.** Efek samping (assignment) di dalam binding; dependensi yang berubah dinamis karena cabang kondisi. **Latihan.** Ubah `a` dari handler dan amati `hasil`. **Dibaca bersama.** Modul 3.1.
 
-### Fase B12 — JavaScript dan Signal
+### [Fase B12 — JavaScript dan Signal][28]
 
 **Tujuan.** Menangani dan memancarkan signal dari JavaScript. **Konsep.** Handler dengan parameter eksplisit, `connect`/`disconnect`, memanggil signal seperti fungsi, dan sifat reentrant-nya. **Contoh.**
 
@@ -3157,7 +3157,7 @@ Item {
 
 **Jebakan.** Rekursi tak terbatas antar-handler. **Latihan.** Prediksi urutan keluaran contoh (jawabannya 3, 2, 1, 0) lalu verifikasi dan jelaskan alasannya. **Dibaca bersama.** Modul 3.2.
 
-### Fase B13 — Modul dan Resource JavaScript
+### [Fase B13 — Modul dan Resource JavaScript][29]
 
 **Tujuan.** Memecah logika ke berkas `.js`. **Konsep.** `.pragma library` untuk pustaka bersama, `import 'x.js' as X` dari QML, dan `.import` di dalam berkas `.js`. Berkas `.mjs` memakai sintaks ES module (`export`/`import`) **\[uji dulu\]** pada versi Qt Anda. **Contoh.**
 
@@ -3170,7 +3170,7 @@ import { kuadrat } from './util.mjs'
 
 **Jebakan.** Mengira `.pragma library` dapat mengakses `id` QML; lupa mendaftarkan berkas di CMake. **Latihan.** Pecah fungsi bantu dari satu proyek ke `Logic.js`. **Dibaca bersama.** Modul 2.3.
 
-### Fase B14 — Tipe Data dan Konversi QML ↔ JavaScript
+### [Fase B14 — Tipe Data dan Konversi QML ↔ JavaScript][30]
 
 **Tujuan.** Menghindari kejutan tipe antar dua dunia. **Konsep.** `int`/`real` ↔ number; `string` ↔ string; `bool` ↔ boolean; `url` dan `color` perlu `toString()` untuk teks; `point`, `rect`, `size` adalah value type; `var` yang berisi objek menyimpan referensi. **Contoh.**
 
@@ -3187,7 +3187,7 @@ Item {
 
 **Jebakan.** Array-like dari C++ tidak lolos `Array.isArray()`; QDate dan Date berbasis UTC; bulan 0–11 vs 1–12. **Latihan.** Buat tabel tipe QML dan wujudnya di JavaScript berdasarkan percobaan Anda sendiri. **Dibaca bersama.** Modul 1.2 dan 10.4.
 
-### Fase B15 — Pemrograman Asinkron
+### [Fase B15 — Pemrograman Asinkron][30]
 
 **Tujuan.** Menangani pekerjaan yang selesai kelak tanpa membekukan UI. **Konsep.** Event loop, callback, `Timer`, XHR, `Promise` (tercantum di daftar objek resmi), `WorkerScript`. `async/await` **\[uji dulu\]**. **Contoh.**
 
@@ -3215,7 +3215,7 @@ Item {
 
 **Jebakan.** Lupa menangani galat; pekerjaan berat di thread UI. **Latihan.** Tambahkan batas waktu dengan `Timer` yang menolak janji bila terlalu lama. **Dibaca bersama.** Modul 7.4.
 
-### Fase B16 — JavaScript dan C++
+### [Fase B16 — JavaScript dan C++][30]
 
 **Tujuan.** Menjembatani JavaScript dan C++ dengan aman. **Konsep.** Konversi tipe lewat `QVariant`; callback JavaScript diterima C++ sebagai `QJSValue`; `QJSEngine` dipakai bila Anda menanamkan mesin skrip tanpa QML. **Contoh.**
 
@@ -3230,7 +3230,7 @@ Q_INVOKABLE void ambilData(const QJSValue &callback)
 
 **Jebakan.** Memanggil callback setelah objek pemiliknya dihancurkan; memanggil dari thread selain thread engine. **Latihan.** Panggil callback itu dari QML dengan fungsi anonim dan cetak hasilnya. **Dibaca bersama.** Modul 10.4.
 
-### Fase B17 — Lifecycle dan Memori
+### [Fase B17 — Lifecycle dan Memori][30]
 
 **Tujuan.** Menghindari kebocoran dan akses ke objek yang sudah hilang. **Konsep.** Objek JavaScript dibersihkan garbage collector. Objek `QObject` punya kepemilikan: dimiliki C++ atau dimiliki JavaScript (`QQmlEngine::ObjectOwnership`); objek hasil `createObject(parent)` dimiliki `parent`. Closure dan koneksi yang tersisa dapat menahan objek. **Contoh.**
 
@@ -3245,7 +3245,7 @@ Item {
 
 **Jebakan.** Handler yang menahan objek besar; `destroy()` tanpa memutus rujukan. **Latihan.** Buat dan hancurkan 1000 objek dinamis, lalu pantau memori sebelum dan sesudah. **Dibaca bersama.** Modul 3.3 dan 7.3.
 
-### Fase B18 — Debug dan Optimasi JavaScript
+### [Fase B18 — Debug dan Optimasi JavaScript][30]
 
 **Tujuan.** Menemukan dan memperbaiki JavaScript yang lambat atau salah. **Konsep.** Ukur dengan `console.time` dan profiler, hindari binding berat, memoisasi, gabungkan pembaruan dengan `Qt.callLater`, beri anotasi tipe, dan pindahkan pekerjaan berat ke `WorkerScript` atau C++. **Contoh.**
 
@@ -3259,7 +3259,7 @@ function mahal(n) {
 
 **Jebakan.** Optimasi dini tanpa pengukuran; cache yang tidak pernah dibersihkan. **Latihan.** Ukur sebuah fungsi dengan dan tanpa cache memakai `console.time`. **Dibaca bersama.** Modul 12.1, 12.2, dan 11.4.
 
-### Fase B19 — Arsitektur Logika
+### [Fase B19 — Arsitektur Logika][30]
 
 **Tujuan.** Menempatkan logika di tempat yang dapat diuji dan dirawat. **Konsep.** Fungsi murni di `Logic.js` (`.pragma library`), keadaan di store, I/O di tepi, dan uji dengan Qt Quick Test. **Contoh.**
 
@@ -3494,3 +3494,19 @@ Kurikulum ini memandang penguasaan sebagai kemampuan membuktikan, bukan menghafa
 [12]: ./bagian-13/README.md
 [13]: ./bagian-14/README.md
 [14]: ./bagian-15/README.md
+[16]: ./js/bagian-1/README.md
+[17]: ./js/bagian-2/README.md
+[18]: ./js/bagian-3/README.md
+[19]: ./js/bagian-4/README.md
+[20]: ./js/bagian-5/README.md
+[21]: ./js/bagian-6/README.md
+[22]: ./js/bagian-7/README.md
+[23]: ./js/bagian-8/README.md
+[24]: ./js/bagian-9/README.md
+[25]: ./js/bagian-10/README.md
+[26]: ./js/bagian-11/README.md
+[27]: ./js/bagian-12/README.md
+[28]: ./js/bagian-13/README.md
+[29]: ./js/bagian-14/README.md
+[30]: ./js/bagian-15/README.md
+
