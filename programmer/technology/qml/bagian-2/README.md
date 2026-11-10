@@ -11,7 +11,7 @@ Dokumen ini melanjutkan dokumen Fase 0 dengan pola yang sama: audit singkat, pen
 | 1. Audit Fase 1 dan Modul 1.1 | Pemeriksaan sebelum materi | Selesai |
 | 2. Fase 1 (tingkat fase) | Peran, filosofi, peta, hubungan | Selesai |
 | 3. Modul 1.1 — Sintaks Dasar dan Struktur Dokumen | Sub-bagian 1.1.1 sampai 1.1.7 | Ditulis di dokumen ini |
-| Modul 1.2, 1.3, 1.4 | Tipe data, properti, komponen | Menunggu konfirmasi Anda |
+| Modul 1.2 (bagian 4), 1.3 (bagian 5), 1.4 (bagian 6), dan penutup Fase 1 (bagian 7) | Tipe data, properti, komponen | Selesai. Berikutnya: Fase 2 |
 
 **Konvensi** sama dengan Fase 0: baris berawalan `$` adalah perintah; tabel **Kata demi kata** menerangkan kode; **\[TAMBAHAN\]** menandai materi di luar kurikulum asli beserta alasannya; **\[amati\]** berarti hasil bergantung mesin Anda dan harus dibuktikan sendiri. Tautan berasal dari dokumentasi resmi, dan belum diuji otomatis.
 
@@ -1554,9 +1554,11 @@ Untuk tiap berkas catat: apakah `qmllint` menangkapnya **sebelum** dijalankan? P
 
 Simpan sebagai `galat.md` di repositori belajar dan isi dari hasil lab Anda:
 
+```markdown
 | Berkas | Kerusakan | Kelas | Pesan pertama (salin utuh) | Exit | Tertangkap qmllint? | Perbaikan |
 | --- | --- | --- | --- | --- | --- | --- |
 | e01 | dua akar | ? | ... | ? | ? | bungkus dalam satu akar |
+```
 
 Tambahkan baris baru **setiap kali Anda bertemu galat baru** sepanjang kurikulum. Dalam beberapa bulan, ia menjadi referensi paling berharga milik Anda, karena ia berisi pesan dari versi Qt dan lingkungan **Anda**.
 
@@ -1691,6 +1693,7 @@ Di folder `~/Development/qt-learning/fase1/terpadu/` (30–45 menit), tanpa meny
 
 Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 
+```markdown
 **Daftar isi.** 1.1.1 Struktur dokumen: pragma, import, root · 1.1.2 Objek dan hierarki · 1.1.3 Properti dasar · 1.1.4 `id` dan referensi · 1.1.5 Komentar, `qmlformat`, dan konvensi penulisan · 1.1.6 Konvensi nama berkas · 1.1.7 Lab merusak dokumen dan kamus galat
 
 **Terminologi (tambahan).** Pragma (arahan engine, ditulis sebelum import; contoh: `Singleton` sejak 5.2, `ComponentBehavior` sejak 6.4); tiga jenis import (modul, direktori, JavaScript) dan `as` untuk namespace lokal; default property (pada `Item`: `data`); unqualified access (merujuk properti tanpa menyebut objeknya); urutan atribut Qt (id, properti, signal, fungsi, properti objek, objek anak).
@@ -1704,6 +1707,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 **Referensi (tambahan).** [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [Import Statements](https://doc.qt.io/qt-6/qtqml-syntax-imports.html) · [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [qmlformat](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html)
 
 **Estimasi.** Fase 1 secara keseluruhan: Jalur A sekitar 3 minggu.
+```
 
 ### 3.7.6 Status dan langkah berikutnya
 
@@ -1712,7 +1716,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.1.
 | Audit Fase 1 dan Modul 1.1 | Selesai |
 | Fase 1 (tingkat fase) | Selesai |
 | Modul 1.1 (1.1.1–1.1.7) | **Selesai** |
-| Modul 1.2 — Tipe Data dan Sistem Tipe | Berikutnya, menunggu konfirmasi |
+| Modul 1.2 — Tipe Data dan Sistem Tipe | Berikutnya |
 | Modul 1.3 — Properti, Alias, dan Atribut Objek | Setelah 1.2 |
 | Modul 1.4 — Komponen dan Reuse | Setelah 1.3 |
 
@@ -3411,6 +3415,7 @@ Di folder `~/Development/qt-learning/fase1/tipe/` (30–45 menit), tanpa menyali
 
 Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.2.
 
+```markdown
 **Terminologi (pengganti).** Mulai Qt 6.6/6.7 istilah dokumentasi adalah *value type* (tipe nilai), bukan *basic type*: tipe nilai disalin saat ditugaskan, dan tipe objek dirujuk. Penyedia: bahasa QML (`bool`, `int`, `real`, `double`, `string`, `url`, `date`, `var`, `variant`, `list`, `void`), QtQml (`point`, `rect`, `size`, `easingCurve`), dan QtQuick (`color`, `font`, `vector2d`, `vector3d`, `vector4d`, `matrix4x4`, `quaternion`; perlu `import QtQuick`).
 
 **Daftar isi.** 1.2.1 Primitif dan `url` · 1.2.2 Geometri, warna, dan font · 1.2.3 `date` dan konversi `QDate`/`QTime` · 1.2.4 `list` dan `var` · 1.2.5 Enum · 1.2.6 Konversi dan jebakan · 1.2.7 Vektor, matriks, dan kuaternion · 1.2.8 Memeriksa dan menegakkan tipe
@@ -3420,6 +3425,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.2.
 **Cek pemahaman (jawaban lebih presisi).** (1) Pengganti `time`: gunakan `date` dan baca jam-menitnya, atau `int` detik bila hanya durasi. (2) Properti terketik lebih baik karena kesalahan tertangkap dini (galat saat nilai salah), tooling (`qmllint`, `qmlls`) dapat menalar, dan kompiler QML dapat menghasilkan kode lebih efisien.
 
 **Referensi (ganti dan tambah).** [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html) (menggantikan `...basictypes.html`) · [QML Enumerations](https://doc.qt.io/qt-6/qtqml-typesystem-enumerations.html) · [Data Type Conversion Between QML and C++](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html)
+```
 
 ### 4.6.6 Status
 
@@ -3428,7 +3434,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.2.
 | Audit Fase 1 dan Modul 1.1 | Selesai |
 | Modul 1.1 (1.1.1–1.1.7) | Selesai |
 | Modul 1.2 (1.2.1–1.2.8) | **Selesai** |
-| Modul 1.3 — Properti, Alias, dan Atribut Objek | Menunggu konfirmasi Anda |
+| Modul 1.3 — Properti, Alias, dan Atribut Objek | Berikutnya |
 | Modul 1.4 — Komponen dan Reuse | Setelah 1.3 |
 
 ---
@@ -5458,7 +5464,7 @@ Di folder `~/Development/qt-learning/fase1/komponen/` (45–60 menit), tanpa men
 
 Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.3.
 
-
+```markdown
 **Daftar isi.** 1.3.1 Deklarasi dan tipe · 1.3.2 `readonly` dan `required` · 1.3.3 Alias dan default property · 1.3.4 Group properties · 1.3.5 Attached properties · 1.3.6 Handler perubahan `onXChanged`, signal, dan metode · 1.3.7 Pola private lewat `QtObject` · 1.3.8 Bayangan properti: `virtual`, `override`, `final` · 1.3.9 Lab galat properti
 
 **Terminologi (tambahan).** Sintaks deklarasi: `[default] [virtual] [override] [final] [required] [readonly] property <tipe> <nama>`; `required <properti>` (menjadikan properti yang sudah ada wajib diisi); shadowing (mendeklarasikan ulang properti tipe dasar); attached property hanya dipasang pada objek bersangkutan, bukan anak-anaknya.
@@ -5468,6 +5474,7 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.3.
 **Kesalahan umum (tambahan).** Mengira attached property tersedia pada anak (akses lewat `id` pemilik); mencampur anak implisit dan `data:` eksplisit pada default property; mencampur penugasan objek utuh dan sub-properti pada group property yang sama; menimpa properti tipe dasar tanpa `virtual`/`override`/`final`; menaruh `QtObject` sebagai anak dari akar `QtObject`; memberi nilai awal pada properti `required`.
 
 **Referensi (tambahan).** [QML Object Attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [Property Shadowing and Override Semantics](https://doc.qt.io/qt-6/qtqml-syntax-overridesemantics.html)
+```
 
 ### 5.6.6 Status
 
@@ -5477,9 +5484,1576 @@ Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.3.
 | Modul 1.1 (1.1.1–1.1.7) | Selesai |
 | Modul 1.2 (1.2.1–1.2.8) | Selesai |
 | Modul 1.3 (1.3.1–1.3.9) | **Selesai** |
-| Modul 1.4 — Komponen dan Reuse | Menunggu konfirmasi Anda |
+| Modul 1.4 — Komponen dan Reuse | Selanjutnya |
 
+---
 
+## 6. Modul 1.4 — Komponen dan Reuse
+
+**Daftar isi bagian ini:** 6.1 Audit Modul 1.4 · 6.2 Deskripsi dan peran · 6.3 Filosofi modul · 6.4 Visual: cetakan dan kue · 6.5 Estimasi waktu · lalu 1.4.1 sampai 1.4.6 · 6.6 Penutup Modul 1.4 · 7. Penutup Fase 1
+
+### 6.1 Audit Modul 1.4
+
+Diperiksa pada 7 November 2026 terhadap dokumentasi *Defining Object Types through QML Documents* (beberapa versi Qt 6) dan *Scope and Naming Resolution*. Kurikulum Modul 1.4 saya baca ulang sebelum audit ini.
+
+**Terverifikasi (tidak perlu diubah):**
+
+- Nama tipe dari berkas: hanya huruf, angka, garis bawah, dan **diawali huruf besar**. Tipe tersedia otomatis bagi berkas lain **di direktori yang sama**; untuk direktori lain perlu `import`. Dokumentasi merekomendasikan agar huruf besar-kecil nama berkas **sama persis** dengan nama tipe (mis. `Box.qml`, bukan `BoX.qml`), karena sistem berkas UNIX peka huruf.
+- **Semua** properti, signal, dan metode objek akar, termasuk yang diwarisi dari tipenya, dapat dibaca dan diubah oleh pemakai tipe. Sebaliknya, `id` di dalam berkas **tidak** dapat diakses dari luar.
+- Inline component: sintaks `component <Nama>: TipeDasar { ... }`; di dalam berkas pemilik dipakai dengan namanya saja, di berkas lain **harus diawali nama komponen pemilik** (`Galeri.Chip`); **tidak boleh bersarang**; **tidak berbagi cakupan** dengan komponen tempatnya dideklarasikan (merujuk `id` luar dari berkas lain menghasilkan `ReferenceError`); dan boleh menjadi **tipe properti**.
+- Elemen `Component` cocok bila Anda tidak perlu mengekspos tipe dan hanya perlu membuat instans, tetapi **tidak** bila Anda perlu mendeklarasikan properti bertipe komponen itu atau memakainya di banyak berkas; untuk itu gunakan inline component.
+- `pragma ComponentBehavior: Bound` membatasi komponen dalam berkas agar hanya membuat objek di konteks aslinya, sehingga `id` dari komponen luar aman dipakai di dalamnya; bawaan adalah `Unbound`.
+
+**Perlu dikoreksi atau dilengkapi:**
+
+1. **Contoh minimal kurang ukuran.** Akar `Item` dan `Row` tanpa lebar dan tinggi membuat jendela `qml` kosong atau sangat kecil, dan `Text { text: parent.label }` rapuh. Contoh diperbaiki (akar diberi ukuran, `id` dipakai).
+2. **Tiga arti “komponen” perlu dibedakan:** komponen berkas, inline component, dan elemen `Component`. Kurikulum menyebutnya sekilas; kini dibedakan dalam tabel (1.4.2).
+3. **Jawaban Cek pemahaman** (“kapan inline lebih tepat dari berkas terpisah”) belum dirumuskan. Rumusannya: inline bila kecil, hanya dipakai dalam satu berkas, dan sangat terikat pada pemiliknya; berkas bila dipakai lintas berkas, cukup besar, perlu diuji dan diperiksa lint sendiri, atau menjadi bagian API. Ada di 1.4.4.
+4. **“Antarmuka terlalu bocor”** hanya disebut; belum ada cara mencegahnya. Ditambahkan: akar `Item` minimal, properti `readonly`, alias selektif, dan keadaan internal di `QtObject` (1.4.1-e dan 1.4.3).
+5. **Kesalahan “mengakses `id` di luar dokumen”** perlu dilengkapi: bahkan **inline component** yang dipakai dari berkas lain tidak berbagi cakupan dengan pemiliknya; `ComponentBehavior: Bound` hanya menjamin akses `id` luar **dalam berkas yang sama**.
+6. **Belum ada cara menguji komponen terpisah** dan hal-hal praktis di aplikasi yang dibangun (mendaftarkan, mengimpor, huruf besar-kecil nama berkas lintas platform, `qmldir` untuk berkas lewat jaringan). Ditambahkan sebagai 1.4.5.
+7. **Sub-bagian tambahan:** 1.4.5 (komponen di aplikasi dan pengujian terpisah) dan 1.4.6 (lab galat komponen, melanjutkan pola 1.1.7 dan 1.3.9).
+
+**Daftar isi Modul 1.4 yang diperbarui:**
+
+| No. | Judul | Asal |
+| --- | --- | --- |
+| 1.4.1 | File sebagai tipe | Asli 1.4.1, diperluas |
+| 1.4.2 | Inline component | Asli 1.4.2, diperluas |
+| 1.4.3 | Properti sebagai antarmuka komponen | Asli 1.4.3, diperluas |
+| 1.4.4 | Kapan memecah komponen | Asli 1.4.4, diperluas |
+| 1.4.5 | Komponen di aplikasi yang dibangun dan diuji terpisah | **\[TAMBAHAN\]** |
+| 1.4.6 | Lab galat komponen | **\[TAMBAHAN\]** |
+
+### 6.2 Deskripsi dan peran dalam kurikulum
+
+Modul ini mengajarkan cara **memecah antarmuka menjadi komponen yang dapat dipakai ulang**: sebagai berkas, sebagai inline component, dan bagaimana mendesain antarmukanya. Ini puncak Fase 1: semua yang Anda pelajari (struktur dokumen, tipe, properti, alias, default property, `required`) bertemu di sini untuk menghasilkan komponen yang rapi. Fase 5 (komponen dan styling), Fase 8 (modul), dan Fase 9 (kendali kustom) semuanya berdiri di atas ini.
+
+### 6.3 Filosofi modul
+
+**Komponen adalah cetakan; instans adalah kuenya.** Satu cetakan, banyak kue, dan mengubah cetakan mengubah semuanya. Setiap komponen yang baik memiliki **antarmuka kecil dan jelas** (apa yang wajib, boleh, dan keluar) di atas **isi dalam yang bebas diubah**. Menulis komponen berarti merancang kontrak.
+
+### 6.4 Visual: cetakan dan kue
+
+```
+  Chip.qml  (CETAKAN = tipe)                    instans (KUE)
+ +------------------------------+
+ | Rectangle { property label }  | --->  Chip { label: 'A' }   Chip { label: 'B' }   Chip { ... }
+ +------------------------------+
+   ubah cetakan --> SEMUA instans berubah
+
+  tiga bentuk komponen:
+   [berkas Nama.qml]      tipe publik, dipakai lintas berkas
+   [component X: T {}]    tipe di dalam satu berkas (di luar: Pemilik.X)
+   [Component { ... }]    cetakan anonim untuk dibuat nanti (Modul 7.3)
+```
+
+### 6.5 Estimasi waktu
+
+Jalur A: 8–10 jam; Jalur B: 3–4 jam.
+
+---
+
+## 1.4.1 File sebagai tipe
+
+*Semangat: satu cetakan yang dirancang baik melayani seribu kue.*
+
+**Daftar isi 1.4.1:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: `Chip.qml` · d. Contoh 2: instansiasi berulang · e. Antarmuka bocor dan perapatan · f. Menguji komponen terpisah · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini mengubah blok yang Anda tulis berulang menjadi **tipe**: Anda memberi nama sekali, lalu memakainya sebanyak perlu. Ini cara paling dasar, paling umum, dan paling disarankan untuk reuse di QML.
+
+### b. Konsep dan filosofi
+
+- Menulis `Chip.qml` otomatis mendefinisikan tipe `Chip` yang dapat dipakai berkas lain **di folder yang sama** tanpa `import` (1.1.6).
+- Objek akar menentukan **antarmuka**: semua properti, signal, dan metode akar (termasuk yang diwarisi) terlihat dan dapat diubah oleh pemakai. `id` dan anak-anak di dalamnya tersembunyi.
+- Komponen adalah **instans yang dibuat dari pohon objek** yang dideklarasikan di berkasnya: setiap `Chip { }` membuat satu pohon baru.
+
+**Filosofi:** pikirkan tipe dari sisi **pemakai**, bukan pembuat. Apa yang ingin ia atur? Apa yang ia tak perlu tahu?
+
+### c. Contoh 1: Chip.qml
+
+Buat `Chip.qml`:
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    property string label: 'Chip'
+
+    width: 80
+    height: 28
+    radius: 14
+    color: 'lightsteelblue'
+
+    Text {
+        anchors.centerIn: parent
+        text: root.label
+    }
+}
+```
+
+Dan `Main.qml` di folder yang sama:
+
+```qml
+import QtQuick
+
+Row {
+    spacing: 8
+
+    Chip { label: 'A' }
+    Chip { label: 'B'; color: 'lightcoral' }
+    Chip { label: 'C'; radius: 4 }
+}
+```
+
+```bash
+$ qml Main.qml
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `Chip.qml` | Berkas bernama `Chip` (huruf besar) mendefinisikan tipe `Chip`. |
+| `Rectangle { id: root ... }` | Objek akar: menentukan bahwa `Chip` adalah sebuah `Rectangle`. |
+| `property string label: 'Chip'` | Properti buatan sendiri: bagian antarmuka. |
+| `Text { text: root.label }` | Anak yang membaca `label` lewat `id` akar (lebih tegas daripada `parent.label`). |
+| `Row { ... }` | Akar `Main.qml`: menyusun tiga chip berdampingan. |
+| `Chip { label: 'A' }` | Membuat satu instans; `label` diubah. |
+| `Chip { label: 'B'; color: 'lightcoral' }` | `color` adalah properti `Rectangle` (akar `Chip`); pemakai boleh mengubahnya. |
+| `Chip { label: 'C'; radius: 4 }` | Pemakai boleh mengubah **sifat bawaan** tipe akar juga. |
+
+Coba ubah `color` di `Chip.qml` menjadi `'khaki'`, jalankan lagi, dan lihat **ketiga** chip yang tidak menyetel `color` ikut berubah: satu cetakan, banyak kue.
+
+### d. Contoh 2: instansiasi berulang
+
+Bila isi chip berasal dari daftar, buat instans dengan `Repeater` (Fase 4 dan 7):
+
+```qml
+import QtQuick
+
+Row {
+    spacing: 8
+
+    Repeater {
+        model: ['A', 'B', 'C']
+
+        Chip {
+            required property string modelData
+            label: modelData
+        }
+    }
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `Repeater { model: [...] }` | Membuat satu instans untuk tiap elemen model. |
+| `Chip { ... }` | Delegate: cetakan yang diulang. |
+| `required property string modelData` | Properti `required` yang diisi dari model (1.3.2-e); nama `modelData` adalah nama bidang model sederhana. |
+| `label: modelData` | Mengisi `label` dari data model. |
+
+Perilaku persisnya diuji di mesin Anda **\[amati\]**; detail model dan delegate dibahas di Fase 7.
+
+### e. Antarmuka bocor dan perapatan
+
+Contoh 1 memperlihatkan **kebocoran**: pemakai dapat mengubah `color` dan `radius`, dua hal yang mungkin tidak ingin Anda izinkan. Dokumentasi menegaskan: seluruh atribut akar terbuka. Cara merapatkan:
+
+```qml
+// ChipKetat.qml
+import QtQuick
+
+Item {
+    id: root
+
+    property string label: 'Chip'
+
+    implicitWidth: 80
+    implicitHeight: 28
+
+    Rectangle {
+        anchors.fill: parent
+        radius: height / 2
+        color: 'lightsteelblue'
+
+        Text {
+            anchors.centerIn: parent
+            text: root.label
+        }
+    }
+}
+```
+
+```qml
+// UjiKetat.qml
+import QtQuick
+
+Row {
+    spacing: 8
+
+    ChipKetat { label: 'A' }
+    ChipKetat { label: 'B' }
+    // ChipKetat { color: 'red' }   // buka komentar: galat
+}
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `Item { id: root ... }` | Akar minimal: hanya properti `Item` yang terbuka (posisi, ukuran, `visible`, `opacity`, ...), bukan `color` atau `radius`. |
+| `implicitWidth`, `implicitHeight` | Ukuran bawaan yang dapat diganti pemakai. |
+| `Rectangle { anchors.fill: parent ... }` | Tampilan disembunyikan di dalam, tak terbuka. |
+| `// ChipKetat { color: 'red' }` | Bila dibuka, dugaan galat bahwa `color` bukan properti **\[amati pesannya\]**. |
+
+Harga perapatan: akar `Item` tidak menyerahkan `color` dan `radius`; bila pemakai memang butuh warna, sediakan **sebuah properti** (`property color warna`) atau alias selektif (1.3.3). Ini merancang antarmuka sengaja, bukan kebetulan dari tipe akar.
+
+### f. Menguji komponen terpisah
+
+Komponen berkas dapat dijalankan langsung: `qml Chip.qml` menampilkan satu `Chip` dengan nilai bawaan. Tetapi komponen dengan properti `required` **gagal** dijalankan sendirian (1.3.2); untuk itu buat berkas uji kecil:
+
+```qml
+// UjiTombol.qml
+import QtQuick
+
+TombolAksi { teks: 'Coba' }
+```
+
+Berkas `Uji*.qml` berdampingan dengan komponennya adalah kebiasaan sederhana yang menjadi cikal uji dan pratinjau (Modul 12 dan 1.4.5).
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Dipakai lintas berkas | Berkas `.qml` | Pilihan umum |
+| Kecil, hanya dalam satu berkas | Inline component | 1.4.2 |
+| Cetakan yang dibuat nanti atau dinamis | `Component`, `Loader` | Modul 7.3 |
+| Banyak instans dari data | `Repeater`, `ListView` | Fase 4 dan 7 |
+| Antarmuka sangat rapat | Akar `Item` minimal | Bagian e |
+| Tipe dari C++ | Tipe terdaftar | Fase 10 |
+
+### h. Visual
+
+```
+  Chip.qml (akar Rectangle)             ChipKetat.qml (akar Item)
+   +---------------------------+         +-----------------------------+
+   | pemakai BISA ubah:         |         | pemakai BISA ubah:           |
+   |  label, color, radius,     |         |  label, x, y, width, height, |
+   |  width, height, ...        |         |  visible, opacity, ...       |
+   |  (SEMUA milik Rectangle)   |         | pemakai TIDAK bisa: color,   |
+   +---------------------------+         |  radius (ada di dalam)       |
+                                         +-----------------------------+
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Komponen berkas | Tipe yang didefinisikan oleh satu berkas `.qml` |
+| Instans | Satu objek yang dibuat dari sebuah tipe |
+| Objek akar | Penentu tipe dan antarmuka komponen |
+| Antarmuka | Properti, signal, dan metode yang terbuka |
+| Delegate | Cetakan yang diulang oleh `Repeater` atau view |
+| Pratinjau | Menjalankan komponen sendirian untuk dilihat |
+
+### j. Tips dan praktik terbaik
+
+- Ekstrak komponen sesudah blok yang sama muncul **tiga kali**, atau sesudah blok itu menjadi sulit dibaca.
+- Tentukan dulu apa yang berubah antar instans: itulah properti antarmukanya.
+- Cocokkan huruf besar-kecil nama berkas dengan nama tipe persis, di semua platform.
+- Beri berkas `Uji*.qml` untuk komponen penting.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Menyalin-tempel blok yang sama | Belum membuat tipe | Ekstrak ke berkas |
+| Pemakai mengubah hal yang tak dimaksudkan | Antarmuka bocor lewat tipe akar | Akar `Item` minimal, `readonly`, alias selektif |
+| `X is not a type` | Nama berkas berawalan huruf kecil, atau folder berbeda tanpa import | 1.1.6 |
+| Komponen `required` gagal dijalankan sendiri | Properti wajib belum diisi | Berkas uji |
+| `label` tak terbaca di anak | Salah merujuk | Pakai `id` akar |
+| Berkas bernama `Chip.qml` dipanggil `chip` | Nama tipe peka huruf | `Chip` |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk 1.4.2 sampai 1.4.6, Fase 4 (`Repeater`), Fase 5 (komponen dan styling), Fase 7 (delegate), dan Fase 9 (kendali kustom).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit** (dari kurikulum, dilengkapi). Ekstrak tiga blok berulang dari sebuah `Main.qml` menjadi `Chip.qml`, jalankan, lalu ubah satu sifat di `Chip.qml` dan buktikan semua instans berubah. Buat versi `ChipKetat.qml` dan catat apa yang tidak lagi dapat diubah pemakai.
+
+**Cek pemahaman.** (1) Apa yang terbuka dari sebuah komponen berkas? (2) Mengapa akar `Item` merapatkan antarmuka? (3) Mengapa komponen `required` perlu berkas uji?
+
+### n. Referensi
+
+- [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [QML Object Types](https://doc.qt.io/qt-6/qtqml-typesystem-objecttypes.html)
+- [Repeater](https://doc.qt.io/qt-6/qml-qtquick-repeater.html) · [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html)
+
+---
+
+## 1.4.2 Inline component
+
+*Semangat: kadang cetakan terbaik adalah yang tinggal di dalam rumahnya sendiri.*
+
+**Daftar isi 1.4.2:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh 1: `Chip` inline · d. Memakai dari berkas lain · e. Cakupan: yang tidak dibagi · f. `ComponentBehavior: Bound` · g. Tiga arti “komponen” · h. Opsi lain · i. Visual · j. Terminologi · k. Tips · l. Kesalahan umum · m. Hubungan · n. Latihan dan cek · o. Referensi
+
+### a. Deskripsi dan peran
+
+Inline component mendefinisikan **tipe di dalam sebuah berkas**, tanpa membuat berkas baru. Cocok untuk bagian kecil yang hanya dipakai di berkas itu (dan mungkin sedikit di tempat lain) dan sangat terikat pada pemiliknya.
+
+### b. Konsep dan filosofi
+
+Sintaks (dokumentasi):
+
+```
+component <NamaKomponen> : TipeDasar {
+    // deklarasikan properti dan binding di sini
+}
+```
+
+- Nama komponen **diawali huruf besar** (seperti nama tipe).
+- Di dalam berkas yang mendeklarasikannya, tipenya dipakai **dengan namanya saja**.
+- Di berkas lain, ia **harus diawali nama komponen pemilik**: `Galeri.Chip`.
+- Inline component **tidak boleh bersarang** (tidak boleh ada `component` di dalam `component`).
+- Inline component **tidak berbagi cakupan** dengan komponen tempat ia dideklarasikan.
+- Inline component boleh menjadi **tipe properti** (mis. `property Chip dipilih`).
+
+**Filosofi:** simpan hal kecil dan terikat **dekat dengan pemiliknya**; angkat ke berkas hanya bila ia berdiri sendiri.
+
+### c. Contoh 1: Chip inline
+
+Simpan sebagai `Galeri.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+
+    component Chip: Rectangle {
+        id: chip
+
+        property string label
+
+        width: 80
+        height: 28
+        radius: 14
+        color: 'lightsteelblue'
+
+        Text {
+            anchors.centerIn: parent
+            text: chip.label
+        }
+    }
+
+    width: 220
+    height: 40
+
+    Row {
+        spacing: 8
+
+        Chip { label: 'A' }
+        Chip { label: 'B' }
+    }
+}
+```
+
+```bash
+$ qml Galeri.qml
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| `component Chip: Rectangle { ... }` | Mendefinisikan tipe `Chip` (turunan `Rectangle`) **di dalam** `Galeri.qml`. |
+| `id: chip` | `id` lokal di dalam inline component. |
+| `property string label` | Properti antarmuka inline component. |
+| `Text { text: chip.label }` | Membaca properti lewat `id` komponen sendiri. |
+| `Item { width: 220; height: 40 ... }` | Akar diberi ukuran agar jendela `qml` terlihat (perbaikan dari contoh kurikulum). |
+| `Chip { label: 'A' }` | Dipakai langsung dengan nama, karena satu berkas. |
+
+### d. Memakai dari berkas lain
+
+Simpan sebagai `PakaiChip.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    width: 260
+    height: 40
+
+    Galeri.Chip { label: 'Dari file lain' }
+}
+```
+
+```bash
+$ qml PakaiChip.qml
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `Galeri.Chip` | Nama inline component **diawali nama komponen pemilik** (`Galeri`). Tanpa awalan, `Chip` tidak dikenal di berkas ini. |
+
+Bila hanya `Chip { }` yang ditulis di `PakaiChip.qml`, dokumentasi menyiratkan bahwa tipe itu tidak dikenal di sana; catat pesan galatnya **\[amati\]**.
+
+### e. Cakupan: yang tidak dibagi
+
+Dokumentasi menyatakan bahwa inline component **tidak berbagi cakupan** dengan komponen tempatnya dideklarasikan. Contohnya:
+
+```qml
+// A.qml
+import QtQuick
+
+Item {
+    id: root
+    property string pesan: 'Dari A'
+
+    component Info: Item {
+        Component.onCompleted: console.log(root.pesan)
+    }
+}
+```
+
+```qml
+// B.qml
+import QtQuick
+
+Item {
+    A.Info { }
+}
+```
+
+Bila `A.Info` dibuat dari **`B.qml`**, terjadi `ReferenceError`: `root` bukan `id` di `B.qml`. Karena itu dokumentasi menyarankan agar inline component **tidak merujuk objek yang bukan bagiannya**. Jadikan semua yang dibutuhkan **properti** inline component itu, lalu isi dari pemakai.
+
+```qml
+component Info: Item {
+    required property string pesan
+    Component.onCompleted: console.log(pesan)
+}
+```
+
+### f. ComponentBehavior: Bound
+
+Pragma `ComponentBehavior` (1.1.1-d) mengatur apakah komponen dalam berkas terikat ke konteksnya:
+
+| Nilai | Arti (dokumentasi) |
+| --- | --- |
+| `Unbound` (bawaan) | Komponen dapat dibuat di konteks lain; engine dan alat tidak tahu `id` luar akan berarti apa. Properti lokal menimpa `id` luar bila namanya bentrok |
+| `Bound` | Komponen hanya membuat objek di konteks aslinya; `id` dari komponen luar **dalam berkas yang sama** aman dipakai dan dipahami alat. Bila bentrok, `id` luar menimpa properti lokal |
+
+`Bound` menjamin keamanan **di dalam berkas yang sama**; ia tidak menyelesaikan masalah memakai inline component dari berkas lain (bagian e). Gunakan `Bound` pada berkas yang memiliki delegate atau inline component yang merujuk `id` luar.
+
+### g. Tiga arti “komponen”
+
+| Bentuk | Sintaks | Dipakai dari | Tipe properti? | Kapan |
+| --- | --- | --- | --- | --- |
+| Komponen berkas | `Nama.qml` | Berkas mana pun (folder sama atau diimpor) | Ya | Reuse lintas berkas |
+| Inline component | `component X: T { }` | Berkas pemilik: `X`; berkas lain: `Pemilik.X` | Ya | Bagian kecil terikat pada pemiliknya |
+| Elemen `Component` | `Component { ... }` | Hanya dalam berkas itu, lewat `id` | Tidak sebagai tipe | Cetakan anonim yang dibuat nanti (Modul 7.3) |
+
+### h. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Reuse lintas banyak berkas | Berkas terpisah | Lebih jelas dan dapat diuji sendiri |
+| Delegate kecil sekali pakai | `Component` atau `delegate: Item { }` | Modul 7.3 |
+| Properti bertipe komponen | Inline component | `Component` tidak bisa dipakai sebagai tipe |
+| Pengecualian atas aturan “tidak bersarang” | Tidak ada; pecah jadi dua | Dilarang |
+| Cakupan luar dibutuhkan | `required property` dan `Bound` | Jangan mengandalkan `id` luar |
+
+### i. Visual
+
+```
+  Galeri.qml (pemilik)                         PakaiChip.qml
+  +----------------------------------+         +-----------------------------+
+  | id: root                          |         |                             |
+  | component Chip: Rectangle {...}   |  <----- |  Galeri.Chip { label: ... } |
+  |  (dipakai sebagai Chip { })       |         |   (awalan Galeri. WAJIB)    |
+  +----------------------------------+         +-----------------------------+
+     'root' tidak terlihat dari dalam Chip bila Chip dibuat di PakaiChip.qml  (ReferenceError)
+```
+
+### j. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Inline component | Tipe yang didefinisikan di dalam sebuah berkas |
+| Komponen pemilik | Berkas yang mendeklarasikan inline component |
+| Cakupan komponen (component scope) | Wilayah tempat `id` dikenal |
+| Bound / Unbound | Komponen terikat ke konteks aslinya atau tidak |
+| Elemen `Component` | Cetakan anonim yang dibuat belakangan |
+| Awalan pemilik | `Pemilik.` pada nama inline component di berkas lain |
+
+### k. Tips dan praktik terbaik
+
+- Inline component sebaiknya **mandiri**: semua yang ia butuhkan masuk lewat propertinya.
+- Beri nama inline component seperti tipe biasa, huruf besar, dan peran yang jelas.
+- Aktifkan `pragma ComponentBehavior: Bound` pada berkas yang berisi delegate atau inline component.
+- Bila inline component mulai besar atau dipakai lintas berkas, angkat ke berkas sendiri.
+
+### l. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| `X is not a type` di berkas lain | Lupa awalan pemilik | `Pemilik.X` |
+| `ReferenceError: root is not defined` | Inline component dipakai dari berkas lain dan merujuk `id` pemilik | Beri properti `required` |
+| Galat saat menaruh `component` di dalam `component` | Tidak boleh bersarang | Pecah |
+| Memakai `Component` sebagai tipe properti | Tidak mungkin | Inline component |
+| Perilaku `id` berbeda dari dugaan | `Unbound` bawaan | `pragma ComponentBehavior: Bound` |
+
+### m. Hubungan dengan modul lain
+
+Prasyarat untuk 1.4.3 sampai 1.4.6, Fase 7 (delegate dan `Component`), Fase 8 (inline component dalam modul), dan Modul 12.2 (peringatan `qmllint` tentang konteks).
+
+### n. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `Galeri.qml` dan `PakaiChip.qml`. Lalu: (1) hapus awalan `Galeri.` dan catat pesan galat **\[amati\]**; (2) buat `A.qml` dan `B.qml` seperti di bagian e dan buktikan `ReferenceError`; (3) perbaiki dengan properti `required`; (4) coba menyarangkan `component` di dalam `component` dan catat galatnya **\[amati\]**.
+
+**Cek pemahaman.** (1) Bagaimana inline component dipakai dari berkas lain? (2) Mengapa ia tidak berbagi cakupan dengan pemiliknya? (3) Apa bedanya inline component dan elemen `Component`?
+
+### o. Referensi
+
+- [Defining Object Types: Inline Components](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html)
+- [Structure of a QML Document: pragma ComponentBehavior](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [Component](https://doc.qt.io/qt-6/qml-qtqml-component.html)
+
+---
+
+## 1.4.3 Properti sebagai antarmuka komponen
+
+*Semangat: antarmuka yang baik terasa seperti percakapan yang jelas, bukan teka-teki.*
+
+**Daftar isi 1.4.3:** a. Deskripsi dan peran · b. Konsep dan filosofi · c. Contoh: `TombolAksi` · d. Daftar periksa antarmuka sehat · e. Bocor dan rapat: alias selektif · f. Mengubah antarmuka dengan aman · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini menyatukan seluruh Modul 1.3 menjadi satu keterampilan: **merancang antarmuka sebuah komponen**. Antarmuka adalah apa yang pemakai bisa wajib isi, boleh ubah, boleh baca, dan boleh dengarkan.
+
+### b. Konsep dan filosofi
+
+Antarmuka komponen QML terdiri dari lima macam anggota:
+
+| Anggota | Peran bagi pemakai | Alat |
+| --- | --- | --- |
+| Masukan wajib | “Isi ini” | `required property` |
+| Masukan opsional | “Atur bila perlu” | `property` dengan nilai bawaan |
+| Keluaran | “Baca ini” | `readonly property` |
+| Peristiwa | “Dengarkan ini” | `signal` |
+| Perintah | “Panggil ini” | `function` beranotasi |
+
+Tambahan: **alias** untuk meneruskan satu atribut bagian dalam, dan **`QtObject` ber-id `d`** untuk keadaan internal (1.3.7). Dokumentasi menegaskan bahwa seluruh atribut objek akar terbuka, sehingga **pemilihan tipe akar** adalah bagian dari desain antarmuka (1.4.1-e).
+
+**Filosofi:** antarmuka adalah janji. Semakin kecil dan jelas, semakin sedikit yang bisa rusak.
+
+### c. Contoh: TombolAksi
+
+Buat `TombolAksi.qml`:
+
+```qml
+import QtQuick
+
+// TombolAksi: tombol aksi sederhana.
+// Wajib    : teks
+// Opsional : aktif (bawaan true), warnaTeks
+// Keluaran : ditekan (hanya baca)
+// Sinyal   : diklik()
+Item {
+    id: root
+
+    required property string teks
+    property bool aktif: true
+    property alias warnaTeks: label.color
+    readonly property bool ditekan: area.pressed
+
+    signal diklik
+
+    implicitWidth: 140
+    implicitHeight: 40
+
+    Rectangle {
+        anchors.fill: parent
+        radius: 8
+        color: root.aktif ? (root.ditekan ? '#74c7ec' : '#89b4fa') : '#9399b2'
+
+        Text {
+            id: label
+            anchors.centerIn: parent
+            text: root.teks
+        }
+    }
+
+    MouseArea {
+        id: area
+        anchors.fill: parent
+        enabled: root.aktif
+        onClicked: root.diklik()
+    }
+}
+```
+
+Dan `UjiTombolAksi.qml`:
+
+```qml
+import QtQuick
+
+Column {
+    spacing: 8
+
+    TombolAksi {
+        teks: 'Simpan'
+        onDiklik: console.log('simpan diklik')
+    }
+
+    TombolAksi {
+        teks: 'Nonaktif'
+        aktif: false
+        warnaTeks: 'white'
+    }
+}
+```
+
+```bash
+$ qml UjiTombolAksi.qml
+```
+
+**Kata demi kata**
+
+| Bagian | Arti |
+| --- | --- |
+| Komentar kepala (`// Wajib ...`) | Ringkasan antarmuka: pembaca tak perlu membaca seluruh berkas. |
+| `Item` sebagai akar | Akar minimal: `color` dan `radius` tak terbuka (1.4.1-e). |
+| `required property string teks` | Masukan wajib. |
+| `property bool aktif: true` | Masukan opsional dengan nilai bawaan masuk akal. |
+| `property alias warnaTeks: label.color` | Meneruskan **satu atribut** (`color`), bukan seluruh `Text`. |
+| `readonly property bool ditekan: area.pressed` | Keluaran: pemakai dapat membacanya, tidak dapat mengubahnya. |
+| `signal diklik` | Peristiwa: ditulis kata kerja lampau. |
+| `implicitWidth`, `implicitHeight` | Ukuran bawaan yang dapat diganti. |
+| `color: root.aktif ? (root.ditekan ? ... ) : ...` | Tampilan menurut keadaan: binding bersarang. |
+| `enabled: root.aktif` | Meneruskan `aktif` ke `MouseArea`. |
+| `onClicked: root.diklik()` | Mengubah klik internal menjadi signal publik. |
+| `onDiklik: console.log(...)` (di pemakai) | Pemakai mendengarkan signal; `label`, `area`, dan `Rectangle` tidak terlihat olehnya. |
+
+### d. Daftar periksa antarmuka sehat
+
+| No. | Pertanyaan |
+| --- | --- |
+| 1 | Apakah yang wajib diisi ditandai `required`? |
+| 2 | Apakah yang opsional punya nilai bawaan yang masuk akal? |
+| 3 | Apakah keluaran dibuat `readonly`? |
+| 4 | Apakah peristiwa dikomunikasikan lewat signal, bukan lewat pemakai mengintip anak? |
+| 5 | Apakah setiap properti dan metode bertipe? |
+| 6 | Apakah akar sudah merupakan tipe paling minimal yang cukup? |
+| 7 | Apakah alias hanya meneruskan atribut yang perlu, bukan seluruh objek? |
+| 8 | Apakah keadaan internal tersimpan di `QtObject` ber-`id`? |
+| 9 | Apakah nama menggambarkan peran bagi pemakai (`aktif`, `terpilih`), bukan implementasi? |
+| 10 | Apakah ada komentar kepala yang meringkas antarmuka? |
+
+### e. Bocor dan rapat: alias selektif
+
+| Rapat | Bocor |
+| --- | --- |
+| `property alias warnaTeks: label.color` | `property alias isi: label` |
+| Pemakai hanya dapat mengubah warna teks | Pemakai dapat mengubah **semua** properti `Text` (`text`, `font`, `anchors`, bahkan `visible`) |
+
+Meneruskan seluruh objek (`alias isi: label`) menyerahkan kendali atas bagian dalam; pemakai bergantung pada detail yang seharusnya bebas Anda ubah. Alias adalah alat yang kuat, dan karena itu harus dipakai **seperlunya** (1.3.3-k). Ingat juga batasan: alias merujuk satu atribut dan tidak bertipe sendiri.
+
+### f. Mengubah antarmuka dengan aman
+
+Antarmuka adalah janji kepada semua pemakai. Mengubahnya dapat merusak mereka:
+
+| Perubahan | Aman? |
+| --- | --- |
+| Menambah properti opsional bernilai bawaan | Aman |
+| Menambah signal | Aman |
+| Mengganti nama properti | **Tidak aman**; cari semua pemakai dengan `grep -rn` (0.0.4) |
+| Menjadikan properti opsional `required` | **Tidak aman** |
+| Mengubah tipe properti | **Tidak aman** |
+| Mengganti tipe akar | **Mungkin tidak aman** (properti yang terbuka berubah) |
+| Mengubah perilaku internal tanpa mengubah antarmuka | Aman; inilah gunanya antarmuka |
+
+```bash
+$ grep -rn 'TombolAksi' --include='*.qml' .
+$ grep -rn 'warnaTeks' --include='*.qml' .
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `grep -rn 'TombolAksi' --include='*.qml' .` | Cari semua pemakaian tipe di seluruh proyek sebelum mengubahnya. |
+| `grep -rn 'warnaTeks' ...` | Cari pemakaian satu properti sebelum menghapus atau mengganti namanya. |
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Mengganti isi sebuah bagian oleh pemakai | Properti bertipe `Component` atau `Item` | Pola `contentItem` (Fase 5 dan 9) |
+| Beberapa slot anak | Properti objek bernama (`header`, `footer`) | Satu per satu |
+| Satu slot anak utama | `default property alias isi: wadah.data` | 1.3.3 |
+| Menerima banyak data | Properti terketik atau model | Fase 7 |
+| Dokumentasi otomatis | Komentar kepala; alat dokumentasi proyek | Modul 12 |
+
+### h. Visual
+
+```
+  TombolAksi (antarmuka)
+  +------------------------------------------------------------+
+  |  MASUK  : required teks       property aktif    alias warnaTeks |
+  |  KELUAR : readonly ditekan                                    |
+  |  EVENT  : signal diklik       PERINTAH: function ...()        |
+  +----------------------------+-------------------------------+
+                               |   disembunyikan di dalam
+                               v
+          Rectangle { Text { id: label } }   MouseArea { id: area }   QtObject { id: d }
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Antarmuka (API) komponen | Anggota yang terbuka bagi pemakai |
+| Masukan / keluaran | Yang diisi pemakai / yang dibaca pemakai |
+| Peristiwa | Pemberitahuan lewat signal |
+| Perintah | Metode yang dapat dipanggil |
+| Kebocoran | Terbukanya detail yang seharusnya tersembunyi |
+| Breaking change | Perubahan antarmuka yang merusak pemakai |
+| Alias selektif | Alias yang meneruskan satu atribut |
+
+### j. Tips dan praktik terbaik
+
+- Rancang antarmuka **dari sisi pemakai** sebelum menulis isinya: tulis dulu bagaimana Anda ingin memakainya.
+- Pertahankan antarmuka kecil; tambah anggota hanya bila ada kebutuhan nyata.
+- Beri tanda `required` pada hal yang tanpanya komponen tak bermakna.
+- Sebelum mengubah antarmuka, cari semua pemakaian dengan `grep` dan `qmllint`.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Pemakai mengubah warna padahal tak dimaksudkan | Akar `Rectangle` membuka `color` | Akar `Item` minimal |
+| Pemakai merusak tampilan lewat alias seluruh objek | Alias terlalu luas | Alias per atribut |
+| Antarmuka melebar terus | Menambah tanpa kebutuhan | Tinjau berkala dan hapus |
+| Perubahan nama merusak banyak berkas | Tidak mencari pemakai | `grep` dan `qmllint` |
+| Komponen tak bisa dipakai tanpa membaca isinya | Tak ada komentar antarmuka | Komentar kepala |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk 1.4.4 (kapan memecah), 1.4.5, Fase 5 (komponen dan styling), Fase 9 (kendali kustom), dan Fase 8 (API modul).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Jalankan `TombolAksi.qml` lewat `UjiTombolAksi.qml`. Lalu: (1) coba mengubah `ditekan` dari pemakai dan catat galatnya; (2) coba memberi `color` pada `TombolAksi` dan catat hasilnya **\[amati\]**; (3) buat versi akar `Rectangle` dan bandingkan apa yang terbuka; (4) tambah properti `ikon` opsional dan pastikan pemakai lama tetap jalan.
+
+**Cek pemahaman.** (1) Sebutkan lima macam anggota antarmuka dan alatnya. (2) Mengapa alias seluruh objek bocor? (3) Perubahan antarmuka mana yang tidak aman?
+
+### n. Referensi
+
+- [QML Object Attributes](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html)
+- [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [Customizing Qt Quick Controls (contoh desain antarmuka)](https://doc.qt.io/qt-6/qtquickcontrols-customize.html)
+
+---
+
+## 1.4.4 Kapan memecah komponen
+
+*Semangat: memotong pada sambungan yang tepat membuat semuanya lebih ringan.*
+
+**Daftar isi 1.4.4:** a. Deskripsi dan peran · b. Pertanda perlu memecah · c. Pertanda jangan memecah · d. Contoh: sebelum dan sesudah · e. Lima pertanyaan penentu · f. Berkas atau inline? · g. Prosedur ekstraksi · h. Opsi lain · i. Visual · j. Terminologi · k. Tips · l. Kesalahan umum · m. Hubungan · n. Latihan dan cek · o. Referensi
+
+### a. Deskripsi dan peran
+
+Memecah terlalu sedikit menghasilkan berkas raksasa yang sulit dibaca; memecah terlalu banyak menghasilkan puluhan komponen kecil tanpa makna. Bagian ini memberi **pedoman pengambilan keputusan**.
+
+### b. Pertanda perlu memecah
+
+- **Pengulangan:** blok yang sama muncul tiga kali atau lebih.
+- **Satu tanggung jawab yang dapat dinamai:** “ini kartu kontak”, “ini bilah pencarian”.
+- **Dokumen terlalu panjang untuk dibaca sekilas** (sebagai pedoman umum, bukan aturan Qt: di atas kira-kira seratus sampai seratus lima puluh baris).
+- **Perlu dipakai di lebih dari satu berkas.**
+- **Perlu dilihat atau diuji sendirian.**
+- **Bagian dalam sering berubah** sementara antarmukanya stabil.
+
+### c. Pertanda jangan memecah
+
+- Dipakai **sekali** dan kecil (satu atau dua baris).
+- **Sangat terikat** pada pemiliknya: ia butuh banyak `id` luar atau banyak properti hanya untuk dioperkan.
+- Pemecahan hanya mengubah satu berkas panjang menjadi banyak berkas yang harus dibaca bolak-balik.
+- Antarmukanya akan lebih rumit daripada isinya.
+
+### d. Contoh: sebelum dan sesudah
+
+`Sebelum.qml`:
+
+```qml
+import QtQuick
+
+Row {
+    spacing: 8
+
+    Rectangle {
+        width: 80; height: 28; radius: 14; color: 'lightsteelblue'
+        Text { anchors.centerIn: parent; text: 'A' }
+    }
+
+    Rectangle {
+        width: 80; height: 28; radius: 14; color: 'lightsteelblue'
+        Text { anchors.centerIn: parent; text: 'B' }
+    }
+
+    Rectangle {
+        width: 80; height: 28; radius: 14; color: 'lightsteelblue'
+        Text { anchors.centerIn: parent; text: 'C' }
+    }
+}
+```
+
+`Sesudah.qml` (memakai `Chip.qml` dari 1.4.1):
+
+```qml
+import QtQuick
+
+Row {
+    spacing: 8
+
+    Chip { label: 'A' }
+    Chip { label: 'B' }
+    Chip { label: 'C' }
+}
+```
+
+| Aspek | Sebelum | Sesudah |
+| --- | --- | --- |
+| Baris | 18 | 7 |
+| Mengubah gaya chip | Tiga tempat | Satu tempat (`Chip.qml`) |
+| Menambah chip | Menyalin sembilan baris | Satu baris |
+| Keterbacaan | Harus membaca isi | Membaca niat |
+| Risiko salah satu berbeda tak sengaja | Tinggi | Rendah |
+
+### e. Lima pertanyaan penentu
+
+| No. | Pertanyaan |
+| --- | --- |
+| 1 | Apakah ia **diulang** tiga kali atau lebih? |
+| 2 | Apakah ia punya **satu tanggung jawab** yang dapat dinamai? |
+| 3 | Apakah antarmukanya dapat dituliskan dalam **sekitar lima properti atau kurang**? |
+| 4 | Apakah berguna **dilihat atau diuji sendirian**? |
+| 5 | Apakah ia **dipakai lintas berkas**? |
+
+Pedoman: tiga jawaban “ya” atau lebih berarti ekstrak; empat sampai lima berarti jadikan **berkas**; satu sampai dua berarti biarkan atau jadikan inline.
+
+### f. Berkas atau inline?
+
+Jawaban untuk Cek pemahaman kurikulum (*kapan inline component lebih tepat dari berkas terpisah?*):
+
+| Pilih **inline component** bila | Pilih **berkas** bila |
+| --- | --- |
+| Kecil dan hanya dipakai di satu berkas | Dipakai di banyak berkas |
+| Sangat terikat pada pemiliknya | Berdiri sendiri |
+| Tidak perlu diuji atau dilihat sendirian | Perlu `Uji*.qml`, pratinjau, atau lint tersendiri |
+| Bukan bagian API publik | Bagian dari API (modul, pustaka) |
+| Tidak perlu `qmldir` atau registrasi khusus | Layak punya riwayat git sendiri |
+
+Bila ragu, mulailah dengan **inline**; angkat menjadi berkas ketika kriteria di kolom kanan terpenuhi. Inline component yang dipakai dari berkas lain memerlukan awalan pemilik (`Pemilik.X`), tanda bahwa ia sebenarnya layak menjadi berkas.
+
+### g. Prosedur ekstraksi
+
+1. **Temukan pengulangan** (atau bagian yang bertanggung jawab tunggal).
+2. **Tentukan yang berubah antar instans**; itu menjadi properti antarmuka (`required` bila wajib).
+3. **Salin satu instans** ke berkas baru (huruf besar, nama peran), lalu ganti nilai yang berubah menjadi properti.
+4. **Tentukan akar** (minimal) dan **tipe properti**.
+5. **Ganti semua pengulangan** dengan pemakaian tipe baru.
+6. **Jalankan** `qml`, `qmllint`, dan `qmlformat`; bandingkan tampilan sebelum dan sesudah.
+7. **Commit** dengan pesan bermakna (0.0.6), satu ekstraksi per commit.
+
+### h. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Pengulangan dari data | `Repeater`, `ListView` | Tidak perlu menulis beberapa instans |
+| Bagian kecil terikat pemilik | Inline component | 1.4.2 |
+| Logika, bukan tampilan | Fungsi, berkas `.js`, atau kelas C++ | Fase 2 dan 10 |
+| Gaya bersama | Komponen gaya atau tema | Fase 5 dan 9 |
+| Memecah menurut halaman | Satu komponen per halaman | Fase 8 |
+
+### i. Visual
+
+```
+  blok berulang atau tanggung jawab tunggal?
+        |
+        +-- diulang >= 3 kali?  ---+
+        +-- satu nama jelas?      --+--> (tiga ya atau lebih) --> EKSTRAK
+        +-- <= 5 properti?        --+            |
+        +-- bisa diuji sendiri?   --+            +-- dipakai lintas berkas / perlu diuji? --> BERKAS
+        +-- lintas berkas?        --+            '-- kecil, terikat pemilik               --> INLINE
+
+  satu atau dua ya --> biarkan (jangan abstraksi dini)
+```
+
+### j. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Ekstraksi | Memindahkan bagian dokumen menjadi komponen |
+| Refactoring | Mengubah struktur kode tanpa mengubah perilaku |
+| Abstraksi dini | Membuat komponen sebelum kebutuhannya jelas |
+| Tanggung jawab tunggal | Satu komponen, satu peran |
+| Kohesi / kopling | Keterkaitan isi dalam / ketergantungan antarkomponen |
+
+### k. Tips dan praktik terbaik
+
+- Aturan tiga: tunggu hingga pengulangan ketiga sebelum mengekstrak.
+- Lakukan ekstraksi dalam langkah kecil yang dapat dijalankan dan dikomit.
+- Beri nama komponen menurut peran, bukan bentuk.
+- Tinjau komponen secara berkala; hapus yang tak terpakai (`grep -rn`).
+
+### l. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Berkas raksasa | Tak pernah memecah | Ekstraksi bertahap |
+| Puluhan komponen satu baris | Memecah berlebihan | Gabungkan kembali |
+| Komponen dengan lima belas properti | Menggabungkan terlalu banyak tanggung jawab | Pecah menurut peran |
+| Komponen bergantung pada banyak `id` luar | Kopling tinggi | Properti `required`, atau tetap inline |
+| Berubah di satu tempat merusak banyak | Antarmuka tak stabil | 1.4.3-f |
+
+### m. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 5 (komponen dan layout), Fase 8 (arsitektur dan modul), Fase 9 (kendali kustom), dan Modul 14.1 (arsitektur aplikasi).
+
+### n. Latihan dan cek pemahaman
+
+**Latihan 15 menit.** Ambil satu `Main.qml` milik Anda (atau `Sebelum.qml`) dan terapkan prosedur bagian g, sekali sebagai berkas (`Chip.qml`) dan sekali sebagai inline component; bandingkan keduanya dengan lima pertanyaan bagian e, lalu tulis kesimpulan Anda.
+
+**Cek pemahaman.** (1) Kapan inline component lebih tepat dari berkas? (2) Sebutkan tiga pertanda jangan memecah. (3) Apa langkah pertama ekstraksi?
+
+### o. Referensi
+
+- [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html)
+- [Refactoring (Martin Fowler)](https://refactoring.com/) · [Rule of three (Wikipedia)](<https://en.wikipedia.org/wiki/Rule_of_three_(computer_programming)>)
+
+---
+
+## 1.4.5 Komponen di aplikasi yang dibangun dan diuji terpisah \[TAMBAHAN\]
+
+**Mengapa ditambahkan:** komponen yang jalan di `qml` belum tentu jalan di aplikasi yang dibangun, dan sebaliknya (0.2.6 dan 1.1.6). Pembelajar perlu peta tetap tentang **di mana sebuah tipe dicari**, bagaimana mendaftarkannya, dan bagaimana mengujinya terpisah.
+
+*Semangat: komponen yang bekerja di mana saja adalah komponen yang Anda pahami penuh.*
+
+**Daftar isi 1.4.5:** a. Deskripsi dan peran · b. Tiga konteks pencarian tipe · c. Struktur proyek dan pendaftaran · d. Huruf besar-kecil lintas platform · e. Menguji komponen terpisah · f. Memuat lewat jaringan · g. Opsi lain · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan · m. Latihan dan cek · n. Referensi
+
+### a. Deskripsi dan peran
+
+Bagian ini menghubungkan Fase 1 dengan Modul 0.2: bagaimana komponen yang Anda tulis sampai ke aplikasi yang dibangun, dan bagaimana Anda tetap dapat melihatnya sendirian selama pengembangan.
+
+### b. Tiga konteks pencarian tipe
+
+| Konteks | Cara engine menemukan `Chip` | Yang harus Anda lakukan |
+| --- | --- | --- |
+| `qml Main.qml`, `Chip.qml` di **folder yang sama** | Impor implisit direktori | Tidak ada |
+| `qml Main.qml`, `Chip.qml` di **subfolder** (`components/`) | Hanya lewat import direktori | `import "components"` di `Main.qml` |
+| **Aplikasi yang dibangun** (CMake, 0.2) | Modul QML aplikasi (URI) | Daftarkan di `QML_FILES`; tidak perlu `import` bila satu modul |
+
+Inilah akar jebakan “jalan di `qml`, gagal di aplikasi” dan kebalikannya: dua konteks memakai **mekanisme pencarian berbeda**. Selalu uji di konteks tempat komponen akan dipakai.
+
+### c. Struktur proyek dan pendaftaran
+
+```
+hello/
+  CMakeLists.txt
+  main.cpp
+  Main.qml
+  components/
+    Chip.qml
+    TombolAksi.qml
+  uji/
+    UjiTombolAksi.qml
+```
+
+```cmake
+qt_add_qml_module(apphello
+    URI Hello
+    QML_FILES
+        Main.qml
+        components/Chip.qml
+        components/TombolAksi.qml
+)
+```
+
+| Bagian | Arti |
+| --- | --- |
+| `components/` | Folder untuk komponen yang dipakai di banyak tempat (konvensi, bukan keharusan). |
+| `QML_FILES ... components/Chip.qml` | Mendaftarkan komponen ke modul `Hello` (0.2.6). Jalur resource: `:/qt/qml/Hello/components/Chip.qml`. |
+| `uji/UjiTombolAksi.qml` | Berkas uji **tidak** didaftarkan; ia hanya untuk `qml` saat pengembangan. |
+| `Chip { }` di `Main.qml` | Dipakai **tanpa import**, karena satu modul. Dengan kebijakan QTP0004 (aktif lewat `qt_standard_project_setup(REQUIRES 6.8)`), berkas di subfolder tetap saling melihat tipe modul (0.2.6). Verifikasi dengan `cat build/Hello/qmldir` **\[amati\]**. |
+
+Untuk melihat lint seluruh modul: `cmake --build build --target all_qmllint` (0.2.7).
+
+### d. Huruf besar-kecil lintas platform
+
+Dokumentasi menyebut bahwa huruf besar-kecil nama berkas **bermakna di sebagian sistem berkas (terutama UNIX)**, dan merekomendasikan agar nama berkas cocok persis dengan nama tipe. Akibatnya: berkas bernama `chip.qml` yang dipakai sebagai `Chip` bisa tampak berjalan di macOS atau Windows (sistem berkas tak peka huruf) tetapi **gagal di Linux**. Karena Anda berkembang di Arch (peka huruf), Anda akan menemukan galat itu lebih dulu; syukuri.
+
+### e. Menguji komponen terpisah
+
+| Cara | Perintah | Cocok untuk |
+| --- | --- | --- |
+| Jalankan komponen sendirian | `qml components/Chip.qml` | Komponen tanpa `required` |
+| Berkas uji berdampingan | `qml uji/UjiTombolAksi.qml` | Komponen dengan `required`, atau butuh konteks |
+| Dalam aplikasi | `cmake --build build` lalu `./build/apphello` | Verifikasi akhir di konteks nyata |
+| Lint | `qmllint components/Chip.qml` | Pemeriksaan statis cepat |
+| Hot reload (Qt 6.12) | Dibahas di Modul 12 | Iterasi cepat pada tampilan |
+
+Berkas uji di `uji/` yang memakai komponen di `components/` memerlukan jalur impor: `import "../components"` (impor direktori), atau jalankan dengan `qml -I`/`QML_IMPORT_PATH` bila komponen sudah menjadi modul (Fase 8). Lakukan percobaan kecil dan catat mana yang berfungsi di mesin Anda **\[amati\]**.
+
+### f. Memuat lewat jaringan
+
+Menurut dokumentasi, engine QML **tidak** mencari direktori jarak jauh secara otomatis seperti pencariannya di direktori lokal; untuk dokumen yang dimuat lewat jaringan, Anda harus menyediakan berkas `qmldir` yang mendaftarkan tipenya (modul, Fase 8). Hindari memuat QML dari jaringan tanpa memikirkan kepercayaan: QML adalah kode (0.0.9, Modul 13.1).
+
+### g. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Banyak aplikasi memakai komponen yang sama | Modul QML pustaka | Fase 8 |
+| Pratinjau visual | Qt Creator, Qt Design Studio | Opsional (0.1.7) |
+| Uji otomatis komponen | Qt Quick Test | Modul 12.3 |
+| Komponen di folder lain tanpa modul | Import direktori | Hanya untuk proyek kecil |
+| Varian per platform | File selector | Fase 13 |
+
+### h. Visual
+
+```
+  qml Main.qml (folder sama)         : Chip.qml  --- impor implisit --->  OK
+  qml Main.qml (components/Chip.qml) : butuh  import "components"
+  aplikasi dibangun (modul Hello)    : components/Chip.qml terdaftar di QML_FILES  --->  OK tanpa import
+
+  tidak didaftarkan?  --> jalan di qml, GAGAL di aplikasi   (1.1.6, 0.2.6)
+  chip.qml vs Chip     --> jalan di Windows/macOS, GAGAL di Linux
+```
+
+### i. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Impor implisit | Berkas di folder yang sama saling terlihat |
+| Import direktori | `import "folder"` |
+| Modul QML (URI) | Kumpulan tipe terdaftar (0.2.4) |
+| `QML_FILES` | Daftar berkas QML modul di CMake |
+| Berkas uji | `Uji*.qml` yang tidak masuk modul |
+| Sistem berkas peka huruf | Membedakan `Chip.qml` dan `chip.qml` |
+
+### j. Tips dan praktik terbaik
+
+- Tulis komponen di `components/` dan daftarkan segera di `QML_FILES`; jadikan satu langkah dengan membuat berkasnya.
+- Pisahkan berkas uji dari modul.
+- Cocokkan huruf besar-kecil persis, selalu.
+- Uji komponen di konteks yang akan memakainya sebelum menganggapnya selesai.
+
+### k. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| `X is not a type` di aplikasi | Belum didaftarkan di `QML_FILES` | Daftarkan, bangun ulang |
+| `X is not a type` di `qml` untuk komponen di subfolder | Tak ada import direktori | `import "components"` |
+| Berkas uji ikut menjadi bagian modul | Didaftarkan tak sengaja | Keluarkan dari `QML_FILES` |
+| Bedanya antar-platform | Huruf besar-kecil nama berkas | Samakan persis |
+| Komponen jaringan tak ditemukan | Tak ada `qmldir` | Sediakan `qmldir` atau hindari |
+
+### l. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 8 (modul QML), Fase 12 (uji otomatis), dan Fase 13 (deployment).
+
+### m. Latihan dan cek pemahaman
+
+**Latihan 20 menit.** Di proyek `hello` (0.2), pindahkan `Chip.qml` ke `components/`, daftarkan di `QML_FILES`, pakai di `Main.qml`, bangun, dan jalankan. Lalu coba `qml Main.qml` dari folder yang sama dan catat apa yang terjadi, serta cara memperbaikinya dengan `import "components"`. Ganti nama `Chip.qml` menjadi `chip.qml` dan catat galat di bangunan dan di `qml` **\[amati\]**.
+
+**Cek pemahaman.** (1) Mengapa komponen bisa jalan di `qml` tetapi gagal di aplikasi yang dibangun? (2) Mengapa berkas uji tidak didaftarkan ke modul? (3) Apa risiko huruf besar-kecil nama berkas lintas platform?
+
+### n. Referensi
+
+- [Defining Object Types: importing types outside the directory](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [QML Import Statements](https://doc.qt.io/qt-6/qtqml-syntax-imports.html)
+- [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html) · [Qt CMake policy QTP0004](https://doc.qt.io/qt-6/qt-cmake-policy-qtp0004.html)
+- [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html)
+
+---
+
+## 1.4.6 Lab galat komponen \[TAMBAHAN\]
+
+**Mengapa ditambahkan:** komponen memperkenalkan galat yang belum ada di berkas tunggal: tipe tak ditemukan, cakupan `id`, antarmuka bocor, inline component yang disalahgunakan, dan rekursi. Lab ini melanjutkan pola 1.1.7 dan 1.3.9. Kolom dugaan adalah hipotesis, bukan jawaban.
+
+*Semangat: setiap galat yang pernah Anda sengaja timbulkan adalah satu jebakan yang tak lagi menjebak.*
+
+**Daftar isi 1.4.6:** a. Deskripsi dan peran · b. Membuat berkas · c. Menjalankan dan mencatat · d. Dugaan dan hasil · e. Memperluas `galat.md` · f. Opsi lain · g. Visual · h. Terminologi · i. Tips · j. Kesalahan umum · k. Hubungan · l. Latihan dan cek · m. Referensi
+
+### a. Deskripsi dan peran
+
+Dua belas kerusakan komponen yang paling umum: pencarian tipe, cakupan `id`, kebocoran antarmuka, inline component, dan rekursi. Anda akan menjalankan tiap kasus, mencatat pesan, dan mengklasifikasikannya.
+
+### b. Membuat berkas
+
+Simpan sebagai `buat-lab-komponen.sh` di `~/Development/qt-learning/fase1/`, lalu `bash buat-lab-komponen.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -eu
+mkdir -p lab-komponen
+cd lab-komponen
+
+cat > Chip.qml << 'EOF'
+import QtQuick
+
+Rectangle {
+    id: root
+    required property string label
+    width: 80
+    height: 28
+    radius: 14
+    color: 'lightsteelblue'
+    Text { id: isi; anchors.centerIn: parent; text: root.label }
+}
+EOF
+
+cat > ChipKetat.qml << 'EOF'
+import QtQuick
+
+Item {
+    id: root
+    property string label: 'Chip'
+    implicitWidth: 80
+    implicitHeight: 28
+    Rectangle {
+        anchors.fill: parent
+        radius: 14
+        color: 'lightsteelblue'
+        Text { anchors.centerIn: parent; text: root.label }
+    }
+}
+EOF
+
+cat > Pemilik.qml << 'EOF'
+import QtQuick
+
+Item {
+    id: root
+    property string pesan: 'dari Pemilik'
+
+    component Info: Item {
+        Component.onCompleted: console.log(root.pesan)
+    }
+
+    component Chip2: Rectangle {
+        property string label
+        width: 60
+        height: 20
+    }
+}
+EOF
+
+cat > kartu.qml << 'EOF'
+import QtQuick
+
+Rectangle { width: 40; height: 40; color: 'orange' }
+EOF
+
+cat > Rekursif.qml << 'EOF'
+import QtQuick
+
+Item {
+    Rekursif { }
+}
+EOF
+
+cat > k01-tipe-tak-ada.qml << 'EOF'
+import QtQuick
+
+ChipTakAda { }
+EOF
+
+cat > k02-required-hilang.qml << 'EOF'
+import QtQuick
+
+Chip { }
+EOF
+
+cat > k03-id-dalam.qml << 'EOF'
+import QtQuick
+
+Chip {
+    label: 'x'
+    Component.onCompleted: console.log(isi.text)
+}
+EOF
+
+cat > k04-properti-tak-ada.qml << 'EOF'
+import QtQuick
+
+Chip { label: 'x'; warna: 'red' }
+EOF
+
+cat > k05-akar-bocor.qml << 'EOF'
+import QtQuick
+
+Chip { label: 'x'; color: 'red' }
+EOF
+
+cat > k06-akar-rapat.qml << 'EOF'
+import QtQuick
+
+ChipKetat { color: 'red' }
+EOF
+
+cat > k07-inline-tanpa-awalan.qml << 'EOF'
+import QtQuick
+
+Chip2 { }
+EOF
+
+cat > k08-inline-dengan-awalan.qml << 'EOF'
+import QtQuick
+
+Pemilik.Chip2 { label: 'x' }
+EOF
+
+cat > k09-inline-cakupan.qml << 'EOF'
+import QtQuick
+
+Item {
+    Pemilik.Info { }
+}
+EOF
+
+cat > k10-inline-bersarang.qml << 'EOF'
+import QtQuick
+
+Item {
+    component Luar: Item {
+        component Dalam: Item { }
+    }
+}
+EOF
+
+cat > k11-nama-huruf-kecil.qml << 'EOF'
+import QtQuick
+
+Item {
+    kartu { }
+}
+EOF
+
+cat > k12-rekursi.qml << 'EOF'
+import QtQuick
+
+Rekursif { }
+EOF
+
+echo 'lab-komponen/ dibuat: lima berkas pendukung dan dua belas berkas k*.qml'
+```
+
+### c. Menjalankan dan mencatat
+
+Simpan sebagai `jalankan-lab-komponen.sh`:
+
+```bash
+#!/usr/bin/env bash
+cd lab-komponen || exit 1
+mkdir -p log
+for f in k*.qml; do
+    timeout 3 qml "$f" &> "log/$f.log"
+    kode=$?
+    printf '%-30s exit=%s\n' "$f" "$kode"
+    head -n 2 "log/$f.log" | sed 's/^/    /'
+done
+echo '--- qmllint ---'
+for f in k*.qml; do
+    echo "== $f"
+    qmllint "$f" 2>&1 | head -n 3
+done
+```
+
+```bash
+$ bash buat-lab-komponen.sh
+$ bash jalankan-lab-komponen.sh
+```
+
+| Bagian | Arti |
+| --- | --- |
+| Lima berkas pendukung | `Chip.qml` (akar `Rectangle`, `required label`, `id: isi` di dalam), `ChipKetat.qml` (akar `Item`), `Pemilik.qml` (dua inline component), `kartu.qml` (huruf kecil), `Rekursif.qml` (memuat dirinya). |
+| `k*.qml` | Dua belas kasus yang memakai berkas pendukung. |
+| Dua loop | Sama seperti lab sebelumnya: log, exit code, dua baris pertama, lalu `qmllint`. |
+
+`k12` dapat memakan sumber daya; ia dijalankan dengan `timeout 3` sehingga aman, tetapi jangan menghapus `timeout`.
+
+### d. Dugaan dan hasil
+
+| Berkas | Kerusakan | Dugaan | Hasil Anda |
+| --- | --- | --- | --- |
+| `k01-tipe-tak-ada` | Tipe tidak ada | `ChipTakAda is not a type` |  |
+| `k02-required-hilang` | `required` komponen tak diisi | Dimuat gagal |  |
+| `k03-id-dalam` | Mengakses `id` di dalam komponen dari luar | `ReferenceError` (id tak terlihat dari luar) |  |
+| `k04-properti-tak-ada` | Properti tak ada | `Cannot assign to non-existent property` |  |
+| `k05-akar-bocor` | Mengubah `color` akar `Rectangle` | **Berhasil**: antarmuka bocor (exit 124) |  |
+| `k06-akar-rapat` | Mengubah `color` pada akar `Item` | Ditolak: `Item` tak punya `color` |  |
+| `k07-inline-tanpa-awalan` | Inline component tanpa awalan pemilik | `Chip2 is not a type` |  |
+| `k08-inline-dengan-awalan` | Inline component dengan `Pemilik.` | Berhasil |  |
+| `k09-inline-cakupan` | Inline component merujuk `root` pemiliknya dari berkas lain | `ReferenceError: root is not defined` |  |
+| `k10-inline-bersarang` | `component` di dalam `component` | Ditolak |  |
+| `k11-nama-huruf-kecil` | Tipe berawalan huruf kecil | Galat (sintaks atau tipe tak dikenal) **\[amati\]** |  |
+| `k12-rekursi` | Komponen memuat dirinya tanpa henti | Galat rekursif atau berhenti oleh `timeout` **\[amati\]** |  |
+
+Kelas galat bertambah satu: **kelas 6, penemuan tipe dan cakupan komponen** (`is not a type`, `ReferenceError` akibat cakupan, rekursi).
+
+### e. Memperluas galat.md
+
+Tambahkan baris untuk setiap kasus dengan kolom **Kelas (1 sampai 6)** dan **Kontrak atau cakupan yang dilanggar**. Setelah tiga lab (1.1.7, 1.3.9, 1.4.6), Anda memiliki sekitar tiga puluh pesan galat nyata dari mesin Anda; kumpulan itu adalah referensi terbaik untuk Fase 2 sampai 14.
+
+### f. Opsi lain
+
+| Kebutuhan | Opsi | Catatan |
+| --- | --- | --- |
+| Mengulang lab setelah memperbarui Qt | Jalankan skrip dan `diff` terhadap log lama | Mendeteksi perubahan pesan |
+| Menambah kasus | `k13-...` dan seterusnya | Satu kerusakan per berkas |
+| Menjalankan di CI | Skrip yang sama | Modul 12.3 |
+| Lab untuk komponen Anda sendiri | Salin pola | Pastikan kontrak komponen Anda ditegakkan |
+
+### g. Visual
+
+```
+  kelas 1 sintaks | 2 tipe/import | 3 pembuatan objek | 4 runtime | 5 kontrak properti | 6 komponen & cakupan
+
+  k01 k07 k11            --> penemuan tipe          (kelas 2/6)
+  k03 k09                --> cakupan id             (kelas 4/6)
+  k02 k04 k06            --> kontrak antarmuka      (kelas 3/5)
+  k05                    --> TIDAK galat: antarmuka bocor (bahaya diam-diam)
+  k10 k12                --> aturan struktur        (kelas 3/6)
+```
+
+### h. Terminologi
+
+| Istilah | Arti |
+| --- | --- |
+| Penemuan tipe | Pencarian engine untuk nama tipe |
+| Cakupan `id` | Wilayah `id` dikenal |
+| Kebocoran antarmuka | Hal yang seharusnya tertutup terbuka bagi pemakai |
+| Rekursi tak terbatas | Komponen yang membuat dirinya tanpa kondisi henti |
+| Kelas galat | Pengelompokan menurut tahap dan penyebab |
+
+### i. Tips dan praktik terbaik
+
+- Tulis dugaan sebelum menjalankan.
+- Perhatikan `k05`: tidak semua masalah desain tampil sebagai galat; yang paling berbahaya adalah yang diam-diam berhasil.
+- Pakai `timeout` selalu pada kasus rekursi.
+- Tambah kasus baru setiap bertemu galat komponen yang belum tercatat.
+
+### j. Kesalahan umum dan solusi
+
+| Gejala | Penyebab | Solusi |
+| --- | --- | --- |
+| Semua berkas keluar 124 | Berkas sah bertahan | Periksa log untuk peringatan |
+| `k12` memakan memori | Tanpa `timeout` | Jangan menghapus `timeout` |
+| Pesan berbeda dari dugaan | Dugaan hanya hipotesis | Catat pesan sebenarnya |
+| `k05` dianggap “gagal” | Berhasil, itulah masalahnya | Bahas desain antarmuka (1.4.3) |
+
+### k. Hubungan dengan modul lain
+
+Prasyarat untuk Fase 2 (galat JavaScript akan melengkapi kamus), Fase 8 (galat modul), dan Modul 12.2 sampai 12.3 (lint dan uji kontrak).
+
+### l. Latihan dan cek pemahaman
+
+**Latihan 30 menit.** Buat dan jalankan lab, isi tabel (dugaan lebih dulu), dan commit skrip serta `galat.md`. Pilih tiga kasus dan tulis bagaimana desain komponen yang baik mencegahnya. Untuk `k05`, tulis perbaikan antarmukanya.
+
+**Cek pemahaman.** (1) Mengapa `k05` berbahaya meski tak menghasilkan galat? (2) Mengapa `k09` menghasilkan `ReferenceError`? (3) Apa bedanya `k01` dan `k07`?
+
+### m. Referensi
+
+- [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html)
+- [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [Debugging QML Applications](https://doc.qt.io/qt-6/qtquick-debugging.html)
+
+---
+
+## 6.6 Penutup Modul 1.4
+
+**Daftar isi bagian ini:** 6.6.1 Peta konsep · 6.6.2 Latihan terpadu · 6.6.3 Cek pemahaman modul · 6.6.4 Hubungan ke modul berikutnya · 6.6.5 Pembaruan yang diusulkan untuk kurikulum · 6.6.6 Status
+
+### 6.6.1 Peta konsep
+
+```
+   1.4.1 File sebagai tipe (cetakan, antarmuka terbuka, akar minimal)
+        |
+   1.4.2 Inline component (di dalam berkas; awalan Pemilik.; cakupan terpisah)
+        |
+   1.4.3 Antarmuka komponen (required / readonly / signal / alias / d)
+        |
+   1.4.4 Kapan memecah (lima pertanyaan; berkas atau inline)
+        |
+   1.4.5 Di aplikasi dan diuji terpisah (qml vs modul; QML_FILES; huruf besar-kecil)
+        |
+   1.4.6 Lab galat komponen --> galat.md (kelas 6)
+        |
+        v
+   Penutup Fase 1 --> Fase 2 (JavaScript)
+```
+
+### 6.6.2 Latihan terpadu
+
+Di folder `~/Development/qt-learning/fase1/pustaka/` (60 menit), tanpa menyalin: (1) tulis tiga komponen berkas di `components/`: `Chip` (dengan `required label`), `TombolAksi` (antarmuka lengkap: masukan wajib, opsional, keluaran `readonly`, signal, alias selektif, keadaan internal di `QtObject`), dan `Panel` (dengan `default property alias`); (2) tulis satu inline component yang kecil dan terikat pada `Main.qml`; (3) buat `Main.qml` yang memakai semuanya; (4) pilih akar minimal pada setiap komponen dan jelaskan alasannya di komentar kepala; (5) tulis `Uji*.qml` untuk tiap komponen; (6) jalankan `qmlformat`, `qmllint`, dan `qml`; (7) langgar dua kontrak dengan sengaja dan catat di `galat.md`; (8) bila ada proyek CMake dari 0.2, daftarkan semuanya di `QML_FILES`, bangun, dan jalankan; (9) commit dengan pesan yang bermakna.
+
+### 6.6.3 Cek pemahaman modul
+
+1. Apa yang terbuka dari sebuah komponen berkas, dan apa yang tersembunyi?
+2. Mengapa akar `Item` merapatkan antarmuka dibanding akar `Rectangle`?
+3. Bagaimana inline component dipakai dari berkas lain, dan mengapa ia tidak berbagi cakupan dengan pemiliknya?
+4. Apa bedanya komponen berkas, inline component, dan elemen `Component`?
+5. Sebutkan lima macam anggota antarmuka dan alat QML-nya.
+6. Mengapa alias seluruh objek dianggap bocor?
+7. Perubahan antarmuka apa yang tidak aman bagi pemakai lama?
+8. Kapan memilih inline component dan kapan berkas? Sebutkan tiga kriteria.
+9. Mengapa komponen bisa jalan di `qml` tetapi gagal di aplikasi yang dibangun?
+10. Mengapa komponen dengan `required` perlu berkas `Uji*.qml`?
+
+### 6.6.4 Hubungan ke modul berikutnya
+
+| Modul | Mengandalkan dari 1.4 |
+| --- | --- |
+| Fase 2 JavaScript | Komponen sebagai tempat JavaScript berjalan; fungsi di komponen (1.4.3) |
+| Fase 3 Reaktivitas | Signal, binding antar komponen (1.4.3) |
+| Fase 5 Komponen, layout, styling | Komponen dan tema; `Layout` pada komponen (1.4.1, 1.4.3) |
+| Fase 7 Model dan view | Delegate sebagai komponen; `Component` (1.4.2) |
+| Fase 8 Modul dan arsitektur | Komponen di modul; `qmldir`; huruf besar-kecil nama berkas (1.4.5) |
+| Fase 9 Controls | Kendali kustom; antarmuka bergaya `contentItem` (1.4.3) |
+| Modul 12.2 dan 12.3 | `qmllint` dan uji komponen; `Uji*.qml` (1.4.5) |
+
+### 6.6.5 Pembaruan yang diusulkan untuk kurikulum
+
+Tempelkan ke README Anda sebagai pengganti atau tambahan pada Modul 1.4.
+
+````markdown
+**Daftar isi.** 1.4.1 File sebagai tipe · 1.4.2 Inline component · 1.4.3 Properti sebagai antarmuka komponen · 1.4.4 Kapan memecah komponen · 1.4.5 Komponen di aplikasi yang dibangun dan diuji terpisah · 1.4.6 Lab galat komponen
+
+**Contoh minimal (pengganti).** Beri akar ukuran agar jendela `qml` terlihat, dan rujuk properti lewat `id`:
+
+```qml
+import QtQuick
+
+Item {
+    width: 220
+    height: 40
+
+    component Chip: Rectangle {
+        id: chip
+        property string label
+        width: 80
+        height: 28
+        radius: 14
+        color: 'lightsteelblue'
+        Text { anchors.centerIn: parent; text: chip.label }
+    }
+
+    Row {
+        spacing: 8
+        Chip { label: 'A' }
+        Chip { label: 'B' }
+    }
+}
+```
+
+**Terminologi (tambahan).** Tiga arti "komponen": komponen berkas, inline component (`component X: T { }`, dipakai dari berkas lain sebagai `Pemilik.X`, tidak boleh bersarang, tidak berbagi cakupan dengan pemiliknya), dan elemen `Component` (cetakan anonim). Seluruh properti, signal, dan metode objek akar terbuka bagi pemakai; `id` di dalam berkas tidak. `pragma ComponentBehavior: Bound` membatasi komponen dalam berkas pada konteks aslinya.
+
+**Kesalahan umum (tambahan).** Antarmuka bocor lewat tipe akar (mis. `color` pada akar `Rectangle`); alias seluruh objek; inline component yang merujuk `id` pemiliknya lalu dipakai dari berkas lain (`ReferenceError`); `component` bersarang; komponen jalan di `qml` tetapi tak terdaftar di `QML_FILES`; huruf besar-kecil nama berkas berbeda dari nama tipe.
+
+**Cek pemahaman (jawaban no. 2).** Inline component lebih tepat bila kecil, hanya dipakai dalam satu berkas, dan sangat terikat pada pemiliknya; berkas terpisah lebih tepat bila dipakai lintas berkas, cukup besar, perlu diuji dan diperiksa lint sendiri, atau menjadi bagian API.
+
+**Referensi (tambahan).** [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html)
+````
+
+### 6.6.6 Status
+
+| Bagian | Status |
+| --- | --- |
+| Modul 1.1 (1.1.1–1.1.7) | Selesai |
+| Modul 1.2 (1.2.1–1.2.8) | Selesai |
+| Modul 1.3 (1.3.1–1.3.9) | Selesai |
+| Modul 1.4 (1.4.1–1.4.6) | **Selesai** |
+| Fase 1 secara keseluruhan | **Selesai** (lihat bagian 7) |
+
+---
+
+## 7. Penutup Fase 1
+
+**Daftar isi bagian ini:** 7.1 Ringkasan fase · 7.2 Kriteria lulus · 7.3 Ujian akhir Fase 1 · 7.4 Daftar pembaruan kurikulum terkonsolidasi · 7.5 Hal yang masih perlu Anda verifikasi · 7.6 Langkah berikutnya
+
+### 7.1 Ringkasan fase
+
+| Modul | Sub-bagian | Dari kurikulum | Tambahan | Hasil utama |
+| --- | --- | --- | --- | --- |
+| 1.1 Sintaks dasar | 7 | 6 | 1 | Dokumen QML, import, objek, properti, `id`, konvensi, lab galat |
+| 1.2 Tipe data | 8 | 6 | 2 | Tipe nilai, konversi, enum, jebakan, tipe terketik |
+| 1.3 Properti dan atribut | 9 | 7 | 2 | Kontrak properti, alias, group, attached, signal, shadowing |
+| 1.4 Komponen | 6 | 4 | 2 | Komponen berkas dan inline, antarmuka, memecah, uji terpisah |
+| **Jumlah** | **30** | **23** | **7** |  |
+
+Selain materi, Fase 1 menghasilkan **tiga lab galat** (1.1.7, 1.3.9, 1.4.6) dan sebuah `galat.md` berisi sekitar tiga puluh pesan galat nyata dari mesin Anda.
+
+### 7.2 Kriteria lulus
+
+Anda lulus Fase 1 bila dapat melakukan semuanya **tanpa melihat catatan** (acuan di Bagian 2.5, kini diperluas):
+
+- Menyusun dokumen QML yang benar (pragma, import, satu akar, hierarki) dan menjelaskan fungsi tiap bagiannya (1.1.1–1.1.4).
+- Memformat dan memeriksa kode dengan `qmlformat` dan `qmllint`, dan menulis dengan urutan atribut Qt (1.1.5).
+- Memilih tipe properti yang tepat dan menghindari jebakan konversi, termasuk tanggal dan `var` (1.2.1–1.2.6, 1.2.8).
+- Mendeklarasikan properti dengan `required`, `readonly`, alias, dan default property, serta menjelaskan batas masing-masing (1.3.1–1.3.3).
+- Memakai group dan attached property dengan benar, dan mengakses attached lewat `id` pemilik (1.3.4–1.3.5).
+- Membedakan binding dan handler, serta menyatakan keadaan internal dengan `QtObject` (1.3.6–1.3.7).
+- Memecah antarmuka menjadi komponen berkas dan inline component dengan antarmuka yang rapi (1.4.1–1.4.4).
+- Menjelaskan mengapa komponen bisa jalan di `qml` tetapi gagal di aplikasi yang dibangun, dan memperbaikinya (1.4.5).
+- Membaca pesan galat QML dan menggolongkannya menurut kelas 1 sampai 6 (1.1.7, 1.3.9, 1.4.6).
+
+### 7.3 Ujian akhir Fase 1
+
+**Proyek `kartu-kontak`** (3–4 jam), di folder baru tanpa menyalin dari dokumen:
+
+1. Buat repositori git baru dengan `.gitignore` dan commit awal. *(0.0.6, 0.2.8)*
+2. Buat proyek CMake `apphello` dengan URI `Hello` dan komponen di `components/`. *(0.2, 1.4.5)*
+3. Tulis empat komponen: `Avatar` (gambar atau inisial, `url` dan `color` terketik), `KartuKontak` (menyusun `Avatar`, nama `required`, telepon, `date` terakhir dihubungi), `TombolAksi` (antarmuka lengkap), dan `DaftarKontak` (menyusun beberapa `KartuKontak`, dengan `default property alias`). *(1.2, 1.3, 1.4)*
+4. Pakai satu `enum` untuk status kontak dan satu inline component yang kecil. *(1.2.5, 1.4.2)*
+5. Beri anotasi tipe pada semua fungsi dan bersihkan `qmllint` sampai nol. *(1.2.8, 1.1.5)*
+6. Tulis `Uji*.qml` untuk tiap komponen. *(1.4.5)*
+7. Tangani tanggal dengan benar: uji dengan `TZ=UTC` dan satu zona lain. *(1.2.3)*
+8. Sengaja timbulkan tiga galat komponen dan catat di `galat.md` dengan kelas masing-masing. *(1.4.6)*
+9. Tulis `README.md`: cara membangun, antarmuka tiap komponen, dan versi Qt yang diuji.
+10. Commit dengan pesan bermakna; `git status` bersih.
+
+**Rubrik singkat:** komponen dan antarmuka yang rapi (30%); tipe dan penanganan tanggal benar (20%); `qmllint` nol dan format konsisten (15%); tiga galat tercatat dengan kelas dan perbaikan (15%); repositori dan dokumentasi (20%).
+
+### 7.4 Daftar pembaruan kurikulum terkonsolidasi
+
+Ringkasan seluruh perubahan yang diusulkan pada README. Blok siap tempel ada di bagian yang disebut.
+
+| Bagian README | Perubahan | Di dokumen ini |
+| --- | --- | --- |
+| Fase 1 (estimasi) | Jalur A sekitar 3 minggu | 1.1 |
+| Modul 1.1 | Daftar isi 7 sub; daftar pragma; tiga jenis import dan `as`; jawaban `button.qml`; catatan gaya kutip | 3.7.5 |
+| Modul 1.2 | Istilah *value type*; kolom penyedia tipe; tambahan `easingCurve`, `variant`, `void`; tautan `qtqml-typesystem-valuetypes.html`; jebakan tanggal dan konversi; jawaban cek pemahaman | 4.6.5 |
+| Modul 1.3 | Sintaks deklarasi lengkap dengan `virtual`/`override`/`final`; `required <properti>`; batasan alias; aturan default, group, dan attached; kesalahan umum | 5.6.5 |
+| Modul 1.4 | Contoh minimal dengan ukuran akar; tiga arti “komponen”; antarmuka bocor; jawaban inline vs berkas | 6.6.5 |
+| Kamus galat | Tambahkan `galat.md` dan tiga lab sebagai bagian latihan fase | 1.1.7, 1.3.9, 1.4.6 |
+
+### 7.5 Hal yang masih perlu Anda verifikasi
+
+Saya tidak memiliki akses ke mesin Anda, contoh kode belum saya jalankan, dan tautan belum diuji otomatis. Yang perlu Anda buktikan sendiri:
+
+- **Pesan galat nyata** pada tiga lab (1.1.7, 1.3.9, 1.4.6): kolom “Hasil Anda” sengaja kosong.
+- **Hasil bertanda \[amati\] atau \[uji dulu\]:** `typeof` untuk tipe nilai (1.2.8); `property list<int>` (1.2.4); bentuk argumen `Qt.enumValueToString` (1.2.5); pesan dan perilaku `qmllint` untuk komentar direktif (1.1.5) dan anotasi (1.2.8); `QtObject` sebagai akar (1.3.7); campuran `font:` dan `font.bold` (1.3.4); perilaku `Repeater` dengan `required modelData` (1.4.1); `Panel` berakar `Rectangle` yang mendeklarasikan default property (1.3.3).
+- **Perilaku zona waktu** pada 1.2.3 (`TZ=UTC`, `Asia/Jakarta`, `America/Los_Angeles`).
+- **Tautan**, terutama yang saya susun dari pola alamat Qt (mis. `qml-font.html`, `qml-sequence-types.html`).
+
+### 7.6 Langkah berikutnya
+
+**Fase 2 — JavaScript untuk QML (Fondasi)** (estimasi di kurikulum: 2–3 minggu), terdiri dari empat modul:
+
+| Modul | Judul |
+| --- | --- |
+| 2.1 | Dasar JavaScript yang Dipakai QML |
+| 2.2 | JavaScript di dalam Dokumen QML |
+| 2.3 | File JavaScript dan Pragma |
+| 2.4 | Lingkungan Host JavaScript dan Batasnya |
 
 
 > - **[⬆️ Ke Atas](#)**
