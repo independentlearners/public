@@ -380,7 +380,21 @@ Prasyarat untuk: 0.0.2 (mengapa ada putaran event), Modul 0.2 (CMake mengatur ko
 
 *Semangat: antarmuka yang lancar bukan keajaiban, melainkan disiplin kecil yang dijaga setiap milidetik.*
 
-**Daftar isi 0.0.2:** a. Deskripsi dan peran · b. Konsep dan analogi · c. Fondasi: thread GUI dan antrean event · d. Contoh 1: UI yang macet · e. Contoh 2: perbaikan dengan potongan kerja · f. Event loop tanpa Qt (Python) · g. Opsi lain untuk kerja berat · h. Visual · i. Terminologi · j. Tips · k. Kesalahan umum · l. Hubungan dengan modul lain · m. Latihan dan cek pemahaman · n. Referensi
+**Daftar isi 0.0.2:** 
+- a. Deskripsi dan peran
+- b. Konsep dan analogi 
+- c. Fondasi: thread GUI dan antrean event
+- d. Contoh 1: UI yang macet
+- e. Contoh 2: perbaikan dengan potongan kerja
+- f. Event loop tanpa Qt (Python)
+- g. Opsi lain untuk kerja berat
+- h. Visual
+- i. Terminologi
+- j. Tips
+- k. Kesalahan umum
+- l. Hubungan dengan modul lain
+- m. Latihan dan cek pemahaman
+- n. Referensi
 
 ### a. Deskripsi dan peran
 
