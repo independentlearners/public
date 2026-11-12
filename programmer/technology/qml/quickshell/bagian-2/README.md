@@ -2172,7 +2172,7 @@ Apakah Anda memerlukan restart otomatis saat crash?
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../quickshell.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 

@@ -7063,7 +7063,7 @@ Saya tidak memiliki akses ke mesin Anda, contoh kode belum saya jalankan, dan ta
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../qml.md
 [sebelumnya]: ../bagian-1/README.md
 [selanjutnya]: ../bagian-3/README.md
 

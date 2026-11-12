@@ -1,3 +1,5 @@
+bagian-15
+
 <details>
   <summary>📃 Daftar Isi</summary>
 
@@ -11,10 +13,9 @@
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../README.md
 [sebelumnya]: ../bagian-14/README.md
-
-<!-- [selanjutnya]: ../bagian-3/README.md -->
+[selanjutnya]: ../bagian-16/README.md
 
 <!----------------------------------------------------->
 

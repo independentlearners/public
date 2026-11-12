@@ -4130,7 +4130,7 @@ Materi **Modul 2.5** dan seluruh **Fase 2 — Integrasi Sistem: Wayland, Composi
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../quickshell.md
 [sebelumnya]: ../bagian-2/README.md
 [selanjutnya]: ../bagian-4/README.md
 

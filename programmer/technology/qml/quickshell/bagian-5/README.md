@@ -3017,7 +3017,7 @@ Modul 4.3 telah selesai dibahas secara komprehensif, mencakup:
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../quickshell.md
 [sebelumnya]: ../bagian-4/README.md
 [selanjutnya]: ../bagian-6/README.md
 

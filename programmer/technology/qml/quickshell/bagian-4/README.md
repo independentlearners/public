@@ -1434,7 +1434,7 @@ Modul 3.3 selesai. Anda telah menyelesaikan seluruh dari Fase 3 : Anda memiliki 
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../quickshell.md
 [sebelumnya]: ../bagian-3/README.md
 [selanjutnya]: ../bagian-5/README.md
 

@@ -5066,7 +5066,7 @@ Kurikulum ini kini lengkap dari **Fase −1** (fondasi non-IT) hingga **Catatan 
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../quickshell.md
 [sebelumnya]: ../bagian-5/README.md
 [selanjutnya]: ../bagian-7/README.md
 

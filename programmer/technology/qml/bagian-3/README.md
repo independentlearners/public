@@ -12,7 +12,7 @@
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../../../README.md
-[kurikulum]: ../../../../README.md
+[kurikulum]: ../qml.md
 [sebelumnya]: ../bagian-2/README.md
 [selanjutnya]: ../bagian-4/README.md
 

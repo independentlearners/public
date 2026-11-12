@@ -699,7 +699,7 @@ Text { text: Qt.formatDateTime(clock.date, 'HH:mm:ss') }
 > - **[🏠 Home][domain]**
 
 [domain]: ../../../../README.md
-[kurikulum]: ../../README.md
+[kurikulum]: ../quickshell.md
 [selanjutnya]: ../bagian-2/README.md
 
 <!----------------------------------------------------->
