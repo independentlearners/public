@@ -133,7 +133,7 @@ Catatan psikologis yang menjaga kualitas belajar:
 - **Beban kognitif:** maksimal dua konsep baru per sesi; blok fokus 50 menit lalu jeda 10 menit; tidur cukup adalah bagian dari kurikulum.
 - **Disiplin:** jadwal tetap tanpa tawar-menawar dengan diri sendiri. Ukuran kemajuan adalah *keputusan desain yang bisa Anda pertahankan*, bukan jumlah halaman yang dibaca.
 
-## Fase 1 — Fondasi Berpikir Komputasional (Foundation)
+## [Fase 1 — Fondasi Berpikir Komputasional (Foundation)][1]
 
 **Level:** Pemula → Menengah · **Estimasi:** 4 minggu (≈ 40 jam) · **Tujuan fase:** berpikir dari masalah → spesifikasi → invarian → kode; menaruh logika di tempat yang tepat; mengenali jebakan semantik data.
 
@@ -446,7 +446,7 @@ Web (JS)    double tanpa pecahan     64-bit IEEE   dipotong ke 32-bit
 
 **Latihan (tanpa kunci jawaban).** Implementasikan `konversi_satuan` tanpa `double` untuk faktor yang pasti (km, m, cm) memakai bilangan bulat satuan terkecil atau rasional (`BigInt` pembilang dan penyebut). *Kriteria penerimaan:* konversi bolak-balik *tepat* (bukan sekadar hampir) untuk 10.000 nilai acak dengan seed tetap; lulus pada `dart test` di VM (platform web opsional: `dart test -p chrome`).
 
-## Fase 2 — Algoritma & Struktur Data Idiomatik
+## [Fase 2 — Algoritma & Struktur Data Idiomatik][2]
 
 **Level:** Menengah · **Estimasi:** 4 minggu (≈ 40 jam) · **Tujuan fase:** memilih struktur data dan algoritma berdasarkan biaya yang terukur, bukan kebiasaan.
 
@@ -698,7 +698,7 @@ Jalur ditemukan lewat peta induk: mm <- cm <- m <- km  => [km, m, cm, mm]
 
 **Latihan (tanpa kunci jawaban).** Tambahkan faktor konversi sebagai bobot sisi pada `konversi_satuan`, lalu hitung faktor total sepanjang jalur. Implementasikan juga deteksi definisi satuan yang saling melingkar (A didefinisikan lewat B, B lewat A) dengan topological sort. *Kriteria penerimaan:* satuan yang tak terhubung mengembalikan galat yang informatif, siklus ditolak saat pendaftaran satuan, dan konversi bolak-balik konsisten untuk semua pasangan terhubung.
 
-## Fase 3 — Pemodelan Domain & Logika Berbasis Tipe
+## [Fase 3 — Pemodelan Domain & Logika Berbasis Tipe][3]
 
 **Level:** Menengah → Mahir · **Estimasi:** 4 minggu (≈ 40 jam) · **Tujuan fase:** memindahkan sebanyak mungkin pemeriksaan kebenaran dari runtime ke compile time.
 
@@ -941,7 +941,7 @@ bug programatik (Error) --> jangan ditangkap: biarkan crash dengan stack trace y
 
 **Latihan (tanpa kunci jawaban).** Tambahkan `parseKuantitas` ke `konversi_satuan` dengan tiga jenis kegagalan berbeda (format, angka, satuan tak dikenal) sebagai subtipe sealed `Gagal`, lalu buat CLI-nya mengembalikan kode keluar berbeda per jenis. *Kriteria penerimaan:* tidak ada `catch` tanpa `on`; setiap jenis kegagalan punya test; `switch` atas hasil exhaustive tanpa wildcard.
 
-## Fase 4 — Komposisi Fungsional & Manajemen State
+## [Fase 4 — Komposisi Fungsional & Manajemen State][4]
 
 **Level:** Mahir · **Estimasi:** 3 minggu (≈ 30 jam) · **Tujuan fase:** menyusun logika dari potongan murni yang bisa dikomposisi, dan mengelola perubahan state secara eksplisit.
 
@@ -1087,7 +1087,7 @@ Pasangan (state, peristiwa) lain --> StateError (ditolak)
 
 **Latihan (tanpa kunci jawaban).** Lengkapi mesin keadaan `katalog_perpustakaan` dengan `Memesan`, `Membatalkan`, dan `Hilang`, lalu buat tabel transisi sebagai test (semua pasangan state × peristiwa, yang ilegal ditandai). *Kriteria penerimaan:* semua pasangan tercakup test; menambah peristiwa baru tanpa menambah baris test membuat test gagal (pakai daftar semua peristiwa).
 
-## Fase 5 — Asinkron & Konkurensi
+## [Fase 5 — Asinkron & Konkurensi][5]
 
 **Level:** Mahir · **Estimasi:** 5 minggu (≈ 50 jam) · **Tujuan fase:** menalar urutan eksekusi, menghindari race condition dan kebocoran sumber daya, serta memakai paralelisme dengan benar.
 
@@ -1405,7 +1405,7 @@ isolate utama                      isolate worker
 
 **Latihan (tanpa kunci jawaban).** Paralelkan konversi batch `konversi_satuan` (jutaan nilai) ke N isolate dan bandingkan dengan versi satu isolate. *Kriteria penerimaan:* ukur percepatan untuk N = 1, 2, 4, 8 dan jelaskan mengapa kurvanya tidak linear (biaya salin, jumlah inti, tekanan memori); worker yang crash dilaporkan sebagai kegagalan terkendali tanpa menggantungkan program.
 
-## Fase 6 — Performa & Efisiensi Sumber Daya
+## [Fase 6 — Performa & Efisiensi Sumber Daya][6]
 
 **Level:** Mahir · **Estimasi:** 4 minggu (≈ 40 jam) · **Tujuan fase:** mengganti tebakan dengan pengukuran, dan memahami apa yang sebenarnya dilakukan mesin saat logika Anda berjalan.
 
@@ -1646,7 +1646,7 @@ kepala: |-- 16 byte --|   (view: menunjuk ke bytes yang sama, tanpa salinan)
 
 **Latihan (tanpa kunci jawaban).** Tambahkan cache LRU berkapasitas 1.000 dengan TTL pada pencarian `katalog_perpustakaan`, lalu ukur hit rate dan memori untuk beban akses berdistribusi Zipf (sebagian kecil kunci sangat sering diakses). *Kriteria penerimaan:* memori puncak stabil saat jumlah kunci unik dinaikkan 100×; laporan hit rate untuk tiga kapasitas berbeda dan satu kalimat keputusan kapasitas beserta alasannya.
 
-## Fase 7 — Keamanan, Isolasi & Anonimitas
+## [Fase 7 — Keamanan, Isolasi & Anonimitas][7]
 
 **Level:** Mahir → Expert · **Estimasi:** 4 minggu (≈ 40 jam) · **Tujuan fase:** merancang logika yang tetap benar ketika inputnya bermusuhan, rahasianya terjaga, dan radius kerusakannya terbatas.
 
@@ -1881,7 +1881,7 @@ proses Dart (hak penuh) --> bwrap/systemd: [tanpa jaringan][FS read-only][memori
 
 **Latihan (tanpa kunci jawaban).** Audit proyek `konversi_satuan`: daftar semua dependensi langsung dan transitif, tulis alasan keberadaan tiap dependensi langsung, hapus yang tidak sepadan, lalu jalankan biner AOT di bawah `bwrap` tanpa jaringan. *Kriteria penerimaan:* CI gagal bila `pubspec.lock` berubah tanpa disengaja; biner tetap berfungsi di sandbox dengan sistem berkas hanya-baca; satu halaman keputusan tentang dependensi yang dipertahankan beserta alasannya.
 
-## Fase 8 — Kualitas & Verifikasi
+## [Fase 8 — Kualitas & Verifikasi][8]
 
 **Level:** Mahir → Expert · **Estimasi:** 3 minggu (≈ 30 jam) · **Tujuan fase:** membuktikan sebanyak mungkin kebenaran lewat uji otomatis dan analisis statis, bukan lewat keyakinan.
 
@@ -2053,7 +2053,7 @@ Bukti makin kuat ke kanan; biaya tiap pemeriksaan juga makin mahal ke kanan.
 
 **Latihan (tanpa kunci jawaban).** Nyalakan seluruh mode strict dan 15 lint tambahan pada `katalog_perpustakaan`, perbaiki semua temuan tanpa `// ignore`, lalu lakukan mutasi manual pada 10 baris logika inti. *Kriteria penerimaan:* analyzer bersih dengan `--fatal-infos`; cakupan cabang minimal 90% pada lapisan domain; setiap mutasi tertangkap test (yang lolos dicatat dan ditambal dengan test baru); skrip lokal (`just` atau `make`) menjalankan semua langkah dengan satu perintah.
 
-## Fase 9 — Arsitektur, Ketahanan & Interoperabilitas (Expert/Enterprise)
+## [Fase 9 — Arsitektur, Ketahanan & Interoperabilitas (Expert/Enterprise)][9]
 
 **Level:** Expert/Enterprise · **Estimasi:** 5 minggu (≈ 50 jam) · **Tujuan fase:** menyusun logika yang tetap sehat saat skalanya membesar: banyak modul, banyak tim, banyak kegagalan, banyak platform.
 
@@ -2319,7 +2319,7 @@ Satu kode, banyak target:   VM  |  AOT  |  JS  |  Wasm
 
 **Latihan (tanpa kunci jawaban).** Pindahkan satu operasi `konversi_satuan` yang berat (misal parsing massal) ke pustaka C atau Rust kecil dengan ABI C, panggil lewat FFI, lalu bandingkan dengan implementasi Dart murni (ukur dengan Modul 6.2). Sediakan juga adapter penyimpanan dengan import bersyarat untuk VM dan web. *Kriteria penerimaan:* tidak ada kebocoran memori native (diverifikasi valgrind atau ASan di sisi native); keputusan “FFI atau Dart murni” ditulis dengan angka pengukuran; test domain lulus di VM dan di web (`dart test -p vm,chrome`).
 
-## Fase 10 — Capstone & Penguasaan
+## [Fase 10 — Capstone & Penguasaan][10]
 
 **Level:** Expert · **Estimasi:** 6 minggu (≈ 60 jam) · **Tujuan fase:** mengintegrasikan keenam sumbu (kebenaran, keamanan, ketahanan, kecepatan, efisiensi, keterawatan) dalam satu proyek utuh dan mempertahankan keputusan desainnya.
 
@@ -2418,18 +2418,18 @@ Setelah menyelesaikan kurikulum ini, peserta mampu:
 - **Contoh kode:** ditulis untuk Dart 3.13+; jalankan `dart analyze` dan `dart test` di proyek Anda sendiri sebelum menganggapnya benar, karena kebiasaan memverifikasi adalah bagian dari kurikulum ini.
 - **Pemeliharaan:** tinjau kurikulum tiap rilis Dart besar (tiga bulanan) dan tambahkan modul untuk fitur baru yang mengubah cara logika dirancang.
 
-[0]: ./bagian-1/README.md
-[1]: ./bagian-2/README.md
-[2]: ./bagian-3/README.md
-[3]: ./bagian-4/README.md
-[4]: ./bagian-5/README.md
-[5]: ./bagian-6/README.md
-[6]: ./bagian-7/README.md
-[7]: ./bagian-8/README.md
-[8]: ./bagian-9/README.md
-[9]: ./bagian-10/README.md
-[10]: ./bagian-11/README.md
-[11]: ./bagian-12/README.md
-[12]: ./bagian-13/README.md
-[13]: ./bagian-14/README.md
-[14]: ./bagian-15/README.md
+[1]: ./bagian-1/README.md
+[2]: ./bagian-2/README.md
+[3]: ./bagian-3/README.md
+[4]: ./bagian-4/README.md
+[5]: ./bagian-5/README.md
+[6]: ./bagian-6/README.md
+[7]: ./bagian-7/README.md
+[8]: ./bagian-8/README.md
+[9]: ./bagian-9/README.md
+[10]: ./bagian-10/README.md
+[11]: ./bagian-11/README.md
+[12]: ./bagian-12/README.md
+[13]: ./bagian-13/README.md
+[14]: ./bagian-14/README.md
+[15]: ./bagian-15/README.md
