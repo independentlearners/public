@@ -7,7 +7,7 @@
 | Level | Intermediate |
 | Estimasi waktu | 3 minggu, ±35–45 jam (teori ±30%, praktik ±70%) |
 | Prasyarat | Fase 2 selesai (daftar periksa kelulusan terpenuhi, latihan di-commit) |
-| Alat esensial | Dart SDK stabil (rilis stabil per November 2026: 3.13.x), `dart analyze`, `dart test`, `package:collection`, `package:meta` |
+| Alat esensial | Dart SDK stabil (rilis stabil per 13 November 2026: 3.14, dirilis 11 November 2026), `dart analyze`, `dart test`, `package:collection`, `package:meta` |
 | Batas versi fitur | Record dan pola: Dart ≥ 3.0 · extension types: ≥ 3.3 · primary constructors: ≥ 3.13 |
 | Komunitas | https://dart.dev/community · tag `dart` di https://stackoverflow.com/questions/tagged/dart · proposal bahasa di https://github.com/dart-lang/language |
 | Sertifikasi | Tidak ada sertifikasi resmi khusus; portofolio repositori dengan test dan tabel contoh lebih bernilai |
@@ -25,7 +25,6 @@
 
 <details>
   <summary>📃 Daftar Isi</summary>
-
 
 ## Daftar Isi Fase 3
 

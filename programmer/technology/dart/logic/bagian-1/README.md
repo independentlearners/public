@@ -7,7 +7,7 @@
 | Level | Foundation — pemula dalam *logika*, bukan dalam sintaks |
 | Estimasi waktu | 2–3 minggu, ±25–35 jam (teori ±30%, praktik ±70%) |
 | Prasyarat | Dart dasar, OOP, dan fitur lanjutan sudah dikuasai — tidak diulang di sini |
-| Alat esensial | Dart SDK stabil (rilis stabil per November 2026: 3.13.x; semua kode di dokumen ini berjalan di Dart ≥ 3.0), terminal, editor pilihan, DartPad (opsional) |
+| Alat esensial | Dart SDK stabil (rilis stabil per 13 November 2026: 3.14, dirilis 11 November 2026; semua kode di dokumen ini berjalan di Dart ≥ 3.0), terminal, editor pilihan, DartPad (opsional) |
 | Komunitas | https://dart.dev/community, tag `dart` di https://stackoverflow.com/questions/tagged/dart, diskusi di organisasi `dart-lang` pada GitHub |
 | Sertifikasi | Tidak ada sertifikasi resmi khusus logika Dart; portofolio repositori GitHub dengan catatan yang teruji jauh lebih bernilai |
 
@@ -24,7 +24,6 @@
 
 ## Daftar Isi Fase 1
 
-
 <details>
   <summary>📃 Fase 1</summary>
 
@@ -40,7 +39,6 @@
 - **Latihan (tanpa kunci jawaban), Ringkasan, dan Referensi Induk**
 
 </details>
-
 
 ---
 
@@ -1815,9 +1813,6 @@ bool sama(List<int> a, List<int> b) => a == b;
 - A. Hunt & D. Thomas, *The Pragmatic Programmer* — praktik rekayasa sehari-hari.
 - S. McConnell, *Code Complete* — kualitas kode dan pengujian.
 
----
-
-*Fase 1 selesai. Fase 2 dibuka setelah kamu memberi konfirmasi siap dan, bila ada, menempelkan kurikulum aslimu agar penomoran disinkronkan.*
 ---
 
 > - **[⬆️ Ke Atas](#)**
