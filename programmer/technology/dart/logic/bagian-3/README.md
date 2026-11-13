@@ -1705,7 +1705,6 @@ Kerjakan sendiri, jalankan dengan `--enable-asserts`, lalu commit dengan struktu
 - M. Kleppmann, *Designing Data-Intensive Applications* (bagian tentang event log) — gagasan di balik riwayat dan replay.
 
 ---
----
 
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
