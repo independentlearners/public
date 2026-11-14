@@ -53,12 +53,12 @@ Dokumen ini memetakan banyak bahasa / bahasa-domain ke dalam: **Level Abstraksi*
 
 ---
 
-| 🧑‍💻 Bahasa / DSL                                                 |      ♻️ Level Abstraksi | 🧠 Paradigma utama                    | 🎯 Domain / Spesialisasi                  | 🚀 Implementasi umum (engine/kompiler dibuat dengan) | 📍 Persyaratan teknis ringkas (untuk modifikasi/kontribusi) |
+| 🧑‍💻 Bahasa / DSL                                              | ♻️ Level Abstraksi | 🧠 Paradigma utama                    | 🎯 Domain / Spesialisasi                  | 🚀 Implementasi umum (engine/kompiler dibuat dengan) | 📍 Persyaratan teknis ringkas (untuk modifikasi/kontribusi) |
 | ------------------------------------------------------------ | --------------------: | ---------------------------------- | -------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------- |
-| [Machine code / Binary][machine_code]                                        |         Machine-level | Instruksi CPU                      | Semua (OS/firmware/boot/embedded)      | — (dieks. langsung di CPU)                        | Arsitektur CPU, encoding instruksi, assembler/disassembler, JTAG, ICE |
-| [Assembly (x86/x86-64/ARM/RISC-V/MIPS)][assembly]                        |                   Low | Imperatif/procedural               | Bootloaders, drivers, embedded, kernel | Assembler (GNU as, NASM)                          | ABI/calling conventions, linker scripts, ELF/PE/Mach-O, QEMU, gdb     |
-| [C][c]                                                            |                   Low | Imperatif/procedural               | Systems, OS, embedded, runtime         | GCC/Clang (C/C++)                                 | C, build systems (make/cmake), sanitizers, gdb, cross-compiling       |
-| [C++][c_plus_plus]                                                          |                   Mid | Imperatif, OOP, Generic            | Browsers, game engines, desktop apps   | GCC/Clang (C++)                                   | Modern C++ (17/20), templates, cmake, UB understanding                |
+| [Machine code / Binary][machine_code]                        |         Machine-level | Instruksi CPU                      | Semua (OS/firmware/boot/embedded)      | — (dieks. langsung di CPU)                        | Arsitektur CPU, encoding instruksi, assembler/disassembler, JTAG, ICE |
+| [Assembly (x86/x86-64/ARM/RISC-V/MIPS)][assembly]            |                   Low | Imperatif/procedural               | Bootloaders, drivers, embedded, kernel | Assembler (GNU as, NASM)                          | ABI/calling conventions, linker scripts, ELF/PE/Mach-O, QEMU, gdb     |
+| [C][c]                                                       |                   Low | Imperatif/procedural               | Systems, OS, embedded, runtime         | GCC/Clang (C/C++)                                 | C, build systems (make/cmake), sanitizers, gdb, cross-compiling       |
+| [C++][c_plus_plus]                                           |                   Mid | Imperatif, OOP, Generic            | Browsers, game engines, desktop apps   | GCC/Clang (C++)                                   | Modern C++ (17/20), templates, cmake, UB understanding                |
 | [Rust][rust]                                                         |                   Mid | Ownership-based, concurrent        | Systems, CLI, Wasm, embedded           | rustc (Rust + LLVM)                               | Rust ownership/borrow, Cargo, unsafe/FFI, clippy, miri                |
 | [Zig][zig]                                                          |                   Mid | Imperatif, explicit memory         | Systems, cross-compiling               | Zig compiler (Zig/C)                              | Zig lang, build.zig, cross-linking                                    |
 | [D][d]                                                            |                   Mid | Multi-paradigm                     | Systems, apps                          | DMD/LDC (D/C++)                                   | D language, dub, interop C                                            |
@@ -639,113 +639,6 @@ Hasil komprehensif ini mencakup **spektrum ekosistem perangkat lunak**, sehingga
 > ###### **Mayoritas entri relevan untuk kegiatan pengembangan (coding, integrasi, kontribusi)**, tetapi **sekitar 30–40%** dari daftar adalah **spesifikasi, konfigurasi, format, atau tooling** — bukan “penulisan algoritma” murni.
 
 ---
-
-<!-- ### Machine code / Binary -->
-<!---->
-<!-- * **Identitas (singkat):** Instruksi langsung CPU; format biner. -->
-<!-- * **Implementasi umum:** Tidak ada; dieksekusi langsung oleh CPU. -->
-<!-- * **Persyaratan modifikasi:** Pengetahuan arsitektur CPU, firmware, alat debugging hardware; assembler; JTAG/ICE untuk hardware. -->
-<!---->
-<!-- ### Assembly (x86-64, ARM) -->
-<!---->
-<!-- * **Identitas:** Representasi mnemonik dari instruksi CPU. -->
-<!-- * **Implementasi umum:** Assembler (GNU as, NASM), linker (ld), debugger (gdb). -->
-<!-- * **Persyaratan:** Arsitektur CPU, ABI, instruksi set, assembler syntax, ELF/PE format, gdb/lldb. -->
-<!---->
-<!-- ### C -->
-<!---->
-<!-- * **Identitas:** Bahasa sistem low-level untuk sistem & aplikasi; diciptakan oleh Dennis Ritchie (1972). -->
-<!-- * **Implementasi umum:** GCC (C/C++), Clang/LLVM (C++/LLVM infra). -->
-<!-- * **Persyaratan:** C/C++, make/cmake, linker, ABI, sanitizers, gdb, knowledge memory model and UB. -->
-<!---->
-
-
-<!-- # 🧑‍💻 Programmer Hub -->
-<!---->
-<!-- <details> -->
-<!--   <summary> -->
-<!--     <strong>🌐 DSL (Domain-Specific Language)</strong> -->
-<!--     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Bahasa untuk Domain Khusus</i></div> -->
-<!--   </summary> -->
-<!--   <div style="padding-left: 25px; margin-top: 8px;"> -->
-<!---->
-<!-- - **[📍 Lihat Konsep Domain Spesifik](./konsep/domain/README.md)** -->
-<!---->
-<!-- - **⚙️ System** -->
-<!--   - [🧬 C/C++](./domain-spesifik/system/C/README.md) -->
-<!--   - [🦀 Rust](./domain-spesifik/system/Rust/README.md) -->
-<!---->
-<!-- - **🧩 Embedded & Scripting** -->
-<!--   - [🌙 Lua](./domain-spesifik/embeddeble/lua/README.md) -->
-<!--   - [🖥️ Bash/Shell](./domain-spesifik/embeddeble/bash/README.md) -->
-<!---->
-<!-- - **🤖 AI & 🧠 ML** -->
-<!--   - [📊 R](./domain-spesifik/ai-ml/R/README.md) -->
-<!--   - [🐍 Python](./domain-spesifik/ai-ml/python/README.md) -->
-<!---->
-<!-- - **📱 Mobile** -->
-<!--   - [🧊 Dart](./domain-spesifik/mobile/google/dart/README.md) -->
-<!---->
-<!-- - **🪙 Crypto** -->
-<!--   - [Solidity](./domain-spesifik/crypto/solidity/README.md) -->
-<!---->
-<!--   </div> -->
-<!-- </details> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- <details> -->
-<!--   <summary> -->
-<!--     <strong>🧰 Framework</strong> -->
-<!--     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Kerangka Kerja</i></div> -->
-<!--   </summary> -->
-<!--   <div style="padding-left: 25px; margin-top: 8px;"> -->
-<!---->
-<!-- - **[ℹ️ Tentang Framework](./framework/README.md)** -->
-<!-- - [🦋 Flutter](./framework/flutter/README.md) -->
-<!-- - [❤️ Love2D](./framework/love2d/README.md) -->
-<!---->
-<!--   </div> -->
-<!-- </details> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- <details> -->
-<!--   <summary> -->
-<!--     <strong>⌨️ CLI (Command-Line Interface)</strong> -->
-<!--     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Antarmuka Baris Perintah</i></div> -->
-<!--   </summary> -->
-<!--   <div style="padding-left: 25px; margin-top: 8px;"> -->
-<!---->
-<!-- - **[📍 Lihat Konsep CLI](../CLI/terminal/README.md)** -->
-<!-- - **Sistem Operasi:** -->
-<!--   - [🚀 Linux Console (Termux)](../CLI/terminal/README.md) -->
-<!--   - [🚀 Windows PowerShell](../CLI/windows/powershell/README.md) -->
-<!---->
-<!--   </div> -->
-<!-- </details> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- <details> -->
-<!--   <summary> -->
-<!--     <strong>🎯 Niche</strong> -->
-<!--     <div style="font-size: 11px; color: grey; margin-left: 24px;"><i>Bidang atau Area Spesifik</i></div> -->
-<!--   </summary> -->
-<!--   <div style="padding-left: 25px; margin-top: 8px;"> -->
-<!---->
-<!-- - [ℹ️ Tentang](./konsep/domain/README.md) -->
-<!-- - [📝 Neovim Plugin](./domain-spesifik/embeddeble/lua/nich/plugin/neovim/README.md) -->
-<!-- - [♻️ Dart CLI](./domain-spesifik/mobile/google/dart/nich/cli/README.md) -->
-<!---->
-<!--   </div> -->
-<!-- </details> -->
-<!---->
-<!-- --- -->
-<!---->
-<!-- ##### [📚 Kamus](../kamus/README.md)  |  [🏠 Home](../README.md) -->
-<!---->
-<!-- --- -->
 
 **[Promp][promp]**
 
