@@ -565,6 +565,7 @@ Dokumen ini memetakan banyak bahasa / bahasa-domain ke dalam: **Level Abstraksi*
 | **YANG (models)**                                                     |                     Modeling DSL | Data modeling for network              | Network device config                      | gNMI, netconf tooling (C/Go)                             | YANG modeling, codegen (pyang), device bindings                                                                                                 |
 | **Templating engines (Jinja2 / Handlebars / Twig etc.)**              |           Very High (templating) | Templating                             | Web/templates/config generation            | Jinja2 (Python), Handlebars (JS), Twig (PHP)             | Extension APIs, sandboxing, AST transform                                                                                                       |
 | **(Ambulatory / niche)**                                              |                           Varies | Varies                                 | Ultra-niche / proprietary                  | Varies                                                   | Vendor-specific knowledge; add on request                                                                                                       |
+
 ---
 
 ## 🌐 Rangkuman & Panduan praktis singkat
