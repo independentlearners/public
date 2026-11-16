@@ -6,7 +6,7 @@
 
 ## A. Audit singkat
 
-**Sudah benar, terverifikasi:**
+**Sudah terverifikasi:**
 - Mesin QML mengimplementasikan ECMAScript edisi ke-7; `??` tersedia sejak Qt 5.15, `?.` sejak Qt 6.2, dan pemisah numerik `1_000_000` sejak Qt 6.8.
 - Daftar resmi mencantumkan `Map`, `WeakMap`, `Set`, `WeakSet`, `Symbol`, dan `Promise`, dan tidak memuat `BigInt`.
 - Pengembang KDE merujuk QTBUG-58620 untuk menyatakan bahwa QJSEngine tidak mendukung async/await. Sebuah diskusi forum juga menyebut `await` tidak berfungsi di QML. Keduanya laporan era Qt 5.15, jadi untuk 6.12 statusnya tetap `[uji dulu]`. Rujukan "milis Qt 6.4.1" di kurikulum tidak ditemukan. Yang ditemukan adalah diskusi 2017.
