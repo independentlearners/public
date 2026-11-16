@@ -1516,6 +1516,1338 @@ Jalankan dengan `QT_QPA_PLATFORM=offscreen qml klik.qml`. Hapus blok `onComplete
 
 ---
 
+# Fase 2 · Modul 2.3 — File JavaScript dan Pragma
+
+Saya membaca ulang bagian Modul 2.3 dari berkas kurikulum dan mengaudit isinya terhadap dokumentasi Qt 6.12. Yang saya periksa: Defining dan Importing JavaScript Resources, Structure of a QML Document, Singletons in QML, dan `qt_target_qml_sources`. Seperti sebelumnya, saya tidak menjalankan kode ini pada Qt, jadi bagian bertanda `[uji]` perlu Anda buktikan sendiri.
+
+---
+
+## A. Audit singkat
+
+**Terverifikasi (tidak perlu diubah):**
+- Perilaku bawaan adalah salinan unik yang terisolasi untuk setiap instans komponen QML. Dengan `.pragma library`, berkas dimuat sekali dan keadaannya dibagi antar-dokumen. Berkas pustaka itu tidak bisa mengakses objek atau properti instans komponen secara langsung, hanya lewat parameter fungsi.
+- Tabel pragma mencatat `ComponentBehavior` sejak 6.4, `FunctionSignatureBehavior` sejak 6.5, dan `Translator` sejak 6.7. Ini **menyelesaikan catatan yang saya tinggalkan di audit Modul 2.2**. Label `[≥6.5]` di kurikulum benar. Penegakan anotasi tipe secara bawaan baru terjadi sejak 6.7, itu hal yang berbeda.
+- Dengan `ComponentBehavior: Bound`, data model pada delegate hanya bisa dikirim lewat *required property*. Ini sesuai catatan kurikulum.
+- Singleton QML lewat CMake memerlukan properti berkas `QT_QML_SINGLETON_TYPE`, dan `set_source_files_properties` harus dipanggil sebelum `qt_add_qml_module`. Tanpa CMake, qmldir manual memuat baris `singleton`.
+- `QML_FILES` menerima berkas `.qml`, `.js`, dan `.mjs`, termasuk kompilasi ke bytecode dan pemeriksaan lint secara otomatis.
+
+**Perlu dilengkapi:**
+1. **Modul ES (`.mjs`) tidak ada di kurikulum.** Sintaks `.import` adalah ekstensi QML yang sudah digantikan standar ECMAScript, dan pemakaiannya tidak dianjurkan. Sintaks standar `import * as X from "f.mjs"` hanya berlaku di dalam berkas `.mjs`. `Qt.include()` juga usang dan sebaiknya dihindari. Sub-bab 2.3.4 saya susun ulang: `.mjs` dulu, `.import` sebagai warisan.
+2. **Kopling tersembunyi pada mode bawaan.** Bila berkas JS tidak memuat `.import`, kodenya berjalan di scope yang sama dengan instans komponen dan dapat membaca serta mengubah objek dan propertinya. Kurikulum hanya menyebut "salinan sendiri". Ini penting untuk prinsip isolasi, jadi saya jelaskan khusus.
+3. **Aturan pewarisan import.** Skrip dengan pernyataan import tidak mewarisi import dokumen pemanggil. Skrip tanpa import mewarisinya. Skrip `.pragma library` tidak pernah mewarisi.
+4. **Aturan qualifier.** Qualifier untuk berkas JS harus diawali huruf besar, unik, dan tidak boleh sama dengan objek bawaan seperti `Date` atau `Math`.
+5. **Tabel pragma tanpa versi dan nilai bawaan** untuk tiga pragma terakhir. Saya lengkapi dari tabel resmi.
+6. **Posisi pragma.** Dokumen QML berurutan: daftar pragma (opsional), pernyataan import, lalu satu objek akar. Deklarasi `.pragma library` harus muncul sebelum kode JavaScript apa pun, kecuali komentar.
+7. **Nama berkas berhuruf besar di CMake.** Contoh kurikulum memakai `MathUtils.js`. Berkas QML/JS secara bawaan dicatat sebagai tipe di qmldir. Untuk berkas JS berhuruf besar yang bukan modul ES dan bukan pustaka `.pragma library`, dokumentasi menyarankan mempertimbangkan properti `QT_QML_SKIP_QMLDIR_ENTRY`.
+8. Sintaks `.import` tidak berfungsi pada skrip untuk WorkerScript.
+
+**TAMBAHAN:** **2.3.7** Mendaftarkan JS di CMake dan perkakas, karena kurikulum hanya memberinya satu kalimat.
+
+---
+
+## B. Daftar isi Modul 2.3 (diperbarui)
+
+- **2.3.0** Peta besar dan tata letak laboratorium `[TAMBAHAN]`
+- **2.3.1** File `.js`: stateful (bawaan) dan kopling tersembunyi
+- **2.3.2** `.pragma library`: pustaka stateless
+- **2.3.3** `import ... as`
+- **2.3.4** Impor antar-berkas JS: modul ES `.mjs` dan `.import` warisan `[diperluas]`
+- **2.3.5** Pragma dokumen QML (+ versi, nilai bawaan) `[diperluas]`
+- **2.3.6** JavaScript vs QML vs C++
+- **2.3.7** Mendaftarkan JS di CMake dan perkakas `[TAMBAHAN]`
+- Latihan dan kunci jawaban · Glosarium · Hubungan dengan modul lain
+
+**Urutan belajar yang disarankan:** 2.3.0 → 2.3.1 → 2.3.2 → 2.3.3 → 2.3.4 → 2.3.7 → 2.3.5 → 2.3.6.
+
+---
+
+## C. Peta besar
+
+```
+        dua jenis "pragma" (jangan tertukar)
+ ┌──────────────────────────────┬─────────────────────────────────┐
+ │ .pragma library   (ada TITIK)│ pragma Singleton  (tanpa titik) │
+ │ di dalam berkas  .js         │ di dalam berkas  .qml           │
+ │ → pustaka stateless bersama  │ → arahan untuk mesin/dokumen    │
+ └──────────────────────────────┴─────────────────────────────────┘
+ Berkas .js : bawaan = stateful (salinan per instans)
+              .pragma library = stateless (satu salinan bersama)
+ Berkas .mjs: modul ES standar (export / import)
+```
+
+**Filosofinya:** JS yang diletakkan di berkas terpisah harus dipilih *sifat kerahasiaan dan keadaannya*: terisolasi per instans, atau murni tanpa keadaan. Aturan emasnya: **default-kan ke yang paling terisolasi dan paling sedikit mengetahui tentang pemanggilnya.**
+
+**Tata letak laboratorium** (satu direktori, jalankan dengan `qml -a core Main.qml`):
+```
+lab-23/
+├─ Main.qml
+├─ Penghitung.qml        komponen QtObject
+├─ hitung.js             stateful (bawaan)
+├─ MathUtils.js          .pragma library
+├─ faktorial.mjs         modul ES
+├─ skrip.mjs             modul ES yang mengimpor faktorial.mjs
+└─ Mjs.qml               penguji modul ES
+```
+
+---
+
+## D. Materi
+
+### 2.3.1 File `.js`: stateful (bawaan) dan kopling tersembunyi
+
+*Ingat siapa yang memegang keadaan, karena merekalah sumber bug sunyi.*
+
+**Konsep.** Berkas `.js` yang diimpor tanpa pragma adalah *code-behind*: logika milik satu komponen. Tiap instans tipe QML mendapat salinan objek dan keadaan JavaScript-nya sendiri, supaya perilakunya benar.
+
+`hitung.js`:
+```js
+var hitungan = 0
+function tambah() { hitungan += 1; return hitungan }
+function ambilNama() { return nama }
+```
+`Penghitung.qml`:
+```qml
+import QtQml
+import 'hitung.js' as Hitung
+
+QtObject {
+    property string nama: 'tanpa-nama'
+    function tambah() : int { return Hitung.tambah() }
+    function ambil() : string { return Hitung.ambilNama() }
+}
+```
+`Main.qml`:
+```qml
+import QtQml
+
+QtObject {
+    Penghitung { id: a; nama: 'A' }
+    Penghitung { id: b; nama: 'B' }
+
+    Component.onCompleted: {
+        console.log(a.tambah(), a.tambah(), b.tambah())   // 1 2 1  (salinan terpisah)
+        console.log(a.ambil(), b.ambil())                 // A B    [uji]
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+- `var hitungan = 0`: keadaan di tingkat atas berkas. Contoh dokumentasi juga memakai `var` untuk keadaan semacam ini. Memakai `let` atau `const` di tingkat atas berkas skrip `[uji]`.
+- `import 'hitung.js' as Hitung`: impor JS selalu dengan qualifier `as`, yang wajib berawalan huruf besar (2.3.3).
+- `Penghitung { id: a }` dan `Penghitung { id: b }`: dua instans. Karena bawaan JS-nya per instans, `hitungan` masing-masing terpisah (`1 2` lalu `1`).
+- `ambilNama()` membaca `nama` tanpa mendeklarasikannya. Itu terlihat karena skrip ini berjalan di scope instans pemanggil. Hal itu terjadi pada skrip yang tidak mengimpor sumber daya atau modul lain dengan `.import`. Hasilnya `A B`.
+
+```
+ Instans A ──► salinan hitung.js (hitungan=2, melihat nama='A')
+ Instans B ──► salinan hitung.js (hitungan=1, melihat nama='B')
+```
+
+**Mengapa ini berbahaya:** `hitung.js` bergantung diam-diam pada properti `nama` milik komponen. Jika komponen berganti nama properti, JS rusak dan `qmllint` tidak banyak menolong. Kopling tersembunyi seperti ini adalah musuh isolasi. Perbaikannya: kirim sebagai parameter, `Hitung.ambilNama(nama)`.
+
+**Kapan stateful memang tepat:** logika yang benar-benar milik satu komponen, berkeadaan, dan Anda sadar menaruhnya terpisah. Dokumentasi menganjurkan logika sederhana ditulis inline, dan logika kompleks dipisahkan ke berkas code-behind.
+
+**Opsi lain untuk keadaan per komponen:**
+
+| Cara | Sifat |
+|---|---|
+| Properti QML di komponen | Reaktif, terlihat oleh tooling |
+| `.js` stateful (di atas) | Keadaan JS biasa, per instans |
+| Objek anak berberkas `id` | Privat dalam dokumen (2.2.5) |
+| C++ | Kritis kinerja atau keamanan |
+
+| Kesalahan | Solusi |
+|---|---|
+| JS membaca properti komponen secara diam-diam | Kirim sebagai parameter |
+| Mengira keadaan JS dibagi antar-instans | Tidak, ia per instans pada mode bawaan |
+
+**Referensi:** [Defining JavaScript Resources in QML](https://doc.qt.io/qt-6/qtqml-javascript-resources.html) · [JavaScript Expressions in QML Documents](https://doc.qt.io/qt-6/qtqml-javascript-expressions.html)
+
+---
+
+### 2.3.2 `.pragma library`: pustaka stateless
+
+*Yang tak tahu apa-apa tentang pemanggilnya tak bisa merusak pemanggilnya.*
+
+`MathUtils.js`:
+```js
+.pragma library
+
+function clamp(nilai, min, max) {
+    return Math.min(Math.max(nilai, min), max)
+}
+
+function salah() { return dataInduk.nilai }
+```
+Uji dari `Main.qml` (tambahkan di `Component.onCompleted`):
+```qml
+import 'MathUtils.js' as MathUtils
+// ...
+console.log(MathUtils.clamp(15, 0, 10))                       // 10
+try { MathUtils.salah() } catch (e) { console.log('ditolak:', e.name) }  // ReferenceError [uji jenis persis]
+```
+
+**Bedah kode:**
+- `.pragma library`: baris pertama, diawali **titik**, tanpa titik dua. Ini arahan untuk berkas JS. Aturan penempatan: sebelum kode JS apa pun, komentar boleh mendahului.
+- `function clamp(nilai, min, max)`: membatasi `nilai` ke rentang `[min, max]`. `Math.max(nilai, min)` menaikkan ke batas bawah, `Math.min(..., max)` menurunkan ke batas atas.
+- `function salah() { return dataInduk.nilai }`: mencoba memakai nama yang hanya ada di komponen. Karena pustaka tidak melihat scope pemanggil, ia gagal (`ReferenceError`).
+- Pustaka bersama tidak dapat mengakses objek atau properti instans komponen secara langsung, tetapi nilai QML boleh dilewatkan sebagai parameter fungsi.
+
+**Keuntungan.** Menandai pustaka stateless dengan pragma dapat menghemat memori secara signifikan dan mempercepat instansiasi komponen. Berkas itu dimuat sekali oleh mesin walau banyak instans dibuat.
+
+**Keadaan bersama.** Pustaka boleh menyimpan keadaan, dan keadaan itu dibagi ke semua pengimpor. Contoh dokumentasi: pemanggil `factorialCallCount` bisa mendapat nilai bukan nol di dokumen yang tak pernah memanggil `factorial`. Uji sendiri dengan menambahkan `.pragma library` di baris pertama `hitung.js` dari 2.3.1. Hasil pada `Main.qml` berubah menjadi `1 2 3` (satu salinan bersama). Tetapi `ambil()` akan gagal karena pustaka tak lagi melihat `nama`. Itu *tujuan*-nya.
+
+```
+ Tanpa pragma (stateful)             Dengan .pragma library (stateless)
+  Instans A ── salinan JS A            Instans A ─┐
+  Instans B ── salinan JS B            Instans B ─┼─ SATU salinan JS bersama
+  Instans C ── salinan JS C            Instans C ─┘
+  terisolasi per instans, boros        hemat memori; keadaan dibagi; tak melihat komponen
+```
+
+**Opsi lain untuk logika bersama:**
+
+| Cara | Kapan |
+|---|---|
+| `.pragma library` | Fungsi murni, pembantu tanpa keadaan |
+| Modul ES `.mjs` (2.3.4) | Pustaka bergaya standar, ekspor/impor eksplisit |
+| QML singleton (2.3.5, Modul 5.3) | Keadaan bersama yang bertipe dan reaktif |
+| C++ dengan `QML_ELEMENT` | Berat, perlu kinerja atau akses sistem |
+
+**Tips:** pustaka sebaiknya *murni*. Gunakan keadaan bersama hanya bila sungguh perlu dan sadari akibatnya (bocornya data antar-komponen). Bawa data lewat parameter. Jangan simpan rahasia di variabel pustaka. Keadaan itu hidup selama mesin hidup.
+
+| Kesalahan | Solusi |
+|---|---|
+| `.pragma library` bukan di bagian awal berkas | Pindahkan ke atas, sebelum kode |
+| Pustaka mencoba memakai `id` atau properti QML | Kirim sebagai parameter |
+| Menulis `pragma library` (tanpa titik) di berkas `.js` | Gunakan `.pragma library` |
+| Mengandalkan keadaan terpisah per instans tetapi memakai pragma | Hapus pragma atau pindahkan keadaan ke QML |
+
+**Referensi:** [Defining JavaScript Resources in QML: shared libraries](https://doc.qt.io/qt-6/qtqml-javascript-resources.html) · [Importing JavaScript Resources](https://doc.qt.io/qt-6/qtqml-javascript-imports.html)
+
+---
+
+### 2.3.3 `import ... as`
+
+*Setiap impor adalah izin. Berilah nama yang jelas dan sedikit.*
+
+**Konsep.** Sintaks dari QML:
+```
+import "URLSumber" as Qualifier
+```
+Impor berkas JS selalu diberi qualifier dengan kata kunci `as`. Qualifier harus diawali huruf besar dan unik, sehingga ada pemetaan satu-satu antara qualifier dan berkas. Itu juga berarti qualifier tidak boleh bernama seperti objek bawaan `Date` atau `Math`.
+
+```qml
+import QtQml
+import 'MathUtils.js' as MathUtils          // relatif ke dokumen ini
+import 'hitung.js'    as Hitung
+
+QtObject {
+    Component.onCompleted: {
+        console.log(MathUtils.clamp(15, 0, 10))     // 10
+        console.log(Hitung.tambah())                // 1
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+- `import 'MathUtils.js' as MathUtils`: `import` kata kunci, `'MathUtils.js'` URL sumber (relatif), `as` pemberi nama, `MathUtils` qualifier.
+- `MathUtils.clamp(...)`: akses fungsi lewat `Qualifier.namaFungsi(parameter)`.
+- URL relatif diselesaikan relatif terhadap dokumen atau sumber JS yang memuat impor itu. Bila berkas tak dapat diakses, terjadi galat. Bila diambil lewat jaringan, status komponen menjadi "Loading" sampai selesai diunduh.
+- Parameter fungsi boleh bertipe nilai atau objek QML maupun tipe JavaScript biasa, dengan aturan konversi tipe data yang berlaku.
+
+**Opsi lain, bentuk URL:**
+
+| Bentuk | Contoh | Catatan |
+|---|---|---|
+| Relatif | `'MathUtils.js'`, `'lib/Util.js'` | **Pilihan utama** |
+| Resource | `'qrc:/Modul/MathUtils.js'` | Jalur persis bergantung prefix modul `[sesuaikan]` |
+| Jaringan atau `file:` absolut | `'https://...'` | **Hindari**: kode asing menjadi bagian aplikasi Anda |
+
+**Aturan pewarisan import dalam JS** (dari dokumentasi):
+- Skrip dengan pernyataan import sendiri tidak mewarisi import dokumen yang memuatnya.
+- Skrip tanpa pernyataan import mewarisinya (dipertahankan demi kompatibilitas).
+- Skrip bersama `.pragma library` tidak mewarisi import, bahkan jika ia tidak mengimpor skrip lain.
+
+**Tips keamanan:** impor hanya dari sumber lokal (relatif atau resource). Impor lewat jaringan membuka jalan eksekusi kode dari luar.
+
+| Kesalahan | Solusi |
+|---|---|
+| `import 'x.js' as mathUtils` (huruf kecil) | Awali huruf besar |
+| Dua berkas dengan qualifier sama | Qualifier unik |
+| `as Math` / `as Date` | Dilarang. Beri nama lain |
+| Jalur salah → galat saat dimuat | Periksa jalur relatif, dan daftarkan berkas di CMake (2.3.7) |
+
+**Referensi:** [Importing JavaScript Resources in QML](https://doc.qt.io/qt-6/qtqml-javascript-imports.html) · [Import Statements](https://doc.qt.io/qt-6/qtqml-syntax-imports.html)
+
+---
+
+### 2.3.4 Impor antar-berkas JS: modul ES `.mjs` dan `.import` warisan
+
+*Pakailah standar. Ekstensi khusus-pabrikan cepat menua.*
+
+**Modul ES (dianjurkan).** `faktorial.mjs`:
+```js
+export function faktorial(n) {
+    return n <= 1 ? 1 : n * faktorial(n - 1)
+}
+```
+`skrip.mjs`:
+```js
+import { faktorial } from 'faktorial.mjs'
+export { faktorial }
+
+export function laporan(n) {
+    return `${n}! = ${faktorial(n)}`
+}
+```
+`Mjs.qml`:
+```qml
+import QtQml
+import 'skrip.mjs' as Skrip
+
+QtObject {
+    Component.onCompleted: {
+        console.log(Skrip.laporan(5), Skrip.faktorial(4))    // 5! = 120 24
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+- `export function ...`: menandai fungsi sebagai milik antarmuka publik modul. Yang tidak diekspor tetap privat.
+- `import { faktorial } from 'faktorial.mjs'`: mengambil nama tertentu. Kurung kurawal memilih nama, `from` menunjuk berkas.
+- `export { faktorial }`: mengekspor ulang apa yang diimpor, sehingga pemanggil mendapatnya dari `skrip.mjs`.
+- Jalur tanpa `./` mengikuti contoh dokumentasi. Memakai `./faktorial.mjs` `[uji]`.
+- Sintaks `import * as X from "f.mjs"` standar hanya berlaku di dalam modul ES, yaitu berkas berekstensi `.mjs`. Untuk menjadikan fungsi tersedia tanpa qualifier, pakai modul ES dan pernyataan `import` tanpa `as`.
+
+**`.import` (warisan, tidak dianjurkan).**
+```js
+.import 'MathUtils.js' as MU
+.import QtQuick 2.0 as Qt2
+```
+- `.import` adalah ekstensi mesin QML yang bekerja juga di berkas non-modul. Karena sudah digantikan standar, pemakaiannya tidak dianjurkan.
+- Bentuk `.import Modul Versi as Qualifier` memuat modul QML, berguna misalnya untuk singleton. Versi yang ditulis bergantung modulnya.
+- Skrip yang memakai `.import` tidak mengakses import komponen pemanggilnya.
+- `.import` tidak berfungsi pada skrip untuk WorkerScript.
+- `Qt.include()` menyisipkan semua fungsi dan variabel berkas lain ke namespace saat ini dan mengabaikan pragma serta import di berkas itu. Fungsi ini usang. Sebuah pemanggilan fungsi tidak seharusnya mengubah konteks pemanggil.
+
+```
+ JS lama                        modern
+  .import "x.js" as X     ───►   import ... from "x.mjs" / export
+  Qt.include("x.js")      ───►   (hindari; usang)
+  .pragma library         ───►   tetap sah untuk pustaka stateless
+```
+
+**Opsi lain:**
+
+| Kebutuhan | Cara |
+|---|---|
+| Pustaka terenkapsulasi, ekspor eksplisit | `.mjs` |
+| Pustaka stateless sederhana | `.js` + `.pragma library` |
+| Impor modul QML dari JS | `.import Modul X.Y as Q` (warisan) |
+| Menyisipkan berkas | **Jangan** (`Qt.include` usang) |
+
+| Kesalahan | Solusi |
+|---|---|
+| `import ... from` di berkas `.js` biasa | Ganti ekstensi menjadi `.mjs` |
+| Memakai `.import` di skrip WorkerScript | Tidak berfungsi. Pakai cara lain |
+| Mengandalkan `Qt.include` | Migrasi ke `.mjs` |
+
+**Referensi:** [Importing JavaScript Resources: imports within resources](https://doc.qt.io/qt-6/qtqml-javascript-imports.html) · [MDN: JavaScript modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+
+---
+
+### 2.3.5 Pragma dokumen QML
+
+*Arahan kepada mesin harus diucapkan di awal, sebelum urusan lain.*
+
+**Konsep.** `pragma` (tanpa titik) adalah instruksi untuk mesin QML tentang cara menafsirkan dokumen `.qml`. Letaknya di bagian awal dokumen, sebelum pernyataan import dan objek akar.
+
+| Pragma | Nilai (✱ = bawaan) | Sejak |
+|---|---|---|
+| `Singleton` | – | 5.2 |
+| `ListPropertyAssignBehavior` | `Append` ✱, `Replace`, `ReplaceIfNotDefault` | 6.3 |
+| `ComponentBehavior` | `Unbound` ✱, `Bound` | 6.4 |
+| `FunctionSignatureBehavior` | `Enforced` ✱, `Ignored` | 6.5 |
+| `NativeMethodBehavior` | `RejectThisObject` ✱, `AcceptThisObject` | 6.5 |
+| `ValueTypeBehavior` | `Reference` ✱ / `Copy` (6.5), `Inaddressable` ✱ / `Addressable` (6.6), `Assertable` (6.8) | 6.5 |
+| `Translator` | `<konteks terjemahan>` (bawaan: nama berkas) | 6.7 |
+
+Semua baris di atas bersumber dari tabel resmi Qt 6.12.
+
+#### `pragma Singleton`
+`Konfig.qml`:
+```qml
+pragma Singleton
+import QtQml
+
+QtObject {
+    readonly property string nama: 'LabQML'
+    property int tingkatLog: 1
+}
+```
+- `pragma Singleton`: menjadikan komponen pada akar dokumen sebagai singleton.
+- Pragma saja tidak cukup. Bila memakai CMake, qmldir dibuat otomatis oleh `qt_add_qml_module`, dan berkas harus ditandai dengan properti berkas `QT_QML_SINGLETON_TYPE`. `set_source_files_properties` harus dipanggil sebelum `qt_add_qml_module`.
+  ```cmake
+  set_source_files_properties(Konfig.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+  qt_add_qml_module(appqmllab URI LabQml QML_FILES Main.qml Konfig.qml)
+  ```
+- Tanpa CMake, qmldir ditulis manual dengan baris `singleton Nama Versi Berkas.qml`. Contoh uji mandiri di subdirektori `config/` yang memiliki `qmldir` berisi `singleton Konfig 1.0 Konfig.qml`, lalu di `Main.qml` tulis `import 'config'` dan akses `Konfig.nama` `[uji]`.
+- **Peringatan.** Singleton, setelah dibuat, hidup sampai mesin dihancurkan dan membawa kekurangan keadaan bersama karena menjadi bagian dari keadaan global. Pakai sedikit. Detail di Modul 5.3.
+
+#### `pragma ComponentBehavior: Bound`
+```qml
+pragma ComponentBehavior: Bound
+import QtQuick
+
+ListView {
+    id: color
+    width: 100; height: 100
+    property int r: 12
+    model: 1
+    delegate: Rectangle {
+        Component.onCompleted: console.log(color.r)     // 12
+    }
+}
+Timer { interval: 300; running: true; onTriggered: Qt.quit() }
+```
+Jalankan dengan `QT_QPA_PLATFORM=offscreen qml Terikat.qml` `[uji]`. Catatan: `Timer` harus berada di dalam akar. Pindahkan ke dalam `ListView { ... }` bila `qml` menolak dua objek akar.
+
+- Pragma ini membatasi komponen bersarang agar hanya membuat objek di konteks asalnya, sehingga `id` dari komponen luar di berkas yang sama aman dipakai dan tooling dapat mengasumsikan tipenya.
+- Bila terjadi bentrok nama, `id` di luar komponen terikat mengalahkan properti lokal objek. Pada komponen tak terikat, properti lokal mengalahkan `id` luar. Jadi pada mode `Unbound`, `color.r` yang sama kemungkinan merujuk ke komponen warna `Rectangle` (nilai bawaan putih, `r` = 1) `[uji]`.
+- Bawaannya `Unbound`, dan pada versi Qt mendatang bawaan akan berubah menjadi `Bound`. Membiasakan `Bound` sejak sekarang melindungi dari perubahan itu.
+- Pada delegate terikat, data model hanya bisa lewat *required properties*, bukan context property seperti `model.myColor`. Pola yang benar:
+  ```qml
+  delegate: Text {
+      required property string modelData
+      text: modelData
+  }
+  ```
+
+#### `pragma FunctionSignatureBehavior`
+- Sejak 6.7 anotasi tipe pada fungsi ditegakkan saat pemanggilan. Sebelumnya hanya kompiler skrip QML yang menegakkannya.
+- `Ignored` mengembalikan perilaku sebelum 6.7. Akibatnya lebih sedikit kode yang dikompilasi ke C++ lebih awal dan lebih banyak yang diinterpretasi atau di-JIT. Biarkan bawaan (`Enforced`) untuk kode baru.
+
+#### `ListPropertyAssignBehavior`
+Menentukan apa yang terjadi saat menugaskan ke properti `list`: bawaan menambah (`Append`), `Replace` selalu mengganti isi, `ReplaceIfNotDefault` mengganti kecuali pada properti default.
+
+#### `NativeMethodBehavior`, `ValueTypeBehavior`, `Translator` (ringkas)
+- `NativeMethodBehavior`: memanggil method C++ dengan objek `this` berbeda dari asalnya rusak secara historis. `AcceptThisObject` mengizinkan `this` yang diberikan.
+- `ValueTypeBehavior`: `Addressable` mengizinkan casting `a as rect` untuk value type. Jika dipakai dengan `as`, sebaiknya selalu tambahkan `Assertable` (6.8), karena di 6.6 dan 6.7 casting itu keliru ikut membuat nilai baru. `Copy` dan `Reference` adalah opsi eksperimental yang tak dianjurkan.
+- `Translator`: `pragma Translator: myTranslationContext` mengatur konteks terjemahan berkas (Modul i18n).
+
+**Tips:** satu pragma per baris di awal berkas. Pakai `ComponentBehavior: Bound` untuk berkas dengan delegate. Jangan menyalin pragma tanpa tahu efeknya.
+
+| Kesalahan | Solusi |
+|---|---|
+| `.pragma ComponentBehavior: Bound` | Tulis `pragma ComponentBehavior: Bound` di berkas `.qml` |
+| Pragma setelah `import` | Pindahkan ke atas |
+| `pragma Singleton` tanpa pendaftaran | Tambahkan `QT_QML_SINGLETON_TYPE` (CMake) atau baris `singleton` di qmldir |
+| Delegate `Bound` yang memakai `model.x` | Gunakan `required property` |
+
+**Referensi:** [Structure of a QML Document: pragmas](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [Singletons in QML](https://doc.qt.io/qt-6/qml-singleton.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html)
+
+---
+
+### 2.3.6 JavaScript vs QML vs C++
+
+*Alat yang tepat membuat pekerjaan sederhana tetap sederhana.*
+
+```
+ Hubungan antar-properti?                → binding (QML)                    (2.2.1)
+ Respons sekali per peristiwa?           → signal handler (QML)             (2.2.2)
+ Logika murni kecil?                     → fungsi di objek / .pragma library / .mjs
+ Keadaan bersama berskala aplikasi?      → singleton (QML atau C++)
+ Berat, kritis kinerja, akses OS, kripto → C++ (QML_ELEMENT, Q_INVOKABLE)
+```
+
+| Alat | Kuat di | Lemah di |
+|---|---|---|
+| QML (binding) | Hubungan deklaratif, tooling | Logika algoritmik panjang |
+| JavaScript | Fleksibel, cepat dituliskan | Berjalan di utas UI; tipe longgar |
+| C++ | Kinerja, tipe, keamanan memori terkelola, akses sistem | Siklus kompilasi lebih panjang |
+
+- JS di QML berjalan di utas UI. Komputasi berat membekukan antarmuka (2.1.11).
+- Berkas JS yang didaftarkan lewat `QML_FILES` ikut dikompilasi ke bytecode dan di-lint secara otomatis.
+- Untuk mengekspos C++ ke QML: [Exposing Attributes of C++ Classes to QML](https://doc.qt.io/qt-6/qtqml-cppintegration-exposecppattributes.html).
+
+**Aturan praktis:** mulai dari QML. Turun ke JS bila perlu. Naik ke C++ bila ukuran, kinerja, atau keamanan menuntutnya. Logika yang menyentuh data sensitif, kripto, atau sistem berkas sebaiknya tidak ada di JS.
+
+**Referensi:** [Integrating QML and JavaScript](https://doc.qt.io/qt-6/qtqml-javascript-topic.html) · [QML and C++ integration](https://doc.qt.io/qt-6/qtqml-cppintegration-topic.html)
+
+---
+
+### 2.3.7 Mendaftarkan JS di CMake dan perkakas `[TAMBAHAN]`
+
+*Berkas yang tak terdaftar tak ikut terkirim, dan Anda baru tahu saat aplikasi sudah di tangan orang lain.*
+
+```cmake
+qt_add_qml_module(appqmllab
+    URI LabQml
+    VERSION 1.0
+    QML_FILES
+        Main.qml
+        Penghitung.qml
+        hitung.js
+        MathUtils.js
+        faktorial.mjs
+        skrip.mjs
+)
+```
+
+**Bedah kode:**
+- `qt_add_qml_module(appqmllab ...)`: mendefinisikan modul QML untuk target `appqmllab`.
+- `URI LabQml`: nama modul untuk `import`.
+- `QML_FILES`: daftar berkas `.qml`, `.js`, dan `.mjs` yang ditambahkan ke modul, termasuk kompilasi ke bytecode dan lint otomatis.
+- Berkas yang tak tercantum tidak masuk ke resource. Aplikasi gagal memuatnya saat berjalan.
+
+**Pengaturan per berkas.** Properti berkas seperti `QT_QML_SKIP_QMLLINT` harus diatur sebelum berkas ditambahkan lewat `qt_add_qml_module` atau `qt_target_qml_sources`. Contoh:
+```cmake
+set_source_files_properties(hitung.js PROPERTIES QT_QML_SKIP_QMLDIR_ENTRY TRUE)
+```
+
+**Pilihan lain** (dari dokumentasi `qt_target_qml_sources`):
+
+| Pengaturan | Efek |
+|---|---|
+| `NO_LINT` / `NO_CACHEGEN` | Mematikan pemeriksaan lint / kompilasi bytecode untuk berkas yang tercantum |
+| `QT_QML_SKIP_QMLLINT` | Properti berkas: lewati lint untuk satu berkas |
+| `QT_QML_SKIP_CACHEGEN` | Properti berkas: lewati kompilasi bytecode |
+| `QT_QML_SKIP_QMLDIR_ENTRY` | Mencegah berkas dicatat sebagai tipe di qmldir, biasanya untuk berkas yang tak membuka tipe publik, seperti berkas JS privat. |
+| `qt_target_qml_sources(...)` | Menambah berkas ke modul **setelah** `qt_add_qml_module` |
+
+**Perhatian untuk `MathUtils.js` dari kurikulum.** Untuk berkas JS bernama huruf besar yang bukan modul ES dan bukan pustaka `.pragma library`, pertimbangkan properti `QT_QML_SKIP_QMLDIR_ENTRY`. `MathUtils.js` yang berpragma pustaka aman. Tetapi `hitung.js` yang stateful sebaiknya tidak diberi nama berhuruf besar, atau diberi properti itu.
+
+**Perkakas.** Jalankan `qmllint` (di Arch nama binernya bisa `qmllint6`, cek dengan `pacman -Ql qt6-declarative | grep '/bin/'`) pada `.qml` dan `.js` untuk menangkap kesalahan lebih awal.
+
+| Kesalahan | Solusi |
+|---|---|
+| Lupa mendaftarkan `.js` | Tambahkan ke `QML_FILES` |
+| Properti berkas diatur setelah `qt_add_qml_module` | Atur sebelumnya |
+| JS stateful berhuruf besar menimbulkan entri qmldir | Beri `QT_QML_SKIP_QMLDIR_ENTRY` atau ganti nama |
+| Mematikan lint demi diam | Perbaiki penyebabnya |
+
+**Referensi:** [qt_target_qml_sources](https://doc.qt.io/qt-6/qt-target-qml-sources.html) · [Singletons in QML](https://doc.qt.io/qt-6/qml-singleton.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html)
+
+---
+
+## E. Latihan 15 menit dan kunci jawaban
+
+**Latihan (dari kurikulum):** buat `MathUtils.js`, panggil dari `Main.qml`, lalu jelaskan konsekuensi bila `.pragma library` dihapus.
+
+```js
+// MathUtils.js
+.pragma library
+function clamp(nilai, min, max) { return Math.min(Math.max(nilai, min), max) }
+```
+```qml
+// Main.qml
+import QtQml
+import 'MathUtils.js' as MathUtils
+QtObject { Component.onCompleted: { console.log(MathUtils.clamp(15, 0, 10)); Qt.quit() } }   // 10
+```
+
+**Konsekuensi menghapus `.pragma library`:**
+1. Fungsi `clamp` tetap bekerja dengan hasil yang sama, karena murni.
+2. Tetapi setiap instans komponen mendapat salinan JS-nya sendiri, jadi lebih banyak memori dan instansiasi lebih lambat.
+3. Keadaan (jika ada) tidak lagi dibagi.
+4. Berkas bisa membaca scope komponen pemanggil, selama tidak ada `.import`. Kopling tersembunyi muncul.
+
+**Cek pemahaman:**
+1. *Apa beda `.pragma library` dan `pragma Singleton`?* Yang pertama arahan berkas `.js` untuk pustaka stateless bersama. Yang kedua arahan berkas `.qml` yang menjadikan tipe singleton dan perlu pendaftaran di CMake atau qmldir.
+2. *Mengapa `.pragma library` tak boleh memakai `id` QML?* Karena ia satu salinan bersama dan tidak berjalan di scope instans mana pun.
+3. *Mengapa lebih baik memakai `.mjs` daripada `.import`?* `.mjs` adalah standar ECMAScript dengan ekspor eksplisit, sedangkan `.import` ekstensi yang sudah digantikan dan tidak dianjurkan.
+
+**Tantangan:** ubah `hitung.js` dari 2.3.1 agar menerima nama sebagai parameter dan jadikan `.pragma library`. Pastikan hasil `1 2 3` dan `ambil()` tetap berfungsi tanpa kopling tersembunyi.
+
+---
+
+## F. Glosarium Modul 2.3
+
+| Istilah | Arti |
+|---|---|
+| Code-behind | Berkas JS yang menjadi logika milik satu komponen |
+| Stateful / stateless | Menyimpan keadaan / tidak menyimpan keadaan |
+| `.pragma library` | Arahan JS: jadikan berkas pustaka stateless bersama |
+| `pragma` (dokumen) | Arahan untuk mesin pada berkas `.qml` |
+| Qualifier | Nama awalan huruf besar pada `import ... as` |
+| Modul ES (`.mjs`) | Berkas JS bergaya standar dengan `export`/`import` |
+| `.import` | Ekstensi QML untuk impor di dalam `.js`; warisan |
+| Singleton | Objek yang dibuat sekali per mesin |
+| qmldir | Berkas deskripsi modul QML (tipe, singleton, versi) |
+| `Bound` / `Unbound` | Komponen terikat / tak terikat pada konteks asalnya |
+| Delegate | Komponen templat yang dibuat per item oleh `ListView`, `Repeater`, dll |
+| Required property | Properti yang wajib diisi pembuatnya |
+| Bytecode / cachegen | Kompilasi JS/QML ke bentuk siap-jalan saat build |
+| Lint | Pemeriksaan statis kode |
+| Resource prefix | Awalan jalur berkas di dalam resource aplikasi |
+
+---
+
+## G. Hubungan dengan modul lain
+
+| Modul | Hubungan |
+|---|---|
+| **2.1** Dasar JavaScript | Sintaks `export`, `import`, dan fungsi murni berasal dari sana |
+| **2.2** JavaScript di dokumen QML | Fungsi pembantu dipindahkan ke `.js`; `this` di berkas JS tak terdefinisi |
+| **2.4** Lingkungan host | `WorkerScript` dan batas `.import`, `Qt`, `XMLHttpRequest` |
+| **3.x** Properti dan binding | `required property` dan `ComponentBehavior: Bound` bertemu dengan model-delegate |
+| **5.3** Singleton | Pendalaman `pragma Singleton`, `qmldir`, dan C++ `QML_SINGLETON` |
+| **13.1** Keamanan | Larangan impor dari jaringan, jejak keadaan bersama, dan batas JS |
+
+**Prasyarat Modul 2.4:** menguasai 2.3.1 sampai 2.3.5. Bagian 2.3.7 diperlukan begitu Anda memakai CMake.
+
+---
+
+**Catatan tautan:** halaman Qt yang saya buka langsung adalah Defining dan Importing JavaScript Resources, Structure of a QML Document, serta `qt_target_qml_sources`. Halaman Singletons in QML saya baca lewat pencarian, dan cuplikannya berasal dari beberapa versi dokumentasi. Tautan MDN dan halaman lain tidak saya buka satu per satu. Bila ada yang tidak terbuka, kabari saya.
+
+# Fase 2 · Modul 2.4 — Lingkungan Host JavaScript dan Batasnya
+
+Saya membaca ulang bagian Modul 2.4 dari berkas kurikulum dan mengaudit isinya terhadap dokumentasi Qt 6.12. Yang saya periksa: JavaScript Host Environment, QML Global Object, objek `Qt`, XMLHttpRequest, Settings, Console API, LocalStorage, dan Timer. Saya tidak menjalankan kode ini pada Qt, jadi bagian bertanda `[uji]` perlu Anda buktikan sendiri.
+
+---
+
+## A. Audit singkat
+
+**Terverifikasi:**
+- QML tidak menyediakan objek `window` maupun API DOM seperti di peramban, dan runtime-nya mengimplementasikan ECMAScript edisi ke-7.
+- Secara bawaan `XMLHttpRequest` tidak bisa membaca berkas lokal. Untuk mengaktifkannya, variabel lingkungan perlu diset ke `1`, dan fitur itu hanya boleh dipakai bila aplikasi menjalankan kode QML/JS tepercaya.
+- `Settings` memakai `import QtCore` dan tersedia sejak Qt 6.5. Label `[≥6.5]` di kurikulum benar.
+- `QtQuick.LocalStorage` adalah tipe singleton untuk membaca dan menulis basis data SQLite.
+
+**Perlu dikoreksi atau dilengkapi:**
+1. **`Qt.callLater` bukan penunda waktu.** Tabel kurikulum menulis "Menunda aksi: `Timer`, `Qt.callLater`". `Qt.callLater` memanggil fungsi nanti, setelah mesin kembali ke event loop, dan beberapa pemanggilan berturut-turut dengan fungsi yang sama hanya dijalankan sekali. Ia menunda *giliran* dan menghapus duplikat, bukan menunda *durasi*.
+2. **Variabel `QML_XHR_ALLOW_FILE_WRITE` hilang.** Selain `QML_XHR_ALLOW_FILE_READ`, ada variabel untuk menulis berkas. XHR di QML juga tidak menegakkan same-origin policy. Ini implikasi keamanan penting.
+3. **Penyempurnaan atas 2.1.1.** Di sana saya menulis larangan variabel global implisit secara umum. Dokumentasi lebih tepat: kode JavaScript di berkas `.qml` tidak boleh mengubah objek global, tetapi kode di berkas `.js` boleh, dan perubahannya terlihat oleh berkas `.qml` yang mengimpornya. Kode "global" di berkas `.js` berjalan pada scope tereduksi: hanya berkas itu sendiri dan objek global, tanpa akses ke objek QML. Kesimpulan praktisnya tetap: selalu deklarasikan variabel.
+4. **Objek global yang tidak tercantum di kurikulum.** Selain objek `Qt`, ada keluarga `qsTr()`, fungsi `gc()`, fungsi `print()`, objek `console`, serta `XMLHttpRequest` dan `DOMException`. Dari objek `Qt` yang relevan untuk modul ini: `Qt.exit(kode)`, `Qt.application`, `Qt.platform`, `Qt.formatDateTime`, `Qt.locale`.
+5. **`Qt.application` tanpa GUI.** Pada QML tanpa `QGuiApplication`, properti `application.active`, `state`, `layoutDirection`, dan `font` tidak terdefinisi. Ini mengenai laboratorium `qml -a core` kita.
+6. **Console API lebih luas.** Ada `log/debug/info/warn/error`, `assert`, `time/timeEnd`, `trace`, `count`, `profile/profileEnd`, dan `exception`. Keluarannya memakai kategori log `qml` atau `js`, tergantung jenis berkas yang mencatat.
+7. **LocalStorage tidak terisolasi.** Basis datanya khusus pengguna dan khusus QML, tetapi dapat diakses semua aplikasi QML. Jadi bukan tempat rahasia.
+8. **Settings.** Berbasis QSettings, memakai berkas INI teks biasa pada Unix, dan tanpa notifikasi perubahan antar-instans `Settings`.
+9. **Salah ketik di dokumentasi Qt.** Contoh `Qt.formatDateTime` memakai `new Date(2001, 5, 21, 14, 13, 9)` tetapi hasilnya ditulis "21.05.2001". Indeks bulan JavaScript dimulai dari 0, jadi `5` adalah **Juni**. Gunakan `4` untuk Mei.
+10. **Catatan versi.** `Qt.escapeHtml` baru ada sejak 6.12, dan varian `atob`/`btoa` dengan `ArrayBuffer` sejak 6.11.
+
+**TAMBAHAN:** **2.4.0** laboratorium uji lingkungan host, dan **2.4.8** pola asinkron tanpa `async/await` (kurikulum mencantumkan `Promise` dan *event loop* di terminologi tetapi tanpa sub-bab).
+
+---
+
+## B. Daftar isi Modul 2.4 (diperbarui)
+
+- **2.4.0** Laboratorium: menguji isi lingkungan host `[TAMBAHAN]`
+- **2.4.1** Yang tersedia (+ `print`, `gc`, `DOMException`, `qsTr`) `[diperluas]`
+- **2.4.2** Yang tidak ada
+- **2.4.3** Objek `Qt` (+ `callLater`, `exit`, `application`, `platform`, format tanggal) `[diperluas]`
+- **2.4.4** `console` (+ kategori log, filter) `[diperluas]`
+- **2.4.5** XHR dan `QML_XHR_ALLOW_FILE_READ`/`WRITE` `[diperluas]`
+- **2.4.6** Penyimpanan data: `Settings` dan `LocalStorage`
+- **2.4.7** `Timer` vs penunda lain
+- **2.4.8** Pola asinkron: callback, sinyal, `Promise` `[TAMBAHAN]`
+- Ringkasan keamanan · Latihan dan kunci jawaban · Glosarium · Hubungan dengan modul lain
+
+**Urutan belajar yang disarankan:** 2.4.0 → 2.4.1 → 2.4.2 → 2.4.4 → 2.4.3 → 2.4.7 → 2.4.8 → 2.4.5 → 2.4.6.
+
+---
+
+## C. Peta besar
+
+```
+   Kode JavaScript Anda
+          │
+          ▼
+ ┌────────────────────────────────────────────────────┐
+ │ ECMAScript edisi ke-7 (Object Array JSON Math Date │
+ │ Promise Map Set ...)                               │
+ ├────────────────────────────────────────────────────┤
+ │ Objek tuan rumah QML (selalu ada, tanpa import):   │
+ │ Qt  console  print  gc  qsTr…  XMLHttpRequest      │
+ │ DOMException                                       │
+ ├────────────────────────────────────────────────────┤
+ │ Jenis tipe QML (perlu import): Timer (QtQml)       │
+ │ Settings (QtCore)  LocalStorage (QtQuick.Local…)   │
+ └────────────────────────────────────────────────────┘
+   ✗ TIDAK ADA: window  document  DOM  localStorage global
+```
+
+**Filosofinya:** JavaScript di QML adalah *tamu dengan perabot yang dipilihkan tuan rumah*. Karena perabotnya sedikit dan eksplisit, permukaan serangannya juga lebih kecil daripada di peramban. Tugas Anda memahami persis apa yang dipinjamkan, dan tidak membuka pintu tambahan (variabel lingkungan XHR, basis data bersama) tanpa alasan.
+
+---
+
+## D. Materi
+
+### 2.4.0 Laboratorium: menguji isi lingkungan host `[TAMBAHAN]`
+
+*Dokumen memberi tahu. Mesin Anda membuktikan.*
+
+Simpan sebagai `host.qml`, jalankan `qml -a core host.qml`:
+```qml
+import QtQml
+
+QtObject {
+    function ada(nama: string) : string {
+        return String(eval('typeof ' + nama))
+    }
+
+    Component.onCompleted: {
+        const daftar = ['Qt', 'console', 'print', 'gc', 'qsTr', 'XMLHttpRequest', 'DOMException',
+                        'JSON', 'Math', 'Date', 'Promise', 'Map', 'Set',
+                        'document', 'window', 'fetch', 'setTimeout', 'setInterval',
+                        'localStorage', 'require', 'process', 'globalThis', 'URL',
+                        'structuredClone', 'queueMicrotask']
+        for (const n of daftar) console.log(n.padEnd(16), ada(n))
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+- `eval('typeof ' + nama)`: membentuk ekspresi `typeof Qt`, `typeof document`, dan seterusnya. `typeof` pada nama yang tidak ada mengembalikan `'undefined'` tanpa galat. `eval` hanya aman di sini karena daftar nama berasal dari kode kita sendiri.
+- `for (const n of daftar)`: perulangan nilai array (2.1.11). `n.padEnd(16)` meratakan kolom.
+
+**Dugaan berdasarkan dokumen (bukan hasil uji):**
+
+| Nama | Dugaan |
+|---|---|
+| `Qt`, `console`, `print`, `gc`, `qsTr`, `XMLHttpRequest`, `DOMException` | ada (terdokumentasi sebagai objek global) |
+| `JSON`, `Math`, `Date`, `Promise`, `Map`, `Set` | ada (daftar objek resmi) |
+| `document`, `window` | `undefined` (tidak ada di QML) |
+| `localStorage`, `require`, `process` | tak terdokumentasi `[uji]` |
+| `fetch`, `setTimeout`, `setInterval`, `URL`, `structuredClone`, `queueMicrotask`, `globalThis` | tak terdokumentasi `[uji]` |
+
+Simpan hasilnya sebagai catatan versi Qt Anda. Itulah "peta pasti" yang berlaku bagi aplikasi Anda.
+
+---
+
+### 2.4.1 Yang tersedia
+
+*Kenali perabot yang dipinjamkan, supaya tak mencari yang tidak ada.*
+
+**Konsep.** Objek dan fungsi tuan rumah berikut selalu tersedia dari semua kode JavaScript di QML tanpa import: objek `Qt`, `qsTr()` dan kawan-kawannya, `gc()`, `print()`, objek `console`, serta `XMLHttpRequest` dan `DOMException`.
+
+| Kelompok | Isi | Dibahas |
+|---|---|---|
+| Standar ECMAScript | `Object Array String Number Math Date RegExp JSON Map Set Promise Symbol` … | Modul 2.1 |
+| Perluasan Qt pada bawaan | fungsi `arg()` pada `String`, serta fungsi konversi sadar-locale pada `Date` dan `Number` | 2.1.6 |
+| Objek `Qt` | utilitas, enum, `callLater`, `quit`, `application`, `platform` | 2.4.3 |
+| `console`, `print` | pencatatan | 2.4.4 |
+| `XMLHttpRequest`, `DOMException` | HTTP | 2.4.5 |
+| `qsTr`, `qsTranslate`, `qsTrId` | terjemahan | modul i18n |
+| `gc()` | memicu pengumpul sampah | di bawah |
+
+- `print(...)`: mencetak ke konsol, mirip `console.log`. Pilih `console.log` karena punya kategori dan tingkat.
+- `gc()`: menjalankan garbage collector, setara `QJSEngine::collectGarbage()`. Untuk uji kebocoran, bukan untuk kode produksi.
+- Perluasan sadar-locale `Date`/`Number`: lihat [Date](https://doc.qt.io/qt-6/qml-qtqml-date.html) dan [Number](https://doc.qt.io/qt-6/qml-qtqml-number.html).
+
+**Tipe QML bukan objek global.** `Timer`, `Settings`, dan `LocalStorage` membutuhkan `import`. Beda objek global dan tipe QML penting untuk menjawab "kenapa `Timer` tidak ditemukan".
+
+**Opsi lain:**
+
+| Kebutuhan | Opsi |
+|---|---|
+| Mencetak | `console.log` (utama), `print` |
+| Terjemahan | `qsTr` (default), `qsTranslate`, `qsTrId` |
+| Memeriksa tipe | `typeof`, `instanceof` (diperluas untuk tipe QML), `Qt.isQtObject(x)` |
+
+| Kesalahan | Solusi |
+|---|---|
+| Mengira semua yang ada di MDN tersedia | Cek 2.4.0 di mesin Anda |
+| `Timer` tak dikenali | `import QtQml` |
+| Memakai `gc()` untuk "memperbaiki" kinerja | Perbaiki akar masalah |
+
+**Referensi:** [QML Global Object](https://doc.qt.io/qt-6/qtqml-javascript-qmlglobalobject.html) · [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [List of JavaScript Objects and Functions](https://doc.qt.io/qt-6/qtqml-javascript-functionlist.html)
+
+---
+
+### 2.4.2 Yang tidak ada
+
+*Mengetahui apa yang tidak ada sama berharganya dengan mengetahui apa yang ada.*
+
+**Konsep.** Tidak ada peramban, jadi tidak ada `window`, `document`, atau DOM. Dokumentasi juga menyarankan memeriksa apakah sebuah fungsi bagian dari standar ECMAScript atau khusus peramban, karena banyak referensi JavaScript difokuskan pada peramban.
+
+| Kebiasaan peramban | Padanan di QML |
+|---|---|
+| `document.getElementById('x')` | `id: x` lalu rujuk langsung `x` |
+| `window.setTimeout(fn, 1000)` | `Timer` (2.4.7) |
+| `fetch(url)` | `XMLHttpRequest` (2.4.5) |
+| `localStorage.setItem(k, v)` | `Settings` / `LocalStorage` (2.4.6) |
+| `alert(...)` | `console.log`, atau dialog QtQuick Controls |
+| `require()` / `import` Node | `import 'x.mjs' as X` (Modul 2.3) |
+| `window.location` | `Qt.resolvedUrl`, `Qt.openUrlExternally` |
+
+**Pembatasan lain yang sudah Anda kenal:**
+- Kode di berkas `.qml` tidak boleh mengubah objek global, jadi membuat variabel tanpa deklarasi menimbulkan exception. Kode di berkas `.js` boleh, dan perubahannya tampak di `.qml`. Tetap saja, jangan memanfaatkan itu.
+- Kode global di `.js` berjalan di scope tereduksi tanpa akses ke objek QML, sehingga kode awal aplikasi harus diletakkan di `Component.onCompleted`. (2.2.6)
+- `this` tidak terdefinisi di sebagian besar konteks. (2.2.4)
+
+**Tips:** bila Anda menemukan snippet web, tanyakan: *apakah ini ECMAScript murni atau API peramban?* Jangan salin yang kedua.
+
+| Kesalahan | Solusi |
+|---|---|
+| `document.getElementById` | Pakai `id` |
+| `localStorage` global | `Settings` atau `LocalStorage` |
+| Menyalin `fetch(...).then(...)` | Pakai XHR atau bungkus dengan `Promise` (2.4.8) |
+
+**Referensi:** [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [MDN: JavaScript reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference)
+
+---
+
+### 2.4.4 `console`
+
+*Anda tidak bisa memperbaiki yang tak terlihat. Catatlah dengan disiplin.*
+
+```qml
+import QtQml
+
+QtObject {
+    Component.onCompleted: {
+        console.log('nilai:', 42, JSON.stringify({ a: 1 }))
+        console.warn('peringatan')
+        console.error('galat')
+        console.assert(1 + 1 === 3, 'asersi gagal')
+        console.count('hitung'); console.count('hitung')
+        console.time('kerja')
+        let s = 0
+        for (let i = 0; i < 100000; i++) s += i
+        console.timeEnd('kerja')
+        console.trace()
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+- `console.log(a, b, c)`: argumen digabung dengan spasi. Untuk objek, serialkan dengan `JSON.stringify` agar cetakannya pasti.
+- `console.warn`, `console.error`: tingkat lebih tinggi, dan mudah disaring.
+- `console.assert(kondisi, pesan)`: menguji bahwa ekspresi benar. Bila tidak, ia menulis pesan opsional dan mencetak jejak tumpukan.
+- `console.count('hitung')`: mencetak berapa kali kode itu berjalan, mis. `f called: 1`, `f called: 2`. Keluaran contoh kita: `hitung: 1`, `hitung: 2`.
+- `console.time` / `timeEnd`: mencatat waktu dalam milidetik di antara keduanya, dengan string pengenal.
+- `console.trace()`: mencetak jejak tumpukan eksekusi JavaScript, dibatasi 10 frame terakhir.
+
+**Kategori dan filter.** Keluaran memakai kategori log `qml` atau `js` tergantung jenis berkasnya, lewat mekanisme `qCDebug/qCWarning/qCCritical`. Karena itu bisa disaring dari terminal `[uji]`:
+```bash
+QT_LOGGING_RULES='js.debug=false' qml -a core Main.qml                  # senyapkan log dari berkas .js
+QT_MESSAGE_PATTERN='[%{time hh:mm:ss}] %{category} %{type}: %{message}' qml -a core Main.qml
+```
+- `QT_LOGGING_RULES`: aturan filter `kategori.tingkat=true|false`.
+- `QT_MESSAGE_PATTERN`: pola format keluaran, standar Qt.
+
+**Kategori kustom.** Kategori log dapat diberikan sebagai argumen pertama ke fungsi `console`. Dengan tipe `LoggingCategory` `[uji]`:
+```qml
+LoggingCategory { id: logLab; name: 'lab.demo' }
+// ...
+console.log(logLab, 'pesan dari kategori saya')
+```
+
+**Opsi lain:**
+
+| Tujuan | Opsi |
+|---|---|
+| Pesan biasa | `console.log` / `debug` / `info` |
+| Masalah | `console.warn` / `error` |
+| Jejak asal | `console.trace` / `exception` |
+| Pengukuran | `console.time`, `console.profile` (profiler) |
+| Debugger penuh | `-qmljsdebugger` (lihat peringatan di bawah) |
+
+**Peringatan keamanan:** mengaktifkan infrastruktur debugging dapat membahayakan integritas aplikasi dan sistem, sehingga hanya boleh di lingkungan terkendali. Jangan mencatat token, kata sandi, atau data pribadi ke log. Log sering berakhir di berkas, jurnal sistem, atau laporan galat.
+
+| Kesalahan | Solusi |
+|---|---|
+| `console.log(obj)` mencetak tak terduga | `JSON.stringify(obj)` |
+| Log berlebihan di binding (dicetak setiap evaluasi) | Pindahkan ke handler |
+| Rahasia ikut tercatat | Sunting sebelum mencatat |
+
+**Referensi:** [Debugging QML Applications: Console API](https://doc.qt.io/qt-6/qtquick-debugging.html#console-api) · [QLoggingCategory](https://doc.qt.io/qt-6/qloggingcategory.html) · [LoggingCategory (QML)](https://doc.qt.io/qt-6/qml-qtqml-loggingcategory.html)
+
+---
+
+### 2.4.3 Objek `Qt`
+
+*Satu objek, banyak alat. Kenali yang benar-benar Anda butuhkan.*
+
+```qml
+import QtQml
+
+QtObject {
+    property int dipanggil: 0
+    function perbarui() { dipanggil++ }
+
+    Component.onCompleted: {
+        console.log(Qt.platform.os)                                                       // linux
+        console.log(Qt.md5('halo').length)                                                // 32
+        console.log(Qt.formatDateTime(new Date(2026, 10, 16, 14, 5, 9), 'dd.MM.yyyy hh:mm:ss'))
+        // 16.11.2026 14:05:09  (bulan 10 = November, indeks mulai 0)
+        console.log(Qt.locale('id_ID').name)                                              // id_ID [uji]
+
+        Qt.callLater(perbarui); Qt.callLater(perbarui); Qt.callLater(perbarui)
+        console.log('sebelum event loop:', dipanggil)                                      // 0
+        Qt.callLater(() => { console.log('sesudah:', dipanggil); Qt.quit() })             // sesudah: 1
+    }
+}
+```
+
+**Bedah kode:**
+- `Qt.platform.os`: nama sistem operasi, dengan nilai seperti `"linux"`, `"windows"`, `"osx"`, `"android"`. Dengan `-a core`, ketersediaan `Qt.platform` `[uji]`.
+- `Qt.md5(data)`: mengembalikan string heksadesimal hash MD5. MD5 rusak untuk keamanan, jadi hanya untuk checksum atau kunci cache, **bukan** kata sandi atau tanda tangan.
+- `Qt.formatDateTime(tanggal, format)`: format memakai ekspresi seperti `dd`, `MM`, `yyyy`, `hh`, `mm`, `ss`.
+- `Qt.locale('id_ID')`: mengembalikan objek locale dengan format nama `bahasa[_wilayah]`. Bila nama tak valid, locale "C" dipakai.
+- `Qt.callLater(fn)`: dijalankan setelah mesin kembali ke event loop. Pemanggilan berturut-turut dengan fungsi yang sama hanya dijalankan sekali, dan bila ada duplikat, hanya argumen terakhir yang diteruskan. Tiga panggilan `perbarui` menghasilkan satu eksekusi, jadi `dipanggil` bernilai 1.
+
+**Fungsi `Qt` yang penting, per kebutuhan:**
+
+| Kebutuhan | Fungsi | Catatan |
+|---|---|---|
+| Keluar | `Qt.quit()` | Menghentikan aplikasi (di alat `qml`) |
+| Keluar dengan kode | `Qt.exit(kode)` | Di alat `qml` membuat peluncur keluar dengan kode itu. Cocok untuk skrip CLI |
+| Argumen/identitas aplikasi | `Qt.application.*` | Beberapa properti tak terdefinisi tanpa `QGuiApplication`. |
+| Tanggal | `Qt.formatDate/DateTime/Time` | Gunakan indeks bulan mulai 0 pada `new Date` |
+| URL relatif | `Qt.resolvedUrl('x')` | Relatif ke dokumen pemanggil |
+| Teks aman HTML | `Qt.escapeHtml(s)` | `[≥6.12]` |
+| Pengodean | `Qt.btoa`, `Qt.atob` | Basis64 itu *pengodean*, bukan enkripsi. Varian `ArrayBuffer` `[≥6.11]` |
+| Memori | `Qt.gc()` | Untuk uji |
+
+**Fungsi `Qt` yang berbahaya bila salah dipakai:**
+- `Qt.openUrlExternally(url)`: meneruskan URL ke aplikasi eksternal; dokumentasi memperingatkan bahwa URL tak tepercaya bisa berakibat tak terduga dan menyarankan memeriksa `protocol` terhadap daftar yang diizinkan. Terapkan daftar putih, mis. hanya `https:`.
+- `Qt.createQmlObject(string, ...)`: sangat lambat karena mengompilasi string QML setiap kali, dan mudah menghasilkan QML tak valid. Jangan merakit QML dari masukan tak tepercaya. Pakai komponen terpisah.
+
+**Opsi lain:**
+
+| Pola | Kapan |
+|---|---|
+| `Qt.callLater(fn)` | Menggabungkan pembaruan beruntun (misalnya perhitungan ulang tata letak) |
+| `Timer { interval: 0 }` | Menunda satu giliran tetapi lewat objek yang bisa dihentikan |
+| Langsung panggil | Bila tak perlu menunda |
+
+| Kesalahan | Solusi |
+|---|---|
+| `Qt.callLater` dikira "tunggu 1 detik" | Pakai `Timer` |
+| `new Date(2001, 5, 21)` dikira Mei | Indeks bulan mulai 0, jadi 5 adalah Juni |
+| `Qt.md5` untuk hash kata sandi | Pakai pustaka kripto yang tepat (C++) |
+| `Qt.application.active` undefined | Pakai `-a gui` atau jangan mengandalkannya |
+
+**Referensi:** [Qt QML Type](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Date](https://doc.qt.io/qt-6/qml-qtqml-date.html) · [Locale](https://doc.qt.io/qt-6/qml-qtqml-locale.html)
+
+---
+
+### 2.4.7 `Timer` vs penunda lain
+
+*Menunggu adalah keputusan desain, bukan kebetulan.*
+
+```qml
+import QtQml
+
+QtObject {
+    id: root
+    property int tik: 0
+
+    Timer {
+        interval: 300; repeat: true; running: true
+        onTriggered: { root.tik += 1; console.log('tik', root.tik) }
+    }
+    Timer {
+        interval: 1000; running: true
+        onTriggered: { console.log('satu detik berlalu'); Qt.quit() }
+    }
+}
+```
+Keluaran yang diharapkan: `tik 1`, `tik 2`, `tik 3`, lalu `satu detik berlalu`.
+
+**Bedah kode:**
+- `Timer { ... }`: tipe dari `QtQml`. Dapat memicu aksi sekali atau berulang pada interval tertentu.
+- `interval: 300`: interval dalam milidetik, bawaan 1000.
+- `repeat: true`: bila true, pemicuan berulang. Bila tidak, timer memicu sekali lalu berhenti (`running` menjadi false). Bawaan `repeat` adalah false.
+- `running: true`: menyalakan timer. Bawaannya false.
+- `onTriggered`: handler sinyal `triggered()`.
+- Timer kedua bersifat *sekali pakai* (one-shot) dan memanggil `Qt.quit()` setelah satu detik. Ini jawaban latihan kurikulum.
+
+**Sifat penting:**
+- Timer disinkronkan dengan timer animasi (umumnya 60 fps), sehingga resolusinya paling baik sekitar 16 ms. Bukan untuk pengukuran presisi tinggi. Gunakan selisih `Date.now()` untuk durasi nyata.
+- Bila properti diubah saat timer berjalan, waktu yang telah berlalu direset.
+- `triggeredOnStart: true` membuat timer langsung memicu saat dimulai. Bila `repeat` false, ia memicu dua kali: saat mulai dan setelah interval.
+- `restart()`: bila belum berjalan, dimulai. Bila sudah, dihentikan, direset, lalu dimulai lagi.
+
+**Pola debounce** (satu pencarian meski masukan berubah cepat):
+```qml
+import QtQml
+
+QtObject {
+    id: root
+    property string kueri: ''
+    onKueriChanged: debounce.restart()
+
+    Timer {
+        id: debounce
+        interval: 200
+        onTriggered: { console.log('cari:', root.kueri); Qt.quit() }
+    }
+    Component.onCompleted: { kueri = 'k'; kueri = 'ko'; kueri = 'kop' }    // tiga perubahan cepat
+}
+```
+Keluaran: satu baris `cari: kop`.
+
+**Opsi lain, menunda atau menjadwalkan:**
+
+| Cara | Sifat |
+|---|---|
+| `Timer` sekali pakai | Menunggu durasi tertentu |
+| `Timer` berulang | Denyut berkala |
+| `Qt.callLater(fn)` | Giliran berikutnya, bukan durasi |
+| `setTimeout` / `setInterval` | Tak terdokumentasi `[uji]` |
+| `PauseAnimation` (QtQuick) | Jeda di dalam rangkaian animasi |
+| `Qt.createQmlObject` untuk Timer baru | **Hindari**: lambat |
+| `QTimer` di C++ | Ketepatan lebih baik, logika di luar QML |
+
+| Kesalahan | Solusi |
+|---|---|
+| `running: true` tanpa mematikannya saat tak perlu | Matikan, atau gunakan one-shot |
+| Mengubah `interval` di tengah jalan lalu heran waktunya reset | Itu perilaku terdokumentasi |
+| Handler berat di `onTriggered` | Menahan UI. Pecah kerjanya |
+| Menghitung durasi dengan jumlah tik | Pakai selisih `Date.now()` |
+
+**Referensi:** [Timer](https://doc.qt.io/qt-6/qml-qtqml-timer.html) · [Qt.callLater](https://doc.qt.io/qt-6/qml-qtqml-qt.html#callLater-method)
+
+---
+
+### 2.4.8 Pola asinkron: callback, sinyal, `Promise` `[TAMBAHAN]`
+
+*Dunia tidak menunggu Anda, jadi biarkan pekerjaan lambat memanggil Anda kembali.*
+
+**Konsep.** Antarmuka QML berjalan di satu utas dengan *event loop*. Pekerjaan lambat (jaringan, timer) tidak boleh memblokirnya, jadi hasilnya datang belakangan lewat **callback**, **sinyal**, atau **Promise**. Seperti dicatat di audit 2.1.9, `async/await` tidak terkonfirmasi didukung. `Promise` dengan `.then` tercantum di daftar objek resmi.
+
+```
+ kode Anda ─ memulai pekerjaan ─► (event loop jalan terus, UI tetap hidup)
+                                       │ selesai
+ callback / sinyal / .then ◄───────────┘
+```
+
+**Membungkus Timer menjadi Promise** `[uji]`:
+```qml
+import QtQml
+
+QtObject {
+    property var penyelesai: null
+
+    Timer {
+        id: pewaktu
+        interval: 300
+        onTriggered: {
+            const selesai = penyelesai
+            penyelesai = null
+            if (selesai) selesai('selesai')
+        }
+    }
+
+    function tunggu() {
+        return new Promise(resolve => { penyelesai = resolve; pewaktu.start() })
+    }
+
+    Component.onCompleted: {
+        tunggu().then(hasil => { console.log(hasil); Qt.quit() })
+    }
+}
+```
+
+**Bedah kode:**
+- `new Promise(resolve => {...})`: *Promise* mewakili hasil yang belum ada. Fungsi di dalamnya menerima `resolve`, yang dipanggil nanti dengan hasilnya.
+- `penyelesai = resolve`: menyimpan `resolve` agar Timer bisa memanggilnya. `property var` menyimpan fungsi `[uji]`.
+- `.then(hasil => ...)`: dijalankan ketika Promise terpenuhi.
+- Hasilnya: setelah sekitar 300 ms tercetak `selesai`.
+
+**Opsi lain untuk logika "tunggu lalu lakukan":**
+
+| Cara | Kapan |
+|---|---|
+| Callback langsung (gaya XHR, 2.4.5) | Sederhana, tanpa lapisan tambahan |
+| Sinyal + handler (2.2.2) | Hasil dipakai banyak pihak |
+| `Promise` + `.then` | Merangkai beberapa langkah berurutan `[uji]` |
+| `async`/`await` | Tak terkonfirmasi, uji dulu (2.1.9) |
+| C++ + sinyal | Pekerjaan berat atau utas terpisah |
+
+| Kesalahan | Solusi |
+|---|---|
+| Memblokir dengan perulangan kosong menunggu hasil | Biarkan event loop berjalan |
+| Menggunakan `await` tanpa menguji | Uji di 2.1.9 atau pakai `.then` |
+| Callback dipanggil dua kali atau tidak sama sekali | Uji semua jalur (sukses, gagal, batas waktu) |
+| Lupa menangani penolakan (`reject`/`.catch`) | Selalu sediakan jalur gagal |
+
+**Referensi:** [MDN: Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) · [javascript.info: Promise](https://javascript.info/promise-basics)
+
+---
+
+### 2.4.5 XHR dan `QML_XHR_ALLOW_FILE_READ`/`WRITE`
+
+*Jaringan adalah perbatasan. Perlakukan setiap respons sebagai tak tepercaya.*
+
+Siapkan server uji lokal yang hanya melayani `127.0.0.1`:
+```bash
+mkdir -p ~/lab-24/www && cd ~/lab-24
+printf '{"nama":"Kopi","harga":15000}\n' > www/data.json
+python -m http.server 8000 --bind 127.0.0.1 --directory www &
+qml -a core Xhr.qml
+kill %1
+```
+- `--bind 127.0.0.1`: hanya menerima koneksi dari mesin sendiri.
+- `&` dan `kill %1`: jalankan di latar belakang, lalu hentikan setelah selesai.
+
+`Xhr.qml`:
+```qml
+import QtQml
+
+QtObject {
+    function ambilJson(url, sukses, gagal) {
+        const req = new XMLHttpRequest()
+        req.onreadystatechange = function () {
+            if (req.readyState !== XMLHttpRequest.DONE) return
+            if (req.status !== 200) { gagal('HTTP ' + req.status); return }
+            try { sukses(JSON.parse(req.responseText)) }
+            catch (e) { gagal('JSON rusak: ' + e.name) }
+        }
+        req.open('GET', url)
+        req.send()
+    }
+
+    Component.onCompleted: ambilJson('http://127.0.0.1:8000/data.json',
+        data  => { console.log(data.nama, data.harga); Qt.quit() },       // Kopi 15000
+        pesan => { console.log('gagal:', pesan); Qt.quit() })
+}
+```
+
+**Empat langkah dari dokumentasi:** (1) buat objek `XMLHttpRequest`, (2) pasang fungsi callback pada `onreadystatechange`, (3) panggil `open()` dengan metode HTTP dan URL, (4) panggil `send()`.
+
+**Bedah kode:**
+- `req.onreadystatechange = function () {...}`: callback dipanggil setiap `readyState` berubah. Praktik baiknya memeriksa `readyState` sama dengan `DONE` sebelum membaca `response`, `responseText`, atau `responseXML`.
+- `XMLHttpRequest.DONE`: konstanta keadaan "selesai". Konstanta lain: `UNSENT`, `OPENED`, `HEADERS_RECEIVED`, `LOADING`.
+- `req.status !== 200`: kode HTTP. Nilai 0 umumnya berarti kegagalan jaringan.
+- `JSON.parse(req.responseText)` dibungkus `try/catch`: respons tak tepercaya harus ditangani kegagalan parse-nya (2.1.8).
+- `req.open('GET', url)`: parameter ketiga `async` bernilai true secara bawaan, jadi permintaan bersifat asinkron.
+- Fungsi `sukses`/`gagal` dikirim sebagai callback: pola 2.4.8.
+
+**Keadaan `readyState`:**
+```
+ UNSENT ─open()─► OPENED ─send()─► HEADERS_RECEIVED ─► LOADING ─► DONE
+```
+
+**Akses berkas lokal (dimatikan bawaan).** Secara bawaan XHR tidak bisa membaca sistem berkas lokal. Untuk membukanya, atur variabel lingkungan `QML_XHR_ALLOW_FILE_READ` dan/atau `QML_XHR_ALLOW_FILE_WRITE` ke `1`, dan hanya bila aplikasi menjalankan kode tepercaya.
+```bash
+QML_XHR_ALLOW_FILE_READ=1 qml -a core Berkas.qml
+```
+Contoh isi `Berkas.qml` (`req.open('GET', Qt.resolvedUrl('data.json'))` dengan `data.json` di direktori yang sama). Membaca `qrc:` tanpa variabel itu `[uji]`.
+
+**Debug.** Variabel `QML_XHR_DUMP=1` mencatat metode, URL, dan isi permintaan terkirim, URL dan isi respons, serta galat jaringan. Isinya bisa memuat data sensitif. Hanya untuk uji lokal.
+
+**Keamanan, ringkasan:**
+- XHR di QML tidak menegakkan same-origin policy. Kode QML mana pun dapat menghubungi host mana pun. Terapkan daftar putih URL di kode Anda sendiri.
+- Pakai HTTPS untuk jaringan nyata. Validasi bentuk JSON sebelum dipakai (jangan percaya `data.harga` pasti angka).
+- Jangan menyalakan variabel berkas di aplikasi yang memuat QML atau JS dari sumber luar.
+- XHR tidak mendokumentasikan properti batas waktu. Buat sendiri dengan `Timer` yang memanggil `req.abort()`: `abort()` membatalkan permintaan dan mengembalikan `readyState` ke `UNSENT`.
+
+**Opsi lain:**
+
+| Kebutuhan | Cara |
+|---|---|
+| HTTP sederhana | `XMLHttpRequest` (di atas) |
+| Antarmuka mirip `fetch` | Bungkus XHR dengan `Promise` `[uji]` |
+| TLS, autentikasi, unggah besar, unduh berkas | C++ `QNetworkAccessManager`, diekspos ke QML |
+| Baca/tulis berkas | C++ `QFile`/`QSaveFile`, bukan XHR |
+
+| Kesalahan | Solusi |
+|---|---|
+| Membaca `responseText` sebelum `DONE` | Periksa `readyState` dulu |
+| Tak menangani `status !== 200` atau galat parse | Sediakan jalur `gagal` |
+| Menyalakan `QML_XHR_ALLOW_FILE_*` "supaya jalan" | Pindahkan akses berkas ke C++ |
+| Menaruh token di URL atau log | Pakai header dan jangan dicatat |
+
+**Referensi:** [XMLHttpRequest](https://doc.qt.io/qt-6/qml-qtqml-xmlhttprequest.html) · [W3C XHR Level 1](https://www.w3.org/TR/2014/WD-XMLHttpRequest-20140130/) · [MDN: XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest)
+
+---
+
+### 2.4.6 Penyimpanan data: `Settings` dan `LocalStorage`
+
+*Menyimpan itu mudah. Menyimpan dengan aman dan sadar itu keterampilan.*
+
+#### `Settings` (modul `QtCore`, ≥ 6.5)
+```qml
+import QtCore
+import QtQml
+
+QtObject {
+    Settings {
+        id: pengaturan
+        location: Qt.resolvedUrl('lab.ini')
+        category: 'LabQML'
+        property int bukaKe: 0
+    }
+
+    Component.onCompleted: {
+        pengaturan.bukaKe += 1
+        console.log('dibuka ke', pengaturan.bukaKe)
+        Qt.quit()
+    }
+}
+```
+Jalankan dua kali (`qml -a core Pengaturan.qml`), lalu `cat lab.ini`. Dugaan: `dibuka ke 1`, lalu `dibuka ke 2`, dan isi berkas `[LabQML]` dengan `bukaKe=2` `[uji]`.
+
+**Bedah kode:**
+- `import QtCore`: tipe `Settings` ada di modul ini, sejak Qt 6.5.
+- `property int bukaKe: 0`: nilai pengaturan dideklarasikan sebagai properti di dalam elemen `Settings`, dan hanya tipe nilai yang dikenali QSettings yang didukung. Nilai 0 adalah bawaan.
+- `category: 'LabQML'`: kategori mengelompokkan pengaturan dan mencegah bentrok kunci.
+- `location`: jalur berkas pengaturan. Bila belum ada, dibuat. Bila diisi, format INI dipakai. Dengan `location` eksplisit, data **terisolasi di satu berkas yang Anda tentukan**, tidak bercampur dengan pengaturan aplikasi lain.
+- Tanpa `location`, pengaturan diidentifikasi lewat nama, organisasi, dan domain aplikasi, yang bisa diatur dari C++ atau lewat `Qt.application.name/organization/domain`.
+
+**Mode lain:**
+- Properti `alias`: pendekatan yang dianjurkan untuk pembaruan otomatis dua arah (misalnya posisi dan ukuran jendela), dengan biaya penyimpanan setiap nilai alias berubah.
+- Properti biasa dan `setValue`/`value`: kontrol lebih halus. Simpan saat `Component.onDestruction`.
+
+**Batasan:**
+- Berbasis QSettings, sehingga tidak ada notifikasi perubahan, dan menulis lewat satu instans `Settings` tidak memperbarui instans lain.
+- Di Unix tanpa standar tertentu, berkas INI teks biasa dipakai (registry di Windows, XML plist di macOS). **Teks polos: jangan simpan rahasia.**
+
+#### `LocalStorage` (SQLite)
+```qml
+import QtQml
+import QtQuick.LocalStorage
+
+QtObject {
+    Component.onCompleted: {
+        const db = LocalStorage.openDatabaseSync('LabQML', '', 'Basis data lab', 100000)
+        db.transaction(tx => {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS produk (nama TEXT, harga INTEGER)')
+            tx.executeSql('INSERT INTO produk VALUES (?, ?)', ['Kopi', 15000])
+        })
+        db.readTransaction(tx => {
+            const hasil = tx.executeSql('SELECT nama, harga FROM produk WHERE harga > ?', [10000])
+            for (let i = 0; i < hasil.rows.length; i++)
+                console.log(hasil.rows.item(i).nama, hasil.rows.item(i).harga)
+        })
+        Qt.quit()
+    }
+}
+```
+Jalankan `qml -a core LocalStorage.qml`. Bila modul menolak `-a core`, gunakan `QT_QPA_PLATFORM=offscreen qml LocalStorage.qml` `[uji]`.
+
+**Bedah kode:**
+- `openDatabaseSync(nama, versi, deskripsi, ukuranPerkiraan)`: membuka atau membuat basis data. API-nya mengikuti API sinkron HTML5 Web Database (draf W3C 2009).
+- `db.transaction(tx => {...})`: transaksi baca-tulis. Bila callback melempar exception, transaksi di-rollback.
+- `db.readTransaction(...)`: transaksi baca-saja untuk `SELECT`.
+- `tx.executeSql(sql, [nilai...])`: menjalankan pernyataan SQL dan mengikat daftar nilai ke parameter posisional `?`.
+- `hasil.rows.length` dan `hasil.rows.item(i)`: akses baris hasil `[uji]` sesuai API Web Database.
+
+**Mengapa `?` dan bukan penyambungan string** (injeksi SQL):
+```js
+// SALAH: masukan pengguna menjadi bagian perintah SQL
+tx.executeSql("SELECT * FROM produk WHERE nama = '" + masukan + "'")
+// BENAR: nilai diikat sebagai data, bukan perintah
+tx.executeSql('SELECT * FROM produk WHERE nama = ?', [masukan])
+```
+
+**Peringatan lokasi.** Basis datanya khusus pengguna dan khusus QML, tetapi dapat diakses semua aplikasi QML, disimpan di subdirektori Databases dari `offlineStoragePath()` sebagai SQLite. Cari berkasnya `[uji]`:
+```bash
+find ~/.local/share -name '*.sqlite' -mmin -5
+```
+Berkas itu tidak terenkripsi dan terbaca oleh aplikasi QML lain milik pengguna yang sama.
+
+**Pilih yang mana:**
+
+| Data | Pilihan |
+|---|---|
+| Preferensi kecil (tema, ukuran jendela) | `Settings` |
+| Tabel relasional kecil | `LocalStorage` |
+| Data besar, indeks, migrasi serius | C++ `QSqlDatabase`/Qt SQL |
+| **Rahasia** (token, kata sandi) | Brankas sistem lewat C++ (mis. [QtKeychain](https://github.com/frankosterfeld/qtkeychain)), bukan keduanya |
+| Berkas biasa | C++ `QFile` |
+
+| Kesalahan | Solusi |
+|---|---|
+| Menyimpan token di `Settings`/`LocalStorage` | Pakai keyring sistem |
+| Menyambung string ke SQL | Parameter `?` |
+| Mengira `Settings` saling sinkron antar-instans | Tidak. Gunakan satu instans (singleton) |
+| Lupa `import QtCore` / `import QtQuick.LocalStorage` | Tambahkan import |
+
+**Referensi:** [Settings](https://doc.qt.io/qt-6/qml-qtcore-settings.html) · [QSettings](https://doc.qt.io/qt-6/qsettings.html) · [Qt Quick Local Storage QML Types](https://doc.qt.io/qt-6/qtquick-localstorage-qmlmodule.html) · [SQLite](https://www.sqlite.org/docs.html)
+
+---
+
+## E. Ringkasan keamanan Modul 2.4
+
+| Permukaan | Risiko | Praktik |
+|---|---|---|
+| `XMLHttpRequest` | Tanpa same-origin policy; respons tak tepercaya | Daftar putih URL, HTTPS, validasi JSON |
+| `QML_XHR_ALLOW_FILE_READ/WRITE` | Kode QML/JS dapat membaca dan menulis berkas | Tinggalkan nonaktif; pakai C++ |
+| `QML_XHR_DUMP`, `console.*` | Kebocoran data ke log | Hanya uji lokal; sunting rahasia |
+| `LocalStorage` | Terbaca semua aplikasi QML pengguna | Bukan tempat rahasia |
+| `Settings` | Teks polos (INI) | Bukan tempat rahasia |
+| `Qt.openUrlExternally` | URL tak tepercaya | Daftar putih `protocol` |
+| `Qt.createQmlObject`, `eval` | Eksekusi kode dari string | Hindari; pakai komponen |
+| `Qt.md5` | Hash lemah | Hanya checksum |
+| `-qmljsdebugger` | Membuka infrastruktur debug | Hanya lingkungan terkendali |
+
+---
+
+## F. Latihan 15 menit dan kunci jawaban
+
+**Latihan (dari kurikulum):** jalankan contoh `Timer`, lalu ubah agar aplikasi keluar setelah satu detik memakai `Qt.quit()`.
+
+```qml
+import QtQml
+
+QtObject {
+    Timer {
+        interval: 1000; running: true
+        onTriggered: { console.log('satu detik berlalu'); Qt.quit() }
+    }
+}
+```
+`repeat` tidak diisi sehingga bawaannya false (sekali pakai). Hasilnya satu baris `satu detik berlalu`, lalu proses berhenti. Untuk kode keluar tertentu: `Qt.exit(2)` lalu periksa dengan `echo $?`.
+
+**Cek pemahaman:**
+1. *Bagaimana menunda aksi satu detik di QML?* Dengan `Timer { interval: 1000; running: true; onTriggered: ... }`. `Qt.callLater` bukan untuk itu.
+2. *Bagaimana menyimpan preferensi pengguna?* Dengan `Settings` (modul `QtCore`, sejak 6.5), idealnya dengan `location` eksplisit. Jangan dipakai untuk rahasia.
+3. *Mengapa `localStorage` ala peramban gagal?* Tidak ada objek global itu di QML. Padanannya adalah tipe `LocalStorage` (SQLite) setelah `import QtQuick.LocalStorage`.
+4. *Mengapa membaca berkas lewat XHR bermasalah?* Dinonaktifkan bawaan, dan menyalakannya memberi kode QML/JS akses ke sistem berkas. Pindahkan ke C++.
+
+**Tantangan:** tulis `ambilJson` dengan batas waktu: tambahkan `Timer` 2 detik yang memanggil `req.abort()` dan jalur `gagal('batas waktu')`. Uji dengan server yang sengaja lambat.
+
+---
+
+## G. Glosarium Modul 2.4
+
+| Istilah | Arti |
+|---|---|
+| Host environment | Objek dan fungsi yang disediakan penyelenggara (Qt) di luar standar JS |
+| Objek global | Nama yang selalu ada tanpa import (`Qt`, `console`, …) |
+| DOM | Model dokumen peramban; tidak ada di QML |
+| Event loop | Antrean yang menjalankan pekerjaan satu per satu di utas UI |
+| Callback | Fungsi yang dipanggil kembali saat pekerjaan selesai |
+| Promise | Objek penampung hasil yang belum tersedia |
+| XHR | `XMLHttpRequest`, antarmuka HTTP klien |
+| `readyState` | Tahap permintaan XHR (`UNSENT` sampai `DONE`) |
+| Same-origin policy | Aturan peramban yang membatasi permintaan lintas asal; tidak ditegakkan di XHR QML |
+| One-shot timer | Timer yang memicu sekali (`repeat: false`) |
+| Debounce | Menunda aksi sampai masukan berhenti berubah |
+| QSettings / INI | Pustaka pengaturan Qt / format berkas teks berpasangan kunci-nilai |
+| SQLite | Basis data relasional dalam satu berkas |
+| Parameter terikat (`?`) | Nilai yang dikirim terpisah dari perintah SQL |
+| Kategori log | Label sumber pesan (`qml`, `js`, atau milik Anda) |
+| Daftar putih | Hanya yang disebut yang diizinkan |
+
+---
+
+## H. Hubungan dengan modul lain
+
+| Modul | Hubungan |
+|---|---|
+| **2.1** Dasar JavaScript | `JSON`, `Date`, `Promise`, `try/catch` dipakai di semua contoh |
+| **2.2** JS di dokumen QML | `onTriggered`, `Component.onCompleted`, `Connections` |
+| **2.3** File JS dan pragma | `.import` tidak berfungsi di WorkerScript; kode global `.js` bersifat tereduksi |
+| **3.x** Properti dan binding | `property alias` ke `Settings`; `required property` pada model |
+| **5.x** Singleton dan C++ | `Settings` sebagai singleton; C++ untuk jaringan, berkas, penyimpanan aman |
+| **13.1** Keamanan | Ringkasan keamanan di atas diperdalam di sana |
+
+**Fase 2 selesai.** Prasyarat Fase 3: menguasai 2.1 sampai 2.4, terutama binding (2.2.1), `Qt.binding` (2.2.8), dan lab (2.1.0, 2.4.0).
+
+---
+
+**Catatan tautan:** halaman Qt yang saya buka langsung adalah Host Environment, QML Global Object, XMLHttpRequest, Settings, objek `Qt`, dan Debugging. Halaman Timer dan LocalStorage saya baca lewat pencarian dari beberapa versi dokumentasi. Tautan MDN, SQLite, QtKeychain, dan `LoggingCategory` tidak saya buka satu per satu. Bila ada yang tidak terbuka, kabari saya.
 
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
