@@ -1189,7 +1189,550 @@ Hasilnya tiga baris. Urutannya mengikuti urutan *sambungan*: handler bawaan terh
 ---
 
 <!-- **Catatan tautan:** halaman Qt yang saya buka langsung adalah Connections dan Signal and Handler Event System (6.12). Urutan pemanggilan dan emisi sinkron saya ambil dari dokumentasi C++ Signals & Slots, yang cuplikannya berasal dari beberapa versi (5.x dan 6.12), sehingga perilaku di QML perlu Anda uji. Halaman `qtqml-cppintegration-exposecppattributes` dan MDN tidak saya buka satu per satu. Bila ada yang tidak terbuka, kabari saya. -->
+# Fase 3 · Modul 3.3 — Lifecycle Objek
 
+---
+
+## A. Audit singkat
+
+**Tumpang tindih dengan Fase 2.** `Component.onCompleted` dan `onDestruction` sudah ada di **2.2.6**, dan `Qt.callLater` di **2.4.3**. Di sini saya tidak mengulangnya, melainkan memperdalam: fase pembuatan, penghancuran, pembuatan dinamis, dan `Loader`.
+
+**Terverifikasi:**
+- `completed()` dipancarkan setelah objek selesai diinstansiasi, saat seluruh lingkungan QML sudah terbentuk. Handler `onCompleted` boleh dipasang di objek mana pun, dan urutan eksekusinya tidak terdefinisi. Catatan kurikulum benar.
+- `destruction()` dipancarkan saat objek mulai dihancurkan, dan dipakai untuk membatalkan pekerjaan yang dilakukan sebagai tanggapan atas `completed` atau kode imperatif lain. Urutan handler-nya juga tidak terdefinisi.
+- `Qt.callLater(fungsi)` menjalankan fungsi setelah mesin kembali ke event loop, dan pemanggilan berturut-turut dengan fungsi yang sama digabung menjadi satu. Catatan kurikulum benar.
+- Aman memanggil `destroy()` pada sebuah objek dari dalam objek itu sendiri.
+
+**Perlu dikoreksi atau dilengkapi:**
+1. **Contoh kurikulum tidak berhenti sendiri dan butuh jendela.** Akarnya `Item` dengan `Rectangle`, jadi `qml` membuka jendela dan menunggu. Gunakan varian `QtObject` di bawah, atau tambahkan `Qt.quit()` dan jalankan dengan `QT_QPA_PLATFORM=offscreen`. Pesan `'induk dihancurkan'` juga belum tentu tercetak saat aplikasi keluar `[uji]`.
+2. **`destroy()` tidak sembarang.** Kurikulum menyebutnya tanpa aturan. Dokumentasi menetapkan:
+   - Objek hanya bisa dihancurkan secara dinamis bila dibuat secara dinamis. Memanggil `destroy()` pada objek yang dibuat statis menghasilkan galat.
+   - Jangan menghapus manual objek yang dibuat oleh pabrik objek seperti `Loader` dan `Repeater`, dan hindari menghapus objek yang tidak Anda buat sendiri.
+   - `destroy()` punya argumen opsional berupa penundaan dalam milidetik (bawaan 0). Objek tidak langsung dihancurkan, melainkan dibersihkan di antara akhir blok skrip dan frame berikutnya.
+3. **Konteks pembuatan harus lebih panjang umurnya.** Bila konteks pembuatan dihancurkan lebih dulu, binding dan signal handler pada objek dinamis tidak lagi bekerja. Objek dinamis juga tidak punya `id`. Keduanya belum ada di kurikulum.
+4. **Kepemilikan dan pengumpul sampah.** Bila `createObject()` dipanggil tanpa induk, Anda harus menyimpan referensi ke objek itu agar tak dihancurkan garbage collector. Menetapkan `Item::parent` sesudahnya tidak mengubah kepemilikan, hanya induk grafisnya.
+5. **Nilai awal lewat argumen kedua.** Nilai properti yang diberikan ke `createObject` diterapkan sebelum pembuatan difinalkan, lebih efisien, dan memungkinkan binding dipasang (dengan `Qt.binding`) sebelum objek dibuat. Ini juga menghindari galat binding bila properti tertentu harus terisi lebih dulu.
+6. **Pembuatan asinkron dan penanganan galat** tidak disebut. `incubateObject` membuat instans tanpa membekukan UI (bawaannya asinkron). `Component.status` bernilai `Null`, `Ready`, `Loading`, atau `Error`, dan `errorString()` mendeskripsikan galatnya. `createObject` mengembalikan `null` bila gagal.
+7. **`Loader` lebih dari sekadar "objek tertunda".** Bila `source` atau `sourceComponent` berubah, item lama dihancurkan. `active: false` melepas item tanpa mengubah sumbernya. `asynchronous` membuat instansiasi tersebar di beberapa frame. Rincian di 3.3.5.
+8. **Peringatan keamanan.** Objek tidak boleh dibuat secara dinamis dari sumber tak tepercaya, dan batasan untuk sumber QML statis berlaku sama. Ini masuk 3.3.3 dan 3.3.6.
+9. **`Qt.callLater` bukan penunda waktu, dan identitas fungsi menentukan penggabungan.** Sudah ada di 2.4.3. Di 3.3.4 saya tambahkan bahwa fungsi anonim yang dibuat baru setiap kali tidak digabung `[uji]`.
+
+**TAMBAHAN:** **3.3.6** Pola aman siklus hidup dan diagnosis, supaya pembuatan, pemakaian, dan pembuangan objek dipasangkan secara disiplin.
+
+---
+
+## B. Daftar isi Modul 3.3 (diperbarui)
+
+- **3.3.1** Fase pembuatan objek (+ nilai awal, konteks, kepemilikan) `[diperluas]`
+- **3.3.2** `onCompleted` dan sifat urutannya
+- **3.3.3** Penghancuran dan `destroy()` (+ aturan, penundaan, akses setelah mati) `[diperluas]`
+- **3.3.4** `Qt.callLater` (+ identitas fungsi dan argumen terakhir) `[diperluas]`
+- **3.3.5** `Loader` dan objek yang dibuat tertunda (+ dinamis, asinkron) `[diperluas]`
+- **3.3.6** Pola aman siklus hidup dan diagnosis `[TAMBAHAN]`
+- Latihan dan kunci jawaban · Glosarium · Hubungan dengan modul lain
+
+**Urutan belajar yang disarankan:** 3.3.1 → 3.3.2 → 3.3.3 → 3.3.4 → 3.3.5 → 3.3.6.
+
+---
+
+## C. Peta besar
+
+```
+  dibuat ───────► hidup ───────► dihancurkan
+    │               │                │
+ nilai awal      binding,         onDestruction
+ + binding       sinyal,          (bersih-bersih)
+    │            handler                │
+ onCompleted        │              objek hilang
+ ("siap")           │              (referensi jadi tak valid)
+    └───── pencipta: Component/createObject, Loader, Repeater, deklarasi statis
+```
+
+**Filosofinya:** setiap objek memiliki *pemilik* dan *umur*. Kebocoran, akses ke objek mati, dan startup lambat hampir selalu bermuara pada dua pertanyaan yang tak dijawab: siapa pemilik objek ini, dan kapan ia boleh mati? Disiplin siklus hidup sama pentingnya dengan disiplin memori di C++.
+
+**Cara menjalankan contoh:**
+- Berkas berbasis `QtObject`: `qml -a core nama.qml`.
+- Berkas visual (`Item`, `Loader`): `QT_QPA_PLATFORM=offscreen qml nama.qml` (laboratorium 2.1.0).
+
+---
+
+## D. Materi
+
+### 3.3.1 Fase pembuatan objek
+
+*Tahu urutan kelahiran menghindarkan Anda dari menyentuh sesuatu yang belum ada.*
+
+**Konsep.** Sebuah objek QML tidak langsung "siap pakai" begitu muncul di memori. Ia dibuat, diberi nilai awal, dipasangi binding, baru kemudian dinyatakan siap. Hanya bagian-bagian yang didokumentasikan yang boleh Anda andalkan:
+
+```
+ Component ──createObject(parent, {nilai awal})──►
+   ① objek dibangun
+   ② nilai awal dari argumen {…} diterapkan   ← SEBELUM pembuatan difinalkan
+   ③ binding dipasang dan dievaluasi
+   ④ Component.completed → onCompleted dijalankan     (urutan antarobjek: TAK TERDEFINISI)
+      ... objek hidup ...
+   ⑤ destroy() / pemilik menghancurkan / GC
+   ⑥ Component.destruction → onDestruction            (urutan antarobjek: TAK TERDEFINISI)
+```
+Langkah ② dan ④ dan ⑥ bersumber dari dokumentasi. Urutan internal ① dan ③ saya sederhanakan.
+
+**Peragaan: lingkungan sudah terbentuk saat `onCompleted`.**
+```qml
+import QtQml
+
+QtObject {
+    property int a: 1
+    property int b: a * 2
+
+    QtObject { Component.onCompleted: console.log('anak 1 siap') }
+    QtObject { Component.onCompleted: console.log('anak 2 siap') }
+    QtObject { Component.onCompleted: console.log('anak 3 siap') }
+
+    Component.onCompleted: console.log('induk siap, b =', b)    // b = 2
+}
+```
+
+**Bedah kode:**
+- `property int b: a * 2`: binding yang sudah terpasang ketika `onCompleted` jalan, jadi `b` bernilai 2.
+- Tiga `QtObject` anak ditambahkan lewat *default property* `data` (2.2.5).
+- Setiap objek memiliki `Component.onCompleted` sendiri. Handler ini boleh ada di objek mana pun, dan urutan menjalankannya tidak terdefinisi. Jalankan beberapa kali dan catat urutan yang Anda lihat, tetapi **jangan mengandalkannya**.
+
+**Nilai awal dan konteks (untuk objek dinamis):**
+- Argumen kedua `createObject` adalah peta nilai awal. Nilai itu diterapkan sebelum pembuatan difinalkan, menghindari galat binding bila properti tertentu harus terisi agar binding lain bekerja.
+- Objek dibuat dalam konteks tempat `Component` dibuat. Itu yang membuat objek hasil `createObject` bisa memakai `id` dan properti dari konteks asalnya.
+- Konteks pembuatan harus hidup lebih lama daripada objek yang dibuat.
+
+**Kepemilikan.**
+
+| Cara membuat | Pemilik | Konsekuensi |
+|---|---|---|
+| Deklarasi statis di QML | Objek induk dalam dokumen | Hidup selama induknya |
+| `createObject(parent, ...)` | `parent` | Hancur bersama `parent` |
+| `createObject(null, ...)` | Referensi JavaScript | Wajib menyimpan referensi, atau GC dapat menghancurkannya. |
+| `Loader`, `Repeater` | Pabrik itu sendiri | Jangan dihancurkan manual (3.3.3) |
+
+**Opsi lain, cara memberi nilai awal pada objek dinamis:**
+
+| Cara | Kapan |
+|---|---|
+| `createObject(parent, { x: 1 })` | Dianjurkan: sebelum finalisasi |
+| `obj.x = 1` setelah dibuat | Sederhana, tetapi binding lain sempat melihat nilai kosong |
+| `{ x: Qt.binding(() => ...) }` | Nilai awal berupa binding |
+| `required property` (Fase berikut) | Memaksa pencipta mengisi nilai awal |
+
+| Kesalahan | Solusi |
+|---|---|
+| Mengakses objek tetangga di `onCompleted` dan berasumsi sudah siap | Urutan tak terdefinisi. Pakai binding atau sinyal |
+| Mengisi properti setelah objek dibuat, binding sempat salah | Berikan sebagai nilai awal |
+| `createObject(null)` lalu referensi dilepas | Simpan referensi atau beri induk |
+| Konteks pembuatan hancur lebih dulu | Pastikan ia hidup lebih lama |
+
+**Referensi:** [Component](https://doc.qt.io/qt-6/qml-qtqml-component.html) · [Dynamic QML Object Creation from JavaScript](https://doc.qt.io/qt-6/qtqml-javascript-dynamicobjectcreation.html)
+
+---
+
+### 3.3.2 `onCompleted` dan sifat urutannya
+
+*Siap bukan berarti semua orang sudah siap.*
+
+Ringkasan dari 2.2.6, ditambah yang baru:
+- `completed` bisa dipakai menjalankan skrip saat startup, setelah seluruh lingkungan QML terbentuk.
+- Bila ada beberapa `onCompleted`, urutannya tak terdefinisi. Objek A tidak boleh bergantung pada B yang "pasti sudah siap".
+- Pekerjaan berat di `onCompleted` memperlambat startup, karena aplikasi baru tampil setelah semuanya selesai.
+
+**Pola menyebar pekerjaan awal:**
+
+| Pekerjaan | Cara |
+|---|---|
+| Nilai awal sederhana | Deklarasikan sebagai properti (tanpa `onCompleted`) |
+| Langkah awal imperatif kecil | `Component.onCompleted` |
+| Pekerjaan berat yang boleh menunggu | `Qt.callLater(fn)` atau `Timer { interval: 0 }` |
+| Komponen berat yang tak langsung dibutuhkan | `Loader` (3.3.5) atau `incubateObject` (3.3.3) |
+
+**Contoh ketergantungan yang benar (tanpa mengandalkan urutan):**
+```qml
+import QtQml
+
+QtObject {
+    id: root
+    property bool siap: false
+    property string status: siap ? 'siap' : 'menunggu'
+
+    QtObject { Component.onCompleted: root.siap = true }
+    Component.onCompleted: console.log(status)
+}
+```
+Hasilnya tergantung urutan `onCompleted` (`menunggu` atau `siap`), sehingga kode seperti ini rapuh `[uji]`. Perbaikannya: jangan membaca `status` di `onCompleted`, tetapi pasang `onStatusChanged` atau `Binding` yang bereaksi kapan pun `siap` berubah. Binding bekerja tanpa peduli urutan.
+
+| Kesalahan | Solusi |
+|---|---|
+| Menganggap anak selalu siap sebelum induk (atau sebaliknya) | Urutan tak terdefinisi; gunakan binding/sinyal |
+| Banyak kerja di `onCompleted` | Tunda atau tarik ke `Loader` |
+| Menugaskan properti ber-binding di `onCompleted` | Binding terputus (2.2.8) |
+
+**Referensi:** [Component: completed()](https://doc.qt.io/qt-6/qml-qtqml-component.html#completed-signal)
+
+---
+
+### 3.3.3 Penghancuran dan `destroy()`
+
+*Membuang dengan benar sama berharganya dengan membuat dengan benar.*
+
+**Peragaan lengkap: buat, simpan, hancurkan, periksa.**
+```qml
+import QtQml
+
+QtObject {
+    id: root
+    property Component cetakan: Component {
+        QtObject {
+            property string nama: ''
+            Component.onCompleted: console.log('lahir:', nama)
+            Component.onDestruction: console.log('mati :', nama)
+        }
+    }
+    property var daftar: []
+
+    Component.onCompleted: {
+        for (const n of ['a', 'b', 'c']) {
+            const o = cetakan.createObject(root, { nama: n })
+            daftar.push(o)
+        }
+        console.log('dibuat:', daftar.length)          // 3
+        daftar[1].destroy()
+        console.log('destroy dipanggil')               // objek BELUM mati di titik ini
+    }
+
+    Timer {
+        interval: 50; running: true
+        onTriggered: {
+            try { console.log(daftar[1].nama) }
+            catch (e) { console.log('akses setelah mati:', e.name) }
+            Qt.quit()
+        }
+    }
+}
+```
+Keluaran yang diharapkan: `lahir: a`, `lahir: b`, `lahir: c`, `dibuat: 3`, `destroy dipanggil`, `mati : b`, lalu `akses setelah mati: TypeError` `[uji]`.
+
+**Bedah kode:**
+- `property Component cetakan: Component { QtObject {...} }`: *templat* objek. Satu `Component` memuat satu objek akar.
+- `cetakan.createObject(root, { nama: n })`: membuat instans dengan `root` sebagai induk, `nama` sebagai nilai awal.
+- `daftar.push(o)`: menyimpan referensi. Aman walau tak mengisi ulang properti, karena tak ada binding yang bergantung pada `daftar`.
+- `daftar[1].destroy()`: menjadwalkan penghancuran. `'destroy dipanggil'` tercetak **sebelum** `'mati : b'`, karena objek dibersihkan di antara akhir blok skrip dan frame berikutnya.
+- `Timer` 50 ms: menunggu sampai penghancuran benar-benar terjadi, lalu menguji akses ke objek mati. Jenis galat persisnya `[uji]`.
+
+**Aturan `destroy()` (dari dokumentasi):**
+- `destroy()` punya argumen opsional (bawaan 0) untuk menunda penghancuran kira-kira sekian milidetik. Contoh: `newObject.destroy(1000)`.
+- Hanya untuk objek yang **Anda buat sendiri** secara dinamis. Objek yang dibuat statis di QML tak bisa dihancurkan secara dinamis, dan mencobanya menghasilkan galat.
+```qml
+QtObject { id: statis; Component.onCompleted: statis.destroy() }    // galat (jenis pesan [uji])
+```
+- Jangan menghapus manual objek yang dibuat oleh `Loader` dan `Repeater`. Matikan lewat `Loader.active` atau ubah `source`.
+- Pada antarmuka visual, kadang cukup `opacity: 0` atau menggesernya keluar layar. Menghapus objek yang tak dipakai bermanfaat bila jumlahnya banyak.
+
+**Akses setelah mati.** Setelah `destroy()` selesai, referensi JavaScript ke objek itu tidak lagi valid. Membaca propertinya melempar galat (`TypeError` `[uji]`), atau membaca `null`. Karena itu: hapus referensi dari daftar Anda saat menghancurkan:
+```js
+const mati = daftar[1]
+daftar = daftar.filter(o => o !== mati)     // ganti array agar binding pembaca ikut berubah (3.1.5)
+mati.destroy()
+```
+
+**Pembuatan asinkron (`incubateObject`).**
+```js
+const inkubator = cetakan.incubateObject(root, { nama: 'x' })     // bawaan: asinkron
+if (inkubator.status !== Component.Ready)
+    inkubator.onStatusChanged = status => { if (status === Component.Ready) console.log(inkubator.object) }
+```
+Inkubator membuat instans tanpa membekukan UI, dengan `status`, `object`, `onStatusChanged`, dan `forceCompletion()`. Meski diminta sinkron, dalam keadaan tertentu pembuatan tetap asinkron, misalnya bila komponen pemanggilnya sendiri dibuat secara asinkron.
+
+**Membuat komponen dari berkas, dengan penanganan galat:**
+```js
+const komponen = Qt.createComponent('Sprite.qml')
+if (komponen.status === Component.Ready) {
+    const o = komponen.createObject(parent, { x: 100, y: 100 })
+    if (o === null) console.log('gagal membuat objek')
+} else if (komponen.status === Component.Error) {
+    console.log('galat memuat:', komponen.errorString())
+}
+```
+Dokumentasi menunjukkan pola ini, termasuk menyambung `komponen.statusChanged` bila berkas belum siap (jaringan). Jalur relatif diselesaikan relatif terhadap berkas tempat `Qt.createComponent()` dijalankan.
+
+**Peringatan keamanan.**
+- Objek tidak boleh dibuat dinamis dari sumber tak tepercaya, dan batasan untuk sumber QML statis berlaku sama. Rujukan: [Untrusted data](https://doc.qt.io/qt-6/untrusteddata.html) (tidak saya buka langsung).
+- `Qt.createQmlObject` sangat lambat karena mengompilasi string QML setiap kali dan mudah menghasilkan QML tak valid. Jangan merakit QML dari masukan pengguna. Itu setara menjalankan kode asing. Simpan komponen sebagai berkas, lalu sesuaikan lewat properti.
+
+**Opsi lain:**
+
+| Kebutuhan | Cara |
+|---|---|
+| Satu objek dinamis | `Component.createObject` |
+| Tanpa membekukan UI | `incubateObject` atau `Loader { asynchronous: true }` |
+| Banyak objek dari data | `Repeater`/`Instantiator` (tidak saya buka langsung) atau model |
+| Menyembunyikan saja | `visible: false`/`opacity: 0` |
+| QML dari string | **Hindari** `Qt.createQmlObject` |
+
+| Kesalahan | Solusi |
+|---|---|
+| `destroy()` pada objek statis | Pakai `Loader` atau `visible`; destroy hanya untuk yang dibuat dinamis |
+| Menghancurkan objek buatan `Loader` | Ubah `active`/`source` |
+| Memakai objek tepat setelah `destroy()` | Hapus referensi; objek baru mati kemudian |
+| Lupa memeriksa `status` dan `null` | Cek `Component.Ready` dan hasil `createObject` |
+| Konteks hancur lebih dulu | Pastikan konteks lebih panjang umurnya |
+
+**Referensi:** [Dynamic QML Object Creation: deleting objects](https://doc.qt.io/qt-6/qtqml-javascript-dynamicobjectcreation.html#deleting-objects-dynamically) · [Component: createObject, incubateObject](https://doc.qt.io/qt-6/qml-qtqml-component.html#createObject-method)
+
+---
+
+### 3.3.4 `Qt.callLater`
+
+*Kadang yang Anda butuhkan bukan menunggu, melainkan bersabar sampai giliran Anda.*
+
+**Konsep.** `Qt.callLater(fungsi, argumen...)` mendaftarkan fungsi untuk dijalankan **setelah mesin kembali ke event loop**, bukan setelah sekian detik. Pemanggilan berulang dengan fungsi yang sama dalam putaran event yang sama hanya dijalankan sekali, dengan argumen dari pemanggilan terakhir.
+
+```qml
+import QtQml
+
+QtObject {
+    property int hitung: 0
+    function muat() { hitung++ }
+    function tampil(x) { console.log('x =', x) }
+
+    Component.onCompleted: {
+        Qt.callLater(muat); Qt.callLater(muat); Qt.callLater(muat)               // fungsi sama → sekali
+        Qt.callLater(tampil, 1); Qt.callLater(tampil, 2)                          // sekali, argumen terakhir: x = 2
+        Qt.callLater(() => { hitung += 10 }); Qt.callLater(() => { hitung += 10 }) // fungsi anonim BEDA → dua kali [uji]
+        Qt.callLater(() => { console.log('hasil:', hitung); Qt.quit() })           // 1 + 20 = 21 [uji]
+    }
+}
+```
+
+**Bedah kode:**
+- `Qt.callLater(muat)` tiga kali: satu eksekusi `muat`. `hitung` bertambah satu.
+- `Qt.callLater(tampil, 1)` lalu `(tampil, 2)`: satu eksekusi, dengan argumen terakhir, yaitu `x = 2`.
+- Dua panah `() => { hitung += 10 }` yang ditulis dua kali adalah dua objek fungsi berbeda, jadi penggabungan berdasarkan identitas tidak berlaku. Keduanya berjalan, sehingga `hitung` menjadi 21 `[uji]`. Untuk penggabungan, beri **nama** fungsinya.
+- Panggilan terakhir mencetak hasil setelah semua yang tertunda jalan (urutan pendaftaran `[uji]`).
+
+**Kapan tepat dipakai:**
+
+| Situasi | Alasan |
+|---|---|
+| Beberapa properti berubah beruntun dan Anda ingin menghitung ulang sekali | Penggabungan panggilan |
+| Perlu menunda sampai tumpukan panggilan sekarang selesai | Kembali ke event loop dulu |
+| Memutus siklus handler (3.2.6) | Memindahkan koreksi ke giliran berikutnya |
+| **Bukan** untuk menunggu 1 detik | Pakai `Timer` (2.4.7) |
+
+**Kapan tidak tepat:** bila hasilnya dibutuhkan segera di baris berikutnya, atau bila urutan relatif terhadap objek lain harus pasti. `callLater` menjamin "nanti", bukan "kapan persisnya".
+
+| Kesalahan | Solusi |
+|---|---|
+| Mengira `callLater` menunda sekian milidetik | Itu `Timer` |
+| Fungsi anonim baru tiap panggilan, lalu heran tak tergabung | Beri nama dan rujuk fungsi yang sama |
+| Mengira urutan terhadap objek lain pasti | Jangan mengandalkan |
+| Menaruh kerja berat di dalamnya | Tetap berjalan di utas UI; pecah |
+
+**Referensi:** [Qt.callLater](https://doc.qt.io/qt-6/qml-qtqml-qt.html#callLater-method)
+
+---
+
+### 3.3.5 `Loader` dan objek yang dibuat tertunda
+
+*Jangan membangun rumah yang belum akan dihuni.*
+
+**Konsep.** `Loader` adalah `Item` yang memuat komponen **sesuai permintaan**. Ia berguna menunda pembuatan komponen sampai dibutuhkan, misalnya saat dibuat atas permintaan atau demi kinerja.
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 100; height: 100
+
+    Component {
+        id: halaman
+        Item {
+            Component.onCompleted: console.log('halaman: lahir')
+            Component.onDestruction: console.log('halaman: mati')
+        }
+    }
+
+    Loader {
+        id: pemuat
+        active: false
+        sourceComponent: halaman
+        onLoaded: console.log('loaded; item ada =', item !== null)
+    }
+
+    Timer { interval: 100; running: true; onTriggered: { console.log('aktifkan'); pemuat.active = true } }
+    Timer { interval: 300; running: true; onTriggered: { console.log('nonaktifkan'); pemuat.active = false } }
+    Timer { interval: 600; running: true; onTriggered: Qt.quit() }
+}
+```
+Jalankan dengan `QT_QPA_PLATFORM=offscreen qml loader.qml`. Keluaran yang diharapkan: `aktifkan`, `halaman: lahir`, `loaded; item ada = true`, `nonaktifkan`, `halaman: mati` `[uji urutan lahir dan loaded]`.
+
+**Bedah kode:**
+- `Component { id: halaman; Item {...} }`: templat. Komponen yang didefinisikan di dalam `Component` tidak dimuat sampai diminta.
+- `active: false`: bila Loader tidak aktif, mengubah `source` atau `sourceComponent` tidak menginstansiasi item sampai Loader diaktifkan. Bawaannya `true`.
+- `pemuat.active = true`: `Loader` membuat instans dari `halaman`, dan `onCompleted` di dalamnya berjalan.
+- `onLoaded`: dipancarkan saat `status` menjadi `Loader.Ready`, atau pada pemuatan awal yang berhasil. `item` adalah objek akar yang dimuat.
+- `pemuat.active = false`: item yang dimuat dilepas, tanpa mengubah `source` atau `sourceComponent`. `onDestruction` jalan.
+
+**Properti penting (dari dokumentasi 6.12):**
+
+| Properti | Perilaku |
+|---|---|
+| `source` / `sourceComponent` | Bila berubah, item sebelumnya dihancurkan. String kosong atau `undefined` membongkar item dan mengosongkan Loader. |
+| `active` | Mengaktifkan atau melepas tanpa mengubah sumber |
+| `asynchronous` | Bawaan `false`. Bila `true`, objek dibuat tersebar di beberapa frame, dan `status` menjadi `Loading` lalu `Ready`. Dipadu dengan `source`, pemuatan dan kompilasi juga di utas latar. |
+| `status` | `Null`, `Ready`, `Loading`, `Error` |
+| `item` | Objek akar yang dimuat |
+| `setSource(url, props)` | Memuat dengan nilai awal. Bila Loader tak aktif, sumber dan properti awal disimpan dan dipakai saat Loader diaktifkan. |
+
+**Catatan khusus:**
+- Bila sumber adalah berkas lokal, `status` sejak awal `Ready` (atau `Error`), dan tidak ada `onStatusChanged`, tetapi `onLoaded` tetap dipanggil. Andalkan `onLoaded`.
+- **Mendengarkan item yang dimuat:** Sinyal dari objek yang dimuat dapat diterima dengan `Connections`.
+  ```qml
+  Connections { target: pemuat.item; function onMessage(msg) { console.log(msg) } }
+  ```
+  `target` mengikuti `item`, jadi otomatis berganti saat item baru dimuat (3.2.3).
+- **Ukuran:** Bila ukuran Loader tak ditentukan, ia menyesuaikan item yang dimuat. Bila ditentukan atau di-anchor, item yang dimuat diubah ukurannya mengikuti Loader.
+- **Fokus:** Loader adalah *focus scope*, jadi `focus: true` perlu diset pada Loader agar anaknya bisa mendapat fokus aktif.
+- **Loader di dalam delegate:** Konteks `index` milik delegate tidak terlihat oleh komponen yang dibuat Loader dengan konteks pembuatan lain. Tiga jalan keluar: pindahkan komponen ke dalam (inline), pindahkan ke berkas terpisah, atau kirim sebagai properti Loader (`property int modelIndex: index`).
+
+**Opsi lain, memuat tertunda:**
+
+| Kebutuhan | Pilihan |
+|---|---|
+| Satu komponen sesuai permintaan | `Loader` |
+| Satu per satu dari kode | `Component.createObject` / `incubateObject` |
+| Daftar komponen dari model | `Repeater`/`ListView` (tidak saya buka langsung) |
+| Tanpa tampilan (logika) | `Loader` juga bisa memuat objek non-visual (sejak QtQuick 2.0) |
+| Sekadar sembunyikan | `visible: false` |
+
+| Kesalahan | Solusi |
+|---|---|
+| Mengakses `loader.item` sebelum selesai | Tunggu `onLoaded` atau periksa `status` |
+| Menghancurkan objek hasil Loader manual | Ubah `active`/`source` |
+| `index` tak terlihat dalam Loader di delegate | Kirim sebagai properti Loader |
+| Berharap tampilan tak berkedip saat `asynchronous` | Bungkus dengan `visible: status === Loader.Ready` |
+| Loader menarik fokus yang tak terduga | Atur `focus` secara eksplisit |
+
+**Referensi:** [Loader](https://doc.qt.io/qt-6/qml-qtquick-loader.html) · [Qt: dynamic object creation](https://doc.qt.io/qt-6/qml-qtqml-qt.html#dynamic-object-creation)
+
+---
+
+### 3.3.6 Pola aman siklus hidup dan diagnosis `[TAMBAHAN]`
+
+*Setiap yang dibuat harus punya pasangan: siapa yang membuangnya.*
+
+**Pasangan yang harus seimbang:**
+
+| Dibuat | Dibuang oleh |
+|---|---|
+| `createObject(parent, ...)` | Induk, atau `destroy()` Anda sendiri |
+| `createObject(null, ...)` | Anda: simpan referensi, lalu `destroy()` |
+| `Loader` | `active: false`, atau mengubah `source` |
+| `signal.connect(fn)` | `signal.disconnect(fn)` (3.2.4) |
+| `Timer { running: true }` | `running: false`, atau objek induk hancur |
+| Handler yang menyimpan referensi objek | Putus di `Component.onDestruction` |
+
+**Pola bersih-bersih:**
+```qml
+Item {
+    property var penanda: () => { /* ... */ }
+    Component.onCompleted: sumber.nilaiChanged.connect(penanda)
+    Component.onDestruction: sumber.nilaiChanged.disconnect(penanda)
+}
+```
+(`property var` untuk fungsi `[uji]`.) Karena objek hasil `createObject` hanya bisa dipakai selama konteks pembuatannya hidup, pastikan objek dinamis yang merujuk konteks lain dibuang lebih dulu.
+
+**Diagnosis:**
+
+| Gejala | Dugaan | Alat |
+|---|---|---|
+| "Cannot read property … of null" | Memakai objek yang sudah dihancurkan | `console.trace()` di tempat terjadi |
+| Binding/handler objek dinamis diam | Konteks pembuatan sudah hilang | Periksa umur pencipta |
+| Objek lenyap tanpa sebab | `createObject(null)` tanpa referensi (kena GC) | Simpan referensi, atau beri induk |
+| Startup lambat | Terlalu banyak kerja di `onCompleted` | Tunda, `Loader`, `incubateObject` |
+| `destroy()` galat | Objek dibuat statis | Pakai `Loader` atau `visible` |
+| Objek tak kunjung hilang | Pemilik masih memegang | Cek induk dan referensi |
+
+**Rutinitas:** catat `onCompleted` dan `onDestruction` dengan `console.log` saat mengembangkan komponen, lalu jalankan skenario "dibuat, dipakai, dibuang" dan pastikan jumlahnya seimbang (`console.count`, Modul 2.4.4).
+
+---
+
+## E. Latihan 15 menit dan kunci jawaban
+
+**Latihan (dari kurikulum):** jalankan contoh, tambahkan dua anak lagi, dan amati bahwa Anda tidak boleh berasumsi urutan keluarannya.
+
+```qml
+import QtQml
+
+QtObject {
+    Component.onCompleted: console.log('induk siap')
+    Component.onDestruction: console.log('induk dihancurkan')
+
+    QtObject { Component.onCompleted: console.log('anak 1 siap') }
+    QtObject { Component.onCompleted: console.log('anak 2 siap') }
+    QtObject { Component.onCompleted: console.log('anak 3 siap') }
+
+    Timer { interval: 50; running: true; onTriggered: Qt.quit() }
+}
+```
+Jalankan `for i in 1 2 3 4 5; do qml -a core urutan.qml 2>&1 | tr '\n' '|'; echo; done`. Bandingkan urutan keluaran antar-putaran. Dokumentasi menyatakan urutan tak terdefinisi, jadi jangan menggantungkan logika pada urutan yang tampak stabil di mesin Anda. Apakah `'induk dihancurkan'` tercetak saat `Qt.quit()` `[uji]`.
+
+**Cek pemahaman:** *Kapan `Qt.callLater` lebih tepat daripada memanggil fungsi langsung?* Bila Anda ingin menggabungkan beberapa pemicu beruntun menjadi satu eksekusi (misalnya beberapa properti berubah dan Anda cukup menghitung ulang sekali), atau menunda sampai tumpukan panggilan sekarang selesai. Bukan untuk menunggu durasi tertentu, itu tugas `Timer`.
+
+**Pertanyaan tambahan:**
+1. *Mengapa `destroy()` pada objek statis menghasilkan galat?* Karena dokumentasi hanya mengizinkan penghancuran objek yang dibuat dinamis.
+2. *Mengapa `'destroy dipanggil'` tercetak sebelum `'mati : b'`?* Karena objek dibersihkan belakangan, di antara akhir blok skrip dan frame berikutnya.
+3. *Mengapa objek tanpa induk bisa hilang sendiri?* Jika tak ada referensi, pengumpul sampah dapat menghancurkannya.
+4. *Apa yang terjadi bila `active: false` pada Loader yang sudah memuat?* Item dilepas, `onDestruction` jalan, `source`/`sourceComponent` tetap.
+
+**Tantangan:** ubah contoh `Loader` agar `asynchronous: true`, tambahkan `visible: status === Loader.Ready`, lalu catat urutan `status` (`Loading` lalu `Ready`) dengan `onStatusChanged`. Setelah itu coba `setSource('Lain.qml', { nama: 'x' })` saat `active: false` untuk membuktikan properti awal tersimpan sampai Loader diaktifkan.
+
+---
+
+## F. Glosarium Modul 3.3
+
+| Istilah | Arti |
+|---|---|
+| Lifecycle | Rangkaian dibuat, hidup, dihancurkan |
+| Instansiasi | Membuat objek dari definisi komponen |
+| `Component` | Definisi komponen yang dimuat saat diminta |
+| `createObject` | Membuat instans dari `Component` dengan induk dan nilai awal |
+| Nilai awal (initial properties) | Properti yang diisi sebelum pembuatan difinalkan |
+| Konteks pembuatan (creation context) | Konteks tempat komponen dideklarasikan atau dibuat |
+| Kepemilikan | Siapa yang menentukan umur objek (induk atau referensi JS) |
+| Garbage collector (GC) | Pembebas objek JavaScript yang tak direferensikan |
+| `destroy()` | Menjadwalkan penghancuran objek dinamis |
+| `incubateObject` | Membuat instans secara asinkron |
+| `Loader` | `Item` yang memuat komponen sesuai permintaan |
+| `active` | Saklar `Loader` untuk membuat atau melepas item |
+| Asinkron | Dikerjakan tersebar, tanpa membekukan UI |
+| `Qt.callLater` | Menjalankan fungsi setelah kembali ke event loop, dengan penggabungan |
+| Focus scope | Pembatas fokus (Loader adalah salah satunya) |
+
+---
+
+## G. Hubungan dengan modul lain
+
+| Modul | Hubungan |
+|---|---|
+| **2.2.6, 2.4.3** | Dasar `onCompleted` dan `Qt.callLater` yang diperdalam di sini |
+| **3.1** Property Binding | Binding sudah terpasang saat `onCompleted`; nilai awal vs `Qt.binding` |
+| **3.2** Signal | `disconnect` saat `onDestruction`; `Connections` ke `Loader.item` |
+| **3.4** Scope, ID, Konteks | Konteks pembuatan menentukan `id` dan properti yang terlihat oleh objek dinamis |
+| **Fase View/Delegate** | `Loader` di delegate dan konteks `index` |
+| **Keamanan (13.x)** | Larangan membuat objek dari sumber tak tepercaya |
+
+**Prasyarat Modul 3.4:** menguasai 3.3.1 sampai 3.3.3, terutama konsep konteks pembuatan. Bagian 3.3.5 sangat dianjurkan sebelum membangun navigasi halaman.
+
+---
+
+**Catatan tautan:** halaman Qt yang saya buka langsung adalah Component, Dynamic QML Object Creation from JavaScript, dan Loader (6.12). `Qt.callLater` saya baca dari halaman objek `Qt` pada putaran sebelumnya. Halaman Untrusted Data, `Repeater`, `Instantiator`, dan inline components muncul sebagai tautan di dalam halaman-halaman itu tetapi tidak saya buka satu per satu. Bila ada yang tidak terbuka, kabari saya.
+
+Modul 3.3 selesai. Lanjut ke **Modul 3.4 — Scope, ID, dan Konteks**? Sebagian isinya sudah ada di 2.2.4, jadi 3.4 akan fokus pada shadowing, context property, dan kebiasaan akses berkualifikasi.
 
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
