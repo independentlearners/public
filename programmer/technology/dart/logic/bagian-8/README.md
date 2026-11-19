@@ -1,5 +1,3 @@
-bagian 8
-
 <details>
   <summary>📃 Daftar Isi</summary>
 

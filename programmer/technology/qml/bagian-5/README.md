@@ -1767,8 +1767,1110 @@ Perhatikan bahwa kotak pertama memakai `width` eksplisit bersama satu jangkar ho
 
 ---
 
-**Catatan tautan:** halaman Positioning with Anchors (6.12) saya buka langsung. Fakta tentang `alignWhenCentered`, `implicitWidth`, dan `dumpItemTree()` saya baca lewat hasil pencarian dari dokumentasi Item beberapa versi Qt (5.x dan 6.5) serta kode sumber Qt, sehingga tandai `[uji]` pada versi Anda. Bunyi pesan peringatan `Cannot anchor to an item that isn't a parent or sibling` dan `Cannot specify left, right, and horizontalCenter anchors` saya tulis dari ingatan akan kode sumber Qt dan tidak saya verifikasi dalam sesi ini. Halaman AnchorChanges dan Item Positioners muncul sebagai tautan di halaman yang saya buka tetapi tidak saya buka satu per satu. Bila ada yang tidak terbuka, kabari saya.
+**Catatan tautan:** Fakta pada halaman Positioning with Anchors (6.12) tentang `alignWhenCentered`, `implicitWidth`, dan `dumpItemTree()` yang mana materi disini diambil lewat hasil pencarian dari dokumentasi Item beberapa versi Qt (5.x dan 6.5) serta kode sumber Qt, sehingga tandai `[uji]` pada versi Anda. Bunyi pesan peringatan `Cannot anchor to an item that isn't a parent or sibling` dan `Cannot specify left, right, and horizontalCenter anchors` ditulis dari kode sumber Qt dan belum verifikasi dalam sesi ini. Halaman AnchorChanges dan Item Positioners muncul sebagai tautan di halaman yang telah ditinjau tetapi belum diuji satu per satu.
 
+# Fase 4 · Modul 4.3 — Resource: Gambar, Font, dan URL
+
+*Melanjutkan Modul 4.2.*
+
+<!-- Saya membaca bagian Modul 4.3 dari kurikulum Fase 4 yang Anda kirim, lalu mengaudit isinya terhadap dokumentasi Qt 6.12 (Image, tipe `url`, `qt_add_qml_module`, Building a QML application) dan dokumentasi Qt untuk `FontLoader` dan `QImageReader`. Seperti sebelumnya, saya tidak menjalankan kode QML dan CMake ini pada Qt, jadi bagian bertanda `[uji]` perlu Anda buktikan sendiri. Satu pengecualian: skrip Python pembuat PNG di bagian C sudah saya jalankan dan periksa (validitas berkas, ukuran, dan hitungan memori). -->
+
+---
+
+## A. Audit singkat
+
+**Terverifikasi:**
+
+- URL relatif dihitung dari URL komponen yang memuatnya. Contoh kurikulum benar.
+- Di dalam modul QML, `RESOURCES` pada `qt_add_qml_module` menaruh berkas di bawah akar path yang sama dengan berkas QML, sehingga path relatif dari berkas QML tetap berlaku di dalam binary.
+- `Image.asynchronous` hanya berlaku untuk berkas di filesystem lokal. Gambar dari jaringan selalu dimuat asinkron.
+- `sourceSize` membatasi jumlah piksel yang disimpan di memori, bukan sekadar ukuran gambar saat digambar. Bila hanya satu dimensi diisi, dimensi lain mengikuti rasio asli.
+- Contoh kurikulum `Image { source; asynchronous; fillMode: Image.PreserveAspectFit; sourceSize.width: 128 }` sah.
+- `FontLoader` memuat font dari nama atau URL, mengisi `name` otomatis dari `source`, dan melaporkan `status`.
+- `Qt.resolvedUrl` mengubah string relatif menjadi `url` absolut menurut berkas pemanggil.
+
+**Perlu dikoreksi atau dilengkapi:**
+
+1. **Skema `qrc`.** Dokumentasi tipe `url` menyatakan bahwa untuk berkas di sistem resource Qt, QML memerlukan `qrc:///`, bukan `:/`. Kurikulum tidak menyebutnya. Masuk 4.3.5.
+2. **Prefix resource bergantung pada kebijakan CMake.** Path `qrc:/qt/qml/<URI>` hanya berlaku bila `qt_standard_project_setup(REQUIRES 6.5)` mengaktifkan kebijakan QTP0001. Kurikulum langsung ke `RESOURCES` tanpa menyebut ini. Masuk 4.3.6, yang juga **memerlukan Modul 10.1** (C++ dan CMake).
+3. **`asynchronous` bukan obat segalanya.** Ia hanya untuk berkas lokal, gambar baru terlihat setelah siap, dan tata letak tak boleh bergantung pada gambar yang belum ada. `status` dan `progress` perlu dibaca. Diperluas di 4.3.2.
+4. **`cache` ada di judul tetapi tak dijelaskan.** Gambar dibagikan: beberapa `Image` dengan `source` sama memakai satu salinan. `cache: false` berguna untuk gambar besar agar tak menyingkirkan gambar UI kecil dari cache. Masuk 4.3.2.
+5. **`sourceSize` hanya dikaitkan dengan memori.** Dokumentasi juga menyatakan pengaruhnya pada SVG (ukuran raster), pada JPEG (seluruh gambar tak pernah dimuat), pada `implicitWidth`, dan bahwa mengubahnya saat berjalan memuat ulang sumber. Diperluas di 4.3.3.
+6. **Membandingkan `source` dengan string selalu salah.** `logo.source == 'pics/logo.png'` bernilai `false` karena nilai sudah menjadi objek URL. Bandingkan dengan `Qt.resolvedUrl(...)`. Masuk 4.3.5.
+7. **Font dari URL jarang diperingatkan.** Font adalah berkas biner yang diurai oleh pustaka font. Untuk keamanan, utamakan font yang dikemas di resource. Masuk 4.3.4 dan 4.3.8.
+8. **Latihan memori perlu cara mengukur.** Saya sediakan skrip pembuat gambar uji dan cara membaca memori proses dari terminal (`VmRSS`).
+9. **Varian gambar dan batas sumber daya tak dibahas.** Sintaks `@nx` untuk layar beresolusi tinggi, SVG, `AnimatedImage`, EXIF (`autoTransform`), deteksi ekstensi otomatis, dan batas alokasi gambar bawaan Qt (256 MB). TAMBAHAN 4.3.7 dan 4.3.8.
+
+**TAMBAHAN:**
+
+- **4.3.7** Varian dan format: `@nx`, SVG, `AnimatedImage`, EXIF, deteksi ekstensi.
+- **4.3.8** Keamanan dan batas sumber daya.
+
+---
+
+## B. Daftar isi Modul 4.3 (diperbarui)
+
+- **4.3.1** `Image` dan `fillMode` `[diperluas]`
+- **4.3.2** Pemuatan asinkron, status, dan cache `[diperluas]`
+- **4.3.3** `sourceSize` dan memori `[diperluas]`
+- **4.3.4** `FontLoader` dan `font` `[diperluas]`
+- **4.3.5** URL dan `Qt.resolvedUrl` `[diperluas]`
+- **4.3.6** `RESOURCES` di CMake (prasyarat: Modul 10.1) `[diperluas]`
+- **4.3.7** Varian dan format `[TAMBAHAN]`
+- **4.3.8** Keamanan dan batas sumber daya `[TAMBAHAN]`
+- Latihan dan kunci jawaban · Glosarium · Hubungan dengan modul lain
+
+**Urutan belajar yang disarankan:** 4.3.1 → 4.3.2 → 4.3.3 → 4.3.4 → 4.3.5 → 4.3.7 → 4.3.8, lalu kerjakan Modul 10.1 sebelum 4.3.6.
+
+---
+
+## C. Peta besar
+
+```
+ source: 'images/logo.png'                     (sekadar teks)
+      |  url: relatif dihitung dari URL berkas QML yang menulisnya
+      v
+ qrc:/qt/qml/Lab43/images/logo.png             (di dalam binary; atau file:///..., https://...)
+      |  dimuat: sinkron | asynchronous | jaringan (selalu asinkron)
+      v
+ dekode -> QImage (lebar x tinggi x 4 byte)    <- sourceSize membatasi di titik ini
+      |  cache bersama: satu salinan per sumber
+      v
+ tekstur GPU -> digambar oleh scene graph
+```
+
+**Filosofinya:** sebuah resource adalah dependensi dari luar kode Anda. Ia harus dipetakan (dari mana asalnya), dibatasi (seberapa besar ia boleh jadi), dan diverifikasi (apakah ia ada dan dapat dibaca). Aplikasi yang lalai pada salah satunya tampil rusak di satu mesin dan baik-baik saja di mesin lain, atau lebih buruk, mengonsumsi memori tanpa batas dari berkas yang tak Anda kendalikan.
+
+**Persiapan laboratorium.** Simpan skrip ini sebagai `gen_png.py`. Ia membuat PNG dengan pustaka standar Python saja, jadi tak perlu mengunduh apa pun. Polos secara bawaan, atau papan catur 20 piksel bila diberi argumen `papan`.
+
+```python
+#!/usr/bin/env python3
+# python3 gen_png.py nama.png LEBAR TINGGI          -> warna polos
+# python3 gen_png.py nama.png LEBAR TINGGI papan    -> papan catur 20 px
+import sys, zlib, struct
+
+def chunk(tipe, data):
+    c = struct.pack('>I', len(data)) + tipe + data
+    return c + struct.pack('>I', zlib.crc32(tipe + data) & 0xffffffff)
+
+def baris(y, lebar, papan):
+    if not papan:
+        return b'\x00' + bytes((255, 140, 0)) * lebar
+    px = [bytes((255, 140, 0)) if (x // 20 + y // 20) % 2 == 0 else bytes((40, 40, 40))
+          for x in range(lebar)]
+    return b'\x00' + b''.join(px)
+
+def buat(nama, lebar, tinggi, papan=False):
+    z = zlib.compressobj(6)
+    idat = b''.join(z.compress(baris(y, lebar, papan)) for y in range(tinggi)) + z.flush()
+    png = (b'\x89PNG\r\n\x1a\n'
+           + chunk(b'IHDR', struct.pack('>IIBBBBB', lebar, tinggi, 8, 2, 0, 0, 0))
+           + chunk(b'IDAT', idat) + chunk(b'IEND', b''))
+    with open(nama, 'wb') as f:
+        f.write(png)
+
+if __name__ == '__main__':
+    nama, lebar, tinggi = sys.argv[1], int(sys.argv[2]), int(sys.argv[3])
+    buat(nama, lebar, tinggi, len(sys.argv) > 4 and sys.argv[4] == 'papan')
+    print(nama, lebar, 'x', tinggi)
+```
+
+```bash
+mkdir -p lab43 && cd lab43
+python3 ../gen_png.py lebar.png 200 100 papan     # 487 byte di disk
+python3 ../gen_png.py logo.png 64 64              # 176 byte
+python3 ../gen_png.py besar.png 6000 4000         # 79.884 byte di disk
+file besar.png                                    # PNG image data, 6000 x 4000
+```
+
+Saya sudah menjalankan ketiganya dan memeriksa bahwa hasilnya PNG sah. Perhatikan `besar.png`: hanya sekitar 80 KB di disk, tetapi 6000 × 4000 × 4 byte = 96.000.000 byte, kira-kira 91,6 MiB, begitu didekode di memori. Ketimpangan inilah yang dibahas di 4.3.3 dan 4.3.8.
+
+**Cara menjalankan contoh:** `QT_QPA_PLATFORM=offscreen qml nama.qml` dari direktori `lab43`, agar path relatif ditemukan. Berkas visual: `qml nama.qml`.
+
+---
+
+## D. Materi
+
+### 4.3.1 `Image` dan `fillMode`
+
+*Satu gambar kecil di tempat yang tepat lebih berharga daripada seribu piksel yang tak terpakai.*
+
+**Konsep.** `Image` menampilkan gambar dari sebuah URL (`source`). Ia menerima format standar yang didukung Qt: bitmap seperti PNG dan JPEG, dan format vektor seperti SVG. Untuk gambar beranimasi, dokumentasi menyebut `AnimatedSprite` dan `AnimatedImage` (4.3.7).
+
+Aturan ukuran menurut dokumentasi: bila `width` dan `height` tak ditentukan, `Image` memakai ukuran gambar yang dimuat. Bila ditentukan, gambar diskalakan ke ukuran itu secara bawaan. `fillMode` mengubah perilaku tersebut.
+
+| `fillMode` | Perilaku |
+| --- | --- |
+| `Image.Stretch` (bawaan) | Gambar diskalakan agar pas |
+| `Image.PreserveAspectFit` | Diskalakan seragam agar muat tanpa terpotong |
+| `Image.PreserveAspectCrop` | Diskalakan seragam agar memenuhi area, terpotong bila perlu |
+| `Image.Tile` | Digandakan horizontal dan vertikal |
+| `Image.TileVertically` | Direntangkan horizontal, diulang vertikal |
+| `Image.TileHorizontally` | Direntangkan vertikal, diulang horizontal |
+| `Image.Pad` | Tidak ditransformasi |
+
+Dua catatan dokumentasi: `clip` bawaannya `false`, sehingga pada `PreserveAspectCrop` item bisa menggambar di luar batasnya kecuali Anda menyetel `clip: true`. Dan `paintedWidth` serta `paintedHeight` melaporkan ukuran yang benar-benar digambar, yang bisa lebih kecil atau lebih besar daripada `width` dan `height` pada mode Fit dan Crop.
+
+**Peragaan 1: angka (tanpa jendela).**
+
+```qml
+import QtQuick
+
+Item {
+    Image { id: s; source: 'lebar.png'; width: 130; height: 100; fillMode: Image.Stretch }
+    Image { id: f; source: 'lebar.png'; width: 130; height: 100; fillMode: Image.PreserveAspectFit }
+    Image { id: c; source: 'lebar.png'; width: 130; height: 100; fillMode: Image.PreserveAspectCrop }
+
+    Timer {
+        interval: 300; running: true
+        onTriggered: {
+            console.log('implisit :', s.implicitWidth, s.implicitHeight)    // 200 100
+            console.log('stretch  :', s.paintedWidth, s.paintedHeight)      // 130 100
+            console.log('fit      :', f.paintedWidth, f.paintedHeight)      // 130 65
+            console.log('crop     :', c.paintedWidth, c.paintedHeight)      // 200 100
+            Qt.quit()
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml fillmode.qml
+```
+
+Dugaan keluaran: `200 100`, `130 100`, `130 65`, dan `200 100` `[uji]`.
+
+**Bedah kode:**
+
+- `source: 'lebar.png'`: URL relatif. Dihitung dari lokasi berkas QML ini (4.3.5).
+- `width: 130; height: 100`: kotak tampilan. Gambarnya sendiri berukuran 200 × 100, rasio 2 : 1.
+- `Image.Stretch`: gambar dipaksa pas ke 130 × 100, jadi `paintedWidth` dan `paintedHeight` sama dengan kotak.
+- `Image.PreserveAspectFit`: skala seragam terkecil yang membuat gambar muat: min(130 / 200, 100 / 100) = 0,65. Hasilnya 130 × 65, dengan ruang kosong di atas dan bawah.
+- `Image.PreserveAspectCrop`: skala seragam terbesar yang membuat gambar memenuhi kotak: max(0,65, 1) = 1. Hasilnya 200 × 100, lebih lebar daripada kotak 130, dan bagian lebihnya terpotong bila `clip: true`.
+- `implicitWidth` dan `implicitHeight`: ukuran alami gambar (200 × 100), tak berubah oleh `width` dan `height` (4.2.2).
+- `Timer`: gambar lokal dimuat sinkron, tetapi pengukuran sebaiknya dibaca setelah jeda singkat (3.3).
+
+**Peragaan 2: lihat bedanya** (dengan jendela).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 460; height: 140; color: '#202020'
+
+    Image { x: 10;  y: 20; width: 130; height: 100; source: 'lebar.png'; fillMode: Image.Stretch }
+    Image { x: 160; y: 20; width: 130; height: 100; source: 'lebar.png'; fillMode: Image.PreserveAspectFit }
+    Image { x: 310; y: 20; width: 130; height: 100; source: 'lebar.png'; fillMode: Image.PreserveAspectCrop; clip: true }
+}
+```
+
+Dugaan: papan catur kiri tampak melar, tengah utuh dengan jalur kosong di atas dan bawah, kanan terpotong di tepi kiri dan kanan `[uji]`.
+
+**Opsi lain, menampilkan gambar pada kotak berukuran tetap:**
+
+| Kebutuhan | Pilihan | Catatan |
+| --- | --- | --- |
+| Gambar utuh tanpa distorsi | `PreserveAspectFit` | Bisa menyisakan ruang kosong |
+| Kotak penuh tanpa ruang kosong | `PreserveAspectCrop` + `clip: true` | Sebagian gambar hilang; `clip` punya biaya (4.1.4) |
+| Ubin berulang | `Tile`, `TileHorizontally`, `TileVertically` | Tekstur latar |
+| Tanpa penskalaan | `Pad` | Ukuran asli |
+| Sudut membulat | `Rectangle` + efek penutup (fase lanjut) | Lebih mahal |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| `PreserveAspectCrop` tanpa `clip` lalu gambar meluap | Setel `clip: true`, atau jaga ukuran agar tak meluap |
+| Mengisi `width` dan `height` dengan rasio yang salah lalu heran gambar melar | Pakai `PreserveAspectFit`, atau hitung rasio |
+| Mengandalkan `width` untuk menurunkan memori | `width` hanya menskala tampilan. Pakai `sourceSize` (4.3.3) |
+
+**Referensi:** [Image](https://doc.qt.io/qt-6/qml-qtquick-image.html) · [Qt Quick Examples: Image Elements](https://doc.qt.io/qt-6/qtquick-imageelements-example.html)
+
+---
+
+### 4.3.2 Pemuatan asinkron, status, dan cache
+
+*Antarmuka yang tak membeku saat menunggu adalah antarmuka yang dihormati penggunanya.*
+
+**Konsep.** Menurut dokumentasi:
+
+- Secara bawaan, gambar yang tersedia secara lokal dimuat **segera**, dan antarmuka terblokir sampai selesai. Untuk gambar besar, `asynchronous: true` memuatnya di thread berprioritas rendah.
+- `asynchronous` hanya berlaku untuk berkas di filesystem lokal. Gambar dari jaringan selalu dimuat asinkron, dengan `progress` dan `status` yang diperbarui.
+- Gambar di-*cache* dan dibagi secara internal: bila beberapa `Image` punya `source` yang sama, hanya satu salinan dimuat.
+- `cache` bernilai `true` secara bawaan. Menyetelnya `false` berguna untuk gambar besar agar tak menyingkirkan gambar UI kecil dari cache.
+- `status` bernilai `Image.Null`, `Image.Loading`, `Image.Ready`, atau `Image.Error`. `progress` berjalan dari 0.0 sampai 1.0.
+- Sejak Qt 6.8, `retainWhileLoading: true` mempertahankan gambar lama sampai yang baru siap saat `source` diganti dan pemuatan asinkron, sehingga tak berkedip. Harganya sedikit memori tambahan.
+
+**Peragaan 1: urutan status.**
+
+```qml
+import QtQuick
+
+Item {
+    function nama(s) {
+        return s === Image.Ready ? 'Ready'
+             : s === Image.Loading ? 'Loading'
+             : s === Image.Error ? 'Error' : 'Null'
+    }
+
+    Image {
+        source: 'besar.png'; asynchronous: true; sourceSize.width: 600
+        onStatusChanged: console.log('async  :', nama(status))
+    }
+    Image {
+        source: 'tidak-ada.png'
+        onStatusChanged: console.log('hilang :', nama(status))
+    }
+    Image {
+        source: 'logo.png'
+        onStatusChanged: console.log('lokal  :', nama(status))
+    }
+
+    Timer { interval: 1500; running: true; onTriggered: Qt.quit() }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml status.qml
+```
+
+Dugaan keluaran: `async  : Loading` lalu `async  : Ready`; `hilang : Error` (disertai peringatan bahwa berkas tak dapat dibuka); `lokal  : Ready`. Urutan antarbaris tak dijamin `[uji]`.
+
+**Bedah kode:**
+
+- `function nama(s)`: fungsi bantu yang menerjemahkan nilai `status` menjadi teks. `Image.Ready` dan kawan-kawannya adalah konstanta enumerasi milik tipe `Image`.
+- `onStatusChanged`: handler yang jalan setiap `status` berubah. Di dalam handler, `status` adalah milik `Image` itu sendiri (3.4.1).
+- `asynchronous: true`: pemuatan berjalan di thread terpisah, jadi kita melihat `Loading` sebelum `Ready`.
+- `sourceSize.width: 600`: membatasi piksel yang disimpan (4.3.3).
+- Gambar tak ada: statusnya langsung `Error`, tanpa `Loading`, karena berkas lokal diperiksa sinkron.
+- `Timer ... Qt.quit()`: memberi waktu gambar asinkron selesai, lalu keluar.
+
+**Peragaan 2: gambar cadangan saat gagal.**
+
+```qml
+Image {
+    id: avatar
+    readonly property url bawaan: Qt.resolvedUrl('avatar-bawaan.png')
+    source: 'avatar-pengguna.png'
+    onStatusChanged: if (status === Image.Error && source != bawaan) source = bawaan
+}
+```
+
+- `readonly property url bawaan`: gambar cadangan, diubah menjadi URL absolut agar dapat dibandingkan dengan `source`.
+- `source != bawaan`: pengaman agar tak berputar tanpa akhir bila gambar cadangan pun tak ada. Keduanya bertipe `url`, jadi perbandingannya sah (4.3.5).
+- `source = bawaan` di dalam handler: penugasan imperatif yang memutus binding `source` (3.1.2). Bila `source` aslinya berupa binding, pakai pola lain, misalnya properti perantara.
+
+**Progres untuk gambar jaringan:** `Text { text: Math.round(gambar.progress * 100) + '%' }` mengikuti `progress` secara reaktif. Tak dapat diuji offline, jadi `[uji]`.
+
+**Opsi lain, strategi pemuatan:**
+
+| Cara | Kapan |
+| --- | --- |
+| Bawaan (sinkron) | Gambar kecil yang selalu dibutuhkan saat tampil |
+| `asynchronous: true` | Gambar besar di filesystem lokal |
+| Sumber jaringan | Selalu asinkron; pantau `progress` dan `status` |
+| `Loader { active: ... }` | Hindari membuat `Image` sampai dibutuhkan (3.3.5) |
+| `retainWhileLoading: true` | Ganti `source` tanpa berkedip (Qt 6.8 ke atas) |
+| `cache: false` | Gambar besar atau sekali pakai |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengira `asynchronous` berlaku untuk jaringan | Jaringan selalu asinkron; propertinya hanya untuk lokal |
+| Tata letak bergantung pada ukuran gambar yang belum siap | Tunggu `status === Image.Ready`, atau tentukan ukuran sendiri |
+| Tak menangani `Image.Error` | Sediakan gambar cadangan dan catat galatnya |
+| Memuat banyak gambar besar sinkron saat startup | Pakai `asynchronous` dan `Loader` |
+| Gambar besar menyingkirkan ikon kecil dari cache | `cache: false` pada gambar besar |
+
+**Referensi:** [Image: Performance, asynchronous, cache, status](https://doc.qt.io/qt-6/qml-qtquick-image.html) · [Qt Quick Examples: Image Elements](https://doc.qt.io/qt-6/qtquick-imageelements-example.html)
+
+---
+
+### 4.3.3 `sourceSize` dan memori
+
+*Piksel yang tak pernah tampak tetap membayar sewa di memori.*
+
+**Konsep.** `width` dan `height` hanya menskala **penggambaran** gambar. `sourceSize` menetapkan jumlah piksel maksimum yang **disimpan** untuk gambar yang dimuat, sehingga gambar besar tak memakai memori lebih dari yang perlu. Dokumentasi 6.12 menegaskan beberapa hal:
+
+- Bila ukuran asli gambar lebih besar daripada `sourceSize`, gambar diskalakan turun saat dimuat.
+- Bila hanya satu dimensi diisi (lebih dari 0), dimensi lain mengikuti rasio asli.
+- Bila keduanya diisi, gambar diskalakan turun agar muat di dalam ukuran itu dengan rasio terjaga (untuk `PreserveAspectCrop` dan `PreserveAspectFit`, ke ukuran optimal untuk pemotongan atau pemuatan).
+- Ukuran sebenarnya setelah penskalaan terbaca lewat `implicitWidth` dan `implicitHeight`.
+- Untuk gambar vektor (SVG), `sourceSize` menentukan ukuran gambar yang dimuat tanpa memedulikan ukuran bawaannya. Hindari mengubahnya saat berjalan karena merender SVG itu lambat.
+- Untuk gambar non-skalar seperti JPEG, hasilnya tak lebih besar daripada nilai itu, dan untuk beberapa format (saat ini hanya JPEG) seluruh gambar tak pernah benar-benar dimuat ke memori.
+- Mengubah `sourceSize` saat berjalan memuat ulang sumbernya, bahkan dari jaringan bila tak ada di cache disk. Mengosongkannya ke ukuran alami dilakukan dengan `undefined`.
+
+**Rumus kasar.** Gambar yang telah didekode umumnya menempati lebar × tinggi × 4 byte (satu piksel 32-bit), terlepas dari ukuran berkasnya di disk `[uji]`.
+
+| Gambar | Piksel | Memori kira-kira |
+| --- | --- | --- |
+| 6000 × 4000 | 24.000.000 | 91,6 MiB |
+| 1920 × 1080 | 2.073.600 | 7,9 MiB |
+| 600 × 400 | 240.000 | 0,9 MiB |
+
+**Peragaan 1: ukuran implisit (tanpa jendela).**
+
+```qml
+import QtQuick
+
+Item {
+    Image { id: penuh; source: 'besar.png' }
+    Image { id: kecil; source: 'besar.png'; sourceSize.width: 600 }
+    Image { id: skala; source: 'besar.png'; width: 600; height: 400 }
+
+    Timer {
+        interval: 800; running: true
+        onTriggered: {
+            console.log('penuh :', penuh.implicitWidth, penuh.implicitHeight)     // 6000 4000
+            console.log('kecil :', kecil.implicitWidth, kecil.implicitHeight)     // 600 400
+            console.log('skala :', skala.implicitWidth, skala.implicitHeight,
+                        skala.width, skala.height)                              // 6000 4000 600 400
+            Qt.quit()
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml sourcesize.qml
+```
+
+Dugaan keluaran: `6000 4000`, `600 400`, lalu `6000 4000 600 400` `[uji]`.
+
+**Bedah kode:**
+
+- `Image { source: 'besar.png' }`: tanpa batas, gambar dimuat dalam ukuran penuh, 6000 × 4000.
+- `sourceSize.width: 600`: hanya lebar diisi, sehingga tinggi mengikuti rasio (4000 × 600 / 6000 = 400). Gambar disimpan di memori sebagai 600 × 400.
+- `width: 600; height: 400` pada `skala`: tampilannya sama kecilnya, tetapi `implicitWidth` dan `implicitHeight` tetap 6000 × 4000. Artinya seluruh gambar penuh tetap dimuat. Inilah beda `width` dan `sourceSize`.
+- `implicitWidth`, `implicitHeight`: ukuran gambar setelah dimuat, sesuai dokumentasi.
+
+**Peragaan 2: ukur memori dari terminal.**
+
+```bash
+cat > penuh.qml <<'EOF'
+import QtQuick
+Image { source: 'besar.png' }
+EOF
+cat > kecil.qml <<'EOF'
+import QtQuick
+Image { source: 'besar.png'; sourceSize.width: 600 }
+EOF
+
+for f in penuh kecil; do
+    QT_QPA_PLATFORM=offscreen qml $f.qml &
+    pid=$!
+    sleep 3
+    printf '%s: ' "$f"; grep VmRSS /proc/$pid/status
+    kill $pid; wait $pid 2>/dev/null
+done
+```
+
+Dugaan: nilai `VmRSS` untuk `penuh` lebih besar sekitar 90 MiB daripada `kecil` `[uji]`. Angka mutlaknya bergantung pada Qt, driver, dan platform.
+
+**Bedah kode:**
+
+- `cat > penuh.qml <<'EOF' ... EOF`: membuat berkas dari terminal. Tanda kutip pada `'EOF'` mencegah shell mengubah isinya.
+- `QT_QPA_PLATFORM=offscreen qml $f.qml &`: menjalankan `qml` di latar belakang tanpa jendela nyata.
+- `pid=$!`: menyimpan nomor proses yang baru dijalankan.
+- `sleep 3`: memberi waktu gambar dimuat.
+- `grep VmRSS /proc/$pid/status`: membaca memori fisik yang dipakai proses itu (*resident set size*) dari pseudo-berkas kernel.
+- `kill $pid; wait $pid`: menghentikan proses dan menunggunya selesai.
+- Bila `qml` ternyata skrip pembungkus di sistem Anda, `$!` menunjuk ke pembungkusnya dan angkanya menyesatkan `[uji]`. Periksa dengan `file $(which qml)`.
+
+**`sourceClipRect`:** bila hanya sebagian gambar yang diperlukan, kombinasikan dengan `sourceSize`.
+
+```qml
+Image {
+    source: 'peta-besar.png'
+    sourceSize.width: 2048                          // skala dulu ke lebar 2048
+    sourceClipRect: Qt.rect(100, 100, 512, 512)     // lalu ambil wilayah 512 x 512
+}
+```
+
+`sourceSize` menentukan skala, `sourceClipRect` memotongnya. Dokumentasi mencatat bahwa sebagian format dapat menghemat CPU dengan merender wilayah itu saja, sedangkan format lain memuat seluruh gambar dulu lalu memotong. Mengubahnya saat berjalan juga memuat ulang sumber.
+
+**Opsi lain, memilih `sourceSize`:**
+
+| Kebutuhan | Pilihan |
+| --- | --- |
+| Thumbnail | `sourceSize.width` kecil dan tetap (misalnya 160) |
+| Foto layar penuh | Ukuran layar (dikali rasio piksel perangkat bila ingin tajam di layar HiDPI) |
+| Isi dari pengguna atau jaringan | Selalu batasi (4.3.8) |
+| Ikon SVG | Ukuran tampil; jangan diubah saat berjalan |
+| Hanya sebagian gambar | `sourceSize` + `sourceClipRect` |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Memakai `width` dan `height` untuk menghemat memori | Itu hanya menskala tampilan. Pakai `sourceSize` |
+| Mengikat `sourceSize` ke ukuran yang sering berubah | Setiap perubahan memuat ulang sumber. Pakai nilai tetap |
+| Membiarkan foto 24 megapiksel dimuat penuh untuk thumbnail | Batasi dengan `sourceSize` |
+| Menilai ukuran berkas di disk sebagai ukuran memori | PNG polos 80 KB bisa menjadi 91 MiB di memori |
+
+**Referensi:** [Image: sourceSize, sourceClipRect](https://doc.qt.io/qt-6/qml-qtquick-image.html) · [QImageReader](https://doc.qt.io/qt-6/qimagereader.html)
+
+---
+
+### 4.3.4 `FontLoader` dan `font`
+
+*Huruf adalah suara sebuah antarmuka. Pastikan Anda tahu dari mana suara itu berasal.*
+
+**Konsep.** `FontLoader` memuat font berdasarkan nama atau URL. Fakta dari dokumentasi:
+
+- `source` adalah URL font yang dimuat, dan `name` adalah nama keluarga font yang terisi otomatis saat Anda memuat lewat `source`.
+- Pakai `name` untuk mengisi `font.family` pada `Text`.
+- `status` bernilai `FontLoader.Null`, `Ready`, `Loading`, atau `Error`, berguna terutama untuk font dari sumber jarak jauh.
+- Anda juga dapat memuat font yang sudah terpasang dengan menulis `name` saja.
+
+Grup `font` pada `Text` menentukan tampilan huruf: `font.family`, `font.pixelSize` atau `font.pointSize` (pilih salah satu, 4.1.2), `font.bold`, `font.italic`, `font.underline`, `font.weight`, dan `font.letterSpacing`. Bila keluarga yang diminta tak ada, Qt memilih pengganti yang bergantung pada platform `[uji]`.
+
+**Peragaan 1: apa yang tersedia di sistem (tanpa jendela).**
+
+```qml
+import QtQuick
+
+Item {
+    FontLoader { id: huruf; name: 'monospace' }
+
+    Timer {
+        interval: 200; running: true
+        onTriggered: {
+            const daftar = Qt.fontFamilies()
+            console.log('jumlah keluarga:', daftar.length)
+            console.log('contoh:', daftar.slice(0, 3).join(', '))
+            console.log('FontLoader name:', huruf.name)        // monospace
+            Qt.quit()
+        }
+    }
+}
+```
+
+**Bedah kode:**
+
+- `FontLoader { id: huruf; name: 'monospace' }`: memuat berdasarkan nama keluarga. Tak ada berkas yang dimuat.
+- `Qt.fontFamilies()`: fungsi pada objek `Qt` yang mengembalikan daftar nama keluarga font yang tersedia.
+- `daftar.slice(0, 3).join(', ')`: tiga nama pertama, digabung dengan koma. Keduanya adalah metode larik JavaScript.
+- `huruf.name`: nama yang Anda isi. Hasilnya bergantung pada sistem Anda `[uji]`.
+
+**Peragaan 2: memuat berkas font.** Salin sebuah font dari sistem Anda. Di Arch, `fontconfig` menyediakan alat yang diperlukan:
+
+```bash
+fc-list : family file | head -n 5
+cp "$(fc-match -f '%{file}' monospace)" fontku.ttf
+file fontku.ttf
+```
+
+Bila `fc-match` mengembalikan berkas bukan TTF atau OTF (misalnya `.pcf` atau `.ttc`), pilih salah satu dari keluaran `fc-list` yang berakhiran `.ttf`.
+
+```qml
+import QtQuick
+
+Item {
+    FontLoader { id: huruf; source: 'fontku.ttf' }
+
+    Timer {
+        interval: 300; running: true
+        onTriggered: {
+            console.log('siap:', huruf.status === FontLoader.Ready, '| keluarga:', huruf.name)
+            Qt.quit()
+        }
+    }
+}
+```
+
+Dugaan: `siap: true | keluarga: <nama keluarga berkas itu>` `[uji]`.
+
+**Memakainya di `Text`:**
+
+```qml
+Text {
+    text: 'Halo, Qt Quick'
+    font.family: huruf.status === FontLoader.Ready ? huruf.name : 'sans-serif'
+    font.pixelSize: 24
+}
+```
+
+Binding `font.family` memilih keluarga yang dimuat bila siap, dan font cadangan bila belum. Karena `status` reaktif, teks berganti sendiri saat font selesai dimuat (3.1).
+
+**Opsi lain, menyediakan font:**
+
+| Cara | Kapan | Catatan |
+| --- | --- | --- |
+| Font sistem lewat `font.family` | Aplikasi sederhana | Tampilan bergantung pada mesin pengguna |
+| `FontLoader` dengan `source` dari resource | Font yang dikemas bersama aplikasi | Disarankan: tampilan seragam dan sumber terkendali |
+| `FontLoader` dengan `name` | Memastikan font terpasang tersedia | Tak menambah font baru |
+| `FontLoader` dengan URL jaringan | Hindari | Berkas biner tak tepercaya diurai oleh pustaka font (4.3.8) |
+| `QFontDatabase::addApplicationFont` (C++) | Memuat font saat startup dari kode | Fase 10 |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengisi `font.family` sebelum font siap | Ikat ke `status` atau sediakan font cadangan |
+| Mengira `FontLoader` mengganti font bawaan seluruh aplikasi | Ia hanya menyediakan font; Anda yang memilihnya lewat `font.family` |
+| Memuat font dari URL yang tak tepercaya | Kemas font di resource |
+| Mengatur `pixelSize` dan `pointSize` sekaligus | Pilih salah satu |
+
+**Referensi:** [FontLoader](https://doc.qt.io/qt-6/qml-qtquick-fontloader.html) · [Qt Quick Examples: Text Fonts](https://doc.qt.io/qt-6/qtquick-text-fonts-example.html) · [Qt QML Type: fontFamilies](https://doc.qt.io/qt-6/qml-qtqml-qt.html)
+
+---
+
+### 4.3.5 URL dan `Qt.resolvedUrl`
+
+*Alamat yang tepat adalah separuh dari menemukan barangnya.*
+
+**Konsep.** Tipe `url` merujuk ke sebuah lokasi sumber daya. Fakta dari dokumentasi:
+
+- URL boleh absolut (misalnya `http://qt-project.org`) atau relatif (`pics/logo.png`). URL relatif dihitung dari URL komponen yang memuatnya.
+- Saat string relatif ditulis ke properti bertipe `url`, ia diubah menjadi objek URL. Karena itu membandingkan `source` dengan string aslinya bernilai `false`. Pakai `Qt.resolvedUrl()` untuk perbandingan dan `toString()` untuk membaca isinya.
+- Untuk berkas di sistem resource Qt, QML memerlukan `qrc:///`, bukan `:/`. URL relatif yang dihitung dari dalam berkas resource memakai protokol yang sama.
+- Karakter khusus dapat ditulis dengan *percent-encoding* (RFC 3986). Berkas bernama dengan `#` harus dienkode karena `#` dianggap awal fragmen URL.
+
+**Peragaan 1: string bukan URL.**
+
+```qml
+import QtQuick
+
+Image {
+    id: logo
+    source: 'logo.png'
+
+    Component.onCompleted: {
+        console.log(logo.source == 'logo.png')                       // false
+        console.log(logo.source == Qt.resolvedUrl('logo.png'))       // true
+        console.log(logo.source.toString())                          // file:///.../lab43/logo.png
+        Qt.quit()
+    }
+}
+```
+
+Dugaan keluaran: `false`, `true`, lalu path absolut berawalan `file:///` `[uji]`.
+
+**Bedah kode:**
+
+- `source: 'logo.png'`: string relatif ditugaskan ke properti bertipe `url`, dan seketika menjadi objek URL absolut.
+- `logo.source == 'logo.png'`: membandingkan objek URL dengan string mentah, hasilnya `false`.
+- `Qt.resolvedUrl('logo.png')`: mengubah string yang sama menjadi URL absolut dengan aturan yang sama, sehingga perbandingannya `true`.
+- `logo.source.toString()`: mengubah URL menjadi teks, yaitu path absolut lengkap dengan skemanya.
+
+**Peragaan 2: relatif terhadap berkas yang menulisnya.** Siapkan struktur berikut.
+
+```bash
+mkdir -p widget
+python3 ../gen_png.py widget/ikon.png 32 32
+```
+
+```qml
+// widget/Ikon.qml
+import QtQuick
+
+Image {
+    source: 'ikon.png'                                    // relatif ke widget/Ikon.qml
+    Component.onCompleted: console.log('Ikon memuat:', source.toString())
+}
+```
+
+```qml
+// Main.qml
+import QtQuick
+import 'widget'
+
+Item {
+    Ikon { }
+    Timer { interval: 200; running: true; onTriggered: Qt.quit() }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml Main.qml
+```
+
+Dugaan: `qml: Ikon memuat: file:///.../lab43/widget/ikon.png` `[uji]`. Jalur menuju `widget/`, bukan `lab43/`, walau `Main.qml` yang dijalankan.
+
+**Bedah kode:**
+
+- `import 'widget'`: impor direktori relatif. Tipe `Ikon` datang dari `widget/Ikon.qml`.
+- `source: 'ikon.png'` di `Ikon.qml`: dihitung dari lokasi `Ikon.qml`, yaitu `widget/ikon.png`, bukan dari `Main.qml` dan bukan dari direktori kerja Anda.
+- Pemindahan `Ikon.qml` ke folder lain mengubah arti path relatifnya. Itu sebabnya struktur resource dalam modul dijaga sama dengan struktur sumber (4.3.6).
+
+**Skema URL yang dikenal:**
+
+| Bentuk | Contoh | Catatan |
+| --- | --- | --- |
+| Relatif | `'images/logo.png'` | Dihitung dari berkas QML pemanggil; paling portabel |
+| `file:///` | `'file:///home/pengguna/foto.png'` | Path absolut di mesin itu; tak portabel |
+| `qrc:///` | `'qrc:///qt/qml/Lab43/images/logo.png'` | Sistem resource Qt; jangan pakai `:/` di QML |
+| `https://` | `'https://contoh.org/a.png'` | Jaringan, selalu asinkron; batasi (4.3.8) |
+| `image://` | `'image://penyedia/id'` | Penyedia gambar dari C++ (`QQuickImageProvider`, Fase 10) |
+
+Untuk berkas yang namanya mengandung `#`, dokumentasi memberi contoh `Image { source: encodeURIComponent('/tmp/test#1.png') }` agar `#` tak dianggap fragmen.
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Memakai path absolut ke berkas lokal (`/home/saya/...`) | Pakai URL relatif atau resource |
+| Membandingkan `source` dengan string | Pakai `Qt.resolvedUrl(...)` |
+| Menulis `':/images/logo.png'` di QML | Tulis `qrc:///...` |
+| Mengira path relatif dihitung dari direktori kerja | Dihitung dari berkas QML yang menulisnya |
+| Memindahkan berkas QML tanpa memindahkan resource-nya | Jaga struktur tetap sama, atau perbarui path |
+
+**Referensi:** [url (tipe dasar QML)](https://doc.qt.io/qt-6/qml-url.html) · [Qt QML Type: resolvedUrl](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Image: source](https://doc.qt.io/qt-6/qml-qtquick-image.html)
+
+---
+
+### 4.3.6 `RESOURCES` di CMake (prasyarat: Modul 10.1)
+
+*Yang ikut terkemas ke dalam binary tak akan hilang di jalan.*
+
+> **Prasyarat:** bagian ini memakai CMake dan C++ sebagai kerangka, yang dibahas utuh di **Modul 10.1**. Bila Anda belum sampai di sana, baca bagian ini sebagai pratinjau dan kembali mengerjakannya setelah 10.1.
+
+**Konsep.** `qt_add_qml_module` mendefinisikan sebuah modul QML dan mengoordinasikan kompilasi `.qml` ke bytecode, penyematan resource, pemeriksaan `qmllint`, dan pembuatan berkas modul. Fakta dari dokumentasi:
+
+- Bila `qt_standard_project_setup(REQUIRES 6.5)` dipanggil, kebijakan QTP0001 aktif dan `RESOURCE_PREFIX` bawaannya menjadi `/qt/qml/`, yang merupakan jalur impor bawaan mesin QML. Modul Anda tersedia di `qrc:/qt/qml/<URI>`.
+- Berkas pada `QML_FILES` dan `RESOURCES` dikemas di bawah akar path yang sama. Path resource sebuah berkas ditentukan oleh path relatifnya terhadap direktori sumber saat ini (`CMAKE_CURRENT_SOURCE_DIR`).
+- Karena struktur resource dijaga sama dengan struktur sumber, gambar yang ditulis sebagai path relatif dari berkas QML selalu ditemukan.
+- `qt_add_qml_module` juga menjalankan `qmlcachegen` dan membuat target `<nama>_qmllint`.
+- Memakai `RESOURCE_PREFIX` khusus tidak dianjurkan kecuali untuk menghindari bentrok nama modul pustaka pihak ketiga.
+
+**Peragaan: proyek minimal.** Susun begini:
+
+```
+ proyek43/
+   CMakeLists.txt
+   main.cpp
+   Main.qml
+   images/logo.png
+```
+
+```bash
+mkdir -p proyek43/images && cd proyek43
+python3 ../gen_png.py images/logo.png 64 64
+```
+
+```cmake
+# CMakeLists.txt
+cmake_minimum_required(VERSION 3.16)
+project(App43 VERSION 1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.5)
+
+qt_add_executable(app43 main.cpp)
+
+qt_add_qml_module(app43
+    URI Lab43
+    VERSION 1.0
+    QML_FILES Main.qml
+    RESOURCES images/logo.png
+)
+
+target_link_libraries(app43 PRIVATE Qt6::Quick)
+```
+
+```cpp
+// main.cpp
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+    QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
+                     &app, []() { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
+    engine.loadFromModule("Lab43", "Main");
+    return app.exec();
+}
+```
+
+```qml
+// Main.qml
+import QtQuick
+
+Window {
+    visible: true; width: 240; height: 160
+
+    Image {
+        anchors.centerIn: parent
+        source: 'images/logo.png'
+        Component.onCompleted: console.log(source)
+    }
+}
+```
+
+```bash
+sudo pacman -S --needed qt6-base qt6-declarative cmake ninja
+cmake -S . -B build -G Ninja
+cmake --build build
+./build/app43
+cmake --build build --target app43_qmllint
+```
+
+Dugaan: jendela kecil dengan persegi oranye, dan log `qml: qrc:/qt/qml/Lab43/images/logo.png` `[uji]` (bentuk persis URL dapat sedikit berbeda).
+
+**Bedah kode:**
+
+- `find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)`: memuat Qt Quick dan, otomatis, Qt Qml yang mendefinisikan `qt_add_qml_module`.
+- `qt_standard_project_setup(REQUIRES 6.5)`: menerapkan bawaan proyek Qt standar dan mengaktifkan QTP0001, sehingga prefix resource menjadi `/qt/qml/`.
+- `qt_add_executable(app43 main.cpp)`: membuat target aplikasi.
+- `qt_add_qml_module(app43 URI Lab43 ...)`: menjadikan aplikasi sebagai modul QML bernama `Lab43`. `QML_FILES` mendaftarkan berkas QML, `RESOURCES` mendaftarkan berkas non-QML seperti gambar.
+- `RESOURCES images/logo.png`: menyematkan gambar di bawah akar yang sama, sehingga `'images/logo.png'` dari `Main.qml` menunjuk ke `qrc:/qt/qml/Lab43/images/logo.png`.
+- `target_link_libraries(app43 PRIVATE Qt6::Quick)`: menautkan pustaka Qt Quick.
+- `engine.loadFromModule("Lab43", "Main")`: memuat tipe `Main` dari modul `Lab43` (Qt 6.5 ke atas).
+- `objectCreationFailed`: keluar dengan kode galat bila pemuatan gagal, agar tak diam-diam menggantung.
+- `app43_qmllint`: target yang dibuat otomatis untuk menjalankan `qmllint` pada berkas `QML_FILES`.
+
+```
+ sumber (disk)             ->   resource (di dalam binary)
+ Main.qml                       qrc:/qt/qml/Lab43/Main.qml
+ images/logo.png                qrc:/qt/qml/Lab43/images/logo.png
+  \_ path relatif dari CMakeLists.txt  \_ /qt/qml/ + URI Lab43 + path itu
+```
+
+**Jebakan “jalan di mesin saya”.** Bila Anda lupa mendaftarkan `RESOURCES`, `qml Main.qml` dari direktori sumber tetap menemukan gambar di filesystem, tetapi versi yang dibangun mencari di `qrc:` dan gagal dengan `Image.Error`. Selalu uji versi yang dibangun, dan pakai penanganan `Image.Error` dari 4.3.2.
+
+**Opsi lain, menyertakan berkas ke dalam aplikasi:**
+
+| Cara | Kapan | Catatan |
+| --- | --- | --- |
+| `RESOURCES` di `qt_add_qml_module` | Standar untuk proyek QML Qt 6 | Dianjurkan |
+| `qt_add_resources` dengan berkas `.qrc` | Proyek yang lebih tua atau resource non-modul | Prefix perlu diatur sendiri |
+| `QT_RESOURCE_ALIAS` pada berkas sumber | Berkas berada di direktori berbeda dari path resource yang diinginkan | Setel dengan `set_source_files_properties(... PROPERTIES QT_RESOURCE_ALIAS ...)` sebelum `qt_add_qml_module` `[uji]` |
+| Berkas di luar binary (`file:///`) | Aset besar yang dikirim terpisah | Harus Anda sebarkan dan lindungi sendiri |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Lupa mendaftarkan resource | Tambahkan ke `RESOURCES`, lalu uji versi yang dibangun |
+| Tak memakai `qt_standard_project_setup(REQUIRES 6.5)` | Prefix resource tak mengikuti bawaan modern. Panggil dengan `REQUIRES` |
+| Mengacu ke `:/...` di QML | Pakai path relatif atau `qrc:///...` |
+| Struktur sumber dan resource tak sama | Jaga selaras, atau pakai `QT_RESOURCE_ALIAS` |
+
+**Referensi:** [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html) · [Building a QML application](https://doc.qt.io/qt-6/cmake-build-qml-application.html) · [The Qt Resource System](https://doc.qt.io/qt-6/resources.html)
+
+---
+
+### 4.3.7 Varian dan format `[TAMBAHAN]`
+
+*Satu sumber, banyak layar. Pilih format yang melayani semuanya.*
+
+**Konsep.** Beberapa hal tentang `Image` yang dicatat dokumentasi tetapi tak ada di kurikulum:
+
+- **Sintaks `@nx` untuk resolusi tinggi.** Anda dapat menyediakan varian beresolusi tinggi dengan penamaan seperti `logo@2x.png` di samping `logo.png`. Qt memilih varian yang sesuai dengan rasio piksel layar, melalui mekanisme yang sama dengan `QImageReader`. Penjelasan lengkapnya ada di halaman `QImageReader` `[uji]`.
+- **SVG.** Untuk gambar vektor, `sourceSize` menentukan ukuran raster. Atur ke ukuran tampil dan jangan ubah saat berjalan karena merender SVG lambat.
+- **Gambar beranimasi.** Dokumentasi menunjuk ke `AnimatedImage` dan `AnimatedSprite`. `Image` sendiri punya `frameCount` dan `currentFrame` untuk gambar berbingkai banyak.
+- **EXIF.** `autoTransform` (bawaan `false`) menerapkan metadata orientasi seperti EXIF. Foto dari ponsel sering tampak terputar tanpanya.
+- **Deteksi ekstensi otomatis (sejak Qt 5.11).** Bila `source` menunjuk ke berkas lokal atau resource yang tak ada, `Image` mencoba menambahkan ekstensi gambar yang didukung.
+- **Tekstur terkompresi.** `PKM`, `KTX`, dan `ASTC` didukung bila driver grafis mendukungnya. Ini topik lanjut.
+- **`smooth` dan `mipmap`.** `smooth` (bawaan `true`) menghaluskan saat diskalakan. `mipmap` memberi kualitas lebih baik saat memperkecil, dengan biaya inisialisasi dan render.
+
+**Peragaan 1: deteksi ekstensi (tanpa jendela).**
+
+```qml
+import QtQuick
+
+Item {
+    Image { id: a; source: 'logo' }            // tak ada berkas bernama logo, tetapi ada logo.png
+    Image { id: b; source: 'logo.png' }
+
+    Timer {
+        interval: 300; running: true
+        onTriggered: {
+            console.log('a siap:', a.status === Image.Ready, a.implicitWidth)   // true 64
+            console.log('b siap:', b.status === Image.Ready, b.implicitWidth)   // true 64
+            Qt.quit()
+        }
+    }
+}
+```
+
+Dugaan: dua baris `true 64` `[uji]`. Praktis, tetapi mengaburkan berkas mana yang sebenarnya dimuat. Untuk aplikasi yang menuntut kepastian, tulis nama lengkap.
+
+**Peragaan 2: SVG pada ukuran berbeda.**
+
+```bash
+cat > ikon.svg <<'EOF'
+<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'>
+  <circle cx='50' cy='50' r='40' fill='orange'/>
+</svg>
+EOF
+```
+
+```qml
+import QtQuick
+
+Item {
+    Image { id: kecil; source: 'ikon.svg'; sourceSize.width: 48;  sourceSize.height: 48 }
+    Image { id: besar; source: 'ikon.svg'; sourceSize.width: 480; sourceSize.height: 480 }
+    Image { id: asli;  source: 'ikon.svg' }
+
+    Timer {
+        interval: 500; running: true
+        onTriggered: {
+            console.log(kecil.implicitWidth, besar.implicitWidth, asli.implicitWidth)   // 48 480 100
+            Qt.quit()
+        }
+    }
+}
+```
+
+Dugaan keluaran: `48 480 100` `[uji]`. Bila `status` berakhir `Error` untuk SVG, pasang dukungan SVG Qt (di Arch: `sudo pacman -S qt6-svg`) `[uji]`.
+
+**Bedah kode:**
+
+- `<svg ... width='100' height='100'>`: gambar vektor berukuran bawaan 100 × 100, berisi satu lingkaran.
+- `sourceSize.width: 48; sourceSize.height: 48`: SVG dirender pada 48 × 48 piksel, tajam pada ukuran itu.
+- `sourceSize` 480 × 480: dirender ulang pada 480 × 480, tetap tajam karena vektor, tetapi menempati memori sekitar 100 kali lebih banyak.
+- Tanpa `sourceSize`: dirender pada ukuran bawaannya.
+
+**Opsi lain, format gambar:**
+
+| Kebutuhan | Pilihan | Catatan |
+| --- | --- | --- |
+| Foto | JPEG | Beberapa format tak dimuat penuh bila `sourceSize` dibatasi |
+| Grafik dengan transparansi | PNG | Tak berkehilangan |
+| Ikon yang harus tajam di semua ukuran | SVG + `sourceSize` | Jangan ubah dinamis |
+| Layar HiDPI | Varian `@2x` | Qt memilih otomatis `[uji]` |
+| Animasi | `AnimatedImage` | Fase lanjut |
+| Foto dari ponsel | `autoTransform: true` | Menerapkan orientasi EXIF |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Foto ponsel tampak terputar | Setel `autoTransform: true` |
+| Ikon SVG buram | Setel `sourceSize` ke ukuran tampil |
+| Mengubah `sourceSize` SVG tiap kali jendela berubah | Pakai ukuran tetap, atau debounce |
+| Mengandalkan deteksi ekstensi di produksi | Tulis nama lengkap |
+
+**Referensi:** [Image](https://doc.qt.io/qt-6/qml-qtquick-image.html) · [QImageReader: high resolution versions](https://doc.qt.io/qt-6/qimagereader.html#high-resolution-versions-of-images) · [AnimatedImage](https://doc.qt.io/qt-6/qml-qtquick-animatedimage.html)
+
+---
+
+### 4.3.8 Keamanan dan batas sumber daya `[TAMBAHAN]`
+
+*Gambar adalah data dari luar. Perlakukan ia seperti masukan apa pun yang tak Anda tulis sendiri.*
+
+**Konsep.** Dokumentasi `Image` menyebut gambar sebagai pengguna memori terbesar di antarmuka QML, dan meminta agar gambar yang bukan bagian UI dibatasi ukurannya lewat `sourceSize`, terutama untuk konten dari sumber luar atau dari pengguna. Dari sudut pandang keamanan, ada lima permukaan yang perlu dijaga.
+
+**1. Bom dekompresi.** Berkas kecil bisa mengembang menjadi memori besar saat didekode. Qt menyediakan pengaman bawaan di `QImageReader`: batas alokasi 256 MB (bisa diubah dengan `QImageReader::setAllocationLimit` atau variabel lingkungan `QT_IMAGEIO_MAXALLOC`, dalam MB, dengan 0 berarti tanpa batas). Gambar yang melebihinya ditolak dengan pesan `qt.gui.imageio: QImageIOHandler: Rejecting image as it exceeds the current allocation limit of 256 megabytes`. Laporan pengguna Qt menunjukkan batas itu cukup untuk sekitar 85 megapiksel RGB 24-bit `[uji]`.
+
+**Percobaan:**
+
+```bash
+python3 ../gen_png.py raksasa.png 12000 9000     # 333 KB di disk, sekitar 309 MiB bila didekode
+```
+
+```qml
+import QtQuick
+
+Item {
+    Image {
+        source: 'raksasa.png'; sourceSize.width: 600
+        onStatusChanged: console.log('raksasa:',
+            status === Image.Error ? 'Error' : status === Image.Ready ? 'Ready' : 'lain')
+    }
+    Timer { interval: 2000; running: true; onTriggered: Qt.quit() }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml raksasa.qml
+QT_IMAGEIO_MAXALLOC=0 QT_QPA_PLATFORM=offscreen qml raksasa.qml     # hanya untuk percobaan
+```
+
+Dugaan: pada proses pertama, `qml: raksasa: Error` disertai pesan penolakan di atas. Pada proses kedua, batas dimatikan dan gambar mungkin dimuat, dengan memori besar `[uji]`. Skrip pembuat gambar itu sudah saya jalankan: berkasnya 333 KB, dan 12000 × 9000 × 3 byte ≈ 309 MiB, di atas batas 256 MB. Jangan menaikkan batas ini untuk masukan yang tak tepercaya. Batas itu adalah jaring pengaman Anda.
+
+**2. Sumber yang dikendalikan penyerang.** `Image.source` menerima URL dari skema apa pun yang didukung Qt. Bila nilainya berasal dari masukan pengguna atau data jarak jauh, penyerang dapat memicu permintaan keluar (pelacakan atau pemindaian jaringan internal) atau meraba keberadaan berkas lokal. Pakai daftar izin (*allow-list*), bukan daftar larangan:
+
+```qml
+import QtQuick
+
+Item {
+    function sumberAman(teks) {
+        const u = String(teks)
+        return u.startsWith('qrc:/') || u.startsWith('https://gambar.contoh.org/')
+    }
+
+    Component.onCompleted: {
+        const uji = [
+            'qrc:/qt/qml/Lab43/images/logo.png',
+            'https://gambar.contoh.org/a.png',
+            'https://gambar.contoh.org.jahat.example/a.png',
+            'https://gambar.contoh.org@jahat.example/a.png',
+            'file:///etc/passwd',
+            'http://gambar.contoh.org/a.png'
+        ]
+        for (const u of uji)
+            console.log(sumberAman(u) ? 'BOLEH' : 'TOLAK', u)
+        Qt.quit()
+    }
+}
+```
+
+Dugaan: baris 1 dan 2 `BOLEH`, baris 3 sampai 6 `TOLAK` `[uji]`.
+
+**Bedah kode:**
+
+- `String(teks)`: memastikan nilai dibandingkan sebagai teks, apa pun tipenya.
+- `startsWith('https://gambar.contoh.org/')`: garis miring di akhir sangat penting. Tanpanya, `https://gambar.contoh.org.jahat.example/` lolos karena awalannya sama.
+- Kasus `...org@jahat.example`: setelah `org` datang `@`, bukan `/`, jadi ditolak. Bagian sebelum `@` dalam URL adalah informasi pengguna, bukan host.
+- `for (const u of uji)`: perulangan atas setiap elemen larik.
+- Pemeriksaan awalan teks adalah penjaga kasar. Untuk validasi yang lebih kokoh, uraikan URL dengan objek `URL` lalu bandingkan `protocol` dan `hostname` secara terpisah `[uji]`.
+
+**3. Font dan sumber jarak jauh lain.** Font adalah berkas biner yang diurai oleh pustaka font. Pemuatan lewat `FontLoader` dari URL jaringan memperluas permukaan serangan. Kemas font di resource (4.3.4).
+
+**4. Teks kaya yang memuat gambar.** Seperti dicatat di 4.1.2, `Text` bawaan dapat memuat gambar lewat jaringan bila ia menebak isinya sebagai markup. Untuk isi tak tepercaya, setel `textFormat: Text.PlainText`.
+
+**5. Resource tertanam bukan rahasia.** Isi `qrc:` tertanam di binary dan dapat diekstrak oleh siapa pun yang memegang berkasnya. Jangan menyimpan kunci API atau data rahasia sebagai resource.
+
+**Pertahanan berlapis, ringkasan:**
+
+| Risiko | Pengendali |
+| --- | --- |
+| Bom dekompresi | `sourceSize`, batas alokasi bawaan Qt, jangan naikkan untuk masukan luar |
+| Permintaan keluar atau pemindaian | Daftar izin skema dan host; filter di tingkat mesin lewat C++ (Fase 10 dan keamanan) |
+| Font berbahaya | Hanya font dari resource |
+| Teks kaya yang memuat gambar | `textFormat: Text.PlainText` |
+| Konsumsi memori berulang | `cache: false` untuk gambar sekali pakai; `asynchronous` untuk masukan pengguna |
+| Rahasia di resource | Jangan disimpan sebagai resource |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengikat `Image.source` langsung ke teks pengguna | Validasi dengan daftar izin, atau tampilkan gambar bawaan |
+| Menaikkan `QT_IMAGEIO_MAXALLOC` agar sebuah berkas terbuka | Naikkan hanya di proses yang Anda kendalikan dan untuk berkas tepercaya |
+| Mengira ukuran berkas = ukuran memori | PNG 80 KB bisa menjadi 91 MiB; PNG 333 KB bisa menjadi 309 MiB |
+| Awalan terlalu longgar pada daftar izin | Sertakan `/` penutup dan uji kasus `@` dan subdomain mirip |
+| Menyimpan rahasia di resource | Taruh di penyimpanan rahasia sistem |
+
+**Referensi:** [Image: Performance](https://doc.qt.io/qt-6/qml-qtquick-image.html) · [QImageReader: setAllocationLimit](https://doc.qt.io/qt-6/qimagereader.html#setAllocationLimit) · [Text: textFormat warning](https://doc.qt.io/qt-6/qml-qtquick-text.html)
+
+---
+
+## E. Latihan 15 menit dan kunci jawaban
+
+**Latihan (dari kurikulum):** tambahkan satu gambar sebagai resource modul, tampilkan dengan `sourceSize` kecil, dan bandingkan pemakaian memori dengan dan tanpa `sourceSize`.
+
+**Langkah A: perbandingan memori tanpa CMake.** Kerjakan Peragaan 2 di 4.3.3 (`penuh.qml` melawan `kecil.qml`) dan catat dua angka `VmRSS`. Untuk pembanding dasar, ukur juga sebuah berkas kosong:
+
+```bash
+cat > kosong.qml <<'EOF'
+import QtQuick
+Item { }
+EOF
+QT_QPA_PLATFORM=offscreen qml kosong.qml &
+pid=$!; sleep 3; grep VmRSS /proc/$pid/status; kill $pid; wait $pid 2>/dev/null
+```
+
+**Langkah B: sebagai resource modul** (setelah Modul 10.1). Di `proyek43`, buat gambar besar dan daftarkan:
+
+```bash
+python3 ../gen_png.py images/besar.png 6000 4000
+```
+
+Ubah `CMakeLists.txt`: `RESOURCES images/logo.png images/besar.png`. Ganti isi `Main.qml`:
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 600; height: 400
+
+    Image {
+        anchors.fill: parent
+        source: 'images/besar.png'
+        sourceSize.width: 600            // hapus baris ini untuk perbandingan
+        fillMode: Image.PreserveAspectFit
+    }
+}
+```
+
+```bash
+cmake --build build
+./build/app43 &
+pid=$!; sleep 3; grep VmRSS /proc/$pid/status; kill $pid; wait $pid 2>/dev/null
+```
+
+Ulangi tanpa baris `sourceSize.width: 600`. Isi tabel berikut dengan angka Anda:
+
+| Skenario | VmRSS (KiB) |
+| --- | --- |
+| Berkas kosong (pembanding dasar) |  |
+| Dengan `sourceSize.width: 600` |  |
+| Tanpa `sourceSize` |  |
+
+**Kunci:**
+
+- Secara teori selisihnya mendekati 6000 × 4000 × 4 − 600 × 400 × 4 = 95.040.000 byte, sekitar 90,6 MiB. Angka nyata bervariasi menurut Qt, driver, dan platform `[uji]`, tetapi urutan besarnya (puluhan MiB) harus terlihat.
+- Selisih terhadap pembanding dasar menunjukkan biaya gambar itu sendiri, terlepas dari biaya Qt.
+- Bila selisihnya kecil, kemungkinan `$!` menunjuk ke proses pembungkus. Periksa dengan `pgrep -a app43`.
+- Ingat 4.3.3: `width: 600` tanpa `sourceSize` tidak menurunkan memori, karena seluruh gambar penuh tetap dimuat.
+
+**Cek pemahaman (dari kurikulum):** *Mengapa `sourceSize` penting untuk gambar besar?* Karena gambar didekode menjadi sekitar lebar × tinggi × 4 byte di memori, terlepas dari ukuran berkasnya. `width` dan `height` hanya menskala penggambaran, sedangkan `sourceSize` membatasi piksel yang disimpan. Dokumentasi menyebut gambar sebagai pengguna memori terbesar di UI QML dan menekankan pembatasan untuk konten dari sumber luar atau pengguna.
+
+**Pertanyaan tambahan:**
+
+1. *Apa beda `width: 600` dan `sourceSize.width: 600`?* Yang pertama menskala penggambaran, yang kedua membatasi piksel yang disimpan di memori.
+2. *Mengapa `logo.source == 'logo.png'` bernilai `false`?* Nilai itu sudah menjadi objek URL absolut. Bandingkan dengan `Qt.resolvedUrl('logo.png')`.
+3. *Dari mana path relatif dihitung?* Dari URL berkas QML yang menulisnya, bukan dari direktori kerja.
+4. *Apa arti `asynchronous: true` untuk URL `https`?* Tak berpengaruh: gambar jaringan selalu dimuat asinkron. Properti itu hanya untuk berkas lokal.
+5. *Kapan `cache: false` berguna?* Untuk gambar besar atau sekali pakai, agar tak menyingkirkan gambar UI kecil dari cache.
+6. *Mengapa `qrc:///` dan bukan `:/` di QML?* QML memerlukan path berbentuk URL, dan URL relatif dari berkas resource memakai protokol yang sama.
+7. *Mengapa prefix `/qt/qml/` bergantung pada `qt_standard_project_setup(REQUIRES 6.5)`?* Panggilan itu mengaktifkan kebijakan QTP0001 yang menetapkan prefix bawaan.
+8. *Mengapa awalan daftar izin harus diakhiri `/`?* Tanpanya `https://gambar.contoh.org.jahat.example/` lolos karena awalannya sama.
+9. *Bagaimana berkas 80 KB dapat memakai 91 MiB?* Kompresi PNG sangat efektif pada gambar polos, tetapi hasil dekode tetap lebar × tinggi × 4 byte.
+
+**Tantangan:**
+
+- Daftarkan sebuah font di `RESOURCES`, muat dengan `FontLoader`, dan pastikan `status` bernilai `Ready` pada versi yang dibangun.
+- Tulis ulang `sumberAman` memakai objek `URL` (`protocol` dan `hostname`), lalu uji dengan keenam kasus di 4.3.8 `[uji]`.
+- Tambahkan gambar cadangan ke `Image` dari 4.3.2 dan pastikan ia hanya dipakai sekali saat gambar utama gagal.
+
+---
+
+## F. Glosarium Modul 4.3
+
+| Istilah | Arti |
+| --- | --- |
+| Resource | Berkas yang dikemas ke dalam binary dan diakses lewat `qrc:` |
+| `qrc` | Skema URL untuk sistem resource Qt; di QML ditulis `qrc:///` |
+| URL relatif | URL yang dihitung dari URL komponen yang menuliskannya |
+| Tipe `url` | Tipe dasar QML untuk lokasi sumber daya; string relatif diubah menjadi objek URL |
+| `Qt.resolvedUrl` | Mengubah string relatif menjadi URL absolut menurut berkas pemanggil |
+| `status` | Keadaan pemuatan: `Null`, `Loading`, `Ready`, `Error` |
+| `asynchronous` | Memuat gambar lokal di thread terpisah |
+| `cache` | Berbagi salinan gambar yang sama antar `Image` |
+| `fillMode` | Cara gambar menyesuaikan diri dengan kotak tampilan |
+| `paintedWidth` / `paintedHeight` | Ukuran gambar yang benar-benar digambar |
+| `sourceSize` | Batas piksel yang disimpan untuk gambar yang dimuat |
+| `sourceClipRect` | Wilayah gambar sumber yang dimuat |
+| `VmRSS` | Memori fisik yang dipakai proses, dibaca dari `/proc/PID/status` |
+| `FontLoader` | Tipe untuk memuat font dari nama atau URL |
+| Keluarga font (*font family*) | Nama yang dipakai `font.family` untuk memilih huruf |
+| `qt_add_qml_module` | Perintah CMake yang mendefinisikan modul QML |
+| `RESOURCES` | Argumen `qt_add_qml_module` untuk berkas non-QML yang disematkan |
+| QTP0001 | Kebijakan CMake Qt yang menetapkan prefix resource bawaan `/qt/qml/` |
+| `QT_RESOURCE_ALIAS` | Properti berkas untuk menetapkan path resource yang berbeda dari path sumber |
+| `@nx` | Penamaan varian resolusi tinggi, misalnya `logo@2x.png` |
+| EXIF | Metadata gambar, termasuk orientasi; diterapkan dengan `autoTransform` |
+| Bom dekompresi | Berkas kecil yang mengembang menjadi memori sangat besar saat didekode |
+| `QT_IMAGEIO_MAXALLOC` | Variabel lingkungan batas alokasi gambar, dalam MB |
+| Daftar izin (*allow-list*) | Daftar sumber yang diizinkan; semua yang lain ditolak |
+
+---
+
+## G. Hubungan dengan modul lain
+
+| Modul | Hubungan |
+| --- | --- |
+| **3.1** Property Binding | `font.family` terikat ke `status` `FontLoader`; menugaskan `source` dari JS memutus binding-nya |
+| **3.3** Lifecycle | `Loader` menghindari pembuatan `Image` sebelum perlu; baca `status` setelah jeda, bukan langsung di `onCompleted` |
+| **3.4** Scope dan konteks | `Qt.resolvedUrl` bekerja menurut berkas pemanggil; handler `onStatusChanged` membaca `status` milik `Image` itu sendiri |
+| **4.1** Item dan primitif | `Image` adalah primitif visual; `clip` dan `PreserveAspectCrop`; peringatan `textFormat` pada `Text` |
+| **4.2** Geometri dan anchors | `implicitWidth` dan `implicitHeight` `Image`; `fillMode` dan `anchors.fill` menentukan tata letak gambar |
+| **4.4** Input dasar | Tombol bergambar dan area sentuh dibangun dari `Image` plus handler |
+| **10.1** C++ dan CMake | **Prasyarat 4.3.6**; `qt_add_qml_module` dan `loadFromModule` dibahas utuh di sana |
+| **Fase 10 selanjutnya** | `QQuickImageProvider` (`image://`), `QFontDatabase`, dan pembatasan jaringan di tingkat mesin |
+| **Keamanan** | Daftar izin sumber, batas alokasi, font dari resource, dan rahasia tak boleh di resource |
+
+**Penutup Modul 4.3:** Anda kini dapat memuat gambar dan font dengan benar, memahami dari mana sebuah URL berasal, membatasi biaya memori gambar, mengemas resource ke dalam modul, dan memperlakukan sumber dari luar dengan curiga yang sehat. Modul berikutnya, dan yang terakhir di Fase 4, adalah 4.4 — Input Dasar: Pointer, Tap, dan Keyboard.
+
+---
+
+**Catatan tautan:** Fakta pada halaman Image (6.12) tentang `qt_add_qml_module` (6.12) dan pola proyek di Building a QML application (6.7 dan 6.8), tipe `url` (Qt 5.x sampai 6.1), `FontLoader` (Qt 5.x), objek `Qt` (6.3), dan batas alokasi gambar (laporan pengguna Qt dan KDE yang mengutip dokumentasi `QImageReader`) saya baca lewat hasil pencarian, jadi tandai `[uji]` pada versi Anda. Skrip `gen_png.py` sudah saya jalankan: `besar.png` valid, 79.884 byte di disk, 6000 × 4000 piksel; `raksasa.png` valid, 333.337 byte, 12000 × 9000 piksel. Halaman The Qt Resource System, QImageReader, AnimatedImage, Text Fonts example, dan Image Elements example tidak saya buka satu per satu. Nama paket Arch (`qt6-base`, `qt6-declarative`, `qt6-svg`, `cmake`, `ninja`) dan format `fc-match` saya tulis dari pengetahuan umum dan tidak saya verifikasi dalam sesi ini. Bila ada yang tidak terbuka, kabari saya.
 
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
