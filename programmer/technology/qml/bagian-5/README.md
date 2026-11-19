@@ -887,7 +887,7 @@ Anak berwarna biru digambar di bawah isi induknya (merah), karena `z` negatif me
 2. **“Binding loop lewat anchors” perlu contoh dan nama peringatannya.** Qt melapor `Possible anchor loop detected on ...` (untuk jangkar horizontal, `fill`, dan `centerIn`). Masuk 4.2.4.
 3. **Mengubah jangkar saat berjalan punya jebakan urutan** yang tak ada di kurikulum: lepas jangkar lama (`undefined`) dulu, baru pasang yang baru. Jangan mengubah jangkar lewat binding kondisional. Untuk state, pakai `AnchorChanges`. Masuk 4.2.4.
 4. **`anchors.alignWhenCentered`** (bawaan `true`) membulatkan posisi tengah ke piksel utuh. Terkait ketajaman gambar dan getaran saat rotasi. Masuk 4.2.3 dan 4.2.6.
-5. **Z-order hanya disebut sekilas.** Fakta kuncinya: `z` hanya membandingkan item bersaudara, jadi anak tak bisa melampaui saudara induknya. Telah ditambahkan percobaan dan catatan keamanan soal overlay di 4.2.5.
+5. **Z-order hanya disebut sekilas.** Fakta kuncinya: `z` hanya membandingkan item bersaudara, jadi anak tak bisa melampaui saudara induknya. Saya tambahkan percobaan dan catatan keamanan soal overlay di 4.2.5.
 6. **Transformasi (`rotation`, `scale`, `transformOrigin`) tak dibahas**, padahal ikut menentukan posisi akhir item. TAMBAHAN 4.2.6.
 7. **Memilih mekanisme tata letak dan men-debug geometri tak dibahas.** TAMBAHAN 4.2.7. Positioner dan Layouts hanya dikenalkan namanya karena bukan bagian Fase 4.
 8. **Sinkron dengan 4.1:** ukuran bawaan 0 × 0 adalah akar keluhan “Rectangle tak muncul”. 4.2.2 menjelaskan mengapa komponen perlu menyatakan ukuran alaminya.
@@ -1102,6 +1102,672 @@ Dugaan keluaran: `qml: true true` lalu `qml: 200 true` `[uji]`.
 
 **Referensi:** [Item: implicitWidth, implicitHeight](https://doc.qt.io/qt-6/qml-qtquick-item.html) · [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html)
 
+---
+
+### 4.2.3 Anchors dan margin
+
+*Janji relatif adalah cara membuat tata letak yang tak rapuh.*
+
+**Konsep.** Setiap item punya tujuh garis jangkar. Anda mengikat sebuah garis milik item ini ke garis milik item lain, dan mesin menjaga janji itu setiap kali sesuatu berubah. Dua jangkar pada sumbu yang sama (misalnya `left` dan `right`) sekaligus menentukan ukuran item.
+
+| Properti | Arti |
+| --- | --- |
+| `anchors.left`, `right`, `top`, `bottom` | Mengikat tepi item ke garis item lain |
+| `anchors.horizontalCenter`, `verticalCenter` | Mengikat garis tengah |
+| `anchors.baseline` | Mengikat garis dasar teks |
+| `anchors.fill` | Setara empat jangkar ke tepi item target |
+| `anchors.centerIn` | Setara dua jangkar tengah ke item target |
+| `leftMargin`, `rightMargin`, `topMargin`, `bottomMargin`, `margins` | Ruang kosong di **luar** jangkar |
+| `horizontalCenterOffset`, `verticalCenterOffset`, `baselineOffset` | Menggeser garis tengah atau baseline |
+| `alignWhenCentered` | Membulatkan posisi tengah ke piksel utuh (bawaan `true`) |
+
+Perhatikan dua aturan margin dari dokumentasi: margin adalah ruang kosong di sisi luar jangkar, dan margin hanya berlaku bila item memang berjangkar pada sisi itu. Margin bukan cara umum memberi bantalan pada sebuah item.
+
+**Peragaan 1: contoh kurikulum, dikembangkan.**
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: akar
+    width: 320; height: 200; color: '#222'
+
+    Rectangle {
+        id: kotak
+        width: 80; height: 80; color: 'tomato'
+        anchors { left: parent.left; verticalCenter: parent.verticalCenter; leftMargin: 16 }
+    }
+    Rectangle {
+        id: hijau
+        width: 80; height: 80; color: 'seagreen'
+        anchors { left: kotak.right; verticalCenter: kotak.verticalCenter; leftMargin: 8 }
+    }
+    Rectangle {                                   // mengisi sisa ruang di kanan
+        id: biru
+        color: 'steelblue'
+        anchors {
+            left: hijau.right; right: parent.right
+            top: parent.top; bottom: parent.bottom
+            margins: 8
+        }
+    }
+
+    Timer {
+        interval: 100; running: true
+        onTriggered: {
+            console.log(kotak.x, hijau.x, hijau.y)                        // 16 104 60
+            console.log(biru.x, biru.y, biru.width, biru.height)          // 192 8 120 184
+            Qt.quit()
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml anchors.qml
+```
+
+Dugaan keluaran: `16 104 60` lalu `192 8 120 184` `[uji]`.
+
+**Bedah kode:**
+
+- `anchors { left: parent.left; ... }`: sintaks kelompok properti, sama dengan menulis `anchors.left: ...` satu per satu.
+- `parent.left`: garis kiri milik induk. Nilai di sebelah kanan titik dua selalu berupa garis jangkar item lain, bukan angka.
+- `leftMargin: 16`: menyisakan 16 piksel kosong di sisi luar jangkar kiri, sehingga `kotak.x` adalah 0 + 16.
+- `verticalCenter: parent.verticalCenter`: pusat vertikal `kotak` sejajar dengan pusat vertikal induk. Tingginya 200 dan tinggi `kotak` 80, jadi `y` adalah 100 − 40 = 60.
+- `left: kotak.right; leftMargin: 8`: tepi kiri `hijau` berada di tepi kanan `kotak` (16 + 80 = 96) ditambah 8, yaitu 104.
+- `biru` tak punya `width` dan `height`. Dua jangkar horizontal (kiri `hijau.right`, kanan `parent.right`) dan dua jangkar vertikal menentukan ukurannya. `margins: 8` berlaku untuk keempat sisi: kiri 184 + 8 = 192, kanan 320 − 8 = 312 (lebar 120), atas 8, bawah 200 − 8 = 192 (tinggi 184).
+- `Timer`: anchors baru diterapkan saat komponen selesai, jadi nilai dibaca setelah jeda singkat (3.3).
+
+```
+ akar 320 x 200
+ +----------------------------------------------------------+
+ |   +------+   +------+   +--------------------------------+ |
+ |16 | kotak| 8 | hijau| 8 |             biru               | |8
+ |-->|80x80 |<->|80x80 |<->|  mengisi sisa ruang, margin 8  | |
+ |   +------+   +------+   +--------------------------------+ |
+ +----------------------------------------------------------+
+  kotak dan hijau berpusat vertikal; biru dibatasi empat jangkar
+```
+
+**Peragaan 2: baseline, offset, dan `centerIn`** (dengan jendela).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 360; height: 160; color: '#202020'
+
+    Text {
+        id: besar
+        x: 20; y: 20
+        text: 'Besar'; color: 'white'; font.pixelSize: 40
+    }
+    Text {
+        anchors { left: besar.right; leftMargin: 8; baseline: besar.baseline }
+        text: 'kecil'; color: 'gold'; font.pixelSize: 14
+    }
+    Rectangle {
+        width: 120; height: 40; color: 'steelblue'
+        anchors {
+            horizontalCenter: parent.horizontalCenter; horizontalCenterOffset: 60
+            bottom: parent.bottom; bottomMargin: 16
+        }
+    }
+    Rectangle {
+        width: 60; height: 60; color: 'seagreen'
+        anchors.centerIn: parent
+    }
+}
+```
+
+**Bedah kode:**
+
+- `baseline: besar.baseline`: teks kecil duduk di garis dasar yang sama dengan teks besar, bukan di tepi atasnya. Hasilnya dua ukuran huruf tampak sebaris.
+- `horizontalCenterOffset: 60`: menggeser pusat horizontal 60 piksel ke kanan dari pusat induk. Offset hanya berlaku untuk jangkar tengah dan baseline.
+- `bottom: parent.bottom; bottomMargin: 16`: tepi bawah 16 piksel di atas tepi bawah induk.
+- `anchors.centerIn: parent`: persegi hijau di tengah induk, setara `horizontalCenter` dan `verticalCenter` sekaligus.
+- `parent` untuk item di dalam `Window` adalah `contentItem` (4.1.5).
+
+**`alignWhenCentered`.** Dokumentasi: bila bernilai `true` (bawaan), item yang dipusatkan dan berukuran ganjil diletakkan pada piksel utuh, bukan setengah piksel, sehingga tampak tajam. Pada kasus tertentu ini tak diinginkan, misalnya saat item diputar karena pusat yang dibulatkan dapat menimbulkan getaran. Matikan dengan `anchors.alignWhenCentered: false` (4.2.6).
+
+**Opsi lain, membuat item memenuhi induknya:**
+
+| Cara | Catatan |
+| --- | --- |
+| `anchors.fill: parent` | Paling ringkas; mendukung `margins` |
+| Empat jangkar tepi | Sama dengan `fill`, tetapi margin bisa berbeda per sisi |
+| `width: parent.width; height: parent.height` | Binding ukuran; tak mendukung margin dan bukan janji relatif |
+| `Layout.fillWidth` di `Layouts` | Fase berikutnya |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Menulis `leftMargin` tanpa `anchors.left` | Margin tak berlaku. Pasang jangkarnya juga |
+| Mengira margin sama dengan padding di dalam item | Margin berada di luar jangkar, bukan di dalam item |
+| Memberi `width` pada item yang sudah berjangkar kiri dan kanan | Hasil tak terdefinisi (4.2.4). Hapus `width` |
+| Mengharap `anchors` bekerja segera di `onCompleted` | Baca setelah jeda singkat (3.3) |
+
+**Referensi:** [Positioning with Anchors](https://doc.qt.io/qt-6/qtquick-positioning-anchors.html) · [Item: anchors](https://doc.qt.io/qt-6/qml-qtquick-item.html)
+
+---
+
+### 4.2.4 Aturan anchors (hanya ke induk atau saudara)
+
+*Aturan yang dihafal cukup untuk lulus, aturan yang dipahami cukup untuk tak pernah debugging semalaman.*
+
+**Aturan 1: hanya induk langsung dan saudara.** Demi performa, sebuah item hanya boleh berjangkar pada induknya sendiri atau item yang sama-sama anak induk itu.
+
+```qml
+Item {
+    Item {
+        id: grup1
+        Rectangle { id: rect1; width: 50; height: 50 }
+    }
+    Item {
+        id: grup2
+        Rectangle { id: rect2; width: 50; height: 50; anchors.left: rect1.right }   // tidak sah
+    }
+}
+```
+
+`rect1` adalah anak `grup1`, bukan saudara maupun induk `rect2`. Qt menghasilkan peringatan sejenis `Cannot anchor to an item that isn't a parent or sibling` `[uji]` (bunyi persisnya dapat berbeda).
+
+| Perbaikan | Kapan |
+| --- | --- |
+| Jadikan keduanya saudara (satu induk) | Struktur memang bisa diratakan |
+| Jangkarkan kedua item ke leluhur bersama | Keduanya perlu mengikuti item di luar kelompoknya |
+| Pakai `mapToItem` di sebuah binding | Hanya bila tak ada pilihan lain; hilangkan sifat jangkarnya |
+
+**Aturan 2: jangan mencampur posisi mutlak dan jangkar.** Dokumentasi menyatakan hasilnya tak terdefinisi pada kombinasi berikut:
+
+| Kombinasi | Mengapa bermasalah |
+| --- | --- |
+| `x` + `anchors.left` | Tak jelas apakah posisi dari `x` atau dari jangkar |
+| `anchors.left` + `anchors.right` + `width` | Tak jelas apakah lebar dari `width` atau dari dua jangkar |
+| `y` + `anchors.top`, atau `anchors.top` + `bottom` + `height` | Sama, pada sumbu vertikal |
+| `anchors.fill` + `width` atau `height` | Tak jelas siapa yang menentukan |
+| Jangkar + item yang ditata `Row`, `Column`, atau `Grid` | Positioner mengatur `x` dan `y` |
+
+Untuk beralih dari jangkar ke posisi mutlak, lepas jangkar dengan menugaskan `undefined`. Perhatikan: kurikulum menyebut `x` “diabaikan”. Dokumentasi menyebutnya **tak terdefinisi**, jadi jangan bergantung pada perilaku tertentu.
+
+**Aturan 3: tak ada tiga jangkar pada satu sumbu.** `left`, `right`, dan `horizontalCenter` sekaligus bertentangan. Qt memperingatkan dengan teks sejenis `Cannot specify left, right, and horizontalCenter anchors` `[uji]`.
+
+**Aturan 4: jangan membuat lingkaran.** Dua item yang saling menjangkar membuat loop yang tak dapat diselesaikan.
+
+```qml
+Item {
+    width: 300; height: 100
+    Rectangle { id: p; width: 50; height: 50; anchors.left: q.right }
+    Rectangle { id: q; width: 50; height: 50; anchors.left: p.right }   // lingkaran
+}
+```
+
+Dugaan: Qt mencetak peringatan `Possible anchor loop detected on horizontal anchor` `[uji]`. Kode sumber Qt memiliki varian serupa untuk `fill` dan `centerIn`. Perbaikannya: putus salah satu arah.
+
+**Aturan 5: ubah jangkar saat berjalan dengan urutan yang benar.** Dokumentasi memperingatkan bahwa mengubah jangkar lewat JavaScript harus diurutkan: lepas yang tak diperlukan dulu, baru pasang yang baru.
+
+```qml
+import QtQuick
+
+Item {
+    width: 300; height: 120
+
+    Rectangle {
+        id: salah
+        width: 50; height: 50
+        anchors.left: parent.left
+        function keKanan() {
+            anchors.right = parent.right     // dua jangkar horizontal aktif: item melebar
+            anchors.left = undefined         // lebar hasil pelebaran bertahan
+        }
+    }
+    Rectangle {
+        id: benar
+        y: 60; width: 50; height: 50
+        anchors.left: parent.left
+        function keKanan() {
+            anchors.left = undefined         // lepas yang lama dulu
+            anchors.right = parent.right         // baru pasang yang baru
+        }
+    }
+
+    Timer {
+        interval: 100; running: true
+        onTriggered: {
+            salah.keKanan(); benar.keKanan()
+            console.log('salah:', salah.x, salah.width)     // 0 300
+            console.log('benar:', benar.x, benar.width)     // 250 50
+            Qt.quit()
+        }
+    }
+}
+```
+
+Dugaan keluaran: `salah: 0 300` dan `benar: 250 50` `[uji]`.
+
+**Bedah kode:**
+
+- `anchors.right = parent.right` di dalam fungsi: menugaskan garis jangkar secara imperatif. Di JS, sisi kanan tanda sama adalah nilai garis jangkar milik induk.
+- Pada `salah`: setelah jangkar kanan dipasang, ada dua jangkar horizontal sekaligus, sehingga item direntangkan memenuhi induk. Saat jangkar kiri dilepas, lebar 300 hasil rentangan tetap bertahan.
+- Pada `benar`: jangkar kiri dilepas lebih dulu, lalu jangkar kanan dipasang. Item tetap berukuran 50 dan menempel di kanan, jadi `x` = 300 − 50 = 250.
+- `anchors.left = undefined`: cara melepas jangkar.
+
+**Jangan mengubah jangkar lewat binding kondisional.** Urutan evaluasi binding tak terdefinisi, sehingga ekspresi seperti `anchors.left: kondisi ? undefined : parent.left` yang dipasangkan dengan `anchors.right` pasangannya dapat membuat kedua jangkar aktif bersamaan. Item akhirnya melebar ke seluruh induk. Untuk perubahan jangkar yang terkait state, dokumentasi merekomendasikan `AnchorChanges`:
+
+```qml
+Rectangle {
+    id: rect
+    width: 50; height: 50
+    anchors.left: parent.left
+
+    states: State {
+        name: 'kanan'
+        AnchorChanges { target: rect; anchors.left: undefined; anchors.right: parent.right }
+    }
+}
+```
+
+`State` dan `AnchorChanges` dibahas di fase animasi dan state. Di sini cukup Anda tahu bahwa `AnchorChanges` mengurus urutan secara internal, dan bahwa `AnchorAnimation` dapat menganimasikannya `[uji]` untuk detail pemakaiannya.
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Menjangkar ke item yang bukan induk atau saudara | Ratakan struktur, atau jangkar ke leluhur bersama |
+| Memadukan `x` dengan `anchors.left` | Pilih satu. Lepas jangkar dengan `undefined` bila beralih |
+| Menambah jangkar baru sebelum melepas yang lama | Lepas dulu, pasang kemudian |
+| Mengubah jangkar lewat binding kondisional | Pakai `AnchorChanges` di dalam `State` |
+| Dua item saling menjangkar | Putus salah satu arah |
+
+**Referensi:** [Positioning with Anchors: Changing Anchors, Restrictions](https://doc.qt.io/qt-6/qtquick-positioning-anchors.html) · [AnchorChanges](https://doc.qt.io/qt-6/qml-qtquick-anchorchanges.html)
+
+---
+
+### 4.2.5 `z` dan urutan gambar
+
+*Yang di atas tidak selalu yang paling besar nomornya, melainkan yang paling dekat ke akar.*
+
+**Konsep.** Aturan dasar (dibahas di 4.1) menurut dokumentasi: `z` menentukan urutan tumpuk item bersaudara. `z` lebih tinggi digambar di atas `z` lebih rendah. `z` yang sama digambar dari bawah ke atas menurut urutan kemunculan di kode. `z` negatif digambar di bawah isi induknya. Nilai bawaannya 0.
+
+Kata kunci pada definisi itu adalah *bersaudara*: `z` hanya membandingkan item yang berinduk sama. Akibatnya, sebuah anak tidak dapat melampaui saudara induknya, seberapa besar pun `z`-nya.
+
+**Percobaan: `z` tak bisa lolos dari induknya.**
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 300; height: 220; color: '#202020'
+
+    Item {                                       // induk A (z: 0)
+        id: a
+        x: 20; y: 20; width: 160; height: 120
+        Rectangle { anchors.fill: parent; color: 'tomato' }
+        Rectangle { z: 100; x: 60; y: 80; width: 100; height: 100; color: 'gold' }   // z besar, tetapi anak A
+    }
+    Item {                                       // induk B (z: 1), saudara A
+        id: b
+        z: 1
+        x: 120; y: 60; width: 160; height: 120
+        Rectangle { anchors.fill: parent; color: 'steelblue' }
+    }
+}
+```
+
+Dugaan: persegi emas (`z: 100`) tetap tertutup biru di area yang tumpang tindih, karena seluruh subpohon A (`z: 0`) digambar di bawah B (`z: 1`). Hanya bagian emas yang menjorok ke luar B yang terlihat `[uji]`. Ubah `a` menjadi `z: 2` dan emas kini berada di atas biru.
+
+**Bedah kode:**
+
+- `Item { id: a ... }` dan `Item { id: b; z: 1 }`: dua item bersaudara. `z` mereka (0 dan 1) menentukan siapa di atas.
+- `Rectangle { z: 100 ... }` di dalam `a`: `z` ini hanya berpengaruh terhadap saudaranya di dalam `a` (di sini persegi tomat), bukan terhadap `b`.
+- Subpohon sebuah item digambar sebagai satu kesatuan relatif terhadap saudaranya `[uji]`.
+
+```
+ Saudara dalam satu induk, diurutkan oleh z:
+   root
+    +-- A (z 0)  -------- isinya digambar sebagai satu paket
+    |     +-- tomat
+    |     +-- emas (z 100)   hanya menang atas tomat
+    +-- B (z 1)  -------- digambar di atas seluruh paket A
+```
+
+**Urutan input mengikuti urutan gambar secara terbalik.** Item yang paling atas diberi kesempatan pertama menerima klik. Bila ia menerimanya, item di bawahnya tak mendapat apa-apa. Itu sebabnya item `opacity: 0` yang berada di atas dapat menelan klik (4.1.3).
+
+**Catatan keamanan.** Karena item teratas menerima input lebih dulu, sebuah item transparan berukuran penuh dengan `z` tinggi dapat menutupi tombol konfirmasi di bawahnya dan menelan atau mengalihkan klik. Ini analog dengan *clickjacking* di web. Pada aplikasi yang memuat QML pihak ketiga atau plugin, periksa siapa yang boleh menaruh item di atas pohon utama, dan jangan memberi komponen luar akses ke akar tempat overlay bisa dipasang.
+
+**Opsi lain, mengatur urutan:**
+
+| Cara | Kapan |
+| --- | --- |
+| Urutan deklarasi | Paling sederhana; susun item dari bawah ke atas |
+| `z` | Mengubah urutan antar saudara tanpa memindahkan baris kode |
+| Pindahkan ke induk lain (`parent = ...`) | Item harus keluar dari subpohon induknya (4.1.6) |
+| Taruh item yang selalu di atas (dialog, tooltip) sebagai anak akar | Agar tak terperangkap di subpohon induk yang `z`-nya rendah |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Memberi `z: 9999` pada anak agar muncul di atas segalanya | Tak bekerja bila induknya kalah. Pindahkan item atau naikkan `z` induknya |
+| Mengira `z` membandingkan seluruh pohon | Hanya antar saudara |
+| Menumpuk item tak terlihat yang menelan input | Pakai `visible: false` atau `enabled: false` (4.1.3) |
+| Mengandalkan urutan deklarasi untuk overlay penting | Beri `z` eksplisit dan taruh di tingkat yang tepat |
+
+**Referensi:** [Item: z](https://doc.qt.io/qt-6/qml-qtquick-item.html) · [Important Concepts In Qt Quick: Positioning](https://doc.qt.io/qt-6/qtquick-positioning-topic.html)
+
+---
+
+### 4.2.6 Transformasi dan piksel `[TAMBAHAN]`
+
+*Posisi menentukan di mana sebuah item berada. Transformasi menentukan bagaimana ia tampak berada di sana.*
+
+**Konsep.** Geometri (`x`, `y`, `width`, `height`) dan transformasi adalah dua hal berbeda. Transformasi memutar atau membesarkan tampilan item tanpa mengubah geometrinya.
+
+| Properti | Arti | Bawaan |
+| --- | --- | --- |
+| `rotation` | Sudut putar dalam derajat, searah jarum jam, di sekitar `transformOrigin` | 0 |
+| `scale` | Faktor pembesaran di sekitar `transformOrigin` | 1.0 |
+| `transformOrigin` | Titik tumpu transformasi (`Item.TopLeft`, `Top`, `TopRight`, `Left`, `Center`, `Right`, `BottomLeft`, `Bottom`, `BottomRight`) | `Item.Center` `[uji]` |
+
+**Peragaan: geometri tak berubah, posisi visual berubah.**
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 300; height: 300
+
+    Rectangle {
+        id: r
+        x: 100; y: 100; width: 100; height: 50
+        rotation: 90                                   // searah jarum jam, di sekitar pusatnya
+    }
+    Rectangle {
+        id: s
+        width: 20; height: 20
+        anchors { left: r.right; verticalCenter: r.verticalCenter }
+    }
+
+    Timer {
+        interval: 100; running: true
+        onTriggered: {
+            console.log(r.x, r.y, r.width, r.height)       // 100 100 100 50   (tak berubah)
+            const p = r.mapToItem(root, 0, 0)
+            console.log(p.x, p.y)                              // 175 75
+            console.log(s.x)                               // 200
+            Qt.quit()
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml putar.qml
+```
+
+Dugaan keluaran: `100 100 100 50`, lalu `175 75`, lalu `200` `[uji]`.
+
+**Bedah kode:**
+
+- `rotation: 90`: persegi 100 × 50 diputar 90 derajat searah jarum jam di sekitar pusatnya, titik (150, 125) di koordinat `root`.
+- `r.x, r.y, r.width, r.height`: tetap `100 100 100 50`. Transformasi tak mengubah geometri.
+- `r.mapToItem(root, 0, 0)`: memetakan sudut kiri atas lokal `r` ke koordinat `root`, dengan memperhitungkan rotasi. Titik (0, 0) berjarak (−50, −25) dari pusat. Setelah diputar 90° searah jarum jam, ia menjadi (25, −50) dari pusat, yaitu (175, 75) di `root`.
+- `s.x` bernilai 200: jangkar `r.right` dihitung dari geometri `r` (100 + 100), bukan dari bentuk setelah rotasi `[uji]`. Item yang berjangkar pada item yang diputar tidak ikut berputar.
+
+**Piksel dan ketajaman.**
+
+- `x`, `y`, `width`, dan `height` boleh pecahan, tetapi tepi yang jatuh di tengah piksel tampak kabur. Bulatkan dengan `Math.round` bila ketajaman penting.
+- `anchors.alignWhenCentered` (bawaan `true`) membulatkan posisi item yang dipusatkan ke piksel utuh. Saat item diputar, pembulatan pusat dapat menimbulkan getaran, jadi dokumentasi menyebut ini kadang tak diinginkan. Matikan dengan `anchors.alignWhenCentered: false`.
+- `Rectangle` memiliki `border.pixelAligned` untuk menyejajarkan bingkai ke piksel `[uji]`.
+
+**Opsi lain, transformasi yang lebih kompleks:** properti `transform` menerima daftar tipe seperti `Rotation`, `Scale`, `Translate`, dan `Matrix4x4`, untuk titik tumpu berbeda per transformasi atau rotasi tiga dimensi `[uji]`.
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengira `rotation` mengubah `width` dan `height` | Geometri tak berubah. Pakai `mapToItem` atau `childrenRect` untuk batas visual |
+| Mengharap item yang berjangkar pada item berputar ikut berputar | Jangkar mengikuti geometri, bukan bentuk visual `[uji]` |
+| Memberi `clip: true` pada item yang diputar | Klip berputar lebih mahal (4.1.4). Hindari bila bisa |
+| Item yang dipusatkan bergetar saat berputar | Setel `anchors.alignWhenCentered: false` |
+
+**Referensi:** [Item: rotation, scale, transformOrigin](https://doc.qt.io/qt-6/qml-qtquick-item.html) · [Item: anchors.alignWhenCentered](https://doc.qt.io/qt-6/qml-qtquick-item.html)
+
+---
+
+### 4.2.7 Memilih mekanisme tata letak dan men-debug geometri `[TAMBAHAN]`
+
+*Alat yang tepat membuat tata letak tak lagi terasa seperti sihir.*
+
+**Konsep.** Qt Quick menyediakan beberapa cara menata item. Memilih yang tepat menentukan seberapa tahan tata letak Anda saat jendela, font, atau isi berubah.
+
+| Mekanisme | Cocok untuk | Catatan |
+| --- | --- | --- |
+| Koordinat mutlak (`x`, `y`) | Item yang tak pernah bergerak, prototipe cepat | Paling rapuh |
+| Binding (`width: parent.width / 2`) | Hubungan matematis sederhana | Bukan janji antar tepi |
+| Anchors | Hubungan antar tepi, mengisi, memusatkan | Hanya induk dan saudara; tak ada pembagian ruang rata |
+| Positioner (`Row`, `Column`, `Grid`, `Flow`) | Menata anak berurutan | Fase berikutnya; mengatur `x` dan `y` anak |
+| `Layouts` (`RowLayout`, `ColumnLayout`, `GridLayout`) | Pembagian ruang, ukuran minimum dan maksimum | Fase berikutnya |
+
+```
+ Perlu menata item?
+   |
+   +-- hubungan antar tepi / mengisi / memusatkan? --> anchors
+   +-- deretan item berurutan? ---------------------> Row / Column / Grid (fase berikutnya)
+   +-- ruang dibagi rata atau ada ukuran min/maks? --> Layouts (fase berikutnya)
+   +-- satu nilai bergantung pada rumus? ------------> binding
+   +-- tak pernah bergerak? -------------------------> x dan y
+```
+
+**Teknik debugging geometri:**
+
+1. **Garis bantu.** Tempel sementara persegi berbingkai di item yang dicurigai:
+
+```qml
+Rectangle {
+    anchors.fill: parent
+    color: 'transparent'
+    border { color: 'magenta'; width: 1 }
+    z: 1000
+}
+```
+
+Ingat aturan 4.2.5: `z` hanya membandingkan saudara. Bila garis bantu tak muncul, mungkin ia terperangkap di subpohon yang tertutup.
+
+2. **Cetak setelah jeda.** Anchors dan ukuran implisit baru stabil setelah komponen selesai. Baca dalam `Timer` atau `Qt.callLater` (3.3.4), bukan langsung di `onCompleted`.
+3. **`dumpItemTree()`.** Item memiliki metode `dumpItemTree()` yang tercantum di daftar anggota dokumentasi Qt 6.5. Menurut namanya ia mencetak pohon item ke log, termasuk anak-anaknya. Perilaku persisnya `[uji]`:
+
+```qml
+Timer { interval: 200; running: true; onTriggered: { root.dumpItemTree(); Qt.quit() } }
+```
+
+4. **Uji perubahan ukuran.** Ubah ukuran jendela lewat kode dan periksa invarian tata letak:
+
+```qml
+import QtQuick
+
+Window {
+    id: w
+    visible: true; width: 320; height: 120
+
+    Rectangle {
+        id: a; width: 60; height: 60; color: 'tomato'
+        anchors { left: parent.left; leftMargin: 8; verticalCenter: parent.verticalCenter }
+    }
+    Rectangle {
+        id: b; width: 60; height: 60; color: 'seagreen'
+        anchors { right: parent.right; rightMargin: 8; verticalCenter: parent.verticalCenter }
+    }
+
+    Timer {
+        interval: 200; running: true
+        onTriggered: {
+            console.log('sebelum:', b.x, a.y)             // 252 30
+            w.width = 640; w.height = 200
+            ulang.start()
+        }
+    }
+    Timer {
+        id: ulang
+        interval: 200
+        onTriggered: { console.log('sesudah:', b.x, a.y); Qt.quit() }     // 572 70
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml ukuran.qml
+```
+
+Dugaan keluaran: `sebelum: 252 30` lalu `sesudah: 572 70` `[uji]`. Kotak hijau tetap 8 piksel dari tepi kanan (640 − 8 − 60 = 572) dan kotak merah tetap di tengah vertikal ((200 − 60) / 2 = 70).
+
+5. **Alat eksternal.** *GammaRay* (KDAB) menampilkan pohon item dan propertinya langsung. `qmllint` menandai pola yang mencurigakan secara statis.
+
+**Bedah kode (uji ukuran):**
+
+- `w.width = 640; w.height = 200`: mengubah ukuran jendela. Karena `a` dan `b` berjangkar ke induknya, posisi mereka dihitung ulang otomatis.
+- Dua `Timer` berurutan: yang kedua memberi waktu loop peristiwa memproses perubahan ukuran sebelum nilai dibaca.
+- Angka 252 dan 572 muncul dari rumus lebar jendela dikurangi margin dikurangi lebar kotak. Anda dapat memeriksanya dengan kalkulator.
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Memilih koordinat mutlak lalu heran tata letak pecah saat ukuran berubah | Pakai anchors atau positioner |
+| Mencetak geometri langsung di `onCompleted` | Tunggu sebentar (`Timer`, `Qt.callLater`) |
+| Menebak penyebab tata letak aneh | Pasang garis bantu, cetak nilai, jalankan uji ukuran |
+| Menggunakan anchors untuk membagi ruang rata | Anchors tak punya pembagian ruang. Pakai positioner atau Layouts nanti |
+
+**Referensi:** [Important Concepts In Qt Quick: Positioning](https://doc.qt.io/qt-6/qtquick-positioning-topic.html) · [Item Positioners](https://doc.qt.io/qt-6/qtquick-positioning-layouts.html) · [Item](https://doc.qt.io/qt-6/qml-qtquick-item.html)
+
+---
+
+## E. Latihan 15 menit dan kunci jawaban
+
+**Latihan (dari kurikulum):** susun tiga kotak sejajar yang tetap berjarak 8 piksel saat jendela diubah ukurannya.
+
+```qml
+import QtQuick
+
+Window {
+    id: w
+    visible: true; width: 360; height: 140; color: '#202020'
+
+    Rectangle {
+        id: a; width: 90; height: 90; color: 'tomato'
+        anchors { left: parent.left; leftMargin: 8; verticalCenter: parent.verticalCenter }
+    }
+    Rectangle {
+        id: b; width: 90; height: 90; color: 'seagreen'
+        anchors { left: a.right; leftMargin: 8; verticalCenter: parent.verticalCenter }
+    }
+    Rectangle {
+        id: c; width: 90; height: 90; color: 'steelblue'
+        anchors { left: b.right; leftMargin: 8; verticalCenter: parent.verticalCenter }
+    }
+
+    Timer {
+        interval: 200; running: true
+        onTriggered: {
+            console.log('jarak:', b.x - (a.x + a.width), c.x - (b.x + b.width))       // 8 8
+            w.width = 700
+            periksa.start()
+        }
+    }
+    Timer {
+        id: periksa
+        interval: 200
+        onTriggered: {
+            console.log('jarak:', b.x - (a.x + a.width), c.x - (b.x + b.width), 'y:', a.y)   // 8 8 y: 25
+            Qt.quit()
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml tiga-kotak.qml
+```
+
+Dugaan: `jarak: 8 8`, lalu `jarak: 8 8 y: 25` `[uji]`.
+
+**Kunci:** kotak pertama berjangkar ke tepi kiri induk dengan margin 8. Kotak kedua berjangkar ke tepi kanan kotak pertama, dan kotak ketiga ke tepi kanan kotak kedua, masing-masing dengan margin 8. Jarak antarkotak adalah 8 apa pun lebar jendela karena tak ada angka mutlak untuk `x`. Ketiganya berpusat vertikal ((140 − 90) / 2 = 25).
+
+**Variasi: tiga kotak melebar sama lebar.** Anchors saja tak dapat membagi ruang secara rata, jadi pakai binding:
+
+```qml
+Rectangle {
+    id: a; height: 90; color: 'tomato'
+    width: (parent.width - 4 * 8) / 3                       // empat celah 8 piksel, tiga kotak
+    anchors { left: parent.left; leftMargin: 8; verticalCenter: parent.verticalCenter }
+}
+Rectangle {
+    id: b; height: 90; color: 'seagreen'; width: a.width
+    anchors { left: a.right; leftMargin: 8; verticalCenter: parent.verticalCenter }
+}
+Rectangle {
+    id: c; height: 90; color: 'steelblue'; width: a.width
+    anchors { left: b.right; leftMargin: 8; verticalCenter: parent.verticalCenter }
+}
+```
+
+Perhatikan bahwa kotak pertama memakai `width` eksplisit bersama satu jangkar horizontal saja (`left`), sehingga tak melanggar aturan 4.2.4. Untuk pembagian ruang yang lebih rapi, positioner dan `Layouts` di fase berikutnya adalah alat yang tepat.
+
+**Cek pemahaman (dari kurikulum):** *Item mana saja yang boleh menjadi target anchors?* Hanya induk langsung dan saudara (item lain yang berinduk sama).
+
+**Pertanyaan tambahan:**
+
+1. *Apa beda margin anchors dan padding?* Margin adalah ruang kosong di luar jangkar dan hanya berlaku bila berjangkar pada sisi itu. Padding adalah ruang di dalam item, dan harus Anda hitung sendiri.
+2. *Mengapa `leftMargin` tanpa `anchors.left` tak berefek?* Margin hanya berlaku pada sisi yang berjangkar.
+3. *Apa yang terjadi bila `x` dipakai bersama `anchors.left`?* Hasilnya tak terdefinisi. Pilih salah satu.
+4. *Mengapa urutan lepas dan pasang jangkar penting?* Memasang jangkar baru sebelum melepas yang lama membuat dua jangkar aktif sekaligus, dan item melebar.
+5. *Mengapa anak ber-`z: 100` tertutup saudara induknya?* `z` hanya membandingkan saudara, dan subpohon induk digambar sebagai satu kesatuan.
+6. *Mengapa komponen perlu menyatakan `implicitWidth`?* Agar ia punya ukuran alami yang bermakna dan pemakai tetap bebas menimpa.
+7. *Mengapa tiga kotak berlebar sama tak dapat dibuat dengan anchors saja?* Anchors mengikat tepi, bukan membagi ruang.
+
+**Tantangan:**
+
+- Buat komponen sebaris `Kartu` dengan `implicitWidth` dan `implicitHeight`, lalu pakai tiga instans dalam satu baris yang berjangkar.
+- Bandingkan `x` sebuah persegi 51 × 51 yang dipusatkan di induk 100 × 100 dengan `anchors.alignWhenCentered` bernilai `true` dan `false`. Dugaan: dengan `false` nilainya 24.5, dengan `true` bilangan bulat `[uji]`.
+
+---
+
+## F. Glosarium Modul 4.2
+
+| Istilah | Arti |
+| --- | --- |
+| Geometri | Posisi dan ukuran item: `x`, `y`, `width`, `height` |
+| Koordinat lokal | Koordinat yang diukur dari sudut kiri atas induk |
+| Garis jangkar | Salah satu dari tujuh garis tak terlihat pada item: `left`, `horizontalCenter`, `right`, `top`, `verticalCenter`, `baseline`, `bottom` |
+| Anchors | Mekanisme mengikat garis jangkar satu item ke garis item lain |
+| Margin | Ruang kosong di luar jangkar; hanya berlaku pada sisi yang berjangkar |
+| Offset | Pergeseran garis tengah atau baseline |
+| `anchors.fill` | Setara empat jangkar ke tepi item target |
+| `anchors.centerIn` | Setara dua jangkar tengah |
+| `alignWhenCentered` | Membulatkan posisi yang dipusatkan ke piksel utuh |
+| `implicitWidth` / `implicitHeight` | Ukuran alami item bila `width` dan `height` tak ditentukan |
+| `childrenRect` | Persegi pembatas semua anak, dalam koordinat lokal |
+| Anchor loop | Dua item yang saling menjangkar sehingga tak dapat diselesaikan |
+| `AnchorChanges` | Tipe untuk mengubah jangkar di dalam `State` dengan urutan yang aman |
+| `z` | Urutan tumpuk antar saudara |
+| Stacking context | Subpohon yang digambar sebagai satu kesatuan relatif terhadap saudara induknya |
+| `rotation` / `scale` / `transformOrigin` | Transformasi tampilan di sekitar titik tumpu |
+| Positioner | Tipe yang menata anak berurutan (`Row`, `Column`, `Grid`, `Flow`) |
+| Inline component | Komponen yang dideklarasikan di dalam berkas yang sama dengan `component Nama: Tipe { }` |
+
+---
+
+## G. Hubungan dengan modul lain
+
+| Modul | Hubungan |
+| --- | --- |
+| **3.1** Property Binding | Anchors adalah hubungan yang diperbarui otomatis; `width: contentWidth` dan jangkar yang saling menunjuk menimbulkan loop |
+| **3.3** Lifecycle | Anchors dan ukuran implisit baru stabil setelah selesai; pakai `Timer` atau `Qt.callLater` untuk membaca |
+| **3.4** Scope dan konteks | `parent` dan `id` sebagai target jangkar; sintaks kelompok `anchors { }` mengikuti aturan scope biasa |
+| **4.1** Item dan primitif | Hierarki, `z`, `clip`, dan `opacity` yang dibahas di sana terus berlaku; 4.2 menambah cara menempatkan dan menata |
+| **4.3** Resource | `Image` punya ukuran implisit sendiri, `fillMode` dan `sourceSize` memengaruhi tata letak; **4.3.6 memerlukan Modul 10.1** |
+| **4.4** Input dasar | Urutan input mengikuti `z`; ukuran item menentukan area sentuh; idiom `MouseArea { anchors.fill: parent }` |
+| **Fase berikutnya** | Positioner, `Layouts`, `State` dengan `AnchorChanges`, dan animasi |
+| **Keamanan** | Item overlay berukuran penuh dengan `z` tinggi dapat menelan input; periksa siapa yang boleh menaruhnya |
+
+**Penutup Modul 4.2:** Anda kini dapat menempatkan item dengan janji relatif, tahu aturan yang tak boleh dilanggar, memahami mengapa `z` tak bisa lolos dari induknya, dan punya cara memeriksa tata letak. Modul berikutnya adalah 4.3 — Resource: Gambar, Font, dan URL (bagian 4.3.6 memerlukan Modul 10.1).
+
+---
+
+**Catatan tautan:** halaman Positioning with Anchors (6.12) saya buka langsung. Fakta tentang `alignWhenCentered`, `implicitWidth`, dan `dumpItemTree()` saya baca lewat hasil pencarian dari dokumentasi Item beberapa versi Qt (5.x dan 6.5) serta kode sumber Qt, sehingga tandai `[uji]` pada versi Anda. Bunyi pesan peringatan `Cannot anchor to an item that isn't a parent or sibling` dan `Cannot specify left, right, and horizontalCenter anchors` saya tulis dari ingatan akan kode sumber Qt dan tidak saya verifikasi dalam sesi ini. Halaman AnchorChanges dan Item Positioners muncul sebagai tautan di halaman yang saya buka tetapi tidak saya buka satu per satu. Bila ada yang tidak terbuka, kabari saya.
 
 
 > - **[⬆️ Ke Atas](#)**
