@@ -1,12 +1,10 @@
 # Fase 3 · Modul 3.1 — Property Binding
 
-Saya membaca bagian Fase 3 dari berkas kurikulum yang Anda kirim, lalu mengaudit Modul 3.1 terhadap dokumentasi Qt 6.12 (Binding, Property Binding, Performance considerations) dan sumber pendukung. Seperti sebelumnya, saya tidak menjalankan kode ini pada Qt, jadi bagian bertanda `[uji]` perlu Anda buktikan sendiri.
-
 ---
 
 ## A. Audit singkat
 
-**Tumpang tindih dengan Fase 2.** Sebagian isi Fase 3 sudah saya bahas di Fase 2. Itu bukan kesalahan kurikulum, karena Fase 3 memang memperdalam. Agar tidak mengulang, setiap modul Fase 3 merujuk ke sana dan menambah yang belum ada:
+**Tumpang tindih dengan Fase 2.** Sebagian isi Fase 3 sudah dibahas pada Fase 2. Itu bukan kesalahan kurikulum, karena Fase 3 memang memperdalam. Agar tidak mengulang, setiap modul Fase 3 merujuk ke sana dan menambah yang belum ada:
 
 | Modul Fase 3 | Sudah dibahas | Yang akan ditambah |
 |---|---|---|
@@ -27,7 +25,7 @@ Saya membaca bagian Fase 3 dari berkas kurikulum yang Anda kirim, lalu mengaudit
 2. **`Binding` mengevaluasi `value` tanpa syarat.** Ekspresi `value` tetap dievaluasi walau `when` bernilai false. Ini bisa memunculkan peringatan, misalnya saat dipakai menjaga nilai `null`. Sintaks ringkas dengan target ber-`id` hanya mengevaluasi ekspresi saat Binding aktif. Kurikulum tidak menyebutnya.
 3. **`restoreMode` dan `delayed` tidak dibahas.** `restoreMode` bawaannya `RestoreBindingOrValue` dan ada demi kompatibilitas, tidak dianjurkan untuk kode baru. `delayed` menunda pembaruan target sampai antrean event kosong, dengan biaya waktu-jalan.
 4. **Sintaks `Binding` modern.** Selain `target/property/value`, ada bentuk ringkas `Binding { objek.properti: ekspresi }` dan bentuk `Binding on properti { ... }`.
-5. **Properti yang tak terpantau (*non-NOTIFYable*) tidak disebut.** Properti yang non-konstan dan tak punya notifikasi, bila dipakai di binding, membuat binding berpotensi usang. `qmllint` menandainya sebagai `stale-property-read`. Saat berjalan, mesin dapat mencetak peringatan "Expression … depends on non-NOTIFYable properties". Penting untuk Fase C++ nanti dan saya tambahkan di 3.1.1.
+5. **Properti yang tak terpantau (*non-NOTIFYable*) tidak disebut.** Properti yang non-konstan dan tak punya notifikasi, bila dipakai di binding, membuat binding berpotensi usang. `qmllint` menandainya sebagai `stale-property-read`. Saat berjalan, mesin dapat mencetak peringatan "Expression … depends on non-NOTIFYable properties". Penting untuk Fase C++ nanti dan telah ditambahkan di 3.1.1.
 6. **Array/objek: ada alternatif lain.** Selain `[...daftar, x]`, ada `concat` dan pemicu manual `daftarChanged()`. Pengembang Qt membenarkan memancarkan sinyal secara manual setelah mengubah isi. Contoh resmi Qt 6.12 sendiri menyalin sequence lewat spread `[...qrealListProperty]`, jadi spread pada array aman. Spread pada *objek* tetap `[uji]` (audit 2.1.9).
 7. **3.1.6 "Biaya binding" diperkaya** dengan temuan dokumentasi 6.12: akumulasi dalam variabel sementara, granularitas notifikasi sequence dan value type, serta binding vs anchors. Isinya di 3.1.6.
 8. **Salah satu nilai di kurikulum perlu dibaca hati-hati:** `width: height` dan `height: width` adalah loop pada `Item` dengan ukuran bawaan 0. Pada kontrol berlayout, loop sering muncul dari properti `implicitWidth` yang tak kentara (laporan log KDE menunjukkannya).
@@ -631,7 +629,7 @@ Dugaan: peringatan `Binding loop detected for property "width"` (dan atau `"heig
 
 ## A. Audit singkat
 
-**Tumpang tindih dengan Fase 2.** Sebagian besar dasar Modul 3.2 sudah ada di **2.2.2** (signal handler, parameter, `arguments`) dan **2.2.7** (`Connections`, `connect()`). Di sini saya tidak mengulang penjelasannya, melainkan memperdalam dan menutup celah.
+**Tumpang tindih dengan Fase 2.** Sebagian besar dasar Modul 3.2 sudah ada di **2.2.2** (signal handler, parameter, `arguments`) dan **2.2.7** (`Connections`, `connect()`). Di sini tidak mengulang penjelasannya, melainkan memperdalam dan menutup celah.
 
 **Terverifikasi:**
 - Handler bernama `on<Sinyal>` dengan huruf pertama kapital, dan menurut dokumentasi tidak boleh dipanggil langsung. Bila kodenya perlu dipakai bersama, pindahkan ke fungsi terpisah atau pancarkan sinyalnya.
@@ -1195,7 +1193,7 @@ Hasilnya tiga baris. Urutannya mengikuti urutan *sambungan*: handler bawaan terh
 
 ## A. Audit singkat
 
-**Tumpang tindih dengan Fase 2.** `Component.onCompleted` dan `onDestruction` sudah ada di **2.2.6**, dan `Qt.callLater` di **2.4.3**. Di sini saya tidak mengulangnya, melainkan memperdalam: fase pembuatan, penghancuran, pembuatan dinamis, dan `Loader`.
+**Tumpang tindih dengan Fase 2.** `Component.onCompleted` dan `onDestruction` sudah ada di **2.2.6**, dan `Qt.callLater` di **2.4.3**. Di sini tidak mengulangnya, melainkan memperdalam: fase pembuatan, penghancuran, pembuatan dinamis, dan `Loader`.
 
 **Terverifikasi:**
 - `completed()` dipancarkan setelah objek selesai diinstansiasi, saat seluruh lingkungan QML sudah terbentuk. Handler `onCompleted` boleh dipasang di objek mana pun, dan urutan eksekusinya tidak terdefinisi. Catatan kurikulum benar.
@@ -1732,7 +1730,1134 @@ Jalankan `for i in 1 2 3 4 5; do qml -a core urutan.qml 2>&1 | tr '\n' '|'; echo
 
 **Catatan tautan:** halaman Qt yang saya buka langsung adalah Component, Dynamic QML Object Creation from JavaScript, dan Loader (6.12). `Qt.callLater` saya baca dari halaman objek `Qt` pada putaran sebelumnya. Halaman Untrusted Data, `Repeater`, `Instantiator`, dan inline components muncul sebagai tautan di dalam halaman-halaman itu tetapi tidak saya buka satu per satu. Bila ada yang tidak terbuka, kabari saya.
 
-Modul 3.3 selesai. Lanjut ke **Modul 3.4 — Scope, ID, dan Konteks**? Sebagian isinya sudah ada di 2.2.4, jadi 3.4 akan fokus pada shadowing, context property, dan kebiasaan akses berkualifikasi.
+# Fase 3 · Modul 3.4 — Scope, ID, dan Konteks
+
+*Penutup Fase 3. Melanjutkan Modul 3.1 sampai 3.3.*
+
+---
+
+## A. Audit singkat
+
+**Tumpang tindih dengan Fase 2.** Dasar scope, `id`, dan prinsip isolasi komponen sudah ada di **2.2.4**, dan `this` di `Qt.binding` dijanjikan Modul 3.1 untuk dibahas di sini. Modul ini tidak mengulang pengantarnya, melainkan memperdalam: urutan pencarian resmi, shadowing, batas `id`, `ComponentBehavior`, context property, dan closure.
+
+**Terverifikasi:**
+
+- Binding, fungsi, dan berkas JavaScript impor berjalan dalam scope JavaScript biasa. Variabel lokal dan parameter fungsi menutupi properti QML bernama sama, dan setiap ekspresi punya variabel lokal sendiri.
+- Objek pemilik binding disebut *scope object*. Propertinya dipakai tanpa awalan, dan `this` tidak diperlukan di sana.
+- *Component scope* adalah gabungan `id` di dalam komponen dan properti objek akarnya.
+- Contoh kurikulum benar: `root.nilai` bernilai 1 dan `parent.nilai` bernilai 2, karena keduanya dikualifikasi.
+- `qmllint` memberi peringatan kategori `unqualified` pada akses tanpa kualifikasi, dengan alasan keterbacaan dan performa. Konvensi kode Qt juga meminta properti komponen induk dirujuk lewat `id`.
+- Context property masih tersedia, tetapi dokumentasi 6.12 memberi dua peringatan keras: dependensinya tak dideklarasikan, dan ia tak terlihat oleh Qt Quick Compiler, `qmllint`, dan QML Language Server.
+- `id` bukan properti: `objek.id` tidak ada, dan nilainya tak bisa diubah setelah objek dibuat.
+
+**Perlu dikoreksi atau dilengkapi:**
+
+1. **Urutan di analogi kurikulum perlu diperbaiki.** Analogi menaruh properti objek (meja kerja) sebelum `id` (ruangan). Dokumentasi menyatakan `id` selalu didahulukan atas nama properti lain, kecuali scope JavaScript. Walau scope object punya properti bernama sama dengan sebuah `id`, `id` yang menang. Urutan baru ada di 3.4.1 dan peta besar.
+2. **Pencarian tidak melewati induk visual.** Nama tanpa awalan hanya melihat variabel lokal, `id`, scope object, dan objek akar komponen (lalu komponen pemanggil). Properti `Rectangle` induk yang berada di tengah hierarki tidak ikut. Ini kejutan terbesar bagi pemula, jadi saya jadikan latihan.
+3. **Scoping dinamis tidak disebut.** QML menyambungkan scope komponen ke scope pemakainya, sehingga komponen di berkas lain bisa kebetulan memakai nama milik pemakainya. Dokumentasi menyebutnya kuat tetapi berbahaya. Masuk 3.4.4.
+4. **Batas `id` kurang rinci.** Dokumentasi 6.12 punya bagian khusus: jangan merujuk `id` objek akar dari komponen lain, dan `id` internal yang diakses dari luar berkas menghasilkan `ReferenceError`. Aturan penamaan `id` juga belum ada. Masuk 3.4.2.
+5. **Shadowing punya empat wajah, bukan satu.** Variabel lokal vs properti, `id` vs properti, properti lokal vs `id` luar (bergantung `ComponentBehavior`), dan properti turunan vs properti dasar. Untuk yang terakhir Qt menyediakan kata kunci `virtual`, `override`, dan `final`. Masuk 3.4.3.
+6. **Atribut terlampir (*attached property*) tanpa kualifikasi** selalu menunjuk ke atribut milik scope object, bukan milik root delegate. Masuk 3.4.4.
+7. **Context property: peringatan ada, alternatif belum.** Kurikulum hanya berkata hindari. Saya tambahkan alternatif konkret di 3.4.5, termasuk fakta bahwa mengubah konteks memicu evaluasi ulang semua binding di dalamnya.
+8. **`ComponentBehavior` dan injeksi konteks delegate belum ada.** `pragma ComponentBehavior: Bound` mengubah siapa yang menang saat nama bentrok, dan delegate yang terikat tidak lagi menerima `model` dan `index` secara otomatis. Dokumentasi juga menyebut bahwa bawaannya akan berubah menjadi `Bound` di versi Qt mendatang. Ini TAMBAHAN 3.4.7.
+9. **Closure** dirujuk ke Bagian B8. Di 3.4.6 saya hanya membuat jembatan dan satu jebakan yang menyambung langsung ke `Qt.binding` (3.1).
+
+**TAMBAHAN:**
+
+- **3.4.7** Delegate, injeksi konteks, dan `pragma ComponentBehavior`.
+- **3.4.8** Merancang batas komponen dan mendiagnosis scope.
+
+---
+
+## B. Daftar isi Modul 3.4 (diperbarui)
+
+- **3.4.1** Urutan pencarian nama (+ `this`, urutan resmi) `[diperluas]`
+- **3.4.2** `id` dan batasnya (+ penamaan, alias, batas berkas) `[diperluas]`
+- **3.4.3** Shadowing (+ empat wajah, `virtual`/`override`/`final`) `[diperluas]`
+- **3.4.4** Akses berkualifikasi (+ atribut terlampir, scoping dinamis) `[diperluas]`
+- **3.4.5** Context property dan alternatifnya (+ empat jalan keluar) `[diperluas]`
+- **3.4.6** Closure di JavaScript (jembatan ke Bagian B8)
+- **3.4.7** Delegate, injeksi konteks, dan `pragma ComponentBehavior` `[TAMBAHAN]`
+- **3.4.8** Merancang batas komponen dan mendiagnosis scope `[TAMBAHAN]`
+- Latihan dan kunci jawaban · Glosarium · Hubungan dengan modul lain
+
+**Urutan belajar yang disarankan:** 3.4.1 → 3.4.2 → 3.4.3 → 3.4.4 → 3.4.5 → 3.4.6 → 3.4.7 → 3.4.8.
+
+---
+
+## C. Peta besar
+
+```
+ ekspresi menyebut sebuah nama:  nilai
+   │  dicari dari yang PALING DEKAT ke yang PALING JAUH
+   ▼
+ ┌────────────────────────────────────────────────────────────┐
+ │ ① scope JavaScript   variabel lokal, parameter, closure     │ ◄ menang atas semuanya
+ ├────────────────────────────────────────────────────────────┤
+ │ ② id                 objek ber-id di komponen yang sama     │ ◄ menang atas properti
+ ├────────────────────────────────────────────────────────────┤
+ │ ③ scope object       properti objek pemilik binding         │
+ ├────────────────────────────────────────────────────────────┤
+ │ ④ objek akar         properti root komponen ini             │
+ ├────────────────────────────────────────────────────────────┤
+ │ ⑤ komponen pemanggil scope komponen yang memakai kita       │ ◄ scoping dinamis
+ ├────────────────────────────────────────────────────────────┤
+ │ ⑥ tipe dan impor     Rectangle, enum, attached, berkas JS,  │
+ │   objek global JS    Math, Date, Qt                         │
+ └────────────────────────────────────────────────────────────┘
+ ① dan ② terdokumentasi tegas. Urutan ③ → ④ → ⑤ mengikuti prinsip terdekat menang [uji].
+ Induk visual (parent) yang berada DI ANTARA ③ dan ④ tidak ikut dicari.
+```
+
+**Filosofinya:** scope adalah kontrak tentang apa yang boleh diketahui sebuah ekspresi. Semakin sempit dan eksplisit kontraknya, semakin mudah komponen diaudit, diuji, dan dipindahkan. Ini prinsip *least privilege* yang sama dengan isolasi proses di sistem Anda: komponen yang hanya memegang apa yang diberikan kepadanya tak bisa merusak apa yang tak diberikan. Hampir semua bug scope jatuh ke tiga hal: nama yang menunjuk ke bukan yang Anda kira, nama yang diam-diam bergantung pada pemakainya, dan data global yang tak dideklarasikan siapa pun.
+
+**Cara menjalankan contoh:**
+
+- Berkas berbasis `QtObject`: `qml -a core nama.qml` (laboratorium 2.1.0).
+- Contoh multi-berkas: simpan semua berkas dalam satu direktori lalu jalankan `qml -a core Main.qml`. Tipe `Penghitung` dari `Penghitung.qml` ditemukan otomatis karena berada di direktori yang sama.
+- Berkas visual: `QT_QPA_PLATFORM=offscreen qml nama.qml`.
+- Peringatan statis: `qmllint nama.qml` (di Arch bisa `qmllint6`).
+
+---
+
+## D. Materi
+
+### 3.4.1 Urutan pencarian nama
+
+*Mesin tidak menebak, ia mengikuti urutan. Pelajari urutannya dan Anda berhenti ditebak-tebak olehnya.*
+
+**Konsep.** Setiap kali sebuah ekspresi menyebut nama, mesin harus memutuskan nama itu menunjuk ke apa. Aturannya: terdekat menang.
+
+| Tingkat | Isi | Catatan |
+| --- | --- | --- |
+| ① Scope JavaScript | variabel lokal dan parameter fungsi | Aturan JS biasa; QML tidak mengubahnya |
+| ② `id` | objek ber-`id` di komponen yang sama | Menang atas nama properti mana pun, kecuali scope JS |
+| ③ Scope object | properti objek pemilik binding | Dipakai tanpa awalan dan tanpa `this` |
+| ④ Objek akar | properti root komponen | Bersama ② membentuk *component scope* |
+| ⑤ Komponen pemanggil | scope komponen yang memakai instans ini | Scoping dinamis (3.4.4) |
+| ⑥ Tipe dan impor | tipe, enum, atribut terlampir, berkas JS impor, objek global JS | `id`, properti, dan tipe yang bentrok dengan objek global JS dilarang |
+
+Dokumentasi menyatakan ① dan ② dengan tegas, dan bahwa properti lokal di sebuah komponen mengalahkan nama dari komponen pemanggilnya. Urutan persis antara ③ dan ④ tidak dirinci, jadi saya menyebutnya terdekat menang `[uji]` dan menyediakan percobaannya.
+
+**Peragaan: siapa yang menang?**
+
+```qml
+import QtQml
+
+QtObject {
+    id: root
+    property string nama: 'akar'                  // ④ properti objek akar
+
+    property QtObject tamu: QtObject {
+        id: pintu                                 // sebuah id bernama pintu
+        property string nama: 'tamu'              // ③ properti scope object
+
+        property string a: nama                   // ③ menutupi ④ → 'tamu'
+        property string b: root.nama              // dikualifikasi → 'akar'
+        property string c: {
+            var nama = 'lokal'                    // ① variabel lokal
+            return nama                           // → 'lokal'
+        }
+    }
+
+    property QtObject lain: QtObject {
+        property string pintu: 'properti'         // properti bernama sama dengan sebuah id
+        property string d: typeof pintu           // ② id menang → 'object'
+    }
+
+    Component.onCompleted: {
+        console.log(tamu.a, tamu.b, tamu.c, lain.d)
+        Qt.quit()
+    }
+}
+```
+
+```bash
+qml -a core cari.qml
+```
+
+Dugaan keluaran: `qml: tamu akar lokal object` `[uji]`.
+
+**Bedah kode:**
+
+- `import QtQml`: memuat tipe non-visual (`QtObject`, `Timer`, objek `Qt`). Tak butuh jendela.
+- `QtObject { ... }`: objek paling sederhana. Karena menjadi akar berkas, properti-nya masuk component scope (④).
+- `id: root`: nama bagi objek ini. Bukan properti, dan hanya berlaku di berkas ini.
+- `property string nama: 'akar'`: deklarasi properti. `property` kata kunci, `string` tipe, `nama` nama, `:` memberi nilai awal.
+- `property QtObject tamu: QtObject { ... }`: properti bertipe objek yang nilainya objek baru. Binding di dalam objek itu memakai objek tersebut sebagai scope object (③).
+- `property string a: nama`: bacaan tanpa awalan. Properti `nama` milik `tamu` lebih dekat daripada milik akar.
+- `property string c: { var nama = 'lokal'; return nama }`: blok dengan variabel lokal bernama sama dengan properti. QML tidak melarang; ini aturan JS (①).
+- `typeof pintu`: operator JS yang mengembalikan jenis nilai. Hasil `object` berarti `pintu` dibaca sebagai objek ber-`id`, bukan string properti.
+- `Component.onCompleted` dan `Qt.quit()`: baca semuanya setelah binding terpasang (3.3.2), lalu hentikan `qml`.
+
+**`this` di binding dari JavaScript.** Di dalam handler atau fungsi sebuah objek, nama tanpa awalan merujuk ke objek itu, bukan ke anak-anaknya. Dokumentasi memberi contoh: `Component.onCompleted` milik sebuah `Item` memandang `width` sebagai lebar `Item`, bukan lebar `Rectangle` di dalamnya. Saat membuat binding lewat `Qt.binding` dan Anda ingin merujuk objek penerimanya, pakai `this`.
+
+```qml
+import QtQml
+
+QtObject {
+    id: root
+    property int lebar: 500
+
+    QtObject {
+        id: kotak
+        property int lebar: 100
+        property int tinggi: 0
+    }
+
+    Component.onCompleted: {
+        kotak.tinggi = Qt.binding(function () { return this.lebar * 2 })
+        console.log(kotak.tinggi)            // 200, bukan 1000
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+
+- `QtObject { id: kotak ... }` di dalam akar: anak ditambahkan lewat default property `data` (2.2.5).
+- `Qt.binding(function () { ... })`: pembungkus binding imperatif (3.1.3).
+- `this.lebar`: `this` adalah objek penerima binding (`kotak`), jadi bernilai 100 dan hasilnya 200.
+- Tanpa `this`, `lebar` akan dicari dari scope tempat handler ditulis, yaitu akar (500), dan hasilnya 1000.
+- `this` hanya terdefinisi di dalam binding. Perilaku fungsi arrow tidak saya uji `[uji]`; aturan JS menyatakan arrow function tidak punya `this` sendiri, jadi pakai `function` atau, lebih baik, `kotak.lebar`.
+
+**Opsi lain, menyebut nilai milik objek lain:**
+
+| Cara | Kapan | Catatan |
+| --- | --- | --- |
+| `root.nilai` (lewat `id`) | Dalam satu berkas | Dianjurkan: jelas, cepat, dikenali alat |
+| `parent.nilai` | Induk visual langsung | Rapuh bila struktur berubah; hanya untuk `Item` |
+| `nilai` (telanjang) | Properti milik scope object sendiri | Aman bila memang miliknya |
+| `this.nilai` | Di dalam fungsi `Qt.binding` | Hanya di dalam binding |
+| Properti antarmuka yang diisi dari luar | Komponen yang dipakai ulang | Terbaik untuk batas berkas (3.4.4) |
+
+**Hal yang perlu diingat:**
+
+- Setiap nama yang dibaca binding juga menjadi dependensinya (3.1.1). Nama yang salah resolusi berarti salah pantau.
+- Nama telanjang tidak pernah naik ke induk visual di tengah hierarki.
+- Variabel lokal menutupi properti tanpa peringatan apa pun. Beri nama variabel lokal yang tidak menyerupai properti.
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengira nama telanjang menunjuk ke properti induk terdekat | Tidak. Hanya scope object, objek akar, dan `id`. Kualifikasi dengan `id` |
+| Variabel lokal bernama sama dengan properti | Lokal menang dan properti terabaikan. Ganti nama |
+| Memakai `this` di luar binding | `this` tak terdefinisi di sana. Pakai `id` |
+| Mengandalkan nama dari pemakai komponen | Scoping dinamis (3.4.4). Ganti dengan properti eksplisit |
+
+**Referensi:** [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [Property Binding: Using this](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html) · [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html)
+
+---
+
+### 3.4.2 `id` dan batasnya (satu dokumen)
+
+*Nama yang baik memberi Anda pegangan. Batas yang jelas menjaga pegangan itu tak bocor.*
+
+**Konsep.** `id` adalah nama bagi sebuah objek, yang bisa dipakai objek lain dalam konteks yang sama. Fakta dari dokumentasi:
+
+- Tiap elemen paling banyak punya satu `id`. Atribut ini disediakan bahasa dan tak bisa didefinisikan ulang oleh tipe mana pun.
+- Aturan nama: diawali huruf kecil atau garis bawah, hanya berisi huruf, angka, dan garis bawah, dan bukan kata kunci JavaScript.
+- Unik di dalam konteksnya, tak bisa diubah setelah objek dibuat, dan bukan properti (`objek.id` tidak ada).
+- Hanya berlaku di dokumen (berkas) tempat ia dideklarasikan.
+
+| `id` | Sah? | Alasan |
+| --- | --- | --- |
+| `root`, `tombol1`, `_tmp` | Ya |  |
+| `Root` | Tidak | Harus diawali huruf kecil atau garis bawah |
+| `tombol-1`, `tombol 1` | Tidak | Hanya huruf, angka, garis bawah |
+| `class`, `function` | Tidak | Kata kunci JavaScript |
+| `Math`, `Date` | Tidak | Bentrok dengan objek global JS (3.4.1) |
+
+**Peragaan: `id` tak menyeberangi batas berkas.** Simpan dua berkas ini dalam satu direktori.
+
+```qml
+// Penghitung.qml
+import QtQml
+
+QtObject {
+    property alias jumlah: mesin.hitung       // antarmuka resmi ke dunia luar
+
+    QtObject {
+        id: mesin                             // id privat: hanya berlaku di berkas ini
+        property int hitung: 5
+    }
+}
+```
+
+```qml
+// Main.qml
+import QtQml
+
+Penghitung {
+    Component.onCompleted: {
+        console.log('lewat alias:', jumlah)          // 5
+        try {
+            console.log(mesin.hitung)
+        } catch (e) {
+            console.log('galat:', e.message)         // mesin is not defined
+        }
+        Qt.quit()
+    }
+}
+```
+
+```bash
+qml -a core Main.qml
+```
+
+Dugaan keluaran: `qml: lewat alias: 5` lalu `qml: galat: mesin is not defined` `[uji]` (bentuk persis pesan bisa berbeda).
+
+```
+ Penghitung.qml                          Main.qml
+ ┌──────────────────────────┐          ┌───────────────────────────┐
+ │ id: mesin     (PRIVAT)   │   ✗      │ mesin.hitung → ReferenceError
+ │ alias jumlah ────────────┼────────► │ jumlah        ✓ (publik)  │
+ └──────────────────────────┘          └───────────────────────────┘
+```
+
+**Bedah kode:**
+
+- `property alias jumlah: mesin.hitung`: alias adalah referensi langsung ke properti lain, bukan salinan dan bukan binding. Membaca atau menulis `jumlah` sama dengan membaca atau menulis `mesin.hitung`.
+- Batas alias menurut dokumentasi: hanya menunjuk objek atau properti di dalam jangkauan tipe itu, tak boleh ekspresi JS, tak boleh atribut terlampir, dan kedalamannya paling banyak dua tingkat (`rectangle.border.color` boleh).
+- `Penghitung { ... }` di `Main.qml`: nama berkas `Penghitung.qml` otomatis menjadi nama tipe, karena berada di direktori yang sama.
+- `try { } catch (e) { }`: menangkap galat JS agar skrip tak berhenti. `e.message` berisi teksnya.
+- `mesin` di `Main.qml`: tak ada di konteks `Main.qml`, sehingga menghasilkan `ReferenceError`.
+
+**Jangan merujuk `id` akar dari komponen lain.** Dokumentasi 6.12 mengingatkan: komponen yang memakai `root.width` padahal `root` dideklarasikan di berkas pemakainya bisa saja jalan karena scoping dinamis. Namun ia menciptakan dependensi tersembunyi, rapuh saat dimuat dinamis atau dipakai di konteks lain, dan dapat tertutup `id` lain yang bernama sama. Solusinya: properti eksplisit, alias, atau sinyal (3.4.4 dan 3.4.8).
+
+**Tiga batas lain:**
+
+- Objek dinamis (`createObject`) tidak punya `id`. Simpan referensinya di variabel atau properti (3.3.1).
+- `id` yang dideklarasikan di dalam `Component {}` atau delegate berlaku di scope komponen itu, bukan di luarnya `[uji]`. Sebaliknya, isi delegate bisa melihat `id` di luarnya (scope bertingkat).
+- `id` bukan nama untuk dibaca program saat berjalan. Untuk label yang perlu dibaca, pakai `objectName`.
+
+**Konvensi:** letakkan `id` di baris pertama objek, dan beri nama `root` pada objek akar. Urutan atribut yang dipakai dokumentasi Qt: `id`, deklarasi properti, deklarasi sinyal, fungsi, properti objek, lalu objek anak.
+
+**Opsi lain, mengekspos objek internal ke luar:**
+
+| Cara | Kapan | Catatan |
+| --- | --- | --- |
+| `property alias x: anak.x` | Ekspos satu properti anak | Menulis ke alias menulis ke anak |
+| `property alias anak: anakId` | Ekspos seluruh objek anak | Hanya tipe dasarnya yang terlihat; properti tambahan inline tak terlihat |
+| Properti biasa + binding | Nilai turunan satu arah | Bukan referensi |
+| Sinyal | Memberi tahu kejadian ke luar | 3.2.7 |
+| Fungsi | Memberi perintah ke dalam | `function reset() { ... }` |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Memakai `id` dari berkas lain | `ReferenceError`, atau kebetulan jalan lewat scoping dinamis. Ganti dengan properti, alias, atau sinyal |
+| Dua `id` sama dalam satu dokumen | Galat saat memuat. Beri nama unik |
+| Mengira `id` adalah properti | `objek.id` tidak ada. Pakai `objectName` bila perlu label |
+| `id` yang tak layak sebagai identifier JS | Tak bisa dirujuk dari JS. Pilih nama biasa |
+
+**Referensi:** [QML Object Attributes: the id Attribute, Property Aliases](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [Scope and Naming Resolution](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html)
+
+---
+
+### 3.4.3 Shadowing
+
+*Dua nama yang sama bukan kebetulan yang lucu. Ia adalah utang yang ditagih saat refactor.*
+
+**Konsep.** Shadowing terjadi ketika satu nama menutupi nama lain yang lebih jauh. Ada empat wajah. Semuanya sah menurut bahasa, tetapi dokumentasi menyebut penutupan properti sering tak disengaja, membingungkan, dan menyulitkan alat.
+
+| # | Wajah | Siapa menang | Dasar |
+| --- | --- | --- | --- |
+| 1 | Variabel lokal JS vs properti | Variabel lokal | Dokumentasi: JavaScript Scope |
+| 2 | `id` vs properti bernama sama | `id` | Dokumentasi: Component Scope |
+| 3 | Properti lokal vs `id` di luar komponen | `Unbound`: properti lokal. `Bound`: `id` luar | Dokumentasi: ComponentBehavior (3.4.7) |
+| 4 | Properti turunan vs properti dasar | Dua properti terpisah; yang terbaca ditentukan tempat nama itu ditulis | Dokumentasi: Overridden Properties |
+
+**Wajah 1: variabel lokal dan parameter.**
+
+```qml
+import QtQml
+
+QtObject {
+    property int a: 3
+    property int b: 9
+
+    function tambahkan(b) {              // parameter b menutupi properti b
+        var a = 13                       // variabel lokal a menutupi properti a
+        return b + a
+    }
+
+    Component.onCompleted: {
+        console.log(tambahkan(1))        // 14, bukan 4 dan bukan 10
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+
+- `function tambahkan(b) { ... }`: metode bernama `tambahkan` dengan satu parameter. Nama parameter sengaja sama dengan properti `b`.
+- `var a = 13`: variabel lokal. `var` mendeklarasikannya di dalam fungsi, sehingga properti `a` tak tersentuh.
+- `return b + a`: memakai parameter dan variabel lokal, bukan properti. Hasilnya 14 berapa pun nilai properti `a` dan `b`. Dokumentasi menegaskan QML mempertahankan aturan scoping JavaScript.
+
+**Wajah 2** sudah Anda lihat di 3.4.1: `typeof pintu` bernilai `object` karena `id` mengalahkan properti `pintu`.
+
+**Wajah 3** bergantung pada `pragma ComponentBehavior`, dibahas di 3.4.7 beserta percobaannya.
+
+**Wajah 4: properti turunan.** Simpan tiga berkas dalam satu direktori.
+
+```qml
+// Hewan.qml
+import QtQml
+
+QtObject {
+    property string nama: 'hewan'
+    function perkenalan() { return 'Aku ' + nama }
+}
+```
+
+```qml
+// Kucing.qml
+import QtQml
+
+Hewan {
+    property string nama: 'kucing'                 // menutupi properti nama milik Hewan
+    function meong() { return 'Meong, aku ' + nama }
+}
+```
+
+```qml
+// Main.qml
+import QtQml
+
+Kucing {
+    Component.onCompleted: {
+        console.log(nama)              // kucing
+        console.log(meong())           // Meong, aku kucing
+        console.log(perkenalan())      // Aku hewan  ← membaca nama MILIK HEWAN
+        Qt.quit()
+    }
+}
+```
+
+Dugaan keluaran: `kucing`, `Meong, aku kucing`, `Aku hewan` `[uji]`.
+
+**Bedah kode:**
+
+- `Hewan { ... }` di `Kucing.qml`: `Kucing` diturunkan dari `Hewan` (nama berkas menjadi nama tipe).
+- `property string nama` di `Kucing.qml`: mendeklarasikan ulang properti. Hasilnya dua properti bernama `nama`, dan hanya satu yang terlihat dari tiap tempat.
+- `perkenalan()` ditulis di `Hewan.qml`, jadi scope-nya adalah `Hewan` dan ia membaca `nama` milik `Hewan`. Itu sebabnya hasilnya `Aku hewan`. Dokumentasi menyebut kedua properti sepenuhnya terpisah: handler `onNamaChanged` satu tidak terpicu oleh yang lain, dan alias hanya menunjuk salah satunya.
+
+**Menjadikannya eksplisit: `virtual`, `override`, `final`.** Dokumentasi 6.12 memperkenalkan tiga kata kunci agar penutupan tak lagi tak sengaja. Pesan utamanya tetap: lebih baik memberi nama unik daripada menutup atau menimpa.
+
+```qml
+// Hewan.qml
+import QtQml
+
+QtObject {
+    virtual property string nama: 'hewan'      // dimaksudkan boleh ditimpa
+    property int umur: 1                       // bukan virtual
+}
+```
+
+```qml
+// Kucing.qml
+import QtQml
+
+Hewan {
+    final property string nama: 'kucing'       // menimpa nama; tak bisa ditimpa lagi
+}
+```
+
+- `virtual`: properti ini sengaja boleh ditimpa turunan.
+- `override`: properti ini sengaja menimpa properti virtual milik tipe dasar.
+- `final`: boleh menimpa, tetapi tak bisa ditimpa atau ditutupi lagi oleh turunan berikutnya. Dokumentasi menganjurkan `final` daripada `override`.
+
+| Deklarasi di turunan | Dasar biasa | Dasar `virtual` | Dasar `final` |
+| --- | --- | --- | --- |
+| `property x` | Peringatan | Peringatan (tanpa `override` atau `final`) | Galat |
+| `final property x` | Peringatan | Boleh | Galat |
+| `override property x` | Galat | Boleh | Galat |
+
+Dokumentasi menambahkan bahwa sebagian besar peringatan ini akan menjadi galat di masa depan. Versi Qt minimum untuk kata kunci ini tidak saya temukan di halaman itu, jadi cek versi Anda dengan `pacman -Q qt6-declarative` `[uji]`.
+
+**Wajah tersembunyi lain:** sinyal atau metode baru boleh memakai nama yang sudah ada pada tipe dasar dan akan menyembunyikannya, sehingga dokumentasi menyuruh berhati-hati. Sebaliknya, `id`, properti, dan tipe yang bentrok dengan objek global JS dilarang sama sekali.
+
+**Opsi lain, menghindari shadowing:**
+
+| Cara | Kapan |
+| --- | --- |
+| Nama unik (`namaHewan`, `namaKucing`) | Pilihan pertama, hampir selalu |
+| Kualifikasi (`root.nama`) | Nama sama di scope berbeda tak terhindarkan |
+| `virtual` + `final` | Penimpaan memang dirancang |
+| `qmllint` | Menandai sebagian pola secara statis |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mendeklarasikan ulang properti dasar di turunan | Pakai nama baru, atau tandai `virtual` lalu `final` |
+| Mengira mengubah `nama` turunan mengubah `nama` dasar | Keduanya terpisah. Beri nama berbeda |
+| Nama parameter sama dengan properti | Parameter menang di dalam fungsi. Beri awalan, misalnya `n` atau `nilaiBaru` |
+| `id` bernama sama dengan properti objek lain | `id` menang secara diam-diam. Pilih nama `id` yang khas |
+
+**Referensi:** [Property Shadowing and Override Semantics](https://doc.qt.io/qt-6/qtqml-syntax-overridesemantics.html) · [Scope and Naming Resolution: Overridden Properties](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [QML Object Attributes: Override Semantics](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+
+---
+
+### 3.4.4 Akses berkualifikasi
+
+*Menyebut nama lengkap bukan formalitas. Ia asuransi.*
+
+**Konsep.** Akses berkualifikasi berarti `objek.properti`, dengan `objek` berupa `id` (atau nama tipe untuk enum dan atribut terlampir). Akses tanpa kualifikasi adalah nama telanjang yang diselesaikan lewat urutan di 3.4.1. Panduan `qmllint` menyebut dua alasan memilih yang pertama: kode lebih mudah dibaca dan performanya lebih baik. Konvensi kode Qt juga meminta properti komponen induk selalu dirujuk lewat `id`. Dokumentasi konvensi menambahkan alasan ketiga: data dari luar komponen sebaiknya dinyatakan dengan `required property`, karena lebih cepat daripada pencarian telanjang dan memungkinkan manusia maupun alat menalar tipenya.
+
+**Peragaan:**
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    property int lebarKotak: 50
+
+    Rectangle {
+        width: lebarKotak            // ✗ telanjang: qmllint melapor [unqualified]
+        height: root.lebarKotak      // ✓ berkualifikasi
+        color: 'steelblue'
+    }
+}
+```
+
+```bash
+qmllint Main.qml
+```
+
+Dugaan: satu peringatan `[unqualified]` untuk `lebarKotak` `[uji]`.
+
+**Bedah kode:**
+
+- `id: root` di baris pertama dan `property int lebarKotak: 50`: properti milik objek akar.
+- `width: lebarKotak`: `Rectangle` tak punya `lebarKotak`, jadi nama ditemukan di objek akar (④). Jalan, tetapi bergantung pada pencarian bertingkat dan pada posisi `Rectangle` di dalam komponen ini.
+- `root.lebarKotak`: jalur eksplisit. Tetap benar bila `Rectangle` dipindah ke dalam objek lain di berkas yang sama.
+- `color: 'steelblue'`: warna boleh ditulis sebagai string; mesin mengubahnya menjadi nilai `color`.
+
+**Tiga jebakan akses telanjang:**
+
+**1. Tidak naik ke induk visual.** Nama telanjang tak mencari properti `Rectangle` induk di tengah hierarki. Anda akan membuktikannya di latihan E.
+
+**2. Atribut terlampir.** Bacaan atribut terlampir tanpa awalan selalu menunjuk ke atribut milik scope object, padahal atribut seperti `ListView.isCurrentItem` hanya dipasang pada root delegate.
+
+```qml
+import QtQuick
+
+ListView {
+    width: 200; height: 100
+    model: 3
+    delegate: Item {
+        id: baris
+        width: 200; height: 30
+        Rectangle {
+            width: 200; height: 30
+            color: baris.ListView.isCurrentItem ? 'tomato' : 'khaki'   // ✓ lewat root delegate
+            // color: ListView.isCurrentItem ? 'tomato' : 'khaki'      // ✗ atribut milik Rectangle sendiri
+        }
+    }
+}
+```
+
+**Bedah kode:**
+
+- `baris.ListView.isCurrentItem`: `baris` adalah `id` root delegate, `ListView` adalah nama atribut terlampir, `isCurrentItem` isinya. Ini akses berkualifikasi atas atribut.
+- Versi yang dikomentari membaca atribut `ListView` milik `Rectangle` itu sendiri, yang tak pernah diisi view, sehingga hasilnya tak sesuai harapan.
+
+**3. Scoping dinamis.** Komponen di berkas lain bisa memakai nama milik pemakainya, dan jalan. Dokumentasi menyebutnya kuat tetapi harus dipakai hati-hati, hanya untuk dua komponen yang sudah erat terkait.
+
+```qml
+// Halaman.qml
+import QtQml
+
+QtObject {
+    id: halaman
+    property string judul: 'Halo'
+    property QtObject kop: Kop { }          // Kop.qml tidak mendeklarasikan judul
+}
+```
+
+```qml
+// Kop.qml
+import QtQml
+
+QtObject {
+    property string teks: '<b>' + judul + '</b>'   // judul datang dari pemakai
+}
+```
+
+```qml
+// Main.qml
+import QtQml
+
+Halaman {
+    Component.onCompleted: { console.log(kop.teks); Qt.quit() }
+}
+```
+
+Dugaan keluaran: `qml: <b>Halo</b>` `[uji]`. Pakai `Kop` di tempat lain tanpa `judul` dan ia gagal dengan `ReferenceError`.
+
+```
+ Halaman.qml                                Kop.qml
+ ┌────────────────────────────┐              ┌─────────────────────────────┐
+ │ property string judul ◄────┼── diam-diam ──┤ teks: '<b>' + judul + ...  │
+ │   Kop { }  ──────────────┼── memakai ───► │ (judul tak dideklarasikan)   │
+ └────────────────────────────┘              └─────────────────────────────┘
+ Jalan karena scope Kop disambung ke scope pemakainya. Kop kini bergantung diam-diam pada Halaman.
+```
+
+**Perbaikan: antarmuka eksplisit.**
+
+```qml
+// Kop.qml
+import QtQml
+
+QtObject {
+    required property string judul                    // data wajib, tertulis jelas
+    property string teks: '<b>' + judul + '</b>'
+}
+```
+
+```qml
+// Halaman.qml
+import QtQml
+
+QtObject {
+    id: halaman
+    property string judul: 'Halo'
+    property QtObject kop: Kop { judul: halaman.judul }   // diteruskan eksplisit
+}
+```
+
+**Bedah kode:**
+
+- `required property string judul`: properti yang wajib diisi saat objek dibuat. Dokumentasi: melanggarnya menggagalkan pemuatan bila terdeteksi statis. Nilai awal tak boleh ditulis pada deklarasinya.
+- `Kop { judul: halaman.judul }`: pemakai mengisi properti dengan nilai yang dikualifikasi lewat `id`. Dua sisi kini saling menyatakan kontraknya.
+
+**`parent`.** Properti `parent` ada pada `Item`, tetapi `QtObject` tak punya. Ia menunjuk induk visual, yang bisa berubah saat reparenting dan bisa `null`. Pakai untuk hubungan visual langsung (misalnya `anchors.fill: parent`), bukan untuk menjangkau data. Untuk data, pakai `id`.
+
+**Opsi lain, komponen menerima data dari luar:**
+
+| Cara | Terlihat bagi alat? | Kapan |
+| --- | --- | --- |
+| Properti biasa dengan nilai bawaan | Ya | Data opsional |
+| `required property` | Ya, dan wajib diisi | Data wajib |
+| Nama telanjang dari pemakai (scoping dinamis) | Tidak | Hindari |
+| Context property | Tidak | Hindari (3.4.5) |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Komponen memakai nama milik pemakainya | Jadikan properti, atau `required property` |
+| `ListView.isCurrentItem` dibaca dari anak delegate | Lewat `id` root delegate |
+| Mengandalkan `parent.x` untuk data | Pakai `id`; `parent` hanya untuk hubungan visual |
+| Mengabaikan `[unqualified]` dari `qmllint` | Jadikan peringatan itu bagian dari rutinitas (3.4.8) |
+
+**Referensi:** [QML Coding Conventions: Unqualified access, Required properties](https://doc.qt.io/qt-6/qml-codingconventions.html) · [qmllint: unqualified](https://doc.qt.io/qt-6/qmllint-warnings-and-errors-unqualified.html) · [Scope and Naming Resolution: Component Instance Hierarchy](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [QML Object Attributes: Attached Properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html)
+
+---
+
+### 3.4.5 Context property dan alternatifnya
+
+*Pintu belakang yang nyaman tetap pintu belakang.*
+
+**Konsep.** Context property adalah nama yang disuntikkan aplikasi C++ ke konteks QML lewat `QQmlContext::setContextProperty`. Kode QML lalu merujuknya tanpa awalan, seperti variabel global. Dokumentasi 6.12 memberi tiga peringatan:
+
+- Kode QML Anda bergantung pada konteks tertentu yang tak dideklarasikan di mana pun. Tak ada `import` dan tak ada pernyataan apa yang diharapkan, sehingga siapa pun yang memakai ulang kode itu sulit mengetahui apakah tempat barunya punya konteks yang cukup.
+- Context property tak terlihat oleh alat yang bekerja sebelum QML dimuat. Qt Quick Compiler, `qmllint`, dan QML Language Server memperlakukannya sebagai akses tanpa kualifikasi.
+- Bila konteks diubah, semua binding di konteks itu dievaluasi ulang. Pakai hanya saat inisialisasi aplikasi.
+
+**Peragaan lama (jangan ditiru).** Bagian C++ ini ditinjau lagi di Fase 10, jadi di sini cukup dibaca.
+
+```cpp
+// main.cpp
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+    QQmlApplicationEngine engine;
+
+    engine.rootContext()->setContextProperty("namaApp", "Lab 3.4");   // nama telanjang di QML
+    engine.load(QUrl::fromLocalFile("Main.qml"));
+    if (engine.rootObjects().isEmpty())
+        return -1;
+    return app.exec();
+}
+```
+
+```qml
+// Main.qml
+import QtQuick
+import QtQuick.Window
+
+Window {
+    visible: true
+    title: namaApp        // dari mana asalnya? tak tertulis di berkas ini
+}
+```
+
+**Bedah kode:**
+
+- `QGuiApplication app(argc, argv)`: objek aplikasi Qt untuk program grafis.
+- `QQmlApplicationEngine engine`: mesin QML yang memuat berkas dan menyimpan konteks akar.
+- `engine.rootContext()`: konteks paling atas. Semua nama yang disetel di sini terlihat dari seluruh QML yang dimuat mesin ini.
+- `setContextProperty("namaApp", "Lab 3.4")`: mendaftarkan nama `namaApp` dengan nilainya.
+- `engine.load(QUrl::fromLocalFile("Main.qml"))`: memuat berkas QML. `rootObjects().isEmpty()` memeriksa apakah pemuatan gagal.
+- `title: namaApp` di QML: nama telanjang yang tak dideklarasikan. `qmllint` menandainya `unqualified`, dan Qt Quick Compiler tak tahu tipenya.
+
+**Empat jalan keluar:**
+
+**A. Properti pada akar, diisi saat memuat (`required property` + `setInitialProperties`).** Dokumentasi menyebut context property umumnya dapat diganti properti biasa pada objek akar.
+
+```cpp
+engine.setInitialProperties({{"namaApp", "Lab 3.4"}});
+engine.load(QUrl::fromLocalFile("Main.qml"));
+```
+
+```qml
+// Main.qml
+import QtQuick
+import QtQuick.Window
+
+Window {
+    required property string namaApp        // tertulis, bertipe, diperiksa
+    visible: true
+    title: namaApp
+}
+```
+
+- `setInitialProperties`: mengisi properti objek akar sebelum objek selesai dibuat. Kode C++ ini `[uji]` pada versi Qt Anda.
+- `required property string namaApp`: kontrak yang terbaca di berkas QML. Lupa mengisinya akan menggagalkan pemuatan.
+
+**B. Singleton QML.** Cocok untuk pengaturan yang dipakai di banyak tempat, dan bisa dicoba tanpa C++.
+
+```
+# qmldir
+singleton Pengaturan 1.0 Pengaturan.qml
+```
+
+```qml
+// Pengaturan.qml
+pragma Singleton
+import QtQml
+
+QtObject {
+    readonly property string namaApp: 'Lab 3.4'
+}
+```
+
+```qml
+// Main.qml
+import QtQml
+import '.'
+
+QtObject {
+    Component.onCompleted: { console.log(Pengaturan.namaApp); Qt.quit() }
+}
+```
+
+```bash
+qml -a core Main.qml
+```
+
+Dugaan keluaran: `qml: Lab 3.4` `[uji]` (pendaftaran singleton lewat `qmldir` dan `import '.'` perlu Anda cek di versi Qt Anda).
+
+- `pragma Singleton`: menyatakan komponen di berkas ini sebagai singleton, satu instans per mesin QML.
+- `qmldir`: berkas pendaftaran modul. Baris `singleton` memberi tahu mesin bahwa `Pengaturan` adalah singleton.
+- `readonly property`: nilai hanya boleh diberikan saat inisialisasi, tak bisa ditimpa dari luar.
+- `Pengaturan.namaApp`: akses berkualifikasi lewat nama tipe, terlihat oleh alat.
+
+**C. Singleton C++ (`QML_SINGLETON`).** Pola yang sama dari sisi C++ untuk objek yang punya logika (akses berkas, jaringan). Detail pendaftaran di Fase 10.
+
+**D. Teruskan lewat properti.** Akar menerima data, lalu meneruskannya ke anak yang memerlukan: `Panel { namaApp: root.namaApp }`. Paling eksplisit, dan paling mudah diuji.
+
+| Cara | Dideklarasikan di QML? | Terlihat bagi alat? | Cocok untuk |
+| --- | --- | --- | --- |
+| Context property | Tidak | Tidak | Hindari untuk kode baru |
+| `required property` + `setInitialProperties` | Ya | Ya | Data awal aplikasi |
+| Singleton QML | Ya | Ya | Pengaturan dan konstanta bersama |
+| Singleton C++ | Ya (setelah didaftarkan) | Ya | Layanan berlogika |
+| Properti yang diteruskan | Ya | Ya | Data milik satu pohon komponen |
+
+**Catatan keamanan dan isolasi.** Context property adalah *ambient authority*: setiap QML yang berjalan di konteks itu, termasuk QML pihak ketiga atau yang dimuat dari jaringan, otomatis bisa memanggil metode `Q_INVOKABLE` objek yang Anda suntikkan. Terapkan *least privilege*: sediakan antarmuka sesempit mungkin, jangan suntikkan objek yang bisa membaca berkas atau menjalankan proses ke konteks yang memuat QML yang tak sepenuhnya Anda percayai (Fase Keamanan 13.x).
+
+**Catatan `Connections`.** Contoh di halaman dokumentasi context property memakai bentuk lama `onDataChanged:` di dalam `Connections`. Untuk kode baru pakai `function onDataChanged() { ... }` (3.2.3).
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Memakai context property di komponen yang dipakai ulang | Ganti dengan `required property` atau singleton |
+| Mengubah context property berulang kali saat berjalan | Seluruh binding di konteks dievaluasi ulang. Pakai properti biasa |
+| Heran mengapa `qmllint` melaporkan nama yang jelas ada | Alat tak melihat context property. Itu memang kelemahannya |
+| Menyuntikkan objek berkemampuan besar | Persempit antarmuka. Sediakan hanya yang diperlukan |
+
+**Referensi:** [Context Properties](https://doc.qt.io/qt-6/qtqml-cppintegration-contextproperties.html) · [Singletons in QML](https://doc.qt.io/qt-6/qml-singleton.html) · [QQmlApplicationEngine::setInitialProperties](https://doc.qt.io/qt-6/qqmlapplicationengine.html#setInitialProperties) · [QQmlContext](https://doc.qt.io/qt-6/qqmlcontext.html)
+
+---
+
+### 3.4.6 Closure di JavaScript (Bagian B8)
+
+*Fungsi yang membawa pulang rumahnya: pahami ia, dan Anda memahami setengah asinkronisme QML.*
+
+Modul ini hanya membuat jembatan. Pendalaman closure, termasuk `var`, `let`, `const`, dan IIFE, ada di Bagian B8.
+
+**Konsep.** Closure adalah fungsi beserta lingkungan tempat ia dibuat. Di QML, binding, handler sinyal, fungsi `Qt.binding`, dan callback `Timer` semuanya closure atas rantai scope yang Anda pelajari di 3.4.1. Fungsi itu membawa variabel lokal sekitarnya, bukan salinannya.
+
+**Jebakan utama: `var` dalam loop bertemu `Qt.binding`.** Binding baru dievaluasi ulang nanti, setelah loop selesai.
+
+```qml
+import QtQml
+
+QtObject {
+    id: root
+    property int basis: 10
+
+    QtObject { id: ta; property int n }
+    QtObject { id: tb; property int n }
+    QtObject { id: tc; property int n }
+
+    Component.onCompleted: {
+        const tujuan = [ta, tb, tc]
+        for (var i = 0; i < tujuan.length; i++)
+            tujuan[i].n = Qt.binding(function () { return i * root.basis })
+
+        console.log(ta.n, tb.n, tc.n)        // 0 10 20  (dihitung saat dipasang)
+        basis = 100                           // memicu evaluasi ulang
+        console.log(ta.n, tb.n, tc.n)        // 300 300 300 dengan var; 0 100 200 dengan let
+        Qt.quit()
+    }
+}
+```
+
+**Bedah kode:**
+
+- `const tujuan = [ta, tb, tc]`: larik tiga objek tujuan. `const` melarang penugasan ulang variabel `tujuan`.
+- `for (var i = 0; ...)`: `var` membuat satu variabel `i` untuk seluruh fungsi, bukan satu per putaran.
+- `Qt.binding(function () { return i * root.basis })`: fungsi ini menangkap variabel `i` yang sama untuk ketiga binding, bukan nilainya.
+- Cetakan pertama benar (0, 10, 20) karena tiap binding dievaluasi segera saat dipasang, ketika `i` bernilai 0, 1, dan 2.
+- Setelah loop, `i` bernilai 3. Saat `basis` berubah, ketiga binding dievaluasi ulang dengan `i` yang sama, yaitu 3, sehingga semuanya 300. Bug ini tersembunyi sampai ada perubahan `[uji]`.
+- Perbaikan: `for (let i = 0; ...)`. Pada `let` di kepala `for`, setiap putaran memiliki variabel `i` sendiri, sehingga hasil akhirnya 0, 100, 200.
+
+**Opsi lain, perbaikan untuk logika yang sama:**
+
+| Cara | Contoh | Catatan |
+| --- | --- | --- |
+| `let` di kepala loop | `for (let i = 0; ...)` | Paling ringkas |
+| Callback dengan parameter | `tujuan.forEach(function (t, k) { t.n = Qt.binding(function () { return k * root.basis }) })` | `k` dibuat baru per panggilan |
+| Fungsi pabrik | `function ikat(t, k) { t.n = Qt.binding(() => k * root.basis) }` | Tiap `k` terpisah |
+| Hindari loop imperatif | `Repeater` atau `Instantiator` dengan `required property int index` (3.4.7) | Binding deklaratif |
+
+**Hal yang perlu diingat:**
+
+- Closure menahan lingkungannya. Handler yang tersambung ke sinyal berumur panjang menahan semua yang ia tangkap sampai Anda memutuskannya (3.2.4, 3.3.6).
+- Closure yang menangkap objek yang kemudian dihancurkan akan membaca objek mati. Periksa dan putuskan di `Component.onDestruction` (3.3.3).
+- `this` di dalam closure tidak selalu seperti dugaan (3.4.1). Tangkap `id` yang jelas, bukan `this`.
+
+| Kesalahan | Solusi |
+| --- | --- |
+| `var` di loop yang membuat closure | Pakai `let`, atau fungsi pabrik |
+| Mengira closure menyalin nilai | Ia menangkap variabel, bukan nilainya |
+| Menahan objek lewat closure tanpa memutusnya | Putuskan koneksi saat objek hancur |
+
+**Referensi:** [MDN: Closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) · [MDN: let](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let) · [You Don't Know JS Yet: Scope & Closures](https://github.com/getify/You-Dont-Know-JS/tree/2nd-ed/scope-closures) · [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html)
+
+---
+
+### 3.4.7 Delegate, injeksi konteks, dan `pragma ComponentBehavior` `[TAMBAHAN]`
+
+*Yang paling sering membingungkan adalah yang tak pernah Anda tulis: nama yang muncul sendiri.*
+
+**Konsep.** Properti `delegate` pada `ListView`, `Repeater`, atau `Instantiator` bertipe komponen. Dokumentasi menyebut bahwa `Component` dibuat otomatis di sekeliling objek yang Anda tulis. Cara kerja lamanya: setiap instans delegate mendapat konteks privat yang berisi `index`, `model`, `modelData`, dan nama-nama role. Nama itu muncul tanpa deklarasi, jadi pemakaiannya adalah akses telanjang yang tak terlihat alat.
+
+Cara modernnya adalah `required property`. Menurut dokumentasi, bila delegate punya properti wajib yang namanya sama dengan role model, properti itu diisi dengan nilai role tersebut.
+
+**`pragma ComponentBehavior` (sejak Qt 6.4).** Satu berkas bisa memuat beberapa komponen yang bersarang. Komponen dalam bisa saja dibuat dari konteks lain, sehingga `id` luar belum tentu ada, dan mesin maupun alat tak bisa memastikan tipenya. Pragma ini menentukan sikapnya:
+
+- `Unbound` (bawaan): komponen boleh dibuat dalam konteks lain. Bila nama bentrok, properti lokal mengalahkan `id` di luar komponen, tetapi tidak `id` di dalam komponen.
+- `Bound`: semua komponen di berkas hanya membuat objek dalam konteks aslinya. `id` luar aman dipakai, dan alat menganggap tipe `id` itu tersedia. Bila nama bentrok, `id` luar mengalahkan properti lokal.
+- Delegate yang terikat tidak menerima konteks privat. Data model hanya bisa masuk lewat `required property`, dan `model.nama` tak lagi bekerja.
+- Pragma berlaku untuk semua komponen di berkas, sedalam apa pun bersarangnya, dan ditulis sebelum `import`.
+- Dokumentasi menyatakan bahwa bawaannya akan berubah menjadi `Bound` pada versi Qt mendatang. Tulis `Bound` secara eksplisit mulai sekarang.
+
+**Percobaan 1: siapa yang menang saat nama bentrok.**
+
+```qml
+pragma ComponentBehavior: Bound
+import QtQuick
+
+ListView {
+    id: radius                          // id luar yang SENGAJA bernama sama dengan properti Rectangle
+    width: 100; height: 100
+    property int nilai: 12
+    model: 1
+    delegate: Rectangle {
+        Component.onCompleted: {
+            console.log(radius.nilai)   // Bound: 12
+            Qt.quit()
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml bound.qml
+```
+
+Dugaan: `qml: 12`. Hapus baris `pragma`, dan `radius` kini dibaca sebagai properti `radius` milik `Rectangle` (sebuah angka), sehingga hasilnya `undefined` `[uji]`.
+
+**Bedah kode:**
+
+- `pragma ComponentBehavior: Bound`: mengikat semua komponen di berkas ke konteks asalnya.
+- `id: radius`: nama `id` yang sengaja sama dengan properti `radius` milik `Rectangle`, untuk memancing bentrokan.
+- `model: 1`: model berupa angka, jadi view membuat satu delegate.
+- `delegate: Rectangle { ... }`: komponen implisit. `Component.onCompleted` jalan saat instans selesai dibuat.
+- `radius.nilai`: pada `Bound`, `id` luar menang atas properti lokal, jadi hasilnya properti `nilai` milik `ListView`.
+
+**Percobaan 2: delegate tanpa konteks tersuntik (tanpa jendela).**
+
+```qml
+pragma ComponentBehavior: Bound
+import QtQml
+import QtQml.Models
+
+QtObject {
+    id: root
+    property string awalan: 'nomor'
+
+    Instantiator {
+        model: ListModel {
+            ListElement { nama: 'satu' }
+            ListElement { nama: 'dua' }
+        }
+        delegate: QtObject {
+            required property int index          // diisi oleh pabrik objek
+            required property string nama        // cocok dengan nama role model
+            Component.onCompleted: console.log(root.awalan, index, nama)
+        }
+    }
+
+    Timer { interval: 100; running: true; onTriggered: Qt.quit() }
+}
+```
+
+```bash
+qml -a core instansiasi.qml
+```
+
+Dugaan keluaran: `qml: nomor 0 satu` dan `qml: nomor 1 dua` (urutan tak dijamin) `[uji]`.
+
+**Bedah kode:**
+
+- `import QtQml.Models`: modul yang memuat `ListModel` dan `Instantiator`.
+- `Instantiator`: pabrik non-visual yang membuat satu objek delegate per elemen model.
+- `ListModel { ListElement { nama: 'satu' } }`: model dengan satu role bernama `nama`.
+- `required property int index`: `index` kini dideklarasikan dan bertipe. Ia diisi pabrik dengan posisi elemen.
+- `required property string nama`: namanya cocok dengan role, jadi diisi nilai role itu.
+- `root.awalan`: akses ke `id` di luar delegate. Aman karena komponennya `Bound`.
+- `Timer ... Qt.quit()`: memberi waktu pabrik membuat objek, lalu menghentikan `qml`.
+
+Bila Anda menghapus `required property` lalu menulis `console.log(index, nama)` pada versi `Bound`, nama-nama itu tak lagi tersedia dan hasilnya galat atau `undefined` `[uji]`.
+
+```
+ Gaya lama (Unbound + injeksi)               Gaya baru (Bound + required)
+ view --membuat--> delegate                  view --membuat--> delegate
+        | konteks privat disuntik:                  | tanpa konteks privat
+        |   index, model, modelData, role           | nilai masuk lewat required property
+        v                                           v
+ nama muncul dari udara (telanjang)          nama dideklarasikan, bertipe, terlihat alat
+```
+
+|  | Gaya lama | Gaya baru |
+| --- | --- | --- |
+| Pragma | Tidak ada (`Unbound`) | `pragma ComponentBehavior: Bound` |
+| `index`, role | Muncul otomatis | `required property` |
+| Bagi alat | Akses telanjang | Tipe dikenal |
+| `id` di luar delegate | Bisa tak ada bila delegate dibuat di konteks lain | Aman |
+| Nama bentrok | Properti lokal menang | `id` luar menang |
+
+**Opsi lain, memberi data ke objek yang dibuat pabrik:**
+
+| Cara | Kapan |
+| --- | --- |
+| `required property` yang cocok dengan role | Dianjurkan |
+| `required property var model` (seluruh objek model) | Bila memerlukan semua role sekaligus `[uji]` |
+| `model.nama` atau `modelData` telanjang | Kode lama; tak jalan pada delegate `Bound` |
+| Properti di `Loader` untuk meneruskan `index` | Komponen yang dibuat `Loader` di dalam delegate (3.3.5) |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| `index` atau `nama` tak terdefinisi setelah menambah `Bound` | Deklarasikan `required property` yang cocok |
+| Nama role di model tak cocok dengan nama properti | Samakan penulisannya, huruf besar kecil ikut dihitung |
+| Delegate memakai `id` luar tetapi dibuat dari berkas lain | Pindahkan komponen ke dalam berkas yang sama, atau teruskan sebagai properti |
+| Mengabaikan perubahan bawaan di versi Qt mendatang | Tulis `pragma ComponentBehavior: Bound` di setiap berkas sejak sekarang |
+
+**Referensi:** [Structure of a QML Document: ComponentBehavior](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [QML Object Attributes: Required Properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html) · [Models and Views in Qt Quick](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html) · [Instantiator](https://doc.qt.io/qt-6/qml-qtqml-models-instantiator.html)
+
+---
+
+### 3.4.8 Merancang batas komponen dan mendiagnosis scope `[TAMBAHAN]`
+
+*Komponen yang baik bisa dipindah ke proyek lain tanpa membawa separuh aplikasi.*
+
+**Konsep.** Semua yang Anda pelajari di 3.4.1 sampai 3.4.7 bermuara pada satu disiplin: setiap komponen punya batas yang tertulis. Yang masuk, yang keluar, dan yang privat terbaca langsung dari berkasnya.
+
+```
+  properti (masuk) ------>+-------------------------+-----> sinyal (keluar)
+  required property ----->|  id privat + logika     |-----> alias (ekspos anak)
+  fungsi (perintah) ----->|  tak melihat ke luar    |
+                          +-------------------------+
+   tidak ada di sini: id milik pemakai, nama dari pemakai, context property
+```
+
+**Daftar periksa perancangan:**
+
+1. Satu berkas, satu komponen, dengan antarmuka eksplisit: properti untuk data masuk, sinyal untuk kejadian keluar, fungsi untuk perintah, alias untuk mengekspos anak.
+2. `id` bersifat privat. Letakkan di baris pertama dan beri nama `root` pada objek akar (3.4.2).
+3. Data wajib dari luar dinyatakan dengan `required property` (3.4.4).
+4. Komponen tak merujuk `id` atau nama milik pemakainya (3.4.2 dan 3.4.4).
+5. Tulis `pragma ComponentBehavior: Bound` di setiap berkas (3.4.7).
+6. Kualifikasi setiap akses ke properti induk, dan jalankan `qmllint` sampai bersih.
+7. Data global memakai singleton, bukan context property (3.4.5).
+
+**Diagnosis:**
+
+| Gejala | Dugaan | Alat atau tindakan |
+| --- | --- | --- |
+| `ReferenceError: x is not defined` | `id` dari berkas lain, atau komponen dipakai di luar konteks yang diasumsikan | Jadikan properti atau alias; uji isolasi (di bawah) |
+| Peringatan `[unqualified]` | Akses telanjang | Kualifikasi dengan `id`, atau pakai `required property` |
+| Nilai salah padahal nama benar | Shadowing oleh `id`, variabel lokal, atau properti turunan | `console.log(typeof x, x)` di dalam binding; ganti nama |
+| Nama `index` atau role hilang di delegate | `Bound` tanpa `required property` | Deklarasikan properti wajibnya |
+| Komponen hanya jalan di satu tempat | Scoping dinamis atau context property | Ganti dengan antarmuka eksplisit |
+| Atribut terlampir kosong di anak delegate | Dibaca tanpa awalan | Lewat `id` root delegate |
+| Binding di loop menghasilkan nilai sama | Closure menangkap `var` | Pakai `let` atau fungsi pabrik (3.4.6) |
+
+**Alat:**
+
+- `qmllint Main.qml` (di Arch bisa `qmllint6`): kategori `unqualified` dan lainnya. Jalankan sebelum menjalankan aplikasi.
+- `qmlls` (QML Language Server, di Arch bisa `qmlls6`): peringatan yang sama langsung di editor lewat klien LSP.
+- `console.log(typeof x, x)` di dalam binding: melihat apa yang sebenarnya diselesaikan sebuah nama.
+
+**Uji isolasi.** Salin satu komponen beserta satu berkas pemakai minimal ke direktori kosong, lalu jalankan. Bila gagal dengan `ReferenceError`, komponen itu punya ketergantungan tersembunyi pada pemakainya. Perbaiki sampai ia berjalan di direktori kosong. Ini sama dengan menguji sebuah layanan di *sandbox*: yang tak berjalan tanpa lingkungannya ternyata sudah bergantung pada lingkungan itu.
+
+**Catatan keamanan.** Akses telanjang dan scoping dinamis membuat permukaan pengaruh yang tak tertulis: siapa pun di scope pemakai bisa mengubah perilaku komponen tanpa kelihatan. Antarmuka eksplisit mempersempit permukaan itu. Anda dapat mengaudit sebuah komponen dengan membaca deklarasi properti, sinyal, dan fungsinya saja.
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Menganggap komponen yang jalan di aplikasi pasti mandiri | Jalankan uji isolasi |
+| Menumpuk `id` luar di dalam komponen demi kemudahan | Jadikan properti yang diteruskan |
+| Mengabaikan peringatan `qmllint` karena aplikasi tetap jalan | Peringatan `unqualified` adalah utang yang tertunda |
+
+**Referensi:** [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [QML Language Server](https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html) · [Qt Quick Compiler](https://doc.qt.io/qt-6/qtqml-qtquick-compiler-tech.html)
+
+---
+
+## E. Latihan 15 menit dan kunci jawaban
+
+**Latihan (dari kurikulum):** ubah contoh agar `Text` menampilkan `nilai` dari tiga tingkat, dan lihat apa yang dikeluhkan `qmllint` bila kualifikasi dihilangkan.
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    property int nilai: 1
+
+    Rectangle {
+        id: tengah
+        property int nilai: 2
+
+        Rectangle {
+            id: dalam
+            property int nilai: 3
+
+            Text {
+                text: root.nilai + ' / ' + tengah.nilai + ' / ' + dalam.nilai
+                Component.onCompleted: { console.log(text); Qt.quit() }
+            }
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qml tiga.qml
+qmllint tiga.qml
+```
+
+Dugaan: `qml: 1 / 2 / 3`, dan `qmllint` bersih untuk `text` karena semuanya berkualifikasi `[uji]`.
+
+Sekarang ganti baris `text:` menjadi `text: nilai` lalu ulangi kedua perintah. Dugaan: hasilnya `1` dan `qmllint` melapor `unqualified` untuk `nilai` `[uji]`.
+
+**Kunci:**
+
+- Versi telanjang menghasilkan 1, bukan 3. `Text` tak punya `nilai`, dan pencarian tidak mampir ke `dalam` atau `tengah`. Ia langsung ke objek akar komponen, yaitu `root`. Inilah kejutan yang dimaksud di audit nomor 2.
+- Pada struktur yang lebih rumit, hasil telanjang bisa terlihat benar secara kebetulan. Karena itu `qmllint` menandainya, dan konvensi Qt meminta `id` yang eksplisit.
+
+**Cek pemahaman (dari kurikulum):** *Mengapa `root.nilai` lebih baik daripada `nilai`?* Karena ia tak bergantung pada urutan pencarian dan tak tertipu oleh nama yang sama di tempat lain. Ia tetap benar saat elemen dipindahkan di dalam berkas, dibaca jelas oleh manusia, dan dikenali `qmllint` serta Qt Quick Compiler, sehingga alat dapat mengoptimalkannya.
+
+**Pertanyaan tambahan:**
+
+1. *Siapa yang menang antara variabel lokal JS, `id`, dan properti scope object?* Variabel lokal menang atas semuanya, lalu `id` atas properti.
+2. *Mengapa `mesin.hitung` galat di `Main.qml` pada 3.4.2?* `id` hanya berlaku dalam dokumen tempat ia dideklarasikan. Ekspos lewat `property alias`.
+3. *Apa bedanya `Bound` dan `Unbound` saat nama bentrok?* `Unbound`: properti lokal mengalahkan `id` luar. `Bound`: `id` luar mengalahkan properti lokal.
+4. *Mengapa `model.nama` gagal pada delegate `Bound`?* Delegate terikat tidak menerima konteks privat. Data hanya lewat `required property`.
+5. *Mengapa `ListView.isCurrentItem` gagal di anak delegate?* Atribut itu hanya terpasang pada root delegate. Baca lewat `id` root.
+6. *Mengapa context property sulit bagi alat?* Ia disuntik saat berjalan dari C++, sehingga tak ada deklarasi yang bisa dibaca sebelum QML dimuat.
+7. *Mengapa closure `var` di loop memberi nilai sama?* Satu variabel dipakai semua binding, dan nilainya sudah 3 saat dievaluasi ulang.
+
+**Tantangan:**
+
+- Ubah lab 3.4.5 dari context property menjadi `required property` + `setInitialProperties`, lalu bandingkan keluaran `qmllint` sebelum dan sesudah.
+- Lakukan uji isolasi pada `Kop.qml` versi awal 3.4.4: salin ke direktori kosong tanpa `Halaman.qml`. Catat galatnya, lalu perbaiki dengan `required property`.
+
+---
+
+## F. Glosarium Modul 3.4
+
+| Istilah | Arti |
+| --- | --- |
+| Scope | Wilayah tempat sebuah nama dapat dikenali |
+| Scope object | Objek pemilik binding; propertinya dipakai tanpa awalan |
+| Component scope | Gabungan `id` dalam komponen dan properti objek akarnya |
+| Objek akar (root) | Objek paling atas dalam sebuah berkas QML |
+| Konteks (context) | Lingkungan tempat `id` dan nama diselesaikan saat objek dibuat |
+| Scoping dinamis | Komponen dapat memakai nama dari scope pemakainya |
+| `id` | Nama bagi objek, berlaku dalam satu dokumen; bukan properti |
+| Shadowing | Satu nama menutupi nama lain yang lebih jauh |
+| `virtual` / `override` / `final` | Kata kunci untuk menyatakan penimpaan properti secara eksplisit |
+| Akses berkualifikasi | Merujuk lewat `objek.nama`, bukan nama telanjang |
+| Akses telanjang (unqualified) | Nama tanpa awalan yang diselesaikan lewat urutan pencarian |
+| Atribut terlampir (*attached property*) | Properti yang dipasang tipe lain pada objek tertentu, misalnya `ListView.isCurrentItem` |
+| `property alias` | Properti yang menjadi referensi langsung ke properti lain |
+| `required property` | Properti yang wajib diisi saat objek dibuat |
+| Context property | Nama yang disuntik dari C++ ke konteks QML |
+| Singleton | Objek tunggal per mesin QML, diakses lewat nama tipenya |
+| Delegate | Komponen yang dibuat view atau pabrik objek untuk tiap elemen model |
+| Injeksi konteks | Nama (`index`, `model`, role) yang disuntik ke delegate secara otomatis |
+| `ComponentBehavior` | Pragma yang menentukan apakah komponen terikat ke konteks asalnya (`Bound`) atau tidak (`Unbound`) |
+| Closure | Fungsi beserta lingkungan tempat ia dibuat |
+| `this` | Di dalam `Qt.binding`, objek penerima binding |
+| `qmllint` | Pemeriksa statis QML; kategori `unqualified` melaporkan akses telanjang |
+| `qmlls` | Server bahasa QML untuk editor |
+
+---
+
+## G. Hubungan dengan modul lain
+
+| Modul | Hubungan |
+| --- | --- |
+| **2.2.4** | Dasar scope dan isolasi yang diperdalam di sini |
+| **3.1** Property Binding | Setiap nama yang dibaca menjadi dependensi; `this` di `Qt.binding`; closure pada `Qt.binding` (3.4.6) |
+| **3.2** Signal dan Connections | `target` `Connections` dijangkau lewat `id`; parameter handler eksplisit, bukan injeksi; `connect()` membuat closure |
+| **3.3** Lifecycle | Konteks pembuatan menentukan nama yang terlihat; objek dinamis tak punya `id`; `Loader` di delegate dan `index` |
+| **Fase View/Delegate** | `required property`, `pragma ComponentBehavior: Bound`, dan injeksi `index` dan `model` (3.4.7) |
+| **Fase 10** (C++) | Context property, singleton, `setInitialProperties` |
+| **Bagian B8** | Closure secara mendalam |
+| **Keamanan (13.x)** | *Least privilege*: antarmuka komponen yang sempit dan permukaan injeksi yang kecil |
+
+**Penutup Fase 3:** dengan Modul 3.4 selesai, Anda sudah memegang empat alat inti model objek QML: binding (3.1), sinyal (3.2), siklus hidup (3.3), dan scope (3.4). Fase berikutnya belum ada di berkas Anda, jadi kirimkan bagian kurikulumnya bila siap melanjutkan.
+
+---
+
+**Catatan tautan:** halaman Qt yang telah dibuka langsung adalah Scope and Naming Resolution, Structure of a QML Document, QML Object Attributes, Property Shadowing and Override Semantics, dan Context Properties (semuanya 6.12). Bagian `this` pada Property Binding, panduan `qmllint` kategori `unqualified`, dan QML Coding Conventions dibaca lewat hasil pencarian dari beberapa versi Qt 6, jadi tandai `[uji]` pada versi Anda. Halaman Qt lain (QQmlApplicationEngine, Singletons in QML, Instantiator, Models and Views, QQmlContext, qmllint, qmlls, Qt Quick Compiler, JavaScript Host Environment) muncul sebagai tautan di halaman yang sudah dibuka tetapi tidak dibuka dengan cara satu per satu. Tautan MDN dan You Don't Know JS tidak saya buka.
 
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
