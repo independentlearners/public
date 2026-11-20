@@ -2872,6 +2872,1067 @@ Ulangi tanpa baris `sourceSize.width: 600`. Isi tabel berikut dengan angka Anda:
 
 **Catatan tautan:** Fakta pada halaman Image (6.12) tentang `qt_add_qml_module` (6.12) dan pola proyek di Building a QML application (6.7 dan 6.8), tipe `url` (Qt 5.x sampai 6.1), `FontLoader` (Qt 5.x), objek `Qt` (6.3), dan batas alokasi gambar (laporan pengguna Qt dan KDE yang mengutip dokumentasi `QImageReader`) saya baca lewat hasil pencarian, jadi tandai `[uji]` pada versi Anda. Skrip `gen_png.py` sudah saya jalankan: `besar.png` valid, 79.884 byte di disk, 6000 × 4000 piksel; `raksasa.png` valid, 333.337 byte, 12000 × 9000 piksel. Halaman The Qt Resource System, QImageReader, AnimatedImage, Text Fonts example, dan Image Elements example tidak saya buka satu per satu. Nama paket Arch (`qt6-base`, `qt6-declarative`, `qt6-svg`, `cmake`, `ninja`) dan format `fc-match` saya tulis dari pengetahuan umum dan tidak saya verifikasi dalam sesi ini. Bila ada yang tidak terbuka, kabari saya.
 
+# Fase 4 · Modul 4.4 — Input Dasar: Pointer, Tap, dan Keyboard
+
+*Penutup Fase 4. Melanjutkan Modul 4.3.*
+
+<!-- Saya membaca bagian Modul 4.4 dari kurikulum Fase 4 yang Anda kirim, lalu mengaudit isinya terhadap dokumentasi Qt 6.12 (Important Concepts In Qt Quick - User Input, Keyboard Focus in Qt Quick, Qt Quick Input Handlers), Qt 6.11 (Mouse Events), serta halaman `Keys`, `TapHandler`, `TestCase`, dan Qt Quick Test dari beberapa versi Qt 6 lewat hasil pencarian. Seperti sebelumnya, saya tidak menjalankan kode ini pada Qt, jadi bagian bertanda `[uji]` perlu Anda buktikan sendiri. -->
+
+---
+
+## A. Audit singkat
+
+**Terverifikasi:**
+
+- Input handler bersifat non-visual, hemat memori, dan dirancang dipakai dalam jumlah banyak: satu handler per aspek interaksi, bekerja atas nama item induknya, dan satu item boleh punya handler tak terbatas. Analogi kurikulum tentang “pengintai” tepat.
+- Dokumentasi menyebut input handler sebagai cara yang lebih modern untuk menangani semua perangkat penunjuk. `MouseArea` awalnya dirancang untuk mouse, lalu belakangan juga menangani sentuhan tunggal lewat event mouse sintetis.
+- `TapHandler` bawaannya memakai `gesturePolicy: DragThreshold`, yang hanya membutuhkan *passive grab*, sehingga tak mengganggu pengiriman event ke item atau handler lain. Klaim kurikulum bahwa pengintai “tidak mengganggu pengintai lain” benar untuk handler, tetapi tidak untuk `MouseArea` (4.4.4).
+- Event keyboard dikirim ke item yang memegang *active focus*. Bila tak ada, event diabaikan. Bila item menerimanya, propagasi berhenti; bila tidak, event naik ke induk sampai ke akar.
+- Contoh kurikulum sah: `TapHandler { id: tap; onTapped: ... }` dengan `tap.pressed`, dan `Keys.onPressed: (event) => { ... }` dengan parameter eksplisit.
+- Jawaban cek pemahaman benar: tanpa fokus aktif, tombol tak sampai ke item.
+
+**Perlu dikoreksi atau dilengkapi:**
+
+1. **`focus: true` bukan jaminan fokus aktif.** Dalam satu *focus scope* hanya satu item yang memegang fokus, dan QML tak menjamin urutan inisialisasi. Pada komponen yang dipakai ulang, `focus: true` bisa kalah. Contoh kurikulum aman hanya karena ada satu item. Perlu `FocusScope` dan pembedaan `focus` dari `activeFocus`. Diperluas di 4.4.3.
+2. **Contoh `Keys.onPressed` tak menyetel `event.accepted`.** Dokumentasi: bila Anda menangani tombol, setel `event.accepted = true` agar tak merambat ke induk. Handler tombol spesifik (misalnya `onReturnPressed`) otomatis menerimanya. Masuk 4.4.3 dan 4.4.4.
+3. **`Shortcut` untuk pintasan tingkat jendela.** Kalimat “keluar saat Q ditekan” lebih tepat dengan `Shortcut` bila pintasan harus berlaku tanpa memandang item mana yang berfokus. Masuk 4.4.3 `[uji]`.
+4. **Urutan pemrosesan `Keys`.** Secara bawaan (`Keys.BeforeItem`) handler `Keys` berjalan sebelum penanganan bawaan item (misalnya `TextInput`). Kurikulum tak menyebutnya. Masuk 4.4.4.
+5. **`TapHandler` lebih dari `onTapped`.** `tapCount`, `doubleTapped`, `longPressed`, `acceptedButtons` (bawaan tombol kiri), `acceptedDevices`, `acceptedModifiers`, dan `gesturePolicy` (`ReleaseWithinBounds` untuk perilaku tombol sungguhan). Diperluas di 4.4.2.
+6. **`MouseArea`: `hoverEnabled` bawaannya `false`.** Tanpanya `containsMouse` hanya benar saat tombol ditekan, dan `entered`, `exited`, serta `positionChanged` tak aktif. Masuk 4.4.1.
+7. **Pointer vs sentuhan (4.4.5)** perlu dua fakta: `MouseArea` hanya menangani sentuhan tunggal lewat event sintetis, dan `HoverHandler` hanya untuk mouse dan tablet (layar sentuh tak punya hover).
+8. **Menguji input dari terminal tak dibahas.** Padahal Qt Quick Test dapat mensimulasikan klik dan tombol tanpa jendela terlihat. TAMBAHAN 4.4.6.
+9. **Keamanan input tak dibahas.** Overlay penelan klik, `Keys.forwardTo` dan `priority`, perebutan fokus, pintasan global, dan pencatatan tombol. TAMBAHAN 4.4.7.
+
+**TAMBAHAN:**
+
+- **4.4.6** Menguji input dari terminal.
+- **4.4.7** Keamanan dan desain input.
+
+---
+
+## B. Daftar isi Modul 4.4 (diperbarui)
+
+- **4.4.1** `MouseArea` `[diperluas]`
+- **4.4.2** `TapHandler` dan `HoverHandler` `[diperluas]`
+- **4.4.3** Fokus, `Keys`, dan `Shortcut` `[diperluas]`
+- **4.4.4** Propagasi dan penerimaan event `[diperluas]`
+- **4.4.5** Pointer vs sentuhan `[diperluas]`
+- **4.4.6** Menguji input dari terminal `[TAMBAHAN]`
+- **4.4.7** Keamanan dan desain input `[TAMBAHAN]`
+- Latihan dan kunci jawaban · Glosarium · Hubungan dengan modul lain
+
+**Urutan belajar yang disarankan:** 4.4.1 → 4.4.2 → 4.4.3 → 4.4.4 → 4.4.5 → 4.4.6 → 4.4.7.
+
+---
+
+## C. Peta besar
+
+```
+ Perangkat: mouse, layar sentuh, stylus, keyboard
+      |
+      v  event
+ Window
+      |
+      +-- POINTER (berdasarkan RUANG: siapa yang ada di bawah titik sentuh)
+      |     item dari z TERATAS ke bawah. Pada tiap item:
+      |       1. handler anak (TapHandler, HoverHandler, ...)
+      |       2. item itu sendiri (MouseArea, Flickable, ...)
+      |     berhenti di item yang mengambil exclusive grab
+      |
+      +-- KEYBOARD (berdasarkan FOKUS: siapa yang sedang “berbicara”)
+            item dengan ACTIVE FOCUS
+               | tak menerima? naik ke induk -> induk -> ... -> akar
+               v tak ada yang menerima: event diabaikan
+```
+
+**Filosofinya:** input adalah percakapan antara perangkat dan antarmuka. Event pointer berjalan menurut **ruang**: yang berada di atas titik sentuh didengar lebih dulu. Event keyboard berjalan menurut **fokus**: hanya yang sedang memegang fokus didengar. Memahami dua jalur ini memecahkan sebagian besar keluhan “mengapa input saya tak jalan”. Handler memisahkan perilaku dari tampilan: item menyatakan *seperti apa ia tampak*, handler menyatakan *apa yang ia lakukan*, dan keduanya dirakit dari bagian-bagian kecil.
+
+**Cara menjalankan contoh:** contoh interaktif memerlukan jendela nyata: `qml nama.qml`. Pengujian tanpa jendela dengan Qt Quick Test ada di 4.4.6.
+
+---
+
+## D. Materi
+
+### 4.4.1 `MouseArea`
+
+*Setiap interaksi dimulai dari sebuah area yang mau mendengarkan.*
+
+**Konsep.** `MouseArea` adalah item tak terlihat yang menerima event mouse di dalam areanya. Cara tercepat menentukan area adalah `anchors.fill: parent`. Area yang lebih kecil atau lebih besar daripada induk juga boleh. Menurut dokumentasi, ia memancarkan sinyal `canceled`, `clicked`, `doubleClicked`, `entered`, `exited`, `positionChanged`, `pressAndHold`, `pressed`, dan `released`. Parameter handler adalah objek `MouseEvent` (misalnya `mouse.button`), dan `mouse.accepted` mengendalikan penerusan event.
+
+Beberapa gestur harus diaktifkan lebih dulu:
+
+- `acceptedButtons` menentukan tombol mouse yang didengar (bawaan: tombol kiri).
+- `hoverEnabled` (bawaan `false`) mengaktifkan event posisi walau tak ada tombol ditekan, sekaligus sinyal `entered`, `exited`, dan `positionChanged`. Tanpanya, `containsMouse` hanya memberi nilai benar saat tombol ditekan.
+- `enabled: false` mematikan seluruh area.
+
+**Peragaan: tombol dengan hitungan** (dengan jendela).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 320; height: 160
+
+    Rectangle {
+        id: tombol
+        anchors.centerIn: parent
+        width: 160; height: 60; radius: 8
+        color: area.pressed ? 'darkorange' : area.containsMouse ? 'gold' : 'orange'
+
+        property int hitung: 0
+
+        Text { anchors.centerIn: parent; text: 'Klik: ' + tombol.hitung }
+
+        MouseArea {
+            id: area
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            cursorShape: Qt.PointingHandCursor
+            onClicked: (mouse) => {
+                tombol.hitung += (mouse.button === Qt.RightButton ? 10 : 1)
+            }
+        }
+    }
+}
+```
+
+```bash
+qml mousearea.qml
+```
+
+Dugaan: persegi berubah emas saat kursor masuk, jingga tua saat ditekan; klik kiri menambah 1 dan klik kanan menambah 10 `[uji]`.
+
+**Bedah kode:**
+
+- `property int hitung: 0`: properti milik `Rectangle`, tempat hitungan disimpan. Teks di dalamnya mengikat ke properti itu (3.1).
+- `MouseArea { anchors.fill: parent }`: area yang menutupi seluruh persegi. Tanpa ukuran, `MouseArea` tak punya area untuk menerima event (4.1.1).
+- `hoverEnabled: true`: tanpanya `area.containsMouse` hanya benar saat tombol ditekan, sehingga warna emas saat melayang tak muncul.
+- `acceptedButtons: Qt.LeftButton | Qt.RightButton`: tanda `|` menggabungkan dua nilai bendera. Tanpa tombol kanan di daftar ini, klik kanan diabaikan.
+- `cursorShape: Qt.PointingHandCursor`: bentuk kursor saat berada di atas area.
+- `onClicked: (mouse) => { ... }`: handler dengan parameter eksplisit (3.2.1). `mouse.button` menyebut tombol mana yang menekan.
+- `area.pressed`, `area.containsMouse`: properti reaktif milik `MouseArea` yang dipakai `color` di induknya (3.4.4).
+
+**Opsi lain, merespons klik:**
+
+| Cara | Kapan | Catatan |
+| --- | --- | --- |
+| `MouseArea` | Interaksi mouse sederhana, kode lama | Sentuhan hanya tunggal dan sintetis |
+| `TapHandler` | Kode baru, semua perangkat penunjuk | 4.4.2 |
+| `Button` dari Qt Quick Controls | Tombol standar dengan tampilan dan aksesibilitas | Fase kontrol |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| `MouseArea` tanpa ukuran | Pakai `anchors.fill: parent`, atau beri `width` dan `height` |
+| Heran `containsMouse` tak berubah saat melayang | Setel `hoverEnabled: true` |
+| Klik kanan tak dikenali | Tambahkan `Qt.RightButton` ke `acceptedButtons` |
+| Menaruh logika berat langsung di `onClicked` | Panggil fungsi singkat; pekerjaan berat dipindah dan dijadwalkan (3.3.4) |
+| Menumpuk `MouseArea` dan heran yang di bawah tak menerima | Lihat 4.4.4 |
+
+**Referensi:** [Mouse Events](https://doc.qt.io/qt-6/qtquick-input-mouseevents.html) · [MouseArea](https://doc.qt.io/qt-6/qml-qtquick-mousearea.html) · [MouseEvent](https://doc.qt.io/qt-6/qml-qtquick-mouseevent.html)
+
+---
+
+### 4.4.2 `TapHandler` dan `HoverHandler`
+
+*Satu handler untuk satu aspek interaksi: kecil, mudah dibaca, mudah dihapus.*
+
+**Konsep.** Input handler adalah tipe non-visual yang ditaruh di dalam sebuah item dan menangani event atas nama item itu. Daftar lengkapnya menurut dokumentasi: `DragHandler`, `HoverHandler`, `KeyNavigation`, `Keys`, `PinchHandler`, `PointHandler`, `TapHandler`, dan `WheelHandler`. Beberapa handler menambah interaktivitas hanya dengan dideklarasikan. Semuanya memiliki properti yang dapat dipakai dalam binding dan sinyal yang dapat ditangani.
+
+**`TapHandler`** (dokumentasi Qt 6):
+
+- Menangani ketukan di layar sentuh dan klik mouse.
+- Gestur ketukan yang sah bergantung pada `gesturePolicy`. Bawaannya `TapHandler.DragThreshold`: tekan dan lepas harus berdekatan dalam ruang dan waktu. Ia memakai *passive grab*, jadi tak mengganggu item atau handler lain.
+- `TapHandler.ReleaseWithinBounds` cocok untuk perilaku tombol sungguhan: bila Anda menekan lalu berubah pikiran, menyeret keluar dari tepi membatalkan klik.
+- `acceptedButtons` bawaannya `Qt.LeftButton`. `acceptedDevices` dan `acceptedModifiers` membatasi perangkat dan tombol pengubah (Ctrl, Alt, Shift).
+- Sinyal: `tapped`, `singleTapped`, `doubleTapped`, `longPressed`, `canceled`, dan `grabChanged`. Properti `tapCount` menghitung ketukan beruntun, dan `pressed` bernilai benar selama titik ditekan. `longPressThreshold` (dalam detik) menentukan lama tekan untuk `longPressed`.
+- Ketukan ganda dan seterusnya mengikuti jarak dan selang waktu klik ganda dari pengaturan sistem (`QStyleHints`).
+
+**`HoverHandler`** menangani hover mouse dan tablet. Properti utamanya `hovered`, dan `cursorShape` mengatur bentuk kursor.
+
+**Peragaan: tombol dengan tiga jenis ketukan** (dengan jendela).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 360; height: 200
+
+    Rectangle {
+        id: kotak
+        anchors.centerIn: parent
+        width: 160; height: 80; radius: 8
+        color: tap.pressed ? 'darkorange' : hover.hovered ? 'gold' : 'orange'
+        border.width: 2
+        border.color: tap.pressed ? 'black' : 'transparent'
+
+        Text { anchors.centerIn: parent; text: 'ketukan: ' + tap.tapCount }
+
+        HoverHandler { id: hover; cursorShape: Qt.PointingHandCursor }
+
+        TapHandler {
+            id: tap
+            gesturePolicy: TapHandler.ReleaseWithinBounds
+            onTapped: console.log('tap, jumlah:', tapCount)
+            onDoubleTapped: console.log('dobel-tap')
+            onLongPressed: console.log('tekan lama')
+        }
+        TapHandler {
+            acceptedButtons: Qt.RightButton
+            onTapped: console.log('klik kanan')
+        }
+    }
+}
+```
+
+```bash
+qml tap.qml
+```
+
+Dugaan: kursor menjadi tangan dan persegi emas saat melayang; klik kiri mencatat `tap, jumlah: 1`; klik kiri dua kali cepat mencatat `dobel-tap`; menahan tombol lebih lama dari `longPressThreshold` mencatat `tekan lama`; klik kanan mencatat `klik kanan` `[uji]`.
+
+**Bedah kode:**
+
+- `HoverHandler { id: hover; cursorShape: ... }`: pengintai hover untuk item induk (`kotak`). `hover.hovered` bernilai `true` saat kursor di atas.
+- `color: tap.pressed ? 'darkorange' : hover.hovered ? 'gold' : 'orange'`: dua ekspresi kondisional bersarang. Binding membaca dua handler yang berbeda (3.1.1).
+- `TapHandler { id: tap; gesturePolicy: TapHandler.ReleaseWithinBounds }`: perilaku tombol: menyeret keluar sebelum melepas membatalkan ketukan.
+- `onTapped: console.log('tap, jumlah:', tapCount)`: di dalam handler, `tapCount` dibaca dari `TapHandler` itu sendiri (3.4.1).
+- `onDoubleTapped`, `onLongPressed`: sinyal untuk ketukan ganda dan tekan lama.
+- `TapHandler { acceptedButtons: Qt.RightButton }`: handler kedua yang hanya menanggapi tombol kanan. Dokumentasi memberi contoh yang sama: dua handler pada satu item untuk menanggapi klik kiri dan kanan secara berbeda.
+- Handler tak punya ukuran dan tak digambar. Area aktifnya adalah area item induknya.
+
+**`DragHandler`** (pratinjau): dengan hanya dideklarasikan, ia membuat item induknya dapat diseret.
+
+```qml
+Rectangle {
+    width: 80; height: 80; color: 'steelblue'
+    DragHandler { xAxis.minimum: 0; xAxis.maximum: 280; yAxis.enabled: false }
+}
+```
+
+Batasan sumbu (`xAxis.minimum`, `xAxis.maximum`, `yAxis.enabled`) `[uji]` pada versi Anda. Ketiga handler dibahas lebih dalam di fase gestur.
+
+**Modifier dan perangkat:** dokumentasi memberi contoh handler yang hanya aktif bila Ctrl ditekan:
+
+```qml
+Item {
+    TapHandler { acceptedModifiers: Qt.ControlModifier; onTapped: console.log('ctrl-klik') }
+    TapHandler { acceptedModifiers: Qt.NoModifier; onTapped: console.log('klik biasa') }
+}
+```
+
+**Opsi lain, memilih handler:**
+
+| Kebutuhan | Pilihan |
+| --- | --- |
+| Klik atau ketuk | `TapHandler` |
+| Melayang | `HoverHandler` |
+| Menyeret item | `DragHandler` |
+| Cubit untuk zoom dan putar | `PinchHandler` |
+| Satu titik sentuh mentah | `PointHandler` |
+| Roda mouse | `WheelHandler` |
+| Tombol keyboard | `Keys`, `KeyNavigation`, `Shortcut` (4.4.3) |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengharap `TapHandler` bersuara untuk tombol kanan | `acceptedButtons` bawaannya hanya kiri |
+| Perilaku tombol yang tak bisa dibatalkan dengan menyeret keluar | Setel `gesturePolicy: TapHandler.ReleaseWithinBounds` |
+| Mencampur `MouseArea` dan `TapHandler` pada item yang sama tanpa tujuan | Pilih satu untuk aspek yang sama |
+| `HoverHandler` untuk fitur yang harus ada di layar sentuh | Layar sentuh tak punya hover (4.4.5) |
+
+**Referensi:** [Qt Quick Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [TapHandler](https://doc.qt.io/qt-6/qml-qtquick-taphandler.html) · [HoverHandler](https://doc.qt.io/qt-6/qml-qtquick-hoverhandler.html) · [DragHandler](https://doc.qt.io/qt-6/qml-qtquick-draghandler.html)
+
+---
+
+### 4.4.3 Fokus, `Keys`, dan `Shortcut`
+
+*Tombol yang ditekan tak pernah tersesat. Ia hanya sampai ke yang sedang memegang fokus.*
+
+**Konsep.** Alur penanganan tombol menurut dokumentasi 6.12:
+
+1. Qt menerima aksi tombol dan membuat event tombol.
+2. Bila sebuah `QQuickWindow` adalah *focus window* aplikasi, event dikirim ke jendela itu.
+3. Scene mengirim event ke `Item` yang memegang *active focus*. Bila tak ada item berfokus aktif, event diabaikan.
+4. Bila item itu menerima event, propagasi berhenti. Bila tidak, event dikirim ke induknya, terus naik sampai diterima atau akar tercapai.
+5. Bila akar tercapai, event diabaikan dan penanganan tombol Qt yang biasa berlanjut.
+
+`Item.activeFocus` menunjukkan apakah sebuah item memegang fokus aktif. Sebuah item meminta fokus dengan menyetel `focus: true`.
+
+**Mengapa `focus: true` saja tak cukup.** Untuk kasus sederhana itu cukup. Namun pada komponen yang dipakai ulang, dokumentasi menunjukkan masalahnya: hanya satu item yang bisa memegang fokus keyboard, dan bila beberapa item menyetel `focus: true` sekaligus, yang terakhir menyetel yang menang. Karena QML tak menjamin properti elemen mana yang diinisialisasi lebih dulu, hasilnya bisa berubah-ubah. Komponen yang diimpor tak bisa mengendalikan fokus di lingkungan pemakainya, dan pemakainya tak tahu apakah komponen itu meminta fokus.
+
+**Focus scope** menyelesaikannya, dan dokumentasi menyebutnya setara *focus proxy* otomatis. Aturannya:
+
+- Di dalam tiap focus scope, satu objek boleh menyetel `focus: true`. Bila lebih dari satu, yang terakhir menang.
+- Saat sebuah focus scope menerima fokus aktif, objek di dalamnya yang menyetel `focus` ikut mendapat fokus aktif. Scope dan item di dalamnya sama-sama memiliki `activeFocus`.
+- Bila sebuah item melepas fokus (menyetel `focus: false` saat berfokus aktif), sistem tak otomatis memilih item lain. Boleh jadi tak ada fokus aktif sama sekali.
+- `FocusScope` bukan tipe visual, sehingga properti visual anaknya (ukuran, posisi) perlu diteruskan ke luar agar tata letak induk bekerja.
+- `ListView`, `PathView`, dan `GridView` adalah focus scope, sehingga delegate-nya dapat bereaksi pada tombol tanpa mengganggu bagian aplikasi lain.
+
+**Peragaan 1: contoh kurikulum, diperbaiki** (dengan jendela).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 320; height: 160
+
+    Item {
+        id: papan
+        anchors.fill: parent
+        focus: true
+
+        Keys.onPressed: (event) => {
+            if (event.key === Qt.Key_Q) {
+                Qt.quit()
+                event.accepted = true
+            }
+        }
+        Keys.onEscapePressed: console.log('Esc ditekan')
+    }
+}
+```
+
+```bash
+qml tombol.qml
+```
+
+Dugaan: tekan Esc dan terminal mencatat `qml: Esc ditekan`; tekan Q dan aplikasi keluar `[uji]`.
+
+**Bedah kode:**
+
+- `focus: true`: `papan` meminta fokus. Karena hanya satu item di sini, ia mendapatkannya. `anchors.fill: parent` memberinya ukuran, walau fokus sendiri tak memerlukan ukuran.
+- `Keys.onPressed: (event) => { ... }`: `Keys` adalah atribut terlampir (3.4.4). `onPressed` menangani setiap tombol, dan `event` adalah objek `KeyEvent`.
+- `event.key === Qt.Key_Q`: `Qt.Key_Q` adalah konstanta kode tombol Q. Tiga tanda sama membandingkan nilai dan tipe.
+- `event.accepted = true`: menandai tombol sudah ditangani agar tak merambat ke induk. Dokumentasi meminta ini bila Anda menangani tombol.
+- `Keys.onEscapePressed`: handler untuk satu tombol khusus. Dokumentasi menyatakan handler spesifik seperti ini otomatis menyetel `event.accepted` menjadi `true`.
+
+**Peragaan 2: dua komponen dengan `FocusScope`** (dengan jendela).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 260; height: 80
+
+    component Papan: FocusScope {
+        id: scope
+        property alias warna: rect.color
+        width: 100; height: 60
+
+        Rectangle {
+            id: rect
+            anchors.fill: parent
+            focus: true                                  // fokus di dalam scope ini
+            border.width: scope.activeFocus ? 4 : 0
+            border.color: 'black'
+            Keys.onPressed: (event) => console.log('tombol', event.text, 'di', rect.color)
+        }
+    }
+
+    Papan { id: kiri;  x: 10;  y: 10; warna: 'lightblue'; focus: true }
+    Papan { id: kanan; x: 130; y: 10; warna: 'palegreen' }
+
+    Timer {
+        interval: 300; running: true
+        onTriggered: {
+            console.log('awal   :', kiri.focus, kanan.focus)       // true false
+            kanan.forceActiveFocus()
+            console.log('sesudah:', kiri.focus, kanan.focus)       // false true
+            Qt.quit()
+        }
+    }
+}
+```
+
+Dugaan keluaran: `awal   : true false` lalu `sesudah: false true` `[uji]`. Bila Anda menghapus `Timer` dan menjalankannya dengan jendela, tombol yang Anda ketik tercatat dengan warna komponen yang berfokus, dan bingkai hitam tampak pada komponen itu.
+
+**Bedah kode:**
+
+- `component Papan: FocusScope { ... }`: komponen sebaris yang diturunkan dari `FocusScope`. Setiap instans menjadi focus scope sendiri.
+- `property alias warna: rect.color`: pintu ke warna `Rectangle` di dalam (3.4.2).
+- `focus: true` pada `Rectangle` di dalam `Papan`: meminta fokus **dalam scope** itu, bukan dalam seluruh jendela. Karena ada dua scope, kedua `Rectangle` tak berebut.
+- `Papan { focus: true }` untuk `kiri`: meminta fokus pada tingkat jendela untuk scope pertama. Hanya satu `Papan` yang menyetelnya.
+- `scope.activeFocus`: benar bila scope ini dan rantai induknya memegang fokus aktif.
+- `kanan.forceActiveFocus()`: metode `Item` yang memindahkan fokus aktif ke item itu. Setelahnya `kiri.focus` menjadi `false` dan `kanan.focus` menjadi `true`.
+- Dua baris log membaca `focus`, bukan `activeFocus`, karena `activeFocus` juga bergantung pada apakah jendelanya aktif di sistem. Pada platform `offscreen` hal ini dapat berbeda `[uji]`.
+
+**`Shortcut` untuk pintasan tingkat jendela.** Bila pintasan harus berlaku tanpa memandang item mana yang berfokus, `Shortcut` lebih tepat daripada `Keys`:
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 320; height: 160
+
+    Shortcut {
+        sequence: 'Ctrl+Q'                  // atau: sequence: StandardKey.Quit
+        onActivated: Qt.quit()
+    }
+}
+```
+
+`Shortcut` dan pengaturan `context`-nya (jendela atau seluruh aplikasi) perlu Anda periksa pada versi Qt Anda `[uji]`. Lihat 4.4.7 untuk risiko pintasan tingkat aplikasi.
+
+**`KeyNavigation`.** Atribut terlampir yang memetakan tombol panah dan Tab ke item berikutnya, tanpa kode JavaScript:
+
+```qml
+Item {
+    Rectangle { id: a; focus: true; KeyNavigation.right: b }
+    Rectangle { id: b; KeyNavigation.left: a }
+}
+```
+
+Dokumentasi menyebutnya mendukung navigasi dengan tombol panah. Detail properti `KeyNavigation` `[uji]`.
+
+**Opsi lain, menangani tombol:**
+
+| Kebutuhan | Pilihan | Catatan |
+| --- | --- | --- |
+| Tombol saat item tertentu berfokus | `Keys.onPressed` atau handler spesifik | Perlu fokus aktif |
+| Satu tombol khusus (Enter, Esc, panah, spasi) | `Keys.onReturnPressed`, `onEscapePressed`, ... | Otomatis `accepted` |
+| Pintasan yang berlaku di seluruh jendela | `Shortcut` | Tak bergantung item berfokus |
+| Pindah fokus dengan panah atau Tab | `KeyNavigation` | Tanpa JavaScript |
+| Mengetik teks | `TextInput`, `TextEdit` | Menerima tombol sendiri |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| `focus: true` tetapi tombol tak sampai | Periksa `activeFocus`. Mungkin item lain yang menang atau jendela tak aktif |
+| Dua komponen yang dipakai ulang sama-sama `focus: true` | Bungkus dengan `FocusScope`; yang terakhir menyetel yang menang |
+| Menangani tombol tanpa `event.accepted = true` | Setel `true`, atau pakai handler spesifik |
+| Menaruh `Keys` di item yang tak pernah berfokus | Event tak akan sampai. Beri fokus atau pakai `Shortcut` |
+| Mengira melepas fokus memilih item lain otomatis | Tidak. Bisa jadi tak ada fokus aktif |
+
+**Referensi:** [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html) · [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html) · [KeyNavigation](https://doc.qt.io/qt-6/qml-qtquick-keynavigation.html) · [FocusScope](https://doc.qt.io/qt-6/qml-qtquick-focusscope.html) · [Shortcut](https://doc.qt.io/qt-6/qml-qtquick-shortcut.html)
+
+---
+
+### 4.4.4 Propagasi dan penerimaan event
+
+*Event bergerak mengikuti aturan. Pelajari aturannya, dan Anda bisa memprediksi siapa yang mendengar.*
+
+**Event pointer: menurut ruang.** Menurut dokumentasi input handler:
+
+- Event tekan mouse dan sentuh dikirim dengan mengunjungi item dalam urutan z dari atas ke bawah. Pada tiap item, **handler anaknya dikunjungi dulu, lalu item itu sendiri**.
+- Sebuah item hanya dapat mengambil *exclusive grab*: event berikutnya (gerak dan lepas) hanya dikirim ke dia. Handler punya mekanisme tambahan, yaitu *passive grab*. Handler pasif dijamin menerima pembaruan dan pelepasan walau item atau handler lain mengambil grab jenis apa pun.
+- Sebagian handler hanya bisa pasif, sebagian membutuhkan exclusive, dan sebagian “mengintai” secara pasif sampai gestur terdeteksi lalu beralih ke exclusive. Perilaku `TapHandler` dapat diatur lewat `gesturePolicy`.
+
+**Akibat praktisnya:** `MouseArea` yang menerima tekan mengambil exclusive grab, sehingga item di bawahnya tak lagi dikunjungi. Handler yang pasif tak menghalangi siapa pun.
+
+**Percobaan: dua item bertumpuk** (dengan jendela, klik di berbagai tempat).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 300; height: 200
+
+    Rectangle {
+        id: bawah
+        x: 20; y: 20; width: 200; height: 140; color: 'steelblue'
+        MouseArea { anchors.fill: parent; onClicked: console.log('MouseArea BAWAH') }
+        TapHandler { onTapped: console.log('TapHandler BAWAH') }
+    }
+    Rectangle {
+        id: atas
+        x: 100; y: 60; width: 160; height: 100; color: 'tomato'
+        MouseArea { anchors.fill: parent; onClicked: console.log('MouseArea ATAS') }
+        TapHandler { onTapped: console.log('TapHandler ATAS') }
+    }
+}
+```
+
+Dugaan: klik di bagian biru yang tidak tertutup mencatat `TapHandler BAWAH` dan `MouseArea BAWAH`. Klik di area tumpang tindih mencatat hanya `TapHandler ATAS` dan `MouseArea ATAS` (urutan keduanya tak dijamin), dan item `bawah` tak mendengar apa-apa karena `MouseArea ATAS` mengambil exclusive grab sehingga kunjungan berhenti `[uji]`.
+
+**Bedah kode:**
+
+- `atas` dideklarasikan setelah `bawah`, jadi digambar di atasnya dan dikunjungi lebih dulu.
+- Pada tiap item, `TapHandler` (handler anak) dikunjungi lebih dulu daripada `MouseArea` (item itu sendiri), sesuai dokumentasi.
+- `TapHandler` memakai passive grab, sehingga ia tak menghentikan kunjungan ke `MouseArea` pada item yang sama.
+- `MouseArea` menerima tekan dan mengambil exclusive grab. Kunjungan berhenti, sehingga item di bawahnya tak menerima event tekan itu.
+- Mengubah z (4.2.5) atau urutan deklarasi akan membalik siapa yang berada di atas.
+
+**Meneruskan klik ke bawah.** Bila `MouseArea` di atas harus membiarkan klik sampai ke bawahnya, ia punya `propagateComposedEvents` untuk event gabungan (`clicked`, `doubleClicked`, `pressAndHold`):
+
+```qml
+MouseArea {
+    anchors.fill: parent
+    propagateComposedEvents: true
+    onClicked: (mouse) => { console.log('ATAS melihat klik'); mouse.accepted = false }
+}
+```
+
+`mouse.accepted = false` menandai bahwa area ini tak menerima klik itu sehingga diteruskan ke area di bawahnya. Perilaku `propagateComposedEvents` perlu Anda uji pada versi Anda `[uji]`. Tekan dan lepas mentah tetap hanya ke area teratas.
+
+**Event keyboard: menurut fokus dan urutan pemrosesan `Keys`.** `Keys` dapat diatur lewat dua properti:
+
+- `Keys.forwardTo`: daftar item yang ikut menerima event tombol.
+- `Keys.priority`: `Keys.BeforeItem` (bawaan) atau `Keys.AfterItem`.
+
+Urutan pemrosesan untuk `Keys.BeforeItem` (bawaan), menurut dokumentasi:
+
+1. Item-item di `forwardTo`.
+2. Handler tombol spesifik, misalnya `onReturnPressed`.
+3. Handler `onPressed` dan `onReleased`.
+4. Penanganan bawaan item itu, misalnya penanganan tombol `TextInput`.
+5. Item induk.
+
+Untuk `Keys.AfterItem`, penanganan bawaan item (langkah 4) dipindahkan ke urutan paling awal. Bila event diterima di langkah mana pun, propagasi berhenti, dan item yang menerima event lewat `forwardTo` tak meneruskannya ke item berikutnya dalam daftar.
+
+**Percobaan: propagasi tombol** (dengan jendela, ketik `a` lalu `b`).
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 240; height: 120
+
+    Item {
+        id: induk
+        anchors.fill: parent
+        Keys.onPressed: (event) => console.log('INDUK menerima', event.text)
+
+        Item {
+            id: anak
+            focus: true
+            Keys.onPressed: (event) => {
+                console.log('ANAK menerima', event.text)
+                if (event.text === 'a') event.accepted = true      // hanya 'a' dihentikan
+            }
+        }
+    }
+}
+```
+
+Dugaan: tekan `a` mencatat `ANAK menerima a` saja. Tekan `b` mencatat `ANAK menerima b` lalu `INDUK menerima b`, karena tak diterima dan naik ke induk `[uji]`.
+
+**Bedah kode:**
+
+- `anak` memegang fokus (`focus: true`), jadi ia menerima tombol lebih dulu.
+- `event.accepted = true` hanya untuk `a`: propagasi berhenti di `anak`. Untuk `b`, `accepted` tetap `false`, sehingga event naik ke `induk`.
+- `induk` tak berfokus, tetapi tetap dikunjungi sebagai bagian dari rantai ke akar. Fokus menentukan siapa yang pertama, bukan siapa yang boleh mendengar.
+- Menaruh `Keys` di induk adalah cara umum menangkap tombol “sisa” yang tak ditangani anak.
+
+```
+ Pointer (menurut ruang)               Keyboard (menurut fokus)
+  item teratas                          item dengan active focus
+   |- handler anak (pasif/aktif)         |- forwardTo, handler spesifik, onPressed
+   |- item itu sendiri                   |- penanganan bawaan item
+   v tak diterima? lanjut ke bawah       v tak diterima? naik ke induk
+  item di bawahnya                      induk ... akar -> diabaikan
+   berhenti di exclusive grab            berhenti di event yang diterima
+```
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Heran `MouseArea` di bawah tak menerima klik | `MouseArea` atas mengambil exclusive grab. Atur z, atau pakai `propagateComposedEvents` |
+| Mengira semua handler saling mengganggu | `TapHandler` bawaan pasif dan tak menghalangi yang lain |
+| Tombol “bocor” ke induk | Setel `event.accepted = true` di handler yang menangani |
+| Handler `Keys` induk tak menerima tombol yang ditangani anak | Itu perilaku benar: yang diterima anak tak naik |
+| Lupa bahwa urutan `Keys` bawaan mendahului penanganan item | Pakai `Keys.priority: Keys.AfterItem` bila item harus menangani lebih dulu |
+
+**Referensi:** [Qt Quick Input Handlers: Pointer Grab](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [Keys: Key Handling Priorities](https://doc.qt.io/qt-6/qml-qtquick-keys.html) · [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html) · [Mouse Events](https://doc.qt.io/qt-6/qtquick-input-mouseevents.html)
+
+---
+
+### 4.4.5 Pointer vs sentuhan
+
+*Satu jari bukan satu kursor. Rancanglah untuk keduanya.*
+
+**Konsep.** Dokumentasi menjelaskan dua generasi penanganan perangkat penunjuk:
+
+- `MouseArea` awalnya dirancang untuk mouse. Belakangan ia juga menangani sentuhan **tunggal** dalam bentuk event mouse sintetis, untuk antarmuka sentuh yang sederhana.
+- Input handler menangani gestur (ketuk, seret) **dari perangkat mana pun**, dan juga dapat memperlakukan kelas perangkat berbeda dengan cara berbeda.
+
+| Kebutuhan | Pilihan | Catatan |
+| --- | --- | --- |
+| Klik atau ketuk saja | `TapHandler` | Berlaku untuk mouse, sentuh, dan stylus |
+| Klik mouse berbeda dari ketuk sentuh | `TapHandler` dengan `acceptedDevices` | Dua handler |
+| Melayang | `HoverHandler` | Hanya mouse dan tablet |
+| Cubit untuk zoom dan putar | `PinchHandler` | Multi-sentuh |
+| Menyeret | `DragHandler` | Semua perangkat |
+| Roda mouse | `WheelHandler` | Mouse dan touchpad |
+| Kode lama dengan sentuhan tunggal | `MouseArea` | Sentuhan hanya sintetis |
+
+**Peragaan: perilaku berbeda per perangkat.** Dokumentasi `TapHandler` memberi pola ini:
+
+```qml
+Item {
+    TapHandler {
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.Stylus
+        onTapped: console.log('klik')
+    }
+    TapHandler {
+        acceptedDevices: PointerDevice.TouchScreen
+        onTapped: console.log('ketuk')
+    }
+}
+```
+
+**Bedah kode:**
+
+- `acceptedDevices`: bendera kelas perangkat yang boleh mengaktifkan handler. `|` menggabungkan mouse dan stylus.
+- Dua `TapHandler` pada satu item: yang pertama hanya mendengar mouse dan stylus, yang kedua hanya layar sentuh. Hasilnya `klik` di komputer dan `ketuk` di layar sentuh.
+- Nama enumerasi `PointerDevice` perlu Anda periksa pada versi Qt 6 Anda `[uji]`.
+
+**Area sentuh lebih besar tanpa mengubah tampilan.** `TapHandler` punya properti `margin`, yaitu jarak di luar batas item induk yang masih dapat mengaktifkan handler `[uji]`:
+
+```qml
+Rectangle {
+    width: 32; height: 32; color: 'steelblue'
+    TapHandler { margin: 12; onTapped: console.log('kena') }
+}
+```
+
+Jari lebih lebar daripada kursor, dan pedoman antarmuka umum (bukan dari dokumentasi Qt) menyarankan area sentuh sekitar 44 hingga 48 piksel. Dengan `margin`, ikon 32 piksel tetap rapi tetapi mudah diketuk.
+
+**Aturan desain:**
+
+- Jangan menyembunyikan hal penting di balik hover. Layar sentuh tak punya hover, jadi informasi atau tombol yang hanya muncul saat melayang tak terjangkau.
+- Sediakan padanan untuk klik kanan di sentuh: tekan lama (`TapHandler.longPressed`).
+- Uji di kedua jenis perangkat, atau dengan pengujian otomatis (4.4.6).
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengandalkan `MouseArea` untuk gestur multi-sentuh | Pakai `PinchHandler` atau `PointHandler` |
+| Fitur penting hanya muncul saat hover | Sediakan jalur ketuk atau tekan lama |
+| Area sentuh sekecil kursor | Perbesar item atau pakai `margin` pada handler |
+| Mengira `HoverHandler` bekerja di layar sentuh | Hover hanya untuk mouse dan tablet |
+
+**Referensi:** [Qt Quick Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [TapHandler: acceptedDevices](https://doc.qt.io/qt-6/qml-qtquick-taphandler.html) · [Mouse Events](https://doc.qt.io/qt-6/qtquick-input-mouseevents.html)
+
+---
+
+### 4.4.6 Menguji input dari terminal `[TAMBAHAN]`
+
+*Percobaan yang bisa diulang adalah satu-satunya bukti yang pantas dipercaya.*
+
+**Konsep.** Qt Quick Test (`import QtTest`) adalah kerangka uji unit untuk QML. Menurut dokumentasi:
+
+- Uji ditulis sebagai fungsi JavaScript di dalam `TestCase`. Fungsi yang namanya diawali `test_` dijalankan sebagai kasus uji. `name` menjadi awalan nama di keluaran.
+- `compare(aktual, harapan)` dan `verify(kondisi)` memeriksa hasil. `SignalSpy` mencatat pemancaran sinyal.
+- `keyPress`, `keyRelease`, dan `keyClick` mensimulasikan keyboard. Event dikirim ke item QML yang sedang berfokus, dan Anda boleh memberi kode `Qt.Key_*` atau satu karakter latin1.
+- `mousePress`, `mouseRelease`, `mouseClick`, `mouseDoubleClickSequence`, dan `mouseMove` mensimulasikan mouse.
+- Event keyboard dan mouse hanya dapat dikirim setelah jendela utama tampil. Pakai `when: windowShown`; mengirim sebelumnya gagal.
+- `createTemporaryObject` membuat objek yang dijamin dihancurkan di akhir fungsi uji.
+- Menjalankan kasus uji Qt Quick selalu menampilkan jendela, bahkan bila uji tak melibatkan UI. Untuk menghindarinya, jalankan dengan `-platform offscreen`.
+
+Cara menjalankannya: uji diluncurkan oleh *harness* C++ (`QUICK_TEST_MAIN`). Opsi baris perintahnya meliputi `-input` (menjalankan satu berkas atau direktori uji), `-import` (menambah jalur impor QML), `-functions` (daftar fungsi uji), dan `-help`. Instalasi Qt Anda mungkin juga menyertakan alat siap pakai `qmltestrunner` yang menjalankan berkas `tst_*.qml` tanpa harness buatan sendiri `[uji]`.
+
+**Peragaan: membuktikan 4.4.3 dan 4.4.4 tanpa jendela.** Simpan sebagai `tst_input.qml`.
+
+```qml
+import QtQuick
+import QtTest
+
+Item {
+    id: root
+    width: 320; height: 240
+
+    property int bawahKlik: 0
+    property int atasKlik: 0
+    property int tapBawah: 0
+    property string tombolTerakhir: ''
+    property int indukTerima: 0
+
+    Rectangle {
+        id: bawah
+        x: 20; y: 20; width: 200; height: 140; color: 'steelblue'
+        MouseArea { anchors.fill: parent; onClicked: root.bawahKlik++ }
+        TapHandler { onTapped: root.tapBawah++ }
+    }
+    Rectangle {
+        id: atas
+        x: 100; y: 60; width: 160; height: 100; color: 'tomato'
+        MouseArea { anchors.fill: parent; onClicked: root.atasKlik++ }
+    }
+
+    Item {
+        id: indukKunci
+        Keys.onPressed: (event) => root.indukTerima++
+
+        Item {
+            id: anakKunci
+            focus: true
+            Keys.onPressed: (event) => {
+                root.tombolTerakhir = event.text
+                if (event.text === 'a') event.accepted = true      // hanya 'a' dihentikan
+            }
+        }
+    }
+
+    TestCase {
+        name: 'Input'
+        when: windowShown
+
+        function init() {                                       // jalan sebelum tiap uji
+            root.bawahKlik = 0; root.atasKlik = 0; root.tapBawah = 0
+            root.tombolTerakhir = ''; root.indukTerima = 0
+        }
+
+        function test_klik_tumpang_tindih() {
+            mouseClick(root, 150, 100)                          // area tumpang tindih
+            compare(root.atasKlik, 1)
+            compare(root.bawahKlik, 0)                          // yang di bawah tak menerima
+        }
+
+        function test_klik_bagian_bawah() {
+            mouseClick(root, 40, 40)                            // hanya bagian biru
+            compare(root.bawahKlik, 1)
+            compare(root.atasKlik, 0)
+        }
+
+        function test_tap_handler_bawah() {
+            mouseClick(root, 40, 40)
+            compare(root.tapBawah, 1)
+        }
+
+        function test_tombol_dihentikan_anak() {
+            keyClick('a')
+            compare(root.tombolTerakhir, 'a')
+            compare(root.indukTerima, 0)                        // 'a' berhenti di anak
+        }
+
+        function test_tombol_naik_ke_induk() {
+            keyClick('b')
+            compare(root.tombolTerakhir, 'b')
+            compare(root.indukTerima, 1)                        // 'b' tak diterima, naik ke induk
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qmltestrunner -input tst_input.qml
+```
+
+Dugaan keluaran: baris `PASS   : Input::test_...()` untuk kelima uji, diakhiri ringkasan `Totals: 7 passed, 0 failed` (termasuk `initTestCase` dan `cleanupTestCase`) `[uji]`. Bila ada yang `FAIL`, itu temuan, bukan kegagalan Anda: catat nilai `Actual` dan `Expected` yang dicetak, lalu bandingkan dengan dugaan di 4.4.4.
+
+**Bedah kode:**
+
+- `import QtTest`: modul pengujian. `TestCase` mewarisi `Item`, jadi boleh ditaruh di dalam pohon yang diuji.
+- `Item { id: root; width: 320; height: 240 }`: akar yang diberi ukuran agar mendapat area untuk menerima klik.
+- `TestCase { name: 'Input'; when: windowShown }`: kasus uji yang baru berjalan setelah jendela tampil. Tanpanya, event simulasi gagal terkirim.
+- `function init()`: dijalankan sebelum tiap fungsi uji. Di sini ia mengembalikan penghitung ke nol agar uji tak saling bergantung urutan.
+- `mouseClick(root, 150, 100)`: klik di koordinat (150, 100) di dalam `root`. Titik itu berada di area tumpang tindih `bawah` dan `atas`.
+- `compare(root.atasKlik, 1)`: memeriksa bahwa nilai aktual sama dengan yang diharapkan, dan mencetak keduanya bila berbeda.
+- `keyClick('a')`: menekan dan melepas tombol A. Event dikirim ke item yang berfokus, yaitu `anakKunci`.
+- `compare(root.indukTerima, 0)`: karena `a` diterima di anak, induk tak pernah melihatnya. Pada `b`, `indukTerima` menjadi 1.
+- `Keys.onPressed: (event) => root.indukTerima++`: fungsi panah dengan satu ekspresi sebagai badan.
+
+**Alternatif: harness C++ buatan sendiri** (pratinjau Modul 10.1).
+
+```cpp
+// tst_input.cpp
+#include <QtQuickTest>
+QUICK_TEST_MAIN(input)
+```
+
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(tst_input LANGUAGES CXX)
+enable_testing()
+
+find_package(Qt6 REQUIRED COMPONENTS QuickTest Qml)
+add_definitions(-DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
+qt_add_executable(tst_input tst_input.cpp)
+target_link_libraries(tst_input PRIVATE Qt6::QuickTest Qt6::Qml)
+add_test(NAME tst_input COMMAND tst_input -platform offscreen)
+```
+
+```bash
+cmake -S . -B build -G Ninja
+cmake --build build
+./build/tst_input -platform offscreen
+./build/tst_input -functions
+./build/tst_input -input tst_input.qml
+ctest --test-dir build --output-on-failure
+```
+
+- `QUICK_TEST_MAIN(input)`: makro yang menghasilkan `main()` penjalan uji. `input` adalah pengenal unik kumpulan uji ini.
+- `QUICK_TEST_SOURCE_DIR`: direktori yang dipindai harness secara rekursif untuk berkas `tst_*.qml`. Tanpa definisi ini, direktori kerja yang dipindai.
+- `Qt6::QuickTest`: pustaka kerangka uji.
+- `add_test(... -platform offscreen)`: mendaftarkan uji ke `ctest` dan menjalankannya tanpa jendela nyata.
+
+**`SignalSpy`** untuk memeriksa bahwa sebuah sinyal terpancar:
+
+```qml
+SignalSpy { id: spy; target: area; signalName: 'clicked' }
+// di dalam fungsi uji:
+mouseClick(area)
+compare(spy.count, 1)
+```
+
+`SignalSpy` dan perilaku `mouseClick(area)` tanpa koordinat `[uji]` pada versi Anda.
+
+**Daftar perintah simulasi:**
+
+| Fungsi | Gunanya |
+| --- | --- |
+| `mouseClick(item, x, y, button, modifiers, delay)` | Klik di koordinat dalam item |
+| `mousePress`, `mouseRelease`, `mouseMove` | Langkah mouse yang lebih halus |
+| `mouseDoubleClickSequence(...)` | Klik ganda |
+| `keyClick(key, modifiers, delay)` | Tekan dan lepas |
+| `keyPress`, `keyRelease`, `keySequence` | Langkah tombol yang lebih halus |
+| `tryCompare(obj, 'properti', nilai)` | Menunggu sampai properti mencapai nilai |
+| `wait(ms)`, `waitForRendering(item)` | Memberi waktu pada animasi atau render |
+| `createTemporaryObject(component, parent)` | Membuat objek yang otomatis dibersihkan |
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengirim event sebelum jendela tampil | Pakai `when: windowShown` |
+| Uji saling memengaruhi lewat status bersama | Reset di `init()` |
+| Mengirim tombol ke item yang tak berfokus | Beri `focus` atau panggil `forceActiveFocus()` lebih dulu |
+| Tak sengaja menampilkan jendela di server tanpa layar | Jalankan dengan `-platform offscreen` |
+| Menganggap koordinat klik relatif ke jendela | Relatif ke item yang Anda berikan |
+| Menunggu animasi dengan `wait` tetap | Pakai `tryCompare` pada keadaan akhirnya |
+
+Uji input yang tertulis adalah dokumentasi yang bisa dijalankan: setiap dugaan di modul ini yang berstatus `[uji]` dapat menjadi satu fungsi uji. Jangan menautkan `QtTest` ke aplikasi rilis (4.4.7).
+
+**Referensi:** [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html) · [TestCase](https://doc.qt.io/qt-6/qml-qttest-testcase.html) · [SignalSpy](https://doc.qt.io/qt-6/qml-qttest-signalspy.html)
+
+---
+
+### 4.4.7 Keamanan dan desain input `[TAMBAHAN]`
+
+*Setiap jalur yang membawa masukan ke program Anda adalah jalur yang bisa disalahgunakan.*
+
+**Konsep.** Input adalah batas kepercayaan: dari perangkat dan dari komponen lain ke logika Anda. Qt Quick memberi komponen kebebasan besar atas siapa yang menerima apa, dan kebebasan itu adalah permukaan serangan bila ada komponen yang tak sepenuhnya Anda percayai (plugin, QML pihak ketiga, QML yang dimuat dari jaringan).
+
+**Daftar risiko dan pengendalinya:**
+
+| Risiko | Penjelasan | Kontrol |
+| --- | --- | --- |
+| Overlay penelan klik | Item transparan berukuran penuh dengan `z` tinggi atau `MouseArea` penuh menutupi tombol konfirmasi dan menelan klik (analog *clickjacking*; 4.2.5) | Kendalikan siapa yang boleh menaruh anak di akar; audit `z`; uji klik di area penting (4.4.6) |
+| Perebutan fokus | Komponen yang memanggil `forceActiveFocus()` atau menyetel `focus: true` dapat mencuri tombol dari isian sensitif | Batasi dengan `FocusScope`; cari `forceActiveFocus` saat tinjauan kode; jangan memuat QML tak tepercaya di scene yang sama |
+| `Keys.forwardTo` dan `priority` | Urutan bawaan memproses item di `forwardTo` paling awal, sebelum penanganan bawaan item seperti `TextInput`. Komponen di daftar itu dapat menyadap ketikan | Jangan masukkan komponen tak tepercaya ke `forwardTo`; hati-hati dengan `Keys.BeforeItem` pada item pembungkus isian |
+| Pintasan tingkat aplikasi | `Shortcut` yang berlaku di seluruh aplikasi dapat memicu aksi saat fokus ada di tempat lain | Hindari aksi merusak tanpa konfirmasi; periksa `context` `[uji]` |
+| Pencatatan tombol | `console.log(event.text)` di jalur isian kata sandi membocorkan ketikan ke terminal atau log | Jangan mencatat event tombol di jalur sensitif |
+| Tombol ditahan | Aksi merusak berulang karena auto-repeat | Abaikan `event.isAutoRepeat`; konfirmasi dua langkah |
+| Informasi hanya di hover | Penampil yang menampilkan tujuan tautan hanya saat melayang dapat disalahartikan, dan sentuh tak bisa melihatnya | Tampilkan informasi penting terus-menerus |
+| Handler berat | Logika berat di handler input membekukan antarmuka | Panggil fungsi singkat; debounce dengan `Timer` |
+| Modul uji di rilis | Fungsi simulasi input tersedia di produksi | Pisahkan target uji; jangan tautkan `QtTest` ke aplikasi rilis |
+
+**Peragaan: aksi merusak dengan pengaman.**
+
+```qml
+import QtQuick
+
+Item {
+    id: dokumen
+    focus: true
+    property bool menungguKonfirmasi: false
+
+    Keys.onPressed: (event) => {
+        if (event.isAutoRepeat) {                         // abaikan tombol yang ditahan
+            event.accepted = true
+            return
+        }
+        if (event.key === Qt.Key_Delete) {
+            dokumen.menungguKonfirmasi = true                 // langkah 1: minta konfirmasi
+            event.accepted = true
+        } else if (event.key === Qt.Key_Y && dokumen.menungguKonfirmasi) {
+            console.log('hapus dikonfirmasi')                  // langkah 2: lakukan aksi
+            dokumen.menungguKonfirmasi = false
+            event.accepted = true
+        } else {
+            dokumen.menungguKonfirmasi = false                // tombol lain membatalkan
+        }
+    }
+}
+```
+
+**Bedah kode:**
+
+- `event.isAutoRepeat`: benar bila event berasal dari tombol yang ditahan, bukan ketukan baru. Menolaknya mencegah aksi berulang tak sengaja.
+- `dokumen.menungguKonfirmasi`: keadaan dua langkah. Tombol Delete hanya meminta konfirmasi, dan baru tombol Y yang menjalankan aksi.
+- `else { ... = false }`: tombol apa pun selain Delete dan Y membatalkan permintaan, sehingga aksi tak bisa dipicu oleh urutan yang tak disengaja.
+- Perhatikan bahwa tak ada `console.log(event.text)`: tombol yang ditekan tak dicatat.
+
+**Prinsip desain:**
+
+- **Kurangi wewenang.** Beri komponen hanya properti dan sinyal yang diperlukan, bukan akses ke akar (3.4.8).
+- **Batasi permukaan.** Satu handler per aspek interaksi, dengan penerima yang jelas, lebih mudah diaudit daripada satu `MouseArea` raksasa yang menelan semua.
+- **Pisahkan yang tak tepercaya.** QML yang tak sepenuhnya Anda percayai sebaiknya tak berbagi scene, fokus, dan konteks dengan bagian sensitif. Isolasi di proses atau mesin QML terpisah adalah topik fase keamanan.
+- **Uji perilaku keamanan.** Uji bahwa klik di area konfirmasi sampai ke tombol yang benar (4.4.6).
+
+| Kesalahan | Solusi |
+| --- | --- |
+| Mengabaikan `isAutoRepeat` pada aksi merusak | Abaikan, dan minta konfirmasi |
+| Mencatat tombol yang ditekan saat debugging lalu lupa menghapus | Hapus sebelum rilis; jangan catat di jalur sensitif |
+| Memberi komponen luar akses penuh ke akar scene | Antarmuka sempit lewat properti dan sinyal |
+| Menganggap hover sebagai kanal tepercaya | Tampilkan informasi penting terus-menerus |
+
+**Referensi:** [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html) · [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html) · [Qt Quick Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [Qt Quick Test](https://doc.qt.io/qt-6/qtquicktest-index.html)
+
+---
+
+## E. Latihan 15 menit dan kunci jawaban
+
+**Latihan (dari kurikulum):** buat persegi yang berubah warna saat di-hover dan keluar dari aplikasi saat tombol `Q` ditekan.
+
+**Jawaban** (dengan jendela, `qml latihan.qml`):
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 320; height: 180
+
+    Rectangle {
+        id: kotak
+        anchors.centerIn: parent
+        width: 140; height: 80; radius: 8
+        color: hover.hovered ? 'gold' : 'orange'
+
+        HoverHandler { id: hover; cursorShape: Qt.PointingHandCursor }
+    }
+
+    Item {
+        anchors.fill: parent
+        focus: true
+        Keys.onPressed: (event) => {
+            if (event.key === Qt.Key_Q) {
+                Qt.quit()
+                event.accepted = true
+            }
+        }
+    }
+}
+```
+
+**Bedah kode:**
+
+- `HoverHandler { id: hover }`: pengintai hover untuk `kotak`. `color` terikat ke `hover.hovered`, sehingga warna berubah otomatis (3.1).
+- `Item { anchors.fill: parent; focus: true }`: penerima tombol yang menutupi seluruh jendela. Ia tak punya handler pointer, jadi tak menghalangi hover persegi di bawahnya (4.4.4).
+- `Keys.onPressed`: keluar bila tombol Q ditekan, dan menandai event sudah ditangani.
+
+**Variasi 1: `Shortcut`.** Ganti blok `Item` dengan `Shortcut { sequence: 'Q'; onActivated: Qt.quit() }`. Bedanya: pintasan berlaku tanpa bergantung pada item yang berfokus `[uji]`.
+
+**Variasi 2: buktikan lewat uji otomatis** (tanpa jendela). Simpan sebagai `tst_latihan.qml`:
+
+```qml
+import QtQuick
+import QtTest
+
+Item {
+    id: root
+    width: 320; height: 180
+
+    Rectangle {
+        id: kotak
+        anchors.centerIn: parent
+        width: 140; height: 80
+        color: hover.hovered ? 'gold' : 'orange'
+        HoverHandler { id: hover }
+    }
+
+    TestCase {
+        name: 'Latihan'
+        when: windowShown
+
+        function test_hover() {
+            mouseMove(root, 5, 5)                                // di luar persegi
+            tryCompare(hover, 'hovered', false)
+            verify(Qt.colorEqual(kotak.color, 'orange'))
+
+            mouseMove(kotak, 10, 10)                             // di dalam persegi
+            tryCompare(hover, 'hovered', true)
+            verify(Qt.colorEqual(kotak.color, 'gold'))
+        }
+    }
+}
+```
+
+```bash
+QT_QPA_PLATFORM=offscreen qmltestrunner -input tst_latihan.qml
+```
+
+Dugaan: satu uji `PASS` `[uji]`. `mouseMove` dan perilaku hover pada platform `offscreen` perlu Anda periksa.
+
+**Kunci:**
+
+- Hover di item ditangani `HoverHandler`, tanpa `MouseArea` dan tanpa `hoverEnabled`.
+- Penerima tombol harus berfokus (`focus: true`) dan harus berada di jalur yang menerima event keyboard. Tanpa fokus, tombol Q diabaikan.
+- Item penerima tombol yang menutupi jendela tidak merusak hover karena item tanpa handler pointer tak mengambil grab.
+
+**Cek pemahaman (dari kurikulum):** *Mengapa tombol tidak merespons bila item tidak memegang fokus?* Karena scene mengirim event keyboard hanya ke item yang memegang *active focus*. Bila tak ada item berfokus aktif, event diabaikan. Item yang menangani tombol lewat `Keys` harus berada pada rantai fokus tersebut, atau pintasan dibuat dengan `Shortcut`.
+
+**Pertanyaan tambahan:**
+
+1. *Apa beda `focus` dan `activeFocus`?* `focus` adalah permintaan fokus di dalam focus scope-nya. `activeFocus` menyatakan item benar-benar menerima tombol saat ini, yang juga bergantung pada rantai scope dan jendela aktif.
+2. *Mengapa `FocusScope` diperlukan pada komponen yang dipakai ulang?* Agar komponen punya ruang fokusnya sendiri dan tak berebut dengan komponen lain yang juga menyetel `focus: true`.
+3. *Kapan harus menyetel `event.accepted = true`?* Saat Anda menangani tombol dan tak ingin ia naik ke induk. Handler spesifik seperti `onReturnPressed` melakukannya otomatis.
+4. *Apa urutan pemrosesan `Keys` bawaan?* `forwardTo`, handler spesifik, `onPressed` dan `onReleased`, penanganan bawaan item, lalu induk.
+5. *Apa yang terjadi saat Anda mengklik area tumpang tindih dua `MouseArea`?* Yang teratas menerima dan mengambil exclusive grab, sehingga yang di bawah tak mendengar.
+6. *Apa beda passive dan exclusive grab?* Passive menjamin handler menerima pembaruan dan pelepasan tanpa menghalangi yang lain. Exclusive membuat event berikutnya hanya ke satu penerima.
+7. *Mengapa `containsMouse` tak berubah tanpa `hoverEnabled`?* Tanpa itu, posisi mouse hanya dilaporkan saat tombol ditekan.
+8. *Mengapa `HoverHandler` tak berguna di layar sentuh?* Hover hanya untuk mouse dan tablet.
+9. *Mengapa uji input memerlukan `when: windowShown`?* Karena event keyboard dan mouse hanya dapat dikirim setelah jendela utama tampil.
+
+**Tantangan:**
+
+- Tambahkan `TapHandler` ketuk ganda yang mengganti warna persegi secara tetap, lalu buktikan dengan `mouseDoubleClickSequence` di uji `[uji]`.
+- Batasi `DragHandler` pada sumbu x dan buat persegi tak bisa keluar dari jendela `[uji]`.
+- Tulis uji yang membuktikan bahwa item di `Keys.forwardTo` menerima tombol sebelum anak `[uji]`.
+- Cari penyalahgunaan potensial di proyek Anda dengan `grep -rn "forceActiveFocus\|forwardTo\|Shortcut" --include='*.qml' .`.
+
+---
+
+## F. Glosarium Modul 4.4
+
+| Istilah | Arti |
+| --- | --- |
+| Input handler | Tipe non-visual yang menangani event input atas nama item induknya |
+| `MouseArea` | Item tak terlihat yang menerima event mouse, dan sentuhan tunggal sintetis |
+| `MouseEvent` | Objek parameter sinyal `MouseArea`; memuat `button`, `accepted`, dan lainnya |
+| `hoverEnabled` | Mengaktifkan event posisi mouse tanpa tombol ditekan |
+| `TapHandler` | Handler untuk ketukan dan klik |
+| `HoverHandler` | Handler hover mouse dan tablet |
+| `DragHandler` | Handler seret |
+| `gesturePolicy` | Aturan pengenalan ketukan dan perilaku grab pada `TapHandler` |
+| Passive grab | Grab yang menjamin pembaruan dan pelepasan tanpa menghalangi penerima lain |
+| Exclusive grab | Grab yang membuat event berikutnya hanya ke satu penerima |
+| Event sintetis | Event mouse yang dibuat dari sentuhan untuk memenuhi `MouseArea` |
+| Fokus keyboard | Hak menerima tombol; hanya satu item pada satu waktu |
+| `focus` | Permintaan fokus di dalam focus scope |
+| `activeFocus` | Menyatakan item benar-benar memegang fokus aktif |
+| Focus scope (`FocusScope`) | Ruang fokus tersendiri yang bertindak sebagai proxy otomatis |
+| `Keys` | Atribut terlampir untuk menangani tombol |
+| `event.accepted` | Menandai event sudah ditangani sehingga tak merambat |
+| `Keys.priority` | Menentukan apakah `Keys` berjalan sebelum atau sesudah penanganan bawaan item |
+| `Keys.forwardTo` | Daftar item yang ikut menerima event tombol |
+| `KeyNavigation` | Atribut terlampir untuk berpindah fokus dengan panah dan Tab |
+| `Shortcut` | Pintasan keyboard yang tak bergantung pada item berfokus |
+| `TestCase` | Tipe uji di Qt Quick Test |
+| `windowShown` | Properti yang menandai jendela uji sudah tampil |
+| `SignalSpy` | Pencatat pemancaran sinyal dalam uji |
+| Clickjacking | Menipu pengguna agar mengklik sesuatu yang berbeda dari yang tampak |
+| Auto-repeat | Pengulangan event tombol yang ditahan |
+
+---
+
+## G. Hubungan dengan modul lain
+
+| Modul | Hubungan |
+| --- | --- |
+| **3.1** Property Binding | Properti handler (`pressed`, `hovered`, `tapCount`) langsung dipakai dalam binding |
+| **3.2** Signal dan handler | `onTapped`, `onClicked`, `onPressed` adalah handler sinyal; parameter `event` dan `mouse` ditulis eksplisit di Qt 6 |
+| **3.3** Lifecycle | Fokus belum stabil di `onCompleted`; `forceActiveFocus()` setelah komponen siap; `Loader` dan fokus |
+| **3.4** Scope dan konteks | `Keys` adalah atribut terlampir yang dibaca lewat `id`; handler membaca properti scope object tanpa awalan |
+| **4.1** Item dan primitif | `enabled: false` dan `visible: false` menghentikan input, `opacity: 0` tidak |
+| **4.2** Geometri dan anchors | Area pointer sama dengan geometri item; urutan `z` menentukan siapa didengar dulu; overlay penelan klik |
+| **4.3** Resource | Tombol bergambar dari `Image` ditambah handler; sumber gambar dari pengguna (4.3.8) |
+| **Fase berikutnya** | Kontrol siap pakai (`Button`, `TextField`), states dan animasi, gestur lanjutan, `Flickable`, layout |
+| **10.1** C++ dan CMake | Harness `QUICK_TEST_MAIN` dan `qt_add_executable` untuk 4.4.6; prasyarat 4.3.6 |
+| **Keamanan** | Overlay, perebutan fokus, `forwardTo`, dan pencatatan tombol (4.4.7) |
+
+**Penutup Modul 4.4 dan Fase 4:** dengan modul ini, Fase 4 selesai. Anda kini dapat membaca antarmuka sebagai pohon item (4.1), menempatkannya dengan janji relatif (4.2), memuat sumber daya dengan benar dan aman (4.3), dan menerima input dari pointer dan keyboard dengan pemahaman tentang siapa yang mendengar (4.4). Satu pengingat: bagian 4.3.6 (CMake dan resource modul) menunggu Modul 10.1 dari jalur C++ paralel. Fase berikutnya belum ada di berkas Anda, jadi kirimkan bagian kurikulumnya bila siap melanjutkan.
+
+---
+
+**Catatan tautan:** halaman Important Concepts In Qt Quick - User Input, Keyboard Focus in Qt Quick, dan Qt Quick Input Handlers (semuanya 6.12), serta Mouse Events (6.11), saya buka langsung. Fakta tentang `Keys` (Qt 6.3 sampai 6.10 dan 5.x), `TapHandler` (Qt 5.12 sampai 6.8, termasuk terjemahan), serta `TestCase` dan Qt Quick Test (Qt 5.9 sampai 6.9) saya baca lewat hasil pencarian, jadi tandai `[uji]` pada versi Anda. Halaman MouseArea, MouseEvent, HoverHandler, DragHandler, FocusScope, KeyNavigation, Shortcut, dan SignalSpy tidak saya buka satu per satu. `qmltestrunner` tidak disebut di halaman dokumentasi yang saya baca, jadi saya menandainya `[uji]` dan menyediakan harness C++ sebagai jalur yang terdokumentasi. Perilaku `propagateComposedEvents`, properti `margin` pada handler, batas sumbu `DragHandler`, nama enumerasi `PointerDevice`, konteks `Shortcut`, dan hasil pengujian pada platform `offscreen` saya tulis dari pengetahuan umum dan tidak saya verifikasi dalam sesi ini. Bila ada yang tidak terbuka, kabari saya.
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
