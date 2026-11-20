@@ -2357,7 +2357,6 @@ Kerjakan sendiri, lalu commit dengan struktur `fase-8/latihan-N/` berisi `README
 
 ---
 
-*Fase 8 selesai. Fase berikutnya dibuka setelah kamu memberi konfirmasi siap dan menetapkan penomorannya.*
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
