@@ -27,7 +27,7 @@
 <details>
   <summary>📃 Fase 1</summary>
 
-- **[0. Audit Kurikulum & Peta Fase](#audit)**
+<!-- - **[0. Audit Kurikulum & Peta Fase](#audit)** -->
 - [**1.1 Anatomi Masalah:** dari kalimat ke spesifikasi](#anatomi)
 - [**1.2 Model Mental Komputasi:** state, ekspresi, statement, efek samping](#model)
 - [**1.3 Alat Berpikir:** dekomposisi, abstraksi, pseudocode, trace table](#model)
@@ -42,36 +42,36 @@
 
 ---
 
-<a id="audit"></a>
+<!-- <a id="audit"></a> -->
+<!---->
+<!-- ## 0. Audit Kurikulum & Peta Fase -->
+<!---->
+<!-- **Temuan audit** -->
+<!---->
+<!-- 1. **Teks kurikulum tidak terbaca.** File yang diunggah hanya berisi instruksi dan persona, tanpa daftar fase/modul. Karena itu peta fase di bawah adalah **usulan kerangka** yang diturunkan dari tujuanmu: logika yang aman, kuat, cepat, logis, hemat resource, best-practice, fleksibel, dinamis maupun statis, dan sadar akan dampak tiap pilihan desain. Jika kurikulum aslimu berbeda, tempel daftarnya dan saya sinkronkan penomoran serta urutannya. -->
+<!-- 2. **Potensi lompatan.** Kurikulum logika sering langsung melompat ke algoritma dan struktur data. Tanpa *bahasa spesifikasi* (kontrak, invarian, tabel contoh), pembelajar menulis kode yang benar-secara-kebetulan. Maka Fase 1 diperkuat modul 1.1 dan 1.5 sebagai fondasi. -->
+<!-- 3. **TAMBAHAN (di luar daftar lazim):** modul 1.7 (siklus run–error–debug) dan 1.8 (studi kasus terpadu + latihan). Alasannya: logika yang tidak pernah dijalankan, diamati, dan diperbaiki hanyalah teori. -->
+<!-- 4. **Prasyarat tidak diulang, tetapi dipakai.** Sintaks `if`, `for`, class, dan generics diasumsikan sudah kamu kuasai; yang dibahas di sini adalah *cara berpikir* di balik pemakaiannya. -->
+<!---->
+<!-- **Peta fase usulan** -->
+<!---->
+<!-- | Fase | Tema | Pertanyaan inti | -->
+<!-- | --- | --- | --- | -->
+<!-- | 1 | Fondasi Berpikir Logis | Bagaimana mengubah masalah menjadi program yang terbukti benar? | -->
+<!-- | 2 | Logika Ekspresi & Aliran Kendali Aman | Bagaimana kondisi, pattern matching, dan null safety dipakai tanpa celah? | -->
+<!-- | 3 | Pemodelan Data & State | Bagaimana membuat keadaan ilegal tidak mungkin direpresentasikan? | -->
+<!-- | 4 | Logika di Dalam Fungsi & Class | Di mana logika diletakkan, dan dengan berapa cara ia dipanggil? | -->
+<!-- | 5 | Logika Kegagalan & Ketahanan | Bagaimana gagal dengan aman dan pulih dengan benar? | -->
+<!-- | 6 | Logika Efisiensi | Bagaimana mengukur dan menekan waktu, memori, dan alokasi? | -->
+<!-- | 7 | Logika Asinkron & Konkurensi | Bagaimana bernalar tentang event loop, Future, Stream, dan isolate? | -->
+<!-- | 8 | Logika Statis vs Dinamis | Kapan memakai tipe statis, kapan fleksibilitas dinamis, dan apa dampaknya? | -->
+<!-- | 9 | Logika Keamanan | Bagaimana memperlakukan input sebagai musuh sampai terbukti sebaliknya? | -->
+<!-- | 10 | Verifikasi | Bagaimana test, property-based test, fuzzing, dan benchmark membuktikan klaim? | -->
+<!-- | 11 | Arsitektur & Enterprise | Bagaimana logika disusun menjadi modul yang terisolasi dan dapat dirawat? | -->
+<!---->
+<!-- > **Cara memakai dokumen ini.** Untuk setiap modul: baca, tutup dokumen, tulis ulang kodenya dari ingatan, jalankan, lalu bandingkan. Latihan di akhir sengaja **tanpa kunci jawaban** — tulis solusimu sendiri, jalankan, dan simpan di repositori untuk ditinjau. -->
 
-## 0. Audit Kurikulum & Peta Fase
-
-**Temuan audit**
-
-1. **Teks kurikulum tidak terbaca.** File yang diunggah hanya berisi instruksi dan persona, tanpa daftar fase/modul. Karena itu peta fase di bawah adalah **usulan kerangka** yang diturunkan dari tujuanmu: logika yang aman, kuat, cepat, logis, hemat resource, best-practice, fleksibel, dinamis maupun statis, dan sadar akan dampak tiap pilihan desain. Jika kurikulum aslimu berbeda, tempel daftarnya dan saya sinkronkan penomoran serta urutannya.
-2. **Potensi lompatan.** Kurikulum logika sering langsung melompat ke algoritma dan struktur data. Tanpa *bahasa spesifikasi* (kontrak, invarian, tabel contoh), pembelajar menulis kode yang benar-secara-kebetulan. Maka Fase 1 diperkuat modul 1.1 dan 1.5 sebagai fondasi.
-3. **TAMBAHAN (di luar daftar lazim):** modul 1.7 (siklus run–error–debug) dan 1.8 (studi kasus terpadu + latihan). Alasannya: logika yang tidak pernah dijalankan, diamati, dan diperbaiki hanyalah teori.
-4. **Prasyarat tidak diulang, tetapi dipakai.** Sintaks `if`, `for`, class, dan generics diasumsikan sudah kamu kuasai; yang dibahas di sini adalah *cara berpikir* di balik pemakaiannya.
-
-**Peta fase usulan**
-
-| Fase | Tema | Pertanyaan inti |
-| --- | --- | --- |
-| 1 | Fondasi Berpikir Logis | Bagaimana mengubah masalah menjadi program yang terbukti benar? |
-| 2 | Logika Ekspresi & Aliran Kendali Aman | Bagaimana kondisi, pattern matching, dan null safety dipakai tanpa celah? |
-| 3 | Pemodelan Data & State | Bagaimana membuat keadaan ilegal tidak mungkin direpresentasikan? |
-| 4 | Logika di Dalam Fungsi & Class | Di mana logika diletakkan, dan dengan berapa cara ia dipanggil? |
-| 5 | Logika Kegagalan & Ketahanan | Bagaimana gagal dengan aman dan pulih dengan benar? |
-| 6 | Logika Efisiensi | Bagaimana mengukur dan menekan waktu, memori, dan alokasi? |
-| 7 | Logika Asinkron & Konkurensi | Bagaimana bernalar tentang event loop, Future, Stream, dan isolate? |
-| 8 | Logika Statis vs Dinamis | Kapan memakai tipe statis, kapan fleksibilitas dinamis, dan apa dampaknya? |
-| 9 | Logika Keamanan | Bagaimana memperlakukan input sebagai musuh sampai terbukti sebaliknya? |
-| 10 | Verifikasi | Bagaimana test, property-based test, fuzzing, dan benchmark membuktikan klaim? |
-| 11 | Arsitektur & Enterprise | Bagaimana logika disusun menjadi modul yang terisolasi dan dapat dirawat? |
-
-> **Cara memakai dokumen ini.** Untuk setiap modul: baca, tutup dokumen, tulis ulang kodenya dari ingatan, jalankan, lalu bandingkan. Latihan di akhir sengaja **tanpa kunci jawaban** — tulis solusimu sendiri, jalankan, dan simpan di repositori untuk ditinjau.
-
----
+<!-- --- -->
 
 <a id="anatomi"></a>
 
