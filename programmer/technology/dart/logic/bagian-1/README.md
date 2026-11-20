@@ -27,20 +27,22 @@
 <details>
   <summary>📃 Fase 1</summary>
 
-- **0. Audit Kurikulum & Peta Fase**
-- **1.1 Anatomi Masalah:** dari kalimat ke spesifikasi
-- **1.2 Model Mental Komputasi:** state, ekspresi, statement, efek samping
-- **1.3 Alat Berpikir:** dekomposisi, abstraksi, pseudocode, trace table
-- **1.4 Logika Boolean & Predikat:** tabel kebenaran, De Morgan, short-circuit, presedensi
-- **1.5 Kontrak Program:** precondition, postcondition, invarian, `assert` vs error
-- **1.6 Tiga Struktur Kendali:** sequence, selection, iteration, invarian loop
-- **1.7 Siklus Run–Error–Debug** *(TAMBAHAN)*
-- **1.8 Studi Kasus Terpadu: Tarif Parkir** *(TAMBAHAN)*
-- **Latihan (tanpa kunci jawaban), Ringkasan, dan Referensi Induk**
+- **[0. Audit Kurikulum & Peta Fase](#audit)**
+- [**1.1 Anatomi Masalah:** dari kalimat ke spesifikasi](#anatomi)
+- [**1.2 Model Mental Komputasi:** state, ekspresi, statement, efek samping](#model)
+- [**1.3 Alat Berpikir:** dekomposisi, abstraksi, pseudocode, trace table](#model)
+- [**1.4 Logika Boolean & Predikat:** tabel kebenaran, De Morgan, short-circuit, presedensi](#logika)
+- [**1.5 Kontrak Program:** precondition, postcondition, invarian, `assert` vs error](#kontrak)
+- [**1.6 Tiga Struktur Kendali:** sequence, selection, iteration, invarian loop](#tiga)
+- [**1.7 Siklus Run–Error–Debug** *(TAMBAHAN)*](#siklus)
+- [**1.8 Studi Kasus Terpadu: Tarif Parkir** *(TAMBAHAN)*](#studi)
+- [**Latihan (tanpa kunci jawaban), Ringkasan, dan Referensi Induk**](#latihan)
 
 </details>
 
 ---
+
+<a id="audit"></a>
 
 ## 0. Audit Kurikulum & Peta Fase
 
@@ -70,6 +72,8 @@
 > **Cara memakai dokumen ini.** Untuk setiap modul: baca, tutup dokumen, tulis ulang kodenya dari ingatan, jalankan, lalu bandingkan. Latihan di akhir sengaja **tanpa kunci jawaban** — tulis solusimu sendiri, jalankan, dan simpan di repositori untuk ditinjau.
 
 ---
+
+<a id="anatomi"></a>
 
 ## 1.1 Anatomi Masalah: Dari Kalimat ke Spesifikasi
 
@@ -244,6 +248,8 @@ bool kabisatPola(int tahun) => switch ((tahun % 400, tahun % 100, tahun % 4)) {
 - Pólya, *How to Solve It*: https://en.wikipedia.org/wiki/How\_to\_Solve\_It
 
 ---
+
+<a id="model"></a>
 
 ## 1.2 Model Mental Komputasi: State, Ekspresi, Statement, dan Efek Samping
 
@@ -433,6 +439,8 @@ b.add(3);  final c = [...a];
 
 ---
 
+<a id="alat"></a>
+
 ## 1.3 Alat Berpikir: Dekomposisi, Abstraksi, Pseudocode, dan Trace Table
 
 *Motivasi: masalah besar hanyalah masalah kecil yang belum kamu belah.*
@@ -616,6 +624,8 @@ totalBayar
 - ✔ Operator `~/` dan presedensi: https://dart.dev/language/operators
 
 ---
+
+<a id="logika"></a>
 
 ## 1.4 Logika Boolean & Predikat
 
@@ -831,6 +841,8 @@ void contoh(bool? setuju) {
 
 ---
 
+<a id="kontrak"></a>
+
 ## 1.5 Kontrak Program: Precondition, Postcondition, Invarian
 
 *Motivasi: kode yang kuat tidak pernah berasumsi — ia menuntut, menjamin, dan menjaga.*
@@ -1025,6 +1037,8 @@ Apa yang salah?
 - Hoare logic: https://en.wikipedia.org/wiki/Hoare\_logic
 
 ---
+
+<a id="tiga"></a>
 
 ## 1.6 Tiga Struktur Kendali: Sequence, Selection, Iteration
 
@@ -1268,6 +1282,8 @@ if (A) {                         if (!A) return ...;
 
 ---
 
+<a id="siklus"></a>
+
 ## 1.7 Siklus Run–Error–Debug dan Alat Dasar *(TAMBAHAN)*
 
 *Motivasi: ahli bukan orang yang tak pernah salah, melainkan yang paling cepat belajar dari setiap salah.*
@@ -1478,6 +1494,8 @@ int jumlahGenap(List<int> data) {
 - Paket test: https://pub.dev/packages/test
 
 ---
+
+<a id="studi"></a>
 
 ## 1.8 Studi Kasus Terpadu: Tarif Parkir *(TAMBAHAN)*
 
@@ -1723,6 +1741,8 @@ tarif (rupiah):  │ 0 │   5000    │   8000    │   11000   │ ... │  23
 - ✔ Error handling dan `assert`: https://dart.dev/language/error-handling
 
 ---
+
+<a id="latihan"></a>
 
 ## Latihan Fase 1 (sengaja tanpa kunci jawaban)
 
