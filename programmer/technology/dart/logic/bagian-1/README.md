@@ -87,12 +87,21 @@ Modul ini mencakup cara membaca sebuah masalah, menemukan ambiguitasnya, menulis
 
 ### B. Konsep Kunci & Filosofi Mendalam
 
-- **Masalah bukan spesifikasi.** Masalah: *tentukan apakah suatu tahun kabisat*. Spesifikasi: tipe dan rentang input yang sah, bentuk output, aturan transformasi yang tepat, serta perilaku pada input aneh (nol, negatif, sangat besar).
-- **Lima pertanyaan wajib** sebelum menulis kode: (1) apa input dan rentang sahnya? (2) apa output dan tipenya? (3) apa aturan transformasinya, persisnya? (4) apa yang terjadi di batas dan pada input tak sah? (5) bagaimana saya tahu hasilnya benar (*oracle*)?
-- **Kasus tepi** adalah tempat bug berkumpul: kosong, satu elemen, tepat di batas, satu di luar batas, duplikat, nol, negatif, ekstrem besar.
-- **Partisi ekuivalensi + nilai batas.** Bagi domain input menjadi kelas yang berperilaku sama, lalu uji satu wakil tiap kelas *dan* nilai di perbatasan antarkelas.
+- **Masalah bukan spesifikasi.**
+  - Masalah: *tentukan apakah suatu tahun kabisat*. Spesifikasi: tipe dan rentang input yang sah, bentuk output, aturan transformasi yang tepat, serta perilaku pada input aneh (nol, negatif, sangat besar).
+- **Lima pertanyaan wajib** sebelum menulis kode:
+  - (1) apa input dan rentang sahnya?
+  - (2) apa output dan tipenya?
+  - (3) apa aturan transformasinya, persisnya?
+  - (4) apa yang terjadi di batas dan pada input tak sah?
+  - (5) bagaimana saya tahu hasilnya benar (*oracle*)?
+- **Kasus tepi** adalah tempat bug berkumpul:
+  - kosong, satu elemen, tepat di batas, satu di luar batas, duplikat, nol, negatif, ekstrem besar.
+- **Partisi ekuivalensi + nilai batas.**
+  - Bagi domain input menjadi kelas yang berperilaku sama, lalu uji satu wakil tiap kelas *dan* nilai di perbatasan antarkelas.
 - **Filosofi:** spesifikasi adalah kode tanpa ambiguitas yang dibaca manusia; kode adalah spesifikasi yang dieksekusi mesin. Jika keduanya tak bisa dicocokkan, salah satunya salah.
-- **Dampak desain:** ketidakjelasan spesifikasi memaksa keputusan tersirat. Rata-rata dari list kosong: 0, NaN, atau error? Keputusan yang tak ditulis hari ini adalah celah ketahanan dan keamanan besok.
+- **Dampak desain:** ketidakjelasan spesifikasi memaksa keputusan tersirat.
+  - Rata-rata dari list kosong: 0, NaN, atau error? Keputusan yang tak ditulis hari ini adalah celah ketahanan dan keamanan besok.
 
 ### C. Sintaks Dasar & Contoh Inti Implementasi
 
