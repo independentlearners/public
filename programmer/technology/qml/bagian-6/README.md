@@ -1914,6 +1914,1057 @@ Kuncinya ada pada dua baris: `columns` yang terikat ke lebar layout (titik patah
 
 *Tata letak yang baik tak terlihat: ia hanya terasa benar di ukuran apa pun.*
 
+# Fase 5 · Modul 5.3 — Tema dan Singleton
+
+*Kurikulum Qt 6 QML · Fase 5 (Komponen, Layout, dan Styling) · Modul 3 dari 3 (5.1 → 5.2 → 5.3)*
+
+## Daftar Isi Modul 5.3
+
+- Audit singkat Modul 5.3 dan daftar yang diperbarui
+- Gambaran, peran dalam kurikulum, dan filosofi
+- 5.3.1 `pragma Singleton`
+- 5.3.2 Mendaftarkan singleton di CMake
+- 5.3.3 Design token (warna, spasi, radius, tipografi)
+- 5.3.4 Tema gelap/terang
+- 5.3.5 Singleton dari C++ (`QML_SINGLETON`, rujukan maju ke Modul 10.3)
+- 5.3.6 \[TAMBAHAN\] Alternatif mekanisme tema dan kapan memilihnya
+- 5.3.7 \[TAMBAHAN\] Penegakan, migrasi, dan kontras warna
+- Terminologi esensial
+- Hubungan dengan modul lain
+- Kesalahan umum dan solusi
+- Tips dan praktik terbaik
+- Latihan 15 menit (versi diperbaiki) dan kunci
+- Cek pemahaman dan kunci
+- Rangkuman Fase 5
+- Referensi tambahan
+
+## Audit Singkat Modul 5.3 (sebelum materi dimulai)
+
+Urutan Modul 5.3 logis: ia memusatkan angka dan warna yang tersebar di 5.1 dan 5.2. Temuan yang dibereskan:
+
+1. **\[Klarifikasi\] Dua syarat, bukan satu.** Kurikulum sudah benar menyebut `pragma Singleton` *dan* `QT_QML_SINGLETON_TYPE`, tetapi tidak menjelaskan *mengapa* keduanya perlu: yang pertama ditulis di berkas QML, yang kedua mengatur isi `qmldir` (daftar tipe modul). Dijelaskan di 5.3.2 beserta cara memverifikasinya.
+2. **\[Tambahan\] Jalur tanpa CMake.** Cara cepat `qml6 Main.qml` yang dipakai di 5.1 dan 5.2 tidak mengenali singleton tanpa berkas `qmldir` tulisan tangan. Ditambahkan di 5.3.2.
+3. **\[Tambahan\] 5.3.3 diperdalam.** Token dibagi menurut tingkat (primitif, semantik, komponen), skala spasi, tipografi, durasi gerak, dan titik patah dari 5.2.5, plus aturan penamaan semantik.
+4. **\[Peringatan versi dan platform\] 5.3.4.** `Qt.styleHints.colorScheme` butuh Qt 6.5 ke atas, dan di Linux tanpa desktop environment (misalnya window manager tiling) nilainya bisa `Qt.Unknown`. Ditambahkan *override* manual, cara memeriksa apa yang dilaporkan Qt, dan nilai bawaan yang aman.
+5. **\[Klarifikasi\] “Jangan menaruh keadaan aplikasi di singleton tema”.** Aturan ini benar tetapi kabur. Dipertegas dengan batas yang jelas: *keadaan gaya* (mode gelap) boleh, *data bisnis dan rahasia* tidak.
+6. **\[Tambahan\] 5.3.6.** Alternatif yang tidak ada di kurikulum: `SystemPalette`, tema yang disuntikkan lewat properti (untuk menimpa satu bagian UI), `palette` dan style Qt Quick Controls, serta berkas JavaScript `.pragma library`.
+7. **\[Tambahan\] 5.3.7.** Penegakan agar tak ada warna atau angka mentah tersisa (`grep`, `qmllint`), dan pemeriksaan kontras warna.
+8. **\[Klarifikasi\] 5.3.5 adalah rujukan maju.** Singleton dari C++ dibahas penuh di Modul 10.3; di sini hanya pengenalan konsep dan potongan kode, jangan dipraktikkan sebelum jalur C++ dimulai.
+9. **\[Catatan\] `VERSION 1.0`** pada `qt_add_qml_module` bersifat opsional di Qt 6; dipertahankan sesuai kurikulum.
+
+**Daftar Modul 5.3 yang diperbarui** (tanda \[+\] = tambahan hasil audit):
+
+- 5.3.1 `pragma Singleton`
+- 5.3.2 Mendaftarkan singleton di CMake
+- 5.3.3 Design token (warna, spasi, radius, tipografi)
+- 5.3.4 Tema gelap/terang
+- 5.3.5 Singleton dari C++ (rujukan maju ke Modul 10.3)
+- &#91;+\] 5.3.6 Alternatif mekanisme tema dan kapan memilihnya
+- &#91;+\] 5.3.7 Penegakan, migrasi, dan kontras warna
+
+**Asumsi prasyarat.** Modul 5.1 (`AppButton`, id, API komponen), Modul 5.2 (spasi, margin, titik patah), dan properti serta binding dari Fase 3. Proyek CMake `hello` dari fase sebelumnya sudah bisa dibangun.
+
+## Gambaran, Peran, dan Filosofi
+
+### Deskripsi konkret
+
+Modul ini memusatkan nilai gaya (warna, jarak, radius, ukuran huruf, durasi gerak) ke **satu tempat**: sebuah singleton QML bernama `Theme`, yang dibaca oleh seluruh komponen. Anda belajar membuatnya (`pragma Singleton`), mendaftarkannya agar dikenal (CMake dan `qmldir`), menyusun *design token*, dan menurunkan tema gelap/terang dari satu saklar.
+
+### Peran dalam kurikulum
+
+Di 5.1 `AppButton` memuat angka dan warna mentah (`32`, `6`, `#2563eb`); di 5.2 Anda menulis `spacing: 8`, `margins: 12`, dan titik patah `400` / `720` di banyak tempat. Modul ini menutup Fase 5: satu perubahan di `Theme.qml` mengubah seluruh aplikasi, sehingga komponen (5.1), tata letak (5.2), dan gaya (5.3) bekerja sebagai satu sistem.
+
+### Konsep kunci dan filosofi
+
+- **Analogi buku panduan gaya (dan termostat pusat).** Bayangkan gedung dengan termostat di tiap kamar: mengubah suhu berarti mendatangi seratus kamar. Dengan satu termostat pusat, Anda memutar satu tombol. `Theme` adalah termostat pusat untuk tampilan.
+- **Sumber kebenaran tunggal (single source of truth).** Tiap nilai gaya punya tepat satu tempat tinggal. Tidak ada angka yang “kebetulan sama” di dua berkas, sehingga tidak ada yang lupa diubah.
+- **Design token: nama bermakna menggantikan angka mentah.** `Theme.primary` menyatakan *peran* (warna aksi utama), sedangkan `#2563eb` hanya menyatakan *nilai*. Ketika desain berubah, peran tetap dan nilai berganti.
+- **Konsistensi sebagai fitur keamanan.** Antarmuka yang seragam membuat anomali mudah dikenali: dialog konfirmasi asli selalu tampil dengan gaya yang sama, sehingga tampilan yang “menyimpang” menonjol. Konsistensi juga mengurangi kemungkinan elemen penting (peringatan, tombol hapus) tampil mirip elemen biasa.
+- **Jujur soal harga singleton.** Singleton adalah *keadaan global*. Kenyamanannya besar (tidak perlu meneruskan `theme` lewat setiap komponen), tetapi ia menambah kopling tersembunyi dan menyulitkan pengujian atau penimpaan sebagian. Karena itu isinya dibatasi pada hal yang memang global dan hanya-baca: *gaya*. Jangan pernah menaruh rahasia, token autentikasi, atau data pengguna di sana (prinsip hak akses minimum untuk keadaan global).
+
+Alur dari satu tempat ke seluruh aplikasi:
+
+```
+ Theme.qml  (singleton, SATU instans per engine)
+   |-- mode / dark ---------> warna semantik (primary, surface, ...)
+   |-- spasi, radius, font, durasi, titik patah
+   |
+   +--> AppButton   : color: Theme.primary,  implicitHeight: Theme.controlHeight
+   +--> Main.qml    : spacing: Theme.space2,  margins: Theme.space4
+   +--> komponen lain...
+
+  ubah SATU token  -->  semua binding yang membacanya dihitung ulang (reaktif)
+```
+
+## 5.3.1 `pragma Singleton`
+
+### Dasar: apa itu singleton, dan apa itu `pragma`?
+
+*Singleton* adalah pola desain: sebuah tipe yang hanya punya **satu instans** untuk seluruh program. Di QML, instans itu satu per `QQmlEngine`, dibuat *malas* (lazy) ketika pertama kali dirujuk, dan hidup selama engine hidup. Semua pemakai membaca objek yang sama, sehingga perubahan di satu tempat terlihat di mana-mana.
+
+`pragma` adalah *direktif untuk engine*, bukan kode yang berjalan. Ia memberi tahu bagaimana sebuah dokumen QML harus diperlakukan. `pragma Singleton` berarti “dokumen ini adalah singleton”; ia ditulis di bagian atas berkas, sebelum `import`. (Ada pragma lain seperti `pragma ComponentBehavior: Bound`, yang sudah Anda temui di 5.1.7.)
+
+### Sintaks dan contoh inti: `Theme.qml`
+
+```qml
+pragma Singleton
+import QtQuick
+
+QtObject {
+    readonly property color primary: '#2563eb'
+    readonly property int spacing: 8
+    readonly property int radius: 6
+}
+```
+
+Pemakaian di komponen mana pun dalam modul yang sama:
+
+```qml
+Rectangle {
+    color: Theme.primary
+    radius: Theme.radius
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `pragma Singleton` — menandai dokumen sebagai singleton. Tanpa baris ini `Theme` akan diperlakukan sebagai tipe biasa yang harus diinstansiasi (`Theme { }`), dan sebaliknya, dengan baris ini ia **tidak bisa** lagi dibuat dengan `Theme { }`.
+- `import QtQuick` — memuat modul yang berisi `QtObject` dan tipe warna.
+- `QtObject { ... }` — tipe dasar singleton ini. `QtObject` adalah objek paling dasar *tanpa tampilan*: tidak punya `x`, `y`, `width`, atau `parent`. Itu pas untuk tema, karena tema tidak ikut dalam pohon tampilan. (Singleton boleh berbasis `Item`, tetapi hampir tidak pernah diperlukan untuk tema dan menambah beban tanpa manfaat.)
+- `readonly property color primary: '#2563eb'` — properti `primary` bertipe `color`, **hanya-baca** bagi pihak luar, bernilai biru. `readonly` melarang `Theme.primary = 'red'` dari luar; objek itu sendiri tetap bebas mengubahnya lewat binding internal (itu yang dipakai tema gelap/terang di 5.3.4).
+- `readonly property int spacing: 8` dan `radius: 6` — token ukuran dalam piksel logis.
+- `color: Theme.primary` — *binding* ke singleton: bila `Theme.primary` berubah, `color` ikut dihitung ulang.
+
+### Sifat dan siklus hidup
+
+```
+ pertama kali ada yang menulis 'Theme.xxx'
+        |
+        v
+ engine membuat SATU objek Theme  ---->  disimpan selama engine hidup
+        |
+        v
+ pemakai lain membaca objek yang SAMA  (tidak ada salinan)
+```
+
+- **Satu per engine.** Dua `QQmlEngine` berbeda memiliki dua `Theme` terpisah.
+- **Lazy.** Dibuat saat pertama dirujuk; biaya awalnya kecil.
+- **Tidak ada `parent`, anchors, atau `id` pemakai.** Ia bukan item, hanya objek.
+- **Reaktif.** Binding yang membaca `Theme.x` ikut berubah saat `x` berubah.
+
+### Opsi lain untuk “nilai global bersama”
+
+```qml
+// Opsi 1 — QtObject singleton (kurikulum): reaktif, ringan, tipe-aman
+pragma Singleton
+QtObject { readonly property color primary: '#2563eb' }
+
+// Opsi 2 — singleton berbasis Item: hanya bila perlu anak visual (jarang)
+pragma Singleton
+Item { readonly property color primary: '#2563eb' }
+
+// Opsi 3 — berkas JavaScript .pragma library: konstanta statis, TIDAK reaktif
+.pragma library
+var primary = '#2563eb'
+```
+
+Opsi 3 mudah tetapi tidak memberi tahu pemakai ketika nilainya berubah, jadi tidak bisa dipakai untuk tema gelap/terang yang berganti saat program berjalan. Alternatif lain (tema yang disuntikkan, `SystemPalette`, style Controls) dibahas di 5.3.6.
+
+### Hal yang perlu diperhatikan
+
+- **Simpan hanya gaya.** Token adalah nilai tampilan yang tidak berubah akibat logika bisnis.
+- **Nama bermakna, bukan nilai.** `primary`, bukan `blue`.
+- **Hindari properti yang berubah sering.** Singleton bukan tempat menyimpan keadaan berfrekuensi tinggi.
+
+**Referensi bagian ini:** [Structure of a QML Document (pragma)](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [Defining Object Types through QML Documents](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html) · [QtObject](https://doc.qt.io/qt-6/qml-qtqml-qtobject.html) · [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html)
+
+## 5.3.2 Mendaftarkan singleton di CMake
+
+### Dasar: bagaimana QML menemukan tipe? (`qmldir`)
+
+Sebuah modul QML dideskripsikan oleh berkas teks bernama `qmldir`: daftar “nama tipe → berkas”. Engine membacanya untuk tahu tipe apa saja yang ada. Untuk singleton, baris `qmldir`-nya memakai kata kunci `singleton`:
+
+```
+module Hello
+singleton Theme 1.0 Theme.qml
+AppButton 1.0 AppButton.qml
+```
+
+Kata kunci itu penting karena engine perlu tahu **sebelum** menjalankan kode apakah sebuah tipe harus dibuat sekali (singleton) atau tiap kali dipakai (tipe biasa). `pragma Singleton` di dalam berkas saja tidak cukup untuk menyampaikannya ke modul; baris `singleton` di `qmldir` yang melakukannya.
+
+Dengan CMake Anda tidak menulis `qmldir` sendiri: `qt_add_qml_module` membuatnya. Tugas Anda hanya memberi tahu CMake bahwa `Theme.qml` adalah singleton, lewat properti berkas `QT_QML_SINGLETON_TYPE`.
+
+### Sintaks dan contoh inti
+
+```cmake
+set_source_files_properties(Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+qt_add_qml_module(hello
+    URI Hello
+    VERSION 1.0
+    QML_FILES Main.qml AppButton.qml Theme.qml
+)
+```
+
+### Bedah kode (kata demi kata)
+
+- `set_source_files_properties(...)` — perintah bawaan CMake untuk menempelkan properti pada sebuah berkas sumber.
+- `Theme.qml` — berkas yang dituju; path relatif terhadap `CMakeLists.txt` yang sama.
+- `PROPERTIES` — kata kunci pemisah antara nama berkas dan pasangan properti.
+- `QT_QML_SINGLETON_TYPE TRUE` — properti khusus Qt: “berkas ini singleton”. Ketika `qt_add_qml_module` membuat `qmldir`, ia menulis baris `singleton Theme ...` untuk berkas ini.
+- `qt_add_qml_module(hello ...)` — membuat modul QML untuk target `hello` (yang sudah Anda buat dengan `qt_add_executable`).
+- `URI Hello` — nama modul untuk `import`; juga menentukan lokasi `Hello/qmldir`.
+- `VERSION 1.0` — versi modul; di Qt 6 opsional dan boleh dihilangkan.
+- `QML_FILES Main.qml AppButton.qml Theme.qml` — seluruh berkas QML modul. Singleton **harus** ikut didaftarkan di sini juga.
+
+**Urutan wajib:** properti berkas harus ditetapkan **sebelum** `qt_add_qml_module` (atau `qt_target_qml_sources`), karena nilainya dibaca saat perintah itu dijalankan. Menaruhnya sesudahnya tidak berefek, dan kegagalannya diam-diam.
+
+Kerangka `CMakeLists.txt` secara utuh (sesuaikan dengan proyek `hello` Anda):
+
+```cmake
+cmake_minimum_required(VERSION 3.21)
+project(hello LANGUAGES CXX)
+
+find_package(Qt6 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.5)
+
+qt_add_executable(hello main.cpp)
+
+set_source_files_properties(Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+qt_add_qml_module(hello
+    URI Hello
+    VERSION 1.0
+    QML_FILES Main.qml AppButton.qml Theme.qml
+)
+
+target_link_libraries(hello PRIVATE Qt6::Quick)
+```
+
+### Memverifikasi pendaftaran
+
+```bash
+cmake -S . -B build -G Ninja && cmake --build build
+cat build/Hello/qmldir          # lokasi umum; cari baris yang diawali: singleton Theme
+./build/hello                   # jalankan; Theme.primary harus terbaca di UI
+```
+
+Bila baris `singleton Theme` tidak ada di `qmldir`, properti berkas Anda tidak terbaca (biasanya karena urutan, atau salah nama berkas).
+
+### Alur diagnosis galat
+
+```
+ 'ReferenceError: Theme is not defined'
+  |
+  +-- ada baris 'singleton Theme' di qmldir?    TIDAK --> set_source_files_properties salah urutan / salah path
+  |
+  +-- Theme.qml ada di QML_FILES?               TIDAK --> tambahkan ke qt_add_qml_module
+  |
+  +-- ada 'pragma Singleton' di Theme.qml?      TIDAK --> tambahkan sebagai baris pertama
+  |
+  '-- pemakai berada dalam modul yang sama atau mengimpor modul (import Hello)?  TIDAK --> impor modulnya
+```
+
+### Opsi lain untuk mendaftarkan
+
+```cmake
+# Opsi 1 — properti berkas sebelum qt_add_qml_module (kurikulum)
+set_source_files_properties(Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+qt_add_qml_module(hello URI Hello QML_FILES Main.qml Theme.qml)
+
+# Opsi 2 — menambah berkas belakangan lewat qt_target_qml_sources (properti tetap harus lebih dulu)
+set_source_files_properties(Theme.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+qt_target_qml_sources(hello QML_FILES Theme.qml)
+```
+
+Dan bila Anda memakai jalur cepat **tanpa CMake** (`qml6 Main.qml`), tulis `qmldir` sendiri di folder yang sama:
+
+```
+singleton Theme 1.0 Theme.qml
+AppButton 1.0 AppButton.qml
+```
+
+Daftarkan semua tipe lokal yang dipakai bila Anda menulis `qmldir` sendiri; bila ada yang terlewat, `qml6` akan mengeluh bahwa tipe itu tak dikenal. Buktikan di mesin Anda.
+
+**Referensi bagian ini:** [qt\_target\_qml\_sources (QT\_QML\_SINGLETON\_TYPE)](https://doc.qt.io/qt-6/qt-target-qml-sources.html) · [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html) · [Module Definition qmldir Files](https://doc.qt.io/qt-6/qtqml-modules-qmldir.html) · [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html) · [set\_source\_files\_properties (CMake)](https://cmake.org/cmake/help/latest/command/set_source_files_properties.html)
+
+## 5.3.3 Design token (warna, spasi, radius, tipografi)
+
+### Dasar: apa itu design token?
+
+*Design token* adalah nilai desain yang **diberi nama bermakna**: warna, jarak, radius, ukuran huruf, durasi animasi. Konsep ini lahir dari sistem desain (Material Design, Tailwind, dan sejenisnya) agar desainer dan pengembang berbicara memakai nama yang sama. Di QML, token adalah `readonly property` di dalam `Theme`.
+
+Token dapat dipikirkan dalam tiga tingkat:
+
+```
+ Tingkat 1: token PRIMITIF   nilai mentah, tanpa makna       blue500 = #2563eb   8   14
+       |  dirujuk oleh
+       v
+ Tingkat 2: token SEMANTIK   makna / peran                   primary   surface   space2
+       |  dipakai oleh komponen  <-- inilah antarmuka Theme
+       v
+ Tingkat 3: token KOMPONEN   (opsional) khusus satu komponen buttonBackground
+```
+
+Untuk aplikasi seukuran latihan ini, tingkat 2 sudah cukup; tingkat 1 baru bermanfaat bila palet Anda besar (biru 100–900, abu 100–900, dst.), dan tingkat 3 sebaiknya ditunda sampai benar-benar dibutuhkan.
+
+### Contoh inti: `Theme.qml` lengkap (versi terang)
+
+```qml
+pragma Singleton
+import QtQuick
+
+QtObject {
+    // ===== warna semantik =====
+    readonly property color primary:     '#2563eb'
+    readonly property color primaryDown: '#1d4ed8'
+    readonly property color onPrimary:   '#ffffff'
+    readonly property color surface:     '#ffffff'
+    readonly property color onSurface:   '#0f172a'
+    readonly property color outline:     '#cbd5e1'
+    readonly property color focusRing:   onPrimary
+    readonly property color disabled:    '#9ca3af'
+
+    // ===== spasi: kelipatan 4 px =====
+    readonly property int space1: 4
+    readonly property int space2: 8
+    readonly property int space3: 12
+    readonly property int space4: 16
+    readonly property int space5: 20
+    readonly property int space6: 24
+
+    // ===== bentuk dan ukuran =====
+    readonly property int radius: 6
+    readonly property int controlHeight: 40
+
+    // ===== tipografi (piksel logis) =====
+    readonly property int fontSmall: 12
+    readonly property int fontBody: 14
+    readonly property int fontTitle: 20
+
+    // ===== gerak (milidetik) =====
+    readonly property int durationFast: 120
+    readonly property int durationNormal: 240
+
+    // ===== titik patah (lihat 5.2.5) =====
+    readonly property int bpCompact: 400
+    readonly property int bpMedium: 720
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `// ===== warna semantik =====` — komentar pengelompokan; QML memakai `//` untuk komentar satu baris.
+- `readonly property color primary: '#2563eb'` — `primary` adalah *peran* (warna aksi utama), bukan sekadar “biru”. Tipe `color` memastikan nilai valid.
+- `primaryDown` — varian keadaan *ditekan*; akhiran menunjukkan keadaan, bukan nilai.
+- `onPrimary` — warna isi (teks, ikon) *di atas* `primary`. Pola `onX` (dipinjam dari Material) menjamin pasangan latar-isi selalu dirancang bersama sehingga kontrasnya terjaga.
+- `surface` / `onSurface` — latar umum dan isi di atasnya.
+- `outline` — garis tepi netral.
+- `focusRing: onPrimary` — token ini *merujuk token lain*: cincin fokus memakai warna yang kontras dengan isi tombol. Perhatikan bahwa token boleh dibentuk dari token lain (alasan pemeriksaan kontras ada di 5.3.7).
+- `disabled` — warna item nonaktif.
+- `space1` .. `space6` — skala spasi kelipatan 4 piksel (`spaceN = N × 4`). Menyederhanakan keputusan: Anda memilih *langkah*, bukan angka bebas.
+- `radius: 6`, `controlHeight: 40` — bentuk dan tinggi kontrol standar.
+- `fontSmall` / `fontBody` / `fontTitle` — skala tipografi dalam piksel logis (Qt menskalakannya pada layar berkepadatan tinggi). Dipakai sebagai `font.pixelSize: Theme.fontBody`.
+- `durationFast` / `durationNormal` — durasi animasi dalam milidetik; dipakai oleh `ColorAnimation` dan kawan-kawan.
+- `bpCompact` / `bpMedium` — titik patah dari 5.2.5: `columns: grid.width < Theme.bpCompact ? 1 : 2`.
+
+### Menerapkan token pada `AppButton` (versi akhir Fase 5)
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    // API publik
+    required property string label
+    signal clicked()
+
+    // keyboard dan aksesibilitas (5.1.6)
+    activeFocusOnTab: true
+    Accessible.role: Accessible.Button
+    Accessible.name: root.label
+    Accessible.onPressAction: root.clicked()
+    Keys.onReturnPressed: root.clicked()
+    Keys.onEnterPressed: root.clicked()
+    Keys.onSpacePressed: root.clicked()
+
+    // tampilan: seluruhnya dari token
+    implicitWidth: teks.implicitWidth + 2 * Theme.space4
+    implicitHeight: Theme.controlHeight
+    radius: Theme.radius
+    color: !root.enabled ? Theme.disabled : (tap.pressed ? Theme.primaryDown : Theme.primary)
+    border.width: root.activeFocus ? 2 : 0
+    border.color: Theme.focusRing
+
+    Behavior on color { ColorAnimation { duration: Theme.durationFast } }
+
+    Text {
+        id: teks
+        anchors.centerIn: parent
+        text: root.label
+        color: Theme.onPrimary
+        font.pixelSize: Theme.fontBody
+    }
+
+    TapHandler {
+        id: tap
+        onTapped: {
+            root.forceActiveFocus(Qt.MouseFocusReason)
+            root.clicked()
+        }
+    }
+}
+```
+
+Peta penggantian (sebelum → sesudah):
+
+- `32` (padding kiri-kanan total) → `2 * Theme.space4`
+- `40` → `Theme.controlHeight`
+- `6` → `Theme.radius`
+- `'#2563eb'` → `Theme.primary`; `'#1d4ed8'` → `Theme.primaryDown`
+- `'white'` → `Theme.onPrimary`
+- `'#93c5fd'` (cincin fokus) → `Theme.focusRing`
+- `'#9ca3af'` (nonaktif) → `Theme.disabled`
+- (baru) `font.pixelSize: Theme.fontBody` dan `ColorAnimation { duration: Theme.durationFast }`
+
+`Behavior on color { ColorAnimation { ... } }` membuat setiap perubahan `color` (ditekan, nonaktif, ganti tema) berlangsung mulus selama `durationFast` milidetik, alih-alih meloncat.
+
+### Contoh pemakaian di `Main.qml`
+
+```qml
+import QtQuick
+import QtQuick.Layouts
+
+Window {
+    width: 360; height: 160
+    visible: true
+    title: 'Uji Theme'
+    color: Theme.surface
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: Theme.space4
+        spacing: Theme.space3
+
+        Text {
+            text: 'Halo, tema'
+            color: Theme.onSurface
+            font.pixelSize: Theme.fontTitle
+        }
+
+        RowLayout {
+            spacing: Theme.space2
+            AppButton { label: 'Simpan'; onClicked: console.log('disimpan') }
+            AppButton { label: 'Hapus'; enabled: false }
+        }
+
+        Item { Layout.fillHeight: true }
+    }
+}
+```
+
+Perhatikan bagaimana Fase 5 menyatu: komponen dengan API bersih (5.1), tata letak negosiatif (5.2), dan semua nilai gaya dari `Theme` (5.3).
+
+### Aturan penamaan token
+
+- **Nama peran, bukan nilai:** `primary`, `danger`, `surface`; bukan `blue`, `red`, `white`.
+- **Pasangan `onX`** untuk isi di atas latar `X`.
+- **Akhiran keadaan** untuk varian (`primaryDown`, `primaryHover`).
+- **Skala bernomor** untuk deret (`space1`..`space6`) agar tak ada perdebatan antara “medium” dan “besar”.
+- **Satuan tersirat dari jenis:** jarak dan ukuran dalam piksel logis, durasi dalam milidetik (`duration...`).
+- **Mulai kecil.** Tambahkan token ketika satu nilai dipakai berulang di dua tempat atau lebih; hindari token yang dipakai sekali.
+
+### Opsi lain untuk logika yang sama
+
+```qml
+// Opsi 1 — properti datar bernama (di atas): paling mudah dibaca dan diperiksa alat statis
+readonly property int space2: 8
+
+// Opsi 2 — satuan dasar + fungsi: Theme.sp(3) -> 12
+readonly property int unit: 4
+function sp(n) { return n * unit }
+
+// Opsi 3 — larik: Theme.space[2] -> 8 (ringkas, tetapi indeks adalah angka ajaib bertipe var)
+readonly property var space: [0, 4, 8, 12, 16, 20, 24]
+
+// Opsi 4 — token tipografi sebagai nilai font utuh
+readonly property font body: Qt.font({ pixelSize: 14 })
+// pemakaian: Text { font: Theme.body }
+
+// Opsi 5 — token primitif internal + token semantik (untuk palet besar)
+readonly property QtObject _p: QtObject {
+    readonly property color blue500: '#2563eb'
+    readonly property color blue700: '#1d4ed8'
+}
+readonly property color primary: _p.blue500
+readonly property color primaryDown: _p.blue700
+```
+
+Opsi 2 fleksibel (bahkan mendukung kelipatan bebas), dan QML tetap melacak ketergantungan pada `unit` di dalam fungsi saat binding dievaluasi. Opsi 3 mengorbankan keterbacaan dan pemeriksaan tipe. Opsi 1 adalah titik awal yang disarankan; pindah ke Opsi 5 bila palet Anda membesar.
+
+### Hal yang perlu diperhatikan
+
+- **Satu sumber per nilai.** Bila Anda menulis `8` di komponen, tanyakan: apakah ini `space2`?
+- **Piksel logis.** Qt Quick menskalakan otomatis pada layar high-DPI; jangan mengalikan sendiri dengan faktor skala.
+- **Pisahkan gaya dari perilaku.** Token menentukan *tampilan*; kapan sesuatu berubah adalah urusan komponen.
+- **Jaga tetap kecil.** Puluhan token cukup; ratusan menandakan Anda sedang menciptakan ulang sistem desain.
+
+**Referensi bagian ini:** [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html) · [Behavior](https://doc.qt.io/qt-6/qml-qtquick-behavior.html) · [ColorAnimation](https://doc.qt.io/qt-6/qml-qtquick-coloranimation.html) · [Qt.font()](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Design Tokens Community Group (W3C)](https://www.w3.org/community/design-tokens/) · [Material Design — Design tokens](https://m3.material.io/foundations/design-tokens/overview)
+
+## 5.3.4 Tema gelap/terang
+
+### Dasar: dua set nilai, satu nama
+
+Tema gelap dan terang adalah **dua set nilai untuk token semantik yang sama**. Komponen tidak perlu tahu mana yang aktif: ia selalu menulis `Theme.surface`, dan `Theme` memutuskan nilainya berdasarkan satu saklar, `dark`. Karena token adalah binding, mengubah saklar mengubah seluruh aplikasi sekaligus.
+
+Sumber saklar ada dua, dan keduanya dipakai bersama:
+
+1. **Sistem:** `Qt.styleHints.colorScheme` (Qt 6.5 ke atas), bernilai `Qt.Light`, `Qt.Dark`, atau `Qt.Unknown`.
+2. **Pilihan pengguna:** properti `mode` di `Theme` (ikuti sistem, paksa terang, paksa gelap).
+
+### Contoh inti: `Theme.qml` lengkap dengan mode gelap
+
+```qml
+pragma Singleton
+import QtQuick
+
+QtObject {
+    id: root
+
+    // ===== saklar =====
+    // 0 = ikuti sistem, 1 = terang, 2 = gelap
+    property int mode: 0
+    readonly property bool dark: (mode === 0) ? (Qt.styleHints.colorScheme === Qt.Dark) : (mode === 2)
+
+    // ===== warna semantik: dua set, satu nama =====
+    readonly property color primary:     dark ? '#60a5fa' : '#2563eb'
+    readonly property color primaryDown: dark ? '#93c5fd' : '#1d4ed8'
+    readonly property color onPrimary:   dark ? '#0f172a' : '#ffffff'
+    readonly property color surface:     dark ? '#0f172a' : '#ffffff'
+    readonly property color onSurface:   dark ? '#e2e8f0' : '#0f172a'
+    readonly property color outline:     dark ? '#334155' : '#cbd5e1'
+    readonly property color focusRing:   onPrimary
+    readonly property color disabled:    dark ? '#475569' : '#9ca3af'
+
+    // ===== spasi =====
+    readonly property int space1: 4
+    readonly property int space2: 8
+    readonly property int space3: 12
+    readonly property int space4: 16
+    readonly property int space5: 20
+    readonly property int space6: 24
+
+    // ===== bentuk dan ukuran =====
+    readonly property int radius: 6
+    readonly property int controlHeight: 40
+
+    // ===== tipografi =====
+    readonly property int fontSmall: 12
+    readonly property int fontBody: 14
+    readonly property int fontTitle: 20
+
+    // ===== gerak =====
+    readonly property int durationFast: 120
+    readonly property int durationNormal: 240
+
+    // ===== titik patah =====
+    readonly property int bpCompact: 400
+    readonly property int bpMedium: 720
+}
+```
+
+### Bedah kode (hanya bagian baru)
+
+- `id: root` — nama objek; di sini dipakai bila ada kebutuhan merujuk singleton dari dalam dirinya sendiri (misalnya alias, lihat opsi di bawah).
+- `property int mode: 0` — **tidak** `readonly`, karena pengguna boleh mengubahnya. Ini *keadaan gaya*: pilihan tampilan, bukan data bisnis, jadi pantas tinggal di `Theme`.
+- `Qt.styleHints` — objek global (`QStyleHints`) berisi petunjuk gaya dari platform; `colorScheme` adalah skema warna yang dilaporkan sistem; `Qt.Dark` adalah nilai enumnya.
+- `(mode === 0) ? (...) : (mode === 2)` — operator ternary. Bila mode 0, ikuti sistem; selain itu, gelap hanya bila mode 2. `===` adalah kesamaan ketat JavaScript (tanpa konversi tipe).
+- Pada Qt di bawah 6.5 `Qt.styleHints.colorScheme` bernilai `undefined`, sehingga perbandingannya `false` dan `dark` jatuh ke terang. Ini *nilai bawaan yang aman*, bukan galat.
+- `dark ? '#60a5fa' : '#2563eb'` — tiap token warna memilih nilainya berdasarkan `dark`.
+- `focusRing: onPrimary` — mengikuti `onPrimary` di kedua tema.
+
+Rantai reaktivitasnya:
+
+```
+ sistem berganti skema   --> Qt.styleHints.colorScheme berubah
+ pengguna memilih mode   --> Theme.mode berubah
+                                     |
+                                     v
+                            Theme.dark dihitung ulang
+                                     |
+                                     v
+                 Theme.primary / surface / onSurface / ... dihitung ulang
+                                     |
+                                     v
+        setiap binding 'color: Theme.xxx' di komponen ikut berubah (otomatis)
+```
+
+`readonly` hanya melarang *penulisan dari luar*; nilai tetap boleh berubah karena binding internal. Karena itu `Theme.dark` yang `readonly` tetap berganti saat `mode` atau skema sistem berganti.
+
+### Saklar pengguna
+
+```qml
+AppButton {
+    label: Theme.dark ? 'Mode terang' : 'Mode gelap'
+    onClicked: Theme.mode = Theme.dark ? 1 : 2
+}
+```
+
+Klik mengubah `mode` menjadi eksplisit (1 atau 2), sehingga pilihan pengguna menimpa skema sistem. Untuk menyediakan kembali pilihan “ikuti sistem”, tambahkan kontrol ketiga yang mengisi `Theme.mode = 0`.
+
+### Memeriksa apa yang dilaporkan Qt di mesin Anda
+
+```bash
+cat > /tmp/cs.qml <<'EOF'
+import QtQuick
+Item {
+    Component.onCompleted: {
+        console.log('colorScheme =', Qt.styleHints.colorScheme)   // 0 Unknown, 1 Light, 2 Dark
+        Qt.quit()
+    }
+}
+EOF
+qml6 /tmp/cs.qml
+```
+
+**Catatan penting untuk lingkungan terminal-sentris.** Skema warna dilaporkan oleh *tema platform*. Di GNOME atau KDE yang mengaktifkan mode gelap, hasilnya biasanya 2. Di window manager tiling tanpa desktop environment, nilainya dapat 0 (Unknown) atau 1, sehingga “ikuti sistem” tidak berarti apa-apa. Dua cara menyikapinya: (a) sediakan saklar manual dan tentukan `mode` bawaan Anda sendiri; (b) atur tema platform lewat variabel lingkungan seperti `QT_QPA_PLATFORMTHEME` (misalnya dengan `qt6ct`) dan ulangi pemeriksaan di atas. Rinciannya ada di Arch Wiki (bagian konfigurasi Qt di luar KDE Plasma); verifikasi hasilnya dengan skrip itu, jangan berasumsi.
+
+### Opsi lain untuk mode gelap/terang
+
+```qml
+// Opsi 1 — ternary per token (di atas): sederhana, tipe-aman, tetapi "dark ?" berulang
+readonly property color surface: dark ? '#0f172a' : '#ffffff'
+
+// Opsi 2 — dua palet sebagai objek, satu pemilih
+readonly property QtObject _light: QtObject { readonly property color surface: '#ffffff' }
+readonly property QtObject _dark:  QtObject { readonly property color surface: '#0f172a' }
+readonly property QtObject c: dark ? _dark : _light
+// pemakaian: Theme.c.surface   (alat statis tidak tahu isi 'c' karena bertipe QtObject)
+
+// Opsi 3 — mengikuti palet sistem lewat SystemPalette (lihat 5.3.6)
+// Opsi 4 — style Qt Quick Controls: Material.theme / Universal.theme (lihat 5.3.6)
+```
+
+Opsi 2 memisahkan data dari logika pemilih, tetapi pemakaian `Theme.c.surface` kehilangan pemeriksaan statis oleh `qmllint`. Untuk skala latihan ini, Opsi 1 lebih tepat.
+
+### Menyimpan pilihan pengguna (sekilas)
+
+```qml
+import QtCore
+
+// di dalam QtObject Theme
+readonly property Settings _store: Settings {
+    category: 'tema'
+    property alias mode: root.mode
+}
+```
+
+`Settings` dari modul `QtCore` (Qt 6.5 ke atas) menyimpan nilai ke berkas pengaturan pengguna dan memuatnya kembali saat program dijalankan. Agar lokasi berkasnya jelas, aplikasi perlu mengatur nama organisasi dan nama aplikasi di `main.cpp` (`QCoreApplication::setOrganizationName` dan `setApplicationName`). Anggap ini langkah lanjutan yang diverifikasi di versi Qt Anda.
+
+### Hal yang perlu diperhatikan
+
+- **Jangan mengubah token dari komponen.** Satu-satunya yang boleh mengubah adalah `mode`, lewat jalur yang disengaja (misalnya halaman pengaturan).
+- **Uji kedua tema.** Warna yang bagus di terang bisa tak terbaca di gelap; periksa kontras (5.3.7).
+- **Animasikan perubahan dengan lembut** lewat `Behavior on color` (sudah ada di `AppButton`), tetapi jangan menganimasikan latar seluruh jendela bila itu mengganggu.
+- **Sediakan nilai bawaan yang aman** ketika sistem tidak melaporkan apa-apa.
+
+**Referensi bagian ini:** [QStyleHints (colorScheme)](https://doc.qt.io/qt-6/qstylehints.html) · [Qt namespace (enum ColorScheme)](https://doc.qt.io/qt-6/qt.html) · [Qt QML type (styleHints)](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Settings (QtCore)](https://doc.qt.io/qt-6/qml-qtcore-settings.html) · [Qt — Arch Wiki (konfigurasi di luar KDE Plasma)](https://wiki.archlinux.org/title/Qt)
+
+## 5.3.5 Singleton dari C++ (`QML_SINGLETON`) — rujukan maju ke Modul 10.3
+
+> **Penanda:** bagian ini hanya pengenalan konsep. Pembahasan penuh, termasuk penulisan kelas, registrasi, dan siklus hidup, ada di Modul 10.3. Jangan dipraktikkan sebelum jalur C++ dimulai.
+
+### Dasar: mengapa ada versi C++?
+
+Singleton QML (`Theme.qml`) cocok untuk nilai visual murni. Bila singleton perlu *logika* (membaca berkas konfigurasi, menyimpan pilihan pengguna, mendeteksi tema sistem lewat API platform, diuji unit), kelas C++ yang diekspos sebagai singleton lebih tepat. QML melihatnya persis sama: tetap `Theme.primary`.
+
+### Gambaran kode
+
+```cpp
+// theme.h
+#pragma once
+
+#include <QColor>
+#include <QObject>
+#include <QtQml/qqmlregistration.h>
+
+class Theme : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
+    Q_PROPERTY(QColor primary READ primary NOTIFY primaryChanged)
+
+public:
+    explicit Theme(QObject *parent = nullptr) : QObject(parent) {}
+    QColor primary() const { return m_primary; }
+
+signals:
+    void primaryChanged();
+
+private:
+    QColor m_primary { QColor(0x25, 0x63, 0xeb) };
+};
+```
+
+```cmake
+qt_add_qml_module(hello
+    URI Hello
+    VERSION 1.0
+    QML_FILES Main.qml AppButton.qml
+    SOURCES theme.h
+)
+```
+
+### Bedah kode (kata demi kata)
+
+- `#include <QtQml/qqmlregistration.h>` — menyediakan makro registrasi (`QML_ELEMENT`, `QML_SINGLETON`).
+- `class Theme : public QObject` — kelas C++ yang diwarisi dari `QObject` agar punya properti, signal, dan sistem meta Qt.
+- `Q_OBJECT` — mengaktifkan sistem meta (diproses oleh `moc`).
+- `QML_ELEMENT` — mengekspos kelas ini ke QML dengan nama yang sama (`Theme`).
+- `QML_SINGLETON` — menandainya sebagai singleton: satu instans per engine. Kelas butuh konstruktor publik tanpa argumen wajib (di sini `Theme(QObject *parent = nullptr)`), atau fungsi pabrik statis.
+- `Q_PROPERTY(QColor primary READ primary NOTIFY primaryChanged)` — mendeklarasikan properti `primary` bertipe `QColor`. `READ` menunjuk getter; `NOTIFY` menunjuk signal yang dipancarkan saat nilainya berubah. **Tanpa `NOTIFY`, binding di QML tidak akan diperbarui** ketika nilai berubah.
+- `signals: void primaryChanged();` — signal pemberitahuan itu.
+- `QColor(0x25, 0x63, 0xeb)` — warna dari tiga komponen heksadesimal (merah, hijau, biru): sama dengan `#2563eb`.
+- `SOURCES theme.h` — memasukkan berkas C++ ke modul QML agar registrasinya dibuat otomatis saat build.
+
+### Kapan memilih yang mana
+
+```
+ Hanya nilai visual, ingin iterasi cepat tanpa kompilasi ulang? --> Theme.qml (singleton QML)
+ Perlu logika, penyimpanan, API platform, atau uji unit?        --> singleton C++
+ Keduanya?   --> C++ untuk logika (mode, deteksi skema, penyimpanan),
+                 QML untuk token visual yang membaca C++
+```
+
+Satu catatan praktis: perubahan pada `Theme.qml` tampak tanpa kompilasi ulang bila Anda memakai jalur `qml6` (lihat 5.3.2) atau kebiasaan `entr`; perubahan C++ selalu menuntut build ulang. Itu alasan token visual enak tinggal di QML.
+
+**Hindari bentrok nama:** jangan mendaftarkan `Theme` di QML *dan* di C++ dalam modul yang sama.
+
+**Referensi bagian ini:** [Defining QML Types from C++ (QML\_SINGLETON)](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html) · [Exposing Attributes of C++ Classes to QML](https://doc.qt.io/qt-6/qtqml-cppintegration-exposecppattributes.html) · [The Property System](https://doc.qt.io/qt-6/properties.html) · [qt\_add\_qml\_module (SOURCES)](https://doc.qt.io/qt-6/qt-add-qml-module.html)
+
+## 5.3.6 \[TAMBAHAN\] Alternatif mekanisme tema dan kapan memilihnya
+
+*Alasan penambahan:* singleton hanyalah satu cara. Memahami alternatifnya membuat Anda memilih dengan sadar, dan memberi jalan keluar ketika satu tema global tidak cukup.
+
+### 1. `SystemPalette`: mengikuti palet sistem
+
+```qml
+import QtQuick
+
+Rectangle {
+    SystemPalette { id: sys; colorGroup: SystemPalette.Active }
+
+    color: sys.window
+    Text { text: 'Halo'; color: sys.windowText }
+}
+```
+
+- `SystemPalette` membaca palet warna platform: `window`, `windowText`, `base`, `text`, `button`, `buttonText`, `highlight`, `highlightedText`, dan lainnya.
+- `colorGroup` memilih kelompok (`Active`, `Inactive`, `Disabled`).
+- Kelebihan: mengikuti sistem tanpa Anda mendefinisikan warna. Kekurangan: himpunan peran terbatas (tidak ada `primary` atau `danger`), dan di window manager tanpa desktop environment palet bisa tidak mencerminkan preferensi Anda kecuali tema platform diatur (misalnya `qt6ct`).
+- Pola gabungan yang baik: token `Theme` diturunkan dari `SystemPalette` untuk peran netral (`surface: sys.window`) dan didefinisikan sendiri untuk peran khas aplikasi (`primary`).
+
+### 2. Tema yang disuntikkan (non-singleton): menimpa satu bagian UI
+
+```qml
+// ThemeData.qml (tipe biasa, BUKAN singleton)
+import QtQuick
+
+QtObject {
+    property bool dark: false
+    readonly property color surface:   dark ? '#0f172a' : '#ffffff'
+    readonly property color onSurface: dark ? '#e2e8f0' : '#0f172a'
+}
+```
+
+```qml
+// Panel.qml
+import QtQuick
+
+Rectangle {
+    id: root
+    property ThemeData theme: ThemeData {}
+
+    color: root.theme.surface
+    Text { text: 'Panel'; color: root.theme.onSurface }
+}
+```
+
+```qml
+// pemakai: panel gelap di dalam aplikasi berlatar terang
+Panel { theme: ThemeData { dark: true } }
+```
+
+Singleton bersifat global: satu tema untuk seluruh aplikasi. Bila satu bagian harus tampil berbeda (panel gelap di aplikasi terang, atau tema khusus saat pengujian), tema sebagai objek biasa yang diteruskan lewat properti memberi kendali per-bagian dan mudah digantikan dengan data uji. Harganya: Anda harus meneruskannya (props drilling) dan menulis `root.theme.xxx` di setiap komponen. Kompromi umum: nilai bawaan `theme` mengambil dari singleton `Theme`.
+
+### 3. Qt Quick Controls: style dan `palette`
+
+```qml
+import QtQuick.Controls.Basic
+
+ApplicationWindow {
+    visible: true
+    palette.button: '#2563eb'
+    palette.buttonText: 'white'
+
+    Button { text: 'Simpan' }   // mewarisi palette dari jendela
+}
+```
+
+```bash
+# memilih style Material atau Universal saat dijalankan
+QT_QUICK_CONTROLS_STYLE=Material ./build/hello
+```
+
+Pada kontrol standar, mekanisme tema bawaan Qt adalah *style* (Basic, Fusion, Material, Universal, dan lainnya) dan `palette`. Style Material dan Universal juga punya atribut tema sendiri (`Material.theme`, `Universal.theme`). Hubungannya dengan `Theme` singleton: singleton menata komponen *buatan sendiri* (seperti `AppButton`), sedangkan style menata kontrol *bawaan*; keduanya dapat disinkronkan dengan memetakan `Theme.primary` ke `Material.accent`. Periksa dokumentasi `Palette` untuk perilaku versi Qt Anda.
+
+### 4. Berkas JavaScript `.pragma library` (hanya konstanta)
+
+```js
+// Konstanta.js
+.pragma library
+var RADIUS = 6
+var SPACE2 = 8
+```
+
+Nilai statis yang tidak berubah. Cocok untuk konstanta murni, tetapi **tidak reaktif**: tidak memberi tahu pemakai saat berubah, sehingga tidak bisa dipakai untuk mode gelap/terang yang berganti saat berjalan.
+
+### 5. Context property dari C++ (hindari)
+
+`engine.rootContext()->setContextProperty(...)` membuat objek tersedia sebagai nama global tanpa tipe yang dapat diperiksa alat statis. Di Qt 6 pendekatan modul-dan-singleton yang bertipe (5.3.1 dan 5.3.5) lebih disarankan.
+
+### Ringkasan pilihan
+
+```
+ Satu tema global, komponen buatan sendiri .......... Theme singleton (QML)
+ Perlu logika atau penyimpanan ...................... singleton C++
+ Perlu menimpa satu bagian UI / uji dengan data palsu  tema yang disuntikkan
+ Ingin mengikuti palet sistem secara langsung ....... SystemPalette (digabung dengan Theme)
+ Memakai kontrol bawaan Qt Quick Controls ........... style dan palette
+ Hanya konstanta statis ............................. JS .pragma library
+```
+
+**Referensi bagian ini:** [SystemPalette](https://doc.qt.io/qt-6/qml-qtquick-systempalette.html) · [Styling Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-styles.html) · [Material style](https://doc.qt.io/qt-6/qtquickcontrols-material.html) · [Customizing Qt Quick Controls](https://doc.qt.io/qt-6/qtquickcontrols-customize.html) · [JavaScript Resources in QML](https://doc.qt.io/qt-6/qtqml-javascript-resources.html)
+
+## 5.3.7 \[TAMBAHAN\] Penegakan, migrasi, dan kontras warna
+
+*Alasan penambahan:* tema hanya berguna bila **tidak ada yang lolos darinya**. Satu warna atau angka mentah yang tertinggal berarti satu tempat yang tidak ikut berubah saat tema berganti.
+
+### Migrasi bertahap
+
+1. **Inventarisasi** nilai mentah yang tersisa (perintah di bawah).
+2. **Definisikan token** untuk nilai yang dipakai berulang.
+3. **Ganti** nilai mentah dengan token.
+4. **Ulangi inventarisasi** sampai bersih.
+5. **Jalankan `qmllint`** untuk menangkap rujukan `Theme` yang salah.
+
+```bash
+# warna heksadesimal mentah di luar Theme.qml
+grep -nE '#[0-9a-fA-F]{6}' *.qml | grep -v Theme.qml
+
+# nama warna mentah yang umum
+grep -nwE 'white|black|red|green|blue|tomato' *.qml | grep -v Theme.qml
+
+# spasi, radius, dan padding berupa angka mentah
+grep -nE '(spacing|margins|radius|padding):[[:space:]]*[0-9]+' *.qml | grep -v Theme.qml
+
+# analisis statis
+qmllint6 *.qml
+cmake --build build --target all_qmllint
+```
+
+Temuan dengan nilai 0 atau 1 (misalnya `anchors.margins: 0`, `border.width: 1`) biasanya wajar dibiarkan; yang lain perlu ditinjau.
+
+### Kontras warna (aksesibilitas)
+
+Pedoman WCAG 2.1 menyarankan rasio kontras minimal **4,5 : 1** untuk teks normal, **3 : 1** untuk teks besar dan untuk komponen antarmuka serta indikator fokus. Rasionya dihitung dari luminans relatif: `(L1 + 0.05) / (L2 + 0.05)`, dengan `L1` yang lebih terang.
+
+```bash
+python3 - <<'EOF'
+def lum(h):
+    h = h.lstrip('#')
+    r, g, b = [int(h[i:i+2], 16) / 255 for i in (0, 2, 4)]
+    f = lambda c: c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+
+def ratio(a, b):
+    la, lb = sorted((lum(a), lum(b)), reverse=True)
+    return (la + 0.05) / (lb + 0.05)
+
+print('terang: onPrimary di atas primary =', round(ratio('#ffffff', '#2563eb'), 2))
+print('gelap : onPrimary di atas primary =', round(ratio('#0f172a', '#60a5fa'), 2))
+print('terang: onSurface di atas surface =', round(ratio('#0f172a', '#ffffff'), 2))
+print('gelap : onSurface di atas surface =', round(ratio('#e2e8f0', '#0f172a'), 2))
+EOF
+```
+
+Perkiraan hasilnya sekitar 5 : 1 untuk pasangan terang, sekitar 7 : 1 untuk pasangan gelap, dan jauh di atas 10 : 1 untuk teks di atas latar; jalankan skripnya untuk angka pastinya di mesin Anda.
+
+**Koreksi atas contoh sebelumnya (5.1.6).** Pada contoh `AppButton` di 5.1.6 cincin fokus memakai `#93c5fd`. Dengan skrip yang sama, kontrasnya terhadap biru tombol hanya sekitar 2,9 : 1, di bawah 3 : 1 yang disarankan untuk indikator fokus. Karena `Rectangle` menggambar garis tepinya *di dalam* bidangnya, cincin berada di atas isi tombol; itulah sebabnya `Theme.focusRing` di bagian ini memakai `onPrimary` (putih di tema terang, sekitar 5 : 1 terhadap biru tombol). Prinsipnya: **ukur kontras indikator fokus terhadap warna yang benar-benar bersebelahan dengannya**, jangan memilih “warna yang tampak cantik”.
+
+### Opsi lain untuk menegakkan konsistensi
+
+- **Tinjauan kode** dengan daftar periksa: “adakah warna atau angka mentah?”
+- **Pra-komit (pre-commit hook)** yang menjalankan `grep` di atas dan gagal bila ada temuan.
+- **`qmllint` di CI** (target `all_qmllint`).
+- **Tes visual**: tangkap layar kedua tema di CI dan bandingkan dengan referensi (di luar cakupan modul ini).
+
+**Referensi bagian ini:** [WCAG 2.1 — Contrast (Minimum)](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html) · [WCAG 2.1 — Non-text Contrast](https://www.w3.org/WAI/WCAG21/Understanding/non-text-contrast.html) · [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [Rectangle (border)](https://doc.qt.io/qt-6/qml-qtquick-rectangle.html)
+
+## Terminologi Esensial
+
+- **Singleton** — tipe yang hanya punya satu instans untuk seluruh engine.
+- **`pragma`** — direktif untuk engine QML yang mengubah cara sebuah dokumen diperlakukan (`pragma Singleton`).
+- **`qmldir`** — berkas teks yang mendaftarkan tipe-tipe sebuah modul QML.
+- **`QT_QML_SINGLETON_TYPE`** — properti berkas CMake yang membuat `qt_add_qml_module` menulis baris `singleton` di `qmldir`.
+- **`QtObject`** — objek dasar tanpa tampilan; tipe dasar yang lazim untuk singleton tema.
+- **Design token** — nilai desain bernama (warna, jarak, radius, tipografi, durasi).
+- **Token semantik** — token yang dinamai menurut *peran* (`primary`), bukan nilai (`blue`).
+- **Token primitif** — nilai mentah bernama yang menjadi bahan token semantik.
+- **Pasangan `onX`** — warna isi di atas latar `X` (`onPrimary` di atas `primary`).
+- **Skala spasi** — deret jarak berkelipatan tetap (di sini 4 piksel).
+- **Piksel logis** — satuan ukuran Qt Quick yang diskalakan otomatis pada layar high-DPI.
+- **`readonly property`** — properti yang tidak boleh ditulis dari luar, tetapi dapat berubah lewat binding internal.
+- **Binding reaktif** — ekspresi yang dihitung ulang otomatis saat nilai yang dirujuknya berubah.
+- **Skema warna (`colorScheme`)** — laporan platform tentang tema terang atau gelap (`Qt.Light`, `Qt.Dark`, `Qt.Unknown`).
+- **Mode** — pilihan pengguna atas tema (ikuti sistem, terang, gelap).
+- **`SystemPalette`** — tipe QML yang memberi akses ke palet warna platform.
+- **Tema yang disuntikkan** — objek tema biasa (bukan singleton) yang diteruskan lewat properti.
+- **Props drilling** — meneruskan sebuah nilai lewat banyak lapis komponen.
+- **`QML_SINGLETON`** — makro C++ yang mengekspos kelas sebagai singleton QML.
+- **`Q_PROPERTY` / `NOTIFY`** — deklarasi properti C++ dan signal pemberitahuan yang membuat binding QML reaktif.
+- **Kontras (rasio)** — perbandingan luminans dua warna; ukuran keterbacaan.
+- **WCAG** — pedoman aksesibilitas web yang rasio kontrasnya dipakai juga untuk aplikasi.
+
+## Hubungan dengan Modul Lain
+
+- **Prasyarat:** Modul 5.1 (komponen, API, ukuran implisit), Modul 5.2 (spasi, margin, titik patah yang kini menjadi token), serta properti dan binding dari Fase 3.
+- **Menuju Modul 10.3 (jalur C++):** konsep singleton sama, hanya sumbernya berbeda; makro `QML_ELEMENT` dan `QML_SINGLETON` dibahas penuh di sana.
+- **Ke penggunaan Qt Quick Controls:** pemetaan `Theme` ke style dan `palette` menjadi relevan begitu aplikasi memakai kontrol bawaan.
+- **Ke fase berikutnya:** komponen, tata letak, dan tema yang kini terpadu menjadi dasar untuk membangun halaman, navigasi, dan daftar data.
+
+## Kesalahan Umum dan Solusi
+
+1. **“ReferenceError: Theme is not defined”.** *Sebab:* singleton tidak terdaftar atau tidak diimpor. *Solusi:* periksa baris `singleton Theme` di `qmldir` (5.3.2), daftar `QML_FILES`, dan impor modul.
+2. **Properti berkas dipasang sesudah `qt_add_qml_module`.** *Sebab:* urutan salah. *Akibat:* diam-diam tidak berlaku. *Solusi:* `set_source_files_properties` harus lebih dulu.
+3. **Lupa `pragma Singleton`.** *Akibat:* `Theme` tidak berperilaku sebagai singleton. *Solusi:* jadikan baris pertama berkas.
+4. **Mencoba membuat `Theme { }`.** *Sebab:* menganggapnya tipe biasa. *Solusi:* singleton tidak diinstansiasi; baca propertinya langsung (`Theme.primary`).
+5. **Menulis ke token `readonly`.** *Akibat:* galat yang menyebut properti hanya-baca. *Solusi:* ubah lewat jalur yang sengaja disediakan (`Theme.mode`), bukan menimpa token.
+6. **Menaruh data bisnis atau rahasia di `Theme`.** *Sebab:* singleton terasa praktis. *Akibat:* keadaan global tersembunyi yang sulit diaudit dan berisiko. *Solusi:* `Theme` hanya untuk gaya; data tinggal di model atau lapisan lain.
+7. **Warna atau angka mentah tersisa di komponen.** *Solusi:* migrasi dan penegakan di 5.3.7.
+8. **“Ikuti sistem” tidak berfungsi di window manager tiling.** *Sebab:* `colorScheme` bernilai `Unknown`. *Solusi:* periksa dengan skrip 5.3.4, sediakan saklar manual dan `mode` bawaan, atau atur tema platform.
+9. **Teks tak terbaca di salah satu mode.** *Sebab:* pasangan token tidak diuji. *Solusi:* pakai pasangan `onX` dan ukur kontras (5.3.7).
+10. **Dua `Theme` (QML dan C++) bernama sama.** *Solusi:* pilih satu, atau beri nama berbeda (`Theme` untuk token visual, `ThemeSettings` untuk logika).
+11. **Mengubah token dari komponen biasa.** *Akibat:* efek samping global yang sulit dilacak. *Solusi:* hanya satu jalur terkontrol yang boleh menulis ke `Theme`.
+12. **Menganimasikan semua perubahan warna di seluruh aplikasi.** *Akibat:* boros dan kadang mengganggu. *Solusi:* pasang `Behavior on color` secara selektif pada komponen interaktif.
+
+## Tips dan Praktik Terbaik
+
+- **Token dulu, komponen kemudian.** Tulis `Theme` sebelum menulis komponen baru agar tidak perlu migrasi.
+- **Satu pintu untuk perubahan.** Bila `mode` boleh ditulis dari luar, jadikan itu satu-satunya properti yang dapat ditulis; tambahkan fungsi `setMode(m)` bila butuh validasi.
+- **Iterasi cepat:** `ls *.qml qmldir | entr -r qml6 Main.qml` memuat ulang tiap Anda menyimpan; mengubah satu token langsung terlihat.
+- **Uji kedua tema dan kedua mode** (terang, gelap, ikuti sistem) setiap perubahan besar.
+- **Pikirkan kontras sejak memilih warna,** bukan setelah. Ukur dengan skrip 5.3.7.
+- **Jangan menyimpan rahasia di singleton** (kata sandi, token, kunci). Singleton adalah keadaan global yang dapat dibaca seluruh QML.
+- **Dokumentasikan token** dalam komentar singkat (peran, bukan nilai) agar pembaca tahu kapan memakainya.
+- **Pertimbangkan skema warna sistem sebagai nilai bawaan, bukan satu-satunya sumber.** Pengguna tetap perlu saklar.
+- **Jaga `Theme.qml` kecil.** Bila tumbuh besar, pecah menjadi beberapa singleton (`Colors`, `Spacing`, `Typography`) atau beberapa berkas.
+
+## Latihan 15 Menit (versi diperbaiki)
+
+*Perbaikan dari audit:* kurikulum berhenti pada “ubah satu token dan lihat efeknya”. Di sini ditambah verifikasi pendaftaran, mode gelap, dan penegakan.
+
+1. Buat `Theme.qml` (versi 5.3.3) dan daftarkan di CMake dengan `QT_QML_SINGLETON_TYPE` **sebelum** `qt_add_qml_module`. Verifikasi bahwa `build/Hello/qmldir` memuat baris `singleton Theme`.
+2. Ganti seluruh warna dan angka di `AppButton` dengan token (gunakan peta penggantian di 5.3.3).
+3. Ubah satu token, misalnya `primary`, lalu jalankan ulang; seluruh tombol berubah warna.
+4. Tambahkan `mode` dan `dark` serta dua set warna (versi 5.3.4) dan sebuah tombol pengalih.
+5. Jalankan tiga perintah `grep` di 5.3.7 sampai bersih, lalu `qmllint6 *.qml`.
+6. Ukur kontras pasangan warna Anda dengan skrip Python di 5.3.7.
+
+**Kunci jawaban** (coba dulu sebelum membaca):
+
+- `Theme.qml` lengkap: bagian 5.3.4. `AppButton` akhir: bagian 5.3.3.
+- `Main.qml`:
+
+```qml
+import QtQuick
+import QtQuick.Layouts
+
+Window {
+    width: 360; height: 180
+    visible: true
+    title: 'Uji Theme'
+    color: Theme.surface
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: Theme.space4
+        spacing: Theme.space3
+
+        Text { text: 'Halo, tema'; color: Theme.onSurface; font.pixelSize: Theme.fontTitle }
+
+        RowLayout {
+            spacing: Theme.space2
+            AppButton { label: 'Simpan'; onClicked: console.log('disimpan') }
+            AppButton { label: 'Hapus'; enabled: false }
+            AppButton {
+                label: Theme.dark ? 'Mode terang' : 'Mode gelap'
+                onClicked: Theme.mode = Theme.dark ? 1 : 2
+            }
+        }
+
+        Item { Layout.fillHeight: true }
+    }
+}
+```
+
+- Jalur cepat tanpa CMake: tulis `qmldir` di folder yang sama (`singleton Theme 1.0 Theme.qml` dan `AppButton 1.0 AppButton.qml`), lalu `ls *.qml qmldir | entr -r qml6 Main.qml`.
+- Yang akan Anda amati: klik tombol pengalih mengganti seluruh jendela (latar, teks, tombol) sekaligus dengan transisi warna lembut; tombol “Hapus” tetap nonaktif di kedua tema; `grep` tidak menemukan warna mentah di luar `Theme.qml`.
+
+**Tantangan opsional:** tambahkan opsi “ikuti sistem” sebagai tombol ketiga (`Theme.mode = 0`) dan bandingkan perilakunya dengan hasil skrip pemeriksaan `colorScheme` di mesin Anda.
+
+## Cek Pemahaman dan Kunci
+
+1. **Mengapa `Theme.qml` butuh dua hal: `pragma Singleton` dan properti berkas di CMake?** *Kunci:* `pragma Singleton` ditulis di dalam dokumen untuk menandai perilakunya; properti `QT_QML_SINGLETON_TYPE` membuat CMake menulis baris `singleton` di `qmldir`, yaitu cara modul memberi tahu engine bahwa tipe itu singleton sebelum kode berjalan. Tanpa salah satunya, `Theme` tidak dikenal atau tidak berperilaku sebagai singleton.
+2. **Mengapa properti berkas harus ditetapkan sebelum `qt_add_qml_module`?** *Kunci:* nilainya dibaca saat `qt_add_qml_module` dijalankan untuk membuat `qmldir`; menetapkannya sesudahnya tidak berefek.
+3. **Mengapa token `readonly` tetap bisa berubah saat mode berganti?** *Kunci:* `readonly` hanya melarang penulisan dari luar. Nilai token adalah binding internal yang dihitung ulang ketika `dark` berubah.
+4. **Apa yang boleh dan tidak boleh ada di singleton tema?** *Kunci:* boleh keadaan gaya (token, `mode`); tidak boleh data bisnis, data pengguna, atau rahasia.
+5. **Mengapa token dinamai menurut peran?** *Kunci:* peran (`primary`) tetap sama ketika nilainya berganti (biru ke hijau, terang ke gelap), sehingga komponen tak perlu diubah.
+6. **Apa yang Anda lakukan bila `colorScheme` bernilai `Unknown` di window manager tiling?** *Kunci:* periksa dengan skrip, sediakan saklar manual dan `mode` bawaan yang aman, atau atur tema platform (misalnya `qt6ct`) lalu ukur ulang.
+
+## Rangkuman Fase 5
+
+```
+ 5.1 Komponen sebagai API   -->  tipe dengan antarmuka jelas (properti masuk, signal keluar)
+ 5.2 Positioner dan Layouts -->  penataan negosiatif yang bereaksi pada ukuran apa pun
+ 5.3 Tema dan Singleton     -->  semua nilai gaya dari satu sumber, gelap/terang dari satu saklar
+```
+
+**Daftar periksa Fase 5** (gunakan saat meninjau kode sendiri):
+
+- **Komponen:** API publik minimal dan jelas; ukuran implisit terisi; tanpa `parent` di root; bisa dioperasikan keyboard dan punya peran aksesibilitas.
+- **Tata letak:** Layout bila ukuran harus dinegosiasikan, positioner bila ukuran pasti; tanpa `anchors` pada anak Layout; `Layout.*` ditulis pemakai; ukuran minimum jendela jelas; diuji pada ukuran dan skala ekstrem.
+- **Tema:** tak ada warna atau angka mentah di luar `Theme`; pasangan `onX` terukur kontrasnya; kedua tema diuji; nilai bawaan aman bila sistem tak melaporkan skema.
+
+**Proyek mini opsional** (menyatukan seluruh fase): sebuah *panel pengaturan* dengan form dua kolom yang responsif (5.2), tombol dan kolom isian buatan sendiri dengan API bersih (5.1), dan saklar tema gelap/terang yang mengubah seluruh tampilan (5.3).
+
+## Referensi Tambahan
+
+- [Module Definition qmldir Files](https://doc.qt.io/qt-6/qtqml-modules-qmldir.html)
+- [qt\_add\_qml\_module](https://doc.qt.io/qt-6/qt-add-qml-module.html)
+- [qt\_target\_qml\_sources](https://doc.qt.io/qt-6/qt-target-qml-sources.html)
+- [Structure of a QML Document](https://doc.qt.io/qt-6/qtqml-documents-structure.html)
+- [Defining QML Types from C++](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html)
+- [Qt — Arch Wiki](https://wiki.archlinux.org/title/Qt)
+- [WCAG 2.1 — Understanding Contrast](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
+- [Design Tokens Community Group](https://www.w3.org/community/design-tokens/)
+
+---
+
+*Satu sumber kebenaran: ubah satu nilai, dan seluruh dunia yang Anda bangun ikut berubah.*
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
