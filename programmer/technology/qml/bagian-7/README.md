@@ -2237,6 +2237,1421 @@ WorkerScript.onMessage = function(pesan) {
 
 *Gerak yang baik nyaris tak disadari: ia hanya membuat segalanya terasa wajar.*
 
+# Fase 6 · Modul 6.3 — Input Lanjut dan Kendali Keyboard
+
+*Kurikulum Qt 6 QML · Fase 6 (Interaksi, State, dan Animasi) · Modul 3 dari 4 (6.1 → 6.2 → 6.3 → 6.4)*
+
+## Daftar Isi Modul 6.3
+
+- Audit singkat Modul 6.3 dan daftar yang diperbarui
+- Gambaran, peran dalam kurikulum, dan filosofi
+- 6.3.1 `DragHandler`, `PinchHandler`, `WheelHandler`
+- 6.3.2 `Flickable`
+- 6.3.3 Fokus, `FocusScope`, `forceActiveFocus()`
+- 6.3.4 `KeyNavigation` dan `Keys`
+- 6.3.5 `Shortcut` dan pemetaan tombol
+- 6.3.6 Rancangan antarmuka yang bisa dioperasikan penuh dari keyboard
+- 6.3.7 \[TAMBAHAN\] Pola kendali keyboard bergaya terminal
+- 6.3.8 \[TAMBAHAN\] Handler lain dan Handler vs `MouseArea`
+- Terminologi esensial
+- Hubungan dengan modul lain
+- Kesalahan umum dan solusi
+- Tips dan praktik terbaik
+- Latihan 15 menit (versi diperbaiki) dan kunci
+- Cek pemahaman dan kunci
+- Referensi tambahan
+
+## Audit Singkat Modul 6.3 (sebelum materi dimulai)
+
+Urutan Modul 6.3 logis: setelah keadaan (6.1) dan gerak (6.2), Anda menyelesaikan lingkarannya dengan *kendali*. Catatan audit untuk Modul 6.4 tetap seperti di dokumen Modul 6.1. Temuan untuk 6.3 dibereskan di materi ini:
+
+1. **\[Koreksi\] Contoh `KeyNavigation` tidak bisa dijangkau dengan Tab.** `Rectangle` tidak masuk rantai Tab tanpa `activeFocusOnTab: true`, dan panah kanan/kiri hanya bekerja *setelah* salah satu persegi sudah memegang fokus. Keduanya dibenahi di 6.3.4, termasuk indikator fokus dan perputaran (wrap-around).
+2. **\[Perbaikan\] `DragHandler` hanya membatasi sumbu x.** Pada contoh kurikulum persegi bisa diseret bebas secara vertikal, bahkan keluar jendela. Ditambahkan batas sumbu y (atau `yAxis.enabled: false`) di 6.3.1.
+3. **\[Klarifikasi, sudah diverifikasi pada dokumentasi Qt\] `Shortcut`.** Konteks bawaannya `Qt.WindowShortcut` (aktif bila jendela induknya aktif); `Qt.ApplicationShortcut` aktif bila salah satu jendela aplikasi aktif; sebuah urutan boleh berisi hingga empat penekanan tombol (akord seperti `Ctrl+E,Ctrl+W`); ada sinyal `activatedAmbiguously`. Pada window manager tiling, kombinasi dengan tombol Mod/Super umumnya dicegat WM sebelum sampai ke aplikasi. Dijelaskan di 6.3.5.
+4. **\[Klarifikasi\] `PinchHandler` butuh dua titik sentuh.** Ia tidak aktif dengan mouse biasa; uji dengan layar sentuh atau perangkat yang mengirim gestur pinch (6.3.1).
+5. **\[Tambahan, terverifikasi\] Fokus.** `Item.focusPolicy` tersedia sejak Qt 6.7. Pada kontrol Qt Quick Controls, `visualFocus` lebih tepat daripada `activeFocus` untuk menggambar indikator fokus, karena benar hanya bila fokus datang dari keyboard (Tab, Shift+Tab, atau pintasan) dan tidak dari mouse atau sentuhan. Dijelaskan di 6.3.3.
+6. **\[Tambahan, terverifikasi\] `TapHandler`.** `gesturePolicy` (`DragThreshold`, `WithinBounds`, `ReleaseWithinBounds`), `longPressThreshold`, `tapCount`, `acceptedButtons`, `acceptedModifiers`; handler dinonaktifkan efektif bila item induknya nonaktif. Di 6.3.8.
+7. **\[Tambahan\] Yang belum tercakup:** `HoverHandler`, `PointHandler`, `Keys.forwardTo` / `priority`, `KeyNavigation.priority`, perambatan peristiwa tombol, `Window.activeFocusItem` untuk debug fokus, dan detail `Flickable` (`boundsBehavior`, `flickableDirection`, `interactive`, kendali keyboard).
+8. **\[Klarifikasi\] Latihan.** “Urutan Tab/panah yang lengkap tanpa menyentuh mouse” diperjelas menjadi tujuan yang dapat diuji: Tab, Shift+Tab, panah dengan perputaran, Enter/Spasi, dan log fokus.
+9. **\[Tambahan\] 6.3.7 dan 6.3.8.** Pola keyboard bergaya terminal (hjkl, `gg`, mode normal/sisip, palet perintah) dan perbandingan Handler dengan `MouseArea`.
+
+### **Temuan audit yang paling penting:**
+
+- **Contoh kurikulum cacat:** persegi `a` dan `b` tidak bisa dijangkau dengan Tab karena tanpa `activeFocusOnTab`. `DragHandler` juga hanya membatasi sumbu x. Keduanya saya perbaiki.
+- **Fokus:** `focusPolicy` pada `Item` baru ada sejak Qt 6.7. Untuk cincin fokus pada kontrol Qt Quick Controls, `visualFocus` lebih disarankan daripada `activeFocus`, karena hanya menyala ketika fokus datang dari keyboard, bukan dari mouse atau sentuhan. `Item` biasa tidak punya `visualFocus`, jadi cincin fokus di `AppButton` saya tetap menyala juga saat diklik; untuk perilaku keyboard-saja, turunkan dari `Button` (5.1.7 Opsi C).
+- **`Shortcut`:** satu urutan dapat berisi hingga empat penekanan tombol, dan konteks bawaannya hanya aktif saat jendela induknya aktif. Di window manager tiling, kombinasi dengan tombol Mod biasanya dicegat WM lebih dulu (ini catatan saya, belum saya verifikasi di setup Anda).
+- **`TapHandler`:** `gesturePolicy` bawaannya `DragThreshold`, yang memakai grab pasif sehingga tidak mengganggu handler lain; `ReleaseWithinBounds` cocok untuk perilaku tombol.
+- **Tambahan di luar kurikulum:** pola keyboard bergaya terminal (mode normal/sisip, `gg`/`G`, palet perintah Ctrl+P), dialog modal yang aman, roving focus, serta `HoverHandler`, `PointHandler`, dan perbandingan handler dengan `MouseArea`.
+
+**Daftar Modul 6.3 yang diperbarui** (tanda \[+\] = tambahan hasil audit):
+
+- 6.3.1 `DragHandler`, `PinchHandler`, `WheelHandler`
+- 6.3.2 `Flickable`
+- 6.3.3 Fokus, `FocusScope`, `forceActiveFocus()`
+- 6.3.4 `KeyNavigation` dan `Keys`
+- 6.3.5 `Shortcut` dan pemetaan tombol
+- 6.3.6 Rancangan antarmuka yang bisa dioperasikan penuh dari keyboard
+- &#91;+\] 6.3.7 Pola kendali keyboard bergaya terminal
+- &#91;+\] 6.3.8 Handler lain dan Handler vs `MouseArea`
+
+**Asumsi prasyarat.** Modul 4.4 (`TapHandler`), Modul 5.1.6 (fokus dan keyboard pada komponen), Modul 6.1 (`State`), dan Modul 6.2 (`Behavior`, animasi). Contoh yang memakai `Theme` mengasumsikan singleton dari Modul 5.3.
+
+## Gambaran, Peran, dan Filosofi
+
+### Deskripsi konkret
+
+Modul ini menyelesaikan dua sisi masukan: **pointer** (geser, cubit, roda, gulir kinetis lewat `DragHandler`, `PinchHandler`, `WheelHandler`, `Flickable`) dan **keyboard** (fokus, `FocusScope`, `KeyNavigation`, `Keys`, `Shortcut`). Tujuan akhirnya: antarmuka yang bisa dioperasikan penuh dengan keyboard saja, sebagaimana juga dengan pointer.
+
+### Peran dalam kurikulum
+
+Fase 5 membuat antarmuka yang rapi; 6.1 dan 6.2 membuatnya hidup. Tanpa kendali yang baik, ia tetap setengah jadi: tombol yang hanya bisa diklik, daftar yang tak bisa dijelajahi dengan tombol panah, dialog yang menjebak fokus. Modul ini menutup celah itu.
+
+### Konsep kunci dan filosofi
+
+- **Fokus adalah lampu sorot panggung.** Satu item memegangnya dan menerima tombol. `FocusScope` adalah panggung kecil dengan lampu sorotnya sendiri: komponen dapat mengelola fokus internalnya tanpa merebut fokus dari luar.
+- **Antarmuka yang hanya bisa dipakai dengan pointer adalah antarmuka yang rusak.** Keyboard bukan fitur tambahan. Ia adalah jalur utama bagi pengguna aksesibilitas, pengguna mahir, otomasi, dan siapa pun yang hidup di terminal dan window manager tiling.
+- **Peristiwa pointer dan peristiwa keyboard berjalan dengan cara berbeda.** Pointer dikirim ke item atau handler *di bawah titik sentuh*; keyboard dikirim ke item yang memegang *fokus aktif*, lalu merambat ke induknya bila tidak diterima.
+- **Handler dirancang untuk hidup berdampingan.** Beberapa handler dapat menempel pada satu item dan bekerja sama (ketuk dan geser sekaligus), berbeda dengan `MouseArea` yang menutup area dan cenderung eksklusif.
+- **Sudut pandang keamanan.** Kendali adalah permukaan serangan dan sumber kecelakaan. Tombol pintas satu tekanan untuk aksi merusak (`Delete`, `D`) tanpa konfirmasi atau undo mengundang bencana; fokus yang bisa “dicuri” elemen tak terduga dapat membuat pengguna mengetik kata sandi di tempat yang salah. Rancang agar aksi berbahaya memerlukan niat yang jelas.
+
+Perambatan peristiwa tombol (ASCII):
+
+```
+  Tekan tombol
+      |
+      v
+  item dengan activeFocus   --- menerima peristiwa lebih dulu
+      | tidak diterima (event.accepted = false)
+      v
+  induknya                  --- diberi kesempatan berikutnya
+      | tidak diterima
+      v
+  ... sampai akar jendela   --- bila tak ada yang menerima, peristiwa dibuang
+```
+
+## 6.3.1 `DragHandler`, `PinchHandler`, `WheelHandler`
+
+### Dasar: apa itu Input Handler?
+
+*Input Handler* adalah objek **nonvisual** yang ditempelkan ke sebuah item dan menafsirkan peristiwa pointer (mouse, sentuh, pena, touchpad) untuk item itu. Setiap handler mengenali satu jenis gestur: `TapHandler` (ketuk, 4.4), `DragHandler` (geser), `PinchHandler` (cubit), `WheelHandler` (roda), `HoverHandler`, `PointHandler`. Mereka dapat disusun berdampingan pada item yang sama.
+
+Secara konsep, handler mengambil peristiwa dengan dua cara:
+
+```
+ grab PASIF      mengintip peristiwa tanpa mengambil alih; handler lain tetap menerimanya
+                 (contoh: TapHandler pada pengaturan bawaan)
+ grab EKSKLUSIF  mengambil alih sepenuhnya selama gestur berlangsung
+                 (contoh: DragHandler setelah melewati ambang geser)
+```
+
+Inilah yang membuat `TapHandler` dan `DragHandler` dapat menempel pada item yang sama tanpa saling merusak.
+
+### `DragHandler`: menggeser item
+
+Properti utama: `target` (item yang digeser; bawaan: induk handler), `xAxis` dan `yAxis` (masing-masing punya `enabled`, `minimum`, `maximum`), `active` (hanya-baca; benar selama digeser), `translation`, `centroid`, `dragThreshold`.
+
+```qml
+import QtQuick
+
+Window {
+    width: 360; height: 240; visible: true
+
+    Rectangle {
+        id: arena
+        anchors.fill: parent; anchors.margins: 20
+        color: '#f1f5f9'; border.color: '#cbd5e1'
+
+        Rectangle {
+            id: kartu
+            x: 0; y: 0; width: 80; height: 80; radius: 8; color: 'orchid'
+
+            ParallelAnimation {
+                id: kembali
+                NumberAnimation { target: kartu; property: 'x'; to: 0; duration: 250; easing.type: Easing.OutCubic }
+                NumberAnimation { target: kartu; property: 'y'; to: 0; duration: 250; easing.type: Easing.OutCubic }
+            }
+
+            DragHandler {
+                id: seret
+                xAxis.minimum: 0
+                xAxis.maximum: arena.width - kartu.width
+                yAxis.minimum: 0
+                yAxis.maximum: arena.height - kartu.height
+                onActiveChanged: if (!active) kembali.restart()
+            }
+        }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `Rectangle { id: arena ... }` — area bermain; batas gerak kartu.
+- `Rectangle { id: kartu ... }` — item yang akan digeser; handler di dalamnya menargetkan *induknya*, yaitu `kartu`.
+- `ParallelAnimation { id: kembali ... }` — dua animasi `x` dan `y` bersamaan menuju 0 (dari 6.2): kartu meluncur kembali ke asal.
+- `DragHandler { id: seret }` — handler geser; tanpa `target`, ia menggeser item induknya.
+- `xAxis.minimum: 0` dan `xAxis.maximum: arena.width - kartu.width` — batas sumbu x di sistem koordinat induk kartu (yaitu `arena`): kartu tidak bisa keluar dari tepi kiri atau kanan. `yAxis.minimum` dan `yAxis.maximum` melakukan hal serupa untuk sumbu y (perbaikan dari kurikulum yang hanya membatasi x).
+- `onActiveChanged: if (!active) kembali.restart()` — saat geseran berakhir (`active` menjadi salah), jalankan animasi kembali. `restart()` memastikan animasi mulai dari awal.
+- Mengapa tidak memakai `Behavior` + `enabled: !seret.active` seperti di 6.2? Itu juga bekerja, tetapi urutan evaluasi binding dan handler pada saat `active` berubah tidak dijamin; animasi eksplisit lebih mudah diprediksi.
+
+### Menguncinya dan memakai tanpa target
+
+```qml
+DragHandler { xAxis.enabled: false }            // hanya vertikal: sumbu x dimatikan
+DragHandler { target: null; onTranslationChanged: console.log(translation) }   // hanya mendeteksi gestur
+```
+
+- `xAxis.enabled: false` — mengunci sumbu; kartu hanya bergerak naik-turun.
+- `target: null` — handler tidak menggeser apa pun; Anda yang memakai `translation` (selisih sejak awal geseran) untuk menggerakkan sesuatu sendiri.
+
+### `PinchHandler`: mencubit untuk menskala dan memutar
+
+```qml
+Rectangle {
+    width: 200; height: 200; color: 'steelblue'
+
+    PinchHandler {
+        minimumScale: 0.5
+        maximumScale: 3
+        minimumRotation: -90
+        maximumRotation: 90
+    }
+}
+```
+
+- `PinchHandler` bekerja pada **dua titik sentuh atau lebih**: menggeser kedua jari menggeser item, menjauhkan menskala, memutar memutar.
+- `minimumScale` / `maximumScale` dan `minimumRotation` / `maximumRotation` membatasi hasilnya.
+- **Pengujian:** butuh layar sentuh atau perangkat yang mengirim gestur pinch (misalnya touchpad pada platform yang meneruskannya). Dengan mouse biasa ia tidak aktif. Dukungan gestur touchpad bergantung pada platform dan compositor; verifikasi di sistem Anda.
+- Seperti `DragHandler`, `target: null` menjadikannya detektor murni.
+
+### `WheelHandler`: roda mouse dan gulir touchpad
+
+```qml
+Rectangle {
+    id: kanvas
+    width: 200; height: 200; color: 'tomato'
+
+    WheelHandler {
+        acceptedModifiers: Qt.ControlModifier
+        onWheel: (event) => {
+            kanvas.scale = Math.max(0.5, Math.min(3, kanvas.scale + event.angleDelta.y / 1200))
+        }
+    }
+}
+```
+
+- `acceptedModifiers: Qt.ControlModifier` — handler hanya bereaksi bila Ctrl ditekan; tanpa Ctrl, roda dibiarkan untuk yang lain (misalnya `Flickable`).
+- `onWheel: (event) => { ... }` — handler sinyal `wheel` dengan parameter peristiwa.
+- `event.angleDelta.y` — besar putaran roda; satu “klik” roda umumnya bernilai 120, sehingga pembagian 1200 menghasilkan perubahan skala 0,1 per klik.
+- `Math.max(0.5, Math.min(3, ...))` — menjepit hasil antara 0,5 dan 3 (JavaScript).
+- `WheelHandler` juga menyediakan cara deklaratif (`property`, `rotationScale`) untuk mengikat putaran roda ke sebuah properti tanpa kode; lihat dokumentasi untuk versi Qt Anda.
+
+### Opsi lain untuk menggeser, mencubit, dan roda
+
+```qml
+// Opsi 1 — DragHandler (di atas): modern, multi-sentuh, hidup berdampingan dengan handler lain
+
+// Opsi 2 — MouseArea dengan drag (lama, tetap sah, hanya mouse dan sentuh tunggal)
+MouseArea {
+    anchors.fill: parent
+    drag.target: kartu
+    drag.minimumX: 0; drag.maximumX: arena.width - kartu.width
+}
+
+// Opsi 3 — PinchArea (padanan lama PinchHandler)
+// Opsi 4 — Flickable untuk konten yang lebih besar dari viewport (6.3.2)
+```
+
+### Hal yang perlu diperhatikan
+
+- **Batas gerak bergantung pada sistem koordinat induk,** bukan jendela.
+- **Satu item, banyak handler.** Boleh, tetapi pahami siapa yang menang (6.3.8).
+- **Gestur multi-sentuh butuh perangkat yang tepat.** Jangan menyimpulkan “rusak” hanya karena tak bereaksi pada mouse.
+- **Keyboard tetap perlu jalur setara.** Bila sebuah item hanya bisa digeser dengan pointer, sediakan cara memindahkannya dengan keyboard (6.3.6).
+
+**Referensi bagian ini:** [Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html) · [DragHandler](https://doc.qt.io/qt-6/qml-qtquick-draghandler.html) · [PinchHandler](https://doc.qt.io/qt-6/qml-qtquick-pinchhandler.html) · [WheelHandler](https://doc.qt.io/qt-6/qml-qtquick-wheelhandler.html) · [Qt Quick Examples: Pointer Handlers](https://doc.qt.io/qt-6/qtquick-pointerhandlers-example.html)
+
+## 6.3.2 `Flickable`
+
+### Dasar: jendela pandang atas konten yang lebih besar
+
+`Flickable` adalah *viewport* (jendela pandang) yang menampilkan sebagian dari konten yang lebih besar dan membiarkan pengguna menggesernya dengan momentum (gulir kinetis): seret, lalu lepas, dan konten terus meluncur sebelum melambat. Ia adalah fondasi `ListView`, `GridView`, dan `ScrollView`.
+
+```
+   konten (contentWidth x contentHeight)
+  +-------------------------------+
+  |        +-------------+        |
+  |        |  VIEWPORT   |  <-- ukuran Flickable itu sendiri
+  |        |  (contentX, |
+  |        |   contentY) |
+  |        +-------------+        |
+  +-------------------------------+
+```
+
+### Properti dan metode penting
+
+- `contentWidth`, `contentHeight` — ukuran konten. Tetapkan secara eksplisit agar tidak bergantung pada tebakan.
+- `contentX`, `contentY` — posisi viewport di dalam konten (offset).
+- `flickableDirection` — `Flickable.AutoFlickDirection` (bawaan: ditentukan dari ukuran konten), `HorizontalFlick`, `VerticalFlick`, atau `HorizontalAndVerticalFlick`.
+- `boundsBehavior` — perilaku di tepi: `Flickable.StopAtBounds`, `DragOverBounds`, `OvershootBounds`, atau `DragAndOvershootBounds` (bawaan).
+- `interactive` — `false` mematikan gulir dengan pointer; gulir lewat kode dan keyboard tetap bisa.
+- `maximumFlickVelocity`, `flickDeceleration` — menyetel momentum.
+- `pressDelay` — menunda penerusan tekanan ke anak, agar sentuhan dapat dibedakan antara ketuk dan menggeser.
+- `clip` — bawaannya `false`; setel `true` agar konten tidak tampak di luar viewport.
+- `moving`, `flicking`, `dragging` — hanya-baca; keadaan gerak saat ini.
+- Metode `flick(xVelocity, yVelocity)`, `cancelFlick()`, `returnToBounds()`.
+
+### Contoh inti: daftar yang dapat digulir dengan pointer dan keyboard
+
+```qml
+import QtQuick
+
+Window {
+    width: 320; height: 240; visible: true
+
+    Flickable {
+        id: gulir
+        anchors.fill: parent
+        contentWidth: width
+        contentHeight: kolom.implicitHeight
+        clip: true
+        boundsBehavior: Flickable.StopAtBounds
+        focus: true
+
+        function gulirKe(y) {
+            contentY = Math.max(0, Math.min(contentHeight - height, y))
+        }
+
+        Keys.onDownPressed: gulirKe(contentY + 60)
+        Keys.onUpPressed:   gulirKe(contentY - 60)
+        Keys.onPressed: (event) => {
+            if (event.key === Qt.Key_PageDown)      { gulirKe(contentY + height * 0.9); event.accepted = true }
+            else if (event.key === Qt.Key_PageUp)   { gulirKe(contentY - height * 0.9); event.accepted = true }
+            else if (event.key === Qt.Key_Home)     { gulirKe(0);                        event.accepted = true }
+            else if (event.key === Qt.Key_End)      { gulirKe(contentHeight);            event.accepted = true }
+        }
+
+        Column {
+            id: kolom
+            width: gulir.width
+            spacing: 8
+
+            Repeater {
+                model: 20
+                Rectangle {
+                    id: baris
+                    required property int index
+                    width: kolom.width; height: 48; radius: 6
+                    color: Qt.hsla(baris.index / 20, 0.5, 0.6, 1)
+                    Text { anchors.centerIn: parent; text: 'Baris ' + (baris.index + 1) }
+                }
+            }
+        }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `anchors.fill: parent` — `Flickable` memenuhi jendela; ini ukuran **viewport**.
+- `contentWidth: width` — konten selebar viewport, sehingga tidak ada gulir horizontal.
+- `contentHeight: kolom.implicitHeight` — tinggi konten sama dengan tinggi alami `Column` (jumlah tinggi baris ditambah jarak, dari 5.1.3).
+- `clip: true` — memotong konten yang keluar dari viewport.
+- `boundsBehavior: Flickable.StopAtBounds` — berhenti tegas di tepi, tanpa memantul.
+- `focus: true` — agar `Flickable` memegang fokus awal dan menerima tombol.
+- `function gulirKe(y) { ... }` — fungsi pembantu: menjepit `contentY` antara 0 dan `contentHeight - height` agar tak melewati ujung. Fungsi boleh dideklarasikan di dalam objek QML dan dipanggil dari handler.
+- `Keys.onDownPressed: gulirKe(contentY + 60)` — panah bawah menggulir 60 piksel. `Keys.onUpPressed` sebaliknya.
+- `Keys.onPressed: (event) => { ... }` — menangani PageUp, PageDown, Home, End. Pada handler umum seperti ini, `event.accepted = true` menandai peristiwa sudah ditangani agar tidak merambat ke induk (6.3.4). `height * 0.9` menggulir hampir satu layar, menyisakan sedikit tumpang-tindih agar pembaca tak kehilangan konteks.
+- `Column { width: gulir.width }` — **jangan** memakai `anchors.fill: parent` di dalam `Flickable`. Anak yang dideklarasikan di dalam `Flickable` dimasukkan ke `contentItem`, sehingga `parent` adalah `contentItem` (bukan viewport). Beri lebar eksplisit dari `gulir.width`.
+
+### Menambah bilah gulir
+
+```qml
+import QtQuick.Controls.Basic
+
+Flickable {
+    // ...
+    ScrollBar.vertical: ScrollBar { }
+}
+```
+
+`ScrollBar.vertical` adalah attached property dari Qt Quick Controls pada `Flickable`; bilah muncul di tepi dan dapat diseret.
+
+### Opsi lain untuk menggulir konten
+
+```qml
+// Opsi 1 — Flickable (di atas): paling mendasar; Anda mengatur ukuran konten dan keyboard
+
+// Opsi 2 — ScrollView (Qt Quick Controls): membungkus Flickable + ScrollBar
+ScrollView { anchors.fill: parent; /* konten */ }
+
+// Opsi 3 — ListView / GridView: untuk daftar berbasis model dengan delegate (materi model data)
+
+// Opsi 4 — WheelHandler + DragHandler pada item biasa: gulir manual, kendali penuh tetapi tanpa momentum
+```
+
+### Hal yang perlu diperhatikan
+
+- **`Flickable` tidak menyediakan kendali panah, PageUp, PageDown secara bawaan, sejauh yang saya ketahui.** Tambahkan lewat `Keys` seperti di atas (dan uji di versi Qt Anda).
+- **`TapHandler` di dalam `Flickable` tidak mengganggu gulir,** karena handler itu memakai grab pasif (6.3.1); ketuk tetap diterima dan geser tetap menggulir.
+- **Setel `contentWidth`/`contentHeight`** agar viewport tahu batasnya.
+- **Animasi `contentY`** dapat dihaluskan dengan `Behavior on contentY { enabled: !gulir.moving; NumberAnimation { duration: 120 } }` sehingga lompatan keyboard terasa mulus tanpa mengganggu gulir sentuh; uji perilakunya karena interaksinya bergantung pada versi.
+
+**Referensi bagian ini:** [Flickable](https://doc.qt.io/qt-6/qml-qtquick-flickable.html) · [ScrollBar](https://doc.qt.io/qt-6/qml-qtquick-controls-scrollbar.html) · [ScrollView](https://doc.qt.io/qt-6/qml-qtquick-controls-scrollview.html) · [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html)
+
+## 6.3.3 Fokus, `FocusScope`, `forceActiveFocus()`
+
+### Dasar: satu penerima untuk peristiwa keyboard
+
+Peristiwa keyboard (penekanan tombol) hanya dikirim ke **satu** item pada satu waktu: item yang memegang *fokus aktif*. Tiga istilah yang harus dibedakan:
+
+- `focus` — properti yang Anda atur; artinya “saya ingin fokus *di dalam lingkup fokus saya*”.
+- `activeFocus` — properti hanya-baca; benar bila item benar-benar memegang fokus aktif, yaitu ia `focus` di lingkupnya *dan* seluruh lingkup di atasnya (sampai jendela) juga memegang fokus dan jendela sedang aktif.
+- **Lingkup fokus (focus scope)** — batas yang membagi pohon item menjadi “panggung” terpisah. Akar jendela adalah lingkup pertama; setiap `FocusScope` membuat lingkup baru.
+
+```
+ Window (contentItem = lingkup akar)
+ |- Item A              focus: false
+ |- FocusScope P        focus: true     <- P pemegang fokus di lingkup akar
+ |   |- TextInput T     focus: true     <- T pemegang fokus di lingkup P
+ |   '- Item U          focus: false
+ '- Item B              focus: false
+
+ Jendela aktif -> P.activeFocus = true  dan  T.activeFocus = true
+ (activeFocus butuh rantai fokus lengkap dari item sampai jendela)
+```
+
+### Aturan penting
+
+- **Satu `focus: true` per lingkup.** Bila dua item dalam lingkup yang sama sama-sama meminta fokus, yang terakhir meminta mendapatkannya dan yang lain kehilangannya. Inilah penyebab klasik “fokus hilang karena beberapa item mengklaimnya”.
+- **`focus: true` saja tidak cukup** bila lingkup induknya tidak sedang memegang fokus. Untuk memindahkan fokus aktif ke sebuah item di mana pun ia berada, pakai `forceActiveFocus()`.
+- **Item yang tidak terlihat atau nonaktif tidak dapat memegang fokus.**
+- **`forceActiveFocus(alasan)`** menyetel fokus pada item *dan* seluruh lingkup leluhurnya sekaligus. Parameter opsional adalah *alasan fokus* (`Qt.TabFocusReason`, `Qt.MouseFocusReason`, `Qt.ShortcutFocusReason`, `Qt.OtherFocusReason`, dst.).
+
+### Contoh inti: komponen dengan `FocusScope`
+
+```qml
+// KolomCari.qml
+import QtQuick
+
+FocusScope {
+    id: root
+
+    property alias text: input.text
+    signal diterima(string teks)
+
+    implicitWidth: 240
+    implicitHeight: 32
+
+    Rectangle {
+        anchors.fill: parent
+        radius: 6
+        color: 'white'
+        border.width: root.activeFocus ? 2 : 1
+        border.color: root.activeFocus ? '#1e40af' : '#94a3b8'
+
+        TextInput {
+            id: input
+            anchors.fill: parent
+            anchors.margins: 6
+            focus: true
+            font.pixelSize: 14
+            onAccepted: root.diterima(text)
+            Keys.onEscapePressed: text = ''
+        }
+    }
+}
+```
+
+```qml
+// pemakai
+Column {
+    spacing: 8
+    KolomCari { id: f1; focus: true }      // fokus awal di kolom pertama
+    KolomCari { id: f2 }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `FocusScope { ... }` — akar komponen adalah lingkup fokus. Artinya komponen punya “panggung” sendiri: fokus di dalamnya tidak bentrok dengan fokus di luar.
+- `TextInput { focus: true }` — di dalam lingkup ini, `TextInput` adalah pemegang fokus. Ia tidak berebut dengan `focus: true` milik komponen lain karena berada di lingkup berbeda.
+- `KolomCari { focus: true }` (di pemakai) — pemakai meminta fokus untuk *komponen*; karena komponen adalah `FocusScope`, permintaan itu diteruskan ke anaknya yang ber-`focus: true`. **Pemakai tidak perlu (dan tidak bisa) tahu id `input` yang tersembunyi.** Ini penerapan prinsip enkapsulasi Modul 5.1 pada fokus.
+- `border.width: root.activeFocus ? 2 : 1` — indikator fokus: `activeFocus` pada `FocusScope` benar ketika lingkup itu memegang fokus aktif.
+- `onAccepted: root.diterima(text)` — `onAccepted` dipancarkan `TextInput` ketika pengguna menekan Enter; komponen mengabarkannya ke luar lewat signal (properti masuk, signal keluar).
+- `Keys.onEscapePressed: text = ''` — Esc mengosongkan kolom; `text` di sini adalah properti `TextInput` itu sendiri.
+- `property alias text: input.text` — meneruskan isi ke pemakai (alias dari 5.1.7).
+
+Tanpa `FocusScope`, `KolomCari` bukan lingkup: dua instansnya akan berebut `focus: true` pada `TextInput` mereka di lingkup yang sama, dan pemakai tak punya cara bersih untuk memfokuskan salah satunya.
+
+### Rantai Tab dan kebijakan fokus
+
+- `activeFocusOnTab: true` — memasukkan item ke rantai Tab (Shift+Tab mundur). Urutannya mengikuti urutan anak di pohon, bukan posisi visual (lihat 5.2.7). Item masukan teks seperti `TextInput` umumnya sudah masuk rantai Tab secara bawaan; verifikasi di versi Anda.
+- `focusPolicy` pada `Item` (Qt 6.7 ke atas) — mengatur cara item menerima fokus: `Qt.NoFocus`, `Qt.TabFocus`, `Qt.ClickFocus`, `Qt.StrongFocus` (Tab dan klik), `Qt.WheelFocus`. Pada Qt di bawah 6.7, kombinasi `activeFocusOnTab` dan `forceActiveFocus()` saat diklik (seperti di `AppButton`) adalah cara yang setara. Periksa nilai bawaan `focusPolicy` di versi Anda.
+- `visualFocus` (hanya pada kontrol Qt Quick Controls) — benar bila kontrol memegang fokus aktif *dan* alasannya Tab, Shift+Tab, atau pintasan. Qt menyarankannya untuk menggambar cincin fokus karena **tidak** menyala ketika fokus datang dari klik mouse atau sentuhan. `Item` biasa tidak punya `visualFocus`; bila Anda ingin perilaku itu pada komponen buatan sendiri, turunkan dari `Button` atau `Control` (5.1.7 Opsi C).
+
+### Alasan fokus
+
+```
+ Qt.TabFocusReason      Tab ditekan
+ Qt.BacktabFocusReason  Shift+Tab
+ Qt.MouseFocusReason    klik mouse atau sentuhan
+ Qt.ShortcutFocusReason pintasan (mis. mnemonik label)
+ Qt.PopupFocusReason    popup dibuka atau ditutup
+ Qt.OtherFocusReason    sebab lain, khas aplikasi
+```
+
+### Memantau fokus saat debug
+
+```qml
+Window {
+    id: win
+    onActiveFocusItemChanged: console.log('fokus ->', activeFocusItem)
+}
+```
+
+`Window.activeFocusItem` memberi tahu item mana yang sedang memegang fokus aktif; mencetaknya tiap berubah adalah cara tercepat membongkar misteri “ke mana fokus pergi?”.
+
+### Opsi lain untuk mengatur fokus komponen
+
+```qml
+// Opsi 1 — FocusScope sebagai akar komponen (di atas; disarankan)
+
+// Opsi 2 — metode publik yang memfokuskan bagian dalam
+function fokuskan() { input.forceActiveFocus() }
+// pemakai: f1.fokuskan()   (lebih langsung, tetapi API bertambah)
+
+// Opsi 3 — turunkan dari kontrol Qt Quick Controls (TextField): fokus, visualFocus, aksesibilitas sudah ditangani
+
+// Opsi 4 — Component.onCompleted: forceActiveFocus()  (fokus saat dibuat; pakai hemat, jangan merebut fokus tanpa alasan)
+```
+
+### Hal yang perlu diperhatikan
+
+- **Jangan merebut fokus tanpa alasan.** Memanggil `forceActiveFocus()` saat komponen dimuat dapat merampas fokus dari pengguna yang sedang mengetik di tempat lain.
+- **Kembalikan fokus.** Saat dialog atau popup ditutup, kembalikan fokus ke item yang membukanya (6.3.6).
+- **Fokus berpindah dengan sendirinya** saat item yang memegangnya disembunyikan atau dinonaktifkan; rancang jalur kembali.
+- **Window harus aktif** agar ada fokus aktif. Pada window manager tiling, fokus jendela ditentukan WM.
+
+**Referensi bagian ini:** [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html) · [FocusScope](https://doc.qt.io/qt-6/qml-qtquick-focusscope.html) · [Item (focus, activeFocus, forceActiveFocus, focusPolicy)](https://doc.qt.io/qt-6/qml-qtquick-item.html) · [Control (focusPolicy, visualFocus, focusReason)](https://doc.qt.io/qt-6/qml-qtquick-controls-control.html) · [Window (activeFocusItem)](https://doc.qt.io/qt-6/qml-qtquick-window.html) · [TextInput](https://doc.qt.io/qt-6/qml-qtquick-textinput.html)
+
+## 6.3.4 `KeyNavigation` dan `Keys`
+
+### Dasar: dua attached property untuk keyboard
+
+- **`KeyNavigation`** — memindahkan fokus ke item lain saat tombol arah, Tab, atau Shift+Tab ditekan. Anda cukup menunjuk tujuannya.
+- **`Keys`** — menangani penekanan tombol itu sendiri (kode yang berjalan), baik tombol tertentu (`Keys.onReturnPressed`) maupun semua tombol (`Keys.onPressed`).
+
+Keduanya adalah *attached property* (5.2.3): ditulis di item yang akan menerima tombol, dan hanya bekerja bila item itu memegang fokus aktif.
+
+### Sintaks
+
+```
+KeyNavigation.left / right / up / down / tab / backtab : <item tujuan>
+KeyNavigation.priority : KeyNavigation.BeforeItem | KeyNavigation.AfterItem   // bawaan: AfterItem
+
+Keys.onPressed: (event) => { ... }           // semua tombol; event.key, event.text, event.modifiers
+Keys.on<Tombol>Pressed: <kode>               // tombol tertentu (ReturnPressed, EscapePressed, UpPressed, ...)
+Keys.forwardTo: [ <item>, ... ]              // teruskan peristiwa ke Keys milik item lain
+Keys.priority : Keys.BeforeItem | Keys.AfterItem
+Keys.onShortcutOverride: (event) => { ... } // klaim tombol sebelum Shortcut
+```
+
+### Contoh inti: versi perbaikan dari kurikulum
+
+```qml
+import QtQuick
+
+Window {
+    visible: true; width: 360; height: 240
+
+    Shortcut { sequence: 'Ctrl+Q'; onActivated: Qt.quit() }
+
+    Rectangle {
+        width: 80; height: 80; color: 'orchid'
+        DragHandler {
+            xAxis.minimum: 0; xAxis.maximum: 280
+            yAxis.minimum: 0; yAxis.maximum: 160
+        }
+    }
+
+    Row {
+        y: 150; spacing: 8
+
+        Rectangle {
+            id: a
+            width: 60; height: 40
+            focus: true
+            activeFocusOnTab: true
+            color: activeFocus ? 'gold' : 'gray'
+            border.width: activeFocus ? 2 : 0
+            KeyNavigation.right: b
+            KeyNavigation.tab: b
+        }
+
+        Rectangle {
+            id: b
+            width: 60; height: 40
+            activeFocusOnTab: true
+            color: activeFocus ? 'gold' : 'gray'
+            border.width: activeFocus ? 2 : 0
+            KeyNavigation.left: a
+            KeyNavigation.backtab: a
+        }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `Shortcut { sequence: 'Ctrl+Q'; onActivated: Qt.quit() }` — pintasan keluar (6.3.5).
+- `DragHandler { xAxis...; yAxis... }` — sekarang persegi anggrek terkunci di dalam jendela pada kedua sumbu (perbaikan).
+- `focus: true` pada `a` — `a` memegang fokus saat jendela dibuka; tanpanya tak ada penerima tombol sampai pengguna menekan Tab atau mengklik.
+- `activeFocusOnTab: true` — memasukkan persegi ke rantai Tab. Tanpanya Tab tidak pernah mendarat di `Rectangle` (ini temuan audit).
+- `color: activeFocus ? 'gold' : 'gray'` — `activeFocus` di sini adalah milik persegi itu sendiri; emas berarti memegang fokus.
+- `border.width: activeFocus ? 2 : 0` — indikator fokus yang tidak hanya bergantung pada warna (6.3.6).
+- `KeyNavigation.right: b` — saat `a` memegang fokus dan panah kanan ditekan, fokus pindah ke `b`.
+- `KeyNavigation.tab: b` dan `KeyNavigation.backtab: a` — mengatur secara eksplisit tujuan Tab dan Shift+Tab; hasilnya menggantikan urutan rantai Tab otomatis.
+
+### Keys: menangani tombol sendiri
+
+```qml
+Rectangle {
+    focus: true
+
+    Keys.onReturnPressed: console.log('Enter utama')
+    Keys.onEnterPressed:  console.log('Enter keypad')
+    Keys.onEscapePressed: console.log('Esc')
+
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_H && (event.modifiers & Qt.ControlModifier)) {
+            console.log('Ctrl+H')
+            event.accepted = true
+        }
+    }
+}
+```
+
+- `Keys.onReturnPressed` / `onEnterPressed` / `onEscapePressed` — handler untuk tombol tertentu. Qt membedakan `Return` (Enter utama) dan `Enter` (keypad numerik).
+- `Keys.onPressed: (event) => { ... }` — handler umum; `event` bertipe `KeyEvent`.
+- `event.key === Qt.Key_H` — `event.key` adalah kode tombol; konstanta `Qt.Key_*` menamainya.
+- `event.modifiers & Qt.ControlModifier` — `modifiers` adalah kumpulan bendera (Ctrl, Shift, Alt, Meta); operator `&` menguji apakah Ctrl ikut ditekan.
+- `event.accepted = true` — menandai peristiwa sudah ditangani sehingga **tidak** merambat ke induk (lihat diagram di awal modul). Umumnya handler untuk tombol tertentu menerima peristiwa secara otomatis, sedangkan pada handler umum `onPressed` Anda perlu menyetel `accepted` sendiri; verifikasi perilakunya di versi Anda bila ragu.
+- Properti lain yang berguna: `event.text` (teks yang dihasilkan tombol), `event.isAutoRepeat` (tombol ditahan).
+
+### Mencegat sebelum item: `priority`
+
+```qml
+TextInput {
+    Keys.priority: Keys.BeforeItem
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_Space) event.accepted = true      // blokir spasi sebelum TextInput memprosesnya
+    }
+}
+```
+
+Secara bawaan (`AfterItem`) handler `Keys` berjalan *setelah* item menangani tombol itu sendiri. Dengan `BeforeItem`, handler berjalan lebih dulu dan, bila menerima peristiwa, item tak pernah melihatnya. `KeyNavigation.priority` memiliki dua nilai yang sama: gunakan `BeforeItem` agar panah kiri/kanan berpindah fokus alih-alih menggerakkan kursor teks.
+
+### Meneruskan peristiwa: `forwardTo`
+
+```qml
+Item {
+    focus: true
+    Keys.forwardTo: [daftar]        // peristiwa tombol juga dikirim ke Keys milik 'daftar'
+    // ...
+}
+```
+
+`Keys.forwardTo` berguna ketika fokus tinggal di satu item (misalnya kolom pencarian) tetapi tombol panah harus juga menggerakkan item lain (daftar hasil).
+
+### Mengklaim tombol dari `Shortcut`: `shortcutOverride`
+
+```qml
+TextInput {
+    Keys.onShortcutOverride: (event) => { event.accepted = (event.key === Qt.Key_Escape) }
+}
+```
+
+`Shortcut` bisa mencuri tombol yang sedang dipakai item fokus. Dengan `onShortcutOverride`, item meminta tombol itu untuk dirinya (misalnya Esc di dalam kolom teks) sehingga pintasan jendela tidak ikut aktif. Teks masukan standar sudah melakukannya untuk tombol pengetikan.
+
+### Opsi lain untuk berpindah fokus
+
+```qml
+// Opsi 1 — KeyNavigation: deklaratif; cukup tunjuk tujuannya (di atas)
+KeyNavigation.right: b
+
+// Opsi 2 — Keys: imperatif; kendali penuh dan dapat bersyarat
+Keys.onRightPressed: b.forceActiveFocus(Qt.TabFocusReason)
+
+// Opsi 3 — satu perhentian Tab untuk kelompok, panah di dalamnya (roving focus; 6.3.6)
+```
+
+### Hal yang perlu diperhatikan
+
+- **`Keys` dan `KeyNavigation` hanya bekerja pada item yang memegang fokus aktif.** Bila “tombolnya tak bereaksi”, periksa dulu siapa yang memegang fokus (`onActiveFocusItemChanged`).
+- **Tombol yang diterima tidak merambat.** Hati-hati menerima tombol yang berguna bagi induk (misalnya Esc untuk menutup dialog).
+- **Auto-repeat:** menahan tombol memicu `onPressed` berulang; periksa `event.isAutoRepeat` bila aksi tak boleh berulang.
+- **Kolom teks memakai tombol kursor sendiri.** `KeyNavigation` kiri/kanan di dalam `TextInput` bentrok dengan kursor, kecuali Anda memakai `priority` dan syarat tertentu.
+
+**Referensi bagian ini:** [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html) · [KeyNavigation](https://doc.qt.io/qt-6/qml-qtquick-keynavigation.html) · [KeyEvent](https://doc.qt.io/qt-6/qml-qtquick-keyevent.html) · [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html) · [Qt.Key (enumerasi tombol)](https://doc.qt.io/qt-6/qt.html#Key-enum)
+
+## 6.3.5 `Shortcut` dan pemetaan tombol
+
+### Dasar: pintasan tingkat jendela
+
+`Shortcut` (modul `QtQuick`) adalah objek nonvisual yang memicu sebuah aksi bila kombinasi tombol tertentu ditekan. Bedanya dengan `Keys`:
+
+```
+ Keys.onXxxPressed        hanya bila item ITU memegang fokus aktif
+ Shortcut (WindowShortcut)       selama jendela induknya aktif, apa pun item yang fokus   <- bawaan
+ Shortcut (ApplicationShortcut)  selama salah satu jendela aplikasi aktif
+```
+
+Dari dokumentasi Qt (sudah diverifikasi): properti `sequence` (satu urutan) dan `sequences` (beberapa), `context`, `enabled` (bawaan `true`), `autoRepeat` (bawaan `true`), `nativeText` dan `portableText` (teks pintasan untuk ditampilkan atau disimpan); sinyal `activated()` dan `activatedAmbiguously()`. Sebuah urutan dapat berisi **hingga empat penekanan tombol** berurutan, dipisah koma (akord, misalnya `Ctrl+E,Ctrl+W`).
+
+### Contoh inti
+
+```qml
+import QtQuick
+
+Window {
+    id: win
+    width: 380; height: 200; visible: true
+    title: 'Pintasan'
+
+    property int hitung: 0
+
+    Shortcut {
+        id: simpan
+        sequences: [StandardKey.Save, 'Ctrl+Alt+S']
+        onActivated: console.log('simpan')
+    }
+
+    Shortcut {
+        sequence: 'Ctrl+K,Ctrl+C'
+        onActivated: console.log('akord: Ctrl+K lalu Ctrl+C')
+    }
+
+    Shortcut {
+        sequence: 'Ctrl+Q'
+        context: Qt.ApplicationShortcut
+        onActivated: Qt.quit()
+    }
+
+    Shortcut {
+        sequence: 'F5'
+        enabled: win.hitung < 3
+        autoRepeat: false
+        onActivated: win.hitung++
+    }
+
+    Text {
+        anchors.centerIn: parent
+        text: 'Simpan: ' + simpan.nativeText + '   |   F5 diterima: ' + win.hitung + ' kali'
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `sequences: [StandardKey.Save, 'Ctrl+Alt+S']` — dua jalur ke aksi yang sama. `StandardKey.Save` adalah pintasan *baku platform* untuk “simpan” (biasanya Ctrl+S di Linux); string `'Ctrl+Alt+S'` adalah tambahan buatan sendiri. Qt menyarankan memakai `sequences` untuk tombol baku karena satu `StandardKey` dapat memetakan ke beberapa kombinasi pada platform berbeda.
+- `sequence: 'Ctrl+K,Ctrl+C'` — akord dua langkah: tekan Ctrl+K, lepas, lalu Ctrl+C.
+- `context: Qt.ApplicationShortcut` — aktif selama salah satu jendela aplikasi aktif (bawaannya `Qt.WindowShortcut`, aktif bila jendela induk pintasan itu aktif).
+- `enabled: win.hitung < 3` — pintasan dimatikan setelah tiga kali diterima; `enabled` adalah binding biasa.
+- `autoRepeat: false` — menahan F5 tidak memicu berulang.
+- `simpan.nativeText` — teks pintasan sesuai platform dan terjemahan; paling baik ditampilkan kepada pengguna (misalnya di petunjuk alat atau menu), sehingga tampilan tak pernah berbeda dari pintasan sebenarnya.
+
+### Akord yang ambigu
+
+```qml
+Shortcut { sequence: 'Ctrl+K,Ctrl+C'; onActivated: console.log('komentari') }
+Shortcut { sequence: 'Ctrl+K,Ctrl+U'; onActivated: console.log('batal komentar') }
+Shortcut {
+    sequence: 'Ctrl+K'
+    onActivatedAmbiguously: status.text = 'menunggu tombol berikutnya...'
+}
+```
+
+Setelah Ctrl+K, kedua akord di atas masih mungkin; Qt memancarkan `activatedAmbiguously` dari pintasan yang cocok dengan *awal* lebih dari satu urutan. Gunakan sinyal itu untuk memberi umpan balik (“menunggu tombol berikutnya”) seperti bilah status editor.
+
+### Pemetaan tombol (key mapping) yang dapat diubah
+
+```qml
+// Keymap.qml (singleton atau objek biasa)
+import QtQuick
+
+QtObject {
+    readonly property var bawah: ['J', 'Down']
+    readonly property var atas:  ['K', 'Up']
+    readonly property var pilih: ['Return', 'Space']
+}
+```
+
+```qml
+Shortcut { sequences: keymap.bawah; onActivated: papan.turun() }
+```
+
+Memisahkan *daftar tombol* dari *aksi* membuat pemetaan mudah dibaca, dijadikan petunjuk bantuan, dan kelak dapat disimpan atau diubah pengguna (dengan `Settings`, Modul 6.4). Verifikasi bahwa penugasan larik JS ke `sequences` bekerja di versi Qt Anda; bila tidak, tulis larik secara literal di tiap `Shortcut`.
+
+### Perbedaan dan bentrok
+
+- **`Shortcut` vs `Keys`.** `Shortcut` terpicu tanpa peduli fokus; `Keys` hanya bila fokus. Untuk perilaku yang bergantung konteks (panah di daftar), pakai `Keys`; untuk aksi aplikasi (simpan, keluar, palet perintah), pakai `Shortcut`.
+- **Bentrok dengan kolom teks.** Item masukan teks mengklaim tombol pengetikan lewat `ShortcutOverride`, jadi pintasan satu huruf tidak terpicu saat Anda mengetik. Item Anda sendiri dapat melakukan hal serupa dengan `Keys.onShortcutOverride` (6.3.4).
+- **Window manager tiling.** Aplikasi hanya menerima tombol yang *diteruskan* WM. Pada i3, sway, dwm, atau Hyprland, kombinasi yang memakai tombol Mod (umumnya Super, kadang Alt) biasanya dicegat WM lebih dulu. Hindari pintasan berbasis `Meta+` dan pertimbangkan `Alt+` dengan hati-hati; pintasan `Ctrl+` dan tombol tunggal dalam konteks fokus lebih aman.
+- **Tidak ada pintasan global lintas aplikasi.** Konteks `Shortcut` hanya mencakup jendela aplikasi Anda; pintasan global ditangani oleh WM atau compositor, bukan oleh `Shortcut`.
+- **Aksi merusak.** Jangan menaruh aksi tak bisa dibatalkan (hapus, kirim) pada satu tombol tanpa konfirmasi atau undo; pintasan yang tak sengaja tertekan menimbulkan kerugian nyata.
+
+### Opsi lain untuk pintasan
+
+```qml
+// Opsi 1 — Shortcut (di atas): tingkat jendela, deklaratif
+// Opsi 2 — Keys.onPressed pada item akar yang memegang fokus: bergantung fokus, kendali penuh
+// Opsi 3 — Qt Quick Controls Action + MenuItem/ToolButton: pintasan melekat pada aksi yang juga muncul di menu
+Action { id: aksiSimpan; text: 'Simpan'; shortcut: StandardKey.Save; onTriggered: console.log('simpan') }
+```
+
+**Referensi bagian ini:** [Shortcut](https://doc.qt.io/qt-6/qml-qtquick-shortcut.html) · [QKeySequence](https://doc.qt.io/qt-6/qkeysequence.html) · [Action (Qt Quick Controls)](https://doc.qt.io/qt-6/qml-qtquick-controls-action.html) · [Keys.shortcutOverride](https://doc.qt.io/qt-6/qml-qtquick-keys.html)
+
+## 6.3.6 Rancangan antarmuka yang bisa dioperasikan penuh dari keyboard
+
+### Dasar: keyboard bukan fitur tambahan
+
+Antarmuka dikatakan bisa dioperasikan penuh dari keyboard bila **setiap fungsi yang tersedia dengan pointer juga tersedia dengan keyboard saja**, dengan urutan yang logis dan umpan balik yang jelas. Ini bukan hanya soal aksesibilitas: pengguna mahir, pengguna terminal, otomasi, dan pemakai window manager tiling mengandalkannya.
+
+### Daftar periksa
+
+1. **Dapat dijangkau.** Setiap kontrol bisa mendapat fokus dengan Tab dan Shift+Tab (`activeFocusOnTab`, `focusPolicy`).
+2. **Urutan fokus logis.** Mengikuti urutan baca; urutan Tab mengikuti urutan *deklarasi*, bukan posisi visual, kecuali Anda mengaturnya lewat `KeyNavigation.tab`.
+3. **Indikator fokus selalu terlihat** dan berkontras cukup (5.3.7). Jangan hanya mengandalkan warna.
+4. **Setiap aksi punya jalur keyboard:** Enter atau Spasi untuk mengaktifkan, panah untuk memilih, pintasan untuk aksi umum.
+5. **Esc selalu membatalkan atau menutup,** dan fokus **kembali** ke tempat asal.
+6. **Tidak ada jebakan fokus.** Pengecualian yang sah: dialog modal yang bisa ditutup dengan Esc.
+7. **Satu perhentian Tab untuk kelompok, panah di dalamnya** (*roving focus*) untuk bilah alat, daftar, dan tab; Tab tidak boleh melewati puluhan elemen.
+8. **Jangan menyembunyikan fungsi di balik hover atau gestur** yang hanya bisa dilakukan pointer.
+9. **Pintasan terdokumentasi, terlihat, dan tidak bentrok.**
+10. **Peran dan nama aksesibilitas** (`Accessible.role`, `Accessible.name`; 5.1.6).
+11. **Uji “tanpa mouse”.** Jalankan aplikasi dan selesaikan tugas utama tanpa menyentuh mouse.
+
+Pedoman WCAG yang relevan: 2.1.1 Keyboard, 2.1.2 No Keyboard Trap, 2.4.3 Focus Order, dan 2.4.7 Focus Visible.
+
+### Pola 1: satu perhentian Tab, panah di dalam (roving focus)
+
+```qml
+// BilahPilihan.qml
+import QtQuick
+
+FocusScope {
+    id: root
+
+    property var model: []
+    property int indeks: 0
+    signal dipilih(int indeks)
+
+    activeFocusOnTab: true
+    implicitWidth: baris.implicitWidth
+    implicitHeight: baris.implicitHeight
+
+    Keys.onLeftPressed:   root.indeks = Math.max(0, root.indeks - 1)
+    Keys.onRightPressed:  root.indeks = Math.min(root.model.length - 1, root.indeks + 1)
+    Keys.onReturnPressed: root.dipilih(root.indeks)
+    Keys.onSpacePressed:  root.dipilih(root.indeks)
+
+    Row {
+        id: baris
+        spacing: 6
+
+        Repeater {
+            model: root.model
+
+            Rectangle {
+                id: sel
+                required property string modelData
+                required property int index
+
+                implicitWidth: label.implicitWidth + 20
+                implicitHeight: 30
+                radius: 6
+                color: sel.index === root.indeks ? '#2563eb' : '#e2e8f0'
+                border.width: (sel.index === root.indeks && root.activeFocus) ? 2 : 0
+                border.color: '#0f172a'
+
+                Text {
+                    id: label
+                    anchors.centerIn: parent
+                    text: sel.modelData
+                    color: sel.index === root.indeks ? 'white' : '#0f172a'
+                }
+
+                TapHandler {
+                    onTapped: {
+                        root.indeks = sel.index
+                        root.forceActiveFocus()
+                        root.dipilih(sel.index)
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+- `FocusScope` + `activeFocusOnTab: true` — seluruh bilah hanya satu perhentian Tab.
+- `Keys.onLeftPressed` / `onRightPressed` — panah menggeser `indeks` (dijepit antara 0 dan jumlah elemen kurang satu); tidak ada fokus yang berpindah antar-elemen, hanya penanda pilihan.
+- `Keys.onReturnPressed` / `onSpacePressed` — mengaktifkan elemen terpilih lewat signal `dipilih`.
+- Elemen dibuat oleh `Repeater` dengan `required property` untuk `modelData` dan `index`; yang terpilih berwarna biru, dan cincin fokus tampil hanya saat bilah memegang fokus aktif.
+- `TapHandler` — klik pointer memilih elemen, meminta fokus bilah, dan mengaktifkannya: jalur pointer dan keyboard menuju aksi yang sama.
+
+### Pola 2: dialog modal yang aman
+
+```qml
+// DialogHapus.qml
+import QtQuick
+
+FocusScope {
+    id: dialog
+    property Item pemicu: null
+    visible: false
+
+    function buka(dari) {
+        pemicu = dari
+        visible = true
+        batal.forceActiveFocus()          // fokus awal pada aksi AMAN, bukan yang merusak
+    }
+    function tutup() {
+        visible = false
+        if (pemicu) pemicu.forceActiveFocus()    // kembalikan fokus ke pembuka dialog
+    }
+
+    Keys.onEscapePressed: dialog.tutup()
+
+    Rectangle {
+        anchors.fill: parent
+        color: 'white'; radius: 8; border.color: '#475569'
+
+        Text { x: 16; y: 16; text: 'Hapus berkas ini?'; font.pixelSize: 16 }
+
+        Row {
+            x: 16; y: 60; spacing: 8
+
+            AppButton {
+                id: batal
+                label: 'Batal'
+                KeyNavigation.tab: hapus
+                KeyNavigation.backtab: hapus
+                onClicked: dialog.tutup()
+            }
+            AppButton {
+                id: hapus
+                label: 'Hapus'
+                KeyNavigation.tab: batal
+                KeyNavigation.backtab: batal
+                onClicked: { console.log('dihapus'); dialog.tutup() }
+            }
+        }
+    }
+}
+```
+
+- `function buka(dari)` — menyimpan siapa yang membuka (`pemicu`), menampilkan dialog, dan memberi fokus ke **Batal**: aksi yang aman. Menekan Enter secara refleks tidak langsung menghapus.
+- `function tutup()` — menyembunyikan dialog lalu **mengembalikan fokus** ke `pemicu`, sehingga pengguna keyboard tidak “hilang”.
+- `Keys.onEscapePressed: dialog.tutup()` — Esc selalu keluar (tidak ada jebakan fokus).
+- `KeyNavigation.tab` dan `backtab` saling menunjuk — fokus berputar di dalam dialog selama modal; ini jebakan *yang sah* karena ada jalan keluar (Esc dan tombol Batal).
+- `AppButton` dari Modul 5 dipakai ulang; ia sudah bisa difokuskan dan diaktifkan dengan Enter atau Spasi (5.1.6).
+
+### Pola 3: kesetaraan gestur pointer dan keyboard
+
+```qml
+// pointer: Ctrl + roda untuk zoom (6.3.1)
+WheelHandler { acceptedModifiers: Qt.ControlModifier; onWheel: (e) => kanvas.scale += e.angleDelta.y / 1200 }
+
+// keyboard: pintasan zoom yang setara
+Shortcut { sequences: [StandardKey.ZoomIn];  onActivated: kanvas.scale = Math.min(3, kanvas.scale + 0.1) }
+Shortcut { sequences: [StandardKey.ZoomOut]; onActivated: kanvas.scale = Math.max(0.5, kanvas.scale - 0.1) }
+```
+
+Setiap gestur pointer yang memberi fungsi (zoom, geser, putar) harus punya padanan keyboard.
+
+### Opsi lain untuk kelompok kontrol
+
+```qml
+// Opsi 1 — roving focus dengan satu FocusScope (Pola 1): satu perhentian Tab
+// Opsi 2 — tiap elemen perhentian Tab sendiri (activeFocusOnTab pada semuanya): sederhana, tetapi jalan panjang bagi pengguna keyboard
+// Opsi 3 — komponen Qt Quick Controls (TabBar, ToolBar, ListView dengan keyboard bawaan): perilaku sudah standar
+```
+
+**Referensi bagian ini:** [WCAG 2.1.1 Keyboard](https://www.w3.org/WAI/WCAG21/Understanding/keyboard.html) · [WCAG 2.1.2 No Keyboard Trap](https://www.w3.org/WAI/WCAG21/Understanding/no-keyboard-trap.html) · [WCAG 2.4.3 Focus Order](https://www.w3.org/WAI/WCAG21/Understanding/focus-order.html) · [WCAG 2.4.7 Focus Visible](https://www.w3.org/WAI/WCAG21/Understanding/focus-visible.html) · [Accessibility for Qt Quick Applications](https://doc.qt.io/qt-6/qtquick-accessibility.html) · [WAI-ARIA Authoring Practices: keyboard interface (roving tabindex)](https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/)
+
+## 6.3.7 \[TAMBAHAN\] Pola kendali keyboard bergaya terminal
+
+*Alasan penambahan:* Anda hidup di terminal dan window manager tiling; antarmuka yang dikendalikan seperti Vim atau palet perintah adalah nilai tambah nyata, dan semuanya hanya penerapan `Keys`, `Shortcut`, fokus, dan state.
+
+### 1. Mode normal/sisip, hjkl, `gg` dan `G`
+
+```qml
+import QtQuick
+
+Window {
+    id: win
+    width: 360; height: 300; visible: true
+    title: 'Mode normal / sisip'
+
+    Item {
+        id: papan
+        anchors.fill: parent
+        focus: true
+
+        property string mode: 'normal'
+        property int baris: 0
+        property string buffer: ''
+        readonly property int jumlah: 10
+
+        Timer { id: lupa; interval: 600; onTriggered: papan.buffer = '' }
+
+        Keys.onPressed: (event) => {
+            if (papan.mode === 'sisip') {
+                if (event.key === Qt.Key_Escape) { papan.mode = 'normal'; event.accepted = true }
+                return
+            }
+            const shift = (event.modifiers & Qt.ShiftModifier) !== 0
+            switch (event.key) {
+            case Qt.Key_J: papan.baris = Math.min(papan.jumlah - 1, papan.baris + 1); break
+            case Qt.Key_K: papan.baris = Math.max(0, papan.baris - 1); break
+            case Qt.Key_G:
+                if (shift) { papan.baris = papan.jumlah - 1; papan.buffer = '' }
+                else if (papan.buffer === 'g') { papan.baris = 0; papan.buffer = '' }
+                else { papan.buffer = 'g'; lupa.restart() }
+                break
+            case Qt.Key_I: papan.mode = 'sisip'; break
+            default: return
+            }
+            event.accepted = true
+        }
+
+        Column {
+            x: 16; y: 16; spacing: 4
+            Repeater {
+                model: papan.jumlah
+                Rectangle {
+                    id: sel
+                    required property int index
+                    width: 200; height: 22; radius: 4
+                    color: sel.index === papan.baris ? '#2563eb' : '#e2e8f0'
+                    Text {
+                        x: 8; anchors.verticalCenter: parent.verticalCenter
+                        text: 'Baris ' + (sel.index + 1)
+                        color: sel.index === papan.baris ? 'white' : '#0f172a'
+                    }
+                }
+            }
+        }
+
+        Text {
+            x: 16; y: 270
+            text: '-- ' + (papan.mode === 'normal' ? 'NORMAL' : 'SISIP') + ' --   ' + papan.buffer
+            font.family: 'monospace'
+        }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `property string mode: 'normal'` — mode modal sebagai data; `baris` adalah posisi, `buffer` menampung tombol yang belum lengkap (untuk `gg`).
+- `Timer { id: lupa; interval: 600 }` — setelah 600 ms tanpa tombol lanjutan, buffer dikosongkan sehingga “g” yang menggantung tak bertahan selamanya.
+- `if (papan.mode === 'sisip') { ... return }` — di mode sisip hanya Esc yang ditangani; selainnya dibiarkan (tidak diterima), sehingga bisa ditangani item lain (misalnya kolom teks).
+- `const shift = (event.modifiers & Qt.ShiftModifier) !== 0` — menguji apakah Shift ikut ditekan. Kode tombol `Qt.Key_G` sama untuk `g` dan `G`; pembedanya adalah modifier.
+- `switch (event.key) { case Qt.Key_J: ... }` — memetakan tombol ke aksi; `break` mengakhiri tiap kasus.
+- `case Qt.Key_G:` — tiga cabang: `Shift+G` ke baris terakhir; `g` kedua (buffer sudah `'g'`) ke baris pertama (`gg`); `g` pertama mengisi buffer dan menyalakan timer.
+- `default: return` — tombol yang tidak dikenal tidak diterima, sehingga merambat ke induk.
+- `event.accepted = true` — hanya tombol yang kita tangani yang diterima.
+
+Penyempurnaan: nyatakan mode sebagai `State` (6.1) agar tampilan berubah otomatis, dan pakai `DSM.StateMachine` (6.1.5) bila mode dan perpindahannya bertambah banyak.
+
+### 2. Palet perintah (Ctrl+P)
+
+```qml
+// PaletPerintah.qml
+import QtQuick
+
+FocusScope {
+    id: root
+
+    property var perintah: []                      // [{ nama: 'Simpan', aksi: () => ... }]
+    property int indeks: 0
+    property Item sebelumnya: null
+    readonly property var terfilter: perintah.filter(
+        p => p.nama.toLowerCase().indexOf(input.text.toLowerCase()) !== -1)
+
+    visible: false
+
+    function buka() {
+        sebelumnya = root.Window.activeFocusItem
+        input.text = ''
+        indeks = 0
+        visible = true
+        input.forceActiveFocus()
+    }
+    function tutup() {
+        visible = false
+        if (sebelumnya) sebelumnya.forceActiveFocus()
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: 'white'; radius: 8; border.color: '#94a3b8'
+
+        Column {
+            anchors.fill: parent
+            anchors.margins: 8
+            spacing: 6
+
+            TextInput {
+                id: input
+                width: parent.width; height: 28
+                focus: true
+                font.pixelSize: 14
+                onTextChanged: root.indeks = 0
+                Keys.onDownPressed: root.indeks = Math.min(root.terfilter.length - 1, root.indeks + 1)
+                Keys.onUpPressed:   root.indeks = Math.max(0, root.indeks - 1)
+                Keys.onEscapePressed: root.tutup()
+                onAccepted: {
+                    const p = root.terfilter[root.indeks]
+                    root.tutup()
+                    if (p) p.aksi()
+                }
+            }
+
+            Repeater {
+                model: root.terfilter
+                Rectangle {
+                    id: sel
+                    required property var modelData
+                    required property int index
+                    width: parent.width; height: 26; radius: 4
+                    color: sel.index === root.indeks ? '#dbeafe' : 'transparent'
+                    Text { x: 8; anchors.verticalCenter: parent.verticalCenter; text: sel.modelData.nama }
+                }
+            }
+        }
+    }
+}
+```
+
+```qml
+// pemakai
+Window {
+    width: 360; height: 240; visible: true
+
+    Shortcut { sequence: 'Ctrl+P'; onActivated: palet.buka() }
+
+    PaletPerintah {
+        id: palet
+        x: 40; y: 30; width: 280; height: 170
+        perintah: [
+            { nama: 'Simpan',      aksi: () => console.log('simpan') },
+            { nama: 'Buka berkas',  aksi: () => console.log('buka') },
+            { nama: 'Ganti tema',   aksi: () => console.log('tema') },
+            { nama: 'Keluar',       aksi: () => Qt.quit() }
+        ]
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `property var perintah` — daftar objek JavaScript berisi `nama` dan fungsi `aksi`. Palet tidak tahu *apa* aksinya; ia hanya menjalankannya (properti masuk).
+- `readonly property var terfilter: perintah.filter(p => ...)` — binding yang menyaring daftar berdasarkan isi kolom (tanpa membedakan huruf besar-kecil); dihitung ulang tiap `input.text` berubah. `p => ...` adalah fungsi panah JavaScript.
+- `visible: false` — palet tersembunyi sampai `buka()` dipanggil; item tak terlihat tidak bisa memegang fokus.
+- `function buka()` — mencatat item yang sedang fokus (`Window.activeFocusItem`), mengosongkan kolom, lalu menampilkan dan memfokuskan `input`.
+- `function tutup()` — menyembunyikan dan **mengembalikan fokus** ke item sebelumnya (6.3.6).
+- `FocusScope` sebagai akar — palet mengelola fokusnya sendiri tanpa bentrok.
+- `Keys.onDownPressed` / `onUpPressed` — menggeser sorotan; `Keys.onEscapePressed` menutup; `onAccepted` (Enter) menutup lalu menjalankan aksi terpilih. Menutup *sebelum* menjalankan aksi memastikan fokus sudah kembali bila aksinya membuka sesuatu.
+- `Repeater { model: root.terfilter }` dengan `required property var modelData` — satu baris per hasil; `modelData.nama` adalah teks yang tampil.
+
+### 3. Akord dengan `Shortcut` atau dengan buffer sendiri
+
+```qml
+// Opsi 1 — Shortcut: deklaratif, hingga empat langkah, ada sinyal ambigu
+Shortcut { sequence: 'Ctrl+K,Ctrl+C'; onActivated: komentari() }
+
+// Opsi 2 — buffer + Timer (6.3.7 butir 1): fleksibel, tanpa modifier, batas waktu sendiri
+// Opsi 3 — StateMachine (6.1.5): tiap langkah akord adalah state; perpindahan yang tak sah ditolak
+```
+
+### Hal yang perlu diperhatikan
+
+- **Aksi merusak butuh konfirmasi atau undo.** Pola seperti `dd` (hapus baris) aman bila ada undo; tanpanya, jangan.
+- **Tampilkan mode dan buffer** (seperti baris status Vim) agar pengguna tahu keadaan.
+- **Tombol modal harus punya pelarian jelas** (Esc selalu kembali ke mode normal).
+- **Jangan menelan tombol yang dibutuhkan fungsi lain** (Tab, Esc untuk dialog, tombol aksesibilitas): terima hanya yang Anda tangani.
+- **Sediakan alternatif non-modal** untuk pengguna yang tidak terbiasa dengan gaya Vim.
+
+**Referensi bagian ini:** [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html) · [Shortcut](https://doc.qt.io/qt-6/qml-qtquick-shortcut.html) · [Timer](https://doc.qt.io/qt-6/qml-qtqml-timer.html) · [FocusScope](https://doc.qt.io/qt-6/qml-qtquick-focusscope.html) · [Window (attached activeFocusItem)](https://doc.qt.io/qt-6/qml-qtquick-window.html)
+
+## 6.3.8 \[TAMBAHAN\] Handler lain dan Handler vs `MouseArea`
+
+*Alasan penambahan:* daftar kurikulum hanya menyebut `DragHandler`, `PinchHandler`, `WheelHandler`. Handler lain dan cara memilih antara handler dan `MouseArea` sering menentukan apakah interaksi Anda berjalan mulus di mouse, sentuh, dan pena.
+
+### `HoverHandler`: melayang di atas item
+
+```qml
+Rectangle {
+    id: sel
+    width: 100; height: 40
+    color: hover.hovered ? '#dbeafe' : '#f1f5f9'
+
+    HoverHandler { id: hover; cursorShape: Qt.PointingHandCursor }
+    TapHandler { onTapped: console.log('klik') }
+}
+```
+
+- `HoverHandler` — melaporkan `hovered` (benar selama pointer melayang di atas item induknya) dan dapat mengubah bentuk kursor lewat `cursorShape`.
+- **Hover tidak ada pada sentuhan dan tidak ada untuk keyboard.** Karena itu jangan menyembunyikan fungsi di balik hover; padanannya bagi keyboard adalah fokus.
+
+### `PointHandler`: melacak titik pointer
+
+```qml
+Item {
+    anchors.fill: parent
+    PointHandler { id: titik }
+    Rectangle {
+        visible: titik.active
+        x: titik.point.position.x - 10; y: titik.point.position.y - 10
+        width: 20; height: 20; radius: 10; color: 'tomato'
+    }
+}
+```
+
+`PointHandler` melaporkan satu titik sentuh atau pointer (`point.position`, `active`), berguna untuk penanda, penunjuk laser, atau alat gambar.
+
+### `TapHandler` lebih dalam (sudah diverifikasi pada dokumentasi Qt)
+
+- `gesturePolicy` — syarat ruang bagi sebuah ketukan:
+  - `TapHandler.DragThreshold` (bawaan): titik tidak boleh bergeser jauh; memakai grab **pasif**, sehingga tidak mengganggu handler atau item lain. Cocok bila Anda menambahkan `TapHandler` untuk mengubah perilaku kontrol yang sudah ada.
+  - `TapHandler.WithinBounds`: ketukan dibatalkan bila titik meninggalkan batas item.
+  - `TapHandler.ReleaseWithinBounds`: ketukan hanya sah bila dilepas di dalam batas item; ini perilaku tombol sungguhan (menekan lalu menggeser keluar membatalkan klik). Memakai grab eksklusif saat ditekan.
+- `longPressThreshold` — lama tekan (detik) untuk memicu `longPressed()`.
+- `tapCount`, `onSingleTapped`, `onDoubleTapped` — ketukan ganda; `exclusiveSignals` (Qt 6.5 ke atas) mengatur apakah tunggal dan ganda saling menyingkirkan.
+- `acceptedButtons` — tombol mouse yang diterima (`Qt.LeftButton` bawaan; `Qt.RightButton` untuk klik kanan).
+- `acceptedModifiers` — modifier yang harus ditekan (misalnya `Qt.ControlModifier`).
+- `acceptedDevices` — jenis perangkat (mouse, stylus, layar sentuh).
+- **Bila item induknya nonaktif, handler ikut nonaktif secara efektif,** walau `enabled`-nya sendiri masih `true`. Ini yang membuat tombol `enabled: false` tak bereaksi pada ketukan (5.1.7 dan 6.1).
+
+```qml
+Rectangle {
+    TapHandler { onTapped: console.log('klik kiri') }
+    TapHandler { acceptedButtons: Qt.RightButton; onTapped: console.log('klik kanan') }
+    TapHandler { acceptedModifiers: Qt.ControlModifier; onTapped: console.log('Ctrl+klik') }
+    TapHandler { onLongPressed: console.log('tekan lama') }
+    TapHandler { onDoubleTapped: console.log('klik ganda') }
+}
+```
+
+Peningkatan untuk `AppButton`: ganti `TapHandler { ... }` dengan `TapHandler { gesturePolicy: TapHandler.ReleaseWithinBounds; ... }` agar menekan lalu menggeser keluar membatalkan klik, seperti tombol asli.
+
+### Handler vs `MouseArea`
+
+```
+                         Input Handler                    MouseArea
+ ----------------------  -------------------------------  ----------------------------------
+ Sifat                   objek nonvisual pada item induk  Item tak terlihat yang menutup area
+ Jumlah per item         banyak, hidup berdampingan       satu per area (bertumpuk bila banyak)
+ Perangkat               mouse, sentuh, pena, touchpad    terutama mouse (sentuh disintesis)
+ Multi-sentuh            ya (PinchHandler, DragHandler)   tidak
+ Grab                    pasif atau eksklusif             eksklusif
+ Hover dan kursor        HoverHandler, cursorShape        hoverEnabled, containsMouse
+ Kode lama / contoh      lebih baru (Qt 5.12 ke atas)     sangat umum, tetap sah
+```
+
+Untuk kode baru, pilih handler. `MouseArea` tetap berguna untuk kode lama dan kasus sederhana.
+
+### Opsi lain untuk satu interaksi (klik)
+
+```qml
+// Opsi 1 — TapHandler (modern, berdampingan dengan handler lain)
+TapHandler { onTapped: aksi() }
+
+// Opsi 2 — MouseArea (lama)
+MouseArea { anchors.fill: parent; onClicked: aksi() }
+
+// Opsi 3 — komponen Qt Quick Controls (Button, ItemDelegate): sentuh, mouse, keyboard, aksesibilitas ditangani
+Button { text: 'Aksi'; onClicked: aksi() }
+```
+
+**Referensi bagian ini:** [TapHandler](https://doc.qt.io/qt-6/qml-qtquick-taphandler.html) · [HoverHandler](https://doc.qt.io/qt-6/qml-qtquick-hoverhandler.html) · [PointHandler](https://doc.qt.io/qt-6/qml-qtquick-pointhandler.html) · [PointerHandler](https://doc.qt.io/qt-6/qml-qtquick-pointerhandler.html) · [MouseArea](https://doc.qt.io/qt-6/qml-qtquick-mousearea.html) · [Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html)
+
+## Terminologi Esensial
+
+- **Input Handler** — objek nonvisual yang menafsirkan peristiwa pointer untuk item induknya (`TapHandler`, `DragHandler`, `PinchHandler`, `WheelHandler`, `HoverHandler`, `PointHandler`).
+- **Grab pasif / eksklusif** — pasif: handler mengintip peristiwa tanpa mengganggu penerima lain; eksklusif: handler mengambil alih selama gestur.
+- **`DragHandler.target`** — item yang digeser; bawaannya induk handler; `target: null` menjadikannya detektor murni.
+- **Sumbu (`xAxis`, `yAxis`)** — kelompok properti (`enabled`, `minimum`, `maximum`) yang membatasi geseran per sumbu.
+- **Gestur multi-sentuh** — gestur yang membutuhkan dua titik sentuh atau lebih (cubit).
+- **`Flickable`** — jendela pandang yang dapat digeser dengan momentum atas konten yang lebih besar.
+- **Viewport / `contentItem`** — area yang terlihat / item penampung konten di dalam `Flickable`.
+- **Fokus aktif (`activeFocus`)** — status item yang saat ini menerima peristiwa keyboard.
+- **`focus`** — permintaan fokus di dalam lingkup fokus sebuah item.
+- **Lingkup fokus / `FocusScope`** — batas yang memberi sebuah subpohon “panggung” fokus sendiri.
+- **`forceActiveFocus()`** — memindahkan fokus aktif ke sebuah item beserta seluruh lingkup leluhurnya.
+- **Rantai Tab** — urutan item yang dijangkau dengan Tab.
+- **`focusPolicy`** — cara item menerima fokus (`NoFocus`, `TabFocus`, `ClickFocus`, `StrongFocus`, `WheelFocus`); pada `Item` sejak Qt 6.7.
+- **`visualFocus`** — pada kontrol Qt Quick Controls: fokus aktif dari keyboard, untuk menggambar cincin fokus.
+- **Alasan fokus (focus reason)** — penyebab perpindahan fokus (Tab, mouse, pintasan, dst.).
+- **`KeyNavigation`** — attached property yang memindahkan fokus ke item lain saat tombol arah atau Tab ditekan.
+- **`Keys`** — attached property penangan tombol; `KeyEvent` membawa `key`, `text`, `modifiers`, `accepted`.
+- **Perambatan peristiwa (propagation)** — peristiwa yang tidak diterima diteruskan ke induk.
+- **`Keys.priority`** — apakah handler `Keys` berjalan sebelum (`BeforeItem`) atau sesudah (`AfterItem`) penanganan item sendiri.
+- **`Keys.forwardTo`** — meneruskan peristiwa tombol ke `Keys` milik item lain.
+- **`Shortcut`** — pintasan keyboard tingkat jendela atau aplikasi; `context` menentukan cakupannya.
+- **Akord (chord)** — urutan hingga empat penekanan tombol sebagai satu pintasan (`Ctrl+K,Ctrl+C`).
+- **`StandardKey`** — pintasan baku platform (`StandardKey.Save`, `Quit`, `ZoomIn`).
+- **Roving focus** — satu perhentian Tab untuk kelompok kontrol, dengan panah memindahkan pilihan di dalamnya.
+- **Jebakan fokus (keyboard trap)** — keadaan di mana fokus tak bisa keluar dari sebuah area dengan keyboard.
+- **Mode modal** — gaya kendali di mana arti tombol bergantung pada mode (normal, sisip).
+- **Palet perintah** — antarmuka pencarian aksi dengan keyboard.
+
+## Hubungan dengan Modul Lain
+
+- **Prasyarat:** Modul 4.4 (`TapHandler`), Modul 5.1.6 (fokus, keyboard, dan aksesibilitas pada komponen), Modul 5.2 (urutan Tab mengikuti urutan deklarasi), Modul 6.1 (state fokus, state mode), dan Modul 6.2 (animasi pelepasan `DragHandler`, animasi `contentY`).
+- **Menuju Modul 6.4 (Qt Quick ekstra):** `Settings` menyimpan pemetaan tombol dan preferensi; `Dialogs` membawa persoalan fokus dialog bawaan; `Shapes` dan `Canvas` sering digabung dengan handler untuk menggambar interaktif.
+- **Ke fase berikutnya:** `ListView` dan `GridView` (subkelas `Flickable`) memakai fokus dan `KeyNavigation` secara intensif; Qt Quick Controls menyediakan `visualFocus`, `focusPolicy`, dan perilaku keyboard yang sudah standar.
+- **Ke jalur C++:** padanan C++ adalah `QKeyEvent`, `QEvent::ShortcutOverride`, dan filter peristiwa (`installEventFilter`), dengan konsep yang sama.
+
+## Kesalahan Umum dan Solusi
+
+1. **Fokus hilang karena beberapa item mengklaimnya.** *Sebab:* dua item dalam lingkup yang sama sama-sama `focus: true`; yang terakhir menang. *Solusi:* satu `focus: true` per lingkup, dan gunakan `FocusScope` untuk komponen yang dipakai ulang.
+2. **Persegi atau item tidak terjangkau dengan Tab.** *Sebab:* tidak ada `activeFocusOnTab: true` (atau `focusPolicy` yang sesuai). *Solusi:* tambahkan, dan pastikan ada indikator fokus.
+3. **`Keys` atau `KeyNavigation` tak bereaksi.** *Sebab:* item tidak memegang fokus aktif, atau tombol sudah diterima item di atasnya. *Solusi:* pantau `onActiveFocusItemChanged`; periksa `event.accepted` dan `priority`.
+4. **Tombol yang berguna bagi induk ikut ditelan.** *Sebab:* handler menerima semua tombol (`event.accepted = true` tanpa syarat). *Solusi:* terima hanya yang Anda tangani; tombol lain dibiarkan merambat.
+5. **`Shortcut` bentrok antar-konteks atau dengan WM.** *Sebab:* urutan yang sama didefinisikan dua kali, atau dicegat WM tiling. *Solusi:* kelola konteks (`WindowShortcut` vs `ApplicationShortcut`), pakai `activatedAmbiguously`, hindari `Meta+` dan hati-hati dengan `Alt+`.
+6. **Antarmuka hanya bisa dipakai dengan pointer.** *Solusi:* daftar periksa 6.3.6 dan uji tanpa mouse.
+7. **Konten di dalam `Flickable` salah ukuran.** *Sebab:* memakai `anchors.fill: parent` (padahal `parent` adalah `contentItem`) atau lupa `contentWidth`/`contentHeight`. *Solusi:* beri lebar eksplisit dari id `Flickable` dan setel ukuran konten.
+8. **`DragHandler` membuat item keluar dari area.** *Sebab:* tanpa batas sumbu. *Solusi:* `xAxis` dan `yAxis` dengan `minimum`/`maximum`.
+9. **`PinchHandler` tak bereaksi.** *Sebab:* diuji dengan mouse biasa. *Solusi:* uji dengan layar sentuh atau perangkat yang mengirim gestur pinch.
+10. **Fokus tidak kembali setelah dialog ditutup.** *Solusi:* simpan pembuka dan panggil `forceActiveFocus()` padanya saat menutup.
+11. **Memfokuskan item yang tak terlihat atau nonaktif.** *Akibat:* tak berpengaruh. *Solusi:* tampilkan dan aktifkan dulu, lalu fokuskan.
+12. **Aksi merusak pada satu tombol tanpa konfirmasi atau undo.** *Solusi:* konfirmasi, fokus awal pada aksi aman, atau undo.
+13. **Mengandalkan hover untuk fungsi penting.** *Akibat:* tak bisa diakses sentuhan dan keyboard. *Solusi:* sediakan jalur fokus dan ketuk.
+14. **`TapHandler` mengganggu `Flickable`.** *Sebab:* kebijakan gestur eksklusif yang tidak perlu. *Solusi:* pertahankan `DragThreshold` (grab pasif) kecuali butuh `ReleaseWithinBounds`.
+
+## Tips dan Praktik Terbaik
+
+- **Rancang jalur keyboard sejak awal,** bukan sebagai tambalan akhir.
+- **Satu komponen, satu `FocusScope`** bila ia punya bagian dalam yang dapat difokuskan.
+- **Selalu ada indikator fokus** yang berkontras cukup (5.3.7), dan bila memakai kontrol Qt Quick Controls, gunakan `visualFocus`.
+- **Pantau fokus saat debug:** `onActiveFocusItemChanged: console.log(activeFocusItem)`.
+- **Gunakan `Keys` untuk perilaku yang bergantung fokus, `Shortcut` untuk aksi aplikasi.**
+- **Tampilkan pintasan** kepada pengguna dengan `nativeText`.
+- **Fokus awal pada aksi yang aman** di dialog yang berisiko.
+- **Kembalikan fokus ke pembuka** saat menutup dialog atau palet.
+- **Pilih handler, bukan `MouseArea`, untuk kode baru;** pakai `ReleaseWithinBounds` untuk perilaku tombol.
+- **Jangan menelan Tab dan Esc** kecuali untuk tujuan yang jelas dan dengan pelarian yang jelas.
+- **Uji tanpa mouse, uji pada window manager tiling,** dan uji dengan pembaca layar bila memungkinkan.
+- **Untuk aksi berbahaya,** tambah satu langkah niat yang jelas (konfirmasi, tahan tombol, undo).
+
+## Latihan 15 Menit (versi diperbaiki)
+
+*Perbaikan dari audit:* kurikulum menyuruh “menambahkan item ketiga dan membuat urutan Tab/panah yang lengkap tanpa menyentuh mouse”. Di sini tujuannya dirumuskan sebagai hal yang dapat diuji.
+
+1. Mulai dari contoh 6.3.4 (dua persegi `a` dan `b`).
+2. Tambahkan persegi ketiga `c`.
+3. Pastikan: **Tab** bergerak a → b → c, **Shift+Tab** sebaliknya, **panah kiri/kanan** berputar (c ke kanan menuju a; a ke kiri menuju c), dan **Enter atau Spasi** memicu aksi persegi yang fokus.
+4. Beri indikator fokus yang tak hanya bergantung warna.
+5. Tambahkan log fokus di `Window` dan pintasan `Ctrl+Q`.
+6. Uji tanpa menyentuh mouse sama sekali.
+
+**Kunci jawaban** (coba dulu sebelum membaca):
+
+```qml
+import QtQuick
+
+Window {
+    id: win
+    width: 360; height: 240; visible: true
+    title: 'Navigasi keyboard'
+
+    onActiveFocusItemChanged: console.log('fokus ->', activeFocusItem)
+
+    Shortcut { sequence: 'Ctrl+Q'; onActivated: Qt.quit() }
+
+    Row {
+        x: 20; y: 100; spacing: 8
+
+        component Kotak: Rectangle {
+            id: kotak
+            required property string nama
+            signal dipilih(string teks)
+
+            width: 80; height: 40; radius: 6
+            color: activeFocus ? '#fde68a' : '#e5e7eb'
+            border.width: activeFocus ? 2 : 0
+            border.color: '#92400e'
+            activeFocusOnTab: true
+
+            Text { anchors.centerIn: parent; text: kotak.nama }
+
+            Keys.onReturnPressed: kotak.dipilih(kotak.nama)
+            Keys.onSpacePressed:  kotak.dipilih(kotak.nama)
+
+            TapHandler {
+                onTapped: { kotak.forceActiveFocus(Qt.MouseFocusReason); kotak.dipilih(kotak.nama) }
+            }
+        }
+
+        Kotak {
+            id: a; nama: 'Satu'; focus: true
+            KeyNavigation.right: b; KeyNavigation.left: c
+            onDipilih: (teks) => console.log('dipilih', teks)
+        }
+        Kotak {
+            id: b; nama: 'Dua'
+            KeyNavigation.right: c; KeyNavigation.left: a
+            onDipilih: (teks) => console.log('dipilih', teks)
+        }
+        Kotak {
+            id: c; nama: 'Tiga'
+            KeyNavigation.right: a; KeyNavigation.left: b
+            onDipilih: (teks) => console.log('dipilih', teks)
+        }
+    }
+}
+```
+
+- `component Kotak: Rectangle { ... }` — komponen inline (5.1.7 Opsi D) agar tiga persegi memakai definisi yang sama: `activeFocusOnTab`, indikator fokus, `Keys`, dan `TapHandler` ditulis sekali.
+- `focus: true` hanya pada `a` — hanya satu pemegang fokus awal.
+- `KeyNavigation.right` / `left` saling menunjuk membentuk lingkaran: dari `c` ke kanan kembali ke `a`, dari `a` ke kiri ke `c` (perputaran).
+- Tab dan Shift+Tab mengikuti urutan deklarasi (a, b, c) karena ketiganya `activeFocusOnTab: true`; bila ingin urutan lain, tambahkan `KeyNavigation.tab`/`backtab`.
+- Indikator fokus ganda: warna latar **dan** garis tepi; cincin tetap terbaca walau warna tak dibedakan.
+- Penanda log: setiap perpindahan fokus tercetak sebagai `fokus -> Kotak...`, dan setiap Enter atau Spasi mencetak `dipilih <nama>`.
+- Yang akan Anda amati: dari awal, fokus berada di `a`; panah dan Tab bergerak seperti diharapkan; klik mouse juga memindahkan fokus karena `TapHandler` memanggil `forceActiveFocus`.
+
+**Tantangan opsional:** ubah baris itu menjadi satu perhentian Tab dengan panah di dalamnya, memakai pola `BilahPilihan` di 6.3.6, lalu bandingkan jumlah penekanan Tab yang dibutuhkan untuk melewati bilah.
+
+## Cek Pemahaman dan Kunci
+
+1. **Apa fungsi `FocusScope` dalam komponen yang dipakai ulang?** *Kunci:* ia membuat lingkup fokus sendiri sehingga fokus di dalam komponen tidak berebut dengan komponen lain yang sama-sama memakai `focus: true`, dan pemakai dapat memfokuskan komponen utuh tanpa mengenal item di dalamnya.
+2. **Apa beda `focus` dan `activeFocus`?** *Kunci:* `focus` adalah permintaan fokus di dalam lingkup; `activeFocus` benar hanya bila item memegang fokus dan seluruh lingkup di atasnya juga, serta jendela aktif.
+3. **Mengapa dua item dengan `focus: true` dalam lingkup yang sama bermasalah?** *Kunci:* hanya satu item per lingkup yang boleh memegang fokus; yang terakhir meminta merebutnya dan yang lain kehilangan.
+4. **Apa yang terjadi bila sebuah handler `Keys.onPressed` tidak menyetel `event.accepted`?** *Kunci:* peristiwa dapat merambat ke induk dan ditangani di sana; pada handler umum, setel `accepted = true` hanya untuk tombol yang benar-benar Anda tangani.
+5. **Kapan memakai `Qt.ApplicationShortcut` dan kapan `Qt.WindowShortcut`?** *Kunci:* `WindowShortcut` (bawaan) aktif bila jendela induknya aktif; `ApplicationShortcut` aktif bila salah satu jendela aplikasi aktif, cocok untuk aksi seperti keluar.
+6. **Mengapa `Rectangle` pada contoh kurikulum tidak bisa dijangkau dengan Tab?** *Kunci:* `Rectangle` tidak masuk rantai Tab tanpa `activeFocusOnTab: true`; `KeyNavigation` hanya bekerja setelah salah satu item memegang fokus.
+7. **Mengapa fokus awal di dialog hapus sebaiknya pada Batal?** *Kunci:* agar penekanan Enter yang refleks tidak langsung menjalankan aksi merusak.
+
+## Referensi Tambahan
+
+- [Input Handlers](https://doc.qt.io/qt-6/qtquickhandlers-index.html)
+- [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html)
+- [Shortcut](https://doc.qt.io/qt-6/qml-qtquick-shortcut.html)
+- [TapHandler](https://doc.qt.io/qt-6/qml-qtquick-taphandler.html)
+- [Flickable](https://doc.qt.io/qt-6/qml-qtquick-flickable.html)
+- [Accessibility for Qt Quick Applications](https://doc.qt.io/qt-6/qtquick-accessibility.html)
+- [WCAG 2.1 — Keyboard Accessible (Guideline 2.1)](https://www.w3.org/WAI/WCAG21/Understanding/keyboard-accessible.html)
+- [Qt — Arch Wiki (variabel lingkungan dan platform)](https://wiki.archlinux.org/title/Qt)
+
+---
+
+*Kendali penuh atas keyboard adalah kendali penuh atas mesin Anda.*
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
