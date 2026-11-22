@@ -21,12 +21,10 @@
 - menghubungkan Dart dengan C dan Rust (FFI, build hooks), JavaScript dan Wasm, serta proses lain, dengan memori native yang aman dan batas kepercayaan yang jelas;
 - menulis logika yang konsisten di banyak target (VM, AOT, JS, Wasm) dan menguji perbedaan semantiknya.
 
-## Daftar Isi Fase 9
-
 <details>
   <summary>📃 Daftar Isi</summary>
 
----
+## Daftar Isi Fase 9
 
 - **0. Audit Kurikulum & Sambungan dari Fase 8**
 - **9.1 Arsitektur Modular:** layering, hexagonal, dependency inversion, desain paket, kontrol konkurensi pada port
@@ -34,6 +32,8 @@
 - **9.3 Interoperabilitas & Lintas-Platform:** FFI, JS/Wasm, build hooks
 - **9.4 Studi Kasus Terpadu: To-Do v8, Arsitektur Heksagonal yang Tangguh** *(TAMBAHAN)*
 - **Latihan (tanpa kunci jawaban), Ringkasan, dan Referensi Induk**
+
+---
 
 </details>
 
@@ -3062,6 +3062,39 @@ Kerjakan sendiri, lalu commit dengan struktur `fase-9/latihan-N/` berisi `README
 - [ ] Sembilan latihan sudah di-commit dengan angka nyata beserta konfigurasinya.
 
 **Pratinjau fase berikutnya (penomoran menunggu keputusanmu).** Yang tersisa menurut kurikulum adalah *Keamanan, Isolasi & Anonimitas* (pemodelan ancaman, validasi di batas, dan serangan logika umum; kriptografi aman dan penanganan rahasia; rantai pasok, isolasi proses, dan anonimitas) serta proyek akhir. Fase ini sudah banyak menyentuh bahannya: batas kepercayaan FFI, adapter sebagai pintu masuk data tak tepercaya, log tanpa rahasia, dan rate limiting sebagai pertahanan. Hal yang masih perlu dikonfirmasi: apakah Modul 2.2 dan 2.3 kurikulum (rekursi dan pemrograman dinamis; graf, pencarian, dan penjadwalan) sudah tercakup di Fase 1–4 (yang belum saya audit), dan penomoran akhir fase yang tersisa. Prasyaratnya: daftar periksa di atas terpenuhi.
+
+---
+
+## Referensi Induk Fase 9
+
+> **Catatan verifikasi.** Tanda ✔ berarti halaman tersebut dibuka dan diverifikasi lewat pencarian atau pengambilan halaman saat Fase 9 disusun (20 November 2026). Tautan tanpa tanda adalah halaman resmi atau baku yang stabil, tetapi belum diverifikasi ulang; bila ada yang berpindah, cari judulnya di dart.dev, pub.dev, atau dokumentasi paketnya. **Kode di Fase 9 belum dijalankan di lingkungan penyusun** (tanpa Dart SDK, kompiler C atau Rust, dan akses ke pub.dev). Hal yang bergantung pada versi dan perlu diperiksa saat menjalankan: tanda tangan API hooks (`build`, `CBuilder.library`, `input.config.buildCodeAssets`) pada versi paketmu; nama tipe native `Size` dan `Int` serta tanda tangan `NativeCallable.isolateLocal` di `dart:ffi` SDK-mu; `testOn: 'js'` dan `dart test -p chrome` (butuh Chrome terpasang); API `localStorage` pada `package:web`; serta kecocokan konstruktor `Item` dan fungsi `kodekan`/`dekode` dengan proyekmu. Jalankan `dart analyze` dan `dart test`, lalu laporkan setiap selisih agar bisa diperbaiki.
+
+**Dokumentasi resmi Dart dan paket**
+
+- ✔ Pub workspaces: https://dart.dev/to/pub-workspaces · https://dart.dev/tools/pub/workspaces · Paket: https://dart.dev/tools/pub/create-packages · https://dart.dev/tools/pub/package-layout · https://dart.dev/tools/pub/versioning
+- ✔ Class modifier untuk pemelihara API: https://dart.dev/language/class-modifiers-for-apis · https://dart.dev/language/class-modifiers · ✔ Primary constructors: https://dart.dev/language/primary-constructors · ✔ Rilis Dart 3.13: https://dart.dev/blog/announcing-dart-3-13 · ✔ Rilis Dart 3.14: https://dart.dev/blog/announcing-dart-3-14
+- ✔ Makro dibatalkan: https://dart.dev/go/macros · https://medium.com/dartlang/an-update-on-dart-macros-data-serialization-06d3037d4f12 · ✔ `build_runner`: https://dart.dev/tools/build\_runner
+- Interop: https://dart.dev/interop · https://dart.dev/interop/c-interop · https://dart.dev/interop/js-interop · https://dart.dev/web/wasm · `dart:ffi`: https://api.dart.dev/dart-ffi/dart-ffi-library.html
+- ✔ Build hooks: https://dart.dev/tools/hooks · ✔ Angka di Dart (web dan native): https://dart.dev/resources/language/number-representation · https://github.com/dart-lang/native
+- Paket: `meta` https://pub.dev/packages/meta · `clock` https://pub.dev/packages/clock · ✔ `pool` https://pub.dev/packages/pool · `logging` https://pub.dev/packages/logging · ✔ `async` https://pub.dev/packages/async · ✔ `fake_async` https://pub.dev/packages/fake\_async/changelog · `ffi` https://pub.dev/packages/ffi · `ffigen` https://pub.dev/packages/ffigen · `jnigen` https://pub.dev/packages/jnigen · `hooks` https://pub.dev/packages/hooks · `code_assets` https://pub.dev/packages/code\_assets · `native_toolchain_c` https://pub.dev/packages/native\_toolchain\_c · `web` https://pub.dev/packages/web · `fixnum` https://pub.dev/packages/fixnum · `retry` https://pub.dev/packages/retry
+- Lint: https://dart.dev/tools/linter-rules/implementation\_imports · Import bersyarat: https://dart.dev/language/libraries
+
+**Konsep dan teori**
+
+- Arsitektur: Alistair Cockburn, *Hexagonal Architecture* https://alistair.cockburn.us/hexagonal-architecture/ · Robert C. Martin, *The Clean Architecture* https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html · Mark Seemann, *Composition Root* https://blog.ploeh.dk/2011/07/28/CompositionRoot/ · https://en.wikipedia.org/wiki/Dependency\_inversion\_principle · https://en.wikipedia.org/wiki/Coupling\_(computer\_programming) · https://en.wikipedia.org/wiki/Decorator\_pattern · https://semver.org/
+- Keputusan: Michael Nygard, *Documenting Architecture Decisions* https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions · https://adr.github.io/
+- Ketahanan: AWS *Exponential Backoff and Jitter* https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/ · AWS *Timeouts, retries, and backoff with jitter* https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/ · Azure Architecture Center: Retry https://learn.microsoft.com/en-us/azure/architecture/patterns/retry · Circuit Breaker https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker · Bulkhead https://learn.microsoft.com/en-us/azure/architecture/patterns/bulkhead · Rate Limiting https://learn.microsoft.com/en-us/azure/architecture/patterns/rate-limiting-pattern · https://martinfowler.com/bliki/CircuitBreaker.html · https://en.wikipedia.org/wiki/Token\_bucket · Stripe, *Idempotent requests* https://stripe.com/docs/api/idempotent\_requests · Google SRE https://sre.google/sre-book/handling-overload/ · https://sre.google/sre-book/addressing-cascading-failures/ · Martin Kleppmann (token pagar) https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html
+- Interop dan memori: Rust FFI https://doc.rust-lang.org/nomicon/ffi.html · https://doc.rust-lang.org/std/panic/fn.catch\_unwind.html · https://valgrind.org/ · https://github.com/google/sanitizers/wiki/AddressSanitizer
+
+**Buku (tanpa tautan)**
+
+- R. C. Martin, *Clean Architecture* · E. Evans, *Domain-Driven Design* · N. Ford, R. Parsons, dan P. Kua, *Building Evolutionary Architectures* (fitness function arsitektur).
+- M. Nygard, *Release It!* (pola stabilitas) · B. Beyer dkk., *Site Reliability Engineering*.
+
+---
+
+*Fase 9 selesai.*
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
