@@ -34,12 +34,21 @@ Urutan Fase 6 logis: state (keadaan) → animasi (gerak) → input lanjut dan ke
 
 ### Temuan untuk Modul 6.1 (dibereskan di materi ini)
 
-1. **\[Klarifikasi\] Bentrok nama `State`.** `State` ada di dua modul: `QtQuick` (keadaan visual) dan `QtQml.StateMachine` (mesin keadaan untuk logika). Memakai keduanya tanpa alias membuat nama saling menimpa. Solusi: `import QtQml.StateMachine as DSM` lalu `DSM.State`, `DSM.StateMachine`, `DSM.SignalTransition`. Dijelaskan di 6.1.5.
-2. **\[Peringatan paket\] Modul `StateMachine` terpisah.** Di Arch Linux, tipe QML `QtQml.StateMachine` tidak ikut `qt6-declarative`; ia berasal dari paket `qt6-scxml` (daftar berkas paket itu memuat pustaka `QtStateMachine` dan `QtStateMachineQml`). Pasang dengan `sudo pacman -S qt6-scxml` bila belum ada.
-3. **\[Tambahan\] Fitur yang belum tercakup:** `ParentChange`, `State.extend`, `PropertyChanges.restoreEntryValues` dan `explicit`, aturan bila beberapa `when` bernilai benar sekaligus, aturan pencocokan `Transition` (`from`, `to`, `reversible`, `enabled`), `StateGroup` untuk objek non-`Item`. Masuk ke 6.1.1 sampai 6.1.4.
-4. **\[Klarifikasi\] Latihan tak menyebut pemicu.** “State kedua `nonaktif`” tidak mengatakan bagaimana state itu dimasuki. Ditentukan: `when: !kotak.enabled`, dengan transisi berbeda untuk masuk-keluar.
-5. **\[Klarifikasi\] `states: State { ... }` tanpa kurung siku** sah: properti `states` adalah daftar, dan satu elemen boleh ditulis langsung.
-6. **\[Tambahan\] 6.1.6 dan 6.1.7.** Panduan memilih antara State, `Behavior`, dan animasi imperatif; serta cara memakai State di dalam komponen buatan sendiri tanpa membocorkan API (menyambung Modul 5.1 dan 5.3).
+1. **Klarifikasi Bentrok nama `State`.** `State` ada di dua modul: `QtQuick` (keadaan visual) dan `QtQml.StateMachine` (mesin keadaan untuk logika). Memakai keduanya tanpa alias membuat nama saling menimpa. Solusi: `import QtQml.StateMachine as DSM` lalu `DSM.State`, `DSM.StateMachine`, `DSM.SignalTransition`. Dijelaskan di 6.1.5.
+2. **Peringatan paket Modul `StateMachine` terpisah.** Di Arch Linux, tipe QML `QtQml.StateMachine` tidak ikut `qt6-declarative`; ia berasal dari paket `qt6-scxml` (daftar berkas paket itu memuat pustaka `QtStateMachine` dan `QtStateMachineQml`). Pasang dengan `sudo pacman -S qt6-scxml` bila belum ada.
+3. **Tambahan Fitur yang belum tercakup:** `ParentChange`, `State.extend`, `PropertyChanges.restoreEntryValues` dan `explicit`, aturan bila beberapa `when` bernilai benar sekaligus, aturan pencocokan `Transition` (`from`, `to`, `reversible`, `enabled`), `StateGroup` untuk objek non-`Item`. Masuk ke 6.1.1 sampai 6.1.4.
+4. **Klarifikasi Latihan tak menyebut pemicu.** “State kedua `nonaktif`” tidak mengatakan bagaimana state itu dimasuki. Ditentukan: `when: !kotak.enabled`, dengan transisi berbeda untuk masuk-keluar.
+5. **Klarifikasi `states: State { ... }` tanpa kurung siku** sah: properti `states` adalah daftar, dan satu elemen boleh ditulis langsung.
+6. **Tambahan 6.1.6 dan 6.1.7.** Panduan memilih antara State, `Behavior`, dan animasi imperatif; serta cara memakai State di dalam komponen buatan sendiri tanpa membocorkan API (menyambung Modul 5.1 dan 5.3).
+
+### Hasil audit yang paling penting, semuanya sudah diperiksa ke dokumentasi atau blog resmi Qt:
+
+- **Qt Canvas Painter:** kurikulum menyebutnya sebagai satu fitur, padahal ada dua bagian. API C++-nya sudah tidak lagi technology preview di Qt 6.12, tetapi elemen QML `Canvas2D` masih technology preview. Tipenya diimpor lewat `import QtCanvas2D` dan tersedia sejak Qt 6.12.
+- **`MultiEffect`:** contoh kurikulum menggambar item dua kali karena sumbernya tidak disembunyikan. `visible: false` membuat sumber tidak dirender sama sekali dan tidak menerima input; `opacity: 0` menyembunyikannya tetapi input tetap diterima.
+- **`Settings`:** potongan kurikulum tidak menyebut `import QtCore`. `Qt.labs.settings` sudah deprecated sejak Qt 6.5, dan tipe `Settings` dari QtCore tersedia sejak Qt 6.5.
+- **`LocalStorage` bukan penyimpanan privat:** database-nya khusus pengguna dan khusus QML, tetapi dapat diakses semua aplikasi QML. Dokumentasi tidak menjanjikan enkripsi, jadi jangan simpan rahasia di sana.
+- **Dialog di Linux:** dialog berkas native hanya tersedia di Linux bila platform theme GTK+ dipakai. Selain itu Qt memakai dialog cadangan yang berupa item di dalam scene, bukan jendela tingkat atas, jadi di window manager tiling dialog muncul di dalam jendela aplikasi dan butuh ruang.
+- **`Shapes`:** renderer berbasis kurva (`CurveRenderer`) meminta bentuk dengan kurva asli, sementara bawaannya `GeometryRenderer`. Dokumen juga menjelaskan biaya triangulasi ulang dan saran memakai satu `Shape` dengan banyak `ShapePath`.
 
 ### Catatan awal untuk modul berikutnya (belum dikerjakan; dibahas saat gilirannya)
 
@@ -3651,6 +3660,1132 @@ Window {
 ---
 
 *Kendali penuh atas keyboard adalah kendali penuh atas mesin Anda.*
+
+# Fase 6 · Modul 6.4 — Qt Quick Ekstra
+
+*Kurikulum Qt 6 QML · Fase 6 (Interaksi, State, dan Animasi) · Modul 4 dari 4 (6.1 → 6.2 → 6.3 → 6.4)*
+
+## Daftar Isi Modul 6.4
+
+- Audit singkat Modul 6.4 dan daftar yang diperbarui
+- Gambaran, peran dalam kurikulum, dan filosofi
+- 6.4.1 `Shapes`
+- 6.4.2 `MultiEffect`
+- 6.4.3 `Particles`
+- 6.4.4 `Dialogs`
+- 6.4.5 `Settings` dan `LocalStorage`
+- 6.4.6 `Canvas` dan opsi baru Qt 6.12 (`Canvas2D`)
+- 6.4.7 \[TAMBAHAN\] Memilih alat, biaya, dan batas keamanan
+- Terminologi esensial
+- Hubungan dengan modul lain
+- Kesalahan umum dan solusi
+- Tips dan praktik terbaik
+- Latihan 15 menit (versi diperbaiki) dan kunci
+- Cek pemahaman dan kunci
+- Rangkuman Fase 6
+- Referensi tambahan
+
+## Audit Singkat Modul 6.4 (sebelum materi dimulai)
+
+Modul 6.4 sengaja berbeda dari tiga modul sebelumnya: ia bukan satu gagasan, melainkan *inventaris peralatan*. Urutannya wajar (gambar → efek → partikel → dialog → penyimpanan → menggambar imperatif). Fakta pada bagian yang rawan berubah (Qt 6.12, `Settings`, dialog native) sudah saya periksa pada dokumentasi dan blog resmi Qt. Temuan:
+
+1. **\[Terverifikasi\] Qt Canvas Painter dan Canvas2D.** Kurikulum menulis “Qt 6.12 menambah Qt Canvas Painter yang dipercepat GPU”. Lebih tepat: API C++ `QCanvasPainter` sudah tidak lagi technology preview di Qt 6.12, sedangkan elemen QML-nya, **`Canvas2D`** (modul `QtCanvas2D`, sejak Qt 6.12), **masih technology preview**: API-nya dapat berubah dan belum ada jaminan kompatibilitas sumber atau biner. Ia menggambar di GPU lewat QRhi, dan API-nya hampir kompatibel dengan `Canvas` Qt Quick (cukup impor `QtCanvas2D` dan ganti nama tipe). Dijelaskan di 6.4.6.
+2. **\[Koreksi\] Contoh `MultiEffect`.** `MultiEffect { source: gambar; anchors.fill: gambar }` tanpa menyembunyikan sumbernya menggambar item *dua kali* (sumber dan hasil efek). Dokumentasi menyarankan `visible: false` pada sumber (tak digambar dan tak menerima input) atau `opacity: 0` (tak terlihat tetapi tetap menerima input), atau memakai `layer.effect`. Dijelaskan di 6.4.2.
+3. **\[Koreksi\] Potongan `Settings`.** Contoh kurikulum tak menyebut `import QtCore`, dan lokasi penyimpanan baru jelas bila nama aplikasi, organisasi, dan domain diatur (atau `location` diisi). Juga: `Qt.labs.settings` **deprecated sejak Qt 6.5**; pakai `Settings` dari `QtCore`. Dua instans `Settings` tidak saling menyinkronkan nilai. Dijelaskan di 6.4.5.
+4. **\[Tambahan, penting untuk keamanan\] `LocalStorage`.** Dokumentasi menyatakan database-nya khusus pengguna dan khusus QML, **tetapi dapat diakses semua aplikasi QML** milik pengguna itu. Ia bukan penyimpanan privat per aplikasi dan bukan tempat rahasia. Dijelaskan di 6.4.5.
+5. **\[Terverifikasi\] `Dialogs`.** `FileDialog` native hanya tersedia di Android, iOS, macOS, Windows, dan **Linux bila memakai platform theme GTK+**; selain itu Qt memakai dialog cadangan buatan Qt Quick yang berupa *item di dalam scene*, bukan jendela tingkat atas. Akibatnya di window manager tiling dialog tampil di dalam jendela aplikasi dan butuh ruang. Dijelaskan di 6.4.4.
+6. **\[Terverifikasi\] `Shapes`.** `Shape.CurveRenderer` (Qt 6.6 ke atas, diminta lewat `preferredRendererType`) memberi anti-aliasing berkualitas tinggi tanpa biaya multisampling; renderer bawaan (`GeometryRenderer`) melakukan triangulasi di CPU dan menghitung ulang bila geometri berubah; dokumentasi menyarankan satu `Shape` dengan banyak `ShapePath`, bukan banyak `Shape`. `containsMode` berguna bersama Input Handler. Di 6.4.1.
+7. **\[Tambahan\] `Particles` dan `Dialogs` tak punya contoh minimal di kurikulum.** Ditambahkan, bersama pertimbangan biaya dan gerak berkurang (6.2.7).
+8. **\[Klarifikasi\] Latihan.** “Simpan warna isi dengan `Settings`” diperjelas: butuh `import QtCore`, lokasi berkas yang pasti (agar tak bergantung pada nama organisasi), dan cara memeriksa isi berkas.
+9. **\[Tambahan\] 6.4.7.** Panduan memilih alat dan batas keamanan penyimpanan, plus alat lain yang tidak dibahas (`ShaderEffect`, Qt Quick Effect Maker).
+
+**Daftar Modul 6.4 yang diperbarui** (tanda \[+\] = tambahan hasil audit):
+
+- 6.4.1 `Shapes`
+- 6.4.2 `MultiEffect`
+- 6.4.3 `Particles`
+- 6.4.4 `Dialogs`
+- 6.4.5 `Settings` dan `LocalStorage`
+- 6.4.6 `Canvas` dan opsi baru Qt 6.12 (`Canvas2D`)
+- &#91;+\] 6.4.7 Memilih alat, biaya, dan batas keamanan
+
+**Asumsi prasyarat.** Modul 6.2 (animasi dan biaya animasi), Modul 6.3 (handler dan fokus), Modul 5.3 (`Theme`, singleton), dan Modul 4.4 (`TapHandler`). Beberapa contoh memakai Qt Quick Controls (style Basic) hanya sebagai pembungkus.
+
+## Gambaran, Peran, dan Filosofi
+
+### Deskripsi konkret
+
+Modul ini memperkenalkan modul tambahan yang sering dibutuhkan proyek nyata: menggambar bentuk vektor (`Shapes`), efek gambar (`MultiEffect`), partikel (`Particles`), dialog (`Dialogs`), penyimpanan preferensi dan data (`Settings`, `LocalStorage`), dan menggambar imperatif 2D (`Canvas`, dan `Canvas2D` yang baru).
+
+### Peran dalam kurikulum
+
+Qt Quick inti memberi bahan dasar. Modul ini adalah gudang peralatan khusus: tujuannya bukan menghafal semuanya, melainkan **tahu apa yang tersedia** agar Anda tidak menulis ulang dari nol dan tahu *biayanya*. Ia juga menutup Fase 6 (interaksi, state, animasi) dengan hal-hal yang membuat aplikasi terasa utuh: ingat preferensi, tampil bagus, dan bicara kepada pengguna lewat dialog.
+
+### Konsep kunci dan filosofi
+
+- **Pilih alat paling murah yang cukup.** Bentuk vektor tidak butuh `Canvas`; bayangan sederhana tidak butuh partikel; preferensi tidak butuh database.
+- **Kenali apa yang ada, lalu ukur biayanya.** Efek, partikel, dan gambar imperatif memakai GPU dan baterai; setiap kemudahan punya harga.
+- **Penyimpanan adalah soal kepercayaan.** `Settings` dan `LocalStorage` menulis ke disk *tanpa enkripsi*, dan `LocalStorage` terbuka bagi semua aplikasi QML milik pengguna. Perlakukan keduanya sebagai tempat data yang tak rahasia.
+- **Dialog adalah batas kepercayaan.** Nama berkas yang dipilih pengguna masuk ke aplikasi Anda sebagai masukan; validasi, jangan percaya.
+- **Fitur baru (technology preview) berarti bisa berubah.** Pakai dengan sadar, isolasi, dan siapkan jalan mundur.
+
+Peta kebutuhan → alat (ASCII):
+
+```
+ Bentuk vektor, ikon, grafik sederhana ........ Shapes  (atau Image + SVG)
+ Blur, bayangan, warna, mask .................. MultiEffect
+ Percikan, asap, api (dekoratif) .............. Particles
+ Memilih berkas / folder / warna, pesan ....... Dialogs
+ Preferensi (kunci-nilai) ..................... Settings (QtCore)
+ Data tabular kecil, dapat dikueri ............ LocalStorage (SQLite)
+ Menggambar imperatif 2D ...................... Canvas ; Canvas2D (Qt 6.12, preview)
+```
+
+## 6.4.1 `Shapes`
+
+### Dasar: vektor yang digambar GPU
+
+`QtQuick.Shapes` menggambar **bentuk vektor** (garis, kurva, isian, gradien) dari sebuah *path* (lintasan). Berbeda dari `Canvas`, path **tidak pernah dirasterisasi di perangkat lunak**, sehingga tidak ada biaya mengunggah tekstur untuk area luas (dokumentasi Qt). Komponennya:
+
+- `Shape` — wadah (sebuah `Item`).
+- `ShapePath` — satu bentuk: gaya garis dan isian, ditambah elemen path.
+- Elemen path yang didukung `Shape`: `PathMove`, `PathLine`, `PathQuad`, `PathCubic`, `PathArc`, `PathText`, dan `PathSvg` (data path SVG).
+
+### Sintaks dan properti penting
+
+```
+Shape {
+    width: ...; height: ...
+    preferredRendererType: Shape.CurveRenderer   // opsional (Qt 6.6 ke atas)
+    ShapePath {
+        strokeColor / strokeWidth                // garis tepi
+        fillColor  atau  fillGradient: LinearGradient { ... }   // isian
+        strokeStyle: ShapePath.SolidLine | ShapePath.DashLine ; dashPattern: [ ... ]
+        fillRule: ShapePath.OddEvenFill | ShapePath.WindingFill
+        joinStyle ; capStyle
+        startX: ... ; startY: ...                // titik awal
+        PathLine { x: ...; y: ... }              // elemen path berurutan
+    }
+}
+```
+
+### Contoh inti (dari kurikulum)
+
+```qml
+import QtQuick
+import QtQuick.Shapes
+
+Shape {
+    width: 120; height: 120
+    ShapePath {
+        strokeColor: 'white'; strokeWidth: 3; fillColor: 'royalblue'
+        startX: 10; startY: 110
+        PathLine { x: 60; y: 10 }
+        PathLine { x: 110; y: 110 }
+        PathLine { x: 10; y: 110 }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `import QtQuick.Shapes` — modul terpisah dari `QtQuick`; tanpa ini `Shape` tidak dikenal.
+- `Shape { width: 120; height: 120 }` — area yang ditempati bentuk. Secara bawaan bentuk digambar pada ukuran aslinya, tak peduli ukuran item (`fillMode: Shape.NoResize`).
+- `ShapePath { ... }` — satu bentuk di dalam `Shape`.
+- `strokeColor: 'white'; strokeWidth: 3` — garis tepi putih setebal 3 piksel.
+- `fillColor: 'royalblue'` — isian biru kerajaan.
+- `startX: 10; startY: 110` — titik awal lintasan (kiri bawah).
+- `PathLine { x: 60; y: 10 }` — garis lurus ke puncak; dua `PathLine` berikutnya ke kanan bawah dan kembali ke titik awal. Setiap elemen berlanjut dari akhir elemen sebelumnya.
+- Hasilnya segitiga biru berbingkai putih. Kembali ke `(10, 110)` menutup lintasan secara visual.
+
+### Contoh lebih kaya: gradien, putus-putus, busur, dan kurva halus
+
+```qml
+import QtQuick
+import QtQuick.Shapes
+
+Shape {
+    width: 200; height: 160
+    preferredRendererType: Shape.CurveRenderer
+
+    ShapePath {
+        strokeWidth: 3
+        strokeColor: '#1e3a8a'
+        fillGradient: LinearGradient {
+            x1: 0; y1: 0; x2: 200; y2: 150
+            GradientStop { position: 0; color: '#60a5fa' }
+            GradientStop { position: 1; color: '#2563eb' }
+        }
+        startX: 20; startY: 120
+        PathLine { x: 100; y: 20 }
+        PathLine { x: 180; y: 120 }
+        PathLine { x: 20; y: 120 }
+    }
+
+    ShapePath {
+        strokeWidth: 2
+        strokeColor: 'tomato'
+        fillColor: 'transparent'
+        strokeStyle: ShapePath.DashLine
+        dashPattern: [4, 3]
+        startX: 20; startY: 145
+        PathArc { x: 180; y: 145; radiusX: 100; radiusY: 30 }
+    }
+}
+```
+
+- `preferredRendererType: Shape.CurveRenderer` — meminta renderer berbasis kurva (Qt 6.6 ke atas). Dokumentasi menyatakannya memberi anti-aliasing berkualitas tinggi **tanpa** biaya multisampling dan tanpa triangulasi ulang saat di-zoom; catatan: ia mendekati kurva kubik dengan kurva kuadratik sehingga dapat sedikit berbeda dari bentuk matematis yang tepat. Bila renderer tidak didukung backend, Qt memakai renderer bawaan.
+- `fillGradient: LinearGradient { x1; y1; x2; y2; GradientStop ... }` — isian gradien linear dari titik (x1, y1) ke (x2, y2) dengan titik-titik warna `GradientStop` (`position` 0 sampai 1).
+- `strokeStyle: ShapePath.DashLine` dan `dashPattern: [4, 3]` — garis putus-putus: 4 satuan garis, 3 kosong (satuan mengikuti lebar garis).
+- `PathArc { x; y; radiusX; radiusY }` — busur elips dari posisi sekarang ke `(x, y)`.
+
+### Menerima ketukan hanya di dalam bentuk
+
+```qml
+Shape {
+    containsMode: Shape.FillContains
+    // ... ShapePath segitiga ...
+    TapHandler { onTapped: console.log('di dalam segitiga') }
+}
+```
+
+Secara bawaan `contains()` sebuah `Shape` hanya memeriksa kotak pembatasnya (`Shape.BoundingRectContains`, paling murah). `Shape.FillContains` memeriksa apakah titik berada di dalam isian bentuk, sehingga handler hanya bereaksi pada bentuk sebenarnya. Dokumentasi mengingatkan: makin kompleks dan banyak `ShapePath`, makin mahal pemeriksaannya.
+
+### Opsi lain untuk menggambar bentuk
+
+```qml
+// Opsi 1 — Shape + ShapePath + PathLine (di atas): deklaratif, GPU, dapat dianimasikan
+
+// Opsi 2 — PathSvg: data path SVG sebagai satu string (ringkas, mudah disalin dari editor vektor)
+Shape {
+    ShapePath {
+        fillColor: 'royalblue'
+        PathSvg { path: 'M10 110 L60 10 L110 110 Z' }
+    }
+}
+
+// Opsi 3 — Image dengan berkas SVG (butuh dukungan SVG pada Qt; paket qt6-svg di Arch)
+Image { source: 'ikon.svg'; sourceSize: Qt.size(64, 64) }
+
+// Opsi 4 — Canvas / Canvas2D (6.4.6): imperatif; bila bentuk dihitung per frame lewat kode
+```
+
+### Biaya dan praktik
+
+- **Satu `Shape` dengan banyak `ShapePath`**, bukan banyak `Shape`: dokumentasi menyarankannya.
+- **Perubahan elemen path memicu triangulasi ulang** pada renderer bawaan; menganimasikan geometri bentuk rumit berat bagi sistem lemah. `CurveRenderer` menghindari triangulasi ulang saat zoom.
+- **`asynchronous: true`** memindahkan pemrosesan path ke thread pekerja agar thread GUI tak tertahan saat bentuk dibuat.
+- **`fillMode`** (Qt 6.7 ke atas: `Shape.Stretch`, `PreserveAspectFit`, `PreserveAspectCrop`) menskalakan bentuk mengikuti ukuran item, cocok dengan `PathSvg`.
+- **Anti-aliasing alternatif:** `layer.enabled: true; layer.samples: 4` (multisampling) bila tak memakai `CurveRenderer`; lebih berat.
+
+**Referensi bagian ini:** [Qt Quick Shapes](https://doc.qt.io/qt-6/qtquick-shapes-qmlmodule.html) · [Shape](https://doc.qt.io/qt-6/qml-qtquick-shapes-shape.html) · [ShapePath](https://doc.qt.io/qt-6/qml-qtquick-shapes-shapepath.html) · [Path](https://doc.qt.io/qt-6/qml-qtquick-path.html) · [PathSvg](https://doc.qt.io/qt-6/qml-qtquick-pathsvg.html) · [PathArc](https://doc.qt.io/qt-6/qml-qtquick-patharc.html)
+
+## 6.4.2 `MultiEffect`
+
+### Dasar: efek pasca-proses pada sebuah item
+
+`MultiEffect` (modul `QtQuick.Effects`, Qt 6.5 ke atas) adalah pengganti Qt Graphical Effects dari Qt 5: ia menerapkan **efek pasca-proses** pada sebuah item *sumber* dan menggabungkan banyak efek (blur, bayangan, kolorisasi, mask, kecerahan, kontras, saturasi) dalam satu item dan satu shader, sehingga lebih efisien untuk beberapa efek sekaligus.
+
+Poin yang paling sering terlewat (dokumentasi Qt): **`MultiEffect` menggambar item *baru* di samping sumbernya.** Bila sumber dan efeknya sama-sama tampak, keduanya digambar.
+
+```
+  sumber (Image / Rectangle / ...)          MultiEffect
+       |                                        |
+       |  visible: false  -> sumber tak digambar, tak menerima input
+       |  opacity: 0      -> sumber tak tampak, TETAP menerima input
+       v                                        v
+  hanya hasil efek yang terlihat   <----  digambar di posisi yang sama (anchors.fill: sumber)
+```
+
+### Sintaks dan efek yang tersedia
+
+```
+MultiEffect {
+    source: <item>               // sumber
+    anchors.fill: <item>         // letakkan di posisi sumber
+    brightness / contrast / saturation          // selalu aktif, tanpa biaya tambahan
+    colorization ; colorizationColor            // warna isian di atas sumber
+    blurEnabled: true ; blur: 0..1 ; blurMax ; blurMultiplier
+    shadowEnabled: true ; shadowBlur ; shadowColor ; shadowOpacity ;
+    shadowHorizontalOffset ; shadowVerticalOffset ; shadowScale
+    maskEnabled: true ; maskSource ; maskInverted ; maskThresholdMin/Max ; maskSpreadAtMin/Max
+    autoPaddingEnabled ; paddingRect
+}
+```
+
+### Contoh inti: kartu dengan bayangan
+
+```qml
+import QtQuick
+import QtQuick.Effects
+
+Window {
+    width: 320; height: 220; visible: true; color: '#e2e8f0'
+
+    Rectangle {
+        id: kartu
+        x: 50; y: 50; width: 220; height: 100; radius: 12; color: 'white'
+        visible: false                  // sumber disembunyikan; hasil efek yang tampil
+
+        Text { anchors.centerIn: parent; text: 'Kartu'; font.pixelSize: 20 }
+    }
+
+    MultiEffect {
+        source: kartu
+        anchors.fill: kartu
+        shadowEnabled: true
+        shadowColor: '#000000'
+        shadowOpacity: 0.35
+        shadowBlur: 0.8
+        shadowVerticalOffset: 6
+        shadowHorizontalOffset: 0
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `import QtQuick.Effects` — modul efek (Qt 6.5 ke atas).
+- `Rectangle { id: kartu; visible: false }` — sumber efek. `visible: false` menyembunyikannya; teks anaknya tetap ikut menjadi bagian tekstur sumber yang diolah efek.
+- `MultiEffect { source: kartu; anchors.fill: kartu }` — item efek di posisi dan ukuran kartu.
+- `shadowEnabled: true` — menyalakan efek bayangan; efek lain yang berat (`blur`, `mask`) juga harus dinyalakan eksplisit.
+- `shadowColor`, `shadowOpacity: 0.35` — warna dan kepekatan bayangan.
+- `shadowBlur: 0.8` — kehalusan tepi bayangan dari 0 (tajam) sampai 1 (sangat halus).
+- `shadowVerticalOffset: 6` — bayangan bergeser 6 piksel ke bawah, memberi kesan kartu terangkat.
+- **Padding otomatis:** `autoPaddingEnabled` (bawaan `true`) menambah ruang di sekeliling item bila blur atau bayangan aktif agar tak terpotong.
+- **Mengapa `visible: false` bermasalah bila kartu perlu diketuk:** item tak terlihat tidak menerima input. Gunakan `opacity: 0` pada sumber, atau letakkan `TapHandler` pada `MultiEffect`.
+
+### Contoh blur dan bentuk lapisan (`layer.effect`)
+
+```qml
+// Blur pada gambar: perhatikan 'blurMax' dan 'blur'
+Image {
+    id: foto
+    source: 'foto.jpg'          // ganti dengan berkas Anda
+    visible: false
+}
+MultiEffect {
+    source: foto
+    anchors.fill: foto
+    blurEnabled: true
+    blur: 0.6
+    blurMax: 32
+}
+
+// Bentuk lapisan: efek langsung pada item, tanpa item sumber terpisah
+Rectangle {
+    width: 80; height: 80; color: 'tomato'
+    layer.enabled: true
+    layer.effect: MultiEffect { saturation: -1.0 }       // jadi monokrom
+}
+```
+
+- `blurEnabled: true; blur: 0.6; blurMax: 32` — menyalakan blur; `blur` dari 0 (tak ada) sampai 1 (penuh); `blurMax` adalah radius piksel maksimum yang dicapai saat `blur` bernilai 1.
+- `layer.enabled: true; layer.effect: MultiEffect { ... }` — bentuk ringkas: item dirender ke lapisan, lalu efek langsung diterapkan; Anda tidak perlu `source` dan `anchors.fill`.
+- `saturation: -1.0` — menghilangkan warna sepenuhnya (monokrom); nilai 0 berarti tak berubah.
+
+### Biaya dan praktik (dari dokumentasi Qt)
+
+- **Blur dan bayangan adalah efek terberat.** Nyalakan hanya efek yang benar-benar dipakai (`blurEnabled`, `shadowEnabled`, `maskEnabled`).
+- **Ukuran item sekecil mungkin;** lebih banyak piksel berarti lebih banyak kerja GPU. Saat memburamkan seluruh latar, setel `autoPaddingEnabled: false`, bila tidak efek “tumbuh” keluar jendela.
+- **Utamakan `blurMultiplier` ketimbang `blurMax`** untuk radius lebih besar; tidak menambah jumlah pembacaan tekstur.
+- **Jangan mengubah `blurEnabled`, `shadowEnabled`, atau `maskEnabled` saat animasi:** mengubahnya mengganti shader. Animasikan `blur`, `shadowOpacity`, dan sejenisnya sebagai gantinya.
+- **Hindari sumber yang beranimasi** agar blur tak perlu dibuat ulang tiap frame.
+- **Setel `visible: false` pada `MultiEffect` yang sedang tak dipakai** agar efek tak digambar di latar belakang.
+- Untuk berbagi satu sumber di banyak efek, memakai sebagian sumber, atau menurunkan resolusi, gabungkan dengan `ShaderEffectSource` (`sourceRect`, `textureSize`).
+- Efek yang tidak ada di `MultiEffect`: **Qt Quick Effect Maker** atau `ShaderEffect` untuk shader kustom (di luar cakupan modul ini).
+
+### Opsi lain untuk bayangan dan blur
+
+```qml
+// Opsi 1 — MultiEffect (di atas): satu item, banyak efek; modern
+// Opsi 2 — bayangan tipuan murah: Rectangle semi-transparan bergeser di belakang kartu
+Rectangle { x: kartu.x; y: kartu.y + 4; width: kartu.width; height: kartu.height; radius: 12; color: '#33000000' }
+// Opsi 3 — ShaderEffect + shader kustom: kendali penuh, butuh pengetahuan shader
+// Opsi 4 — Qt Graphical Effects (Qt 5): digantikan MultiEffect; hindari pada kode baru
+```
+
+Opsi 2 sering cukup untuk bayangan statis dan tidak menambah biaya shader.
+
+**Referensi bagian ini:** [MultiEffect](https://doc.qt.io/qt-6/qml-qtquick-effects-multieffect.html) · [Qt Quick Effects](https://doc.qt.io/qt-6/qtquick-effects-qmlmodule.html) · [ShaderEffectSource](https://doc.qt.io/qt-6/qml-qtquick-shadereffectsource.html) · [Item layers (layer.enabled, layer.effect)](https://doc.qt.io/qt-6/qml-qtquick-item.html)
+
+## 6.4.3 `Particles`
+
+### Dasar: banyak objek kecil yang lahir, bergerak, dan mati
+
+Sistem partikel menghasilkan efek seperti percikan, asap, api, salju, atau konfeti dengan menjalankan *banyak* objek kecil yang masing-masing lahir, bergerak sesuai aturan, lalu menghilang. Modulnya `QtQuick.Particles`. Strukturnya terbagi tiga peran yang saling menunjuk satu `ParticleSystem`:
+
+```
+ ParticleSystem            jam dan koordinator seluruh sistem (running, paused)
+   |-- Emitter             MELAHIRKAN partikel: laju, umur, ukuran, kecepatan awal
+   |-- Affector            MEMENGARUHI partikel yang hidup: Gravity, Turbulence, Friction, Age, ...
+   '-- Painter             MENGGAMBAR partikel: ImageParticle (dari gambar), ItemParticle (dari item)
+
+ Semua menunjuk sistem yang sama dengan  system: <id>.
+ 'group' memisahkan kelompok partikel (misalnya api dan asap) dalam satu sistem.
+```
+
+### Properti `Emitter` yang sering dipakai
+
+- `emitRate` — partikel per detik. `lifeSpan` — umur partikel dalam milidetik (`lifeSpanVariation` untuk variasi acak).
+- `size`, `endSize`, `sizeVariation` — ukuran awal, ukuran akhir, dan variasinya.
+- `velocity` — kecepatan awal sebagai arah: `AngleDirection { angle; angleVariation; magnitude; magnitudeVariation }` (sudut dalam derajat: 0 ke kanan, 90 ke bawah, -90 ke atas) atau `PointDirection` atau `TargetDirection`.
+- `shape` — area kelahiran (`EllipseShape`, `RectangleShape`, `LineShape`, `MaskShape`).
+- `enabled`, serta metode `burst(count)` (ledakan sekali) dan `pulse(durasi)`.
+
+### Contoh inti: air mancur
+
+```qml
+import QtQuick
+import QtQuick.Particles
+
+Window {
+    id: win
+    width: 360; height: 300; visible: true; color: '#0f172a'
+
+    property bool kurangiGerak: false
+
+    ParticleSystem {
+        id: sistem
+        running: win.visible && !win.kurangiGerak
+    }
+
+    Emitter {
+        system: sistem
+        x: 175; y: 260
+        width: 10; height: 4
+        emitRate: 80
+        lifeSpan: 1600
+        lifeSpanVariation: 300
+        size: 8
+        sizeVariation: 4
+        velocity: AngleDirection {
+            angle: -90; angleVariation: 25
+            magnitude: 160; magnitudeVariation: 40
+        }
+    }
+
+    Gravity {
+        system: sistem
+        angle: 90
+        magnitude: 220
+    }
+
+    ItemParticle {
+        system: sistem
+        delegate: Rectangle { width: 6; height: 6; radius: 3; color: 'gold' }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `import QtQuick.Particles` — modul partikel (terpisah dari `QtQuick`).
+- `ParticleSystem { id: sistem; running: ... }` — koordinator. `running` diikat ke visibilitas jendela dan ke saklar `kurangiGerak`, sehingga sistem berhenti saat tak terlihat atau saat pengguna meminta gerak dikurangi (6.2.7).
+- `Emitter { system: sistem ... }` — sumber partikel. `x`, `y`, `width`, `height` mendefinisikan *area kelahiran*: lebar 10 dan tinggi 4 di dekat dasar jendela.
+- `emitRate: 80` dan `lifeSpan: 1600` — 80 partikel per detik, masing-masing hidup sekitar 1,6 detik; jumlah yang hidup serentak kira-kira laju × umur = sekitar 128. **Ini angka yang menentukan biaya** (lihat di bawah).
+- `velocity: AngleDirection { angle: -90; ... }` — meluncur ke atas (-90 derajat) dengan sebaran sudut 25 derajat dan kelajuan sekitar 160 (±40).
+- `Gravity { system: sistem; angle: 90; magnitude: 220 }` — *affector* yang menarik partikel ke bawah (90 derajat) sehingga lintasannya melengkung seperti air mancur.
+- `ItemParticle { delegate: Rectangle {...} }` — painter yang membuat satu **item QML** per partikel (di sini titik emas kecil). Mudah, tidak butuh berkas gambar, tetapi relatif berat bila partikelnya banyak.
+
+### Ledakan sekali pakai
+
+```qml
+Emitter {
+    id: ledakan
+    system: sistem
+    enabled: false                 // tidak memancar terus-menerus
+    lifeSpan: 800
+    size: 6
+    velocity: AngleDirection { angleVariation: 360; magnitude: 140; magnitudeVariation: 60 }
+}
+
+TapHandler {
+    onTapped: (eventPoint) => {
+        ledakan.x = eventPoint.position.x
+        ledakan.y = eventPoint.position.y
+        ledakan.burst(30)
+    }
+}
+```
+
+- `enabled: false` — emitter tak memancar sendiri.
+- `angleVariation: 360` — sebaran ke segala arah.
+- `ledakan.burst(30)` — memancarkan 30 partikel sekaligus di posisi ketukan.
+
+### Opsi lain untuk painter dan efek
+
+```qml
+// Opsi 1 — ItemParticle (di atas): paling sederhana; satu item per partikel; berat bila banyak
+
+// Opsi 2 — ImageParticle: menggambar dari satu gambar secara terkelompok; jauh lebih hemat
+ImageParticle {
+    system: sistem
+    source: 'qrc:///particleresources/glowdot.png'    // gambar contoh bawaan modul; bila tak ditemukan, pakai gambar Anda
+    color: '#fbbf24'; colorVariation: 0.2
+}
+
+// Opsi 3 — AnimatedSprite / SpriteSequence: animasi berbasis kerangka gambar, tanpa simulasi fisika
+// Opsi 4 — MultiEffect atau ShaderEffect: efek cahaya statis yang jauh lebih murah dari partikel
+```
+
+### Biaya dan praktik
+
+- **Jumlah partikel hidup = `emitRate` × `lifeSpan` / 1000.** Mulailah kecil dan naikkan sambil mengukur (6.2.7).
+- **Gunakan `ImageParticle`** untuk jumlah besar; `ItemParticle` hanya untuk puluhan.
+- **Hentikan sistem saat tak terlihat:** `ParticleSystem.running` (atau `paused`) terikat ke visibilitas.
+- **Efek dekoratif:** hormati saklar “kurangi gerakan” dan jangan menjadikannya satu-satunya cara menyampaikan informasi.
+- **Hindari banyak `ParticleSystem` terpisah;** satu sistem dengan beberapa `group` lebih hemat.
+
+**Referensi bagian ini:** [Qt Quick Particles](https://doc.qt.io/qt-6/qtquick-particles-qmlmodule.html) · [Using the Qt Quick Particle System](https://doc.qt.io/qt-6/qtquick-particles-qmlmodule.html) · [Emitter](https://doc.qt.io/qt-6/qml-qtquick-particles-emitter.html) · [ParticleSystem](https://doc.qt.io/qt-6/qml-qtquick-particles-particlesystem.html) · [Gravity](https://doc.qt.io/qt-6/qml-qtquick-particles-gravity.html) · [ItemParticle](https://doc.qt.io/qt-6/qml-qtquick-particles-itemparticle.html) · [ImageParticle](https://doc.qt.io/qt-6/qml-qtquick-particles-imageparticle.html)
+
+## 6.4.4 `Dialogs`
+
+### Dasar: dialog sistem dengan cadangan buatan Qt
+
+Modul `QtQuick.Dialogs` menyediakan dialog standar: `FileDialog` (Qt 6.2), `FontDialog` (6.2), `FolderDialog` (6.3), `MessageDialog` (6.3), dan `ColorDialog` (6.4). Rancangannya: pakai dialog **native** bila platform punya, dan bila tidak, jatuh kembali ke dialog buatan Qt Quick.
+
+Fakta yang sudah diverifikasi pada dokumentasi dan blog Qt:
+
+- **`FileDialog` native** tersedia di Android, iOS, macOS, Windows, dan **Linux hanya bila platform theme GTK+ dipakai**.
+- Menurut artikel Qt tentang modul ini (periksa dokumentasi versi Anda untuk keadaan terkini): `FontDialog` dan `ColorDialog` native di macOS dan GTK; `MessageDialog` native hanya di iOS dan Android.
+- **Dialog cadangan** berbasis Qt Quick Controls (tampil mengikuti style yang dipakai) dan **berupa item di dalam scene, bukan jendela tingkat atas.**
+- Opsi `FileDialog.DontUseNativeDialog` memaksa dialog non-native.
+
+Implikasinya bagi pengguna window manager tiling: tanpa platform theme GTK, dialog akan muncul **sebagai lapisan di dalam jendela aplikasi** (bukan jendela terpisah), sehingga membutuhkan ruang yang cukup di jendela induk.
+
+### Contoh inti
+
+```qml
+import QtCore
+import QtQuick
+import QtQuick.Controls.Basic
+import QtQuick.Dialogs
+
+ApplicationWindow {
+    width: 480; height: 320; visible: true
+    title: 'Dialog'
+
+    header: ToolBar {
+        Row {
+            spacing: 8
+            Button { text: 'Pilih gambar'; onClicked: fileDialog.open() }
+            Button { text: 'Hapus...';     onClicked: konfirmasi.open() }
+        }
+    }
+
+    Image {
+        id: gambar
+        anchors.fill: parent
+        fillMode: Image.PreserveAspectFit
+    }
+
+    FileDialog {
+        id: fileDialog
+        title: 'Pilih gambar'
+        currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+        nameFilters: ['Gambar (*.png *.jpg *.jpeg)', 'Semua berkas (*)']
+        onAccepted: gambar.source = selectedFile
+    }
+
+    MessageDialog {
+        id: konfirmasi
+        title: 'Hapus gambar'
+        text: 'Hapus gambar ini?'
+        informativeText: 'Tindakan ini tidak dapat dibatalkan.'
+        buttons: MessageDialog.Ok | MessageDialog.Cancel
+        onAccepted: gambar.source = ''
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `import QtCore` — untuk `StandardPaths` (lokasi baku seperti folder Gambar). `import QtQuick.Dialogs` — modul dialog.
+- `ApplicationWindow { header: ToolBar { ... } }` — jendela Qt Quick Controls dengan bilah atas; dipakai agar dialog cadangan punya induk yang tepat.
+- `FileDialog { id: fileDialog }` — dialog dibuat sekali dan dibuka dengan `open()`; ia tidak muncul sendiri.
+- `currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]` — folder awal: lokasi Gambar pertama dari daftar lokasi standar.
+- `nameFilters: [...]` — daftar filter berkas, setiap entri berformat “deskripsi (pola)”; catatan dokumentasi: `*.*` bukan filter yang portabel, pakai `*`.
+- `onAccepted: gambar.source = selectedFile` — saat pengguna menerima, `selectedFile` (bertipe `url`) dipakai. **Nilai akhir dibaca di `accepted`**: `selectedFile` ikut berubah saat pengguna memilih di tengah dialog.
+- `fileMode` (tidak ditulis, bawaannya `FileDialog.OpenFile`) dapat diganti `OpenFiles` (banyak berkas, hasil di `selectedFiles`) atau `SaveFile` (berkas tak harus ada).
+- `MessageDialog { text; informativeText; buttons }` — `buttons` memakai bendera standar yang digabung dengan `|`; `onAccepted` untuk tombol penerima (Ok), `onRejected` untuk penolak.
+
+### Dialog lain dan opsi lainnya
+
+```qml
+FolderDialog { id: folder; onAccepted: console.log('folder:', selectedFolder) }
+ColorDialog  { id: warna;  selectedColor: 'tomato'; onAccepted: kotak.color = selectedColor }
+FontDialog   { id: huruf;  onAccepted: teks.font = selectedFont }
+```
+
+Nama properti hasil (`selectedFolder`, `selectedColor`, `selectedFont`) mengikuti pola `selectedFile`; periksa dokumentasi versi Anda untuk rincian.
+
+```qml
+// Opsi 1 — Qt Quick Dialogs: native bila tersedia, cadangan Qt bila tidak (di atas)
+// Opsi 2 — Dialog dari Qt Quick Controls: selalu non-native, di dalam scene, dapat dikustomisasi penuh
+Dialog { modal: true; standardButtons: Dialog.Ok | Dialog.Cancel; title: 'Judul'; onAccepted: aksi() }
+// Opsi 3 — dialog buatan sendiri dengan FocusScope (6.3.6 Pola 2): kendali keyboard dan fokus penuh
+// Opsi 4 — memaksa tampilan seragam: FileDialog { options: FileDialog.DontUseNativeDialog }
+```
+
+### Linux, GTK, dan tiling WM
+
+Untuk mendapat dialog berkas native di Linux, Qt perlu platform theme GTK:
+
+```bash
+# periksa apakah qt6-base menyebut plugin GTK sebagai dependensi opsional
+pacman -Qi qt6-base | grep -i -A3 'optional'
+
+# bila terpasang, jalankan dengan platform theme GTK
+QT_QPA_PLATFORMTHEME=gtk3 qml6 Main.qml
+```
+
+Nama paket yang dibutuhkan bergantung pada distribusi dan versi; verifikasi dengan `pacman -Qi qt6-base` dan Arch Wiki (bagian Qt). Tanpa itu dialog cadangan Qt dipakai.
+
+### Hal yang perlu diperhatikan (termasuk keamanan)
+
+- **Jangan mengasumsikan dialog native.** Rancang agar dialog cadangan (di dalam scene) juga muat dan terbaca di jendela kecil.
+- **Perlakukan hasil pemilihan sebagai masukan tak tepercaya.** `selectedFile` adalah URL; periksa skema (`file:`), jangan memercayai ekstensi sebagai jenis berkas, dan ubah ke path lokal dengan hati-hati (di C++: `QUrl::toLocalFile()`). Secara bawaan dialog menyelesaikan symlink; opsi `FileDialog.DontResolveSymlinks` mengubahnya.
+- **Aksi merusak butuh konfirmasi** dengan fokus awal pada aksi aman (6.3.6).
+- **Periksa ke mana fokus kembali** setelah dialog tertutup dan, bila perlu, kembalikan sendiri ke elemen pembuka (6.3.6).
+
+**Referensi bagian ini:** [Qt Quick Dialogs](https://doc.qt.io/qt-6/qtquickdialogs-index.html) · [FileDialog](https://doc.qt.io/qt-6/qml-qtquick-dialogs-filedialog.html) · [MessageDialog](https://doc.qt.io/qt-6/qml-qtquick-dialogs-messagedialog.html) · [FolderDialog](https://doc.qt.io/qt-6/qml-qtquick-dialogs-folderdialog.html) · [ColorDialog](https://doc.qt.io/qt-6/qml-qtquick-dialogs-colordialog.html) · [StandardPaths](https://doc.qt.io/qt-6/qml-qtcore-standardpaths.html) · [Dialogs in Qt Quick (blog Qt)](https://www.qt.io/blog/dialogs-in-qt-quick)
+
+## 6.4.5 `Settings` dan `LocalStorage`
+
+### Dasar: dua cara menyimpan yang berbeda
+
+- **`Settings`** — penyimpanan *kunci-nilai* untuk preferensi (tema, ukuran huruf, posisi jendela). Cepat, ringkas, otomatis.
+- **`LocalStorage`** — database **SQLite** kecil untuk data *tabular yang dapat dikueri* (catatan, riwayat).
+
+Keduanya menulis ke disk tanpa enkripsi dan keduanya bukan tempat rahasia.
+
+### `Settings` (modul `QtCore`, Qt 6.5 ke atas)
+
+Fakta dari dokumentasi Qt: tipe ini mewarisi `QtObject`; nilai individual dinyatakan sebagai **properti** di dalam elemen `Settings`; hanya tipe nilai yang dikenali `QSettings` yang didukung; implementasinya berbasis `QSettings`. Pendekatan yang direkomendasikan memakai **property alias** agar pembaruan berjalan dua arah otomatis, dengan harga bahwa nilai disimpan **setiap kali nilai alias berubah**. Properti biasa memberi kendali lebih rinci (misalnya menyimpan saat komponen dihancurkan).
+
+- `category: string` — mengelompokkan kunci (menghindari bentrok nama kunci).
+- `location: url` — jalur berkas pengaturan; dibuat bila belum ada; bila kosong, format bawaan `QSettings` dipakai, selain itu format INI.
+- Metode: `setValue(key, nilai)`, `value(key, nilaiBawaan)`, `sync()` (menulis perubahan yang belum tersimpan dan memuat ulang perubahan oleh aplikasi lain).
+- **Identitas aplikasi:** pengaturan dikenali lewat nama aplikasi, organisasi, dan domain, **atau** lewat `location`.
+- **Dua instans `Settings` tidak saling menyinkronkan nilai,** walau menunjuk kunci dan kategori yang sama.
+- **`Qt.labs.settings` sudah deprecated sejak Qt 6.5**; jangan dipakai pada kode baru.
+
+### Contoh inti: menyimpan pilihan warna
+
+```qml
+import QtCore
+import QtQuick
+import QtQuick.Shapes
+
+Window {
+    id: win
+    width: 240; height: 220; visible: true
+    title: 'Segitiga tersimpan'
+
+    readonly property var palet: ['royalblue', 'tomato', 'seagreen', 'orchid']
+
+    Settings {
+        id: pref
+        category: 'segitiga'
+        location: 'file:///tmp/uji-pengaturan.ini'
+        property int indeks: 0
+    }
+
+    Item {
+        anchors.fill: parent
+        TapHandler { onTapped: pref.indeks = (pref.indeks + 1) % win.palet.length }
+
+        Shape {
+            anchors.centerIn: parent
+            width: 120; height: 120
+            preferredRendererType: Shape.CurveRenderer
+
+            ShapePath {
+                strokeColor: 'white'; strokeWidth: 3
+                fillColor: win.palet[pref.indeks]
+                startX: 10; startY: 110
+                PathLine { x: 60; y: 10 }
+                PathLine { x: 110; y: 110 }
+                PathLine { x: 10; y: 110 }
+            }
+        }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `import QtCore` — sumber tipe `Settings` (Qt 6.5 ke atas). Potongan kurikulum tidak menyebutnya.
+- `Settings { category: 'segitiga'; location: 'file:///tmp/uji-pengaturan.ini' }` — `location` menentukan berkas secara eksplisit sehingga contoh tidak bergantung pada nama organisasi dan aplikasi. Format `file:///` adalah bentuk URL berkas lokal.
+- `property int indeks: 0` — sebuah pengaturan bernama `indeks` dengan nilai bawaan 0. Nilai bawaan dipakai bila belum ada nilai tersimpan.
+- `TapHandler { onTapped: pref.indeks = (pref.indeks + 1) % win.palet.length }` — setiap ketukan menggeser indeks warna secara melingkar (`%` adalah sisa bagi). Karena `indeks` adalah properti `Settings`, perubahannya disimpan.
+- `fillColor: win.palet[pref.indeks]` — warna isian diambil dari palet berdasarkan indeks tersimpan.
+- Alasan memakai **indeks bilangan bulat**, bukan objek warna: hanya tipe yang dikenali `QSettings` yang didukung, dan bilangan bulat aman di semua platform.
+
+Uji:
+
+```bash
+qml6 Main.qml          # ketuk beberapa kali, tutup, lalu jalankan lagi: warna yang sama pulih
+cat /tmp/uji-pengaturan.ini
+```
+
+Isi berkas (INI) akan memuat bagian `[segitiga]` dengan kunci `indeks`.
+
+### Untuk proyek CMake: identitas aplikasi di `main.cpp`
+
+```cpp
+QGuiApplication app(argc, argv);
+app.setOrganizationName("Latihan");
+app.setOrganizationDomain("latihan.example");
+app.setApplicationName("HelloQt");
+```
+
+Tanpa `location`, ketiganya menentukan di mana `QSettings` menaruh berkas (di Linux umumnya di bawah `~/.config`). Panggil sebelum membuat engine QML.
+
+### Singleton pengaturan dan penutup lingkaran dengan `Theme`
+
+Qt sendiri menunjukkan pola menjadikan `Settings` sebuah **singleton** yang tersedia di semua berkas QML (contoh To Do List), dengan `QT_QML_SINGLETON_TYPE` pada berkasnya, sama seperti `Theme.qml` di Modul 5.3:
+
+```qml
+// AppSettings.qml (daftarkan sebagai singleton di CMake)
+pragma Singleton
+import QtCore
+import QtQuick
+
+Settings {
+    category: 'ui'
+    property int modeTema: 0              // 0 ikuti sistem, 1 terang, 2 gelap
+    property bool kurangiGerak: false
+}
+```
+
+```qml
+// di Theme.qml (Modul 5.3): ikat ke pengaturan tersimpan
+property int mode: AppSettings.modeTema
+property bool reduceMotion: AppSettings.kurangiGerak
+```
+
+Dengan ini pilihan tema dan “kurangi gerakan” bertahan antar-sesi.
+
+### Opsi lain untuk menyimpan preferensi
+
+```qml
+// Opsi 1 — property alias: otomatis dua arah; menyimpan tiap perubahan (disarankan)
+Settings { property alias lebar: win.width }
+
+// Opsi 2 — properti biasa + simpan saat dihancurkan: kendali lebih rinci
+Settings { id: s; property string state: 'active' }
+Component.onDestruction: s.state = page.state
+
+// Opsi 3 — setValue / value: kunci dinamis
+Settings { id: s }   // s.setValue('tema', 'gelap') ; s.value('tema', 'terang')
+
+// Opsi 4 — berkas JSON buatan sendiri lewat C++ (kendali format, enkripsi, migrasi)
+```
+
+### `LocalStorage`: SQLite untuk data tabular
+
+Fakta dari dokumentasi Qt: ia adalah **tipe singleton** untuk membaca dan menulis database SQLite (`import QtQuick.LocalStorage`). Database-nya **khusus pengguna dan khusus QML, tetapi dapat diakses semua aplikasi QML**, disimpan di subdirektori `Databases` pada `QQmlEngine::offlineStoragePath()`. API-nya mengikuti API *sinkron* HTML5 Web Database. Koneksi ditutup otomatis saat garbage collection JavaScript.
+
+```qml
+import QtQuick
+import QtQuick.LocalStorage
+
+Window {
+    id: win
+    width: 320; height: 260; visible: true
+    title: 'Catatan'
+
+    property var catatan: []
+
+    function db() {
+        return LocalStorage.openDatabaseSync('CatatanLatihan', '', 'Catatan kecil', 1000000)
+    }
+
+    function muat() {
+        const hasil = []
+        db().readTransaction(function (tx) {
+            const r = tx.executeSql('SELECT id, isi FROM catatan ORDER BY id DESC')
+            for (let i = 0; i < r.rows.length; i++)
+                hasil.push(r.rows.item(i))
+        })
+        win.catatan = hasil
+    }
+
+    function tambah(isi) {
+        db().transaction(function (tx) {
+            tx.executeSql('INSERT INTO catatan (isi) VALUES (?)', [isi])
+        })
+        muat()
+    }
+
+    Component.onCompleted: {
+        db().transaction(function (tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS catatan (id INTEGER PRIMARY KEY AUTOINCREMENT, isi TEXT)')
+        })
+        muat()
+    }
+
+    Column {
+        x: 12; y: 12; spacing: 6; width: parent.width - 24
+
+        Rectangle {
+            width: parent.width; height: 28; radius: 4; border.color: '#94a3b8'
+            TextInput {
+                anchors.fill: parent; anchors.margins: 4
+                focus: true
+                onAccepted: { if (text.length > 0) { win.tambah(text); text = '' } }
+            }
+        }
+
+        Repeater {
+            model: win.catatan
+            Text {
+                required property var modelData
+                text: modelData.isi
+            }
+        }
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `LocalStorage.openDatabaseSync(nama, versi, deskripsi, perkiraanUkuran)` — membuka atau membuat database. Versi `''` menerima versi apa pun; `1000000` adalah perkiraan ukuran dalam byte.
+- `db().transaction(function (tx) { ... })` — transaksi baca-tulis; bila fungsi melempar pengecualian, transaksi **dibatalkan** (rollback).
+- `db().readTransaction(...)` — transaksi hanya-baca untuk `SELECT`.
+- `tx.executeSql('INSERT ... VALUES (?)', [isi])` — pernyataan SQL dengan **penampung `?`** dan daftar nilai terpisah. Ini kueri berparameter: nilai tidak pernah ditempelkan ke teks SQL, sehingga kebal dari *SQL injection*.
+- `r.rows.length` dan `r.rows.item(i)` — hasil kueri: jumlah baris dan baris ke-i (objek dengan kolom sebagai properti).
+- `CREATE TABLE IF NOT EXISTS` — membuat tabel hanya bila belum ada, sehingga aman dijalankan tiap aplikasi dibuka.
+- `win.catatan = hasil` — menetapkan larik baru ke properti `var`; `Repeater` menggambar ulang daftar.
+
+### Keamanan dan batas `LocalStorage` dan `Settings`
+
+- **`LocalStorage` terbuka bagi aplikasi QML lain milik pengguna yang sama.** Ia bukan penyimpanan privat per aplikasi: aplikasi QML lain dapat membuka database dengan nama yang sama.
+- **Tak ada enkripsi yang dijanjikan** pada keduanya (dokumentasi tidak menyebutnya). Anggap isinya tersimpan sebagai teks atau SQLite biasa.
+- **Jangan menyimpan rahasia** (kata sandi, token, kunci). Untuk itu pakai brankas kunci sistem (misalnya `libsecret` lewat pustaka dari C++) alih-alih berkas.
+- **Selalu gunakan kueri berparameter (`?`)**; jangan menyusun SQL dengan menggabungkan string masukan pengguna.
+- **API-nya sinkron:** operasi besar menahan thread GUI. Untuk data besar atau akses jarang, pindahkan ke C++ (`QtSql`) di thread pekerja.
+- **Lokasi file:** cari dengan `find ~/.local/share -path '*OfflineStorage*' 2>/dev/null` untuk mengetahui tempat database di mesin Anda.
+
+### Memilih penyimpanan
+
+```
+ Preferensi kecil (kunci-nilai)?                          --> Settings
+ Data tabular yang dikueri, ukuran kecil, tidak rahasia?  --> LocalStorage (SQLite)
+ Data besar, relasi kompleks, kinerja, atau enkripsi?     --> QtSql / pustaka C++ / file terenkripsi
+ Rahasia (kata sandi, token)?                             --> brankas kunci sistem; bukan keduanya
+```
+
+**Referensi bagian ini:** [Settings (QtCore)](https://doc.qt.io/qt-6/qml-qtcore-settings.html) · [QSettings](https://doc.qt.io/qt-6/qsettings.html) · [Qt Quick Local Storage](https://doc.qt.io/qt-6/qtquick-localstorage-qmlmodule.html) · [StandardPaths](https://doc.qt.io/qt-6/qml-qtcore-standardpaths.html) · [QQmlEngine::offlineStoragePath](https://doc.qt.io/qt-6/qqmlengine.html) · [Qt SQL](https://doc.qt.io/qt-6/qtsql-index.html) · [OWASP: SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
+
+## 6.4.6 `Canvas` dan opsi baru Qt 6.12 (`Canvas2D`)
+
+### Dasar: menggambar secara imperatif
+
+Berbeda dari `Shapes` yang *deklaratif* (Anda menyatakan bentuknya), `Canvas` bersifat *imperatif*: Anda menulis kode JavaScript yang memberi perintah menggambar satu per satu pada sebuah *context* (kuas), seperti `<canvas>` di HTML. Cocok untuk gambar yang dihitung lewat algoritma: grafik, pengukur (gauge), visualisasi, atau kuas gambar bebas.
+
+```
+ Shapes  (deklaratif):  "ada segitiga biru di sini"         -> engine yang menggambar & menggambar ulang
+ Canvas  (imperatif):   "pindah ke (10,110), garis ke (60,10), isi"  -> Anda yang memerintah kuas
+```
+
+### `Canvas` Qt Quick: contoh pengukur melingkar
+
+```qml
+import QtQuick
+
+Canvas {
+    id: kanvas
+    property real nilai: 0.6
+    width: 160; height: 160
+
+    onNilaiChanged: requestPaint()
+
+    onPaint: {
+        const ctx = getContext('2d')
+        ctx.reset()
+        ctx.lineWidth = 12
+        ctx.lineCap = 'round'
+
+        ctx.strokeStyle = '#e2e8f0'
+        ctx.beginPath()
+        ctx.arc(width / 2, height / 2, 60, 0.75 * Math.PI, 2.25 * Math.PI)
+        ctx.stroke()
+
+        ctx.strokeStyle = '#2563eb'
+        ctx.beginPath()
+        ctx.arc(width / 2, height / 2, 60, 0.75 * Math.PI, (0.75 + 1.5 * nilai) * Math.PI)
+        ctx.stroke()
+    }
+}
+```
+
+### Bedah kode (kata demi kata)
+
+- `property real nilai: 0.6` — data yang digambar (0 sampai 1).
+- `onNilaiChanged: requestPaint()` — `Canvas` **tidak menggambar ulang sendiri** saat data berubah; Anda meminta lewat `requestPaint()`. Ini perbedaan mendasar dari `Shapes`.
+- `onPaint: { ... }` — dipanggil saat kanvas perlu digambar. Semua kode menggambar ada di sini.
+- `getContext('2d')` — mengambil *context* 2D: objek dengan perintah menggambar bergaya HTML5.
+- `ctx.reset()` — mengembalikan context ke keadaan awal (membersihkan keadaan gaya sebelumnya).
+- `ctx.lineWidth`, `ctx.lineCap = 'round'`, `ctx.strokeStyle` — gaya garis: tebal, ujung membulat, warna.
+- `ctx.beginPath()` lalu `ctx.arc(cx, cy, r, sudutAwal, sudutAkhir)` lalu `ctx.stroke()` — membuat lintasan busur dan menggambarnya. Sudut dalam radian; `Math.PI` adalah setengah putaran. Busur pertama (abu muda) adalah jalur penuh; busur kedua (biru) hanya sampai sejauh `nilai`.
+
+### Apa yang terjadi di balik layar (dan mengapa ada peringatan)
+
+Fakta dari dokumentasi dan blog resmi Qt: `Canvas` Qt Quick menggambar dengan **`QPainter` di CPU ke sebuah `QImage`, lalu mengunggahnya sebagai tekstur**. Setiap pembaruan berarti unggah tekstur, sehingga dokumentasi tidak menyarankannya untuk animasi atau kanvas besar. Properti `renderTarget: Canvas.Image` adalah satu-satunya yang efektif (`FramebufferObject` diabaikan sejak Qt 6.0).
+
+### Opsi baru Qt 6.12: `Canvas2D` (technology preview)
+
+Fakta yang sudah diverifikasi:
+
+- **Modul `QtCanvas2D`, tipe `Canvas2D`, sejak Qt 6.12, berstatus technology preview.** API-nya dapat berubah dan belum ada jaminan kompatibilitas sumber atau biner.
+- **Menggambar di GPU** lewat Qt Canvas Painter dan QRhi, langsung ke scene graph; bukan lagi CPU → gambar → tekstur.
+- **API hampir sepenuhnya kompatibel dengan `Canvas`** Qt Quick: untuk memindahkan kode lama, impor `QtCanvas2D` dan ganti nama tipe `Canvas` menjadi `Canvas2D`.
+- **Perbedaan perilaku penting:** menurut Qt, `Canvas2D` secara bawaan menggambar ulang dari awal setiap frame, sehingga **tak perlu memanggil `clearRect()`** di awal `onPaint` seperti pada HTML Canvas dan `Canvas`. Periksa dokumentasi `Canvas2D` untuk cara mengatur kapan `onPaint` dipanggil.
+- **`Canvas2DContext` menerapkan API Canvas 2D W3C** yang sudah dikenal pengembang web (`beginPath()`, `moveTo()`, `lineTo()`, `bezierCurveTo()`, `fill()`, `stroke()`, dan seterusnya).
+- Sisi C++ (`QCanvasPainter`) sudah **tidak lagi technology preview di Qt 6.12**, sedangkan `Canvas2D` masih.
+- Di Arch Linux, paket C++-nya bernama `qt6-canvaspainter`; periksa apakah modul QML `QtCanvas2D` ikut di dalamnya dengan `pacman -Ql qt6-canvaspainter | grep -i canvas2d`.
+
+```qml
+// Sebelum (Qt Quick Canvas)
+import QtQuick
+Canvas { onPaint: { const ctx = getContext('2d'); /* gambar */ } }
+
+// Sesudah (Canvas2D, Qt 6.12, preview)
+import QtQuick
+import QtCanvas2D
+Canvas2D { onPaint: { const ctx = getContext('2d'); /* gambar yang sama */ } }
+```
+
+### Memilih: `Shapes`, `Canvas`, atau `Canvas2D`
+
+```
+ Bentuk vektor yang dapat dinyatakan sebagai path, perlu interaksi (handler), dianimasikan?  --> Shapes
+ Gambar dihitung dengan algoritma, statis atau jarang berubah, proyek stabil?               --> Canvas
+ Gambar dinamis/animasi besar (grafik, gauge halus, kuas bebas) dan Anda menerima preview? --> Canvas2D
+ Jalur produksi yang harus stabil dan GPU cepat?                                            --> Shapes, atau C++ QCanvasPainter
+```
+
+### Hal yang perlu diperhatikan
+
+- **Jangan memakai `Canvas` untuk yang cukup dengan `Shapes`** (segitiga, lingkaran, garis, gradien).
+- **`Canvas` tak memberi tahu perubahan data;** Anda wajib memanggil `requestPaint()`.
+- **Isi kanvas tidak terbaca teknologi bantu.** Beri `Accessible.name` dan `Accessible.description` pada kanvas (5.1.6) agar pengguna pembaca layar tahu isinya.
+- **`Canvas2D` adalah technology preview.** Isolasi pemakaiannya, jangan bergantung padanya di jalur kritis, dan siapkan jalan mundur ke `Canvas` atau `Shapes`.
+- **Pakai `Behavior` pada `nilai` dengan hati-hati:** pada `Canvas` setiap frame animasi memicu pengunggahan tekstur.
+
+**Referensi bagian ini:** [Canvas](https://doc.qt.io/qt-6/qml-qtquick-canvas.html) · [Context2D](https://doc.qt.io/qt-6/qml-qtquick-context2d.html) · [Canvas2D (Qt 6.12)](https://doc.qt.io/qt-6/qml-qtcanvas2d-canvas2d.html) · [Qt Canvas Painter](https://doc.qt.io/qt-6/qtcanvaspainter-index.html) · [Blog Qt: Canvas2D, elemen kanvas QML baru](https://www.qt.io/blog/canvas2d-new-qml-canvas-element-using-qt-canvas-painter) · [Paket qt6-canvaspainter (Arch)](https://archlinux.org/packages/extra/x86_64/qt6-canvaspainter/)
+
+## 6.4.7 \[TAMBAHAN\] Memilih alat, biaya, dan batas keamanan
+
+*Alasan penambahan:* modul ini adalah daftar alat; yang paling berharga adalah penilaian tentang kapan *tidak* memakainya. Bagian ini merangkum biaya dan batas kepercayaan.
+
+### Tangga biaya (kasar, dari murah ke mahal)
+
+```
+ murah ---------------------------------------------------------------------------> mahal
+
+ Rectangle, Image, Shape statis
+   < Shape yang geometrinya beranimasi (triangulasi ulang)
+   < MultiEffect: warna, bayangan sederhana
+   < MultiEffect: blur, terutama di area luas
+   < Particles: banyak partikel (laju x umur besar)
+   < Canvas: menggambar ulang tiap frame di CPU, unggah tekstur
+```
+
+Urutan ini bersifat umum; ukur di perangkat Anda (6.2.7: `QSG_RENDER_TIMING`, `QSG_VISUALIZE`).
+
+### Batas keamanan
+
+- **Dialog:** hasil pilihan pengguna adalah masukan tak tepercaya (periksa skema, jangan percaya ekstensi, ubah ke path lokal dengan hati-hati).
+- **`Settings`:** teks polos; bukan untuk rahasia. Satu pengguna dapat mengubah berkasnya di luar aplikasi: validasi nilai saat dibaca (rentang, tipe) sebelum dipakai.
+- **`LocalStorage`:** terbuka bagi aplikasi QML lain milik pengguna yang sama; bukan privat dan tidak terenkripsi. Gunakan kueri berparameter.
+- **Partikel dan efek:** hanya dekoratif; jangan menaruh informasi penting di sana, dan hormati saklar gerak berkurang.
+- **Fitur preview (`Canvas2D`):** API bisa berubah; jangan menjadikannya dasar fitur yang tak bisa diganti.
+
+### Alat lain yang tidak dibahas di sini
+
+- `ShaderEffect` dan **Qt Quick Effect Maker** — efek shader kustom bila `MultiEffect` tak cukup.
+- `AnimatedSprite`, `SpriteSequence`, `AnimatedImage` — animasi berbasis kerangka gambar (6.2.9).
+- Modul lain di luar kurikulum ini (grafik 3D, bagan, dsb.); periksa dokumentasi sebelum memutuskan.
+
+## Terminologi Esensial
+
+- **Path (lintasan)** — urutan titik, garis, dan kurva yang mendefinisikan sebuah bentuk.
+- **`Shape` / `ShapePath`** — wadah bentuk vektor / satu bentuk dengan gaya garis dan isian.
+- **Renderer (`GeometryRenderer`, `CurveRenderer`, `SoftwareRenderer`)** — cara `Shape` digambar: triangulasi (bawaan), kurva asli (Qt 6.6 ke atas), atau perangkat lunak.
+- **Triangulasi** — memecah bentuk menjadi segitiga agar GPU dapat menggambarnya.
+- **Anti-aliasing** — menghaluskan tepi bergerigi.
+- **`MultiEffect`** — item efek pasca-proses gabungan (blur, bayangan, warna, mask).
+- **Item sumber (`source`)** — item yang diolah efek; perlu disembunyikan agar tak tergambar dua kali.
+- **`layer.enabled` / `layer.effect`** — merender item ke tekstur, lalu menerapkan efek langsung.
+- **Padding otomatis** — penambahan ruang di sekeliling item agar blur atau bayangan tak terpotong.
+- **Sistem partikel** — gabungan `ParticleSystem`, `Emitter`, affector, dan painter.
+- **`Emitter` / affector / painter** — pelahir partikel / pengubah perilaku partikel hidup / penggambar partikel.
+- **`ItemParticle` / `ImageParticle`** — painter berbasis item (berat) / berbasis gambar (hemat).
+- **Dialog native / cadangan (fallback)** — dialog milik sistem operasi / dialog buatan Qt Quick di dalam scene.
+- **`Settings`** — penyimpanan kunci-nilai berbasis `QSettings` (`QtCore`, Qt 6.5 ke atas).
+- **`QSettings`** — kelas C++ penyimpan pengaturan; di Linux umumnya berkas INI.
+- **`LocalStorage`** — singleton untuk database SQLite lokal, sinkron.
+- **SQL injection** — serangan lewat masukan yang disisipkan ke teks SQL; dicegah dengan kueri berparameter.
+- **Kueri berparameter** — SQL dengan penampung (`?`) dan nilai terpisah.
+- **`Canvas` / `Context2D`** — area gambar imperatif / objek kuasnya.
+- **`Canvas2D` / `QtCanvas2D`** — elemen kanvas baru berbasis GPU di Qt 6.12 (technology preview).
+- **Technology preview** — fitur yang bisa dipakai tetapi API-nya dapat berubah tanpa jaminan kompatibilitas.
+
+## Hubungan dengan Modul Lain
+
+- **Prasyarat:** Modul 6.2 (biaya animasi dan alat ukur), Modul 6.3 (handler dan fokus: `containsMode`, `TapHandler` pada `Shape`; dialog dan fokus), Modul 5.3 (singleton `Theme`; `AppSettings` memakai pola yang sama), dan Modul 4.4 (`TapHandler`).
+- **Mengikat ke fase sebelumnya:** `Settings` menyimpan `Theme.mode` dan `reduceMotion` (5.3 dan 6.2.7); `ParticleSystem.running` mengikuti `reduceMotion`; dialog memakai pola fokus 6.3.6.
+- **Ke fase berikutnya:** `Settings` dan `LocalStorage` membuka pintu ke persistensi data dan model data; dialog ke alur pengguna yang lebih besar; ke jalur C++: `QSettings`, `QtSql`, `QCanvasPainter`, dan `QQuickPaintedItem` adalah padanan yang lebih kuat.
+
+## Kesalahan Umum dan Solusi
+
+1. **Memakai `Canvas` untuk yang cukup dengan `Shapes`.** *Akibat:* CPU dan unggah tekstur sia-sia. *Solusi:* `Shape` + `ShapePath`.
+2. **Blur pada area besar atau pada sumber yang beranimasi.** *Akibat:* beban GPU tinggi. *Solusi:* kecilkan item, utamakan `blurMultiplier`, hindari sumber beranimasi, matikan `autoPaddingEnabled` saat memburamkan seluruh latar.
+3. **Sumber `MultiEffect` tidak disembunyikan.** *Akibat:* item tergambar dua kali. *Solusi:* `visible: false` (atau `opacity: 0` bila perlu input) atau `layer.effect`.
+4. **Mengubah `blurEnabled`, `shadowEnabled`, atau `maskEnabled` saat animasi.** *Akibat:* shader berganti, patah. *Solusi:* animasikan `blur` atau `shadowOpacity`.
+5. **Banyak `Shape` terpisah.** *Solusi:* satu `Shape` dengan banyak `ShapePath`.
+6. **Menganimasikan geometri bentuk rumit pada renderer bawaan.** *Akibat:* triangulasi ulang tiap frame. *Solusi:* `CurveRenderer`, sederhanakan bentuk, atau animasikan transformasi item.
+7. **`Settings` tanpa `import QtCore`, atau memakai `Qt.labs.settings`.** *Solusi:* `import QtCore`; `Qt.labs.settings` sudah deprecated sejak 6.5.
+8. **Lupa identitas aplikasi.** *Akibat:* berkas pengaturan di tempat tak terduga. *Solusi:* atur nama organisasi, domain, dan aplikasi di `main.cpp`, atau isi `location`.
+9. **Mengharapkan dua `Settings` saling menyinkronkan nilai.** *Solusi:* satu sumber (singleton `AppSettings`) dan `sync()` bila perlu.
+10. **Menyimpan rahasia di `Settings` atau `LocalStorage`.** *Solusi:* brankas kunci sistem.
+11. **Menyusun SQL dengan menggabungkan string.** *Akibat:* SQL injection. *Solusi:* `executeSql(sql, [nilai])` dengan penampung `?`.
+12. **Mengira `LocalStorage` privat per aplikasi.** *Fakta:* dapat diakses semua aplikasi QML pengguna.
+13. **Mengandalkan dialog native.** *Akibat:* di Linux tanpa platform theme GTK, dialog cadangan tampil di dalam jendela dan bisa terpotong. *Solusi:* rancang untuk cadangan; atur platform theme bila perlu native.
+14. **Mempercayai path dari dialog.** *Solusi:* validasi skema, canonicalize, dan batasi akses.
+15. **Partikel terlalu banyak atau berjalan saat tak terlihat.** *Solusi:* hitung `emitRate` × `lifeSpan`, gunakan `ImageParticle`, ikat `running` ke visibilitas dan saklar gerak berkurang.
+16. **Membaca `selectedFile` sebelum `accepted`.** *Akibat:* nilai sementara. *Solusi:* ambil nilai akhir di `onAccepted`.
+17. **Bergantung pada `Canvas2D` (preview) di jalur kritis.** *Solusi:* isolasi dan siapkan cadangan.
+
+## Tips dan Praktik Terbaik
+
+- **Mulai dari alat paling murah** yang memenuhi kebutuhan; naik hanya bila perlu.
+- **Ukur sebelum dan sesudah** menambah efek atau partikel (`QSG_RENDER_TIMING`, `QSG_VISUALIZE=overdraw`).
+- **Satu `Shape`, banyak `ShapePath`;** sederhanakan path; pakai `CurveRenderer` untuk kualitas tepi dan zoom.
+- **Efek hanya sebagai pelengkap:** pastikan antarmuka tetap terbaca tanpanya.
+- **Singleton `AppSettings`** untuk pengaturan lintas berkas, terintegrasi dengan `Theme`.
+- **Pakai `location` pada pengujian** agar tidak mengotori pengaturan nyata.
+- **Validasi nilai yang dibaca dari penyimpanan** (rentang, tipe); anggap berkas bisa diubah di luar aplikasi.
+- **Kueri berparameter selalu,** dan batasi `LocalStorage` ke data kecil dan tak rahasia.
+- **Rancang dialog untuk keyboard:** fokus awal aman, Esc menutup, fokus kembali (6.3.6).
+- **Perlakukan technology preview dengan hati-hati:** catat versi Qt, isolasi, dan baca catatan rilis tiap pembaruan.
+- **Jangan bergantung pada gerak dan efek untuk informasi penting.**
+
+## Latihan 15 Menit (versi diperbaiki)
+
+*Perbaikan dari audit:* “gambar segitiga lalu simpan warnanya” diperjelas dengan `import QtCore`, lokasi berkas yang pasti, cara memeriksa isi berkas, serta pengukuran biaya efek.
+
+1. Jalankan kode contoh di 6.4.5 (segitiga dengan `Settings`). Ketuk beberapa kali, tutup, jalankan lagi: warna yang sama harus pulih.
+2. Periksa isi `/tmp/uji-pengaturan.ini`.
+3. Hapus berkas itu dan jalankan lagi: warna kembali ke bawaan.
+4. Tambahkan bayangan pada segitiga dengan `layer.effect: MultiEffect`, lalu ukur dengan `QSG_RENDER_TIMING=1`.
+5. Aktifkan `Shape.CurveRenderer` dan bandingkan tepinya dengan tanpa itu (zoom lewat `scale`).
+6. *Tantangan:* pindahkan pengaturan ke singleton `AppSettings` (daftarkan di CMake seperti `Theme.qml`).
+
+**Kunci jawaban** (coba dulu sebelum membaca):
+
+```qml
+import QtCore
+import QtQuick
+import QtQuick.Effects
+import QtQuick.Shapes
+
+Window {
+    id: win
+    width: 240; height: 220; visible: true
+    title: 'Segitiga tersimpan'
+
+    readonly property var palet: ['royalblue', 'tomato', 'seagreen', 'orchid']
+
+    Settings {
+        id: pref
+        category: 'segitiga'
+        location: 'file:///tmp/uji-pengaturan.ini'
+        property int indeks: 0
+    }
+
+    Item {
+        anchors.fill: parent
+        TapHandler { onTapped: pref.indeks = (pref.indeks + 1) % win.palet.length }
+
+        Shape {
+            anchors.centerIn: parent
+            width: 120; height: 120
+            preferredRendererType: Shape.CurveRenderer
+
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowColor: '#000000'
+                shadowOpacity: 0.4
+                shadowBlur: 0.6
+                shadowVerticalOffset: 4
+            }
+
+            ShapePath {
+                strokeColor: 'white'; strokeWidth: 3
+                fillColor: win.palet[pref.indeks]
+                startX: 10; startY: 110
+                PathLine { x: 60; y: 10 }
+                PathLine { x: 110; y: 110 }
+                PathLine { x: 10; y: 110 }
+            }
+        }
+    }
+}
+```
+
+- `import QtCore` dan `Settings { location: ... }` — penyimpanan eksplisit di `/tmp`, tidak bergantung pada nama organisasi.
+- `layer.enabled: true; layer.effect: MultiEffect { shadowEnabled: true ... }` — bayangan diterapkan pada seluruh `Shape` tanpa item sumber terpisah; padding otomatis mencegah bayangan terpotong.
+- Isi berkas INI setelah beberapa ketukan: bagian `[segitiga]` dengan `indeks=<angka>`.
+- Untuk mengukur: `QSG_RENDER_TIMING=1 qml6 Main.qml`; bandingkan waktu render dengan dan tanpa `layer.effect`. Biaya akan tampak kecil untuk satu bentuk kecil; naikkan ukuran atau jumlah untuk merasakan perbedaannya.
+
+## Cek Pemahaman dan Kunci
+
+1. **Kapan `Shapes` lebih baik daripada `Canvas`?** *Kunci:* untuk bentuk vektor yang dapat dinyatakan sebagai path: deklaratif, digambar di GPU tanpa rasterisasi perangkat lunak dan unggah tekstur, dapat dianimasikan dan diberi handler (`containsMode`). `Canvas` untuk gambar yang dihitung secara imperatif dan jarang berubah.
+2. **Mengapa sumber `MultiEffect` perlu disembunyikan, dan apa kekurangannya?** *Kunci:* karena `MultiEffect` menggambar item *baru* di samping sumber; tanpa disembunyikan keduanya tampil. `visible: false` membuat sumber tak menerima input; gunakan `opacity: 0` atau `layer.effect` bila input diperlukan.
+3. **Mengapa `Settings` sebaiknya memakai `location` atau identitas aplikasi yang jelas?** *Kunci:* lokasi berkas ditentukan oleh nama aplikasi, organisasi, dan domain, atau oleh `location`; tanpa itu berkas bisa berada di tempat tak terduga atau tercampur dengan aplikasi lain.
+4. **Apa risiko `LocalStorage` dibanding berkas biasa?** *Kunci:* database dapat diakses semua aplikasi QML pengguna yang sama dan tidak dienkripsi; dan API-nya sinkron sehingga menahan thread GUI. Gunakan kueri berparameter dan jangan simpan rahasia.
+5. **Apa status `Canvas2D` di Qt 6.12 dan apa implikasinya?** *Kunci:* technology preview; API bisa berubah tanpa jaminan kompatibilitas, jadi isolasi pemakaiannya. API C++ `QCanvasPainter` sudah resmi di 6.12.
+6. **Bagaimana dialog berkas berperilaku di Linux tanpa platform theme GTK?** *Kunci:* memakai dialog cadangan Qt Quick yang berupa item di dalam scene (bukan jendela terpisah), sehingga butuh ruang cukup di jendela aplikasi.
+
+## Rangkuman Fase 6
+
+```
+ 6.1 State dan Transition  -->  keadaan visual yang dinyatakan, perpindahan yang dianimasikan
+ 6.2 Animasi               -->  gerak yang efisien, terukur, dan bertanggung jawab
+ 6.3 Input dan Keyboard    -->  kendali penuh lewat pointer dan keyboard, fokus yang benar
+ 6.4 Qt Quick Ekstra       -->  peralatan khusus: bentuk, efek, dialog, penyimpanan, gambar imperatif
+```
+
+**Daftar periksa Fase 6** (gunakan saat meninjau kode sendiri):
+
+- **State dan transisi:** keadaan diturunkan dari data (`when`); satu `states` per sumbu keadaan; transisi mencakup arah kembali; alur logika sensitif memakai mesin keadaan.
+- **Animasi:** properti murah (`opacity`, `scale`, `x`/`y`); `running` terikat visibilitas; durasi dan kurva dari token tema; saklar “kurangi gerakan”; diukur, bukan ditebak.
+- **Input dan keyboard:** semua fungsi punya jalur keyboard; indikator fokus terlihat; tak ada jebakan fokus; fokus kembali ke pembuka dialog; aksi merusak butuh konfirmasi atau undo.
+- **Ekstra:** alat paling murah yang cukup; efek diukur; penyimpanan tak berisi rahasia dan memakai kueri berparameter; dialog dirancang untuk cadangan; fitur preview diisolasi.
+
+**Proyek mini opsional** (menyatukan seluruh fase): sebuah *panel pengaturan* dengan komponen buatan sendiri (Fase 5), tombol dan kolom yang berpindah state dengan animasi halus (6.1 dan 6.2), navigasi penuh dengan keyboard dan palet perintah (6.3), serta saklar tema dan pilihan berkas yang tersimpan lewat `Settings` dan `FileDialog` (6.4).
+
+## Referensi Tambahan
+
+- [Qt Quick Shapes](https://doc.qt.io/qt-6/qtquick-shapes-qmlmodule.html)
+- [Qt Quick Effects](https://doc.qt.io/qt-6/qtquick-effects-qmlmodule.html)
+- [Qt Quick Particles](https://doc.qt.io/qt-6/qtquick-particles-qmlmodule.html)
+- [Qt Quick Dialogs](https://doc.qt.io/qt-6/qtquickdialogs-index.html)
+- [Settings (QtCore)](https://doc.qt.io/qt-6/qml-qtcore-settings.html)
+- [Qt Quick Local Storage](https://doc.qt.io/qt-6/qtquick-localstorage-qmlmodule.html)
+- [Canvas2D (Qt 6.12)](https://doc.qt.io/qt-6/qml-qtcanvas2d-canvas2d.html)
+- [Qt — Arch Wiki](https://wiki.archlinux.org/title/Qt)
+- [Blog Qt](https://www.qt.io/blog)
+
+---
+
+*Alat yang tepat membuat kerja berat terasa ringan; kenali gudangnya, lalu pilih dengan tenang.*
 
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
