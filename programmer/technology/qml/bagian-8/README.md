@@ -2283,6 +2283,2175 @@ Tautan `doc.qt.io` di bawah ini muncul pada halaman dokumentasi Qt 6.12 yang say
 
 ---
 
+# Modul 7.3: Objek Dinamis (`Loader`, `Component`, dan `Instantiator`)
+
+*Fase 7: Model, View, dan Arsitektur Data*
+
+## Daftar isi modul ini
+
+1. Audit singkat sebelum materi
+2. Fondasi: peran modul, konsep dan filosofi, terminologi, peta visual
+3. **7.3.1** `Loader`
+4. **7.3.2** `Component.createObject()`
+5. **7.3.3** `Qt.createComponent()` dan status loading
+6. **7.3.4** `Instantiator`
+7. **7.3.5** `destroy()` dan kepemilikan
+8. **7.3.6** Risiko `Qt.createQmlObject`
+9. **7.3.7** (TAMBAHAN) Inkubasi asinkron: `incubateObject()`
+10. **7.3.8** (TAMBAHAN) Pola pabrik objek yang aman
+11. Penutup: hubungan modul, tabel kesalahan, latihan, cek pemahaman, referensi
+
+---
+
+## 1. Audit singkat
+
+Saya membaca bagian 7.3 terhadap dokumentasi Qt 6.12 (`Dynamic QML Object Creation`, `Loader`, `Component`, `Instantiator`, `Handling Untrusted Data`).
+
+| # | Temuan | Status | Tindakan |
+|---|---|---|---|
+| 1 | Prasyarat: 3.4 (scope, id, konteks), 5.1 (`Component`), 6.3 (fokus), 7.1.3 (`ObjectModel`), 7.2 (`Loader` dalam delegate) | Aman, tidak ada loncatan | Tidak ada |
+| 2 | Contoh kurikulum | Valid | Diverifikasi. `Loader` di akhir contoh sengaja tidak aktif, jadi hanya memperlihatkan sifat. Dibahas penuh di 7.3.1 |
+| 3 | "Parent vs owner" | Benar tetapi tipis | Dilengkapi di 7.3.5: tanpa parent, umur objek ditentukan referensi JavaScript (GC) |
+| 4 | Status `Component` (`Null`/`Ready`/`Loading`/`Error`), `errorString()` | Kurang | Dilengkapi di 7.3.3 |
+| 5 | `Loader`: aturan ukuran, fokus, sinyal dari objek termuat, `setSource`, konteks dalam delegate | Kurang | Dilengkapi di 7.3.1 |
+| 6 | `Instantiator`: variabel `index`, induk visual, `objectAdded`/`objectRemoved` | Tipis | Dilengkapi di 7.3.4 |
+| 7 | `incubateObject()` (pembuatan asinkron) | Belum ada | TAMBAHAN 7.3.7 |
+| 8 | Keamanan: hanya satu peringatan | Perlu diperluas | 7.3.6 dan TAMBAHAN 7.3.8 (daftar putih, batas jumlah, pembersihan) |
+| 9 | `ObjectModel` + `createObject()` (janji dari 7.1.3) | Tertunda | Dipenuhi di 7.3.8 |
+| 10 | Catatan build statis untuk `createQmlObject` | Belum ada | 7.3.6 |
+
+**Pembaruan daftar isi kurikulum 7.3:** 7.3.1 sampai 7.3.6 tetap, ditambah **7.3.7** (Inkubasi asinkron) dan **7.3.8** (Pola pabrik objek yang aman).
+
+---
+
+## 2. Fondasi modul
+
+### 2.1 Deskripsi konkret dan peran dalam kurikulum
+
+Sejauh ini hampir semua objek QML dideklarasikan **statis**: ditulis di berkas dan dibuat saat aplikasi dimulai. Modul ini mengajarkan membuat objek **saat runtime**: menunda pembuatan sampai diperlukan, membuatnya sebagai reaksi pada klik atau data, dan menghancurkannya dengan benar. Dampaknya nyata: waktu start yang lebih cepat, memori yang lebih hemat, dan antarmuka yang bisa menyesuaikan diri.
+
+Modul ini juga **gerbang menuju keamanan Fase 13**. Kemampuan membuat objek dari teks atau URL adalah kemampuan mengeksekusi kode, jadi di sinilah kebiasaan "daftar putih dan validasi" harus mulai tertanam.
+
+### 2.2 Konsep kunci dan filosofi
+
+**Analogi untuk non-IT.** Pembuatan objek dinamis seperti **memesan kue dari cetakan**. Cetakan (`Component`) disiapkan sekali. Kue (objek) dipesan sesuai kebutuhan, tidak disiapkan semuanya sebelumnya. Tetapi ada dua tanggung jawab. Pertama, kue harus **ditaruh di meja** (diberi parent), kalau tidak, tak ada yang melihatnya. Kedua, kue yang basi harus **dibuang** (`destroy()`), kalau tidak, dapur penuh.
+
+Prinsip yang mendasarinya:
+
+1. **Cetakan terpisah dari kue.** `Component` adalah definisi. `createObject()` dan `Loader` adalah tindakan membuat instance.
+2. **Setiap objek harus punya pemilik yang jelas.** Pemilik menentukan siapa yang berhak dan wajib menghancurkannya.
+3. **Alat yang tepat untuk tugas yang tepat.** `Loader` untuk satu bagian UI. `Instantiator` untuk banyak objek dari model. `createObject()` untuk pembuatan imperatif. `createQmlObject()` hampir tak pernah.
+4. **Perspektif keamanan.** Dokumentasi Qt menegaskan bahwa QML tidak memiliki konsep domain privasi terpisah: kode apa pun yang dimuat, dari jarak jauh maupun lokal, dapat mengakses semua data dalam lingkupnya. Karena itu pembuatan dinamis tidak boleh digerakkan oleh data tak tepercaya.
+5. **Modularitas.** Komponen yang bisa dibuat dinamis harus punya API yang jelas (`required property`, sinyal), selaras dengan Modul 5.1.
+
+### 2.3 Terminologi esensial
+
+| Istilah | Penjelasan |
+|---|---|
+| **Pembuatan dinamis** | Membuat objek QML saat runtime, bukan lewat deklarasi statis. |
+| **`Component`** | Definisi (cetakan) yang bisa diinstansiasi. Bisa inline atau dari berkas. |
+| **`createObject(parent, props)`** | Metode `Component` untuk membuat satu instance. |
+| **`Qt.createComponent(url)`** | Membuat `Component` dari URL berkas QML. |
+| **`Qt.createQmlObject(teks, parent, path)`** | Membuat objek dari **string** QML. Lambat dan berbahaya. |
+| **`Loader`** | Item yang memuat dan membuang subpohon QML sesuai kebutuhan. |
+| **`Instantiator`** | Pembuat banyak objek dari model, tanpa tata letak (`QtQml.Models`). |
+| **`status`** | Keadaan pemuatan: `Null`, `Ready`, `Loading`, `Error`. |
+| **Inkubator** | Objek yang membuat instance secara asinkron (`incubateObject`). |
+| **Parent** | Induk objek (QObject) dan, untuk `Item`, induk visual. |
+| **Pemilik (owner)** | Pihak yang menentukan umur objek: parent, atau referensi JavaScript bila tanpa parent. |
+| **Creation context** | Konteks (id dan properti) tempat komponen dideklarasikan. Menentukan nama apa yang terlihat oleh objek hasil buatan. |
+| **`destroy(delay)`** | Menjadwalkan penghancuran objek dinamis. Hanya untuk objek yang dibuat secara dinamis. |
+| **GC (garbage collector)** | Pembersih memori JavaScript. Dapat menghancurkan objek tanpa parent yang tak lagi dirujuk. |
+| **Daftar putih (allow-list)** | Daftar eksplisit apa yang boleh dimuat. Selain itu ditolak. |
+
+### 2.4 Peta visual
+
+**Diagram A: memilih alat**
+
+```
+Perlu membuat objek saat runtime?
+ |
+ +-- menunda / mengganti SATU bagian UI (halaman, panel, tab) ... Loader
+ +-- banyak objek mengikuti model atau jumlah
+ |     +-- visual berulang, butuh tata letak dan gulir ......... Repeater / ListView (7.2)
+ |     +-- nirvisual, atau induk visual diatur sendiri ......... Instantiator
+ +-- digerakkan logika imperatif (klik, event, data tervalidasi) Component.createObject()
+ +-- komponen dimuat dari berkas/URL, perlu menunggu status ... Qt.createComponent() + status
+ +-- ingin tidak membekukan UI saat membuat objek besar ....... incubateObject()
+ +-- QML disusun sebagai teks saat runtime ................... Qt.createQmlObject()  (HINDARI)
+```
+
+**Diagram B: siklus hidup objek dinamis dan kepemilikannya**
+
+```
+ Component (cetakan)
+     |  createObject(parent, props)
+     v
+ [objek hidup]
+     |-- punya parent ----> umur terikat parent: parent dihancurkan -> objek ikut hancur
+     |-- parent = null ---> umur terikat REFERENSI JS: referensi hilang -> GC boleh menghancurkan
+     |
+     +-- destroy(delay) --> dijadwalkan (antara akhir blok skrip dan frame berikutnya)
+                                 |
+                                 v
+                    Component.onDestruction -> objek hilang
+```
+
+**Diagram C: status `Loader`**
+
+```
+ active=false / source kosong ---> Null
+          | active=true + source/sourceComponent valid
+          v
+   asynchronous=true: Loading ---> Ready (sinyal loaded) ---> item tersedia
+          |                              |
+          +--> Error                     +-- ganti source / active=false
+                                              -> objek lama DIHANCURKAN -> Null (atau Loading baru)
+```
+
+---
+
+## 3. 7.3.1 `Loader`
+
+> Memuat saat dibutuhkan adalah seni menghemat tanpa terasa.
+
+### 3.1 Dasar sintaks
+
+`Loader` memuat subpohon QML dari berkas (`source`) atau dari `Component` (`sourceComponent`). Ia berguna untuk menunda pembuatan: halaman yang baru dibuka, panel yang jarang dipakai, atau konten tab yang aktif saja.
+
+**Contoh A: memuat, menerima sinyal, melepas**
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 320; height: 160
+
+    Component {
+        id: panelKomponen
+        Rectangle {
+            id: panel
+            signal pesan(string teks)
+            color: '#3498db'
+            Text { anchors.centerIn: parent; color: 'white'; text: 'Panel dimuat' }
+            MouseArea { anchors.fill: parent; onClicked: panel.pesan('diklik') }
+        }
+    }
+
+    Loader {
+        id: pemuat
+        anchors.fill: parent
+        active: false
+        sourceComponent: panelKomponen
+        onLoaded: console.log('dimuat, status =', status, '| ukuran =', item.width, 'x', item.height)
+    }
+
+    Connections {
+        target: pemuat.item
+        function onPesan(teks) { console.log('dari panel:', teks) }
+    }
+
+    Timer {
+        interval: 300; running: true
+        onTriggered: {
+            console.log('status sebelum:', pemuat.status)
+            pemuat.active = true
+        }
+    }
+    Timer {
+        interval: 900; running: true
+        onTriggered: {
+            pemuat.active = false
+            console.log('status sesudah dilepas:', pemuat.status, '| item =', pemuat.item)
+            Qt.quit()
+        }
+    }
+}
+```
+
+**Keluaran yang diharapkan** (jalankan tanpa klik; di jendela, klik panel untuk memunculkan baris `dari panel`):
+
+```
+qml: status sebelum: 0
+qml: dimuat, status = 1 | ukuran = 320 x 160
+qml: status sesudah dilepas: 0 | item = null
+```
+
+**Penjelasan kata demi kata:**
+
+| Potongan | Arti |
+|---|---|
+| `Component { id: panelKomponen ... }` | Cetakan inline. Tidak dirender sampai diminta. `Component` bukan turunan `Item`, jadi tak bisa di-anchor. |
+| `signal pesan(string teks)` | Sinyal kustom di item yang akan dimuat. |
+| `Loader { id: pemuat }` | Pemuat. Ia sendiri adalah `Item`. |
+| `anchors.fill: parent` | Ukuran eksplisit untuk `Loader`: item termuat **diubah ukurannya mengikuti Loader**. |
+| `active: false` | Tidak membuat apa pun dulu. Bawaannya `true`. |
+| `sourceComponent: panelKomponen` | Komponen yang akan dibuat saat `active` menjadi benar. |
+| `onLoaded:` | Handler sinyal `loaded()`, terpancar saat status menjadi `Ready`. |
+| `status`, `item` | Properti baca-saja: keadaan pemuatan dan objek termuat. |
+| `Connections { target: pemuat.item }` | Mendengarkan sinyal dari objek yang dimuat. Target berubah saat `item` berubah. |
+| `function onPesan(teks)` | Handler untuk sinyal `pesan`. |
+| `Timer { interval; running }` | Memicu aksi tertunda agar urutannya terlihat. |
+| `pemuat.active = false` | Melepas objek: objek termuat dihancurkan, `status` kembali `Null`. |
+
+### 3.2 Properti dan perilaku utama
+
+| Properti / metode | Fungsi | Catatan |
+|---|---|---|
+| `source` | URL berkas QML | String kosong membuang objek |
+| `sourceComponent` | Objek `Component` | `undefined` membuang objek |
+| `active` | Mengaktifkan atau menonaktifkan pemuatan | Default `true`. Saat dinonaktifkan, objek dibuang tetapi `source` tetap diingat |
+| `asynchronous` | Membuat objek bertahap di beberapa frame | Default `false`. Dengan `source`, kompilasi juga di thread latar |
+| `status` | `Null`/`Ready`/`Loading`/`Error` | Untuk berkas lokal, status langsung `Ready` atau `Error` |
+| `progress` | 0.0 sampai 1.0 | Relevan untuk pemuatan jaringan |
+| `item` | Objek termuat | Boleh tipe apa pun, tak harus `Item` |
+| `loaded()` | Sinyal sukses | Tetap terpancar untuk berkas lokal walau tak ada `onStatusChanged` |
+| `setSource(url, props)` | Memuat dengan properti awal | Tidak memicu `Behavior` pada properti awal |
+
+Perubahan `source` atau `sourceComponent` selalu **menghancurkan objek lama**.
+
+### 3.3 Aturan ukuran `Loader`
+
+- Jika `Loader` **tanpa ukuran eksplisit**, ia mengikuti ukuran item termuat.
+- Jika `Loader` **berukuran eksplisit** (`width`/`height`/anchors), item termuat diubah ukurannya mengikuti `Loader`.
+
+Dalam kedua kasus ukuran keduanya identik, sehingga meng-anchor ke `Loader` sama dengan meng-anchor ke item termuat. Dengan komponen non-`Item`, aturan ini tidak berlaku.
+
+### 3.4 Fokus dan tombol
+
+`Loader` adalah **focus scope**. Agar anak-anaknya mendapat fokus aktif, `focus: true` harus diatur pada `Loader` **dan** pada item di dalam objek yang dimuat. Tombol yang ditangani sebaiknya diterima dengan `event.accepted = true` agar tidak merambat ke induk.
+
+### 3.5 `Loader` di dalam delegate: jebakan konteks
+
+Dokumentasi memperingatkan satu jebakan. Komponen yang dimuat `Loader` diinstansiasi dengan **creation context** tempat `Component`-nya dideklarasikan, bukan konteks delegate. Akibatnya `index` (dan role model) dari delegate tak terlihat dari komponen yang dideklarasikan di luar delegate.
+
+| Solusi | Contoh |
+|---|---|
+| Pindahkan komponen **inline** ke dalam delegate | `sourceComponent: Component { Text { text: index } }` |
+| Pindahkan ke **berkas terpisah** | `source: 'MyComponent.qml'` |
+| Berikan data sebagai **properti `Loader`** (Loader menjadi context object komponen) | `property int modelIndex: index` lalu `text: modelIndex` |
+| Dengan `ComponentBehavior: Bound`: rujuk lewat **id delegate** (cara yang dipakai di 7.2.7 dan 7.2.11) | `text: baris.catatan` |
+
+### 3.6 Opsi lain untuk logika yang sama (memuat konten saat dibutuhkan)
+
+| Opsi | Kapan dipakai |
+|---|---|
+| `Loader { source: ... }` | Satu bagian UI, dimuat dari berkas |
+| `Loader { sourceComponent: ... }` | Komponen sudah ada di berkas yang sama |
+| `Loader { active: kondisi }` | Memuat hanya saat kondisi benar (tab aktif) |
+| `StackView` (Qt Quick Controls) | Navigasi halaman dengan riwayat |
+| `Component.createObject()` | Anda ingin kendali penuh atas parent dan umur |
+
+Jebakan: D9, D10, D11, D17.
+
+---
+
+## 4. 7.3.2 `Component.createObject()`
+
+> Satu cetakan, banyak kue: tanggung jawab ada pada pemesan.
+
+### 4.1 Dasar
+
+`createObject(parent, properties)` membuat satu instance dari `Component` dan mengembalikannya. Argumen:
+
+- **`parent`**: induk objek, boleh `Item` atau non-visual (`QtObject`). Hanya objek visual yang berinduk visual yang akan tampil. Boleh `null`.
+- **`properties`** (opsional): peta nama ke nilai awal, diterapkan **sebelum pembuatan selesai**. Ini lebih efisien daripada mengatur properti sesudahnya dan mencegah galat binding bila suatu properti harus terisi lebih dulu.
+
+Mengembalikan `null` jika gagal.
+
+**Contoh B: contoh kurikulum, dengan log**
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 300; height: 200
+
+    Component {
+        id: kotakKomponen
+        Rectangle {
+            width: 40; height: 40; color: 'tomato'
+            Component.onDestruction: console.log('kotak dihancurkan')
+        }
+    }
+
+    function tambahKotak(posisiX) {
+        const obj = kotakKomponen.createObject(root, { x: posisiX, y: 20 })
+        if (!obj) console.warn('gagal membuat objek')
+        return obj
+    }
+
+    Component.onCompleted: {
+        const k = tambahKotak(30)
+        tambahKotak(100)
+        console.log('anak root =', root.children.length)
+        k.destroy(500)
+    }
+
+    Timer {
+        interval: 900; running: true
+        onTriggered: {
+            console.log('anak root setelah =', root.children.length)
+            Qt.quit()
+        }
+    }
+}
+```
+
+**Keluaran yang diharapkan:**
+
+```
+qml: anak root = 2
+qml: kotak dihancurkan
+qml: anak root setelah = 1
+```
+
+**Penjelasan kata demi kata:**
+
+| Potongan | Arti |
+|---|---|
+| `function tambahKotak(posisiX)` | Fungsi pembuat. Harus berada **di dalam** objek QML (D1). |
+| `kotakKomponen.createObject(root, {...})` | Membuat Rectangle baru berinduk `root`, dengan `x` dan `y` awal. |
+| `if (!obj)` | `createObject` bisa mengembalikan `null`. Selalu periksa (D2). |
+| `Component.onCompleted` | Dijalankan setelah `root` selesai dibuat. Urutan antarpenangan tidak terdefinisi. |
+| `k.destroy(500)` | Menjadwalkan penghancuran sekitar 500 ms kemudian. |
+| `root.children.length` | Jumlah anak **visual** (`Item`) dari `root`. |
+| `Component.onDestruction` | Dipanggil saat objek mulai dihancurkan. |
+
+### 4.2 Properti awal dan `Qt.binding`
+
+Properti awal bisa berupa nilai atau **binding** lewat `Qt.binding`:
+
+```qml
+const obj = kotakKomponen.createObject(root, {
+    x: 10,
+    width: Qt.binding(() => root.width / 4)     // mengikuti root.width
+})
+```
+
+`required property` yang tak diisi lewat argumen ini membuat pembuatan gagal (`null`) dengan pesan galat. Itu cara yang baik untuk memastikan kontrak komponen dipenuhi.
+
+### 4.3 Opsi lain untuk membuat komponen
+
+| Opsi | Catatan |
+|---|---|
+| `Component { id: x ... }` | Anonim, tak bisa dipakai sebagai tipe properti |
+| **Inline component**: `component Kotak: Rectangle { ... }` | Bertipe dan bernama (Qt 6). Disarankan dokumentasi bila butuh nama tipe |
+| Berkas `Kotak.qml` + `Qt.createComponent('Kotak.qml')` | Terbaik untuk komponen besar atau dipakai ulang |
+
+Jebakan: D1, D2, D3, D4, D12.
+
+---
+
+## 5. 7.3.3 `Qt.createComponent()` dan status loading
+
+> Menunggu dengan sabar lebih murah daripada memperbaiki kecelakaan.
+
+`Qt.createComponent(url)` membuat objek `Component` dari berkas QML. Jalur relatif dihitung **terhadap berkas tempat fungsi dipanggil**.
+
+**Status `Component`:**
+
+| Status | Arti |
+|---|---|
+| `Component.Null` | Tak ada data |
+| `Component.Loading` | Sedang dimuat |
+| `Component.Ready` | Siap membuat instance |
+| `Component.Error` | Gagal. `errorString()` menjelaskan alasannya |
+
+Untuk berkas lokal, status biasanya langsung `Ready`. Untuk URL jaringan, URL jarak jauh selalu dimuat secara asinkron, sehingga Anda **harus** menunggu status berubah.
+
+**Contoh C: pemuatan yang aman dengan pemeriksaan status**
+
+Berkas `Sprite.qml`:
+
+```qml
+import QtQuick
+Rectangle { width: 80; height: 50; color: 'steelblue' }
+```
+
+Berkas utama (di folder yang sama):
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 300; height: 200
+
+    property var komponen: null
+
+    function buat() {
+        komponen = Qt.createComponent('Sprite.qml')
+        if (komponen.status === Component.Ready)
+            selesai()
+        else if (komponen.status === Component.Loading)
+            komponen.statusChanged.connect(selesai)
+        else
+            console.warn('galat memuat:', komponen.errorString())
+    }
+
+    function selesai() {
+        if (komponen.status === Component.Ready) {
+            const s = komponen.createObject(root, { x: 100, y: 100 })
+            console.log(s ? 'berhasil dibuat' : 'createObject gagal')
+        } else if (komponen.status === Component.Error) {
+            console.warn('galat memuat:', komponen.errorString())
+        }
+    }
+
+    Component.onCompleted: buat()
+    Timer { interval: 300; running: true; onTriggered: Qt.quit() }
+}
+```
+
+Hasilnya `qml: berhasil dibuat`. Ubah nama berkas menjadi yang tak ada untuk melihat `Component.Error` dan teks `errorString()` yang menyebut berkas dan lokasi galat.
+
+**Penjelasan kata demi kata:**
+
+| Potongan | Arti |
+|---|---|
+| `property var komponen` | Menyimpan `Component` agar tidak lepas selagi menunggu. |
+| `komponen.statusChanged.connect(selesai)` | Menyambungkan sinyal perubahan status ke fungsi `selesai`. |
+| `komponen.errorString()` | Deskripsi galat: berkas, lokasi, alasan. |
+| `s ? ... : ...` | Operator ternary: pesan bergantung pada ada atau tidaknya objek. |
+
+**Opsi lain:**
+
+| Opsi | Catatan |
+|---|---|
+| `Qt.createComponent(url)` + status | Imperatif, fleksibel |
+| `Loader { source: url }` | Menangani status dan siklus hidup untuk Anda |
+| Inline `Component {}` | Tak perlu menunggu, selalu siap |
+
+`Qt.createComponent` juga menerima argumen opsional untuk mode pemuatan dan parent. Lihat dokumentasi objek `Qt` pada versi Anda.
+
+Jebakan: D2, D8.
+
+---
+
+## 6. 7.3.4 `Instantiator`
+
+> Ketika data menentukan berapa banyak, jangan menulis ulang kodenya.
+
+`Instantiator` (modul `QtQml.Models`) membuat **banyak objek dari satu template** berdasarkan `model`. Ia mirip `Repeater`, tetapi tanpa tata letak dan boleh membuat objek non-visual.
+
+**Fakta dari dokumentasi:**
+
+- Objek yang dibuatnya **diparent ke `Instantiator`** dan dikelola olehnya. Ia dapat menghancurkannya bila propertinya berubah.
+- `model` boleh berupa angka, model (`ListModel`, `QAbstractItemModel`), daftar string, atau daftar objek. Default `1`.
+- `delegate` adalah properti default.
+- Di dalam delegate tersedia `index`.
+- `active` (default `true`), `asynchronous` (default `false`), `count`, `object` (objek pertama), `objectAt(i)`.
+- Sinyal `objectAdded(index, object)` dan `objectRemoved(index, object)`. Jangan menyimpan referensi `object` dari `objectRemoved`, karena objek segera dihapus.
+
+**Contoh D: objek visual dari model**
+
+```qml
+import QtQuick
+import QtQml.Models
+
+Item {
+    id: root
+    width: 320; height: 100
+
+    ListModel {
+        id: warna
+        ListElement { nama: 'Merah'; kode: '#e74c3c' }
+        ListElement { nama: 'Hijau'; kode: '#2ecc71' }
+        ListElement { nama: 'Biru';  kode: '#3498db' }
+    }
+
+    Row {
+        id: baris
+        spacing: 8
+    }
+
+    Instantiator {
+        id: pabrik
+        model: warna
+        delegate: Rectangle {
+            required property string nama
+            required property string kode
+            required property int index
+            parent: baris
+            width: 60; height: 60
+            radius: 6
+            color: kode
+        }
+        onObjectAdded: (index, object) => console.log('ditambah', index, object.nama)
+        onObjectRemoved: (index, object) => console.log('dilepas', index)
+    }
+
+    Timer {
+        interval: 300; running: true
+        onTriggered: {
+            warna.append({ nama: 'Kuning', kode: '#f1c40f' })
+            warna.remove(0)
+        }
+    }
+    Timer {
+        interval: 700; running: true
+        onTriggered: { console.log('count =', pabrik.count); Qt.quit() }
+    }
+}
+```
+
+**Keluaran yang diharapkan** (urutan tiga baris awal bisa berbeda):
+
+```
+qml: ditambah 0 Merah
+qml: ditambah 1 Hijau
+qml: ditambah 2 Biru
+qml: ditambah 3 Kuning
+qml: dilepas 0
+qml: count = 3
+```
+
+**Penjelasan kata demi kata:**
+
+| Potongan | Arti |
+|---|---|
+| `import QtQml.Models` | Modul tempat `Instantiator` berada. |
+| `Instantiator { model: warna }` | Membuat satu objek per baris `ListModel`. |
+| `delegate: Rectangle {...}` | Template. Boleh juga ditulis sebagai anak langsung karena `delegate` adalah properti default. |
+| `required property ...` | Kontrak data dari model (sama seperti 7.2.4). |
+| `parent: baris` | `Instantiator` **bukan `Item`**, jadi objek visual tak punya induk visual sampai Anda mengaturnya. Di sini `Row` menata mereka (D15). |
+| `onObjectAdded: (index, object) => ...` | Sinyal tiap objek baru. |
+| `warna.append(...)` dan `warna.remove(0)` | Perubahan model otomatis menambah dan melepas objek. |
+
+**Kegunaan khas `Instantiator`:** membuat objek non-visual dari data, seperti `Connections`, `Shortcut`, atau item menu. Setelah objek dibuat, `onObjectAdded` dipakai untuk menyisipkannya ke wadah yang tepat.
+
+**Opsi lain:**
+
+| Opsi | Kapan |
+|---|---|
+| `Repeater` | Visual berulang dalam positioner (tanpa virtualisasi) |
+| `ListView`/`GridView` | Daftar panjang (virtualisasi) |
+| `Instantiator` | Banyak objek, terutama non-visual, atau induk diatur sendiri |
+| Loop + `createObject()` | Kendali penuh, tetapi Anda yang mengurus umur objek |
+
+Jebakan: D7, D15, D16.
+
+---
+
+## 7. 7.3.5 `destroy()` dan kepemilikan
+
+> Siapa yang membuat, dia yang menjaga umurnya.
+
+### 7.1 Aturan `destroy()`
+
+- `destroy(delay)` menjadwalkan penghancuran. Argumen `delay` (milidetik, default 0) bersifat perkiraan.
+- Objek **tidak dihancurkan seketika**. Pembersihan terjadi antara akhir blok skrip dan frame berikutnya.
+- Aman memanggil `destroy()` dari dalam objek itu sendiri (misalnya animasi yang selesai lalu `rect.destroy()`).
+- **Hanya objek yang dibuat dinamis yang boleh di-`destroy()`.** Pada objek yang dideklarasikan statis, itu menghasilkan galat.
+- **Jangan** menghancurkan secara manual objek yang dibuat oleh pabrik kenyamanan seperti `Loader`, `Repeater`, dan `Instantiator`. Hindari juga menghancurkan objek yang tidak Anda buat sendiri.
+- Untuk UI sederhana, menyetel `opacity` atau `visible` bisa cukup. Menghancurkan baru bermanfaat bila objek dinamis sangat banyak.
+
+### 7.2 Parent vs pemilik
+
+| Cara pembuatan | Parent | Pemilik / penentu umur | Yang harus Anda lakukan |
+|---|---|---|---|
+| `createObject(root, ...)` | `root` | `root`: objek hancur bersama `root`, atau saat `destroy()` | `destroy()` bila tak lagi perlu |
+| `createObject(null, ...)` | Tidak ada | **Referensi JavaScript**: bila hilang, GC boleh menghancurkan objek | **Simpan referensi** (registri) dan atur parent visual bila perlu |
+| `Loader` | `Loader` | `Loader` | Jangan destroy. Ubah `active` atau `source` |
+| `Instantiator` | `Instantiator` | `Instantiator` | Jangan destroy. Ubah model atau `active` |
+| `Repeater` / view | View | View | Jangan destroy |
+| `Qt.createQmlObject(.., parent)` | `parent` | Sama dengan `createObject` | `destroy()` |
+| Dideklarasikan statis | | Berkas QML | Tidak boleh `destroy()` |
+
+Mengatur `Item.parent` setelahnya **tidak mengubah kepemilikan**, hanya induk visual.
+
+### 7.3 Creation context harus hidup lebih lama
+
+Binding dan penangan sinyal pada objek dinamis bergantung pada **creation context**. Jika konteks itu dihancurkan lebih dulu, binding dan penangan di objek dinamis berhenti bekerja. Konteks pembuatan bergantung pada caranya:
+
+| Cara | Creation context |
+|---|---|
+| `Qt.createComponent()` | Konteks tempat metode dipanggil |
+| `Qt.createQmlObject()` | Konteks objek parent yang diberikan |
+| `Component {}` lalu `createObject()` / `incubateObject()` | Konteks tempat `Component` dideklarasikan |
+
+Objek dinamis juga **tidak punya `id`** di QML. Rujuk lewat variabel JavaScript atau registri.
+
+### 7.4 Pola: registri objek
+
+```qml
+property var kotak: []                         // registri: Anda pemilik referensinya
+
+function tambah() {
+    const o = kotakKomponen.createObject(root, { nomor: ++penghitung })
+    if (o) kotak.push(o)
+}
+function hapusTerakhir() {
+    const o = kotak.pop()
+    if (o) o.destroy()
+}
+```
+
+Jebakan: D4, D5, D6, D7, D13.
+
+---
+
+## 8. 7.3.6 Risiko `Qt.createQmlObject`
+
+> Menyusun kode dari teks adalah kemudahan yang harganya paling mahal.
+
+`Qt.createQmlObject(teks, parent, path)` mengompilasi **string QML** lalu membuat objeknya. Argumen ketiga hanya nama berkas untuk pelaporan galat.
+
+```qml
+const obj = Qt.createQmlObject(`
+    import QtQuick
+    Rectangle { color: 'red'; width: 20; height: 20 }
+`, parentItem, 'cuplikanDinamis')
+```
+
+**Tiga alasan menghindarinya:**
+
+1. **Sangat lambat.** Mesin harus mengompilasi string itu setiap kali dipanggil.
+2. **Mudah menghasilkan QML tak valid** saat menyusun kode lewat manipulasi string.
+3. **Berbahaya bila teksnya dipengaruhi data luar.** Teks itu **dieksekusi sebagai kode**. Dokumentasi Qt secara eksplisit melarang pembuatan objek dinamis dari sumber tak tepercaya, dan menegaskan bahwa batasan untuk sumber QML statis berlaku sama untuk pembuatan dinamis.
+
+**Pola yang salah (jangan ditiru):**
+
+```qml
+// JANGAN: masukan luar disisipkan ke teks QML
+const kode = 'import QtQuick\nText { text: "' + masukanPengguna + '" }'
+Qt.createQmlObject(kode, root, 'x')
+```
+
+Tanda kutip di dalam `masukanPengguna` bisa keluar dari string dan menyisipkan QML atau JavaScript lain. Karena QML tak punya domain privasi terpisah, kode yang tersisip dapat mengakses semua data dalam lingkupnya.
+
+**Pola yang benar:** komponen tetap, data lewat properti.
+
+```qml
+Component { id: teksKomponen; Text { required property string isi; text: isi; textFormat: Text.PlainText } }
+
+teksKomponen.createObject(root, { isi: masukanPengguna })   // data tetap data, bukan kode
+```
+
+**Catatan lain:**
+
+- Pada build statis, hanya pernyataan `import` di bagian atas berkas yang dipindai. Impor yang hanya ada di dalam string tidak terdeteksi, jadi tulis impor yang sama juga di bagian atas berkas.
+- Jalur relatif impor dalam string dihitung terhadap berkas objek parent.
+- Prinsip yang sama berlaku untuk `Loader.source`: jangan biarkan URL berasal dari data luar tanpa daftar putih (7.3.8).
+
+**Opsi lain:**
+
+| Kebutuhan | Gunakan |
+|---|---|
+| Objek dengan variasi isi | Komponen tetap + properti awal |
+| Variasi tipe dari kumpulan terbatas | Pilih komponen dari daftar putih (7.3.8) |
+| Isi dinamis berupa data | Model + view |
+
+Jebakan: D14, D17.
+
+---
+
+## 9. 7.3.7 (TAMBAHAN) Inkubasi asinkron: `incubateObject()`
+
+> Pekerjaan berat yang tidak membekukan antarmuka adalah bentuk kesopanan.
+
+`Component.incubateObject(parent, properties, mode)` membuat instance **tanpa membekukan UI**. Ia mengembalikan **inkubator** (atau `null` bila gagal). Properti inkubator:
+
+| Properti | Arti |
+|---|---|
+| `status` | `Component.Ready`, `Component.Loading`, atau `Component.Error` |
+| `object` | Objek hasil. Hanya tersedia saat `Ready` |
+| `onStatusChanged` | Callback saat status berubah |
+| `forceCompletion()` | Menyelesaikan inkubasi secara sinkron |
+
+Mode: `Qt.Synchronous` atau `Qt.Asynchronous` (default asinkron). Walau sinkron diminta, inkubator bisa tetap asinkron bila komponen pemanggilnya sendiri sedang dibuat secara asinkron.
+
+```qml
+function buatAsinkron() {
+    const inkubator = kotakKomponen.incubateObject(root, { nomor: 99, x: 10, y: 100 })
+    if (inkubator === null) { console.warn('inkubasi gagal dimulai'); return }
+
+    if (inkubator.status !== Component.Ready) {
+        inkubator.onStatusChanged = function (status) {
+            if (status === Component.Ready)
+                console.log('siap:', inkubator.object)
+            else if (status === Component.Error)
+                console.warn('inkubasi galat')
+        }
+    } else {
+        console.log('siap segera:', inkubator.object)
+    }
+}
+```
+
+**Penjelasan:**
+
+| Potongan | Arti |
+|---|---|
+| `incubateObject(root, {...})` | Meminta pembuatan bertahap berinduk `root`. |
+| `inkubator.status !== Component.Ready` | Bisa langsung siap, bisa belum. Tangani keduanya. |
+| `inkubator.onStatusChanged = function (status) {...}` | Menetapkan callback yang menerima status baru. |
+| `inkubator.object` | Objek jadi. **Jangan** dipakai sebelum `Ready`. |
+
+**Opsi lain untuk menghindari UI beku:** `Loader { asynchronous: true }` untuk satu bagian UI, dan `Instantiator { asynchronous: true }` untuk banyak objek. Sinyal `objectAdded` memberi tahu tiap objek yang siap.
+
+---
+
+## 10. 7.3.8 (TAMBAHAN) Pola pabrik objek yang aman
+
+> Kuasa untuk menciptakan harus dibatasi daftar dan jumlahnya.
+
+Ini penerapan prinsip keamanan dari 7.3.6. Empat pagar yang perlu dipasang:
+
+1. **Daftar putih** untuk apa yang boleh dimuat.
+2. **Validasi** kunci dan tipe sebelum dipakai.
+3. **Batas jumlah** objek.
+4. **Registri dan pembersihan** yang jelas.
+
+**Contoh E: daftar putih untuk `Loader`**
+
+Berkas `Merah.qml` dan `Hijau.qml` berisi `Rectangle` sederhana berwarna masing-masing (di folder yang sama).
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 320; height: 120
+
+    // Daftar putih: hanya kunci ini yang boleh. Nilai = URL tetap & tepercaya (lokal atau qrc).
+    readonly property var registri: ({
+        'merah': Qt.resolvedUrl('Merah.qml'),
+        'hijau': Qt.resolvedUrl('Hijau.qml')
+    })
+
+    function muatPanel(kunci) {
+        if (typeof kunci !== 'string'
+            || !Object.prototype.hasOwnProperty.call(registri, kunci)) {
+            console.warn('ditolak: kunci panel tidak dikenal')
+            return false
+        }
+        pemuat.source = registri[kunci]
+        return true
+    }
+
+    Loader { id: pemuat; anchors.fill: parent }
+
+    Component.onCompleted: {
+        console.log(muatPanel('merah'))         // true
+        console.log(muatPanel('constructor'))   // false (ditolak)
+        console.log(muatPanel(42))              // false
+        console.log(muatPanel('https://x.test/a.qml'))   // false
+        Qt.quit()
+    }
+}
+```
+
+**Keluaran yang diharapkan:**
+
+```
+qml: true
+qml: ditolak: kunci panel tidak dikenal
+qml: false
+qml: ditolak: kunci panel tidak dikenal
+qml: false
+qml: ditolak: kunci panel tidak dikenal
+qml: false
+```
+
+**Penjelasan kata demi kata:**
+
+| Potongan | Arti |
+|---|---|
+| `readonly property var registri: ({...})` | Peta tetap kunci ke URL. Tanda kurung membuat `{}` terbaca sebagai objek, bukan blok kode. |
+| `Qt.resolvedUrl('Merah.qml')` | Mengubah jalur relatif menjadi URL absolut terhadap berkas ini. |
+| `typeof kunci !== 'string'` | Menolak tipe yang bukan teks. |
+| `Object.prototype.hasOwnProperty.call(registri, kunci)` | Memeriksa kunci **milik objek itu sendiri**. Ini penting. |
+| `pemuat.source = registri[kunci]` | URL yang dimuat selalu dari tabel, **tidak pernah** dari masukan. |
+
+**Mengapa bukan `if (registri[kunci])`?** Kunci seperti `'constructor'` atau `'__proto__'` ada di rantai prototipe objek JavaScript, sehingga pemeriksaan naif meloloskan masukan yang tak Anda daftarkan. Itulah tantangan di bagian latihan.
+
+**Contoh F: pabrik dengan batas dan registri (dipakai untuk latihan 7.3)**
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 360; height: 200
+    focus: true
+
+    property var kotak: []
+    property int penghitung: 0
+    readonly property int maksKotak: 8
+
+    Component {
+        id: kotakKomponen
+        Rectangle {
+            id: k
+            required property int nomor
+            width: 40; height: 40
+            radius: 6
+            color: Qt.hsla((k.nomor * 0.13) % 1, 0.7, 0.55, 1)
+            Text { anchors.centerIn: parent; color: 'white'; text: k.nomor }
+            Component.onDestruction: console.log('kotak', k.nomor, 'dihancurkan')
+        }
+    }
+
+    function tambah() {
+        if (kotak.length >= maksKotak) { console.warn('batas tercapai'); return null }
+        const obj = kotakKomponen.createObject(root, {
+            nomor: ++penghitung, x: 10 + kotak.length * 44, y: 20
+        })
+        if (obj === null) { console.warn('gagal membuat kotak'); return null }
+        kotak.push(obj)
+        return obj
+    }
+
+    function hapusTerakhir() {
+        const obj = kotak.pop()
+        if (obj) obj.destroy()
+    }
+
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_A)      { tambah();        event.accepted = true }
+        else if (event.key === Qt.Key_D) { hapusTerakhir(); event.accepted = true }
+    }
+}
+```
+
+Tekan `a` untuk menambah kotak dan `d` untuk menghapus yang terakhir. Perhatikan log `dihancurkan`.
+
+**Penjelasan:**
+
+| Potongan | Arti |
+|---|---|
+| `maksKotak` | Batas jumlah objek. Mencegah pertumbuhan tanpa batas. |
+| `required property int nomor` | Komponen mewajibkan nomor. Diisi lewat argumen `createObject`. |
+| `Qt.hsla(h, s, l, a)` | Membuat warna dari hue/saturasi/lightness/alfa, untuk variasi warna. |
+| `kotak.push(obj)` / `kotak.pop()` | Registri: satu-satunya tempat referensi objek disimpan. |
+| `obj.destroy()` | Pemilik (registri) menghancurkan objeknya. |
+
+**Integrasi dengan `ObjectModel` (janji dari 7.1.3):** objek hasil `createObject()` dapat dimasukkan ke model berisi item visual:
+
+```qml
+halaman.append(komponenHalaman.createObject())   // tanpa parent: simpan referensi dan atur nasib objeknya
+```
+
+Dalam kasus ini `ObjectModel` menampung referensi, tetapi **Anda tetap bertanggung jawab** atas penghancurannya bila perlu. Perlakukan model sebagai bagian dari registri.
+
+**Pagar tambahan untuk produksi:**
+
+- Data yang menentukan *jenis* objek (misalnya dari JSON hasil 7.4) harus melewati **gerbang validasi** dan dipetakan ke daftar putih. Jangan pernah dijadikan URL atau teks QML.
+- Muat QML hanya dari berkas lokal atau sumber daya Qt (`qrc`). Bila harus lewat jaringan, gunakan HTTPS atau jaringan tepercaya, sesuai anjuran dokumentasi keamanan Qt.
+- Tangani kegagalan: periksa `null`, status `Error`, dan batas jumlah.
+
+Jebakan: D5, D14, D17.
+
+---
+
+## 11. Penutup modul
+
+### 11.1 Hubungan dengan modul lain
+
+- **Prasyarat:** 3.4 (scope, id, konteks, yang menjelaskan creation context), 5.1 (`Component`, `required property`), 6.3 (fokus dan `Keys`), 7.1.3 (`ObjectModel`), 7.2 (`Loader` dalam delegate).
+- **7.4 Data Asinkron:** hasil jaringan harus lewat validasi, lalu dipetakan ke daftar putih sebelum memilih komponen. Jangan meneruskannya ke `createQmlObject`.
+- **Fase 6 (State/Transition):** `Loader.status` bisa dipakai sebagai pemicu `State`.
+- **Modul 10.x (C++):** `QQmlComponent` adalah padanan C++ dari `Component`, dipakai bila pembuatan objek dikendalikan dari C++.
+- **Fase 13 (keamanan):** daftar putih, validasi masukan, batas sumber daya, dan larangan mengeksekusi kode dari data luar.
+- **Qt Quick Controls:** `StackView` mengelola halaman dinamis di atas prinsip yang sama.
+
+### 11.2 Tabel kesalahan umum
+
+| ID | Gejala | Penyebab | Solusi |
+|---|---|---|---|
+| D1 | Galat sintaks saat memuat berkas | Fungsi pembuat ditulis di luar objek | Letakkan di dalam objek QML (atau di berkas `.js`) |
+| D2 | `createObject` mengembalikan `null` tanpa pesan di aplikasi | Galat QML, `required property` tak terisi, atau komponen belum siap | Selalu periksa `null`, baca keluaran galat di konsol |
+| D3 | Objek dibuat tetapi tak terlihat | Tanpa parent visual (parent `null` atau non-`Item`) | Beri parent `Item` yang valid |
+| D4 | Objek menghilang sendiri | `createObject(null)` tanpa referensi disimpan (GC) | Simpan referensi di registri, atau beri parent |
+| D5 | Memori terus naik | Objek tak pernah dihancurkan, tanpa batas | Registri + `destroy()` + batas jumlah |
+| D6 | Galat saat `destroy()` | Objek dideklarasikan statis | Hanya hancurkan objek dinamis |
+| D7 | Perilaku aneh setelah `destroy()` manual | Menghancurkan objek milik `Loader`/`Repeater`/`Instantiator` | Ubah `active`/`source`/model, jangan destroy |
+| D8 | Komponen jaringan tak bisa dibuat | `createObject` dipanggil saat status `Loading` | Tunggu `statusChanged`, periksa `Ready`, tangani `Error` |
+| D9 | `index` atau role tak terlihat di komponen yang dimuat `Loader` di delegate | Creation context komponen bukan delegate | Komponen inline di delegate, berkas terpisah, properti `Loader`, atau rujuk lewat id (dengan `Bound`) |
+| D10 | `Loader` kosong | `active: false`, sumber salah, atau status `Error` | Cek `status`, `source`, dan log galat |
+| D11 | Tombol tak sampai ke item termuat | `Loader` adalah focus scope | `focus: true` pada `Loader` dan item, serta `event.accepted = true` |
+| D12 | Binding awal gagal | Properti diatur setelah pembuatan | Pakai argumen `properties` atau `Qt.binding` |
+| D13 | Binding atau sinyal objek dinamis berhenti | Creation context dihancurkan lebih dulu | Pastikan konteks hidup lebih lama dari objek |
+| D14 | Kode asing tereksekusi | `createQmlObject` dengan teks dipengaruhi data luar | Komponen tetap + properti; jangan susun QML dari input |
+| D15 | Objek `Instantiator` tak tampak | `Instantiator` bukan `Item`, sehingga tak ada induk visual | `parent: wadah` di delegate |
+| D16 | Galat saat memakai objek dari `objectRemoved` | Objek segera dihapus | Jangan simpan referensinya |
+| D17 | Memuat komponen yang tak diinginkan | `Loader.source` atau kunci berasal dari input tanpa daftar putih | Daftar putih, validasi, URL tetap dari tabel |
+
+### 11.3 Latihan 15 menit
+
+**Persiapan terminal (Arch).** Cari nama biner QML di sistem Anda:
+
+```bash
+pacman -Q qt6-declarative
+pacman -Ql qt6-declarative | grep -E 'bin/(qml|qmllint|qmlformat)'
+```
+
+Pakai nama yang muncul, misalnya jika `qml`:
+
+```bash
+qml latihan73.qml                                   # dengan jendela (untuk tombol dan klik)
+QT_QPA_PLATFORM=offscreen qml latihan73.qml         # tanpa jendela (untuk skrip yang mencetak log)
+qmllint latihan73.qml                               # pemeriksaan statis
+```
+
+**Langkah:**
+
+1. Salin Contoh F (7.3.8) ke `latihan73.qml` dan jalankan dengan jendela. Tekan `a` beberapa kali sampai batas, lalu `d`. Cocokkan dengan log `dihancurkan`.
+2. Sesuai kurikulum: tambahkan dua **tombol** (`Rectangle` dengan `MouseArea` atau `TapHandler`) yang memanggil `tambah()` dan `hapusTerakhir()`. Susun di bagian bawah jendela.
+3. **Uji D2:** hapus `nomor: ++penghitung` dari argumen `createObject`. Apa yang terjadi, dan apa kata konsol?
+4. **Uji D4:** buat `createObject(null, { nomor: 1 })` tanpa menyimpannya, lalu panggil `gc()`. Amati apakah `Component.onDestruction` berjalan. Hasilnya bisa bergantung versi dan waktu.
+5. Jalankan `qmllint latihan73.qml` dan rapikan peringatannya.
+
+**Tantangan 10 menit:** pada Contoh E (7.3.8), ganti pemeriksaan daftar putih dengan versi naif `if (registri[kunci])`. Panggil `muatPanel('constructor')` dan amati perbedaannya. Lalu kembalikan ke versi `hasOwnProperty` dan jelaskan sendiri mengapa yang kedua lebih aman.
+
+### 11.4 Cek pemahaman
+
+1. Apa beda `Loader` dan `createObject()`? Siapa pemilik objek yang dibuat dengan `createObject(parent)`?
+2. Mengapa `createObject(null)` tanpa menyimpan referensi berbahaya?
+3. Mengapa objek buatan `Loader` tak boleh dihancurkan manual?
+4. Mengapa `Qt.createQmlObject` dengan input luar berbahaya, dan apa gantinya?
+5. Mengapa komponen yang dimuat `Loader` di dalam delegate bisa kehilangan `index`?
+6. Kapan memilih `Instantiator` dibanding `Repeater`?
+7. Mengapa `destroy()` tidak langsung menghilangkan objek saat itu juga?
+
+**Jawaban singkat:**
+
+1. `Loader` mengelola satu objek termuat beserta siklus hidupnya (membuang objek lama saat `source` berubah, ukuran, status). `createObject()` membuat satu instance secara imperatif dan Anda yang mengelola umurnya. Pemilik objek `createObject(parent)` adalah `parent`: objek ikut hancur bersama parent, atau bisa dihancurkan sendiri lewat `destroy()`.
+2. Tanpa parent, umur objek ditentukan referensi JavaScript. Bila referensi hilang, GC dapat menghancurkannya. Mengatur `Item.parent` kemudian tidak mengubah kepemilikan.
+3. Objek itu dikelola `Loader`. Mengubah `active` atau `source` adalah cara yang benar. Menghancurkan manual mengacaukan keadaan pabrik.
+4. Teksnya dieksekusi sebagai kode, sehingga masukan yang disisipkan bisa menjadi kode. QML juga tak punya domain privasi terpisah. Ganti dengan komponen tetap dan kirim data lewat properti awal.
+5. Karena komponen diinstansiasi dengan creation context tempat `Component` dideklarasikan, bukan konteks delegate. Solusi: komponen inline di delegate, berkas terpisah, properti `Loader`, atau rujukan lewat id.
+6. Saat objek tidak butuh tata letak atau virtualisasi `Repeater`, atau non-visual, atau induk visualnya diatur sendiri.
+7. Penghancuran dijadwalkan: dilakukan antara akhir blok skrip dan frame berikutnya (atau setelah `delay` bila diberikan).
+
+### 11.5 Referensi
+
+Tautan di bawah ini muncul pada halaman dokumentasi Qt 6.12 yang saya baca saat menyusun materi ini.
+
+- [Dynamic QML Object Creation from JavaScript](https://doc.qt.io/qt-6/qtqml-javascript-dynamicobjectcreation.html)
+- [Loader](https://doc.qt.io/qt-6/qml-qtquick-loader.html) · [Component](https://doc.qt.io/qt-6/qml-qtqml-component.html) · [Instantiator](https://doc.qt.io/qt-6/qml-qtqml-models-instantiator.html)
+- [QML Global Object `Qt`](https://doc.qt.io/qt-6/qml-qtqml-qt.html)
+- [Handling Untrusted Data](https://doc.qt.io/qt-6/untrusteddata.html) · [Security in Qt](https://doc.qt.io/qt-6/security.html)
+- [QML Scope (creation context)](https://doc.qt.io/qt-6/qtqml-documents-scope.html) · [Inline components](https://doc.qt.io/qt-6/qtqml-documents-definetypes.html#inline-components)
+- [Connecting Signals to Methods and Signals](https://doc.qt.io/qt-6/qtqml-syntax-signals.html#connecting-signals-to-methods-and-signals) · [Connections](https://doc.qt.io/qt-6/qml-qtqml-connections.html)
+- [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html)
+- [QQmlComponent (C++)](https://doc.qt.io/qt/qqmlcomponent.html)
+- [ObjectModel](https://doc.qt.io/qt-6/qml-qtqml-models-objectmodel.html) · [Models and Views in Qt Quick](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html)
+- Komunitas: [Qt Forum](https://forum.qt.io/) · [Qt Academy](https://www.qt.io/academy)
+
+---
+
+# Modul 7.4: Data Asinkron (XHR, JSON, dan Pekerjaan Berat)
+
+*Fase 7: Model, View, dan Arsitektur Data*
+
+## Daftar isi modul ini
+
+1. Audit singkat sebelum materi
+2. Fondasi: peran modul, konsep dan filosofi, terminologi, peta visual
+3. **7.4.1** XHR dan siklus `readyState`
+4. **7.4.2** `JSON.parse` dan validasi
+5. **7.4.3** Penanganan galat (jaringan, HTTP, parsing)
+6. **7.4.4** `Promise` dan keterbatasan `async/await`
+7. **7.4.5** `WorkerScript`
+8. **7.4.6** Kapan ke C++
+9. **7.4.7** (TAMBAHAN) Ketangguhan: timeout, pembatalan, urutan, dan ulang-coba
+10. **7.4.8** (TAMBAHAN) Keamanan data jaringan dan studi kasus ujung ke ujung
+11. Penutup: hubungan modul, tabel kesalahan, latihan, cek pemahaman, referensi
+
+---
+
+## 1. Audit singkat
+
+Saya membaca bagian 7.4 terhadap dokumentasi Qt 6.12 (`XMLHttpRequest`, JavaScript Host Environment, daftar objek JavaScript, `WorkerScript`).
+
+| # | Temuan | Status | Tindakan |
+|---|---|---|---|
+| 1 | Prasyarat: 2.x (callback, JSON, `Promise`), 3.x (sinyal), 6.x (`Timer`), 7.1 (gerbang validasi), 7.3 (keamanan dinamis) | Aman, tidak ada loncatan | Tidak ada |
+| 2 | Contoh `ambilJson` membungkus `sukses(...)` di dalam `try` | **Cacat kecil** | Galat di dalam callback sukses akan dilaporkan sebagai "JSON tidak valid". Perbaikan: `parse` di dalam `try`, callback di luar (7.4.1) |
+| 3 | `status !== 200` dilaporkan sebagai `HTTP <status>` | Menyesatkan | Pada galat jaringan, `status` umumnya bernilai `0`, bukan kode HTTP. Dipisah di 7.4.3 |
+| 4 | Hanya status `200` dianggap sukses | Terlalu sempit | Seluruh rentang 2xx umumnya sah (misalnya 204). Dibahas di 7.4.3 |
+| 5 | "`async/await` [uji dulu]" | Perlu fakta | Runtime QML mengimplementasikan edisi ke-7 ECMAScript (2016), sedangkan `async/await` baru ada di edisi 2017. `Promise` tersedia. Dikonfirmasi di 7.4.4 |
+| 6 | `WorkerScript` tanpa `import` dan berkas `.mjs` | Kurang | Perlu `import QtQml.WorkerScript`. Berkas `.mjs` berjalan sebagai modul ES (mode ketat). Pesan memiliki batasan tipe. Ditambahkan di 7.4.5 |
+| 7 | Timeout, pembatalan, balapan respons, ulang-coba | Belum ada | TAMBAHAN 7.4.7 |
+| 8 | Keamanan jaringan | Belum ada | TAMBAHAN 7.4.8. XHR QML **tidak menegakkan same-origin policy**, jadi penjagaan host menjadi tugas Anda |
+| 9 | `QML_XHR_DUMP`, akses berkas lokal lewat XHR | Belum ada | Dibahas di 7.4.1 dan 7.4.8 |
+
+**Pembaruan daftar isi kurikulum 7.4:** 7.4.1 sampai 7.4.6 tetap, ditambah **7.4.7** (Ketangguhan) dan **7.4.8** (Keamanan data jaringan dan studi kasus ujung ke ujung).
+
+---
+
+## 2. Fondasi modul
+
+### 2.1 Deskripsi konkret dan peran dalam kurikulum
+
+Data nyata hampir selalu datang dari luar: server, berkas, layanan. Modul ini mengajarkan tiga hal: **mengambilnya tanpa membekukan UI**, **memastikan ia layak dipakai** sebelum masuk model (7.1), dan **memindahkan pekerjaan berat** ke tempat yang tidak mengganggu antarmuka. Modul ini menutup Fase 7: model (7.1), view (7.2), objek dinamis (7.3), dan sekarang pasokan datanya.
+
+### 2.2 Konsep kunci dan filosofi
+
+**Analogi untuk non-IT.** Memesan makanan lewat kurir: Anda tidak berdiri menunggu di pintu (UI tetap berjalan), kurir mengabari saat tiba (callback). Pekerjaan berat di thread UI sama dengan pelayan yang berhenti melayani selama memasak. Memindahkannya ke `WorkerScript` sama dengan menyewa juru masak terpisah di dapur belakang.
+
+Prinsip yang mendasarinya:
+
+1. **Asinkron berarti menunggu tanpa memblokir.** `send()` kembali seketika. Hasilnya datang lewat callback di thread UI.
+2. **Thread UI hanya untuk UI.** Penguraian dan validasi data besar adalah pekerjaan CPU. Jika dijalankan di thread UI, ia membekukan layar.
+3. **Semua yang datang dari jaringan tidak tepercaya.** Ia bisa salah format, terlalu besar, terlambat, atau berbahaya. Perlakukan sebagai **batas kepercayaan** yang dilewati lewat serangkaian gerbang.
+4. **Gagal dengan jelas.** Jaringan putus, HTTP 404, dan JSON rusak adalah tiga masalah yang berbeda dan butuh tanggapan berbeda.
+5. **Keamanan.** XHR QML tidak menegakkan kebijakan same-origin. Aplikasi bisa meminta ke host mana pun, maka aplikasi sendiri harus membatasi host, skema, ukuran, dan jumlah.
+
+### 2.3 Terminologi esensial
+
+| Istilah | Penjelasan |
+|---|---|
+| **XHR (`XMLHttpRequest`)** | Objek bawaan untuk permintaan HTTP dari JavaScript. Implementasi sebagian dari standar W3C XHR Level 1. |
+| **`readyState`** | Tahap permintaan: `UNSENT` 0, `OPENED` 1, `HEADERS_RECEIVED` 2, `LOADING` 3, `DONE` 4. |
+| **`status`** | Kode HTTP respons (200, 404, ...). Bernilai `0` bila tak ada respons HTTP. |
+| **Callback** | Fungsi yang dipanggil saat sesuatu selesai atau terjadi. |
+| **Thread UI** | Thread yang menggambar dan menangani input. Tidak boleh diblokir. |
+| **JSON** | Format teks pertukaran data. `JSON.parse` mengubahnya menjadi objek. `JSON.stringify` kebalikannya. |
+| **Batas kepercayaan** | Garis tempat data berpindah dari tak tepercaya ke tepercaya. Harus dijaga validasi. |
+| **Gerbang validasi** | Fungsi pemeriksa dan pembersih sebelum data masuk model. |
+| **Timeout / `abort()`** | Batas waktu tunggu dan pembatalan permintaan. |
+| **Balapan (race condition)** | Respons lama tiba setelah yang baru dan menimpanya. |
+| **Backoff** | Jeda ulang-coba yang membesar bertahap. |
+| **`WorkerScript`** | Menjalankan JavaScript di thread terpisah dengan mesin JavaScript sendiri. |
+| **`.mjs`** | Berkas modul ES. Untuk `WorkerScript`, berjalan dalam mode ketat. |
+| **`sync()`** | Metode `ListModel` untuk menyinkronkan perubahan dari thread kerja. |
+| **Same-origin policy** | Aturan peramban yang membatasi permintaan lintas asal. **Tidak ditegakkan** oleh XHR QML. |
+| **Daftar putih (allow-list)** | Daftar eksplisit yang diizinkan. Selain itu ditolak. |
+| **ES7** | Edisi ke-7 ECMAScript (2016). Tingkat bahasa yang diimplementasikan runtime QML. |
+
+### 2.4 Peta visual
+
+**Diagram A: permintaan asinkron dan thread**
+
+```
+ Thread UI (satu-satunya yang menyentuh UI)                  Jaringan (di luar thread UI)
+ ---------------------------------------------               -------------------------
+ req.send() -------------------------------------------->    kirim permintaan
+ (UI tetap hidup: animasi, input, render)                    ... menunggu server ...
+ <-------- onreadystatechange (HEADERS_RECEIVED, LOADING) -- data tiba
+ <-------- onreadystatechange (DONE) ----------------------- selesai
+ callback jalan di thread UI -> JSON.parse -> validasi -> model
+ (parse + validasi DATA BESAR di thread UI = UI membeku -> pindahkan ke WorkerScript / C++)
+```
+
+**Diagram B: lapis pertahanan data jaringan**
+
+```
+ Internet / berkas / pengguna  (TIDAK TEPERCAYA)
+        |
+        v
+ [1] Gerbang URL       : skema + host + awalan (daftar putih), HTTPS
+ [2] Gerbang transport : status 2xx, batas waktu, batas ukuran
+ [3] Gerbang format    : JSON.parse di try/catch
+ [4] Gerbang bentuk    : tipe, rentang, kunci dikenal, batas jumlah
+ [5] Gerbang tampilan  : Text.PlainText, tanpa createQmlObject, tanpa Loader dari data
+        |
+        v
+ Model (7.1)  ->  View (7.2)
+```
+
+**Diagram C: memilih alat untuk pekerjaan berat**
+
+```
+Pekerjaan berat?
+ +-- menunggu jaringan / IO ......................... XHR (sudah asinkron, tak perlu thread)
+ +-- CPU berat di JS, hasil kecil sampai sedang ...... WorkerScript
+ +-- CPU berat + data besar / perlu kecepatan & tipe . C++ (QtConcurrent / QThread, Modul 10.7)
+ +-- TLS khusus, upload besar, WebSocket, otentikasi . C++ QtNetwork / QtWebSockets
+```
+
+---
+
+## 3. 7.4.1 XHR dan siklus `readyState`
+
+> Menunggu dengan elegan adalah keterampilan, bukan kelemahan.
+
+### 3.1 Empat langkah dasar
+
+Menurut dokumentasi Qt, langkahnya: buat objek `XMLHttpRequest`, pasang callback `onreadystatechange`, panggil `open(metode, url)`, lalu `send()`. Di callback, periksa `readyState === DONE` sebelum membaca `response`, `responseText`, atau `responseXML`.
+
+**Contoh A: contoh kurikulum, dijelaskan kata demi kata**
+
+```qml
+import QtQuick
+
+Item {
+    function ambilJson(url, sukses, gagal) {
+        const req = new XMLHttpRequest()
+        req.onreadystatechange = function() {
+            if (req.readyState !== XMLHttpRequest.DONE) return
+            if (req.status === 200) {
+                try { sukses(JSON.parse(req.responseText)) }
+                catch (e) { gagal('JSON tidak valid: ' + e) }
+            } else {
+                gagal('HTTP ' + req.status)
+            }
+        }
+        req.open('GET', url)
+        req.send()
+    }
+
+    Component.onCompleted: ambilJson('https://example.com/data.json', console.log, console.warn)
+}
+```
+
+| Potongan | Arti |
+|---|---|
+| `function ambilJson(url, sukses, gagal)` | Fungsi di dalam objek. `sukses` dan `gagal` adalah callback dari pemanggil. |
+| `new XMLHttpRequest()` | Membuat objek permintaan. Satu objek untuk satu permintaan. |
+| `req.onreadystatechange = function() {...}` | Callback yang dipanggil **setiap kali `readyState` berubah**. |
+| `XMLHttpRequest.DONE` | Konstanta tahap akhir (4). Hanya saat itu respons utuh siap. |
+| `req.status === 200` | Kode HTTP "OK". |
+| `JSON.parse(req.responseText)` | Mengurai teks menjadi objek. Melempar `SyntaxError` bila teks tak valid. |
+| `try { ... } catch (e) { ... }` | Menangkap galat parse. |
+| `req.open('GET', url)` | Menentukan metode dan alamat. Wajib sebelum `send()`. |
+| `req.send()` | Mengirim. Kembali seketika, hasil datang lewat callback. |
+| `console.log, console.warn` | Dua fungsi bawaan dipakai sebagai callback demi singkat. |
+
+**Perbaikan hasil audit** (tiga hal: parse di `try` saja, galat jaringan terpisah, rentang 2xx):
+
+```qml
+function ambilJson(url, sukses, gagal) {
+    const req = new XMLHttpRequest()
+    req.onreadystatechange = function () {
+        if (req.readyState !== XMLHttpRequest.DONE) return
+
+        if (req.status === 0) { gagal('jaringan', 'tidak ada respons'); return }
+        if (req.status < 200 || req.status >= 300) { gagal('http', 'HTTP ' + req.status); return }
+
+        let data
+        try { data = JSON.parse(req.responseText) }
+        catch (e) { gagal('json', 'JSON tidak valid: ' + e.message); return }
+
+        sukses(data)          // di luar try: galat di sini bukan "JSON rusak"
+    }
+    req.open('GET', url)
+    req.send()
+}
+```
+
+### 3.2 Siklus `readyState`
+
+```
+ UNSENT(0) --open()--> OPENED(1) --send()--> HEADERS_RECEIVED(2) --> LOADING(3) --> DONE(4)
+     ^                                                                      (LOADING bisa berulang)
+     +------------------------------- abort() ------------------------------ (kembali ke UNSENT)
+```
+
+Setiap perubahan memancarkan `readystatechange`. Untuk mengamatinya:
+
+```qml
+req.onreadystatechange = function () { console.log('readyState =', req.readyState) }
+```
+
+Biasanya terlihat urutan 1, 2, 3, 4. Tahap 3 bisa muncul lebih dari sekali untuk respons besar.
+
+### 3.3 Metode dan properti penting
+
+| Anggota | Fungsi |
+|---|---|
+| `open(metode, url, async)` | Argumen ketiga default `true` (asinkron) |
+| `send(data)` | Argumen opsional untuk badan (POST) |
+| `setRequestHeader(nama, nilai)` | Menambah header pada permintaan berikutnya |
+| `getResponseHeader(nama)` / `getAllResponseHeaders()` | Membaca header respons |
+| `abort()` | Membatalkan. `readyState` kembali `UNSENT` dan sinyal dipancarkan |
+| `responseText` | Isi respons sebagai teks (UTF-16) |
+| `response` / `responseType` | String, `ArrayBuffer`, atau `Document` tergantung tipe respons |
+| `responseURL` | URL akhir setelah pengalihan (redirect) |
+| `status` / `statusText` | Kode dan pesan HTTP |
+
+**Contoh POST dengan header:**
+
+```qml
+const req = new XMLHttpRequest()
+req.onreadystatechange = function () { /* ... seperti di atas ... */ }
+req.open('POST', 'https://api.contoh.id/v1/produk')
+req.setRequestHeader('Content-Type', 'application/json')
+req.setRequestHeader('Authorization', 'Bearer ' + token)    // token tidak pernah di URL
+req.send(JSON.stringify({ nama: 'Kopi', harga: 15000 }))
+```
+
+### 3.4 Fakta lingkungan yang perlu diketahui
+
+- XHR QML adalah implementasi **sebagian** dari XHR Level 1 dan **tidak menegakkan same-origin policy**.
+- Pustaka peramban seperti `window`, DOM, dan `fetch` **tidak ada** di lingkungan QML. Yang tersedia: `XMLHttpRequest` dan `Timer`.
+- Membaca atau menulis **berkas lokal** lewat XHR dinonaktifkan secara default. Mengaktifkannya butuh variabel lingkungan `QML_XHR_ALLOW_FILE_READ` atau `QML_XHR_ALLOW_FILE_WRITE` bernilai `1`, dan dokumentasi memperingatkan agar dipakai hanya pada aplikasi yang menjalankan QML dan JavaScript tepercaya.
+- `QML_XHR_DUMP=1` mencatat metode, URL, badan permintaan dan respons, serta galat jaringan. Alat debug yang bagus, tetapi **jangan dipakai di produksi** karena bisa membocorkan token (7.4.8).
+
+### 3.5 Opsi lain untuk logika yang sama (mengambil data)
+
+| Opsi | Catatan |
+|---|---|
+| XHR + callback | Paling terbukti di QML |
+| XHR dibungkus `Promise` (7.4.4) | Rantai `.then/.catch` |
+| Komponen `PermintaanJson` (7.4.3) | Sinyal `berhasil` dan `gagal`, timeout bawaan |
+| C++ `QNetworkAccessManager` (7.4.6) | Kontrol penuh, TLS, unggah besar |
+
+Jebakan: J2, J3, J4, J9, J13.
+
+---
+
+## 4. 7.4.2 `JSON.parse` dan validasi
+
+> Percaya itu mahal. Memeriksa itu murah.
+
+`JSON.parse(teks)` **hanya memeriksa sintaks**, bukan makna. Data yang sintaksnya benar tetap bisa memiliki bentuk yang salah: kunci hilang, tipe salah, nilai di luar rentang, atau jumlah baris yang ekstrem. Itu sebabnya perlu **gerbang bentuk** sebelum data masuk model.
+
+Catatan runtime: operator `?.` (sejak Qt 6.2) dan `??` (sejak Qt 5.15) tersedia di QML dan berguna untuk validasi.
+
+**Contoh B: gerbang bentuk yang ketat**
+
+```qml
+import QtQuick
+
+Item {
+    function bersihkanProduk(mentah) {
+        if (mentah === null || typeof mentah !== 'object' || Array.isArray(mentah)) return null
+
+        const nama = typeof mentah.nama === 'string' ? mentah.nama.trim() : ''
+        const harga = mentah.harga
+
+        if (nama === '' || nama.length > 80) return null
+        if (typeof harga !== 'number' || !Number.isFinite(harga) || harga < 0 || harga > 1e9) return null
+
+        return { nama: nama, harga: Math.round(harga) }    // hanya kunci yang dikenal
+    }
+
+    Component.onCompleted: {
+        const uji = [
+            { nama: 'Kopi', harga: 15000 },
+            { nama: '  Teh ', harga: 8000.4 },
+            { nama: '', harga: 5 },
+            { nama: 'Susu', harga: '12000' },
+            { nama: 'X', harga: -1 },
+            null, 42, [1, 2],
+            { nama: 'Y'.repeat(100), harga: 1 }
+        ]
+        for (let i = 0; i < uji.length; ++i)
+            console.log(i, JSON.stringify(bersihkanProduk(uji[i])))
+        Qt.quit()
+    }
+}
+```
+
+**Keluaran yang diharapkan:**
+
+```
+qml: 0 {"nama":"Kopi","harga":15000}
+qml: 1 {"nama":"Teh","harga":8000}
+qml: 2 null
+qml: 3 null
+qml: 4 null
+qml: 5 null
+qml: 6 null
+qml: 7 null
+qml: 8 null
+```
+
+| Potongan | Arti |
+|---|---|
+| `mentah === null \|\| typeof mentah !== 'object' \|\| Array.isArray(mentah)` | Hanya objek biasa yang lolos. `typeof null` adalah `'object'` dan array juga `'object'`, jadi keduanya perlu diperiksa eksplisit. |
+| `mentah.nama.trim()` | Membuang spasi di ujung. |
+| `typeof harga !== 'number'` | **Tidak** memaksa string menjadi angka. `'12000'` ditolak. Ini keputusan kontrak: ketat lebih aman, sedangkan Modul 7.1 memakai `Number()` yang lebih longgar. |
+| `Number.isFinite` | Menolak `NaN` dan `Infinity`. |
+| `1e9` | Notasi ilmiah: 1.000.000.000 sebagai batas atas. |
+| `return { nama, harga }` | Objek **baru** hanya berisi kunci yang dikenal. Kunci asing, termasuk kunci seperti `__proto__`, tidak ikut terbawa. |
+
+**Gerbang untuk daftar** (batas jumlah dan penghitungan penolakan):
+
+```qml
+function bersihkanDaftar(data, maks) {
+    if (!Array.isArray(data)) return null
+    const hasil = []
+    let ditolak = 0
+    for (let i = 0; i < data.length; ++i) {
+        if (hasil.length >= maks) { ditolak += data.length - i; break }
+        const b = bersihkanProduk(data[i])
+        if (b === null) ++ditolak
+        else hasil.push(b)
+    }
+    return { item: hasil, ditolak: ditolak }
+}
+```
+
+Kesalahan umum dalam validasi: memakai `if (obj.harga)` (nol dianggap salah), tidak membatasi panjang string dan jumlah baris, menyalin objek mentah ke model (`produk.append(data[i])`), dan tidak menangani `null`.
+
+**Opsi lain untuk pemeriksaan bentuk:**
+
+| Opsi | Catatan |
+|---|---|
+| Fungsi pembersih buatan sendiri (di atas) | Sederhana, bisa disesuaikan |
+| Tabel skema (`{ nama: 'string', harga: 'number' }`) + pemeriksa generik | Lebih ringkas untuk banyak jenis data |
+| Validasi di C++ (`QJsonDocument`) | Untuk data besar atau skema ketat (7.4.6) |
+
+Jebakan: J5, J16, J18.
+
+---
+
+## 5. 7.4.3 Penanganan galat (jaringan, HTTP, parsing)
+
+> Galat yang diberi nama sudah setengah diselesaikan.
+
+Tiga jenis kegagalan yang berbeda, dan sebuah klasifikasi yang rapi:
+
+| Jenis | Ciri | Penanganan lazim |
+|---|---|---|
+| `jaringan` | `status === 0`: tak ada respons HTTP (putus, ditolak, DNS gagal) | Informasikan, tawarkan coba lagi |
+| `http` | `status` di luar 2xx (404, 500, ...) | 4xx: galat permintaan. 5xx: galat server (boleh coba lagi) |
+| `json` | `JSON.parse` melempar galat | Respons rusak: jangan coba lagi tanpa alasan |
+| `bentuk` | JSON sah tetapi tidak sesuai skema | Tolak, catat |
+| `timeout` | Batas waktu terlewati | Bisa coba lagi |
+| `ukuran` | Respons melewati batas | Tolak |
+| `batal` | Dibatalkan pengguna atau kode | Abaikan |
+
+Pada galat jaringan, `status` umumnya bernilai `0`. Konfirmasi di mesin Anda dengan lab di bawah dan `QML_XHR_DUMP=1`.
+
+### 5.1 Komponen `PermintaanJson`
+
+Pola yang sering dipakai ulang sebaiknya dibungkus komponen (Modul 5.1) dengan API yang jelas: properti, sinyal, dan metode.
+
+```qml
+// PermintaanJson.qml
+import QtQuick
+
+QtObject {
+    id: root
+
+    property int batasWaktuMs: 5000
+    property int maksByte: 1000000
+    readonly property bool sibuk: !_selesai
+
+    signal berhasil(var data)
+    signal gagal(string jenis, string pesan, int status)
+
+    property bool _selesai: true
+    property var _req: null
+
+    property Timer _pewaktu: Timer {
+        interval: root.batasWaktuMs
+        onTriggered: {
+            if (root._req) root._req.abort()
+            root._akhiri('timeout', 'batas waktu ' + root.batasWaktuMs + ' ms terlewati', 0)
+        }
+    }
+
+    function ambil(url) {
+        if (!_selesai) return false
+        _selesai = false
+        const req = new XMLHttpRequest()
+        _req = req
+
+        req.onreadystatechange = function () {
+            if (root._req !== req) return
+
+            if (req.readyState === XMLHttpRequest.HEADERS_RECEIVED) {
+                const panjang = parseInt(req.getResponseHeader('content-length'))
+                if (!isNaN(panjang) && panjang > root.maksByte) {
+                    req.abort()
+                    root._akhiri('ukuran', 'respons terlalu besar', 0)
+                }
+                return
+            }
+            if (req.readyState !== XMLHttpRequest.DONE) return
+
+            const status = req.status
+            if (status === 0)
+                return root._akhiri('jaringan', 'tidak ada respons (putus atau ditolak)', 0)
+            if (status < 200 || status >= 300)
+                return root._akhiri('http', 'HTTP ' + status, status)
+
+            const teks = req.responseText
+            if (teks.length > root.maksByte)
+                return root._akhiri('ukuran', 'respons terlalu besar', status)
+
+            let data
+            try { data = JSON.parse(teks) }
+            catch (e) { return root._akhiri('json', 'JSON tidak valid: ' + e.message, status) }
+
+            root._akhiri(null, '', status, data)
+        }
+
+        req.open('GET', url)
+        req.send()
+        _pewaktu.restart()
+        return true
+    }
+
+    function batal() {
+        if (_req) _req.abort()
+        _akhiri('batal', 'dibatalkan', 0)
+    }
+
+    function _akhiri(jenis, pesan, status, data) {
+        if (_selesai) return
+        _selesai = true
+        _pewaktu.stop()
+        _req = null
+        if (jenis === null) berhasil(data)
+        else gagal(jenis, pesan, status)
+    }
+}
+```
+
+**Penjelasan kata demi kata (bagian kunci):**
+
+| Potongan | Arti |
+|---|---|
+| `QtObject` | Objek nirvisual. Komponen ini tidak menampilkan apa pun. |
+| `signal berhasil(var data)` / `gagal(...)` | Keluaran komponen. Pemakai memasang `onBerhasil` dan `onGagal`. |
+| `property Timer _pewaktu: Timer {...}` | Pewaktu sebagai properti berisi objek. Mengimplementasikan timeout. |
+| Awalan `_` | Konvensi "privat". Bukan penegakan, hanya kesepakatan. |
+| `root._req !== req` | Penjaga: abaikan peristiwa dari permintaan yang sudah usai atau digantikan. |
+| `HEADERS_RECEIVED` + `content-length` | Menolak respons besar **sebelum** diunduh seluruhnya, bila server mengirim panjangnya. Respons berpotongan tidak punya header ini, jadi ada pemeriksaan kedua setelah selesai. |
+| `req.abort()` | Membatalkan unduhan. |
+| `_akhiri(...)` | **Satu-satunya** pintu keluar. Menjamin sinyal terpancar tepat sekali, pewaktu berhenti, dan referensi dilepas. |
+| `return root._akhiri(...)` | Keluar dari handler setelah memanggil pintu keluar. |
+| `jenis === null` | Cara internal menandakan sukses. |
+
+### 5.2 Lab terminal: tiga galat berbeda
+
+Siapkan server lokal (terminal pertama):
+
+```bash
+mkdir -p ~/lab74 && cd ~/lab74
+cat > data.json <<'EOF'
+[
+  {"nama": "Kopi", "harga": 15000},
+  {"nama": "Teh", "harga": 8000},
+  {"nama": "", "harga": 1},
+  {"nama": "Susu", "harga": "12000"},
+  {"nama": "Cokelat", "harga": 20000}
+]
+EOF
+printf '{"nama": "Kopi", "harga": \n' > rusak.json
+python -m http.server 8000 --bind 127.0.0.1
+```
+
+Berkas pengujian `main.qml` di folder yang sama dengan `PermintaanJson.qml`:
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+    width: 320; height: 100
+
+    PermintaanJson {
+        id: permintaan
+        batasWaktuMs: 2000
+        onBerhasil: (data) => console.log('OK:', JSON.stringify(data).length, 'karakter')
+        onGagal: (jenis, pesan, status) =>
+            console.log('GAGAL [' + jenis + ']', pesan, '(status ' + status + ')')
+    }
+
+    property var daftarUji: [
+        'http://127.0.0.1:8000/data.json',
+        'http://127.0.0.1:8000/tidak-ada.json',
+        'http://127.0.0.1:8000/rusak.json'
+    ]
+    property int langkah: 0
+
+    Timer {
+        interval: 400; repeat: true; running: true
+        onTriggered: {
+            if (permintaan.sibuk) return
+            if (root.langkah >= root.daftarUji.length) { Qt.quit(); return }
+            permintaan.ambil(root.daftarUji[root.langkah++])
+        }
+    }
+}
+```
+
+Jalankan di terminal kedua (nama biner lihat bagian 11.3):
+
+```bash
+QT_QPA_PLATFORM=offscreen qml main.qml
+```
+
+**Keluaran yang diharapkan** (server hidup):
+
+```
+qml: OK: 189 karakter
+qml: GAGAL [http] HTTP 404 (status 404)
+qml: GAGAL [json] JSON tidak valid: <pesan dari mesin JSON> (status 200)
+```
+
+Panjang karakter pada baris pertama bergantung pada isi berkas Anda. Lalu **hentikan server** (Ctrl+C di terminal pertama) dan jalankan ulang. Ketiga permintaan semestinya menjadi `GAGAL [jaringan] ... (status 0)`. Untuk mengamati alasan jaringan di balik layar, tambahkan `QML_XHR_DUMP=1` di depan perintah.
+
+**Uji timeout:** server yang menerima koneksi tetapi tidak pernah menjawab:
+
+```bash
+python -c "import socket,time; s=socket.socket(); s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1); s.bind(('127.0.0.1', 8001)); s.listen(); c,_=s.accept(); time.sleep(30)"
+```
+
+Arahkan satu permintaan ke `http://127.0.0.1:8001/x`. Setelah 2 detik muncul `GAGAL [timeout]`.
+
+Jebakan: J1, J2, J3, J4, J7.
+
+---
+
+## 6. 7.4.4 `Promise` dan keterbatasan `async/await`
+
+> Alat yang tersedia lebih berharga daripada alat yang diharapkan.
+
+Fakta dari dokumentasi: runtime QML mengimplementasikan **ECMAScript edisi ke-7**. `Promise` ada dalam daftar objek yang didukung. `async/await` baru muncul di edisi 2017, sehingga **tidak termasuk** tingkat bahasa itu. Sesuai catatan kurikulum, uji pada versi Qt Anda: tulis fungsi `async` di sebuah berkas lalu jalankan `qmllint`. Hasil yang diharapkan: galat sintaks. Demikian pula `Promise.prototype.finally` (2018) dan `Promise.allSettled` (2020) bukan bagian ES7, jadi jangan diandalkan tanpa uji.
+
+Lingkungan QML juga **tidak menyediakan** `setTimeout` dan `fetch`. Gunakan `Timer` dan XHR.
+
+**Membungkus XHR dengan `Promise`:**
+
+```qml
+function ambilJsonJanji(url) {
+    return new Promise(function (resolve, reject) {
+        ambilJson(url, resolve, function (jenis, pesan) {
+            reject({ jenis: jenis, pesan: pesan })
+        })
+    })
+}
+
+Component.onCompleted: {
+    ambilJsonJanji('http://127.0.0.1:8000/data.json')
+        .then(function (d) { console.log('janji OK:', d.length, 'baris'); return d })
+        .catch(function (e) { console.log('janji GAGAL:', e.jenis) })
+}
+```
+
+Keluaran: `qml: janji OK: 5 baris`, dengan `ambilJson` dari 7.4.1 dan berkas `data.json` dari lab.
+
+| Potongan | Arti |
+|---|---|
+| `new Promise(function (resolve, reject) {...})` | "Janji" yang bisa dipenuhi (`resolve`) atau ditolak (`reject`). |
+| `.then(fungsi)` | Dijalankan saat janji dipenuhi. Boleh dirantai. |
+| `.catch(fungsi)` | Dijalankan saat janji ditolak, atau saat ada galat di rantai sebelumnya. |
+| `Promise.all([a, b])` | Menunggu semua janji (paralel). Ditolak bila satu ditolak. |
+
+**Callback, sinyal, atau `Promise`?** Dokumentasi tidak melarang `Promise`, tetapi pola yang paling terbukti dan paling mudah diperiksa alat di QML adalah **sinyal dan callback**, sebagaimana catatan kurikulum. Perbedaan perilaku yang penting: galat di dalam `.then` akan jatuh ke `.catch`, sedangkan galat di callback biasa tidak. Dan penolakan tanpa `.catch` bisa lenyap diam-diam, jadi **selalu** tambahkan `.catch`.
+
+**Opsi lain:**
+
+| Opsi | Cocok untuk |
+|---|---|
+| Sinyal dan callback | Alur UI umum |
+| `Promise` + `.then/.catch` | Merangkai beberapa langkah, `Promise.all` |
+| Mesin status (`State`, Modul 6.1) | UI yang bereaksi pada keadaan `memuat/siap/galat` |
+
+Jebakan: J8, J9.
+
+---
+
+## 7. 7.4.5 `WorkerScript`
+
+> Biarkan thread UI hanya melakukan yang hanya ia bisa lakukan.
+
+`WorkerScript` (modul `QtQml.WorkerScript`) menjalankan JavaScript di **thread terpisah**. Cocok untuk pekerjaan CPU berat dalam JS tanpa membekukan layar.
+
+**Aturan dari dokumentasi:**
+
+- `import QtQml.WorkerScript` wajib.
+- `source` menunjuk berkas yang mengimplementasikan `WorkerScript.onMessage`. Ekstensi **`.mjs`** berarti modul ES dalam mode ketat. Ekstensi `.js` berarti skrip biasa non-ketat.
+- Setiap `WorkerScript` memiliki **mesin JavaScript sendiri**, terisolasi sempurna dan aman thread, tetapi boros memori bila banyak. Bagi satu worker untuk beberapa tugas.
+- Worker **tidak dapat** mengakses properti, metode, atau context property objek QML.
+- Pesan (`sendMessage`) hanya boleh berisi: boolean, angka, string, objek dan array JavaScript, atau objek `ListModel`. Semuanya **disalin**, kecuali `ListModel`.
+
+**Contoh C: pekerjaan berat dan bukti UI tetap hidup**
+
+`berat.mjs`:
+
+```js
+function prima(n) {
+    if (n < 2) return false
+    for (let i = 2; i * i <= n; ++i) if (n % i === 0) return false
+    return true
+}
+
+WorkerScript.onMessage = function (pesan) {
+    let jumlah = 0
+    for (let k = 2; k <= pesan.batas; ++k) if (prima(k)) ++jumlah
+    WorkerScript.sendMessage({ batas: pesan.batas, jumlah: jumlah })
+}
+```
+
+`main.qml`:
+
+```qml
+import QtQuick
+import QtQml.WorkerScript
+
+Item {
+    id: root
+    width: 300; height: 160
+    focus: true
+
+    property int frame: 0
+    property double mulai: 0
+    property int batas: 300000        // sesuaikan agar kerja terasa beberapa detik di mesin Anda
+
+    Rectangle {
+        x: 20; y: 20; width: 40; height: 40; color: 'tomato'
+        RotationAnimation on rotation { from: 0; to: 360; duration: 1000; loops: Animation.Infinite }
+        onRotationChanged: root.frame++
+    }
+
+    Text { id: hasil; x: 20; y: 90; text: 'Tekan P (pekerja) atau U (thread UI)' }
+
+    WorkerScript {
+        id: pekerja
+        source: 'berat.mjs'
+        onMessage: (m) => root.selesai('pekerja', m.jumlah)
+    }
+
+    function prima(n) {
+        if (n < 2) return false
+        for (let i = 2; i * i <= n; ++i) if (n % i === 0) return false
+        return true
+    }
+
+    function selesai(mode, jumlah) {
+        const ms = Date.now() - mulai
+        hasil.text = mode + ': ' + jumlah + ' prima'
+        console.log('mode =', mode, '| ms =', ms, '| frame animasi selama kerja =', frame)
+    }
+
+    function mulaiUkur() { frame = 0; mulai = Date.now() }
+
+    Keys.onPressed: (event) => {
+        if (event.key === Qt.Key_P) {
+            mulaiUkur()
+            pekerja.sendMessage({ batas: batas })
+            event.accepted = true
+        } else if (event.key === Qt.Key_U) {
+            mulaiUkur()
+            let j = 0
+            for (let k = 2; k <= batas; ++k) if (prima(k)) ++j
+            selesai('thread-UI', j)
+            event.accepted = true
+        }
+    }
+}
+```
+
+Jalankan **dengan jendela**. Tekan `P`: kotak merah terus berputar, dan `frame animasi selama kerja` bernilai besar. Tekan `U`: layar membeku selama kerja, dan jumlah frame yang tercatat kecil atau nol. Fungsi `prima` diduplikasi hanya untuk demonstrasi.
+
+| Potongan | Arti |
+|---|---|
+| `RotationAnimation on rotation {...}` | Animasi tanpa akhir pada properti `rotation`. |
+| `onRotationChanged: root.frame++` | Menghitung berapa kali animasi benar-benar menggambar ulang. |
+| `pekerja.sendMessage({ batas: batas })` | Mengirim objek ke worker (disalin). |
+| `onMessage: (m) => ...` | Menerima jawaban worker. |
+| `WorkerScript.onMessage = function (pesan)` | Handler di sisi worker. |
+| `WorkerScript.sendMessage({...})` | Jawaban dari worker ke thread UI. |
+| `Date.now()` | Penanda waktu dalam milidetik. |
+
+**Contoh D: worker mengisi `ListModel`**
+
+`isi_model.mjs`:
+
+```js
+function bersihkanProduk(mentah) {
+    if (mentah === null || typeof mentah !== 'object' || Array.isArray(mentah)) return null
+    const nama = typeof mentah.nama === 'string' ? mentah.nama.trim() : ''
+    const harga = mentah.harga
+    if (nama === '' || nama.length > 80) return null
+    if (typeof harga !== 'number' || !Number.isFinite(harga) || harga < 0 || harga > 1e9) return null
+    return { nama: nama, harga: Math.round(harga) }
+}
+
+WorkerScript.onMessage = function (pesan) {
+    let data
+    try { data = JSON.parse(pesan.teks) }
+    catch (e) {
+        WorkerScript.sendMessage({ ok: false, jenis: 'json', pesan: e.message })
+        return
+    }
+    if (!Array.isArray(data)) {
+        WorkerScript.sendMessage({ ok: false, jenis: 'bentuk', pesan: 'bukan array' })
+        return
+    }
+
+    pesan.model.clear()
+    let diterima = 0
+    let ditolak = 0
+    for (let i = 0; i < data.length; ++i) {
+        if (diterima >= pesan.maks) { ditolak += data.length - i; break }
+        const b = bersihkanProduk(data[i])
+        if (b === null) { ++ditolak; continue }
+        pesan.model.append(b)
+        ++diterima
+    }
+    pesan.model.sync()
+    WorkerScript.sendMessage({ ok: true, diterima: diterima, ditolak: ditolak })
+}
+```
+
+`main.qml`:
+
+```qml
+import QtQuick
+import QtQml.WorkerScript
+
+Item {
+    id: root
+    width: 300; height: 120
+
+    ListModel { id: produk }
+
+    WorkerScript {
+        id: pekerja
+        source: 'isi_model.mjs'
+        onMessage: (m) => {
+            console.log('worker selesai:', JSON.stringify(m), '| count model =', produk.count)
+            Qt.quit()
+        }
+    }
+
+    Component.onCompleted: {
+        const mentah = JSON.stringify([
+            { nama: 'Kopi', harga: 15000 },
+            { nama: '', harga: 1 },
+            { nama: 'Teh', harga: 8000 }
+        ])
+        pekerja.sendMessage({ model: produk, teks: mentah, maks: 500 })
+    }
+}
+```
+
+**Keluaran yang diharapkan** (urutan kunci JSON bisa berbeda; `count` biasanya sudah 2 saat pesan tiba):
+
+```
+qml: worker selesai: {"ok":true,"diterima":2,"ditolak":1} | count model = 2
+```
+
+| Potongan | Arti |
+|---|---|
+| `pesan.model` | `ListModel` yang dikirim lewat pesan. Satu-satunya objek QML yang diizinkan, dan perubahannya **tidak disalin** tetapi dibagi. |
+| `pesan.model.sync()` | **Wajib** setelah mengubah model dari thread kerja agar perubahan terlihat di thread UI (J11). |
+| Gerbang validasi di dalam worker | Penguraian dan pembersihan terjadi di worker. Hanya data bersih yang masuk model. |
+| `ok`, `jenis`, `pesan` | Struktur jawaban galat yang konsisten dengan 7.4.3. |
+
+**Opsi lain untuk pekerjaan berat:**
+
+| Opsi | Catatan |
+|---|---|
+| `WorkerScript` | Mudah, terisolasi, hanya JS. Pesan disalin |
+| Memecah pekerjaan dengan `Timer` (potongan kecil per tick) | Tetap di thread UI, tetapi tak membeku total. Cocok untuk pekerjaan ringan-sedang |
+| Thread di C++ (`QtConcurrent`, `QThread`) | Skala besar (7.4.6, Modul 10.7) |
+
+Jebakan: J1, J10, J11, J12, J19.
+
+---
+
+## 8. 7.4.6 Kapan ke C++
+
+> Alat paling tepat adalah yang paling cocok dengan beban kerja, bukan yang paling nyaman.
+
+Pindah ke C++ bila:
+
+1. Data **besar** (ratusan ribu baris atau berkas besar) dan parse/validasi JavaScript terasa lambat atau memakan memori.
+2. Perlu **kontrol TLS**: sertifikat khusus, pinning, konfigurasi cipher. Dokumentasi XHR QML tidak menyediakan API untuk itu. `QtNetwork` menyediakan (`QSslConfiguration`).
+3. Perlu **unggah/unduh besar dengan kemajuan**, proksi, otentikasi (OAuth), atau **WebSocket** (`QtWebSockets`).
+4. Data menjadi **model bertipe kuat** (`QAbstractListModel`, 7.1.4) yang dibagi dengan logika C++.
+5. Perlu **multithreading terstruktur** dan pengujian unit.
+
+**Pratinjau (Modul 10.7 membahasnya penuh):** pengambil JSON di C++ yang menolak skema selain HTTPS.
+
+```cpp
+// pengambil.h (cuplikan)
+#pragma once
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QObject>
+#include <QUrl>
+#include <QVariantList>
+#include <QtQml/qqmlregistration.h>
+
+class Pengambil : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+public:
+    explicit Pengambil(QObject *parent = nullptr) : QObject(parent) {}
+
+    Q_INVOKABLE void ambil(const QUrl &url)
+    {
+        if (url.scheme() != QLatin1String("https")) {
+            emit gagal(QStringLiteral("url"), QStringLiteral("hanya https"));
+            return;
+        }
+        QNetworkReply *balasan = m_nam.get(QNetworkRequest(url));
+        connect(balasan, &QNetworkReply::finished, this, [this, balasan] {
+            balasan->deleteLater();
+            if (balasan->error() != QNetworkReply::NoError) {
+                emit gagal(QStringLiteral("jaringan"), balasan->errorString());
+                return;
+            }
+            QJsonParseError galat;
+            const QJsonDocument dok = QJsonDocument::fromJson(balasan->readAll(), &galat);
+            if (galat.error != QJsonParseError::NoError || !dok.isArray()) {
+                emit gagal(QStringLiteral("json"), galat.errorString());
+                return;
+            }
+            emit berhasil(dok.array().toVariantList());
+        });
+    }
+
+signals:
+    void berhasil(const QVariantList &data);
+    void gagal(const QString &jenis, const QString &pesan);
+
+private:
+    QNetworkAccessManager m_nam;
+};
+```
+
+| Potongan | Arti |
+|---|---|
+| `QML_ELEMENT` | Menjadikan kelas tersedia sebagai tipe QML. |
+| `Q_INVOKABLE` | Metode bisa dipanggil dari QML. |
+| `QNetworkAccessManager` | Pengelola permintaan jaringan Qt. |
+| `connect(balasan, &QNetworkReply::finished, ...)` | Menangani selesainya balasan secara asinkron. |
+| `balasan->deleteLater()` | Membersihkan objek balasan dengan aman. |
+| `QJsonDocument::fromJson(..., &galat)` | Parse JSON dengan laporan galat terperinci. |
+| `signals:` | Sinyal yang akan ditangkap QML (`onBerhasil`, `onGagal`). |
+
+Proyek CMake perlu menautkan modul jaringan (`Qt6::Network`).
+
+---
+
+## 9. 7.4.7 (TAMBAHAN) Ketangguhan: timeout, pembatalan, urutan, dan ulang-coba
+
+> Jaringan yang andal tidak ada. Yang ada hanya aplikasi yang tangguh.
+
+### 9.1 Timeout dan pembatalan
+
+Sudah ada di `PermintaanJson` (7.4.3): `batasWaktuMs` dan `batal()`. Ingat bahwa XHR QML tidak mendokumentasikan properti `timeout` dan sinyal `onerror`/`ontimeout`, sehingga timeout dibuat sendiri dengan `Timer` dan `abort()`.
+
+### 9.2 Balapan respons: yang terbaru menang
+
+Pengguna mengetik cepat: permintaan A (lambat) dan B (cepat) berangkat. Jika A tiba setelah B, hasil usang menimpa hasil baru. Solusinya **nomor urut**:
+
+```qml
+property int nomorTerakhir: 0
+
+function cari(kata) {
+    const nomor = ++nomorTerakhir
+    ambilJson('http://127.0.0.1:8000/cari?q=' + encodeURIComponent(kata),
+        function (data) {
+            if (nomor !== nomorTerakhir) return        // ada permintaan yang lebih baru: abaikan
+            terapkan(data)
+        },
+        tanganiGalat)
+}
+```
+
+`encodeURIComponent` melindungi URL dari karakter khusus dalam masukan pengguna. Lengkapi dengan **debounce** (menunda sampai pengguna berhenti mengetik):
+
+```qml
+Timer {
+    id: tunda
+    interval: 300
+    onTriggered: root.cari(kolom.text)
+}
+// di setiap perubahan teks:  tunda.restart()
+```
+
+### 9.3 Ulang-coba dengan backoff
+
+```qml
+property int percobaan: 0
+
+Timer { id: jedaUlang; onTriggered: root.coba() }
+
+function coba() { permintaan.ambil(url) }
+
+function jadwalkanUlang() {
+    if (percobaan >= 3) { gagalTotal(); return }
+    jedaUlang.interval = Math.min(1000 * Math.pow(2, percobaan), 8000)   // 1s, 2s, 4s (maks 8s)
+    ++percobaan
+    jedaUlang.start()
+}
+```
+
+**Aturan ulang-coba:**
+
+- Hanya untuk galat **sementara**: `jaringan`, `timeout`, dan HTTP 5xx.
+- **Jangan** ulangi untuk 4xx, `json`, atau `bentuk`: hasilnya tak akan berubah.
+- Hanya untuk permintaan **idempoten** (GET, bukan POST yang membuat sesuatu).
+- Beri batas jumlah percobaan dan batas jeda.
+
+Jebakan: J6, J7.
+
+---
+
+## 10. 7.4.8 (TAMBAHAN) Keamanan data jaringan dan studi kasus ujung ke ujung
+
+> Kepercayaan diberikan sedikit demi sedikit, dan hanya setelah diperiksa.
+
+### 10.1 Daftar periksa keamanan
+
+| Area | Praktik |
+|---|---|
+| **Transport** | HTTPS. Muat sumber daya dari berkas lokal atau `qrc`, dan bila perlu lewat jaringan, gunakan HTTPS atau jaringan tepercaya (anjuran dokumentasi Qt) |
+| **Host dan URL** | XHR tidak menegakkan same-origin. Batasi dengan **daftar putih awalan URL**. Periksa `responseURL` bila ada pengalihan |
+| **Rahasia** | Token di header `Authorization`, **bukan** di URL. Jangan memakai `QML_XHR_DUMP` di produksi |
+| **Berkas lokal** | Biarkan `QML_XHR_ALLOW_FILE_READ/WRITE` mati, kecuali pada aplikasi yang menjalankan QML tepercaya |
+| **Ukuran dan jumlah** | Batas `content-length`, panjang teks, jumlah baris, panjang string |
+| **Bentuk** | Gerbang validasi (7.4.2). Salin hanya kunci yang dikenal |
+| **Tampilan** | `Text.PlainText`. Jangan jadikan data URL `Loader.source` atau teks `Qt.createQmlObject` (7.3) |
+| **Isolasi** | Parse data besar di worker agar kegagalannya tidak membekukan UI |
+
+**Daftar putih URL:**
+
+```qml
+readonly property var awalanDiizinkan: ['https://api.contoh.id/v1/', 'http://127.0.0.1:8000/']
+
+function urlAman(url) {
+    return typeof url === 'string' && awalanDiizinkan.some(a => url.startsWith(a))
+}
+```
+
+Awalan **harus** menyertakan garis miring setelah host. Awalan seperti `https://api.contoh.id` tanpa garis miring bisa dicocokkan oleh host yang berbeda, misalnya `https://api.contoh.id.penyerang.example/`. Alamat lab `http://127.0.0.1:8000/` sengaja dibuat untuk pengujian lokal. Di produksi, jangan izinkan HTTP polos.
+
+### 10.2 Studi kasus: dari jaringan ke layar
+
+Studi kasus ini merangkai seluruh Fase 7: gerbang validasi (7.1), `ListView` dengan keadaan (7.2), daftar putih (7.3), dan XHR yang tangguh (7.4).
+
+Pakai server lab dan `PermintaanJson.qml` dari 7.4.3. `main.qml`:
+
+```qml
+pragma ComponentBehavior: Bound
+import QtQuick
+
+Item {
+    id: root
+    width: 360; height: 280
+    focus: true
+
+    property string keadaan: 'idle'          // idle | memuat | siap | kosong | galat
+    property string pesanGalat: ''
+    readonly property int maksBaris: 500
+    readonly property var awalanDiizinkan: ['http://127.0.0.1:8000/']
+
+    ListModel { id: produk }
+
+    function urlAman(url) {
+        return typeof url === 'string' && awalanDiizinkan.some(a => url.startsWith(a))
+    }
+
+    function bersihkanProduk(mentah) {
+        if (mentah === null || typeof mentah !== 'object' || Array.isArray(mentah)) return null
+        const nama = typeof mentah.nama === 'string' ? mentah.nama.trim() : ''
+        const harga = mentah.harga
+        if (nama === '' || nama.length > 80) return null
+        if (typeof harga !== 'number' || !Number.isFinite(harga) || harga < 0 || harga > 1e9) return null
+        return { nama: nama, harga: Math.round(harga) }
+    }
+
+    function terapkan(data) {
+        if (!Array.isArray(data)) { gagalkan('bentuk', 'respons bukan array'); return }
+        produk.clear()
+        let ditolak = 0
+        for (let i = 0; i < data.length; ++i) {
+            if (produk.count >= maksBaris) { ditolak += data.length - i; break }
+            const b = bersihkanProduk(data[i])
+            if (b === null) ++ditolak
+            else produk.append(b)
+        }
+        keadaan = produk.count > 0 ? 'siap' : 'kosong'
+        console.log('diterima:', produk.count, '| ditolak:', ditolak)
+    }
+
+    function gagalkan(jenis, pesan) {
+        keadaan = 'galat'
+        pesanGalat = '[' + jenis + '] ' + pesan
+        console.warn(pesanGalat)
+    }
+
+    function muat(url) {
+        if (!urlAman(url)) { gagalkan('url', 'URL tidak diizinkan'); return }
+        keadaan = 'memuat'
+        if (!permintaan.ambil(url)) console.warn('permintaan sebelumnya masih berjalan')
+    }
+
+    PermintaanJson {
+        id: permintaan
+        batasWaktuMs: 3000
+        onBerhasil: (data) => root.terapkan(data)
+        onGagal: (jenis, pesan, status) =>
+            root.gagalkan(jenis, pesan + (status ? ' (status ' + status + ')' : ''))
+    }
+
+    ListView {
+        anchors { fill: parent; margins: 8 }
+        clip: true
+        spacing: 4
+        visible: root.keadaan === 'siap'
+        model: produk
+        delegate: Rectangle {
+            id: baris
+            required property string nama
+            required property int harga
+            width: ListView.view.width; height: 34; radius: 4; color: '#eeeeee'
+            Text {
+                x: 10; anchors.verticalCenter: parent.verticalCenter
+                textFormat: Text.PlainText
+                text: baris.nama + ' — ' + baris.harga
+            }
+        }
+    }
+
+    Text {
+        anchors.centerIn: parent
+        visible: root.keadaan !== 'siap'
+        textFormat: Text.PlainText
+        text: root.keadaan === 'memuat' ? 'Memuat…'
+            : root.keadaan === 'galat' ? 'Galat: ' + root.pesanGalat
+            : root.keadaan === 'kosong' ? 'Tidak ada data'
+            : 'R = muat | X = 404 | J = JSON rusak | E = URL terlarang'
+    }
+
+    Keys.onPressed: (event) => {
+        const url = 'http://127.0.0.1:8000/'
+        if (event.key === Qt.Key_R)      root.muat(url + 'data.json')
+        else if (event.key === Qt.Key_X) root.muat(url + 'tidak-ada.json')
+        else if (event.key === Qt.Key_J) root.muat(url + 'rusak.json')
+        else if (event.key === Qt.Key_E) root.muat('http://penyerang.example/x.json')
+        else return
+        event.accepted = true
+    }
+}
+```
+
+**Keluaran di terminal saat menekan `R`** (dengan `data.json` dari lab, yang berisi 5 baris dengan 2 baris tak valid):
+
+```
+qml: diterima: 3 | ditolak: 2
+```
+
+Tekan `X` memunculkan `[http] HTTP 404 (status 404)`. Tekan `J` memunculkan `[json] JSON tidak valid: ...`. Tekan `E` memunculkan `[url] URL tidak diizinkan` **tanpa** pernah mengirim permintaan.
+
+**Penjelasan alur:**
+
+| Tahap | Gerbang |
+|---|---|
+| `muat(url)` | Gerbang URL (`urlAman`) |
+| `PermintaanJson` | Gerbang transport (status 2xx, timeout, ukuran) dan format (`JSON.parse`) |
+| `terapkan(data)` | Gerbang bentuk (`bersihkanProduk`, batas `maksBaris`) |
+| Delegate | Gerbang tampilan (`Text.PlainText`) |
+| `keadaan` | Satu variabel yang menentukan apa yang tampil: memuat, siap, kosong, atau galat |
+
+Jebakan: J13, J14, J15, J16, J17, J18.
+
+---
+
+## 11. Penutup modul
+
+### 11.1 Hubungan dengan modul lain
+
+- **Prasyarat:** 2.x (JSON, callback, `Promise`), 3.x (sinyal), 5.1 (komponen sebagai API, dipakai untuk `PermintaanJson`), 6.x (`Timer`, `State`), 7.1 (gerbang validasi dan `ListModel`), 7.3 (daftar putih dan larangan mengeksekusi data).
+- **Fase 7 berakhir di sini.** Alur lengkapnya: **jaringan (7.4) → gerbang → model (7.1) → view (7.2) → objek dinamis bila perlu (7.3)**.
+- **Modul 10.x (C++):** `QNetworkAccessManager`, `QJsonDocument`, model C++, dan thread terstruktur (10.5, 10.7).
+- **Fase 13 (keamanan):** daftar putih URL, validasi masukan, batas sumber daya, rahasia dan token.
+
+### 11.2 Tabel kesalahan umum
+
+| ID | Gejala | Penyebab | Solusi |
+|---|---|---|---|
+| J1 | UI membeku saat memproses data | Parse dan validasi data besar di thread UI | `WorkerScript` atau C++ |
+| J2 | Galat jaringan tampil sebagai "HTTP 0" | `status === 0` tidak dibedakan | Cabangkan: 0 jaringan, di luar 2xx HTTP |
+| J3 | Respons sah 204/206 dianggap gagal | Hanya menerima `status === 200` | Terima rentang 2xx sesuai kontrak API |
+| J4 | Galat di callback sukses dilaporkan "JSON tidak valid" | `try` membungkus callback | `parse` di `try`, callback di luar |
+| J5 | Aplikasi rusak karena data tak terduga | Menganggap JSON selalu sesuai bentuk | Gerbang bentuk (7.4.2) |
+| J6 | Hasil lama menimpa hasil baru | Balapan respons | Nomor urut, `abort()`, debounce |
+| J7 | Aplikasi menunggu selamanya | Tidak ada timeout | `Timer` + `abort()` |
+| J8 | Galat sintaks pada `async`/`await` atau `.finally` | Runtime mengimplementasikan ES7 | `Promise` `.then/.catch` atau callback; uji dulu |
+| J9 | `fetch`, `setTimeout`, atau `window` tak dikenal | Lingkungan QML bukan peramban | XHR dan `Timer` |
+| J10 | `WorkerScript` tak berfungsi | Lupa `import QtQml.WorkerScript`, jalur `source` salah, atau worker mengakses objek QML | Impor modul, periksa jalur, kirim data lewat pesan |
+| J11 | Perubahan `ListModel` dari worker tak terlihat | Lupa `sync()` | Panggil `model.sync()` setelah mengubah |
+| J12 | Pesan ke worker gagal | Mengirim tipe yang tak diizinkan (objek QML selain `ListModel`) | Kirim boolean, angka, string, objek dan array JS, atau `ListModel` |
+| J13 | XHR gagal membaca berkas lokal | Akses berkas dinonaktifkan secara default | Pakai `qrc`; env var hanya untuk QML tepercaya |
+| J14 | Token bocor | Token di URL atau log (`QML_XHR_DUMP`) | Header `Authorization`; matikan dump di produksi |
+| J15 | Aplikasi meminta host tak terduga | XHR tak menegakkan same-origin; URL dari data | Daftar putih awalan URL |
+| J16 | Teks dari server tampil sebagai HTML | `Text` default `AutoText` | `textFormat: Text.PlainText` |
+| J17 | Kode asing berjalan | Respons dimasukkan ke `Qt.createQmlObject` atau `Loader.source` | Jangan; daftar putih (7.3) |
+| J18 | Memori melonjak | Respons raksasa atau jumlah baris tak terbatas | Batas `content-length`, panjang, dan jumlah baris |
+| J19 | Memori boros | Banyak `WorkerScript` (satu mesin JS tiap worker) | Bagi satu worker untuk beberapa tugas |
+
+### 11.3 Latihan 15 menit
+
+**Persiapan terminal (Arch).** Cari nama biner QML:
+
+```bash
+pacman -Q qt6-declarative
+pacman -Ql qt6-declarative | grep -E 'bin/(qml|qmllint|qmlformat)'
+```
+
+Pakai nama yang muncul, misalnya jika `qml`:
+
+```bash
+qml main.qml                                   # dengan jendela (untuk tombol)
+QT_QPA_PLATFORM=offscreen qml main.qml         # tanpa jendela (untuk skrip yang mencetak log)
+QML_XHR_DUMP=1 QT_QPA_PLATFORM=offscreen qml main.qml    # tampilkan rincian permintaan
+qmllint main.qml
+```
+
+**Langkah:**
+
+1. Siapkan lab seperti di 7.4.3: `data.json`, `rusak.json`, dan server `python -m http.server 8000 --bind 127.0.0.1`.
+2. Sesuai kurikulum: ubah `ambilJson` (7.4.1) agar mengembalikan galat berbeda untuk **jaringan putus**, **HTTP 404**, dan **JSON rusak**. Uji ketiganya: `data.json` (sukses), `tidak-ada.json` (404), `rusak.json` (JSON rusak). Lalu hentikan server untuk menguji jaringan putus.
+3. Jalankan `main.qml` dari 7.4.3 dan cocokkan keluarannya. Ulangi dengan `QML_XHR_DUMP=1` dan perhatikan apa yang dicatat.
+4. Jalankan studi kasus 7.4.8. Tekan `R`, `X`, `J`, `E` dan amati keadaan UI serta log.
+5. Jalankan `qmllint` pada semua berkas dan rapikan peringatannya.
+
+**Tantangan 10 menit:** uji timeout dengan server yang tidak pernah menjawab (perintah `python -c ...` di 7.4.3), lalu tambahkan **ulang-coba dengan backoff** (7.4.7) sehingga `timeout` dicoba ulang tiga kali sebelum menyerah, sementara `http 404` tidak diulang. Setelah itu jalankan Contoh C (7.4.5), bandingkan `P` dan `U`, lalu jelaskan hasilnya dengan kata-kata Anda sendiri.
+
+### 11.4 Cek pemahaman
+
+1. Mengapa respons jaringan harus divalidasi sebelum dipakai?
+2. Apa beda `status === 0` dengan `status === 404`?
+3. Mengapa `parse` sebaiknya di dalam `try` saja dan bukan callback sukses?
+4. Kapan memilih `WorkerScript` dibanding XHR, dan kapan C++?
+5. Mengapa XHR QML tak menegakkan same-origin policy, sehingga aplikasi perlu daftar putih URL?
+6. Mengapa `sync()` diperlukan setelah mengubah `ListModel` di worker?
+7. Bagaimana mencegah hasil permintaan lama menimpa hasil baru?
+
+**Jawaban singkat:**
+
+1. `JSON.parse` hanya menjamin sintaks, bukan makna. Data luar bisa salah bentuk, terlalu besar, atau berbahaya. Gerbang validasi menjaga model dan UI.
+2. `0` berarti tidak ada respons HTTP sama sekali (jaringan putus, ditolak). `404` berarti server menjawab bahwa sumber tidak ada. Penanganannya berbeda.
+3. Jika callback ikut di dalam `try`, galat di kode Anda sendiri akan disalahlaporkan sebagai JSON rusak. Parse yang terisolasi menjaga diagnosis tetap benar.
+4. XHR untuk menunggu jaringan (sudah asinkron). `WorkerScript` untuk pekerjaan CPU berat dalam JS. C++ untuk data sangat besar, TLS khusus, WebSocket, atau thread terstruktur.
+5. Dokumentasi menyatakan XHR QML tidak menegakkan kebijakan itu. Tanpa pagar dari aplikasi, kode bisa meminta ke host mana pun, termasuk yang dipengaruhi data luar.
+6. Worker berjalan di thread lain. `sync()` mendorong perubahan agar terlihat di thread UI.
+7. Beri tiap permintaan nomor urut dan abaikan hasil yang nomornya bukan yang terbaru, atau `abort()` permintaan lama dan tambahkan debounce.
+
+### 11.5 Referensi
+
+Tautan `doc.qt.io` di bawah ini muncul pada halaman dokumentasi Qt 6.12 yang saya baca saat menyusun materi ini. Tautan MDN dan Qt Network tidak saya buka ulang, jadi periksa sendiri bila berubah.
+
+- [The XMLHttpRequest JavaScript Object](https://doc.qt.io/qt-6/qml-qtqml-xmlhttprequest.html)
+- [JavaScript Host Environment](https://doc.qt.io/qt-6/qtqml-javascript-hostenvironment.html) · [List of JavaScript Objects and Functions](https://doc.qt.io/qt-6/qtqml-javascript-functionlist.html)
+- [WorkerScript](https://doc.qt.io/qt-6/qml-qtqml-workerscript-workerscript.html) · [ListModel (termasuk `sync()`)](https://doc.qt.io/qt-6/qml-qtqml-models-listmodel.html)
+- [Handling Untrusted Data](https://doc.qt.io/qt-6/untrusteddata.html) · [Security in Qt](https://doc.qt.io/qt-6/security.html)
+- [Dynamic QML Object Creation from JavaScript](https://doc.qt.io/qt-6/qtqml-javascript-dynamicobjectcreation.html)
+- [W3C XMLHttpRequest Level 1](https://www.w3.org/TR/2014/WD-XMLHttpRequest-20140130/) · [ECMA-262](https://www.ecma-international.org/publications-and-standards/standards/ecma-262/)
+- [MDN: XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) · [MDN: Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) · [MDN: JSON.parse](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse)
+- C++: [QNetworkAccessManager](https://doc.qt.io/qt-6/qnetworkaccessmanager.html) · [QJsonDocument](https://doc.qt.io/qt-6/qjsondocument.html)
+- Komunitas: [Qt Forum](https://forum.qt.io/) · [Qt Academy](https://www.qt.io/academy)
+
+---
+
+
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
