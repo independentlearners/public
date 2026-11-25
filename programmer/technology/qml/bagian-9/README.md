@@ -2877,6 +2877,936 @@ Tautan CMake dan Qt berikut saya baca langsung atau temukan di halaman dokumenta
 
 ---
 
+# Modul 8.4: Konvensi, Linting, dan Disiplin Kualitas
+
+*Fase 8: Modul QML dan Arsitektur Aplikasi*
+
+## Daftar isi modul ini
+
+1. Audit singkat sebelum materi
+2. Fondasi: peran modul, konsep dan filosofi, terminologi, peta visual
+3. Proyek contoh: komponen berkonvensi dan alat pemeriksa
+4. **8.4.1** Urutan atribut dan penamaan
+5. **8.4.2** `qmlformat`
+6. **8.4.3** `qmllint` dan peringatan umum
+7. **8.4.4** Hook git
+8. **8.4.5** CI sederhana
+9. **8.4.6** (TAMBAHAN) Mengelola utang peringatan secara bertahap
+10. **8.4.7** (TAMBAHAN) Keamanan rantai kualitas: sandbox, hook, dan rahasia
+11. Penutup: hubungan modul, tabel kesalahan, latihan, cek pemahaman, referensi
+
+---
+
+## 1. Audit singkat
+
+Saya membaca bagian 8.4 terhadap dokumentasi Qt 6.12 (*QML Coding Conventions*, `qmllint`, `qmlformat`) dan terhadap Modul 8.1 sampai 8.3.
+
+| # | Temuan | Status | Tindakan |
+|---|---|---|---|
+| 1 | Prasyarat: 8.1-8.3 (modul, target `all_qmllint`, preset `lint`, workflow `ci`), 8.2 (arah lapisan) | Aman, tidak ada loncatan | Tidak ada |
+| 2 | Hook: `qmllint $files \|\| exit 1` | **Tidak memblokir peringatan** | Menurut dokumentasi, kode keluar `qmllint` baru non-nol bila peringatan melebihi `--max-warnings`, dan nilai bawaannya `-1` (tanpa batas). Jadi hook hanya memblokir **galat**, bukan peringatan. Latihan kurikulum ("commit file dengan peringatan") akan lolos tanpa perbaikan. Diperbaiki di 8.4.4 |
+| 3 | Hook melint berkas di disk, bukan isi yang di-*stage* | Celah | Bila berkas sebagian di-stage (`git add -p`), yang dilint berbeda dari yang dikomit. Ditambahkan pemeriksaan |
+| 4 | `$files` tanpa tanda kutip | Rapuh | Nama berspasi memecah argumen. Diganti array bash dan pemisah NUL |
+| 5 | Hook disimpan di `.git/hooks/` | Tidak ikut `git clone` | Hook tidak terdistribusi. Pakai `core.hooksPath` ke folder di repo |
+| 6 | Urutan atribut kurikulum: "id, properti, signal, handler, fungsi, anak" | **Berbeda dari panduan Qt** | Panduan resmi: id, deklarasi properti, deklarasi signal, fungsi JavaScript, properti objek, objek anak. Handler tidak dipisah (termasuk properti objek). Dikoreksi di 8.4.1 |
+| 7 | "Akses berkualifikasi", "tanpa logika berat di binding" | Benar | Dilengkapi aturan resmi: binding panjang jadi blok atau fungsi, anotasi tipe fungsi, parameter handler dinamai |
+| 8 | `qmlformat` hanya disebut nama | Kurang | Tidak ada mode "cek saja" bawaan. Dibahas cara diff, berkas `.qmlformat.ini`, dan `-n` vs `--group-attributes-together` |
+| 9 | `qmllint`: konfigurasi, `.qmllint.ini`, `// qmllint disable`, `--fix`, `--json` | Belum ada | Ditambahkan di 8.4.3 dan 8.4.6 |
+| 10 | CI sederhana | Hanya judul | Didefinisikan: satu skrip yang menjalankan preset `ci` (8.3) di wadah terisolasi |
+| 11 | Keamanan alat | Belum ada | Dokumentasi menyarankan `qmllint` dan `qmlformat` dijalankan di sandbox pada kode tak tepercaya. TAMBAHAN 8.4.7 |
+| 12 | Koreksi atas 8.3 | Perlu dicatat | Uji `qmllint` dan target `all_qmllint` di 8.3 hanya gagal pada galat. Dengan `.qmllint.ini` yang disetel `MaxWarnings=0` (8.4.3), peringatan juga akan menggagalkannya |
+
+**Pembaruan daftar isi kurikulum 8.4:** 8.4.1 sampai 8.4.5 tetap, ditambah **8.4.6** (Mengelola utang peringatan) dan **8.4.7** (Keamanan rantai kualitas).
+
+---
+
+## 2. Fondasi modul
+
+### 2.1 Deskripsi konkret dan peran dalam kurikulum
+
+Ini modul penutup Fase 8. Struktur (8.1, 8.3) dan arsitektur (8.2) hanya bertahan bila ditegakkan secara otomatis. Modul ini mengajarkan tiga alat dan satu kebiasaan: **format** (`qmlformat`), **periksa** (`qmllint`), **cegat sebelum komit** (hook), dan **gerbang akhir** (CI). Tujuannya sederhana: kesalahan yang bisa ditangkap mesin tidak boleh sampai ke mata manusia, apalagi ke pengguna.
+
+### 2.2 Konsep kunci dan filosofi
+
+**Analogi untuk non-IT.** Linter adalah korektor naskah yang tidak pernah lelah: ia menandai salah ketik dan kalimat janggal sebelum pembaca melihatnya. Formatter adalah penata huruf: ia membuat semua halaman terlihat dicetak oleh satu tangan. Hook adalah penjaga di pintu penerbit, dan CI adalah percetakan yang menolak naskah cacat tanpa kompromi.
+
+Prinsip yang mendasarinya:
+
+1. **Otomasi menggantikan ingatan.** Aturan yang hanya ada di kepala orang akan dilanggar.
+2. **Peringatan adalah sinyal dini.** Aplikasi berjalan bukan bukti kode benar. Peringatan seperti akses tak berkualifikasi menandai ketergantungan pada konteks, kerapuhan, dan kode yang tak bisa dikompilasi dengan baik.
+3. **Satu gaya untuk semua.** Diff hanya berisi perubahan makna, bukan selera spasi.
+4. **Hook itu kenyamanan, CI itu gerbang.** Hook lokal bisa dilewati (`--no-verify`). Hanya CI yang tak bisa.
+5. **Reproduksibilitas.** Alat dan versi yang sama di lokal dan CI.
+6. **Keamanan.** Alat pemeriksa menguraikan kode. Dokumentasi menyarankan menjalankannya di sandbox bila kodenya tak tepercaya. Hook adalah kode yang dieksekusi di mesin pengembang, jadi perlakukan perubahannya sebagai sensitif.
+
+### 2.3 Terminologi esensial
+
+| Istilah | Penjelasan |
+|---|---|
+| **Linter** | Alat yang memeriksa kode untuk kesalahan dan anti-pola (`qmllint`). |
+| **Formatter** | Alat yang menata ulang tampilan kode tanpa mengubah makna (`qmlformat`). |
+| **Hook git** | Skrip yang dijalankan git pada peristiwa tertentu (`pre-commit`, `pre-push`). |
+| **`core.hooksPath`** | Pengaturan git yang menunjuk folder hook, sehingga hook bisa disimpan di repo. |
+| **CI** | Continuous Integration: build dan uji otomatis pada setiap perubahan. |
+| **Konvensi gaya** | Kesepakatan penulisan kode (urutan atribut, penamaan). |
+| **Kategori peringatan** | Jenis peringatan `qmllint` yang bisa dinaikkan, diturunkan, atau dinonaktifkan (`UnqualifiedAccess`). |
+| **`.qmllint.ini`** | Berkas pengaturan `qmllint`, dicari di folder berkas dan semua induknya. |
+| **`.qmlformat.ini`** | Berkas pengaturan `qmlformat`. |
+| **`--max-warnings`** | Batas jumlah peringatan sebelum kode keluar `qmllint` menjadi non-nol. |
+| **Unqualified access** | Mengakses properti induk lewat nama polos, tanpa id. |
+| **Fixit** | Perbaikan otomatis yang disarankan `qmllint` (`--fix`). |
+| **Sandbox** | Lingkungan terisolasi (wadah) untuk menjalankan alat pada kode tak tepercaya. |
+
+### 2.4 Peta visual
+
+**Diagram A: lapisan penjagaan kualitas**
+
+```
+ menulis kode
+     |
+     v
+ [editor]   qmlls: umpan balik langsung saat mengetik          (paling cepat, paling longgar)
+     |
+     v
+ [hook pre-commit]   qmlformat + qmllint pada berkas yang di-stage   (detik, bisa dilewati)
+     |
+     v
+ [hook pre-push]     (opsional) uji lebih berat
+     |
+     v
+ [CI]   format-check + lint + build + uji, di wadah terisolasi        (gerbang akhir, tak bisa dilewati)
+     |
+     v
+ merge ke cabang utama
+```
+
+**Diagram B: urutan atribut dalam satu objek**
+
+```
+ Rectangle {
+     id: root                          1. id
+                                       (baris kosong)
+     required property ...             2. deklarasi properti
+     property ...
+                                       (baris kosong)
+     signal ...                        3. deklarasi signal
+                                       (baris kosong)
+     function ...(...) : tipe { }      4. fungsi JavaScript
+                                       (baris kosong)
+     width: ...                        5. properti objek (termasuk handler onXxx,
+     color: ...                           states, transitions)
+                                       (baris kosong)
+     Text { ... }                      6. objek anak
+ }
+```
+
+**Diagram C: alur hook yang benar**
+
+```
+ git commit
+    |
+    v
+ pre-commit : ambil berkas .qml yang di-stage
+    |--- tak ada? ---------------------------> lanjut
+    |--- ada perubahan belum di-stage? ------> TOLAK (yang dilint != yang dikomit)
+    |--- qmlformat: terformat? --------------> bila tidak, TOLAK
+    |--- qmllint --max-warnings 0 -----------> bila ada peringatan/galat, TOLAK
+    v
+ komit diterima
+```
+
+---
+
+## 3. Proyek contoh: komponen berkonvensi dan alat pemeriksa
+
+Berkas pada bagian ini dipakai di seluruh sub-bab. Letakkan di repo `miniapp` dari Modul 8.3 (atau repo latihan terpisah).
+
+```
+miniapp/
+├── .githooks/
+│   └── pre-commit
+├── .qmlformat.ini
+├── .qmllint.ini
+├── .git-blame-ignore-revs
+├── tools/
+│   ├── cek-format.sh
+│   ├── cek-lapisan.sh        # dari 8.3
+│   └── ci.sh
+└── qml/MyApp/Components/
+    ├── KartuProduk.qml       # komponen yang berkonvensi
+    └── ...
+```
+
+### 3.1 `KartuProduk.qml` (berkonvensi)
+
+```qml
+import QtQuick
+
+Rectangle {
+    id: root
+
+    required property string judul
+    property int jumlah: 0
+    readonly property bool kosong: root.jumlah === 0
+
+    signal dipilih(string judul)
+
+    function ringkas(maks: int): string {
+        if (root.judul.length <= maks)
+            return root.judul;
+        return root.judul.slice(0, maks) + '…';
+    }
+
+    implicitWidth: 160
+    implicitHeight: 48
+    radius: 6
+    color: root.kosong ? '#dddddd' : '#ffd27f'
+
+    onJumlahChanged: console.log('jumlah berubah:', root.jumlah)
+
+    Text {
+        anchors.centerIn: parent
+        text: root.ringkas(20)
+        textFormat: Text.PlainText
+    }
+
+    TapHandler {
+        onTapped: root.dipilih(root.judul)
+    }
+}
+```
+
+### 3.2 Versi "buruk" untuk latihan lint (`buruk.qml`)
+
+```qml
+import QtQuick
+
+Item {
+    property int lebar: 100
+
+    Rectangle {
+        width: lebar
+        height: 20
+    }
+}
+```
+
+### 3.3 Versi diperbaiki (`baik.qml`)
+
+```qml
+import QtQuick
+
+Item {
+    id: root
+
+    property int lebar: 100
+
+    Rectangle {
+        width: root.lebar
+        height: 20
+    }
+}
+```
+
+### 3.4 Perintah dasar
+
+Cari nama biner di sistem Anda (Arch), lalu pakai nama yang muncul:
+
+```bash
+pacman -Ql qt6-declarative | grep -E 'bin/(qmllint|qmlformat|qmlls)$'
+
+qmllint buruk.qml; echo "kode keluar: $?"
+qmllint baik.qml;  echo "kode keluar: $?"
+qmlformat KartuProduk.qml | diff -u KartuProduk.qml -     # tak ada keluaran = sudah terformat
+```
+
+Pada `buruk.qml`, `width: lebar` mengakses properti induk tanpa id, yang diperingatkan `qmllint` sebagai *unqualified access*. Dengan nilai bawaan, peringatan itu saja **tidak membuat kode keluar non-nol**. Konfirmasi dengan `echo $?` di mesin Anda. Itu inti audit nomor 2.
+
+---
+
+## 4. 8.4.1 Urutan atribut dan penamaan
+
+> Pola yang konsisten membuat mata menemukan jawaban tanpa mencari.
+
+### 4.1 Urutan resmi
+
+Dokumentasi Qt menyatakan bahwa atribut objek QML selalu disusun berurutan: **id**, deklarasi properti, deklarasi signal, fungsi JavaScript, properti objek, objek anak. Bagian-bagian itu dipisahkan baris kosong, dan *id* diletakkan di baris pertama agar objek mudah ditemukan.
+
+Penyesuaian terhadap kurikulum:
+
+| Urutan kurikulum | Urutan resmi | Catatan |
+|---|---|---|
+| id | **id** | Sama |
+| properti | **deklarasi properti** | Sama (`property`, `required property`, `readonly property`, `alias`) |
+| signal | **deklarasi signal** | Sama |
+| handler | *(tidak terpisah)* | Handler (`onXxx:`) adalah properti objek. Dikelompokkan bersama properti objek |
+| fungsi | **fungsi JavaScript** | Resmi: fungsi **sebelum** properti objek |
+| anak | **objek anak** | Sama, `states` dan `transitions` ada di kelompok properti objek |
+
+**Kesepakatan tim yang disarankan** (karena dokumentasi tidak mengatur handler secara khusus): letakkan handler (`onJumlahChanged`, `Component.onCompleted`) **sesudah** properti objek biasa dan **sebelum** `states`, `transitions`, dan anak. Itu yang dilakukan `KartuProduk.qml`.
+
+### 4.2 Aturan konvensi inti
+
+| Aturan | Contoh | Alasan |
+|---|---|---|
+| `id: root` untuk akar komponen | `id: root` | Kesepakatan tim agar akar mudah dirujuk |
+| **Rujuk properti induk lewat id** | `width: root.lebar` | Dokumentasi: meningkatkan keterbacaan dan kinerja. `qmllint` memperingatkan akses tak berkualifikasi |
+| **`required property`** untuk data dari luar | `required property string judul` | Lebih cepat daripada pencarian tak berkualifikasi, terbaca alat, dan menghilangkan asumsi tentang lingkungan pembuat |
+| Satu properti per baris | `color: 'blue'` | Keterbacaan, bahkan untuk ekspresi sederhana |
+| Ekspresi beberapa baris pakai blok | `width: { ...; return w }` | Format yang jelas |
+| Skrip lebih dari beberapa baris jadi fungsi | `function hitung(o: Item): double` | Dipakai ulang, diuji, dan diberi tipe |
+| **Anotasi tipe pada fungsi** | `function ringkas(maks: int): string` | Tipe parameter dan hasil langsung terlihat |
+| Titik koma di blok multi-baris | `x = 1;` | Dipakai di contoh resmi |
+| Parameter handler dinamai eksplisit | `onClicked: event => { ... }` | Kejelasan |
+| Notasi grup bila memperbaiki keterbacaan | `anchors { left: ...; top: ... }` | Mengurangi pengulangan |
+| Teks yang tampil lewat `qsTr()` | `text: qsTr('Simpan')` | Siap diterjemahkan (8.2.5) |
+
+### 4.3 Penamaan
+
+| Hal | Konvensi | Contoh |
+|---|---|---|
+| Berkas komponen | `PascalCase.qml`, berawalan huruf kapital agar menjadi tipe | `KartuProduk.qml` |
+| Properti, fungsi, id | `camelCase` | `jumlahSelesai`, `hitungTotal` |
+| Signal | Peristiwa atau kata kerja lampau | `dipilih`, `ditambahkan` |
+| Handler | `onNamaSignal` | `onDipilih` |
+| Privat | Awalan `_` (konvensi) | `_segarkan` |
+| Role model | Nama spesifik, hindari `id`, `index`, `model`, `color` | `uid`, `judul` |
+| Kategori log | `aplikasi.fitur` | `miniapp.tugas` |
+
+### 4.4 Menegakkan urutan secara otomatis
+
+`qmlformat` dapat menata atribut sesuai panduan (8.4.2):
+
+- `--group-attributes-together` mengatur ulang tanpa mengurutkan abjad.
+- `-n` / `--normalize` mengurutkan juga menurut nama (diff besar, tak selalu diinginkan).
+
+**Opsi lain untuk menegakkan konvensi:**
+
+| Opsi | Catatan |
+|---|---|
+| `qmlformat` dengan `.qmlformat.ini` | **Default**: konsisten tanpa debat |
+| Tinjauan manual (code review) | Lengkapi, bukan pengganti |
+| Dokumen gaya singkat di repo | Sebut hanya hal yang tak otomatis (penamaan) dan rujuk panduan Qt |
+
+Jebakan: Q8, Q14.
+
+---
+
+## 5. 8.4.2 `qmlformat`
+
+> Perdebatan tentang spasi adalah perdebatan yang paling mudah diakhiri oleh mesin.
+
+### 5.1 Dasar penggunaan
+
+`qmlformat` menata ulang berkas QML sesuai *QML Coding Conventions*. Secara bawaan ia **mencetak hasil ke stdout**, dan menulis ke berkas hanya dengan `-i`.
+
+```bash
+qmlformat KartuProduk.qml                       # cetak hasil, berkas tak berubah
+qmlformat -i KartuProduk.qml                    # ubah di tempat
+git ls-files -z -- '*.qml' | xargs -0 qmlformat -i      # format semua berkas QML terlacak
+qmlformat -F daftar.txt                         # format semua berkas yang tercantum di daftar.txt (di tempat)
+```
+
+**Tidak ada mode "cek saja" bawaan** pada tabel opsinya. Triknya: bandingkan keluaran dengan berkas aslinya.
+
+```bash
+qmlformat KartuProduk.qml | diff -u KartuProduk.qml -      # tak ada keluaran = sudah terformat
+```
+
+### 5.2 Opsi penting
+
+| Opsi | Setelan (`.qmlformat.ini`) | Default | Arti |
+|---|---|---|---|
+| `-i`, `--inplace` | | | Ubah di tempat |
+| `-F`, `--files <berkas>` | | | Format semua berkas dalam daftar (di tempat, mengabaikan argumen posisi) |
+| `-t`, `--tabs` | `UseTabs` | `false` | Pakai tab |
+| `-w`, `--indent-width` | `IndentWidth` | `4` | Lebar indentasi |
+| `-W`, `--column-width` | `MaxColumnWidth` | `-1` | Pecah baris panjang (`-1` = mati) |
+| `-n`, `--normalize` | `NormalizeOrder` | `false` | Mengatur ulang dan **mengurutkan** atribut sesuai panduan |
+| `--group-attributes-together` | `GroupAttributesTogether` | `false` | Mengatur ulang **tanpa** mengurutkan. Tak kompatibel dengan `-n` |
+| `--objects-spacing` / `--functions-spacing` | `ObjectsSpacing` / `FunctionsSpacing` | `false` | Jarak antar-objek dan antar-fungsi (hanya dengan `-n` atau `--group-attributes-together`) |
+| `-l`, `--newline` | `NewlineType` | `native` | `native`, `macos`, `unix`, `windows` |
+| `-S`, `--sort-imports` | `SortImports` | `false` | Urutkan impor (bisa mengubah makna bila nama sama di beberapa modul) |
+| `--semicolon-rule` | `SemicolonRule` | `always` | `always` atau `essential` |
+| `--write-defaults` | | | Tulis `.qmlformat.ini` bawaan dan keluar. **Menimpa** pengaturan dan komentar yang ada |
+| `--ignore-settings` | | | Abaikan berkas pengaturan |
+| `--output-options` | | | Tampilkan semua opsi, nilai bawaan, dan petunjuknya |
+
+### 5.3 Berkas pengaturan `.qmlformat.ini`
+
+`qmlformat` mencari `.qmlformat.ini` di source proyek atau folder induknya. Cara paling aman menulisnya: **hasilkan dulu lalu sunting**, bukan menebak bentuknya.
+
+```bash
+qmlformat --write-defaults          # menulis .qmlformat.ini di folder kerja
+```
+
+Lalu ubah nilai yang Anda inginkan. Untuk proyek contoh:
+
+```
+IndentWidth=4
+UseTabs=false
+GroupAttributesTogether=true
+ObjectsSpacing=true
+FunctionsSpacing=true
+SemicolonRule=always
+NewlineType=unix
+```
+
+Nama-nama setelan itu diambil dari dokumentasi. Letakkan di bagian dan format yang sama dengan berkas hasil `--write-defaults` di versi Qt Anda.
+
+### 5.4 Mematikan format di sebagian kode
+
+```qml
+// qmlformat off
+property var tabelSandi: [ 1, 0, 0,
+                           0, 1, 0,
+                           0, 0, 1 ]
+// qmlformat on
+```
+
+Aturan dari dokumentasi: direktif harus berada di baris sendiri, tidak mendukung bersarang, dan **diabaikan** dalam mode `normalize` atau saat opsi pengurutan impor aktif.
+
+### 5.5 Format pertama sebuah proyek
+
+Memformat seluruh proyek pertama kali menghasilkan diff besar yang mengaburkan riwayat. Praktiknya:
+
+1. Lakukan pemformatan dalam **satu komit khusus** (`Format: terapkan qmlformat`), tanpa perubahan makna.
+2. Catat hash komit itu di `.git-blame-ignore-revs`.
+3. Aktifkan: `git config blame.ignoreRevsFile .git-blame-ignore-revs`.
+
+Dengan begitu `git blame` melewati komit pemformatan dan tetap menunjuk pengubah makna.
+
+### 5.6 Opsi lain untuk menata kode
+
+| Opsi | Catatan |
+|---|---|
+| `qmlformat` + `.qmlformat.ini` | **Default** |
+| Format oleh editor lewat `qmlls` | Praktis, tetapi pastikan setelannya sama dengan berkas ini |
+| Tanpa formatter | Diff berderau, gaya melenceng |
+
+**Keamanan:** dokumentasi menyatakan `qmlformat` sebaiknya dijalankan di sandbox atau wadah bila memformat kode tak tepercaya, misalnya saat menguji di CI publik (8.4.7).
+
+Jebakan: Q7, Q8.
+
+---
+
+## 6. 8.4.3 `qmllint` dan peringatan umum
+
+> Peringatan yang dibaca hari ini mencegah insiden minggu depan.
+
+### 6.1 Apa yang diperiksa
+
+`qmllint` memverifikasi sintaks berkas QML dan memperingatkan anti-pola, antara lain:
+
+- akses properti tanpa kualifikasi;
+- handler sinyal yang tak punya sinyal pasangannya;
+- penggunaan `with`;
+- masalah yang menghalangi kompilasi QML;
+- impor yang tak terpakai;
+- komponen dan properti usang;
+- dan banyak lainnya.
+
+Agar bekerja benar, `qmllint` butuh informasi tipe dari modul di import path. Folder saat ini dan import path tipe bawaan Qt dipakai secara default. Tambahan diberikan lewat **`-I`**:
+
+```bash
+qmllint -I build/debug/qml qml/MyApp/App/Main.qml
+```
+
+Pada IDE seperti Qt Creator, `qmlls` memberi diagnosis waktu nyata saat mengetik, sehingga `qmllint` manual jarang dibutuhkan di sana. Di terminal, ia tetap alat utama.
+
+### 6.2 Kode keluar: bagian yang sering salah paham
+
+| Keadaan | Kode keluar |
+|---|---|
+| Ada **galat** (sintaks, jenis galat lain) | Non-nol |
+| Hanya **peringatan**, nilai bawaan | **Nol** |
+| Peringatan melebihi `--max-warnings` | Non-nol |
+| Pesan **info** (mis. impor tak terpakai) | Tak pernah memengaruhi kode keluar |
+
+Nilai bawaan `MaxWarnings` adalah `-1` (tanpa batas). Karena itu, untuk membuat peringatan benar-benar menggagalkan hook dan CI, pilih salah satu:
+
+```bash
+qmllint --max-warnings 0 berkas.qml            # lewat baris perintah
+```
+
+atau tetapkan di `.qmllint.ini` (lihat 6.4).
+
+### 6.3 Menyetel tingkat peringatan
+
+Tiap kategori peringatan punya tingkat: `info`, `warning`, `error`, atau `disable`. Cara menyetel:
+
+```bash
+qmllint --deprecated=disable berkas.qml
+qmllint --unused-imports=error berkas.qml
+```
+
+Opsi baris perintah menimpa nilai bawaan dan berkas pengaturan. Untuk setelan permanen, dipakai berkas pengaturan.
+
+### 6.4 Berkas `.qmllint.ini`
+
+`qmllint` otomatis mencari `.qmllint.ini` di folder berkas yang dilint dan **semua folder induknya**, kecuali bila Anda memberi `--ignore-settings`. Hasilkan bentuk bawaan dengan `qmllint --write-defaults` lalu sunting. Contoh setelan untuk proyek ini (nama kategori dan bagian diambil dari dokumentasi):
+
+```
+[General]
+MaxWarnings=0
+
+[Warnings]
+UnqualifiedAccess=error
+ContextProperties=error
+RequiredProperty=error
+PreferNonVarProperties=warning
+UnusedImports=warning
+```
+
+`MaxWarnings=0` membuat **peringatan apa pun** menggagalkan lint. Karena `.qmllint.ini` di akar proyek ditemukan otomatis oleh `qmllint` yang dipanggil target `all_qmllint` (8.3), pengaturan yang sama berlaku untuk lint lewat CMake, hook, dan CI.
+
+### 6.5 Peringatan umum dan perbaikannya
+
+Nama kategori berikut berasal dari daftar pengaturan dokumentasi.
+
+| Kategori | Penyebab | Perbaikan |
+|---|---|---|
+| `UnqualifiedAccess` | Properti induk diakses tanpa id (`width: lebar`) | `width: root.lebar` atau `required property` |
+| `UnusedImports` | `import` yang tak dipakai | Hapus impornya |
+| `PreferNonVarProperties` | `property var` padahal tipe konkret bisa dipakai | Pakai tipe konkret (8.2.3) |
+| `ContextProperties` | Memakai context property dari C++ | Dorong rujukan lewat `required property` (8.2.6) |
+| `RequiredProperty` | Penggunaan `required property` yang keliru | Penuhi atau perbaiki deklarasinya |
+| `Deprecated` | Komponen atau properti usang | Ganti dengan penggantinya |
+| `WithStatement` | Pernyataan `with` | Hindari. Rujuk objek secara eksplisit |
+| `SignalHandlerNameClash` / `BadSignalHandlerParameters` | Handler tak cocok dengan sinyalnya | Cocokkan nama dan parameter |
+| `Quick.Anchors` / `Quick.LayoutsPositioning` | Anchor bentrok, atau mengatur posisi item dalam Layout | Biarkan `Layout` yang menata, hilangkan `x`/`y`/anchors |
+| `AccessSingletonViaObject` | Mengakses singleton lewat instance | Rujuk lewat nama tipe (`Theme.latar`) |
+| `ImportFailure` / `UnresolvedType` | Modul atau tipe tak ditemukan | Perbaiki `-I` dan `IMPORT_PATH` (8.1, 8.3) |
+| `CompilerWarnings` | Kode tak bisa dikompilasi `qmlsc` | Nonaktif secara default. Aktifkan bila mengejar QML terkompilasi |
+
+**Mengapa peringatan perlu dianggap serius walau aplikasi berjalan:** akses tak berkualifikasi bergantung pada konteks tempat objek dibuat sehingga rapuh bila komponen dipindah, ia lebih lambat, dan menghalangi kompilasi. Handler tanpa sinyal pasangan biasanya salah ketik yang diam-diam tidak pernah berjalan. Impor tak terpakai memperlambat startup. Ini bukan soal kosmetik.
+
+### 6.6 Menonaktifkan peringatan secara lokal
+
+Hanya sementara dan **selalu sebut kategorinya**:
+
+```qml
+Item {
+    property string foo
+    Item {
+        property string bar: foo // qmllint disable unqualified
+    }
+}
+```
+
+atau untuk blok:
+
+```qml
+// qmllint disable unqualified
+property string bar: foo
+property string bar2: foo
+// qmllint enable unqualified
+```
+
+Dokumentasi menyarankan **menyebut kategori** daripada mematikan semua peringatan. Komentar yang diawali `qmllint` selalu diartikan sebagai direktif.
+
+### 6.7 Perbaikan otomatis (`--fix`)
+
+Sebagian peringatan punya *fixit*:
+
+```bash
+qmllint --only-explicit-categories --ignore-settings --fix --unqualified=warning berkas.qml
+qmllint --dry-run ...          # lihat hasil tanpa mengubah berkas
+```
+
+Dokumentasi menyarankan membagi pekerjaan: per subset berkas atau per kategori, bukan seluruh proyek sekaligus.
+
+### 6.8 Keluaran JSON untuk skrip
+
+```bash
+qmllint --json - berkas.qml        # '-' = tulis ke stdout
+```
+
+Keluaran memuat pesan, lokasi berkas dan baris, serta tingkat keparahan. Cocok untuk hook dan CI yang ingin membaca hasil. Untuk melihat nama kategori suatu peringatan sebelum menonaktifkannya, baca keluaran ini.
+
+### 6.9 Penanda usang
+
+```qml
+@Deprecated { reason: "Gunakan KartuProduk" }
+Rectangle { /* ... */ }
+```
+
+Properti dan komponen bisa ditandai usang. Peringatan muncul tiap kali ia dipakai.
+
+### 6.10 Opsi lain untuk memeriksa
+
+| Opsi | Kapan |
+|---|---|
+| `all_qmllint` lewat preset `lint` (8.3) | Seluruh proyek, lokal dan CI |
+| `qmllint` langsung | Cepat per berkas, hook |
+| `qmlls` di editor | Umpan balik saat menulis |
+| `--json` | Integrasi alat |
+
+Jebakan: Q1, Q6, Q9, Q10, Q11.
+
+---
+
+## 7. 8.4.4 Hook git
+
+> Penjaga pintu yang baik menolak dengan sopan sebelum masalah masuk.
+
+### 7.1 Hook versi kurikulum dan kelemahannya
+
+```sh
+#!/bin/sh
+files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.qml$')
+[ -z "$files" ] && exit 0
+qmllint $files || exit 1
+```
+
+**Penjelasan kata demi kata:**
+
+| Potongan | Arti |
+|---|---|
+| `#!/bin/sh` | Dijalankan oleh shell POSIX. |
+| `git diff --cached --name-only` | Daftar berkas yang di-stage (akan dikomit). |
+| `--diff-filter=ACM` | Hanya berkas Added, Copied, Modified (bukan dihapus). |
+| `grep '\.qml$'` | Hanya berkas berakhiran `.qml`. |
+| `[ -z "$files" ] && exit 0` | Tak ada berkas QML: izinkan komit. |
+| `qmllint $files \|\| exit 1` | Lint, dan tolak komit bila `qmllint` gagal. |
+
+**Kelemahan** (hasil audit): (1) peringatan tidak memblokir karena kode keluar `0` secara default. (2) Yang dilint adalah berkas di disk, bukan yang di-stage. (3) `$files` tanpa kutip memecah nama berspasi. (4) Tak ada `-I`, sehingga modul sendiri bisa gagal dikenali. (5) Disimpan di `.git/hooks/` yang tak ikut `git clone`.
+
+### 7.2 Hook yang lebih kuat
+
+Simpan sebagai `.githooks/pre-commit` (dapat dieksekusi):
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+QMLLINT="${QMLLINT:-qmllint}"
+QMLFORMAT="${QMLFORMAT:-qmlformat}"
+IMPORT_DIR="${QML_IMPORT_DIR:-build/debug/qml}"
+
+# 1. kumpulkan berkas QML yang di-stage (pemisah NUL aman untuk spasi)
+mapfile -d '' -t berkas < <(git diff --cached --name-only --diff-filter=ACM -z -- '*.qml')
+(( ${#berkas[@]} )) || exit 0
+
+# 2. pastikan yang dilint = yang dikomit
+if ! git diff --quiet -- "${berkas[@]}"; then
+    echo 'pre-commit: ada perubahan belum di-stage pada berkas QML.' >&2
+    echo '            jalankan git add (atau git stash) lalu ulangi.' >&2
+    exit 1
+fi
+
+# 3. pemeriksaan format
+gagal=0
+for f in "${berkas[@]}"; do
+    if ! diff -u "$f" <("$QMLFORMAT" "$f") > /dev/null; then
+        echo "pre-commit: belum terformat: $f   (qmlformat -i \"$f\")" >&2
+        gagal=1
+    fi
+done
+(( gagal == 0 )) || exit 1
+
+# 4. lint; peringatan apa pun menggagalkan komit
+"$QMLLINT" --max-warnings 0 -I "$IMPORT_DIR" "${berkas[@]}"
+```
+
+**Penjelasan kata demi kata:**
+
+| Potongan | Arti |
+|---|---|
+| `set -euo pipefail` | Berhenti pada galat, variabel tak terdefinisi, dan galat dalam pipa. |
+| `cd "$(git rev-parse --show-toplevel)"` | Pindah ke akar repo agar jalur relatif benar. |
+| `${QMLLINT:-qmllint}` | Nama biner bisa diganti lewat variabel lingkungan (sesuai hasil `pacman -Ql`). |
+| `mapfile -d '' -t berkas < <(... -z ...)` | Membaca daftar berpemisah NUL ke array. Aman untuk nama berspasi. Butuh bash 4.4+. |
+| `-- '*.qml'` | Pathspec: berkas QML di folder mana pun. |
+| `(( ${#berkas[@]} )) \|\| exit 0` | Array kosong: tak ada yang dicek. |
+| `git diff --quiet -- "${berkas[@]}"` | Bernilai gagal bila ada perubahan belum di-stage pada berkas itu. |
+| `diff -u "$f" <("$QMLFORMAT" "$f")` | Membandingkan berkas dengan versi terformatnya. |
+| `--max-warnings 0` | Peringatan apa pun membuat kode keluar non-nol. |
+| `-I "$IMPORT_DIR"` | Import path modul buatan sendiri (8.3). |
+
+### 7.3 Memasang hook agar terdistribusi
+
+Hook di `.git/hooks/` tidak ikut `git clone`. Simpan hook di repo (`.githooks/`) dan arahkan git ke sana:
+
+```bash
+chmod +x .githooks/pre-commit
+git config core.hooksPath .githooks
+```
+
+Hook tidak aktif otomatis di klon baru. Setiap pengembang harus menjalankan perintah `git config` sekali (taruh di README atau skrip setup). Itu justru fitur keamanan git: repo yang Anda klon tidak bisa langsung menjalankan kode di mesin Anda.
+
+### 7.4 Percobaan
+
+```bash
+git add buruk.qml
+git commit -m 'uji'                    # hook menolak: peringatan UnqualifiedAccess
+git commit --no-verify -m 'lewati'     # hook dilewati; karena itu CI (8.4.5) tetap perlu
+```
+
+### 7.5 Jenis hook yang berguna
+
+| Hook | Kapan | Isi yang cocok |
+|---|---|---|
+| `pre-commit` | Sebelum komit | Format dan lint berkas yang di-stage (cepat) |
+| `commit-msg` | Setelah pesan ditulis | Aturan pesan komit |
+| `pre-push` | Sebelum push | Pemeriksaan lebih berat (lint seluruh proyek, `ctest`) |
+
+Aturan praktis: hook `pre-commit` harus selesai dalam hitungan detik. Pemeriksaan berat dipindah ke `pre-push` dan CI.
+
+### 7.6 Opsi lain
+
+| Opsi | Catatan |
+|---|---|
+| `.githooks/` + `core.hooksPath` | **Default**: terversi dan mudah ditinjau |
+| Kerangka `pre-commit` (pihak ketiga) | Mengelola banyak hook. Tambahan dependensi |
+| Menyalin ke `.git/hooks/` | Tidak terdistribusi, hanya untuk uji cepat |
+
+Jebakan: Q1-Q6, Q15.
+
+---
+
+## 8. 8.4.5 CI sederhana
+
+> Gerbang yang tak bisa dilewati adalah satu-satunya yang benar-benar menjaga.
+
+CI (*Continuous Integration*) membangun dan menguji setiap perubahan secara otomatis di lingkungan bersih. Karena hook bisa dilewati (`--no-verify`) atau tak terpasang, **CI adalah gerbang sebenarnya**.
+
+### 8.1 Prinsip
+
+1. **Satu skrip, dua tempat.** Logika ada di `tools/ci.sh`, dipanggil dari lokal maupun dari sistem CI mana pun. Jangan menulis logika di berkas YAML.
+2. **Pakai preset yang sama** (`cmake --workflow --preset ci`, 8.3).
+3. **Lingkungan terisolasi dan reproduksibel** (wadah dengan versi Qt yang dipin).
+4. **Urutan gagal-cepat:** format, lapisan, lint, build, uji.
+5. **Hak minimum.** Tanpa rahasia untuk kode dari sumber tak tepercaya.
+
+### 8.2 `tools/cek-format.sh`
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+QMLFORMAT="${QMLFORMAT:-qmlformat}"
+gagal=0
+
+while IFS= read -r -d '' f; do
+    if ! diff -u "$f" <("$QMLFORMAT" "$f") > /dev/null; then
+        echo "belum terformat: $f" >&2
+        gagal=1
+    fi
+done < <(git ls-files -z -- '*.qml')
+
+exit "$gagal"
+```
+
+### 8.3 `tools/ci.sh`
+
+```bash
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+
+echo '== 1. format =='
+bash tools/cek-format.sh
+
+echo '== 2. arah lapisan =='
+sh tools/cek-lapisan.sh
+
+echo '== 3. workflow ci: configure, build, lint, test =='
+cmake --workflow --preset ci
+
+echo 'CI lulus'
+```
+
+Jalankan lokal dari akar proyek: `sh tools/ci.sh`. Keluaran yang sama muncul di CI.
+
+### 8.4 Contoh pada GitHub Actions (wadah Arch)
+
+```yaml
+name: ci
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Pasang dependensi
+        run: pacman -Syu --noconfirm --needed base-devel git cmake ninja qt6-base qt6-declarative
+      - uses: actions/checkout@v4
+      - name: Jalankan CI
+        run: sh tools/ci.sh
+```
+
+| Potongan | Arti |
+|---|---|
+| `permissions: contents: read` | Hak minimum bagi token otomatis. |
+| `container: archlinux:latest` | Menjalankan langkah di wadah Arch (versi Qt dan alat sama dengan lokal). |
+| `pacman -Syu --noconfirm --needed ...` | Memasang dependensi tanpa konfirmasi, melewati yang sudah ada. |
+| `actions/checkout@v4` | Mengambil kode. Periksa versi aksi terbaru, dan untuk lingkungan ketat pin ke **hash komit**, bukan tag. |
+| `sh tools/ci.sh` | Seluruh logika ada di skrip, bukan di YAML. |
+
+Untuk sistem CI lain (GitLab CI, Jenkins, Forgejo/Gitea), pola sama: pasang dependensi, ambil kode, jalankan `sh tools/ci.sh`.
+
+### 8.5 Praktik tambahan
+
+- **Proteksi cabang:** wajibkan CI lulus sebelum penggabungan.
+- **Matriks versi Qt:** uji pada versi terendah yang Anda dukung dan terbaru.
+- **Simpan artefak** laporan lint (`--json`) bila perlu.
+- **Cache** dependensi hanya bila terukur menghemat waktu, dan jangan menyimpan rahasia.
+
+### 8.6 Opsi lain
+
+| Opsi | Catatan |
+|---|---|
+| Skrip tunggal + YAML tipis | **Default**: portabel antar-penyedia |
+| Logika di YAML | Terkunci ke satu penyedia, sulit diuji lokal |
+| Hanya hook | Bisa dilewati. Bukan gerbang |
+
+Jebakan: Q5, Q12, Q13.
+
+---
+
+## 9. 8.4.6 (TAMBAHAN) Mengelola utang peringatan secara bertahap
+
+> Proyek yang sudah berjalan tak perlu bersih dalam semalam, hanya perlu tak bertambah kotor.
+
+Mengaktifkan `MaxWarnings=0` pada proyek yang sudah punya ratusan peringatan membuat CI merah selamanya, dan orang berhenti memperhatikannya. Adopsi bertahap:
+
+1. **Ukur dulu.** `qmllint --json - $(git ls-files '*.qml') > laporan.json` lalu hitung per kategori.
+2. **Nyalakan satu kategori sekali waktu** sebagai `error` (misalnya `UnqualifiedAccess`), dan perbaiki seluruhnya sebelum lanjut.
+3. **Gunakan `--fix`** untuk kategori yang punya fixit, dalam komit terpisah (`--only-explicit-categories --ignore-settings --fix --unqualified=warning` dan `--dry-run` untuk pratinjau).
+4. **Kecualikan sementara dengan kategori eksplisit**: `// qmllint disable unqualified` disertai alasan di baris sebelumnya. Hindari mematikan global di `.qmllint.ini`.
+5. **Catat utang** (jumlah per kategori) di dokumen atau tiket, dan turunkan dari waktu ke waktu.
+6. **Jangan menambah**: aturan komit baru tak boleh menaikkan jumlah peringatan.
+
+**Opsi lain:**
+
+| Opsi | Catatan |
+|---|---|
+| Naikkan satu kategori per iterasi | **Default**: terkendali |
+| Baseline (jumlah maksimum yang diizinkan) | Berguna sementara. Jangan dibiarkan |
+| Mematikan kategori di `.qmllint.ini` | Menyembunyikan utang, hindari |
+
+Jebakan: Q9, Q10.
+
+---
+
+## 10. 8.4.7 (TAMBAHAN) Keamanan rantai kualitas: sandbox, hook, dan rahasia
+
+> Alat pemeriksa yang membaca kode asing adalah juga pintu masuk bagi kode asing.
+
+| Risiko | Penjelasan | Penanganan |
+|---|---|---|
+| **Menjalankan `qmllint`/`qmlformat` pada kode tak tepercaya** | Dokumentasi keduanya menyarankan sandbox, wadah, atau lingkungan aman, misalnya saat memformat atau melint kode di CI publik | Jalankan di wadah tanpa rahasia dan, bila mungkin, tanpa akses jaringan dan dengan sistem berkas read-only |
+| **CI pada PR dari fork** | Kode asing berjalan dengan akses CI Anda | Pisahkan: PR dari fork tanpa rahasia dan hak tulis. Gerbang berhak istimewa hanya untuk cabang tepercaya |
+| **Hook adalah kode** | `.githooks/` dieksekusi di mesin setiap pengembang saat komit | Anggap perubahan `.githooks/`, `tools/`, dan `CMakePresets.json` sebagai perubahan sensitif. Wajib tinjauan |
+| **`core.hooksPath` dari repo tak dikenal** | Mengarahkan git ke hook sembarang menjalankannya | Hanya atur untuk repo yang Anda percaya. Baca isi hook dulu |
+| **Rahasia di skrip, preset, atau YAML** | Masuk riwayat dan log | Variabel lingkungan atau penyimpanan rahasia CI. Jangan dicetak ke log |
+| **Aksi atau dependensi CI tak dipin** | Perubahan hulu menyusup | Pin ke hash komit, tinjau pembaruan |
+| **`--no-verify`** | Melewati hook | CI sebagai gerbang akhir |
+| **Versi alat berbeda lokal vs CI** | Hasil berbeda, celah tak terdeteksi | Wadah dan versi yang sama |
+
+**Prinsipnya:** perlakukan skrip kualitas seperti kode produksi: ditinjau, diberi versi, dan dijalankan dengan hak sekecil mungkin.
+
+Jebakan: Q12, Q13, Q15.
+
+---
+
+## 11. Penutup modul
+
+### 11.1 Hubungan dengan modul lain
+
+- **Prasyarat:** 8.1 (modul, import path untuk `-I`), 8.2 (aturan arah lapisan, ditegakkan skrip), 8.3 (preset `lint` dan `ci`, target `all_qmllint`, `.gitignore`).
+- **Penutup Fase 8:** struktur (8.1, 8.3), arsitektur (8.2), dan disiplin kualitas (8.4) kini bekerja sebagai satu sistem: modul memberi batas, lapisan memberi arah, alat memberi penegakan.
+- **Modul pengujian (fase berikutnya):** uji unit `QtTest` bergabung ke workflow `ci` dan test preset.
+- **Fase 13 (keamanan):** sandbox, pengelolaan rahasia, dan rantai pasok.
+- **Fase deployment:** preset rilis dan pengerasan (8.3.7) dijalankan dari pipeline yang sama.
+
+### 11.2 Tabel kesalahan umum
+
+| ID | Gejala | Penyebab | Solusi |
+|---|---|---|---|
+| Q1 | Hook meloloskan berkas berperingatan | Kode keluar `qmllint` nol untuk peringatan (default `MaxWarnings=-1`) | `--max-warnings 0` atau `MaxWarnings=0` di `.qmllint.ini` |
+| Q2 | Yang dikomit berbeda dari yang dilint | Hook melint berkas di disk, bukan yang di-stage | Periksa `git diff --quiet` pada berkas itu |
+| Q3 | Hook gagal pada nama berspasi | `$files` tanpa kutip | Array bash dan pemisah NUL |
+| Q4 | Hook tidak jalan di mesin kolega | `.git/hooks/` tak ikut `git clone` | `.githooks/` dan `git config core.hooksPath .githooks` |
+| Q5 | Berkas jelek tetap masuk | `git commit --no-verify` | CI sebagai gerbang akhir dan proteksi cabang |
+| Q6 | Lint di hook mengeluh modul tak ditemukan | Tak ada `-I` | `-I build/debug/qml` atau variabel `QML_IMPORT_DIR` |
+| Q7 | Riwayat penuh derau format | Format pertama bercampur dengan perubahan makna | Komit khusus + `.git-blame-ignore-revs` + `blame.ignoreRevsFile` |
+| Q8 | Urutan atribut sengaja tertata berantakan | `-n` mengurutkan semua | `--group-attributes-together`, atau `// qmlformat off` |
+| Q9 | Peringatan hilang tanpa jejak | `// qmllint disable` tanpa kategori | Sebut kategori. Beri alasan |
+| Q10 | Utang menumpuk tak terlihat | Kategori dimatikan global | Turunkan per kategori. Catat dan kurangi |
+| Q11 | Peringatan diabaikan karena "toh jalan" | Menganggap lint kosmetik | Akses tak berkualifikasi rapuh dan menghalangi kompilasi. Perbaiki |
+| Q12 | CI lulus tetapi lokal gagal | Versi Qt atau alat berbeda | Wadah dan versi yang sama. Pin dependensi |
+| Q13 | Rahasia bocor lewat PR | Alat dijalankan pada kode fork dengan rahasia | Sandbox. PR fork tanpa rahasia (8.4.7) |
+| Q14 | Debat gaya berulang | Konvensi tak tertulis | Dokumen gaya singkat + `.qmlformat.ini` yang dikomit |
+| Q15 | Skrip kualitas diubah diam-diam | Perubahan `.githooks/` atau `tools/` tanpa tinjauan | Wajib tinjauan dan perlakukan sebagai sensitif |
+
+### 11.3 Latihan 15 menit
+
+**Persiapan terminal (Arch):**
+
+```bash
+pacman -Ql qt6-declarative | grep -E 'bin/(qmllint|qmlformat)$'
+git --version
+```
+
+**Langkah:**
+
+1. Buat repo latihan: `git init lab84 && cd lab84`, lalu tulis `buruk.qml` dan `baik.qml` dari bagian 3.
+2. Jalankan `qmllint buruk.qml; echo $?` dan `qmllint baik.qml; echo $?`. Catat kode keluarnya. Apakah peringatan membuat kode keluar non-nol?
+3. Sesuai kurikulum: pasang hook versi kurikulum (7.1) sebagai `.git/hooks/pre-commit` (`chmod +x`), lalu coba `git add buruk.qml && git commit -m uji`. **Apakah komit diterima?** Jelaskan alasannya dengan data langkah 2.
+4. Ganti dengan hook yang kuat (7.2) di `.githooks/pre-commit`, lalu `git config core.hooksPath .githooks`. Ulangi komit `buruk.qml` dan konfirmasi ditolak. Perbaiki ke `baik.qml` dan konfirmasi diterima.
+5. Jalankan `qmlformat --write-defaults`, sesuaikan `.qmlformat.ini`, lalu format `KartuProduk.qml` dengan `qmlformat -i` dan lihat diff-nya.
+6. Tambahkan `tools/cek-format.sh` dan jalankan. Buat satu berkas sengaja tidak terformat dan pastikan ia ditangkap.
+7. Bila memakai proyek dari 8.3, jalankan `sh tools/ci.sh` dan pastikan seluruh langkah lolos.
+
+**Tantangan 10 menit:** (a) tulis `.qmllint.ini` yang menaikkan `UnqualifiedAccess` menjadi `error` dan `UnusedImports` menjadi `warning`, lalu buktikan perbedaan kode keluarnya. (b) Tambahkan `// qmllint disable unqualified` pada satu baris di `buruk.qml` dan konfirmasi peringatannya hilang, lalu hapus dan ganti dengan perbaikan sungguhan. (c) Format seluruh proyek dalam satu komit khusus dan atur `.git-blame-ignore-revs`. (d) Jalankan `qmllint --json - buruk.qml` dan temukan nama kategori peringatannya.
+
+### 11.4 Cek pemahaman
+
+1. Mengapa peringatan `qmllint` perlu diperlakukan serius walau aplikasi berjalan?
+2. Apa urutan atribut resmi dalam sebuah objek QML?
+3. Mengapa hook kurikulum tidak memblokir komit yang berperingatan, dan bagaimana memperbaikinya?
+4. Mengapa CI adalah gerbang sebenarnya, bukan hook?
+5. Mengapa `qmlformat` tidak punya mode "cek" bawaan, dan bagaimana mensiasatinya?
+6. Apa beda `-n` dan `--group-attributes-together`?
+7. Mengapa hook sebaiknya disimpan di `.githooks/` dan bukan `.git/hooks/`?
+8. Mengapa `qmllint` dan `qmlformat` sebaiknya dijalankan di sandbox pada kode tak tepercaya?
+
+**Jawaban singkat:**
+
+1. Peringatan seperti akses tak berkualifikasi menandai kode yang bergantung pada konteks (rapuh bila dipindah), lebih lambat, dan menghalangi kompilasi. Handler tanpa sinyal pasangan biasanya salah ketik yang tak pernah berjalan. Aplikasi berjalan bukan bukti kode benar.
+2. id, deklarasi properti, deklarasi signal, fungsi JavaScript, properti objek (termasuk handler, `states`, `transitions`), lalu objek anak, dipisah baris kosong.
+3. Kode keluar `qmllint` hanya non-nol untuk galat atau peringatan melebihi `--max-warnings`, dan nilai bawaannya tanpa batas. Perbaikan: `--max-warnings 0` atau `MaxWarnings=0` di `.qmllint.ini`.
+4. Hook bisa dilewati dengan `--no-verify` atau tak terpasang di mesin tertentu. CI berjalan di lingkungan bersih pada setiap perubahan dan bisa diwajibkan lewat proteksi cabang.
+5. Karena `qmlformat` mencetak hasil ke stdout bila tak diberi `-i`. Bandingkan: `qmlformat berkas.qml | diff -u berkas.qml -`. Keluaran kosong berarti sudah terformat.
+6. `-n` mengatur ulang dan mengurutkan atribut menurut nama. `--group-attributes-together` mengatur ulang tanpa mengurutkan. Keduanya tak kompatibel dan yang kedua diutamakan bila keduanya diberikan.
+7. `.git/hooks/` tidak ikut `git clone` dan tidak berversi. `.githooks/` berada di repo, dapat ditinjau, dan diaktifkan lewat `core.hooksPath`.
+8. Keduanya menguraikan kode yang diberikan. Dokumentasi menyarankan sandbox, wadah, atau lingkungan aman bila kode tak tepercaya, misalnya di CI publik, agar kode asing tak berpeluang menjangkau sistem atau rahasia Anda.
+
+### 11.5 Referensi
+
+Tautan `doc.qt.io` berikut sudah saya baca langsung saat menyusun materi ini. Tautan git dan GitHub Actions tidak saya buka ulang.
+
+- [QML Coding Conventions](https://doc.qt.io/qt-6/qml-codingconventions.html) · [Best Practices for QML and Qt Quick](https://doc.qt.io/qt-6/qtquick-bestpractices.html)
+- [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [QML Lint Warning and Errors](https://doc.qt.io/qt-6/qmllint-warnings-and-errors.html)
+- [qmlformat](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html) · [QML Language Server](https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html)
+- [QML Script Compiler (qmlsc)](https://doc.qt.io/qt-6/qtqml-qml-script-compiler.html)
+- [qt_add_qml_module: Linting QML sources](https://doc.qt.io/qt-6/qt-add-qml-module.html#linting-qml-sources)
+- Dari modul sebelumnya: [CMake Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html)
+- Tidak dibuka ulang: [githooks](https://git-scm.com/docs/githooks) · [git blame (`--ignore-revs-file`)](https://git-scm.com/docs/git-blame) · [GitHub Actions](https://docs.github.com/en/actions)
+- Komunitas: [Qt Forum](https://forum.qt.io/) · [Qt Academy](https://www.qt.io/academy)
+
+---
+
+Modul 8.4 selesai, dan dengan itu seluruh Fase 8 (Modul 8.1 sampai 8.4).
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
