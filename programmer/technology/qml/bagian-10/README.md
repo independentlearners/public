@@ -1403,6 +1403,894 @@ Buat style dari 9.2.6, lalu bandingkan tampilannya dengan Basic.
 
 ---
 
+# Audit Singkat Modul 9.3
+
+**Terverifikasi benar**
+- Contoh kurikulum (`StackView` + `Component` + `Page`, `stack.push(detail)`) valid. `push()` menerima `Item`, `Component`, atau `url`, dan pushing `Component` membuat instans yang dihancurkan saat di-pop.
+- "Menumpuk halaman tanpa batas" dan "memuat semua halaman di awal" adalah jebakan nyata, dan keduanya punya solusi API (lihat 9.3.1 dan 9.3.2).
+
+**Perlu koreksi atau penajaman**
+1. **`Popup` bukan `Item`.** Popup mewarisi `QtObject`, dan diturunkan menjadi `Dialog`, `Drawer`, `Menu`, dan `ToolTip`. Ini harus ada di konsep dasar 9.3.4.
+2. **`stack.pop()` di latihan.** Jika QML dikompilasi, dokumentasi menyarankan fungsi bertipe kuat: `popToItem`, `popToIndex`, `popCurrentItem` (sejak 6.7), serta `pushItem`, `pushItems`, dan `replaceCurrentItem`. Ini terhubung langsung ke 9.2.5. Latihan sebaiknya memakai `popCurrentItem()`.
+3. **Tombol Escape.** Kurikulum tidak menyebut bahwa Popup menutup sendiri dengan Escape bila ia punya `activeFocus`, `closePolicy` mengandung `CloseOnEscape`, dan tombolnya adalah *cancel* standar. `focus` Popup bawaannya `false`. Ini harus masuk ke 9.3.5.
+4. **Jenis popup (≥6.8).** Sejak Qt 6.8, `popupType` memilih `Item`, `Window`, atau `Native`. Tidak ada di kurikulum, dan menentukan perilaku di WM Anda.
+
+**TAMBAHAN yang ditambahkan ke Modul 9.3**
+`popupType`, `closePolicy`, `Overlay`, `ContextMenu` (≥6.9), `DialogButtonBox`/`standardButtons`, *item ownership* `StackView`, atribut terlampir `StackView.*`/`SwipeView.*`, sinkronisasi `TabBar`+`SwipeView`, `PageIndicator`, dan dialog sistem `QtQuick.Dialogs`. Modul `QtQuick.Dialogs` sejak Qt 6.2 menyediakan `ColorDialog`, `FileDialog`, `FolderDialog`, `FontDialog`, dan `MessageDialog`. Ini menutup catatan "dialog native" dari audit 9.1.
+
+**Prasyarat dan urutan:** tidak ada yang meloncat. 9.3 memakai fokus (9.1.7), `Page`/`ApplicationWindow` (9.1.1), dan merujuk 8.2.
+
+## Daftar isi Modul 9.3 (pembaruan, salin ke README)
+
+| No | Sub-topik |
+| --- | --- |
+| 9.3.1 | `StackView`: push/pop/replace, deep linking, *ownership*, transisi, atribut terlampir |
+| 9.3.2 | `SwipeView`, `TabBar`, `PageIndicator` + pemuatan malas `[TAMBAHAN]` |
+| 9.3.3 | `Drawer` (+ mode panel permanen) |
+| 9.3.4 | `Popup`, `Dialog`, `Menu` (+ `popupType [≥6.8]`, `ContextMenu [≥6.9]`) |
+| 9.3.5 | Tombol Escape dan navigasi keyboard |
+| 9.3.6 | Pemisahan logika navigasi (Modul 8.2) |
+| 9.3.7 | Dialog sistem `QtQuick.Dialogs` `[TAMBAHAN]` |
+| 9.3.8 | Lab terpadu: aplikasi tiga layar `[TAMBAHAN]` |
+
+---
+
+# Modul 9.3 — Navigasi dan Popup
+
+## Deskripsi dan peran dalam kurikulum
+
+Aplikasi sungguhan punya banyak layar. Modul ini menjawab tiga pertanyaan:
+- **Bagaimana berpindah antar layar?** (`StackView`, `SwipeView`, `TabBar`, `Drawer`)
+- **Bagaimana menampilkan sesuatu di atas layar tanpa berpindah?** (`Popup`, `Dialog`, `Menu`)
+- **Bagaimana semuanya tetap bisa dioperasikan dari keyboard?** (9.3.5)
+
+Modul ini menyambung 9.1 (fokus dan layout) ke 9.4 (aksesibilitas).
+
+## Konsep kunci dan filosofi
+
+**Analogi.** `StackView` seperti tumpukan kartu: membuka halaman baru menaruh kartu di atas, kembali mengambilnya. `SwipeView` seperti deretan kartu sejajar yang digeser. `Popup` seperti kertas tempel di atas meja: ia tidak mengubah tumpukan, hanya menutupi sebagian.
+
+**Dua jenis navigasi**
+
+```
+HIERARKIS (ada "kembali")          SEJAJAR (ada "sebelah")
+StackView                          SwipeView / TabBar / StackLayout
+[Beranda] -> [Daftar] -> [Detail]  [Umum] [Tampilan] [Lanjutan]
+ push ->                            geser / pilih tab
+ <- pop
+```
+
+**Lapisan di atas layar (overlay)**
+
+```
++--------------------------------------------+
+| ApplicationWindow                          |
+|   header                                   |
+|   contentItem  <- StackView/SwipeView      |
+|   footer                                   |
+|   overlay (lapisan Popup, Dialog, Drawer,  |
+|            Menu, ToolTip)                  |
++--------------------------------------------+
+```
+
+## 9.3.1 `StackView`
+
+> *Perjalanan terjauh bermula dari satu `push()`.*
+
+**Konsep.** `StackView` adalah model navigasi berbasis tumpukan dengan tiga operasi utama: `push()` (maju), `pop()` (mundur), dan `replace()` (ganti item teratas). Item teratas adalah yang tampil (`currentItem`).
+
+```qml
+import QtQuick
+import QtQuick.Controls
+
+ApplicationWindow {
+    visible: true; width: 360; height: 240; title: 'StackView'
+
+    StackView {
+        id: stack
+        anchors.fill: parent
+        initialItem: beranda
+    }
+
+    Component {
+        id: beranda
+        Page {
+            title: 'Beranda'
+            Button {
+                anchors.centerIn: parent
+                text: 'Buka detail'
+                onClicked: stack.push(detail, { nomor: 7 })
+            }
+        }
+    }
+
+    Component {
+        id: detail
+        Page {
+            property int nomor: 0
+            title: 'Detail'
+            Column {
+                anchors.centerIn: parent; spacing: 8
+                Label { text: 'Detail #' + nomor }
+                Button { text: 'Kembali'; onClicked: stack.popCurrentItem() }
+            }
+        }
+    }
+}
+```
+
+**Bedah kode**
+- `StackView { id: stack; anchors.fill: parent }` adalah wadah tumpukan yang memenuhi jendela.
+- `initialItem: beranda` adalah halaman pertama. `initialItem` boleh berupa `Item`, `Component`, atau `url`, dan setara dengan memanggil `push()` saat komponen selesai.
+- `Component { id: beranda; Page { ... } }` adalah *cetakan* halaman. Ia belum dibuat sampai di-push.
+- `stack.push(detail, { nomor: 7 })` menumpuk halaman. Argumen kedua adalah peta nilai awal. Untuk item yang dibuat dinamis, nilai awal diterapkan sebelum pembuatan selesai, lebih efisien daripada mengatur properti sesudahnya.
+- `property int nomor: 0` pada `Page` adalah properti yang menerima nilai awal tadi.
+- `stack.popCurrentItem()` membuang halaman teratas. Ini sama dengan `popToIndex(currentIndex - 1)`, tersedia sejak 6.7.
+
+**Operasi inti dan hasilnya** (tumpukan awal `[A, B, C]`)
+
+| Operasi | Hasil | Catatan |
+| --- | --- | --- |
+| `push(D)` | `[A, B, C, D]` | Bila tumpukan kosong, tanpa transisi; selain itu transisi *push*. |
+| `pop()` | `[A, B]` | Pada kedalaman 1 atau 0, tidak berbuat apa-apa; kosongkan dengan `clear()`. |
+| `pop(null)` | `[A]` | "Unwind" ke dasar tumpukan. |
+| `replace(D)` | `[A, B, D]` | Ganti teratas; transisi *replace*. |
+| `push([D, E, F])` | `[A, B, C, D, E, F]` | Deep linking: hanya item terakhir yang dimuat, sisanya dimuat saat dibutuhkan. |
+
+```
+push(D)             pop()               replace(D)
+[A,B,C] -> [A,B,C,D]  [A,B,C] -> [A,B]    [A,B,C] -> [A,B,D]
+                C keluar                  C diganti D
+```
+
+**Atribut terlampir pada halaman**
+- `StackView.status` bernilai `Inactive`, `Deactivating`, `Activating`, atau `Active`.
+- `StackView.index` adalah posisi halaman, dan `StackView.view` adalah `StackView` yang memilikinya.
+- Sinyal siklus hidup: `activating`, `activated`, `deactivating`, `deactivated`, `removed`.
+
+```qml
+Page {
+    StackView.onActivated: forceActiveFocus()      // pindahkan fokus ke halaman baru
+    StackView.onRemoved: console.log('halaman dilepas')
+}
+```
+
+**Kepemilikan (*ownership*) item.** Ini sumber kebocoran memori yang umum.
+- `StackView` hanya menghancurkan item yang ia buat sendiri dari `Component` atau `url`. Item instans yang Anda `push` tak pernah dihancurkan olehnya.
+- Sinyal `StackView.onRemoved` bisa dipakai untuk menghancurkan item itu dengan aman.
+- Item yang sudah ada di tumpukan tidak di-push lagi.
+
+**Transisi**
+Enam properti mengatur animasi: `pushEnter`, `pushExit`, `popEnter`, `popExit`, `replaceEnter`, `replaceExit`. Animasi saling memengaruhi, jadi mengubah satu dan membiarkan yang lain bisa memberi hasil tak terduga. Contoh efek pudar untuk push dan pop:
+
+```qml
+StackView {
+    id: stack
+    anchors.fill: parent
+    pushEnter: Transition { PropertyAnimation { property: 'opacity'; from: 0; to: 1; duration: 150 } }
+    pushExit:  Transition { PropertyAnimation { property: 'opacity'; from: 1; to: 0; duration: 150 } }
+    popEnter:  Transition { PropertyAnimation { property: 'opacity'; from: 0; to: 1; duration: 150 } }
+    popExit:   Transition { PropertyAnimation { property: 'opacity'; from: 1; to: 0; duration: 150 } }
+}
+```
+
+Operasi tanpa animasi: `stack.push(halaman, {}, StackView.Immediate)`. Ini pas untuk pengguna yang tak suka animasi.
+
+**Aturan ukuran dan jangkar**
+- Anchors pada akar item yang ditambahkan ke `StackView` tidak didukung karena transisi menganimasikan posisi. Anchors pada anak-anaknya tetap normal.
+- `StackView` tidak mewarisi ukuran implisit dari item yang di-push. Karena itu, memakainya sebagai isi `Dialog` memerlukan `implicitWidth`/`implicitHeight` atau ukuran eksplisit.
+
+**Opsi lain**
+
+```qml
+// (1) Fungsi bertipe kuat (≥6.7), disarankan bila QML dikompilasi (Modul 9.2.5)
+stack.pushItem(detail, { nomor: 7 })
+stack.pushItems([ halamanA, halamanB ])
+stack.replaceCurrentItem(halamanC)
+stack.popToIndex(0)
+
+// (2) Navigasi dari dalam halaman tanpa id tumpukan
+StackView.view.push(detail)
+
+// (3) Halaman dari berkas: StackView membuatnya dan menghancurkannya saat di-pop
+stack.push('Detail.qml', { nomor: 7 })
+
+// (4) StackLayout: semua halaman langsung dibuat, hanya satu tampil (tanpa riwayat)
+StackLayout { currentIndex: 0; Item { } Item { } }
+```
+
+**Jebakan**
+- Mem-push `Component` yang sama berulang sehingga tumpukan menggunung. Cek `stack.currentItem` atau gunakan `replace`.
+- Meletakkan `anchors` pada akar halaman.
+- Mem-push instans lalu mengira `StackView` akan menghancurkannya.
+- `pop()` di kedalaman 1 dikira "keluar aplikasi".
+- Melewatkan data sensitif (token, sandi) sebagai parameter halaman. Properti itu hidup selama halaman hidup.
+
+## 9.3.2 `SwipeView`, `TabBar`, `PageIndicator`
+
+> *Yang sejajar tak perlu ditumpuk, cukup digeser.*
+
+**Konsep**
+- `SwipeView` memberi navigasi berbasis geser: satu halaman tampil, pengguna menggeser ke samping. Ia sendiri tidak tampil, dan disarankan dipadukan dengan `PageIndicator`.
+- `TabBar` adalah bilah tab (`TabButton`). Keduanya `Container` dan berbagi `currentIndex`.
+- Gabungan `TabBar` + `SwipeView` adalah pola paling umum untuk halaman sejajar.
+
+```qml
+Page {
+    header: TabBar {
+        id: tab
+        currentIndex: swipe.currentIndex
+        TabButton { text: 'Umum' }
+        TabButton { text: 'Tampilan' }
+        TabButton { text: 'Lanjutan' }
+    }
+
+    SwipeView {
+        id: swipe
+        anchors.fill: parent
+        currentIndex: tab.currentIndex
+
+        Repeater {
+            model: ['Umum', 'Tampilan', 'Lanjutan']
+            Loader {
+                id: halaman
+                required property string modelData
+                active: SwipeView.isCurrentItem || SwipeView.isNextItem || SwipeView.isPreviousItem
+                sourceComponent: Label {
+                    text: 'Halaman ' + halaman.modelData
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+    }
+
+    PageIndicator {
+        count: swipe.count
+        currentIndex: swipe.currentIndex
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+}
+```
+
+**Bedah kode**
+- `header: TabBar { ... }` memasang bilah tab di kepala `Page`.
+- `currentIndex: swipe.currentIndex` dan `currentIndex: tab.currentIndex` adalah dua binding timbal balik, sehingga memilih tab menggeser halaman dan menggeser halaman menandai tab.
+- `Repeater { model: [...] }` membuat satu `Loader` per elemen.
+- `required property string modelData` menerima elemen larik dari `Repeater`.
+- `SwipeView.isCurrentItem`, `.isNextItem`, `.isPreviousItem` adalah atribut terlampir. Rumus `active` ini menjaga paling banyak tiga halaman terinstansiasi sekaligus.
+- `sourceComponent: Label { ... }` adalah halaman yang dimuat saat `active` benar. Saat menjadi `false`, ia dibongkar.
+- `PageIndicator` adalah titik penunjuk halaman.
+
+**Aturan penting**
+- `SwipeView` mengambil alih geometri anak: `anchors` pada akar halaman tak didukung, dan `width`/`height` akan ditimpa.
+- Untuk dua `currentIndex` yang saling terhubung, hindari mengatur `currentIndex` langsung dari kode agar binding tak putus. Gunakan `setCurrentIndex()`.
+- Halaman bisa ditambah, disisipkan, dipindah, dan dihapus saat berjalan lewat metode `Container` (`addItem`, `insertItem`, `moveItem`, `removeItem`).
+- `interactive: false` mematikan geser. `orientation: Qt.Vertical` mengubah arah.
+
+**Keyboard.** `SwipeView` tidak otomatis menyediakan pintasan yang nyaman untuk desktop. Tambahkan sendiri:
+
+```qml
+Shortcut { sequence: 'Ctrl+PgDown'; onActivated: swipe.incrementCurrentIndex() }
+Shortcut { sequence: 'Ctrl+PgUp';   onActivated: swipe.decrementCurrentIndex() }
+```
+
+**Opsi lain**
+- `StackLayout` untuk halaman sejajar tanpa gestur geser. Semua halaman dibuat sekali.
+- `Loader` tunggal dengan `source:` yang diganti, untuk satu halaman aktif.
+- `TabBar` + `StackView` bila tiap tab punya riwayat sendiri.
+
+**Jebakan**
+- Memuat semua halaman di awal. Pakai `Loader` seperti di atas.
+- Mengubah `currentIndex` langsung sehingga binding timbal balik putus. Pakai `setCurrentIndex()`.
+- Menaruh `anchors` pada akar halaman `SwipeView`.
+
+## 9.3.3 `Drawer`
+
+> *Yang jarang dibutuhkan cukup bersembunyi di tepi.*
+
+**Konsep**
+- `Drawer` adalah panel samping berbasis geser, jenis `Popup` khusus yang berada di salah satu tepi jendela. Secara bawaan ia dipindah ke `overlay` jendela dan memakai koordinat jendela.
+- `edge` bawaan adalah `Qt.LeftEdge`, `interactive` bawaan `true`, dan `position` bernilai 0.0 (tertutup) sampai 1.0 (terbuka penuh).
+- `dragMargin` adalah jarak dari tepi layar tempat drag membuka drawer. Nilai 0 atau kurang mencegah pembukaan lewat drag.
+
+```qml
+ApplicationWindow {
+    id: root
+    visible: true; width: 480; height: 320
+    header: ToolBar {
+        ToolButton { text: 'Menu'; onClicked: laci.open() }
+    }
+
+    Drawer {
+        id: laci
+        y: root.header.height
+        width: 0.5 * root.width
+        height: root.height - root.header.height
+        focus: true
+
+        ColumnLayout {
+            anchors.fill: parent
+            ItemDelegate { Layout.fillWidth: true; text: 'Beranda';    onClicked: laci.close() }
+            ItemDelegate { Layout.fillWidth: true; text: 'Pengaturan'; onClicked: laci.close() }
+            Item { Layout.fillHeight: true }
+        }
+    }
+}
+```
+
+Tambahkan `import QtQuick.Layouts`. Letak `y` dan `height` mengikuti contoh dokumentasi agar drawer muncul di bawah header.
+
+**Bedah kode**
+- `laci.open()` dan `laci.close()` adalah metode `Popup`. Penarikan dengan mouse atau sentuhan hanya salah satu cara.
+- `y: root.header.height` dan `height: root.height - root.header.height` menempatkan drawer di bawah header. Anda tidak bisa mengatur `x` (atau margin horizontal) pada drawer di tepi kiri/kanan, maupun `y` pada tepi atas/bawah.
+- `focus: true` memberi drawer fokus agar Escape menutupnya.
+- `ItemDelegate` adalah baris yang bisa diklik. `Item { Layout.fillHeight: true }` adalah pengisi ruang.
+
+**Keyboard dan desktop.** Drag dari tepi adalah gestur sentuh/mouse. Untuk antarmuka keyboard, sediakan pintasan:
+
+```qml
+Shortcut { sequence: 'F9'; onActivated: laci.visible ? laci.close() : laci.open() }
+```
+
+**Mode panel permanen (opsional).** Drawer dapat dijadikan panel samping permanen dengan membuatnya non-modal dan non-interaktif.
+
+```qml
+Drawer {
+    id: panel
+    width: 200; height: root.height
+    modal: false; interactive: false
+    closePolicy: Popup.NoAutoClose
+    visible: true
+}
+StackView { anchors.fill: parent; anchors.leftMargin: panel.width * panel.position }
+```
+
+`anchors.leftMargin` menggeser isi agar tidak tertutup panel. Di sebagian platform, tepi tertentu dicadangkan untuk gestur sistem sehingga tak bisa dipakai.
+
+**Jebakan**
+- Drawer tak pernah terbuka di desktop karena hanya mengandalkan drag. Tambahkan tombol atau pintasan.
+- Mencoba mengatur `x` drawer kiri/kanan.
+- Isi drawer tanpa `focus: true` sehingga Escape tak menutupnya.
+
+## 9.3.4 `Popup`, `Dialog`, `Menu`
+
+> *Interupsi yang baik singkat, jelas, dan mudah ditutup.*
+
+**Konsep dasar `Popup`**
+- Popup bukan `Item`: ia mewarisi `QtObject`, dan anak-anak yang dideklarasikan di dalamnya otomatis dipasang ke `contentItem`. Item yang dibuat dinamis harus di-parent eksplisit ke `contentItem`.
+- Bila tidak memakai jendela popup, `contentItem` dipindah ke `overlay` jendela agar tampil di depan segalanya. Tugas overlay mencegat event untuk item di bawah popup modal dan menutup popup menurut `closePolicy`.
+- `modal` mencegah event menembus ke item di bawah, dan `dim` (redup) mengikuti `modal` kecuali diatur sendiri.
+
+```qml
+Button { text: 'Info'; onClicked: info.open() }
+
+Popup {
+    id: info
+    anchors.centerIn: Overlay.overlay
+    modal: true
+    focus: true
+    padding: 16
+    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+
+    enter: Transition { NumberAnimation { property: 'opacity'; from: 0; to: 1; duration: 120 } }
+    exit:  Transition { NumberAnimation { property: 'opacity'; from: 1; to: 0; duration: 120 } }
+
+    ColumnLayout {
+        Label { text: 'Popup modal' }
+        Button { text: 'Tutup'; onClicked: info.close() }
+    }
+}
+```
+
+**Bedah kode**
+- `Popup { id: info }` adalah objek non-visual sampai dibuka. `info.open()` dan `info.close()` mengatur tampilan.
+- `anchors.centerIn: Overlay.overlay` memusatkan popup di jendela. Popup hanya bisa dipusatkan terhadap induk langsung atau overlay jendela; selain itu menghasilkan peringatan.
+- `modal: true` memblokir interaksi di bawahnya.
+- `focus: true` agar popup menerima fokus. Bawaannya `false`.
+- `closePolicy` adalah gabungan flag: bawaannya `CloseOnEscape | CloseOnPressOutside`. Flag lain: `NoAutoClose`, `CloseOnPressOutsideParent`, `CloseOnReleaseOutside`, `CloseOnReleaseOutsideParent`, dan `CloseMultiple` untuk popup bersarang.
+- `enter`/`exit` adalah `Transition` pembuka dan penutup. Setelah transisi keluar, `opacity` dan `scale` dikembalikan ke nilai awal.
+- Isi dengan satu `ColumnLayout` membuat ukuran popup mengikuti isi. Dengan dua item, atur `contentWidth`/`contentHeight` sendiri.
+
+**Jenis popup `[≥6.8]`**
+
+| `popupType` | Arti |
+| --- | --- |
+| `Popup.Item` | Item di scene yang sama (bawaan umumnya) |
+| `Popup.Window` | Jendela terpisah (`Qt::Popup`), bisa keluar dari batas jendela induk |
+| `Popup.Native` | Popup native platform, dirender platform |
+
+`Item` didukung di semua platform. `Window` dan `Native` umumnya hanya di desktop. Bila tak didukung, jatuh ke tingkat di bawahnya. Menu di dalam menubar native juga native, dan submenu mengikuti jenis menu induknya. Jika Anda mengustomisasi popup (mis. mengganti delegate), pertimbangkan `Popup.Window` agar perubahan terlihat. Pada popup native, delegate QML tak dipakai. Ini menghubungkan ke 9.2.3 dan 9.2.6.
+
+**Pewarisan properti popup.** Popup mewarisi font, palette, dan atribut terlampir lewat jendelanya, bukan lewat induk objek atau visualnya. Popup juga tidak menurunkan propertinya ke popup anak. Jika popup Anda tampak tidak mengikuti tema pohonnya, inilah penyebabnya. Atur palette/font di `ApplicationWindow`, atau teruskan eksplisit.
+
+**Perilaku popup tertutup.** Saat popup tertutup, ia tidak punya jendela dan anak-anaknya tidak di-*polish*. Karena itu, `ListView` di popup tertutup tidak dapat diandalkan untuk memperbarui `count`. Simpan hitungan di model.
+
+**`Dialog`**
+- `Dialog` adalah popup untuk tugas dan komunikasi singkat, terdiri atas `header`, `contentItem`, dan `footer`. Judulnya (`title`) ditampilkan di header, dan tombol standar dikelola oleh `DialogButtonBox` di footer.
+- Dialog punya fokus secara bawaan.
+
+```qml
+Dialog {
+    id: konfirmasi
+    title: 'Keluar tanpa menyimpan?'
+    modal: true
+    anchors.centerIn: Overlay.overlay
+    standardButtons: Dialog.Ok | Dialog.Cancel
+
+    onOpened: standardButton(Dialog.Cancel).forceActiveFocus()
+    onAccepted: console.log('dikonfirmasi')
+    onRejected: console.log('dibatalkan')
+
+    Label { text: 'Perubahan yang belum disimpan akan hilang.' }
+}
+```
+
+**Bedah kode**
+- `standardButtons: Dialog.Ok | Dialog.Cancel` memilih tombol standar. Tombolnya ditata sesuai konvensi platform pengguna.
+- `onAccepted`/`onRejected` mengikuti peran tombol. Sinyal ini tidak dipancarkan bila dialog ditutup lewat `close()` atau `visible = false`.
+- `onOpened: standardButton(Dialog.Cancel).forceActiveFocus()` memberi fokus awal ke tombol aman. Ini penting untuk dialog destruktif, supaya Enter yang terlanjur tidak langsung mengonfirmasi.
+- Tombol lain: `Apply` memicu `applied`, `Discard` memicu `discarded`, `Reset` memicu `reset`, `Help` memicu `helpRequested`. Tombol `Yes`/`No` dipetakan ke peran *accept* dan *reject* di `DialogButtonBox`.
+- Metode: `accept()`, `reject()`, `done(result)`, dan `standardButton(button)` yang mengembalikan tombolnya atau `null`.
+
+**`Menu`**
+
+```qml
+Button { id: tombolBerkas; text: 'Berkas'; onClicked: menuBerkas.popup(tombolBerkas, 0, tombolBerkas.height) }
+
+Menu {
+    id: menuBerkas
+    Action { text: '&Baru';  shortcut: StandardKey.New;  onTriggered: console.log('baru') }
+    Action { text: '&Buka…'; shortcut: StandardKey.Open }
+    MenuSeparator { }
+    Menu {
+        title: 'Terbaru'
+        Action { text: 'a.txt' }
+        Action { text: 'b.txt' }
+    }
+    MenuSeparator { }
+    Action { text: '&Keluar'; shortcut: StandardKey.Quit; onTriggered: Qt.quit() }
+}
+```
+
+**Bedah kode**
+- `Menu { Action { ... } }` menjadikan `Action` (dari 9.1.2) sebagai butir menu. Perintah, pintasan, dan status aktif dipakai bersama.
+- `MenuSeparator { }` adalah garis pemisah. `Menu { title: ... }` di dalam menu menjadi submenu.
+- `shortcut: StandardKey.New` memakai pintasan standar platform (mis. Ctrl+N).
+- `menuBerkas.popup(tombolBerkas, 0, tombolBerkas.height)` membuka menu relatif ke tombol. `&` menandai mnemonik.
+
+**`ContextMenu` `[≥6.9]`**
+Atribut terlampir `ContextMenu` membuka menu konteks dengan cara yang sesuai platform. `ContextMenu` sejak Qt 6.9 dan dapat dipasang pada item mana pun.
+
+```qml
+Label {
+    text: 'Klik kanan di sini (atau tombol Menu)'
+    ContextMenu.menu: Menu {
+        MenuItem { text: 'Salin';  onTriggered: console.log('salin') }
+        MenuItem { text: 'Tempel' }
+    }
+}
+```
+
+Dua catatan:
+- `ContextMenu` membuat `Menu` secara malas (hanya saat diminta). Karena itu, `Menu` yang dideklarasikan langsung di situ sebaiknya tidak diberi `id`, sebab `id` menghilangkan optimasi itu.
+- Bila `Menu` dibuka lewat `TapHandler` atau cara lain, `ContextMenu` tidak ikut terbuka. Ini menjaga aplikasi lama tetap bekerja.
+
+**Latar redup (`Overlay`)**
+Efek redup popup modal didefinisikan lewat `Overlay.modal`, dan popup non-modal lewat `Overlay.modeless`. Pasang di `ApplicationWindow`:
+
+```qml
+ApplicationWindow { Overlay.modal: Rectangle { color: '#aa000000' } }
+```
+
+**Opsi lain**
+
+| Kebutuhan | Pilihan |
+| --- | --- |
+| Pesan singkat tanpa tombol | `ToolTip` atau `Popup` non-modal |
+| Konfirmasi | `Dialog` modal (atau `MessageDialog`, 9.3.7) |
+| Daftar perintah | `Menu` / `ContextMenu` |
+| Menu aplikasi | `MenuBar` (lihat 9.1.1) |
+| Isi kompleks | `Popup` + layout sendiri |
+
+**Jebakan**
+- Popup bukan `Item`, jadi `anchors` biasa dan sifat visual tak sama.
+- `anchors.centerIn` ke item selain induk atau overlay.
+- Menaruh `id` pada `Menu` yang dipasang ke `ContextMenu.menu`.
+- Mengandalkan font/palette induk visual untuk popup.
+- Dialog destruktif dengan fokus awal pada tombol berbahaya.
+
+## 9.3.5 Tombol Escape dan navigasi keyboard
+
+> *Keyboard adalah bahasa ibu bagi mereka yang tak menyentuh mouse.*
+
+**Perilaku bawaan Popup.** Popup menutup sendiri bila punya `activeFocus`, `closePolicy`-nya mengandung `CloseOnEscape`, dan pengguna menekan tombol *cancel* standar (biasanya Escape). Untuk mencegahnya: jangan beri popup fokus, hilangkan `CloseOnEscape` dari `closePolicy`, atau tangani `Keys.escapePressed` pada anak popup sehingga ia menerima event lebih dulu.
+
+**`StackView` tidak punya Escape bawaan.** Pola yang saya sarankan:
+
+```qml
+StackView {
+    id: stack
+    anchors.fill: parent
+    focus: true
+    Keys.onEscapePressed: if (depth > 1) popCurrentItem()
+}
+```
+
+```qml
+// di setiap halaman yang di-push:
+Page { StackView.onActivated: forceActiveFocus() }
+```
+
+**Bedah kode**
+- `Keys.onEscapePressed` adalah penanganan tombol Escape. Event dari item yang fokus merambat ke induknya sampai ada yang menerima, sehingga `StackView` menangkapnya bila tidak ada anak yang menerima.
+- `focus: true` memberi fokus awal pada `StackView`.
+- `StackView.onActivated: forceActiveFocus()` memindahkan fokus ke halaman yang baru aktif. Tanpa ini, fokus bisa tertinggal di halaman yang sudah hilang. `Page` adalah focus scope (lihat 9.1.7).
+- Popup yang terbuka menerima Escape lebih dulu, jadi Escape menutup popup dan baru berikutnya menutup halaman.
+
+**Alternatif: `Shortcut`**
+
+```qml
+Shortcut {
+    sequence: 'Escape'
+    enabled: stack.depth > 1 && !dialogHapus.visible && !laci.visible
+    onActivated: stack.popCurrentItem()
+}
+```
+
+`Shortcut` tidak peduli fokus. Ia lebih mudah menulisnya, tetapi bisa menangkap Escape yang seharusnya menutup popup. Beri syarat `enabled` seperti di atas, dan uji di aplikasi Anda.
+
+**Peta tombol standar**
+
+| Tombol | Hasil |
+| --- | --- |
+| Escape | Tutup popup/dialog/menu, lalu mundur satu halaman |
+| Tab / Shift+Tab | Pindah fokus (9.1.7) |
+| Space / Enter | Aktifkan tombol (umumnya Space; tergantung tema platform) |
+| Panah di `Menu` | Pindah butir; Enter memilih |
+| F9 (contoh) | Buka/tutup `Drawer` |
+| Menu key / Shift+F10 | Menu konteks (`ContextMenu`, ≥6.9) |
+
+**Catatan WM tiling.** `Popup.Item` hidup di dalam jendela utama, jadi tidak pernah menjadi jendela sendiri dan aman di WM tiling. `Popup.Window` dan dialog sistem (9.3.7) membuat jendela tingkat atas. Cara WM Anda memperlakukannya (mengambang atau ditata) harus diuji, dan sebagian WM butuh aturan mengambang.
+
+**Jebakan**
+- Escape tidak berfungsi karena `focus` tak diberikan (Popup bawaannya `false`).
+- Fokus tertinggal di halaman yang sudah tidak ada setelah `pop`.
+- `Shortcut` Escape bertabrakan dengan popup.
+- Navigasi hanya bisa lewat mouse atau gestur.
+
+## 9.3.6 Pemisahan logika navigasi (Modul 8.2)
+
+> *Rute adalah data, bukan pecahan kode di tiap tombol.*
+
+**Konsep.** Jika setiap halaman memanggil `stack.push(...)` langsung, halaman terikat pada satu `StackView` dan pada daftar rute di mana-mana. Pisahkan:
+- **tampilan** (halaman) tidak tahu tumpukan;
+- **logika** (objek navigasi) menyimpan daftar rute dan operasi tumpukan.
+
+```
+Halaman --nav.buka('detail', {...})--> Navigasi --> StackView
+Halaman --nav.kembali()-------------> Navigasi --> StackView
+        (tahu nama rute)             (tahu komponen dan aturan)
+```
+
+```qml
+QtObject {
+    id: nav
+    readonly property var rute: ({ detail: cDetail, pengaturan: cPengaturan })
+
+    function buka(nama, props) {
+        const c = rute[nama]
+        if (!c) { console.warn('rute tak dikenal:', nama); return }
+        stack.push(c, props || {})
+    }
+    function kembali() { if (stack.depth > 1) stack.popCurrentItem() }
+    function keAwal()  { stack.popToIndex(0) }
+}
+```
+
+**Bedah kode**
+- `readonly property var rute: ({ ... })` adalah peta nama rute ke komponen halaman (tanda kurung agar dibaca sebagai objek, bukan blok).
+- `buka(nama, props)` mencari rute di peta. Nama yang tidak ada ditolak dengan peringatan, sehingga peta menjadi daftar putih.
+- `kembali()` aman karena memeriksa `depth`.
+- `keAwal()` memakai `popToIndex(0)` bertipe kuat (≥6.7).
+
+**Keamanan.** Jika rute bisa datang dari luar (argumen CLI, D-Bus, tautan dalam), validasi lewat daftar putih seperti di atas. Jangan menaruh data rahasia pada parameter rute.
+
+**Opsi lain**
+- **Singleton `Navigasi`** (seperti Singleton tema di 5.3): `pragma Singleton`, didaftarkan di CMake dengan `QT_QML_SINGLETON_TYPE`. Cocok untuk aplikasi besar, tetapi perlu registrasi di build.
+- **Sinyal dari halaman:** halaman memancarkan `signal minta(string tujuan)`, dan cangkang (jendela utama) yang memutuskan rute. Halaman benar-benar tak tahu navigasi.
+- **`StackView.view`** (9.3.1) untuk kasus kecil.
+
+**Jebakan**
+- Menyebar `stack.push(...)` ke setiap tombol.
+- Rute berupa string bebas tanpa daftar putih.
+- Menyimpan status UI (`currentIndex`) di tampilan dan di logika sekaligus. Pilih satu sumber kebenaran.
+
+## 9.3.7 Dialog sistem `QtQuick.Dialogs` `[TAMBAHAN]`
+
+> *Beberapa pekerjaan lebih baik diserahkan kepada sistem.*
+
+**Konsep.** Modul `QtQuick.Dialogs` memungkinkan membuat dan berinteraksi dengan dialog sistem dari QML. Dialog fallback (bila platform tak punya dialog native) diimplementasikan sebagai item di scene, bukan jendela tingkat atas, dan didasarkan pada Qt Quick Controls sehingga mengikuti style.
+
+`FileDialog` native tersedia di Android, iOS, Linux (bila berjalan dengan tema platform GTK+), macOS, dan Windows. Selain itu, dipakai implementasi Qt Quick. Di Arch dengan WM minimalis (tanpa tema GTK), Anda biasanya akan melihat dialog fallback Qt Quick. Cek plugin tema yang terpasang:
+
+```bash
+ls /usr/lib/qt6/plugins/platformthemes     # lokasi bisa berbeda; lihat apa yang terpasang
+```
+
+```qml
+import QtCore
+import QtQuick.Dialogs
+
+FileDialog {
+    id: pilihBerkas
+    title: 'Pilih berkas'
+    currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
+    nameFilters: ['Teks (*.txt)', 'Semua (*)']
+    onAccepted: console.log('dipilih:', selectedFile)
+}
+// pilihBerkas.open()
+```
+
+**Bedah kode**
+- `import QtCore` membawa `StandardPaths`, dan `import QtQuick.Dialogs` membawa dialog sistem.
+- `currentFolder` adalah folder awal, di sini folder rumah. `[0]` mengambil elemen pertama daftar jalur.
+- `nameFilters` membatasi jenis berkas.
+- `onAccepted` memakai `selectedFile` (bertipe `url`).
+- Opsi `FileDialog.DontUseNativeDialog` memaksa implementasi Qt Quick non-native.
+
+`MessageDialog` bekerja serupa (`text`, `buttons`, `onAccepted`). Periksa properti persisnya di dokumentasi sebelum dipakai.
+
+**Pilih yang mana?**
+
+| Kebutuhan | Pilihan |
+| --- | --- |
+| Dialog dengan isi bebas, serasi style | `Dialog` (Controls) |
+| Konfirmasi standar | `Dialog` atau `MessageDialog` |
+| Pilih berkas/folder/warna/font | `QtQuick.Dialogs` |
+| Selalu tampil di dalam jendela (aman di WM tiling) | `Dialog` Controls, atau `DontUseNativeDialog` |
+
+## 9.3.8 Lab terpadu `[TAMBAHAN]`
+
+Berkas `Navigasi.qml`: tiga layar (`Beranda`, `Detail`, `Pengaturan`), `Drawer`, `Dialog` konfirmasi, menu konteks, `TabBar` + `SwipeView`, Escape, dan F9. Ini memenuhi latihan kurikulum (halaman ketiga dan tombol Escape).
+
+```qml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+ApplicationWindow {
+    id: root
+    visible: true; width: 560; height: 420; title: 'Lab 9.3'
+
+    // ---------- logika navigasi (tanpa tampilan) ----------
+    QtObject {
+        id: nav
+        readonly property var rute: ({ detail: cDetail, pengaturan: cPengaturan })
+
+        function buka(nama, props) {
+            const c = rute[nama]
+            if (!c) { console.warn('rute tak dikenal:', nama); return }
+            stack.push(c, props || {})
+        }
+        function kembali() { if (stack.depth > 1) stack.popCurrentItem() }
+        function keAwal()  { stack.popToIndex(0) }
+        function tanyaHapus(nomor) { dialogHapus.nomor = nomor; dialogHapus.open() }
+    }
+
+    Shortcut { sequence: 'F9'; onActivated: laci.visible ? laci.close() : laci.open() }
+
+    header: ToolBar {
+        RowLayout {
+            anchors.fill: parent
+            ToolButton { text: 'Menu'; onClicked: laci.open() }
+            ToolButton { text: 'Kembali'; enabled: stack.depth > 1; onClicked: nav.kembali() }
+            Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                text: stack.currentItem ? stack.currentItem.title : ''
+            }
+        }
+    }
+
+    StackView {
+        id: stack
+        anchors.fill: parent
+        initialItem: cBeranda
+        focus: true
+        Keys.onEscapePressed: nav.kembali()
+    }
+
+    Drawer {
+        id: laci
+        y: root.header.height
+        width: 0.4 * root.width
+        height: root.height - root.header.height
+        focus: true
+        ColumnLayout {
+            anchors.fill: parent
+            ItemDelegate { Layout.fillWidth: true; text: 'Beranda';    onClicked: { nav.keAwal(); laci.close() } }
+            ItemDelegate { Layout.fillWidth: true; text: 'Pengaturan'; onClicked: { nav.buka('pengaturan'); laci.close() } }
+            Item { Layout.fillHeight: true }
+        }
+    }
+
+    Dialog {
+        id: dialogHapus
+        property int nomor: 0
+        title: 'Hapus item?'
+        modal: true
+        anchors.centerIn: Overlay.overlay
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onOpened: standardButton(Dialog.Cancel).forceActiveFocus()
+        onAccepted: { console.log('hapus #' + nomor); nav.kembali() }
+        Label { text: 'Item #' + dialogHapus.nomor + ' akan dihapus.' }
+    }
+
+    // ---------- halaman ----------
+    Component {
+        id: cBeranda
+        Page {
+            title: 'Beranda'
+            StackView.onActivated: forceActiveFocus()
+            ColumnLayout {
+                anchors.centerIn: parent
+                Label { text: 'Kedalaman tumpukan: ' + stack.depth }
+                Button { text: 'Buka detail #7'; onClicked: nav.buka('detail', { nomor: 7 }) }
+                Button { text: 'Pengaturan'; onClicked: nav.buka('pengaturan') }
+            }
+        }
+    }
+
+    Component {
+        id: cDetail
+        Page {
+            property int nomor: 0
+            title: 'Detail #' + nomor
+            StackView.onActivated: forceActiveFocus()
+            ColumnLayout {
+                anchors.centerIn: parent
+                Label {
+                    text: 'Klik kanan di sini (atau tombol Menu)'
+                    ContextMenu.menu: Menu {
+                        MenuItem { text: 'Salin nomor'; onTriggered: console.log('salin', nomor) }
+                    }
+                }
+                Button { text: 'Hapus…'; onClicked: nav.tanyaHapus(nomor) }
+            }
+        }
+    }
+
+    Component {
+        id: cPengaturan
+        Page {
+            title: 'Pengaturan'
+            StackView.onActivated: forceActiveFocus()
+            header: TabBar {
+                id: tab
+                currentIndex: swipe.currentIndex
+                TabButton { text: 'Umum' }
+                TabButton { text: 'Tampilan' }
+            }
+            SwipeView {
+                id: swipe
+                anchors.fill: parent
+                currentIndex: tab.currentIndex
+                Repeater {
+                    model: ['Pengaturan umum', 'Pengaturan tampilan']
+                    Loader {
+                        id: halaman
+                        required property string modelData
+                        active: SwipeView.isCurrentItem || SwipeView.isNextItem || SwipeView.isPreviousItem
+                        sourceComponent: Label {
+                            text: halaman.modelData
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+```bash
+qml6 Navigasi.qml                                        # Fusion (bawaan Linux)
+QT_QUICK_CONTROLS_STYLE=Basic qml6 Navigasi.qml          # bandingkan
+qmllint6 Navigasi.qml                                    # akan memperingatkan akses id lintas-komponen
+```
+
+`ContextMenu` membutuhkan Qt ≥ 6.9. Peringatan `qmllint` soal akses tak terkualifikasi adalah materi Modul 8.4 (`pragma ComponentBehavior: Bound` dan `required property`).
+
+**Alur uji keyboard**
+
+```
+Tab -> Beranda: tombol "Buka detail" -> Enter/Space -> Detail
+Esc -> kembali ke Beranda          F9 -> buka/tutup Drawer
+Detail: "Hapus..." -> Dialog; fokus awal ada di "Cancel"; Esc menutup
+Shift+F10 / tombol Menu di label -> menu konteks
+```
+
+**Latihan tambahan**
+1. Tambahkan halaman ketiga `cAbout` dan daftarkan di `rute`.
+2. Ganti semua `stack.push(...)` dengan `stack.pushItem(...)` dan lihat apa yang `qmllint6` katakan.
+3. Aktifkan `popupType: Popup.Window` pada sebuah `Menu`, lalu amati bagaimana WM Anda memperlakukannya.
+4. Coba `StackLayout` sebagai pengganti `StackView` dan bandingkan perilaku riwayatnya.
+
+## Terminologi esensial
+
+| Istilah | Penjelasan |
+| --- | --- |
+| **Navigasi hierarkis** | Ada konsep "kembali" (tumpukan) |
+| **`push` / `pop` / `replace`** | Tambah / buang teratas / ganti teratas pada `StackView` |
+| **Deep linking** | Memulai atau mengubah tumpukan ke keadaan tertentu langsung |
+| **Item ownership** | Siapa yang menghancurkan item (`StackView` hanya yang ia buat) |
+| **Container** | Induk `TabBar`/`SwipeView` yang menyimpan `currentIndex` |
+| **Loader** | Pemuat komponen sesuai kebutuhan (`active`, `sourceComponent`) |
+| **Overlay** | Lapisan di atas isi jendela untuk popup |
+| **Modal / modeless** | Memblokir / tidak memblokir interaksi di bawahnya |
+| **`closePolicy`** | Aturan kapan popup menutup otomatis |
+| **`popupType`** | `Item`, `Window`, atau `Native` (≥6.8) |
+| **Focus scope** | Wilayah fokus terisolasi (`Page`, `StackView`, `Popup`) |
+| **`standardButtons`** | Tombol standar `Dialog` (`Ok`, `Cancel`, `Discard`, dst.) |
+| **Mnemonik** | Huruf bergaris bawah (`&Berkas`) untuk Alt+huruf |
+
+## Hubungan dengan modul lain
+
+- **Prasyarat:** 9.1 (fokus, `Page`, `ApplicationWindow`, `Action`), 9.2 (style memengaruhi tampilan popup; 9.2.5 terkait fungsi bertipe `pushItem`), 8.2 (pemisahan logika dan tampilan), 7.x (model untuk daftar di halaman), 5.3 (Singleton).
+- **Mendukung:** 9.4 (fokus dan keyboard sebagai dasar aksesibilitas; `Accessible` pada tombol navigasi; terjemahan judul halaman/dialog), 8.4 (`qmllint` untuk akses lintas-komponen), jalur C++ (Modul 10.x): pemicu rute dari C++.
+
+## Tips dan praktik terbaik
+
+1. **Satu `StackView` per alur utama** dan akses lewat satu objek `nav`.
+2. **Push `Component`/`url`, bukan instans**, agar `StackView` yang menghancurkan halaman.
+3. **Muat halaman `SwipeView` dengan `Loader`** bila halamannya berat.
+4. **Beri semua popup `focus: true`** bila ingin Escape bekerja, dan jangan hapus `CloseOnEscape` tanpa alasan.
+5. **Dialog destruktif**: fokus awal pada tombol aman, dan teks tombol jelas (`Hapus`, bukan `Ok`).
+6. **Daftar putih rute** untuk apa pun yang bisa datang dari luar proses.
+7. **Sediakan pintasan keyboard** untuk setiap navigasi berbasis gestur (Drawer, SwipeView).
+8. **Uji `popupType: Popup.Window`** di WM Anda sebelum memilihnya.
+9. **Gunakan fungsi bertipe** (`pushItem`, `popToIndex`, `replaceCurrentItem`) bila QML dikompilasi.
+
+## Kesalahan umum dan solusi
+
+| Kesalahan | Akibat | Solusi |
+| --- | --- | --- |
+| Menumpuk halaman tanpa batas | Memori naik, riwayat panjang | `replace`, `popToIndex`, atau cek halaman saat ini |
+| Memuat semua halaman di awal | Start lambat | `Component`/`url` di `StackView`, `Loader` di `SwipeView` |
+| `anchors` pada akar halaman | Transisi/geser rusak | Pakai anchors pada anak, bukan akarnya |
+| Push instans lalu tak dihancurkan | Kebocoran | Push `Component`/`url`, atau `StackView.onRemoved: destroy()` |
+| `currentIndex` diatur langsung | Binding `TabBar`↔`SwipeView` putus | `setCurrentIndex()` |
+| Popup tanpa `focus` | Escape tak menutup | `focus: true` |
+| Popup tak ikut tema | Font/palette beda | Atur di `ApplicationWindow` atau teruskan eksplisit |
+| `Menu` ber-`id` pada `ContextMenu.menu` | Pembuatan malas tak terjadi | Hapus `id`, atau definisikan terpisah dan tunjuk |
+| `Shortcut` Escape bentrok popup | Popup dan halaman menutup sekaligus | Beri syarat `enabled`, atau pakai `Keys.onEscapePressed` |
+| Drawer hanya bisa di-drag | Tak terpakai di desktop | Tombol dan pintasan keyboard |
+| Dialog destruktif dengan fokus pada konfirmasi | Konfirmasi tak sengaja | Fokus awal ke tombol Batal |
+| Rute dari input luar tanpa validasi | Penyalahgunaan navigasi | Daftar putih seperti `nav.rute` |
+
+## Cek pemahaman: jawaban
+
+**Kapan `SwipeView` lebih tepat dari `StackView`?**
+- **`SwipeView`:** halaman *sejajar* dan setara (tab, onboarding, karusel), tanpa konsep "kembali ke halaman sebelumnya". Pengguna berpindah ke samping, dan semua halaman adalah sibling. Gunakan `Loader` bila halamannya berat.
+- **`StackView`:** alur *hierarkis* atau menukik (daftar ke detail ke edit), dengan riwayat dan tombol kembali. `StackView` juga membuat dan menghancurkan halaman per push dan pop, sehingga hemat memori.
+- **Rumus cepat:** ada "kembali"? Pakai `StackView`. Ada "sebelah"? Pakai `SwipeView` atau `TabBar`.
+
+## Referensi
+
+*Halaman Popup, StackView, Dialog, Drawer, SwipeView, ContextMenu, dan QtQuick.Dialogs saya baca langsung dari dokumentasi Qt 6.12. Tautan lain mengikuti pola URL resmi.*
+
+- [StackView](https://doc.qt.io/qt-6/qml-qtquick-controls-stackview.html) · [SwipeView](https://doc.qt.io/qt-6/qml-qtquick-controls-swipeview.html) · [TabBar](https://doc.qt.io/qt-6/qml-qtquick-controls-tabbar.html) · [PageIndicator](https://doc.qt.io/qt-6/qml-qtquick-controls-pageindicator.html) · [Drawer](https://doc.qt.io/qt-6/qml-qtquick-controls-drawer.html)
+- [Popup](https://doc.qt.io/qt-6/qml-qtquick-controls-popup.html) · [Dialog](https://doc.qt.io/qt-6/qml-qtquick-controls-dialog.html) · [DialogButtonBox](https://doc.qt.io/qt-6/qml-qtquick-controls-dialogbuttonbox.html) · [Menu](https://doc.qt.io/qt-6/qml-qtquick-controls-menu.html) · [ContextMenu](https://doc.qt.io/qt-6/qml-qtquick-controls-contextmenu.html) · [Overlay](https://doc.qt.io/qt-6/qml-qtquick-controls-overlay.html)
+- Ikhtisar: [Popup Controls](https://doc.qt.io/qt-6/qtquickcontrols-popups.html) · [Navigation Controls](https://doc.qt.io/qt-6/qtquickcontrols-navigation.html) · [Container Controls](https://doc.qt.io/qt-6/qtquickcontrols-containers.html) · [Focus Management](https://doc.qt.io/qt-6/qtquickcontrols-focus.html)
+- Dialog sistem: [Qt Quick Dialogs](https://doc.qt.io/qt-6/qtquick-dialogs-qmlmodule.html) · [FileDialog](https://doc.qt.io/qt-6/qml-qtquick-dialogs-filedialog.html) · [Dialogs in Qt Quick (blog)](https://www.qt.io/blog/dialogs-in-qt-quick)
+- Pendukung: [Loader](https://doc.qt.io/qt-6/qml-qtquick-loader.html) · [Keys](https://doc.qt.io/qt-6/qml-qtquick-keys.html) · [StackLayout](https://doc.qt.io/qt-6/qml-qtquick-layouts-stacklayout.html) · [Keyboard Focus in Qt Quick](https://doc.qt.io/qt-6/qtquick-input-focus.html)
+
+---
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
