@@ -1658,7 +1658,800 @@ anak2 masih hidup? false
 
 ---
 
- - **[⬆️ Ke Atas](#)**
+# Audit Singkat Modul 10.3
+
+**Terverifikasi benar**
+- Jalur modern memang `QML_ELEMENT` + `qt_add_qml_module`. Untuk CMake, berkas yang memuat kelas harus menjadi bagian dari target yang disiapkan dengan `qt_add_qml_module()`. Header di `SOURCES` tepat.
+- "Context property ditinggalkan" sesuai dokumentasi. Dokumentasi menyatakan context property sebaiknya dihindari, dan memperkenalkan tipe terdaftar serta singleton sebagai cara umum.
+- `#include <QtQml/qqmlregistration.h>` sah bila Anda menautkan QtQml.
+
+**Perlu penajaman atau penambahan**
+1. **Prasyarat `AUTOMOC` tak disebut.** Registrasi tipe otomatis dilakukan atas sumber C++ target yang diproses `AUTOMOC`, dan ini mensyaratkan `AUTOMOC` aktif; proyek yang menonaktifkannya harus mengurus sendiri akibatnya. `qt_standard_project_setup()` menyalakannya.
+2. **`VERSION 1.0` bukan keharusan.** Dokumentasi menyarankan menghilangkan `VERSION` bila Anda tak membutuhkannya (bawaannya versi tertinggi), karena pemberian versi internal modul QML punya cacat mendasar. Kurikulum memakainya demi kejelasan. Lab saya mengikuti saran dokumentasi.
+3. **`QML_UNCREATABLE` butuh argumen.** Argumennya alasan yang dipakai sebagai pesan galat; sejak Qt 6.0, string kosong `""` memberi pesan standar.
+4. **Tabel makro kurang.** Tambahkan:
+   - `QML_ANONYMOUS`, `QML_INTERFACE` (+ `QML_IMPLEMENTS_INTERFACES`), `QML_UNAVAILABLE`
+   - `QML_VALUE_TYPE` (+ `QML_CONSTRUCTIBLE_VALUE` dan `QML_STRUCTURED_VALUE`, keduanya ≥ 6.5)
+   - `QML_EXTENDED_NAMESPACE`, `QML_FOREIGN_NAMESPACE`
+   - `QML_ADDED_IN_VERSION`, `QML_REMOVED_IN_VERSION`, `QML_EXTRA_VERSION`
+   - `QML_SEQUENTIAL_CONTAINER`
+   - `Q_NAMESPACE`/`Q_ENUM_NS` untuk enum
+5. **Atribut makro yang tersembunyi.**
+   - `QML_ATTACHED` tak bisa dialihkan lewat `QML_FOREIGN`, harus ada di tipe yang mengimplementasikan `qmlAttachedProperties()`.
+   - Anggota tipe ekstensi diperlakukan sebagai `FINAL`.
+   - Nama kelas pada makro harus dikualifikasi penuh, walau Anda sudah di dalam namespace.
+   - Dua kelas bernama sama di namespace berbeda yang sama-sama memakai `QML_ELEMENT` bentrok, jadi pakai `QML_NAMED_ELEMENT` untuk salah satunya.
+6. **`DEPENDENCIES` belum ada.** Jika kelas Anda memakai atau menurunkan tipe C++ dari modul lain (mis. `QQuickItem` dari QtQuick, atau `QPointF` yang butuh QtQml), modul itu harus dinyatakan di `DEPENDENCIES`, kalau tidak bisa muncul galat lint dan galat kompilasi QML.
+7. **Syarat jalur header.** Semua header yang mendeklarasikan tipe QML harus dapat diakses tanpa prefiks dari include path proyek.
+8. **Singleton lebih kaya dari satu baris.** Kepemilikan oleh engine, pabrik `create()`, dan jalur instans eksternal ada di 10.3.3.
+9. **Fitur khas QML belum ada:** *default property* dan *parent property* lewat `Q_CLASSINFO`, `QQmlListProperty`, `QQmlParserStatus`, revisi/versi, dan *property value source*. Masuk ke 10.3.7.
+
+## Daftar isi Modul 10.3 (pembaruan, salin ke README)
+
+| No | Sub-topik |
+| --- | --- |
+| 10.3.1 | `QML_ELEMENT` dan modul (+ `QML_NAMED_ELEMENT`, enum lewat `Q_NAMESPACE`, apa yang dibuat `qmltyperegistrar`) |
+| 10.3.2 | Mendaftarkan header dan sumber di CMake (`AUTOMOC`, `URI`, `DEPENDENCIES`, jalur header, `qmllint`) |
+| 10.3.3 | Singleton C++ (`QML_SINGLETON`, `create()`, instans eksternal) |
+| 10.3.4 | Tipe yang tak dapat dibuat: `QML_UNCREATABLE`, `QML_ANONYMOUS`, `QML_INTERFACE`, `QML_UNAVAILABLE` |
+| 10.3.5 | *Attached*, *extended*, dan *foreign type* (+ tipe nilai `Q_GADGET`) |
+| 10.3.6 | Mengapa `qmlRegisterType` dan context property ditinggalkan |
+| 10.3.7 | Fitur khas QML: *default/parent property*, `QQmlListProperty`, `QQmlParserStatus`, revisi/versi `[TAMBAHAN]` |
+| 10.3.8 | Lab terpadu: `apphello` dengan `Backend`, `Tema`, `Mode` `[TAMBAHAN]` |
+
+---
+
+# Modul 10.3 — Registrasi Tipe C++ ke QML
+
+## Deskripsi dan peran dalam kurikulum
+
+Di 10.2 Anda membuat `Backend` dengan properti, sinyal, dan `Q_INVOKABLE`. Itu baru separuh jalan: sifat-sifat sebuah `QObject` memang dapat dibaca QML, tetapi kelas itu belum bisa dipakai sebagai tipe data dari QML sebelum didaftarkan ke sistem tipe QML. Registrasi memberi tiga hal:
+- kelas dapat dideklarasikan seperti tipe QML biasa (`Backend { }`);
+- tipe dan enum-nya bisa dipakai sebagai tipe properti, parameter, dan nilai kembali;
+- sebuah singleton dapat diimpor tanpa dibuat manual.
+
+## Konsep kunci dan filosofi
+
+**Analogi.** Registrasi adalah mendaftarkan nama dagang. Setelah terdaftar di sebuah modul, QML memesan objek C++ semudah memesan tipe QML.
+
+**Filosofi.** Registrasi dilakukan **saat build, secara deklaratif**, bukan saat berjalan secara imperatif. Satu makro di kelas memberi tahu alat build siapa Anda. Akibatnya alat bantu (`qmllint`, `qmlls`) dan kompilator QML mengetahui tipe Anda sebelum program jalan.
+
+```
+backend.h (QML_ELEMENT)
+   |
+   +--moc--------------> metadata tipe (JSON) + moc_backend.cpp
+                              |
+                              +--qmltyperegistrar--> kode registrasi C++  + berkas .qmltypes
+                              |                          |                      |
+                              |                    dikompilasi & ditautkan   dibaca qmllint/qmlls
+                              v
+                     program: modul QML "Hello" berisi tipe Backend
+```
+
+**Pondasi sintaks.** `QML_ELEMENT` dan kawan-kawannya adalah makro yang dibaca alat build (moc dan `qmltyperegistrar`). Berbeda dengan `Q_OBJECT`, mereka tak mengubah perilaku C++ Anda, hanya menambahkan penanda registrasi.
+
+## 10.3.1 `QML_ELEMENT` dan modul
+
+> *Satu baris deklarasi, ribuan pemakaian.*
+
+**Konsep.** `QML_ELEMENT` menyatakan kelas atau namespace tersedia di QML dengan nama kelasnya sendiri. Dengan `QML_NAMED_ELEMENT(nama)` Anda menentukan nama QML yang berbeda.
+
+```cpp
+// backend.h (tambahan dari 10.2)
+#include <QtQml/qqmlregistration.h>
+
+class Backend : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT                       // ← tipe QML bernama "Backend"
+    Q_PROPERTY(QString pesan READ pesan WRITE setPesan NOTIFY pesanChanged FINAL)
+    // ... (sisanya sama seperti Modul 10.2)
+};
+```
+
+**Bedah kode**
+- `#include <QtQml/qqmlregistration.h>`: header makro registrasi. Header ini menyertakan `qqmlintegration.h`. Bila Anda tak menautkan QtQml, gunakan `QtQmlIntegration/qqmlintegration.h`.
+- `QML_ELEMENT` ditaruh di dalam kelas, setelah `Q_OBJECT` (konvensi). Ia menandai kelas untuk dibaca `qmltyperegistrar`.
+- Nama tipe QML mengikuti nama kelas, yaitu `Backend`. Semua properti, method `Q_INVOKABLE`, dan enum-nya ikut terekspos.
+- Tipe dikelompokkan oleh **modul** (URI di CMake, 10.3.2). QML memakainya dengan `import Hello`.
+
+**Nama kustom dan bentrokan**
+
+```cpp
+class SqlEventDatabase : public QObject
+{
+    Q_OBJECT
+    QML_NAMED_ELEMENT(EventDatabase)       // di QML: EventDatabase { }
+};
+```
+
+Bila dua kelas bernama sama berada di namespace berbeda dan keduanya memakai `QML_ELEMENT`, terjadi konflik, jadi pakai `QML_NAMED_ELEMENT` untuk salah satunya. Nama kelas pada makro juga harus dikualifikasi penuh meski sudah di dalam namespace.
+
+**Enum lewat namespace (`Q_NAMESPACE`).** Untuk enum yang tak terikat ke satu kelas:
+
+```cpp
+// mode.h
+#pragma once
+#include <QObject>
+#include <QtQml/qqmlregistration.h>
+
+namespace Mode {
+    Q_NAMESPACE
+    QML_ELEMENT
+    enum Tipe { Terang, Gelap };
+    Q_ENUM_NS(Tipe)
+}
+```
+
+`Q_NAMESPACE` dengan `QML_ELEMENT` membuat namespace tersedia dan enum bertanda `Q_ENUM_NS` dapat dipakai. Di QML: `Mode.Gelap`. Nilai enum untuk tipe terdaftar harus berawalan huruf kapital.
+
+**Opsi lain**
+- **`QML_ELEMENT` di dalam kelas dengan enum `Q_ENUM`** bila enum memang milik kelas (`Backend.Status.Siap`).
+- **Singleton, tak dapat dibuat, dan lain-lain:** 10.3.3–10.3.5.
+- **Pendaftaran imperatif** (`qmlRegisterType`): 10.3.6.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| Lupa `Q_OBJECT` di kelas ber-`QML_ELEMENT` | Tambahkan (10.2) |
+| Nama enum berawalan huruf kecil | Awali dengan huruf kapital |
+| Dua kelas senama di namespace berbeda | `QML_NAMED_ELEMENT` |
+| Kelas di namespace C++ lalu makro memakai nama pendek | Kualifikasi penuh pada argumen makro |
+
+## 10.3.2 Mendaftarkan header dan sumber di CMake
+
+> *Build yang benar adalah separuh dari registrasi yang berhasil.*
+
+**Konsep.** `qt_add_qml_module` mendefinisikan modul QML yang terdiri atas berkas C++, berkas `.qml`, atau keduanya. Fungsi ini juga mengatur kompilasi QML ke bytecode, embedding resource, pemeriksaan lint, dan pembuatan otomatis berkas kunci modul. Definisinya ada di komponen `Qml` dari paket Qt6.
+
+```cmake
+cmake_minimum_required(VERSION 3.21)
+project(hello LANGUAGES CXX)
+
+find_package(Qt6 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.5)           # AUTOMOC + prefiks resource /qt/qml
+
+qt_add_executable(apphello main.cpp)
+
+qt_add_qml_module(apphello
+    URI Hello
+    QML_FILES Main.qml
+    SOURCES backend.h backend.cpp tema.h mode.h
+)
+
+target_link_libraries(apphello PRIVATE Qt6::Quick)
+```
+
+**Bedah kode**
+- `qt_standard_project_setup(REQUIRES 6.5)` menyalakan `AUTOMOC` dan kebijakan modern. Dengan kebijakan QTP0001 baru (mis. lewat `REQUIRES 6.5`), prefiks resource bawaan menjadi `/qt/qml/`, jalur impor bawaan mesin QML, sehingga modul ditemukan tanpa pengaturan tambahan.
+- `qt_add_executable(apphello main.cpp)` membuat program. Ia akan menjadi **target pendukung** modul.
+- `URI Hello` adalah nama modul untuk `import Hello`. `URI` ditulis berpola titik, tiap segmen harus nama identifier ECMAScript yang sah, dan sebaiknya dibatasi huruf Latin, angka, garis bawah, dan titik karena akan diterjemahkan ke nama direktori.
+- `QML_FILES Main.qml` mendaftarkan berkas QML. Berkas ini dikompilasi ke bytecode dan disimpan di target.
+- `SOURCES backend.h ...` setara `target_sources`. Header yang memuat makro registrasi harus ada di sini agar diproses.
+- `VERSION` sengaja tidak ditulis (lihat audit).
+- Tautkan `Qt6::Quick` untuk aplikasi Qt Quick.
+
+**Target executable sebagai modul.** Bila executable menjadi target pendukung, tak ada plugin terpisah, dan susunan direktori sumber tak harus cocok dengan jalur target modul. Untuk pustaka modul yang dipakai ulang, susun direktori sama dengan URI (`MyThings/Panels/`).
+
+**Yang dihasilkan otomatis**
+- Berkas `qmldir` dan berkas typeinfo (`namatarget.qmltypes`) dibuat otomatis, dan sumber C++ dipindai saat build untuk menghasilkan berkas typeinfo dan kode registrasi.
+- Opsi `NO_GENERATE_QMLTYPES` dan `NO_GENERATE_QMLDIR` ada, tetapi penggunaan `NO_GENERATE_QMLTYPES` sangat tidak dianjurkan.
+- Target lint `<target>_qmllint` dan `all_qmllint` dibuat otomatis bila ada berkas QML.
+
+**`DEPENDENCIES`**
+
+```cmake
+qt_add_qml_module(apphello
+    URI Hello
+    QML_FILES Main.qml
+    SOURCES backend.h backend.cpp
+    DEPENDENCIES QtQuick                 # bila kelas Anda menurunkan QQuickItem
+)
+```
+
+Jika kelas Anda memakai tipe C++ dari modul lain, deklarasikan modul itu di `DEPENDENCIES`. Tanpanya, bisa muncul galat lint, galat saat kompilasi tipe, atau galat saat mengompilasi binding ke C++. Pilih `DEPENDENCIES` yang lebih ringan daripada `IMPORTS`.
+
+**Memuat modul di C++**
+
+```cpp
+QQmlApplicationEngine engine;
+engine.loadFromModule("Hello", "Main");     // URI, nama tipe QML (Main.qml)
+```
+
+**Perintah terminal**
+
+```bash
+cmake -S . -B build && cmake --build build && ./build/apphello
+cmake --build build --target all_qmllint        # lint seluruh modul QML
+find build -name '*.qmltypes'                   # lihat tipe yang didaftarkan
+```
+
+**Keamanan jalur impor.** `IMPORT_PATH` menambah lokasi pencarian modul QML. Qt menganggap semua berkas di jalur impor berasal dari sumber tepercaya. Jangan menambahkan direktori yang bisa ditulis pengguna atau berasal dari lingkungan yang tak dikendalikan. Untuk rilis, bundel modul ke dalam resource.
+
+**Opsi lain**
+- **Modul pustaka terpisah** dengan plugin: untuk modul yang dipakai banyak aplikasi. Susunan yang direkomendasikan untuk kebanyakan modul adalah target pendukung dan target plugin terpisah.
+- **Plugin manual:** tidak direkomendasikan oleh dokumentasi.
+- **`NAMESPACE`:** menaruh kode registrasi dalam namespace C++ tertentu.
+
+**Jebakan dan solusi**
+
+| Jebakan | Akibat | Solusi |
+| --- | --- | --- |
+| Header tak ada di `SOURCES` | `Backend is not a type` | Daftarkan header di `SOURCES` |
+| `AUTOMOC` mati | Registrasi tak dihasilkan | `qt_standard_project_setup()` |
+| `URI` di CMake berbeda dari `import` | Modul tak ditemukan | Samakan persis (huruf besar-kecil) |
+| Header tak terjangkau dari include path | Galat kompilasi kode registrasi | Tambahkan ke `target_include_directories` |
+| `DEPENDENCIES` terlewat | Galat lint/kompilasi QML | Tambahkan modul yang dipakai |
+| Mengubah jalur impor ke direktori tak tepercaya | Pemuatan kode QML sembarang | Bundel ke resource |
+
+## 10.3.3 Singleton C++
+
+> *Satu instans, satu sumber kebenaran.*
+
+**Konsep.** Tipe singleton menyediakan properti, sinyal, dan method dalam sebuah namespace tanpa klien perlu membuat instans. Singleton `QObject` dibuat dan dimiliki `QQmlEngine`, dihancurkan saat engine dihancurkan, dan dirujuk lewat nama tipe, bukan `id`. Properti singleton bisa diikat, jadi ia cocok untuk tema atau konfigurasi.
+
+```cpp
+// tema.h
+#pragma once
+#include <QColor>
+#include <QObject>
+#include <QtQml/qqmlregistration.h>
+
+class Tema : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
+    Q_PROPERTY(QColor latar READ latar CONSTANT FINAL)
+    Q_PROPERTY(QColor teks  READ teks  CONSTANT FINAL)
+    Q_PROPERTY(QColor aksen READ aksen CONSTANT FINAL)
+
+public:
+    explicit Tema(QObject *parent = nullptr) : QObject(parent) {}
+    QColor latar() const { return QColor(30, 30, 46); }
+    QColor teks()  const { return QColor(205, 214, 244); }
+    QColor aksen() const { return QColor(137, 180, 250); }
+};
+```
+
+```qml
+import Hello
+
+Rectangle {
+    color: Tema.latar          // dipakai lewat nama tipe, tanpa membuat objek
+}
+```
+
+**Bedah kode**
+- `QML_ELEMENT` + `QML_SINGLETON` bersama menyatakan "tipe QML ini adalah singleton". `QML_SINGLETON` hanya berlaku bila tipe ber-`Q_OBJECT` dan tersedia di QML lewat `QML_ELEMENT` atau `QML_NAMED_ELEMENT`.
+- Properti `CONSTANT` (10.2.2) cocok untuk nilai yang tak berubah. Bila tema harus bisa berganti, beri `NOTIFY` dan setter.
+- Konstruktor `explicit Tema(QObject *parent = nullptr)` bisa dipanggil tanpa argumen, jadi engine dapat membuatnya sendiri.
+- `Tema.latar` di QML merujuk instans engine itu. Tidak ada `Tema { id: ... }`.
+
+**Tiga cara menyediakan instans**
+1. **Konstruktor bawaan:** seperti di atas. Bila ada konstruktor bawaan dan fungsi pabrik sekaligus, konstruktor bawaan yang dipilih.
+2. **Fungsi pabrik statis:** untuk kelas tanpa konstruktor bawaan.
+
+```cpp
+static Tema *create(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
+{
+    Q_UNUSED(qmlEngine); Q_UNUSED(jsEngine);
+    return new Tema;          // engine mengambil alih kepemilikan
+}
+```
+Bentuk tanda tangannya adalah `T *create(QQmlEngine *, QJSEngine *)`, dipanggil saat tipe pertama kali diakses; engine akan menghapus hasilnya.
+
+3. **Instans eksternal** (Anda yang memilikinya):
+
+```cpp
+class Layanan : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
+    QML_UNCREATABLE("Disediakan oleh C++")
+public:
+    Layanan(Backend *b, QObject *parent) : QObject(parent) {}
+};
+
+// di main():
+Layanan layanan(&backend, nullptr);
+engine.setExternalSingletonInstance("Hello", "Layanan", &layanan);   // sebelum QML mengaksesnya
+```
+
+`QML_UNCREATABLE` pada singleton berarti "instans akan diset eksplisit lewat `QQmlEngine::setExternalSingletonInstance` sebelum diakses pertama kali"; ini pengganti `qmlRegisterSingletonInstance`. Engine tak mengambil alih kepemilikan singleton eksternal kecuali Anda memintanya lewat `QJSEngine::setObjectOwnership()`. Argumen persis `setExternalSingletonInstance` (URI dan nama tipe) periksa di dokumentasi `QQmlEngine`.
+
+**Opsi lain**
+- **Singleton QML** (`pragma Singleton`, 5.3): untuk tema murni QML.
+- **Properti biasa pada objek akar** bila hanya satu jendela memerlukannya.
+- **`QJSValue` sebagai singleton:** bisa, tetapi properti singleton jenis itu tak bisa diikat.
+
+**Jebakan dan solusi**
+
+| Jebakan | Akibat | Solusi |
+| --- | --- | --- |
+| Memberi `id` pada singleton atau mencoba `Tema { }` | Galat | Rujuk lewat nama tipe: `Tema.latar` |
+| Mengharapkan satu instans lintas beberapa engine | Tiap engine punya instans sendiri | Singleton itu per-engine |
+| Singleton tak punya konstruktor bawaan dan pabrik | Tak dapat diakses | Tambah `create()` atau `QML_UNCREATABLE` + instans eksternal |
+| Instans eksternal dihapus lebih dulu dari engine | *Use-after-free* | Pastikan umurnya melebihi engine, atau serahkan kepemilikan |
+| Mengisi singleton dengan keadaan aplikasi yang makin besar | Keadaan global tersembunyi | Batasi ke tema/konfigurasi/layanan |
+
+## 10.3.4 Tipe yang tak dapat dibuat
+
+> *Tidak semua yang dikenal harus bisa dibuat.*
+
+**Konsep.** Kelas bisa didaftarkan tanpa dapat diinstansiasi, misalnya bila ia antarmuka, kelas dasar, pembawa enum, atau disediakan lewat singleton. Semua tipe C++ yang didaftarkan harus turunan `QObject`, meski tak dapat dibuat.
+
+| Makro | Arti |
+| --- | --- |
+| `QML_UNCREATABLE("alasan")` + `QML_ELEMENT` | Bernama dan dikenali, tetapi tak bisa dibuat; alasan menjadi pesan galat bila dicoba. |
+| `QML_ANONYMOUS` | Tersedia tetapi anonim: tak bisa dibuat atau dipakai mendeklarasikan properti di QML, namun dikenali saat dilempar dari C++. |
+| `QML_INTERFACE` | Tipe antarmuka: tak dapat dibuat dan tak bisa dipakai untuk properti QML; properti C++ bertipe ini tetap di-*cast* ke antarmuka otomatis. |
+| `QML_UNAVAILABLE` | "Memesan" nama tipe yang tak tersedia agar pengguna mendapat pesan galat yang bermakna. |
+
+```cpp
+class Hak : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_UNCREATABLE("Hak hanya dibuat oleh C++")      // alasan = pesan galat di QML
+public:
+    enum Tingkat { Baca, Tulis, Admin };
+    Q_ENUM(Tingkat)
+};
+```
+
+Di QML: `Hak.Admin` bisa dipakai, tetapi `Hak { }` memunculkan pesan di atas.
+
+**Bedah kode**
+- `QML_UNCREATABLE("...")` mendaftarkan `Hak` sebagai tipe yang dikenal (untuk enum-nya) tetapi tak bisa dibuat.
+- Berguna saat **enum atau atribut terlampir** perlu terekspos tetapi objeknya tak boleh dibuat dari QML.
+- Pola ini juga aman untuk keamanan: objek yang punya konsekuensi (hak akses, sesi) dibuat hanya oleh kode C++ tepercaya.
+
+**Opsi lain.** `Q_NAMESPACE` + `QML_ELEMENT` bila hanya enum yang dibutuhkan (10.3.1). Antarmuka berbasis `QML_INTERFACE` dengan `Q_DECLARE_INTERFACE`, bila ada hierarki penerapan antarmuka.
+
+**Jebakan.** Mengira `QML_ANONYMOUS` bisa dipakai di deklarasi QML. Tipe yang didaftarkan tetapi bukan turunan `QObject` tidak bisa (kecuali tipe nilai).
+
+## 10.3.5 *Attached*, *extended*, dan *foreign type*
+
+> *Memperluas tanpa membongkar adalah seni menjaga kompatibilitas.*
+
+### Tipe terlampir (*attached*)
+
+**Konsep.** Properti terlampir (`Keys.onReturnPressed`, `Layout.fillWidth`, `Accessible.name`) adalah atribut yang "ditempelkan" tipe lain ke objek Anda. Ada tiga pihak: *attachee* (objek yang ditempeli), *attaching type* (pemberi nama), dan *attached object type* (objek atribut).
+
+```cpp
+class JejakAttached : public QObject
+{
+    Q_OBJECT
+    QML_ANONYMOUS
+    Q_PROPERTY(bool dilihat READ dilihat WRITE setDilihat NOTIFY dilihatChanged FINAL)
+public:
+    explicit JejakAttached(QObject *parent) : QObject(parent) {}
+    bool dilihat() const { return m_dilihat; }
+    void setDilihat(bool v)
+    {
+        if (m_dilihat == v) return;
+        m_dilihat = v;
+        emit dilihatChanged();
+    }
+signals:
+    void dilihatChanged();
+private:
+    bool m_dilihat = false;
+};
+
+class Jejak : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_ATTACHED(JejakAttached)
+    QML_UNCREATABLE("Jejak hanya untuk properti terlampir")
+public:
+    static JejakAttached *qmlAttachedProperties(QObject *objek)
+    {
+        return new JejakAttached(objek);           // di-parent ke objek yang ditempeli
+    }
+};
+```
+
+```qml
+Rectangle {
+    Jejak.dilihat: true
+    Jejak.onDilihatChanged: console.log('berubah')
+}
+```
+
+**Bedah kode**
+- `JejakAttached` adalah *attached object type*: `QML_ANONYMOUS` karena tak dibuat langsung dari QML, hanya dibuat engine.
+- `Jejak` adalah *attaching type*: ia mendeklarasikan `QML_ATTACHED(JejakAttached)` dan fungsi statis `qmlAttachedProperties(QObject *)`.
+- Engine memanggil fungsi itu paling banyak sekali per objek yang ditempeli dan menyimpan hasilnya. Meng-*parent*-kan hasil ke objek itu lazim, agar tak bocor.
+- `QML_UNCREATABLE` karena `Jejak` hanya dipakai sebagai nama pemberi atribut.
+- Di C++, `qmlAttachedPropertiesObject<Jejak>(objek)` mengambil objek terlampir.
+
+### Tipe ekstensi (*extended*)
+
+**Konsep.** Objek ekstensi menambah properti pada tipe yang Anda kendalikan tanpa memodifikasinya. Anggotanya digabung transparan dengan kelas target saat dipakai di QML. Meng-ekstensi tipe milik Qt sendiri tidak didukung.
+
+```cpp
+class SensorSuhuExt : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(QString satuan READ satuan CONSTANT FINAL)
+public:
+    explicit SensorSuhuExt(QObject *sensor) : QObject(sensor) {}
+    QString satuan() const { return QStringLiteral("celsius"); }
+};
+
+class SensorSuhu : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_EXTENDED(SensorSuhuExt)                  // di QML: SensorSuhu { satuan ... }
+    Q_PROPERTY(double nilai READ nilai NOTIFY nilaiChanged FINAL)
+    // ...
+};
+```
+
+Kelas ekstensi dibuat malas pada akses pertama properti terekstensi, dengan objek target sebagai induk. Anggota tipe ekstensi diperlakukan sebagai `FINAL`. Untuk hanya menambah enum, pakai `QML_EXTENDED_NAMESPACE(namespace)`.
+
+### Tipe asing (*foreign*)
+
+**Konsep.** Kelas pihak ketiga yang tak bisa diubah tetap bisa diekspos lewat `QML_FOREIGN`, dalam sebuah struct terpisah yang isinya hanya makro registrasi.
+
+```cpp
+#include <tigapihak.h>                            // berisi kelas TigaPihak (QObject, tak boleh diubah)
+
+struct TigaPihakForeign
+{
+    Q_GADGET
+    QML_FOREIGN(TigaPihak)
+    QML_NAMED_ELEMENT(TigaPihak)                  // pakai NAMED agar nama QML = TigaPihak
+};
+```
+
+Dengan `QML_ELEMENT`, nama QML mengikuti struct pembungkus, bukan tipe asing, jadi `QML_NAMED_ELEMENT` biasanya lebih tepat. `QML_ATTACHED` tak bisa dialihkan lewat cara ini. Untuk namespace gunakan `QML_FOREIGN_NAMESPACE`.
+
+### Tipe nilai (`Q_GADGET`)
+
+**Konsep.** Struct sederhana yang disalin, bukan dibagi sebagai objek.
+
+```cpp
+class Titik
+{
+    Q_GADGET
+    QML_VALUE_TYPE(titik)                  // nama QML HARUS huruf kecil
+    QML_STRUCTURED_VALUE                   // ≥ 6.5: boleh diisi dari objek JS
+    Q_PROPERTY(int x MEMBER x)
+    Q_PROPERTY(int y MEMBER y)
+public:
+    int x = 0;
+    int y = 0;
+};
+```
+
+```qml
+QtObject { property titik p: ({ x: 4, y: 7 }) }   // kurung agar dibaca sebagai objek JS
+```
+
+Tipe nilai bernama huruf kecil. Aturan lain: tak boleh singleton, harus bisa dibuat default dan disalin, tak boleh memakai `QProperty` sebagai anggota, dan tak punya properti terlampir. `QML_CONSTRUCTIBLE_VALUE` (≥ 6.5) mengizinkan konstruktor `Q_INVOKABLE` satu argumen dipakai saat menetapkan nilai JavaScript.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| Lupa mem-*parent*-kan objek terlampir | `new JejakAttached(objek)` |
+| Mengira ekstensi bisa menimpa anggota | Anggota ekstensi `FINAL`, jangan menimpa |
+| Memodifikasi kelas pihak ketiga | Pakai `QML_FOREIGN` |
+| Tipe nilai bernama kapital | Nama QML huruf kecil |
+| `QML_ATTACHED` lewat `QML_FOREIGN` | Tak didukung, letakkan di tipe yang punya `qmlAttachedProperties()` |
+
+## 10.3.6 Mengapa `qmlRegisterType` dan context property ditinggalkan
+
+> *Kontrak yang eksplisit mengalahkan keajaiban yang tersembunyi.*
+
+**Tiga cara memasok C++ ke QML, dan peringkatnya**
+
+| Cara | Kapan terdaftar | Diketahui alat bantu? | Peringkat |
+| --- | --- | --- | --- |
+| **Makro (`QML_ELEMENT`, dst.)** | Saat build (otomatis) | Ya (`.qmltypes`) | Pilihan utama |
+| `qmlRegisterType<T>(...)` | Saat berjalan, di `main()` | Tidak | Cara imperatif lama, tak perlu untuk kode baru |
+| `setContextProperty("nama", obj)` | Saat berjalan, global | Tidak | Harus dihindari |
+
+**Alasan konkret**
+- **Alat bantu buta.** Tipe makro dihasilkan ke `.qmltypes`, sehingga `qmllint` dan `qmlls` tahu isi tipe Anda. Penggunaan context property bahkan sengaja diperingatkan oleh `qmllint` lewat berkas dump context property.
+- **Tak ada tipe saat build.** Nama context property baru ada saat berjalan, sehingga kompilator QML tak bisa memeriksa atau mengoptimalkan ekspresi yang bergantung padanya. Ini sambungan ke 9.2.5 (ekspresi dapat dikompilasi ke C++ hanya bila tipenya dikenal).
+- **Keadaan global tersembunyi.** Context property adalah variabel global tak bertipe di cakupan QML: rawan bentrok nama, sulit diuji, dan urutan pengaturannya sensitif (harus sebelum QML dimuat).
+- **Kepemilikan kabur.** Siapa yang menghapus objek itu? Singleton dan instans eksternal punya aturan eksplisit (10.3.3).
+- **Pengganti langsung.** Untuk `qmlRegisterSingletonInstance`, penggantinya adalah `QML_UNCREATABLE` dengan `setExternalSingletonInstance`.
+
+**Peta migrasi**
+
+| Kode lama | Pengganti |
+| --- | --- |
+| `qmlRegisterType<Backend>("Hello", 1, 0, "Backend")` | `QML_ELEMENT` di kelas + `URI Hello` di CMake |
+| `engine.rootContext()->setContextProperty("tema", &tema)` | `QML_SINGLETON` (atau instans eksternal) |
+| `setContextProperty("backend", &backend)` | Buat `Backend { id: backend }` di QML, atau singleton |
+| Enum yang dipakai bebas | `Q_ENUM` + registrasi kelas, atau `Q_NAMESPACE` |
+
+**Alasan untuk tidak mencari anak QML dari C++.** Mengakses objek QML dari C++ tidak direkomendasikan kecuali untuk pengujian dan prototipe, karena merusak pemisahan antarmuka QML dari logika C++. Dibahas di 10.4.6.
+
+**Jebakan.** Meneruskan tutorial lama yang memakai `setContextProperty` ke kode baru. Mencampur `qmlRegisterType` di `main()` dan `QML_ELEMENT` untuk tipe yang sama menyebabkan registrasi ganda dan bingung nama.
+
+## 10.3.7 Fitur khas QML: *default property*, *parent property*, `QQmlListProperty`, `QQmlParserStatus`, revisi `[TAMBAHAN]`
+
+> *Detail kecil yang membuat tipe C++ Anda terasa asli bagi QML.*
+
+**Properti bawaan (*default property*).** Properti bawaan adalah properti yang menerima anak objek secara otomatis bila tak ditetapkan ke properti tertentu. Ditentukan lewat `Q_CLASSINFO("DefaultProperty", "nama")`.
+
+```cpp
+class Butir : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(QString nama MEMBER m_nama NOTIFY namaChanged FINAL)
+signals:
+    void namaChanged();
+private:
+    QString m_nama;
+};
+
+class Daftar : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(QQmlListProperty<Butir> butir READ butir)
+    Q_CLASSINFO("DefaultProperty", "butir")
+public:
+    QQmlListProperty<Butir> butir() { return QQmlListProperty<Butir>(this, &m_butir); }
+private:
+    QList<Butir *> m_butir;
+};
+```
+
+```qml
+Daftar {
+    Butir { nama: 'Kopi' }
+    Butir { nama: 'Teh' }
+}
+```
+
+**Bedah kode**
+- `QQmlListProperty<Butir>` adalah pembungkus daftar yang bisa diisi QML. Bentuk sederhana menerima objek pemilik dan penunjuk ke `QList<Butir *>`.
+- `Q_CLASSINFO("DefaultProperty", "butir")` menjadikan `butir` penampung anak. Tanpa itu, Anda harus menulis `butir: [ Butir {...}, Butir {...} ]`.
+- Butir-butir itu dimiliki oleh pohon QML (induk objek). Daftar C++ hanya menunjuknya.
+
+**Properti induk (*parent property*).** `Q_CLASSINFO("ParentProperty", "nama")` memberi tahu mesin properti mana yang mewakili induk dalam hierarki QML, sehingga `qmllint` dan alat lain tidak memberi peringatan palsu.
+
+**Notifikasi inisialisasi: `QQmlParserStatus`.** Untuk menunda inisialisasi mahal sampai semua properti terisi:
+
+```cpp
+class Pemuat : public QObject, public QQmlParserStatus
+{
+    Q_OBJECT
+    Q_INTERFACES(QQmlParserStatus)
+    QML_ELEMENT
+public:
+    void classBegin() override {}
+    void componentComplete() override
+    {
+        // di sini semua properti dari QML sudah terisi: aman memulai pekerjaan
+    }
+};
+```
+
+Kelas turunan `QQmlParserStatus` yang juga diumumkan lewat `Q_INTERFACES` menerima notifikasi pada beberapa tahap pembuatan komponen. Ini setara `Component.onCompleted` tetapi di sisi C++.
+
+**Revisi dan versi.** Revisi memungkinkan properti atau method baru muncul di versi baru sambil tetap kompatibel dengan versi lama. Properti diberi `REVISION(...)`, signal/method diberi `Q_REVISION(...)`, dan revisi dibaca sebagai versi minor dari versi mayor modul. `QML_ADDED_IN_VERSION(major, minor)` menyatakan tipe baru sejak versi itu. Bila modul diimpor dengan versi lebih rendah, tipenya tak terlihat. Contoh konsisten (versi 1.2):
+
+```cpp
+class Backend : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    QML_ADDED_IN_VERSION(1, 2)
+    Q_PROPERTY(int akar READ akar NOTIFY akarChanged REVISION(1, 2) FINAL)
+signals:
+    Q_REVISION(1, 2) void akarChanged();
+};
+```
+
+Karena `VERSION` modul dihilangkan di lab (anjuran dokumentasi), fitur revisi hanya relevan bila Anda memang menerbitkan modul berversi.
+
+**Property value source (sekilas).** Kelas turunan `QQmlPropertyValueSource` dapat dipakai dengan sintaks `Tipe on properti { }` untuk mengubah nilai properti dari waktu ke waktu; animasi Qt Quick adalah contohnya.
+
+**Jebakan.** `QQmlListProperty` dengan penunjuk ke objek yang dihapus di tengah jalan. Mengisi *default property* dengan objek yang tak dimiliki siapa pun (beri induk). Mengira `componentComplete()` dipanggil bila objek dibuat dari C++ tanpa melewati engine QML.
+
+## 10.3.8 Lab terpadu `[TAMBAHAN]`
+
+Lab ini menjalankan latihan kurikulum (daftarkan `Backend`, buat `Backend { id: backend }` di `Main.qml`, tampilkan `backend.pesan`) dan menambahkan singleton dan enum namespace. Berkas: `CMakeLists.txt`, `main.cpp`, `backend.h`/`backend.cpp` (dari 10.2, plus dua baris), `tema.h`, `mode.h`, `Main.qml`.
+
+```cmake
+# CMakeLists.txt
+cmake_minimum_required(VERSION 3.21)
+project(hello LANGUAGES CXX)
+
+find_package(Qt6 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.5)
+
+qt_add_executable(apphello main.cpp)
+
+qt_add_qml_module(apphello
+    URI Hello
+    QML_FILES Main.qml
+    SOURCES backend.h backend.cpp tema.h mode.h
+)
+
+target_link_libraries(apphello PRIVATE Qt6::Quick)
+```
+
+```cpp
+// main.cpp
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
+                     &app, [] { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
+    engine.loadFromModule("Hello", "Main");
+
+    return app.exec();
+}
+```
+
+`backend.h` dan `backend.cpp`: ambil dari lab 10.2, lalu tambahkan `#include <QtQml/qqmlregistration.h>` dan `QML_ELEMENT` setelah `Q_OBJECT`. `tema.h` dan `mode.h`: dari 10.3.3 dan 10.3.1.
+
+```qml
+// Main.qml
+import QtQuick
+import QtQuick.Controls
+import Hello
+
+ApplicationWindow {
+    visible: true; width: 420; height: 320
+    title: 'Hello C++/QML'
+    color: Tema.latar
+
+    Backend { id: backend }
+
+    Column {
+        anchors.centerIn: parent
+        spacing: 12
+
+        Label {
+            text: backend.pesan === '' ? '(kosong)' : backend.pesan
+            color: Tema.teks
+        }
+        Label { text: 'Hitungan: ' + backend.hitungan; color: Tema.teks }
+        Label {
+            text: backend.status === Backend.Status.Siap ? 'Siap' : 'Sibuk'
+            color: Tema.aksen
+        }
+        Label { text: 'Mode.Gelap = ' + Mode.Gelap; color: Tema.teks }
+
+        Button { text: 'Tambah';     onClicked: backend.tambah() }
+        Button { text: 'Muat ulang'; onClicked: backend.muatUlang() }
+    }
+
+    Connections {
+        target: backend
+        function onSelesai(n) { console.log('selesai pada hitungan', n) }
+    }
+}
+```
+
+```bash
+cmake -S . -B build && cmake --build build && ./build/apphello
+cmake --build build --target all_qmllint
+find build -name '*.qmltypes'
+```
+
+**Bedah ringkas**
+- `Backend { id: backend }` membuat objek C++ dari QML. `backend.pesan` dan `backend.hitungan` adalah properti dengan `NOTIFY`, sehingga label ikut berubah saat tombol ditekan.
+- `Backend.Status.Siap` mengakses enum yang terdaftar lewat `Q_ENUM`.
+- `Tema.latar` memakai singleton lewat nama tipe, tanpa membuat objek.
+- `Mode.Gelap` memakai enum dari namespace yang diekspos.
+- `Connections { target: backend; function onSelesai(n) ... }` mendengar sinyal `selesai(int)`. Perhatikan konsol saat tombol "Tambah" ditekan tiga kali.
+- `all_qmllint` memeriksa QML Anda terhadap tipe yang didaftarkan. Bila Anda salah mengetik `backend.hitungn`, lint akan mengeluh.
+
+**Percobaan yang disarankan (sengaja merusak)**
+1. Hapus `QML_ELEMENT` dari `Backend` lalu bangun ulang. Amati galat di QML ("Backend is not a type" atau serupa).
+2. Keluarkan `backend.h` dari `SOURCES`. Amati bedanya.
+3. Hapus `qt_standard_project_setup()` dan lihat registrasi tak terbuat (tak ada `AUTOMOC`).
+4. Ubah `URI Hello` menjadi `Halo` tanpa mengubah `import`. Amati galat impor.
+5. Jalankan dengan `QT_QPA_PLATFORM=offscreen ./build/apphello` untuk melihat hasil tanpa jendela (cocok di CI).
+
+**Latihan tambahan**
+1. Ubah `Tema` menjadi singleton yang dapat berganti (`NOTIFY` + `Q_INVOKABLE void gantiMode(Mode::Tipe)`), dan buat jendela mengikutinya.
+2. Tambahkan `QML_UNCREATABLE("Hanya dibuat C++")` ke sebuah kelas pembawa enum dan coba membuatnya di QML untuk melihat pesan galat.
+3. Tambahkan tipe terlampir `Jejak` dari 10.3.5 dan pakai di sebuah `Rectangle`.
+4. Tambahkan tipe nilai `titik` dan sebuah properti `titik posisi` di `Backend`, lalu ubah dari QML.
+
+## Terminologi esensial
+
+| Istilah | Penjelasan |
+| --- | --- |
+| **Modul QML (URI)** | Kelompok tipe bernama; dipakai dengan `import` |
+| **`QML_ELEMENT` / `QML_NAMED_ELEMENT`** | Menandai kelas/namespace tersedia di QML (nama kelas / nama kustom) |
+| **`qmltyperegistrar`** | Alat yang menghasilkan kode registrasi dan berkas `.qmltypes` |
+| **`.qmltypes`** | Berkas deskripsi tipe yang dibaca `qmllint`/`qmlls` |
+| **Target pendukung (*backing target*)** | Target CMake yang berisi implementasi modul |
+| **Singleton** | Satu instans per engine, dirujuk lewat nama tipe |
+| **`create(QQmlEngine*, QJSEngine*)`** | Pabrik statis untuk singleton |
+| **Tipe tak dapat dibuat** | Dikenal tetapi tak bisa diinstansiasi dari QML |
+| **Anonim / antarmuka** | Dikenal dari C++ tetapi tak dapat dirujuk / tipe antarmuka |
+| **Tipe terlampir (*attached*)** | Atribut yang ditempelkan lewat `Tipe.properti` |
+| **Tipe ekstensi** | Tambahan properti pada tipe milik Anda tanpa mengubahnya |
+| **Tipe asing (*foreign*)** | Tipe yang tak bisa diberi makro, diekspos lewat pembungkus |
+| **Tipe nilai (`Q_GADGET`)** | Struct yang disalin; nama QML huruf kecil |
+| **Revisi** | Penanda versi minor sebuah anggota |
+| **Context property** | Variabel global tak bertipe dari C++ ke QML (hindari) |
+
+## Hubungan dengan modul lain
+
+- **Prasyarat:** 10.2 (`QObject`, properti, `NOTIFY`, `Q_ENUM`, kepemilikan), 8.3 (CMake, `qt_add_qml_module`), 8.4 (`qmllint`).
+- **Menjadi dasar untuk:** 10.4 (memakai objek terdaftar dari QML dan konversi tipe), 10.5 (model C++ didaftarkan dengan `QML_ELEMENT`), 10.6 (layanan sistem dibungkus dalam tipe terdaftar), 10.7 (objek kerja didaftarkan dan sinyalnya didengar QML).
+- **Menyambung ke:** 5.3 (Singleton tema versi QML), 9.2 (`QQuickStyle` dan atribut terlampir style memakai mekanisme ini), 9.4 (`Accessible` adalah tipe terlampir).
+
+## Tips dan praktik terbaik
+
+1. **Satu baris `QML_ELEMENT` per kelas,** dan header-nya di `SOURCES`.
+2. **Biarkan `VERSION` kosong** kecuali Anda menerbitkan modul berversi.
+3. **Pakai `QML_SINGLETON` hanya untuk keadaan benar-benar global** (tema, konfigurasi, layanan).
+4. **`QML_UNCREATABLE` untuk objek berkonsekuensi** (hak akses, sesi) agar hanya C++ yang membuatnya.
+5. **Tulis `FINAL` pada properti** yang tak untuk ditimpa (dianjurkan dokumentasi).
+6. **Gunakan `DEPENDENCIES`** untuk modul yang dipakai kelas Anda di sisi C++.
+7. **Jalankan `all_qmllint` di CI.** Tipe terdaftar membuat lint jauh lebih berguna.
+8. **Jangan menambahkan jalur impor tak tepercaya;** bundel modul ke resource untuk rilis.
+9. **Hindari `setContextProperty` dan `findChild` pada pohon QML** di kode baru.
+
+## Kesalahan umum dan solusi
+
+| Kesalahan | Akibat | Solusi |
+| --- | --- | --- |
+| Header tak ada di `SOURCES` | Tipe tak terdaftar | Tambahkan ke `SOURCES` |
+| `AUTOMOC` mati | Tak ada kode registrasi | `qt_standard_project_setup()` |
+| `URI` ≠ `import` | Modul tak ditemukan | Samakan |
+| Nama enum berawalan huruf kecil | Tak dapat diakses | Awali huruf kapital |
+| Tipe nilai bernama kapital | Gagal registrasi | Huruf kecil |
+| Singleton tanpa konstruktor bawaan dan `create()` | Tak dapat diakses | Tambah `create()` atau instans eksternal |
+| `Tema { }` atau `id` pada singleton | Galat | Rujuk lewat nama tipe |
+| Lupa `DEPENDENCIES` | Galat lint/kompilasi | Tambahkan |
+| Objek terlampir tanpa induk | Kebocoran | `new X(objek)` |
+| Dua kelas senama di namespace berbeda | Konflik | `QML_NAMED_ELEMENT` |
+| Tipe yang diatur lewat `setContextProperty` | Alat bantu buta, keadaan global | Registrasi tipe atau singleton |
+| Menambah direktori tak tepercaya ke jalur impor | Pemuatan kode QML sembarang | Bundel ke resource |
+
+## Cek pemahaman: jawaban
+
+**Mengapa registrasi tipe lebih baik dari context property?**
+- **Terlihat oleh alat bantu.** Registrasi lewat makro dibaca saat build dan menghasilkan `.qmltypes`. `qmllint` dan `qmlls` mengenali properti, sinyal, dan method Anda, dan dokumentasi menyatakan context property sebaiknya dihindari serta sengaja diperingatkan oleh `qmllint`.
+- **Terikat tipe.** Registrasi memberi mesin metadata tipe lengkap, sehingga tipe dan enum bisa dipakai sebagai tipe properti, parameter, dan nilai kembali. Context property hanyalah nama global yang tipenya baru diketahui saat berjalan.
+- **Kepemilikan dan cakupan jelas.** Tipe terdaftar hidup di modul bernama, tak mencemari cakupan global. Singleton punya aturan kepemilikan eksplisit (milik engine atau instans eksternal).
+- **Siap diuji dan dirawat.** Tak ada urutan pengaturan rahasia (`setContextProperty` harus sebelum QML dimuat), tak ada bentrok nama global, dan antarmuka C++/QML menjadi kontrak yang bisa diperiksa.
+
+## Referensi
+
+*Halaman Defining QML Types from C++, QML and C++ Integration Overview, `qt_add_qml_module`, `<qqmlintegration.h>`, dan Data Type Conversion saya baca langsung dari dokumentasi Qt 6.12. Tautan lain mengikuti pola URL resmi.*
+
+- **Dari kurikulum:** [Defining QML Types from C++](https://doc.qt.io/qt-6/qtqml-cppintegration-definetypes.html) · [Overview: QML and C++ Integration](https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html) · [qt_add_qml_module](https://doc.qt.io/qt-6/qt-add-qml-module.html)
+- **Makro registrasi:** [`<qqmlintegration.h>` (QML_ELEMENT dkk.)](https://doc.qt.io/qt-6/qqmlintegration-h.html) · [qmltyperegistrar](https://doc.qt.io/qt-6/qtqml-tooling-qmltyperegistrar.html) · [Singletons in QML](https://doc.qt.io/qt-6/qml-singleton.html)
+- **Build:** [qt_standard_project_setup](https://doc.qt.io/qt-6/qt-standard-project-setup.html) · [CMake Integration for QML](https://doc.qt.io/qt-6/qtqml-cmake-integration.html) · [Writing QML Modules](https://doc.qt.io/qt-6/qtqml-writing-a-module.html)
+- **Fitur khas:** [QQmlListProperty](https://doc.qt.io/qt-6/qqmllistproperty.html) · [QQmlParserStatus](https://doc.qt.io/qt-6/qqmlparserstatus.html) · [QQmlPropertyValueSource](https://doc.qt.io/qt-6/qqmlpropertyvaluesource.html) · [Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html)
+- **Alat bantu:** [qmllint](https://doc.qt.io/qt-6/qtqml-tooling-qmllint.html) · [Qt QML Language Server](https://doc.qt.io/qt-6/qtqml-tooling-qmlls.html)
+- **Tutorial:** [Writing QML Extensions with C++](https://doc.qt.io/qt-6/qtqml-tutorials-extending-qml-example.html) · [Context properties (hindari)](https://doc.qt.io/qt-6/qtqml-cppintegration-contextproperties.html)
+- **Arch:** [Qt di ArchWiki](https://wiki.archlinux.org/title/Qt)
+
+---
+
+**Modul 10.3 selesai.**
+
+> - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
 > - **[📚 Kurikulum][kurikulum]**
