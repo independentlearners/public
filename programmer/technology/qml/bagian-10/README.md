@@ -2283,6 +2283,854 @@ Shift+F10 / tombol Menu di label -> menu konteks
 
 *Halaman Popup, StackView, Dialog, Drawer, SwipeView, ContextMenu, dan QtQuick.Dialogs saya baca langsung dari dokumentasi Qt 6.12. Tautan lain mengikuti pola URL resmi.*
 
+Modul 9.4 adalah modul penutup Fase 9. Urutannya sama: audit singkat, materi penuh, lalu berhenti untuk konfirmasi.
+
+---
+
+# Audit Singkat Modul 9.4
+
+**Terverifikasi benar**
+- Qt 6 tidak lagi membutuhkan flag untuk menyalakan penskalaan high-DPI. Klaim kurikulum ("selalu menyala") tepat.
+- Alur `lupdate`, Qt Linguist, `lrelease` valid. Qt Quick dan C++ memakai sistem lokalisasi yang sama, termasuk berkas `.ts` dan `.qm`.
+- `qt_add_translations(hello TS_FILES hello_id.ts)` masih sah. Berkas `.ts` boleh disebut lewat `TS_FILES`, tetapi lebih nyaman membiarkan perintah ini menentukan jalurnya sendiri.
+- Daftar kesalahan umum (teks tanpa `qsTr`, string digabung manual, ikon tanpa nama aksesibel, hanya warna) semuanya valid.
+
+**Perlu koreksi atau penajaman**
+1. **Bahasa sumber dan bahasa target bertabrakan.** Contoh kurikulum menulis `qsTr('Simpan')` (sumber Indonesia), lalu membuat `hello_id.ts` dan meminta "terjemahkan satu string". Itu menerjemahkan Indonesia ke Indonesia. Pilih salah satu: sumber Inggris + target `id`, atau sumber Indonesia + target `en`. Bahasa sumber diatur lewat `I18N_SOURCE_LANGUAGE` dan bahasa target lewat `I18N_TRANSLATED_LANGUAGES` pada `qt_standard_project_setup`. Lab saya memakai sumber `id` dan target `en`.
+2. **Alur CMake modern belum ada.** Tambahkan `find_package(Qt6 ... LinguistTools)`, `qt_standard_project_setup(I18N_TRANSLATED_LANGUAGES ...)`, dan `qt_add_translations(target)`. `.qm` otomatis di-embed dan dapat diakses di prefix resource `:/i18n`. Berkas `.ts` khusus bentuk jamak untuk bahasa sumber dibuat otomatis kecuali `NO_GENERATE_PLURALS_TS_FILE` diberikan. Perintah ini juga membuat target `update_translations`.
+3. **Uji Orca butuh langkah pengaktifan.** Di Unix/X11 aplikasi baru menjadi aksesibel bila properti D-Bus `org.a11y.Status.IsEnabled` dan `ScreenReaderEnabled` bernilai true, atau bila variabel `QT_LINUX_ACCESSIBILITY_ALWAYS_ON` diatur. Variabel itu ada biayanya: laporan upstream menyebut dampak performa yang besar bila selalu menyala. Jadi hanya untuk uji.
+4. **Atribut `Accessible` terlalu sedikit.** Terminologi kurikulum (`name`, `description`, `role`) perlu ditambah. Properti lain: `ignored`, `focusable`, `checkable`/`checked`, dan `id` untuk uji UI (`id` bawaannya mengikuti `id` objek QML). `labelledBy`/`labelFor` ada sejak 6.10. Ada juga sinyal aksi (`pressAction`, `toggleAction`, `increaseAction`, `decreaseAction`), dan metode `Accessible.announce()` sejak Qt 6.8.
+5. **Fungsi penanda terjemahan terlalu sedikit.** QML mengenal `qsTr()`, `qsTranslate()`, `qsTrId()`, `QT_TR_NOOP()`, `QT_TRANSLATE_NOOP()`, dan `QT_TRID_NOOP()`. Tambahkan `Qt.uiLanguage` dan `retranslate()`.
+6. **Kerentanan terjemahan.** Terjemahan Qt dikontribusikan komunitas tanpa jaminan, dan bisa salah hingga berbahaya. Dokumentasi menyarankan mengaudit terjemahan yang Anda sertakan. Ini masuk ke praktik terbaik.
+7. **Catatan koreksi dari saya (Modul 9.1.2).** Saya menulis tombol diaktifkan "umumnya Space". Dokumentasi aksesibilitas Qt Quick menyebut tombol bisa dijangkau dengan Tab dan diaktifkan dengan Return atau Enter. Tombol aktivasi sebenarnya bergantung pada tema platform, jadi uji di sistem Anda.
+
+**TAMBAHAN yang ditambahkan ke Modul 9.4**
+RTL dan *mirroring*, WCAG kontras beserta fungsi hitungnya, `QT_TR_NOOP`/`qsTrId`, terjemahan modul Qt, pergantian bahasa saat berjalan (`retranslate`), `FontMetrics` sebagai satuan `em`, variabel lingkungan DPI, dan `accerciser`.
+
+**Prasyarat dan urutan:** tidak ada yang meloncat. 9.4 memakai fokus (9.1.7, 9.3.5), CMake (8.3), dan Controls (9.1).
+
+## Daftar isi Modul 9.4 (pembaruan, salin ke README)
+
+| No | Sub-topik |
+| --- | --- |
+| 9.4.1 | Atribut `Accessible` (`name`, `description`, `role`, `ignored`, `focusable`, aksi, `announce`) |
+| 9.4.2 | Navigasi keyboard penuh |
+| 9.4.3 | `qsTr` dan alur terjemahan (CMake, `lupdate`, Linguist, `lrelease`, modul Qt, pergantian bahasa) |
+| 9.4.4 | Format tanggal, angka, mata uang, dan pluralisasi |
+| 9.4.5 | High-DPI dan font (`em`, aset `@2x`, variabel lingkungan) |
+| 9.4.6 | Uji dengan Orca dan `accerciser` |
+| 9.4.7 | RTL dan *mirroring* `[TAMBAHAN]` |
+| 9.4.8 | Kontras, warna, dan preferensi sistem `[TAMBAHAN]` |
+| 9.4.9 | Lab terpadu: aplikasi yang dapat diterjemahkan dan diaksesibel `[TAMBAHAN]` |
+
+---
+
+# Modul 9.4 — Aksesibilitas, Internasionalisasi, dan DPI
+
+## Deskripsi dan peran dalam kurikulum
+
+Tiga topik ini punya satu tujuan: **aplikasi yang dapat dipakai siapa saja, dalam bahasa apa pun, di layar apa pun.** Modul ini menutup Fase 9. 9.1 memberi kontrol, 9.2 memberi rupa, 9.3 memberi alur, dan 9.4 menjaga semuanya tetap bisa dipakai oleh orang, bahasa, dan perangkat yang berbeda.
+
+## Konsep kunci dan filosofi
+
+**Analogi.** Aksesibilitas adalah pintu yang bisa dilalui kursi roda sekaligus orang berdiri. Internasionalisasi adalah menu yang bisa diganti bahasa tanpa membongkar dapur. High-DPI adalah peta yang tetap terbaca di kertas kecil maupun papan besar.
+
+**Filosofi.** Tiga hal itu bukan "fitur tambahan". Aksesibilitas Qt mencakup UI yang skalabel, navigasi keyboard, warna dan kontras yang memadai, bunyi dan suara, serta dukungan alat bantu seperti pembaca layar. Akibat praktisnya: antarmuka berbasis keyboard, yang Anda sukai, adalah fondasi aksesibilitas, bukan pengecualian.
+
+**Tiga kategori metadata yang dibaca alat bantu** (properti, aksi, dan relasi/navigasi):
+
+```
+Pembaca layar <----------------------> Aplikasi Qt (AT-SPI via D-Bus)
+  membaca  : name, description, role, checked, value
+  memicu   : pressAction, toggleAction, increaseAction
+  menjelajah: hubungan item (induk, anak, fokus, labelledBy)
+```
+
+**Pondasi sintaks yang dipakai**
+- **Atribut terlampir `Accessible`:** `Accessible.name: '...'` menempelkan metadata ke item.
+- **Fungsi `qsTr('teks')`:** menandai teks agar bisa diterjemahkan.
+- **Penanda `%1`, `%n`:** `%1` untuk sisipan nilai (`.arg()`), `%n` untuk bilangan jamak.
+- **Objek `Locale`:** aturan format sebuah bahasa/negara.
+
+## 9.4.1 Atribut `Accessible`
+
+> *Satu nama yang jujur membuka antarmuka bagi mereka yang tak melihatnya.*
+
+**Konsep.** Kontrol bawaan sudah punya fitur aksesibilitas, misalnya tombol bisa dijangkau dengan Tab. Karena itu memakai kontrol standar adalah awal yang baik. Anda hanya perlu memperjelas peran item QML bila perlu. Properti terpenting tipe `Accessible` adalah `name`, `description`, dan `role`.
+
+- **`name`** harus singkat, jelas, terbaca manusia, dan tidak menyebut jenis kontrolnya, hanya namanya.
+- **`description`** lebih panjang dan menjelaskan fungsi.
+- **`role`** adalah jenis semantik (`Accessible.Button`, `Accessible.CheckBox`, dan seterusnya).
+- Prinsip "label dalam nama": nama aksesibel sebaiknya memuat teks yang terlihat. `'Simpan dokumen'` untuk tombol `'Simpan'` aman, tetapi `'Kirim'` untuk tombol `'Simpan'` membingungkan pengguna perintah suara.
+
+**Peran dan kewajibannya**
+
+| Peran | Properti dan aksi yang diharapkan |
+| --- | --- |
+| `Button`, `CheckBox`, `RadioButton` | `pressAction` (setara klik); centang: `checkable`, `checked`, `toggleAction` |
+| `Slider`, `SpinBox`, `Dial`, `ScrollBar` | nilai dan batas, serta `increaseAction`/`decreaseAction` |
+| Semua elemen interaktif | `focusable` dan `focused`; ini penting walau di perangkat sentuh, karena pembaca layar sering punya fokus virtual yang berpindah antar item |
+
+**Kontrol bawaan vs item kustom**
+
+```qml
+// (1) Tombol ikon: tak punya teks -> beri nama
+ToolButton {
+    icon.name: 'list-add'
+    Accessible.name: qsTr('Tambah barang')
+    Accessible.description: qsTr('Menambah jumlah barang satu')
+    onClicked: root.jumlah++
+}
+
+// (2) Kontrol kustom: HARUS menyatakan peran, nama, fokus, dan aksi
+Rectangle {
+    id: kustom
+    activeFocusOnTab: true
+    implicitWidth: 8 * root.em; implicitHeight: 2.5 * root.em
+    radius: 0.4 * root.em
+    color: activeFocus ? '#1d4ed8' : '#2563eb'
+    function aksi() { root.jumlah = 0 }
+
+    Label { anchors.centerIn: parent; text: qsTr('Reset'); color: 'white' }
+    TapHandler { onTapped: kustom.aksi() }
+    Keys.onSpacePressed: aksi()
+    Keys.onReturnPressed: aksi()
+
+    Accessible.role: Accessible.Button
+    Accessible.name: qsTr('Reset jumlah')
+    Accessible.focusable: true
+    Accessible.onPressAction: aksi()
+}
+```
+
+**Bedah kode**
+- `icon.name: 'list-add'` memilih ikon tema. Ia tak punya teks, jadi `Accessible.name` wajib ada.
+- `activeFocusOnTab: true` memasukkan `Rectangle` ke rantai Tab (9.1.7).
+- `TapHandler` melayani mouse dan sentuhan. `Keys.onSpacePressed` dan `Keys.onReturnPressed` melayani keyboard.
+- `Accessible.role: Accessible.Button` menyatakan "ini tombol". Contoh dokumentasi untuk `Rectangle` sebagai tombol memakai peran `Button`, nama dari label, deskripsi, dan `onPressAction`.
+- `Accessible.onPressAction: aksi()` dipanggil alat bantu. Efeknya harus sama dengan klik atau ketukan.
+- Tanpa keempat hal itu (peran, nama, fokus, aksi), pembaca layar tidak tahu `Rectangle` itu tombol.
+
+**Mengelompokkan atau menyembunyikan**
+Dua label yang berdampingan secara visual tetapi item terpisah dapat diperlakukan sebagai satu, dengan menandai tiap label `Accessible.ignored: true` dan memberi nama pada induknya.
+
+```qml
+Row {
+    Accessible.role: Accessible.StaticText
+    Accessible.name: kecepatan.text + ' ' + qsTr('meter per detik')
+    Label { id: kecepatan; text: qsTr('Kecepatan: %1').arg(5); Accessible.ignored: true }
+    Label { text: qsTr('m/s'); Accessible.ignored: true }
+}
+```
+
+**Media non-teks.** Teks pada dasarnya aksesibel, tetapi gambar, video, dan audio tidak. Mereka butuh metadata. Beri `role` (mis. `Chart`), `name`, dan `description` yang menyebut isinya.
+
+**Label terkait `[≥6.10]`**
+
+```qml
+Label { id: lblNama; text: qsTr('Nama') }
+TextField { Accessible.labelledBy: lblNama }
+```
+
+**Pengumuman dinamis `[≥6.8]`.** `Accessible.announce()` diperkenalkan di Qt 6.8. Tingkat kesopanan pengumuman: `Polite` atau `Assertive`. Pakai untuk perubahan penting yang tak mengubah fokus (pesan galat, selesai menyimpan). Periksa argumen persisnya di dokumentasi.
+
+**Opsi lain**
+- Pakai `Label`/`Text` untuk teks. Keduanya otomatis terbaca.
+- Pakai `Button`/`CheckBox` standar, bukan merakit dari `Rectangle`.
+- Untuk uji UI otomatis, `Accessible.id` memberi pengenal stabil.
+
+**Jebakan**
+- Ikon tanpa `Accessible.name`.
+- `name` berisi jenis kontrol ("Tombol Simpan"). Pembaca layar sudah menyebut perannya.
+- Kontrol kustom tanpa `role`/`focusable`/`onPressAction`.
+- Dekorasi yang tak bermakna tetapi dibaca. Gunakan `Accessible.ignored: true`.
+
+## 9.4.2 Navigasi keyboard penuh
+
+> *Hormati keyboard, dan seluruh pengguna akan menghormati antarmuka Anda.*
+
+**Konsep.** Navigasi keyboard penuh adalah syarat aksesibilitas. Jangan hanya bergantung pada mouse atau sentuhan. Izinkan navigasi keyboard dan sediakan pintasan untuk fungsi yang sering dipakai. Banyak pengguna (motorik terbatas, pembaca layar, pengguna mahir, dan Anda sendiri) tidak memakai pointer.
+
+**Daftar periksa**
+
+| Syarat | Cara |
+| --- | --- |
+| Semua kontrol terjangkau dengan Tab | `focusPolicy`, `activeFocusOnTab` (9.1.7) |
+| Urutan Tab logis | Urutan deklarasi atau `KeyNavigation` |
+| Fokus terlihat | `visualFocus` pada `background` (9.2.3) |
+| Tidak ada jebakan keyboard | Popup modal harus bisa ditutup dengan Escape (9.3.5) |
+| Tindakan penting punya pintasan | `Action` + `shortcut` + `ToolTip` |
+| Mnemonik pada menu | `'&Berkas'` (Alt+B) |
+| Fokus dipindah saat halaman berganti | `StackView.onActivated: forceActiveFocus()` (9.3.5) |
+
+```qml
+Action {
+    id: simpanAksi
+    text: qsTr('&Simpan')
+    shortcut: StandardKey.Save
+    onTriggered: console.log('simpan')
+}
+
+Button {
+    action: simpanAksi
+    ToolTip.visible: hovered || visualFocus
+    ToolTip.text: simpanAksi.text.replace('&', '') + '  (' + qsTr('Ctrl+S') + ')'
+}
+```
+
+**Bedah kode**
+- `StandardKey.Save` memakai pintasan standar platform (biasanya Ctrl+S).
+- `ToolTip.visible: hovered || visualFocus` menampilkan petunjuk saat kursor di atas *atau* fokus datang dari keyboard. Pengguna keyboard ikut melihat pintasannya.
+- `text.replace('&', '')` membuang penanda mnemonik dari teks tooltip.
+
+**Protokol uji tanpa mouse (lakukan setiap rilis)**
+1. Cabut atau abaikan mouse. Jalankan aplikasi.
+2. Tab dari awal sampai akhir. Semua kontrol terjangkau, urutan masuk akal, fokus terlihat.
+3. Aktifkan setiap kontrol dengan keyboard (Space/Enter).
+4. Buka setiap popup/dialog, lalu tutup dengan Escape. Fokus kembali ke pemicunya.
+5. Uji semua pintasan.
+
+**Opsi lain**
+- `Keys.forwardTo` untuk meneruskan tombol ke item lain.
+- `FocusScope` untuk wilayah fokus sendiri.
+- `Shortcut` untuk pintasan global, dengan syarat `enabled` agar tak bentrok popup (9.3.5).
+
+**Jebakan**
+- Kontrol kustom tanpa `activeFocusOnTab`.
+- Cincin fokus dihapus karena dianggap "jelek".
+- Satu-satunya cara memicu tindakan hanya lewat hover atau klik kanan.
+- Fokus tertinggal di halaman yang sudah hilang.
+
+## 9.4.3 `qsTr` dan alur terjemahan
+
+> *Satu kalimat yang bisa diterjemahkan membuka satu bahasa lagi bagi dunia.*
+
+**Konsep.** Internasionalisasi (*i18n*) menyiapkan kode agar bisa diadaptasi. Lokalisasi (*l10n*) menyesuaikan untuk wilayah tertentu dengan menerjemahkan dan mengatur format. Internasionalisasi berarti merancang aplikasi agar dapat diadaptasi ke berbagai bahasa dan wilayah tanpa perubahan rekayasa. Dokumen QML selalu berkode UTF-8, dan `lupdate` juga mengharapkan sumber UTF-8.
+
+**Aturan penandaan**
+
+```qml
+// SALAH: potongan tak bisa diterjemahkan; urutan kata berbeda tiap bahasa
+text: qsTr('Halo ') + nama + qsTr(', Anda punya ') + n + qsTr(' pesan')
+
+// BENAR: satu kalimat utuh dengan penanda posisi
+text: qsTr('Halo, %1! Anda punya %2 pesan.').arg(nama).arg(n)
+
+// Dengan disambiguasi (konteks makna):
+text: qsTr('Buka', 'perintah menu')
+
+// Data daftar: tandai saat deklarasi, terjemahkan saat tampil
+readonly property var peran: [ QT_TR_NOOP('Admin'), QT_TR_NOOP('Editor') ]
+// ... ComboBox { model: peran.map(p => qsTr(p)) }
+```
+
+**Bedah kode**
+- `qsTr('...')` mengambil teks sumber, lalu mengembalikan terjemahan bila ada. Bila tidak, ia mengembalikan teks sumber itu sendiri.
+- `%1`, `%2` adalah penanda posisi yang diisi `.arg(nilai)` secara berurutan.
+- Argumen kedua `qsTr` adalah disambiguasi. Dua teks sama dengan makna berbeda diterjemahkan terpisah.
+- `QT_TR_NOOP('Admin')` hanya menandai teks untuk `lupdate`. Terjemahannya dilakukan nanti dengan `qsTr(nilai)`. Pola ini dipakai dokumentasi untuk teks di model data.
+
+**Alur kerja, dari kode sampai pengguna**
+
+```
+Kode QML (qsTr) --lupdate--> .ts (XML) --Qt Linguist--> .ts terjemahan
+                                   --lrelease--> .qm (biner) --embed--> :/i18n/ --QTranslator--> UI
+```
+
+**Opsi 1: ID-based.** `qsTrId('id_simpan')` dengan `lrelease -idbased`. Untuk terjemahan berbasis ID, teruskan `LRELEASE_OPTIONS -idbased` ke `qt_add_translations`. Cocok untuk proyek besar dengan banyak bahasa.
+
+**Konfigurasi CMake (modern)**
+
+```cmake
+find_package(Qt6 REQUIRED COMPONENTS Quick LinguistTools)
+qt_standard_project_setup(
+    I18N_SOURCE_LANGUAGE id          # bahasa teks di kode
+    I18N_TRANSLATED_LANGUAGES en     # bahasa target
+)
+qt_add_translations(lab94)           # buat .ts, kompilasi .qm, embed ke :/i18n
+```
+
+`I18N_SOURCE_LANGUAGE` bawaannya `en`. Bila `qt_add_translations` tak memakai `TS_FILES`, nama berkas `.ts` mengikuti nama proyek, mis. `lab94_en.ts`.
+
+```bash
+cmake --build build --target update_translations    # ekstrak string baru ke .ts
+linguist6 lab94_en.ts                                # terjemahkan (atau /usr/lib/qt6/bin/linguist)
+cmake --build build                                  # kompilasi .qm dan embed
+LANGUAGE=en ./build/lab94                            # jalankan dengan bahasa Inggris
+```
+
+| Perintah | Tujuan |
+| --- | --- |
+| `update_translations` | Memanggil `lupdate`: memindai sumber dan memperbarui `.ts` |
+| `linguist6` | Qt Linguist, aplikasi penerjemah |
+| `lrelease` (otomatis di build) | Mengubah `.ts` menjadi `.qm` |
+| `LANGUAGE=en` | Memilih bahasa antarmuka saat uji |
+
+Jika bahasanya tak berubah, cek `locale -a` dan variabel `LANG`/`LC_ALL`/`LANGUAGE`.
+
+**Memuat terjemahan di C++.** Sisipkan di `main()` sebelum `QQmlApplicationEngine`:
+
+```cpp
+QTranslator appTr;
+for (const QString &bahasa : QLocale::system().uiLanguages()) {
+    if (appTr.load(":/i18n/lab94_" + QLocale(bahasa).name())) {
+        app.installTranslator(&appTr);
+        break;
+    }
+}
+```
+
+`uiLanguages()` mengembalikan daftar bahasa pilihan pengguna berurutan. Loop mencoba tiap bahasa hingga satu berkas `.qm` ditemukan. `:/i18n/` adalah lokasi resource tempat `qt_add_translations` menaruh `.qm`.
+
+**Terjemahan modul Qt.** Tombol standar `Dialog` dan teks bawaan Controls berasal dari katalog Qt, bukan dari aplikasi Anda. Katalog untuk Qt Quick dan Qt Quick Controls berada di `qtdeclarative`. Pemuatannya memakai `QTranslator::load` dengan `QLibraryInfo::path(QLibraryInfo::TranslationsPath)`, lalu `installTranslator`.
+
+```cpp
+QTranslator qtTr;
+if (qtTr.load(QLocale::system(), QStringLiteral("qtbase"), QStringLiteral("_"),
+              QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+    app.installTranslator(&qtTr);
+// ulangi untuk "qtdeclarative" (Qt Quick Controls)
+```
+
+Cek yang terpasang di sistem Anda: `ls /usr/share/qt6/translations | rg '_id'` (lokasi bisa berbeda).
+
+**Pergantian bahasa saat berjalan**
+- Ganti translator dengan `installTranslator`/`removeTranslator`, lalu panggil `QQmlEngine::retranslate()` agar semua binding yang memakai terjemahan dievaluasi ulang.
+- Bila Anda memakai `QQmlApplicationEngine` dan `Qt.uiLanguage` berubah, `retranslate()` dipanggil otomatis.
+
+```cpp
+qApp->removeTranslator(&appTr);
+if (appTr.load(":/i18n/lab94_" + kode)) qApp->installTranslator(&appTr);
+engine.retranslate();
+```
+
+**Jebakan pergantian bahasa.** Setelah perbaikan binding di Qt 6, `retranslate()` mengevaluasi ulang binding QML, tetapi tidak bisa mendeteksi string terjemahan yang datang dari C++. Teks dari C++ perlu properti ber-notify sendiri. Laporan lain menyebut teks di `PropertyChanges` tak ikut diterjemahkan ulang pada kasus tertentu. Uji di versi Qt Anda.
+
+**Keamanan.** Terjemahan Qt komunitas dapat keliru sampai berbahaya, dan disarankan mengaudit terjemahan yang Anda kirim. Perlakukan berkas `.ts` yang Anda terima dari pihak lain sebagai masukan tak tepercaya: tinjau diff-nya sebelum `lrelease`.
+
+**Jebakan**
+- Menggabung potongan kalimat.
+- Mengubah teks sumber sedikit saja, sehingga terjemahan lama menjadi yatim. Jalankan `update_translations` dan tinjau yang berubah.
+- Lupa memuat terjemahan modul Qt, sehingga tombol "Cancel" tetap Inggris.
+- Memakai bahasa sumber yang sama dengan bahasa target.
+
+## 9.4.4 Format tanggal, angka, mata uang, dan pluralisasi
+
+> *Angka yang sama ditulis berbeda di tiap negeri, dan keduanya benar.*
+
+**Konsep.** Bahasa bukan satu-satunya yang berubah. Pemisah desimal, format tanggal, mata uang, dan bentuk jamak ikut berubah. Gunakan objek `Locale`, bukan format yang Anda tulis sendiri. `QLocale` mengonversi angka dan string menurut berbagai bahasa. `Qt.locale()` mengembalikan objek `Locale` dengan informasi lokal, termasuk properti `name`.
+
+```qml
+function ringkas(kode) {
+    const l = kode ? Qt.locale(kode) : Qt.locale()
+    return l.name
+         + ' | ' + l.toString(root.waktu, Locale.ShortFormat)
+         + ' | ' + root.harga.toLocaleString(l, 'f', 2)
+         + ' | ' + l.toCurrencyString(root.harga)
+}
+```
+
+**Bedah kode**
+- `Qt.locale()` mengambil locale sistem, dan `Qt.locale('id_ID')` memilih locale tertentu.
+- `l.name` adalah kode locale (`id_ID`, `en_US`).
+- `l.toString(tanggal, Locale.ShortFormat)` memformat tanggal/waktu menurut aturan locale.
+- `harga.toLocaleString(l, 'f', 2)` memformat angka dengan format tetap (`'f'`) dan dua desimal sesuai pemisah locale.
+- `l.toCurrencyString(harga)` memformat mata uang sesuai locale.
+
+Hasil yang diharapkan: `id_ID` memakai titik untuk pemisah ribuan dan koma untuk desimal, sedangkan `en_US` sebaliknya. Lab akan menampilkannya berdampingan.
+
+**Membaca input pengguna.** `Number.fromLocaleString(locale, teks)` mengurai angka sesuai locale. Ini yang dipakai `SpinBox` desimal di 9.1.4. Jangan `parseFloat` pada input yang mungkin memakai koma.
+
+**Pluralisasi.** Gunakan `%n` dan argumen ketiga `qsTr`:
+
+```qml
+Label { text: qsTr('%n barang', '', root.jumlah) }
+```
+
+`%n` diganti bilangan. Jumlah bentuk jamak bergantung bahasa: bahasa Inggris dua bentuk (`1 item`, `2 items`), bahasa Indonesia umumnya satu, dan bahasa lain bisa lebih banyak. Qt Linguist menampilkan kolom sesuai bahasa target. Bentuk di `.ts`:
+
+```xml
+<message numerus="yes">
+    <source>%n barang</source>
+    <translation>
+        <numerusform>%n item</numerusform>
+        <numerusform>%n items</numerusform>
+    </translation>
+</message>
+```
+
+Rujukan aturannya ada di halaman *Translation Rules for Plural Forms* di dokumentasi Qt. Karena bahasa sumber juga butuh penanganan jamak, `qt_add_translations` membuat berkas `.ts` khusus jamak untuk bahasa sumber secara otomatis.
+
+**Opsi lain**
+- **Mengurutkan teks.** Perbandingan string berbeda tiap bahasa. `QCollator` (C++) membandingkan string menurut algoritma kolasi yang dilokalkan.
+- **Kalimat dengan banyak angka dan jenis** (`%1 file dan %2 folder`): pisahkan menjadi dua `qsTr` jamak atau gunakan kalimat netral.
+- **Tanggal berformat khusus:** `l.toString(tanggal, 'dd MMMM yyyy')`, tetapi urutan dan nama bulan tetap mengikuti `l`.
+
+**Jebakan**
+- `n == 1 ? 'barang' : 'barang-barang'` ditulis tangan.
+- Format tanggal ditulis tangan (`dd/MM/yyyy`).
+- `parseFloat` pada input berlokal koma.
+- Mata uang diberi simbol tetap `'Rp'` di semua locale.
+
+## 9.4.5 High-DPI dan font
+
+> *Layar boleh berganti, ketajaman dan keterbacaan harus tetap.*
+
+**Konsep.** Qt memakai model di mana koordinat aplikasi tidak bergantung pada resolusi perangkat. Aplikasi bekerja dalam piksel independen-perangkat yang dipetakan ke piksel fisik lewat faktor skala, disebut *device pixel ratio*. Jadi 200 unit di layar 2x menjadi 400 piksel fisik. Rasio ini tersedia per jendela (`QWindow::devicePixelRatio()`) atau per layar. Qt 6 secara bawaan sadar-DPI per-monitor di Windows.
+
+**Tiga aturan emas**
+1. **Ukuran dalam satuan relatif**, bukan piksel mutlak.
+2. **Aset gambar dalam beberapa resolusi** atau vektor.
+3. **Ikuti font dan skala sistem** (jangan kunci ukuran font).
+
+**Satuan `em` dari `FontMetrics`**
+
+```qml
+ApplicationWindow {
+    id: root
+    FontMetrics { id: fm; font: root.font }
+    readonly property real em: fm.height        // tinggi satu baris teks
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: root.em
+        spacing: 0.6 * root.em
+        Button { Layout.preferredHeight: 2.5 * root.em; text: qsTr('Simpan') }
+    }
+}
+```
+
+**Bedah kode**
+- `FontMetrics { font: root.font }` mengukur font yang dipakai jendela.
+- `fm.height` adalah tinggi baris teks dalam piksel logis.
+- `em` dipakai sebagai satuan jarak dan ukuran. Bila pengguna memperbesar font sistem, margin, tinggi tombol, dan jarak ikut membesar. Qt mendukung ini lewat sistem layout dinamis, dan kontrol bawaan memakai font serta ukuran font yang diatur sistem operasi.
+
+**Aset gambar**
+- Aset resolusi tinggi memakai konvensi nama khusus, misalnya `logo@2x.png`, dan Qt memilih versi terbaik saat berjalan.
+- Gambar vektor (SVG) tak butuh versi `@2x`. Tetapkan `sourceSize` agar dirender pada ukuran logis yang diinginkan.
+
+```qml
+Image { source: 'logo.svg'; sourceSize.width: 6 * root.em }
+```
+
+**Pengujian dan konfigurasi di Arch**
+
+```bash
+QT_SCALE_FACTOR=2 qml6 Main.qml            # simulasi skala 2x
+QT_FONT_DPI=144 qml6 Main.qml              # skala logis lewat DPI font (basis 96)
+QT_SCALE_FACTOR_ROUNDING_POLICY=PassThrough qml6 Main.qml   # lihat skala pecahan apa adanya
+xrdb -merge <<< 'Xft.dpi: 144'             # X11: skala global (jalankan sebelum aplikasi)
+swaymsg output '*' scale 2                 # Sway/Wayland: contoh; sesuaikan dengan compositor Anda
+```
+
+| Variabel/pengaturan | Efek |
+| --- | --- |
+| `QT_SCALE_FACTOR` | Faktor skala global untuk pengujian. |
+| `QT_FONT_DPI` | Mengatur DPI logis, dengan basis 96, dan UI diskalakan sesuainya. |
+| `Xft.dpi` (X11) | DPI logis global dari pengaturan/resource X. |
+| `QT_USE_PHYSICAL_DPI=1` | Memaksa memakai DPI fisik RandR (X11), dibulatkan ke bilangan bulat. |
+| Wayland | Qt membaca `wl_output::scale`, yang bilangan bulat. Skala diatur di compositor. |
+
+Skala bilangan bulat memberi hasil terbaik, dan skala pecahan bisa menimbulkan artefak. Bila terjadi, `QGuiApplication::setHighDpiScaleFactorRoundingPolicy()` membatasi skala yang terlihat aplikasi.
+
+**Catatan.** Qt tidak menyediakan fasilitas pengguna akhir untuk mengatur perilaku high-DPI. Pengaturan dilakukan lewat pengaturan layar platform agar semua aplikasi sepakat. Karena itu, jangan menaruh pengatur skala di aplikasi Anda.
+
+**Informasi layar di QML**
+
+```qml
+Label {
+    text: qsTr('DPR %1 | layar %2x%3 | 1 em = %4 px')
+          .arg(Screen.devicePixelRatio).arg(Screen.width).arg(Screen.height).arg(root.em.toFixed(1))
+}
+```
+
+`Screen` adalah objek terlampir yang menyajikan data layar tempat item berada.
+
+**Target klik.** Model piksel independen-perangkat tidak menangani perbedaan antara target sentuh dan target mouse. Pastikan kontrol cukup besar untuk jari bila aplikasi dipakai di layar sentuh.
+
+**Jebakan**
+- Margin dan font dalam piksel mutlak (`font.pixelSize: 14`, `margins: 20`).
+- Hanya menguji di skala 1x.
+- Gambar bitmap tanpa versi `@2x` sehingga tampak buram.
+- Mengunci ukuran jendela dan tombol dalam piksel sehingga teks terpotong saat font diperbesar.
+
+## 9.4.6 Uji dengan Orca dan `accerciser`
+
+> *Mendengar aplikasi Anda sendiri adalah cara tercepat menemukan lubangnya.*
+
+**Konsep.** Qt di Linux mengekspos struktur UI lewat AT-SPI (D-Bus). Pembaca layar Orca membacanya. Syaratnya: properti D-Bus `IsEnabled` dan `ScreenReaderEnabled` bernilai true, atau variabel `QT_LINUX_ACCESSIBILITY_ALWAYS_ON` diatur. Menyalakan Orca biasanya sudah memenuhinya.
+
+```bash
+sudo pacman -S --needed at-spi2-core orca accerciser   # periksa nama paket: pacman -Ss orca
+orca &                                  # nyalakan pembaca layar lebih dulu
+qml6 Main.qml &                         # jalankan aplikasi SETELAH Orca aktif
+orca -l                                 # daftar aplikasi aksesibel yang terlihat Orca
+accerciser                              # inspeksi pohon aksesibilitas (role, name, state, action)
+
+# Alternatif tanpa Orca (HANYA untuk uji; ada biaya performa):
+QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1 qml6 Main.qml
+busctl --user list | rg a11y            # periksa layanan bus aksesibilitas aktif
+```
+
+**Catatan.** Variabel lama `QT_ACCESSIBILITY=1` berasal dari era Qt 4/5 awal. Jangan memakainya untuk Qt 6.
+
+**Prosedur uji**
+1. Dengarkan tiap kontrol saat fokus. Nama dan perannya masuk akal? Ikon tanpa nama terdengar sebagai "tombol" saja.
+2. Tab melalui seluruh jendela. Urutan baca logis? Tidak ada kontrol terlewat?
+3. Aktifkan kontrol kustom lewat Orca. `onPressAction` bekerja?
+4. Ubah status (centang, geser). Perubahan dibacakan?
+5. Buka dialog. Fokus berpindah ke dialog, dan kembali saat ditutup?
+6. Bandingkan dengan pohon di `accerciser`. Elemen dekoratif seharusnya `ignored`.
+
+**Opsi lain**
+- **`accerciser`** menampilkan pohon aksesibilitas tanpa suara.
+- **Sesi X11 vs Wayland.** Dukungan fitur Orca (terutama tombol global) dapat berbeda antar-compositor. Jika ragu, uji dengan `QT_QPA_PLATFORM=xcb`.
+- **Pengujian UI otomatis** memanfaatkan `Accessible.id`.
+
+**Jebakan**
+- Menjalankan aplikasi sebelum Orca lalu mengira Qt tak aksesibel.
+- Menyalakan `QT_LINUX_ACCESSIBILITY_ALWAYS_ON` di produksi.
+- Mengandalkan hanya inspeksi visual tanpa pernah mendengar hasilnya.
+
+## 9.4.7 RTL dan *mirroring* `[TAMBAHAN]`
+
+> *Bahasa yang ditulis dari kanan ke kiri juga berhak atas antarmuka yang wajar.*
+
+**Konsep.** Bahasa Arab dan Ibrani ditulis dari kanan ke kiri, kecuali angka dan teks Inggris di dalamnya yang tetap kiri-ke-kanan. Layout ikut dicerminkan: tombol "kembali" pindah ke kanan, dan urutan kolom terbalik.
+
+```qml
+ColumnLayout {                      // akar antarmuka
+    LayoutMirroring.enabled: Qt.application.layoutDirection === Qt.RightToLeft
+    LayoutMirroring.childrenInherit: true
+    // ... RowLayout, Button, dsb. ikut tercermin
+}
+```
+
+**Bedah kode**
+- `Qt.application.layoutDirection` adalah arah tata letak aplikasi (`Qt.LeftToRight` atau `Qt.RightToLeft`).
+- `LayoutMirroring.enabled` mencerminkan layout item ini, dan `childrenInherit: true` menurunkannya ke anak-anaknya.
+- Kontrol memiliki properti `mirrored` (9.1.0) yang mengikuti pencerminan.
+
+**Tips**
+- Ikon berarah (panah) perlu versi cermin, sedangkan ikon netral tidak.
+- Teks tetap diatur penampil teks Qt sesuai kaidah bidirectional (UAX #9).
+- Uji dengan `LayoutMirroring.enabled: true` dipaksa dan bahasa Arab di `qsTr`.
+
+## 9.4.8 Kontras, warna, dan preferensi sistem `[TAMBAHAN]`
+
+> *Warna yang indah belum tentu terbaca. Yang terbaca pasti indah.*
+
+**Konsep.** Aksesibilitas visual bukan hanya "ukuran besar". Beri kontras yang cukup, perhatikan buta warna, dukung skema warna berbeda atau hormati warna dan tema dari sistem, dan jangan bergantung pada warna saja untuk menyampaikan informasi.
+
+**Ambang WCAG 2.x (Level AA)**
+
+| Jenis | Rasio minimum |
+| --- | --- |
+| Teks biasa | 4,5 : 1 |
+| Teks besar (18 pt, atau 14 pt tebal) | 3 : 1 |
+| Komponen UI dan grafik (ikon, garis tepi kolom, penunjuk fokus) | 3 : 1 |
+
+Nilai tidak boleh dibulatkan. 4,499:1 tidak memenuhi 4,5:1. Contohnya, abu-abu `#777777` pada putih (4,47:1) gagal.
+
+**Fungsi penghitung kontras (rumus luminansi relatif WCAG)**
+
+```qml
+function lin(v) { return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }
+function lum(w) { const c = Qt.color(w); return 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b) }
+function rasio(a, b) {
+    const x = lum(a), y = lum(b)
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05)
+}
+```
+
+**Bedah kode**
+- `Qt.color(w)` menormalkan nama warna (`'white'`) atau kode hex menjadi objek warna dengan komponen `r`, `g`, `b` bernilai 0 sampai 1.
+- `lin(v)` mengubah nilai sRGB menjadi linear. Ini koreksi gamma.
+- `lum(w)` menghitung luminansi relatif dengan bobot mata manusia (hijau paling berpengaruh).
+- `rasio(a, b)` adalah (terang + 0,05) / (gelap + 0,05).
+
+**Koreksi untuk contoh saya di Modul 9.2.** Tombol biru memakai warna dasar `#2563eb` dan hover `#3b82f6` dengan teks putih. Perkiraan hitung manual saya: dasar sekitar 5,2:1 (lolos) tetapi hover sekitar 3,7:1 (gagal 4,5:1). Hover yang lebih terang justru mengurangi kontras teks putih. Jalankan fungsi di atas untuk memastikan. Perbaikannya, buat hover lebih *gelap* (mis. `Qt.darker('#2563eb', 1.15)`), bukan lebih terang.
+
+**Jangan hanya warna.** Status "galat" jangan hanya merah. Tambahkan ikon, teks, atau pola. Link jangan hanya dibedakan lewat warna.
+
+**Ikuti tema sistem.** Kontrol Qt secara bawaan memakai palet warna sistem. Jangan menimpa seluruh palet tanpa alasan (9.2.4). Pada Qt ≥ 6.5 skema terang/gelap sistem bisa dibaca lewat `Application.styleHints.colorScheme`.
+
+**Bunyi dan suara.** Jangan hanya mengandalkan notifikasi bunyi. Qt Multimedia dan Qt TextToSpeech tersedia sebagai tambahan.
+
+## 9.4.9 Lab terpadu `[TAMBAHAN]`
+
+Lab ini memenuhi latihan kurikulum (bungkus teks dengan `qsTr`, buat `.ts`, terjemahkan satu string), dengan koreksi bahasa sumber dari audit. Buat tiga berkas: `CMakeLists.txt`, `main.cpp`, `Main.qml`.
+
+```cmake
+# CMakeLists.txt
+cmake_minimum_required(VERSION 3.21)
+project(lab94 LANGUAGES CXX)
+
+find_package(Qt6 REQUIRED COMPONENTS Quick LinguistTools)
+qt_standard_project_setup(
+    I18N_SOURCE_LANGUAGE id
+    I18N_TRANSLATED_LANGUAGES en
+)
+
+qt_add_executable(lab94 main.cpp)
+qt_add_qml_module(lab94
+    URI Lab94
+    VERSION 1.0
+    QML_FILES Main.qml
+)
+qt_add_translations(lab94)
+target_link_libraries(lab94 PRIVATE Qt6::Quick)
+```
+
+```cpp
+// main.cpp
+#include <QGuiApplication>
+#include <QLibraryInfo>
+#include <QLocale>
+#include <QQmlApplicationEngine>
+#include <QTranslator>
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    QTranslator appTr;                                   // terjemahan aplikasi (:/i18n)
+    for (const QString &bahasa : QLocale::system().uiLanguages()) {
+        if (appTr.load(":/i18n/lab94_" + QLocale(bahasa).name())) {
+            app.installTranslator(&appTr);
+            break;
+        }
+    }
+
+    QTranslator qtTr;                                    // terjemahan modul Qt (qtbase)
+    if (qtTr.load(QLocale::system(), QStringLiteral("qtbase"), QStringLiteral("_"),
+                  QLibraryInfo::path(QLibraryInfo::TranslationsPath)))
+        app.installTranslator(&qtTr);
+
+    QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
+                     &app, [] { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
+    engine.loadFromModule("Lab94", "Main");
+    return app.exec();
+}
+```
+
+```qml
+// Main.qml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+ApplicationWindow {
+    id: root
+    visible: true; width: 600; height: 560
+    title: qsTr('Lab 9.4')
+
+    FontMetrics { id: fm; font: root.font }
+    readonly property real em: fm.height
+
+    property int jumlah: 3
+    property real harga: 1234567.891
+    property date waktu: new Date()
+    property string nama: 'Rani'
+
+    // --- kontras WCAG ---
+    function lin(v) { return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }
+    function lum(w) { const c = Qt.color(w); return 0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b) }
+    function rasio(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05) }
+
+    // --- format per locale ---
+    function ringkas(kode) {
+        const l = kode ? Qt.locale(kode) : Qt.locale()
+        return l.name + ' | ' + l.toString(root.waktu, Locale.ShortFormat)
+             + ' | ' + root.harga.toLocaleString(l, 'f', 2)
+             + ' | ' + l.toCurrencyString(root.harga)
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: root.em
+        spacing: 0.6 * root.em
+
+        Label {
+            text: qsTr('Halo, %1! Anda punya %2 pesan.').arg(root.nama).arg(root.jumlah)
+            font.bold: true
+        }
+
+        RowLayout {
+            spacing: 0.6 * root.em
+            Label { text: qsTr('%n barang', '', root.jumlah) }
+            SpinBox {
+                from: 0; to: 10; value: root.jumlah
+                onValueModified: root.jumlah = value
+                Accessible.name: qsTr('Jumlah barang')
+            }
+            ToolButton {
+                icon.name: 'list-add'
+                Accessible.name: qsTr('Tambah barang')
+                Accessible.description: qsTr('Menambah jumlah barang satu')
+                onClicked: root.jumlah++
+            }
+            Rectangle {
+                id: kustom
+                activeFocusOnTab: true
+                implicitWidth: 8 * root.em; implicitHeight: 2.5 * root.em
+                radius: 0.4 * root.em
+                color: activeFocus ? '#1d4ed8' : '#2563eb'
+                border.width: activeFocus ? 0.2 * root.em : 0
+                border.color: '#f59e0b'
+                function aksi() { root.jumlah = 0 }
+
+                Label { anchors.centerIn: parent; text: qsTr('Reset'); color: 'white' }
+                TapHandler { onTapped: kustom.aksi() }
+                Keys.onSpacePressed: aksi()
+                Keys.onReturnPressed: aksi()
+
+                Accessible.role: Accessible.Button
+                Accessible.name: qsTr('Reset jumlah')
+                Accessible.focusable: true
+                Accessible.onPressAction: aksi()
+            }
+        }
+
+        Label { text: qsTr('Locale | tanggal | angka | mata uang'); font.bold: true }
+        Repeater {
+            model: ['', 'id_ID', 'en_US', 'de_DE']
+            Label { required property string modelData; text: root.ringkas(modelData) }
+        }
+
+        Label { text: qsTr('Kontras putih / #2563eb = %1 : 1').arg(root.rasio('white', '#2563eb').toFixed(2)) }
+        Label { text: qsTr('Kontras putih / #3b82f6 = %1 : 1').arg(root.rasio('white', '#3b82f6').toFixed(2)) }
+
+        Label {
+            text: qsTr('DPR %1 | layar %2x%3 | 1 em = %4 px')
+                  .arg(Screen.devicePixelRatio).arg(Screen.width).arg(Screen.height).arg(root.em.toFixed(1))
+        }
+
+        Item { Layout.fillHeight: true }
+    }
+}
+```
+
+**Menjalankan**
+
+```bash
+qml6 Main.qml                                          # uji cepat tanpa terjemahan (qsTr = sumber)
+
+cmake -S . -B build
+cmake --build build --target update_translations       # buat lab94_en.ts dan lab94_id.ts (jamak)
+linguist6 lab94_en.ts                                  # terjemahkan ke Inggris
+cmake --build build
+./build/lab94                                          # sumber Indonesia
+LANGUAGE=en ./build/lab94                              # Inggris
+
+QT_SCALE_FACTOR=2 ./build/lab94                        # uji skala
+QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1 ./build/lab94       # uji aksesibilitas (lalu Orca/accerciser)
+```
+
+**Isi terjemahan yang disarankan (konteks `Main`)**
+
+| Sumber (id) | Terjemahan (en) |
+| --- | --- |
+| `Halo, %1! Anda punya %2 pesan.` | `Hello, %1! You have %2 messages.` |
+| `%n barang` | `%n item` / `%n items` (dua bentuk) |
+| `Jumlah barang` | `Item count` |
+| `Tambah barang` | `Add item` |
+| `Reset jumlah` | `Reset count` |
+
+**Cek hasilnya**
+1. **i18n:** bahasa Inggris tampil dan bentuk jamak benar untuk 1 dan 3.
+2. **l10n:** baris `id_ID`, `en_US`, `de_DE` menunjukkan pemisah desimal berbeda.
+3. **a11y:** semua kontrol terjangkau dengan Tab, termasuk `Rectangle` kustom. Orca membacakan nama yang benar.
+4. **DPI:** `QT_SCALE_FACTOR=2` memperbesar seluruh UI tanpa teks terpotong.
+5. **Kontras:** baris kedua memperlihatkan rasio hover biru di bawah 4,5.
+
+**Latihan tambahan**
+1. Ganti bahasa sumber menjadi `en` dan target `id`, lalu bandingkan berkas `.ts` yang dihasilkan.
+2. Perbaiki warna hover agar kontras ≥ 4,5:1 menggunakan fungsi `rasio`.
+3. Tambahkan `Accessible.labelledBy` pada sebuah `TextField` dan periksa di `accerciser` (butuh Qt ≥ 6.10).
+4. Aktifkan `LayoutMirroring` dan perhatikan urutan `RowLayout`.
+
+## Terminologi esensial
+
+| Istilah | Penjelasan |
+| --- | --- |
+| **Aksesibilitas (a11y)** | Membuat aplikasi dapat dipakai orang dengan beragam kemampuan |
+| **AT-SPI** | Antarmuka aksesibilitas Linux lewat D-Bus yang dibaca pembaca layar |
+| **Pembaca layar (Orca)** | Alat bantu yang membacakan UI dan memicu aksinya |
+| **`Accessible`** | Atribut terlampir QML untuk metadata aksesibilitas |
+| **Peran (`role`)** | Jenis semantik elemen (Button, CheckBox, Chart, StaticText) |
+| **`ignored`** | Menyembunyikan item dari alat bantu |
+| **i18n / l10n** | Internasionalisasi (menyiapkan) / lokalisasi (menyesuaikan wilayah) |
+| **`qsTr` / `qsTrId`** | Penanda teks terjemahan berbasis kalimat / berbasis ID |
+| **`.ts` / `.qm`** | Berkas sumber terjemahan (XML) / hasil kompilasi biner |
+| **`lupdate` / `lrelease` / Linguist** | Ekstrak string / kompilasi / aplikasi penerjemah |
+| **`%1` / `%n`** | Penanda posisi nilai / penanda bilangan jamak |
+| **Locale** | Aturan bahasa dan wilayah (format tanggal, angka, mata uang) |
+| **DPR** | *Device pixel ratio*: rasio piksel fisik terhadap piksel logis |
+| **`em`** | Satuan relatif terhadap tinggi font |
+| **RTL / mirroring** | Tulisan kanan-ke-kiri / pencerminan layout |
+| **Kontras WCAG** | Rasio luminansi teks terhadap latar |
+
+## Hubungan dengan modul lain
+
+- **Prasyarat:** 9.1 (fokus, kontrol, `Action`), 9.2 (`palette`, kontras tema), 9.3 (fokus saat navigasi, popup yang bisa ditutup), 8.3 (CMake dan resource), 5.2 (layout dinamis).
+- **Menyambung ke:** jalur C++ (Modul 10.x) untuk `QTranslator`, `QQmlEngine::retranslate()`, dan `QLocale`; pengujian dan CI (`qmllint`, uji UI dengan `Accessible.id`); Fase berikutnya dalam kurikulum.
+
+## Tips dan praktik terbaik
+
+1. **Tulis `qsTr` dengan kalimat utuh,** tanpa menggabung potongan.
+2. **Pilih satu bahasa sumber** dan jangan menamai target sama dengan sumber.
+3. **Biarkan `Locale` yang memformat** tanggal, angka, dan mata uang.
+4. **Ukuran dalam `em`,** gambar dalam vektor atau `@2x`.
+5. **Beri nama aksesibel pada semua ikon,** dan nama harus memuat label yang terlihat.
+6. **Tes tanpa mouse dan dengan Orca** setiap rilis. Jadikan bagian dari daftar periksa.
+7. **Jaga kontras ≥ 4,5:1 untuk teks** dan ≥ 3:1 untuk komponen UI. Hitung, jangan menebak.
+8. **Jangan hanya warna** untuk status.
+9. **Audit berkas `.ts` dari pihak luar** sebelum dikompilasi.
+10. **Gunakan `QT_LINUX_ACCESSIBILITY_ALWAYS_ON` hanya saat uji.**
+
+## Kesalahan umum dan solusi
+
+| Kesalahan | Akibat | Solusi |
+| --- | --- | --- |
+| Teks tanpa `qsTr` | Tak bisa diterjemahkan | Bungkus semua teks tampil |
+| String digabung manual | Urutan kata salah di bahasa lain | `qsTr('... %1 ...').arg(...)` |
+| Bahasa sumber = bahasa target | Terjemahan tak berarti | Pilih sumber dan target berbeda |
+| Jamak ditulis `n == 1 ? ...` | Salah untuk bahasa lain | `%n` + `qsTr(…, '', n)` |
+| Format tanggal/angka ditulis tangan | Salah di locale lain | `Locale` |
+| Ikon tanpa `Accessible.name` | Pembaca layar hanya bilang "tombol" | Beri `Accessible.name` |
+| Kontrol kustom tanpa `role`/`focusable` | Tak terdeteksi | Nyatakan peran, nama, fokus, aksi |
+| `name` berisi jenis kontrol | Terbaca ganda | Hanya nama |
+| Cincin fokus dihapus | Pengguna keyboard tersesat | Gambar fokus di `background` |
+| Ukuran dalam piksel mutlak | UI terpotong di DPI/font berbeda | `em`, layout, `implicit*` |
+| Gambar tanpa `@2x` | Buram di layar high-DPI | Tambah `@2x` atau SVG |
+| Hanya warna untuk status | Tak terbaca penderita buta warna | Tambah ikon atau teks |
+| Orca dijalankan setelah aplikasi | Aplikasi tak terdeteksi | Nyalakan Orca dulu, atau pakai variabel uji |
+| Lupa terjemahan modul Qt | Tombol dialog tetap Inggris | Muat `qtbase`/`qtdeclarative` |
+| Teks dari C++ tak ikut `retranslate` | Bahasa tak berganti penuh | Sediakan properti ber-notify, uji versi Qt |
+
+## Cek pemahaman: jawaban
+
+**Mengapa navigasi keyboard penuh termasuk aksesibilitas?**
+- Banyak pengguna tidak dapat atau tidak mau memakai pointer: tunanetra yang memakai pembaca layar, pengguna dengan keterbatasan motorik, dan pengguna dengan alat bantu masukan khusus. Semuanya berinteraksi lewat keyboard atau perangkat yang meniru keyboard.
+- Alat bantu seperti pembaca layar bekerja berdasarkan fokus dan aksi: pindah fokus, baca nama, picu aksi. Tanpa kontrol yang dapat difokuskan dan diaktifkan dari keyboard, alat bantu tak punya cara memandu pengguna. Karena itu, kontrol harus `focusable`, punya urutan logis, dan fokus terlihat.
+- Antarmuka yang penuh kendali keyboard, seperti yang Anda sukai, otomatis menjadi dasar aksesibilitas. Selebihnya tinggal melengkapi metadata (`name`, `role`, `description`).
+
+## Referensi
+
+*Halaman Accessibility, Accessibility for Qt Quick, Internationalization, Localizing, qt_add_translations, High DPI, QAccessible, dan tipe Accessible/Qt saya baca dari dokumentasi Qt 6. Tautan lain mengikuti pola URL resmi.*
+
+- Aksesibilitas: [Accessibility](https://doc.qt.io/qt-6/accessible.html) · [Accessibility for Qt Quick Applications](https://doc.qt.io/qt-6/accessible-qtquick.html) · [Accessible (QML)](https://doc.qt.io/qt-6/qml-qtquick-accessible.html) · [QAccessible](https://doc.qt.io/qt-6/qaccessible.html)
+- Internasionalisasi: [Internationalization with Qt](https://doc.qt.io/qt-6/internationalization.html) · [Localizing Applications](https://doc.qt.io/qt-6/localization.html) · [Internationalization and Localization with Qt Quick](https://doc.qt.io/qt-6/qtquick-internationalization.html) · [Writing Source Code for Translation](https://doc.qt.io/qt-6/i18n-source-translation.html) · [Plural Rules](https://doc.qt.io/qt-6/i18n-plural-rules.html) · [ID-based i18n](https://doc.qt.io/qt-6/linguist-id-based-i18n.html)
+- Alat: [Qt Linguist Manual](https://doc.qt.io/qt-6/qtlinguist-index.html) · [qt_add_translations](https://doc.qt.io/qt-6/qtlinguist-cmake-qt-add-translations.html) · [Qt (QML): qsTr, uiLanguage, locale](https://doc.qt.io/qt-6/qml-qtqml-qt.html) · [Locale (QML)](https://doc.qt.io/qt-6/qml-qtqml-locale.html) · [QLocale](https://doc.qt.io/qt-6/qlocale.html)
+- DPI: [High DPI](https://doc.qt.io/qt-6/highdpi.html) · [FontMetrics](https://doc.qt.io/qt-6/qml-qtquick-fontmetrics.html) · [LayoutMirroring](https://doc.qt.io/qt-6/qml-qtquick-layoutmirroring.html)
+- Kontras: [WCAG 2.2 SC 1.4.3 Contrast (Minimum)](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) · [WebAIM: Contrast and Color](https://webaim.org/articles/contrast/)
+- Linux: [Orca (ArchWiki: Accessibility)](https://wiki.archlinux.org/title/Accessibility) · [Qt di ArchWiki](https://wiki.archlinux.org/title/Qt)
+
+---
+
+**Modul 9.4 selesai, dan dengan itu seluruh Fase 9 (Modul 9.1–9.4) tuntas.** Mau memperdalam salah satu modul Fase 9, atau kirim bagian kurikulum berikutnya (Fase 10) untuk dikerjakan?
 - [StackView](https://doc.qt.io/qt-6/qml-qtquick-controls-stackview.html) · [SwipeView](https://doc.qt.io/qt-6/qml-qtquick-controls-swipeview.html) · [TabBar](https://doc.qt.io/qt-6/qml-qtquick-controls-tabbar.html) · [PageIndicator](https://doc.qt.io/qt-6/qml-qtquick-controls-pageindicator.html) · [Drawer](https://doc.qt.io/qt-6/qml-qtquick-controls-drawer.html)
 - [Popup](https://doc.qt.io/qt-6/qml-qtquick-controls-popup.html) · [Dialog](https://doc.qt.io/qt-6/qml-qtquick-controls-dialog.html) · [DialogButtonBox](https://doc.qt.io/qt-6/qml-qtquick-controls-dialogbuttonbox.html) · [Menu](https://doc.qt.io/qt-6/qml-qtquick-controls-menu.html) · [ContextMenu](https://doc.qt.io/qt-6/qml-qtquick-controls-contextmenu.html) · [Overlay](https://doc.qt.io/qt-6/qml-qtquick-controls-overlay.html)
 - Ikhtisar: [Popup Controls](https://doc.qt.io/qt-6/qtquickcontrols-popups.html) · [Navigation Controls](https://doc.qt.io/qt-6/qtquickcontrols-navigation.html) · [Container Controls](https://doc.qt.io/qt-6/qtquickcontrols-containers.html) · [Focus Management](https://doc.qt.io/qt-6/qtquickcontrols-focus.html)
