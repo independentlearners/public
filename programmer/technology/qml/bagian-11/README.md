@@ -2451,6 +2451,884 @@ find build -name '*.qmltypes'
 
 **Modul 10.3 selesai.**
 
+# Audit Singkat Modul 10.4
+
+**Terverifikasi benar**
+- Pemetaan `QVariantList` ↔ array dan `QVariantMap` ↔ objek, termasuk tonggak versinya, sesuai dokumentasi. Sejak Qt 6.5 properti `QVariantList` pada tipe C++ bisa diubah di tempat oleh QML, dan sejak 6.9 hal yang sama berlaku untuk `QVariantMap`. Hasil konversinya berupa *array-like* dengan metode array dan `length` yang tersinkron, tetapi `Array.isArray()` tetap mengembalikan `false`.
+- Bentuk `Connections { function onPesanChanged() {...} }` adalah gaya Qt 6.
+- Prinsip "C++ tidak mencari anak QML" tepat. Dokumentasi memperingatkan bahwa memanipulasi objek QML dari C++ tidak direkomendasikan kecuali untuk pengujian dan prototipe, karena ia merusak pemisahan UI QML dari logika C++.
+
+**Perlu koreksi atau penajaman**
+1. **Tanggal dan waktu terlalu kasar.** Kurikulum menulis "`QDate`/`QDateTime` ↔ `Date` (berbasis UTC)". Yang benar:
+   - `QDateTime` ↔ `Date` adalah pemetaan langsung.
+   - `QDate` dipetakan ke awal hari dalam UTC, dengan aturan pemetaan balik yang agak eksentrik. Karena itu `getUTCDate()` lebih bisa diandalkan daripada `getDate()`.
+   - Dokumentasi menyarankan memakai properti `QDateTime` agar sisi C++ yang mengendalikan UTC atau waktu lokal.
+   - `QTime` menjadi `Date` dengan komponen tanggal buatan yang tak boleh diandalkan.
+   - Dua catatan tambahan: bulan di JavaScript bernomor 0–11 sedangkan Qt 1–12, dan string tanggal tanpa jam ditafsirkan sebagai awal hari UTC, berbeda dari `new Date(y, m, d)` yang memakai waktu lokal.
+2. **Kepemilikan objek (belum ada).** Kepemilikan data dari C++ ke QML tetap di C++, kecuali `QObject` yang dikembalikan dari pemanggilan method C++ eksplisit: mesin QML mengambil alih, kecuali ia punya induk atau Anda menetapkan `CppOwnership`. Mesin tak pernah menghapus `QObject` yang punya induk. Masuk ke 10.4.7.
+3. **Enum.** Belum ada di kurikulum. `enum class` terdaftar sebagai bercakupan (`Message.Status.Ready`) dan tak bercakupan (`Message.Ready`), dan bila ada bentrok nama, pendaftaran tak bercakupan ditimpa oleh enum yang terakhir. Properti `Q_CLASSINFO` `RegisterEnumClassesUnscoped` dan `RegisterEnumsFromRelatedTypes` mengendalikannya. Method/sinyal berparameter enum hanya bisa dipakai bila enum dan method dideklarasikan di kelas yang sama (atau enum itu dari namespace Qt), dan bila ingin tersambung lewat `connect()` JS, enum harus didaftarkan lewat `qRegisterMetaType()`.
+4. **Tipe nilai `Q_GADGET`.** Gadget dikirim sebagai nilai, dan bila QML mengubah satu properti sebuah properti gadget, seluruh gadget dibuat ulang dan dikirim balik ke setter C++.
+5. **Penanda tipe properti.** Jangan memakai `typedef` atau `using` untuk tipe di `Q_PROPERTY` karena membingungkan moc dan bisa membuat perbandingan tipe gagal.
+6. **Sinyal dan handler.** Handler selalu berbentuk `on<Signal>` dengan huruf pertama kapital, dan contoh dokumentasi memakai fungsi panah dengan parameter eksplisit. Parameter bertipe tak terdaftar tidak akan menimbulkan galat, tetapi nilainya tak bisa diakses di handler. Dua signal bernama sama tak bisa dibedakan, dan hanya yang terakhir terlihat di QML.
+7. **Daftar objek.** Properti berisi daftar `QObject` harus memakai `QQmlListProperty`, bukan `QList<T>`. Properti kelompok (*grouped*) punya aturan sendiri (10.4.1).
+8. **`QQmlProperty::write` vs `setProperty`.** Beda penting yang belum ada: `QQmlProperty::write()` juga menghapus binding, sedangkan `QObject::setProperty()` tidak.
+9. **Antarmuka C++ untuk QML, bukan sebaliknya.** Tambahkan tiga jalur resmi: singleton, *initial properties* dengan `required property`, dan model C++ (dokumentasi menyatakan cara terbaik berinteraksi dengan QML dari C++ adalah mendefinisikan antarmuka di C++ lalu mengaksesnya dari QML sendiri).
+10. **Belum ada:** `QJSValue` untuk fungsi callback (`QJSValue` adalah wadah nilai, sedangkan `QJSManagedValue` dianjurkan untuk berinteraksi dengannya), dan `pragma NativeMethodBehavior`.
+
+## Daftar isi Modul 10.4 (pembaruan, salin ke README)
+
+| No | Sub-topik |
+| --- | --- |
+| 10.4.1 | Properti dan binding ke objek C++ (+ `required property`, properti bertipe objek, `QQmlListProperty`, properti kelompok) |
+| 10.4.2 | Memanggil `Q_INVOKABLE` (+ *overload*, `QObject*`, `toString`, hasil asinkron) |
+| 10.4.3 | `Connections` ke signal C++ (+ bentuk handler, `connect()` di JS, enum pada signal) |
+| 10.4.4 | Konversi tipe dan jebakannya (+ tanggal, enum, tipe nilai, `ArrayBuffer`) |
+| 10.4.5 | Memanggil QML dari C++ (`QQmlComponent`, `invokeMethod`, `QQmlProperty`, menyambung sinyal QML) |
+| 10.4.6 | Prinsip: C++ tidak mencari anak QML (antarmuka lewat singleton / *initial properties* / model) |
+| 10.4.7 | Kepemilikan objek lintas C++/QML `[TAMBAHAN]` |
+| 10.4.8 | `QJSValue` dan callback `[TAMBAHAN]` |
+| 10.4.9 | Lab terpadu: konversi, kepemilikan, callback, C++→QML `[TAMBAHAN]` |
+
+---
+
+# Modul 10.4 — Memakai Objek C++ dari QML dan Sebaliknya
+
+## Deskripsi dan peran dalam kurikulum
+
+Di 10.2 Anda membuat `QObject` yang "terbaca" meta-object. Di 10.3 Anda mendaftarkannya sebagai tipe QML. Modul ini adalah **praktik pemakaiannya sehari-hari**:
+- membaca dan mengikat properti,
+- memanggil method,
+- mendengar sinyal,
+- memahami bagaimana data berubah bentuk saat menyeberang,
+- dan kadang menggerakkan QML dari C++.
+
+Modul ini juga tempat jebakan paling mahal: kepemilikan objek yang kabur, tanggal yang bergeser sehari, dan UI yang bergantung pada C++ yang menyelinap ke pohon QML.
+
+## Konsep kunci dan filosofi
+
+**Analogi.** Antarmuka antara dua dunia harus berupa pintu sempit yang jelas. C++ mengekspos objek, QML memakainya. Jangan biarkan C++ menyelinap ke ruang QML mencari anak dengan nama tertentu.
+
+**Tiga peran di batas**
+
+```
+                 properti (keadaan)  + NOTIFY
+   C++  ------------------------------------------>  QML (tampilan, binding)
+ (logika)       Q_INVOKABLE (perintah)  <-----------   (aksi pengguna)
+        ------------ signal (peristiwa/hasil) ---->
+```
+
+**Lima aturan emas modul ini**
+1. Properti untuk keadaan, signal untuk peristiwa, `Q_INVOKABLE` untuk perintah (dari 10.2).
+2. Data lewat batas harus bertipe yang dikenali mesin (10.4.4).
+3. Tahu siapa pemilik tiap objek yang menyeberang (10.4.7).
+4. Arah ketergantungan: **QML memakai C++**, bukan C++ menguasai QML (10.4.6).
+5. Semua yang dipanggil dari QML adalah permukaan serangan. Validasi parameter, dan ekspos sesedikit mungkin.
+
+**Pondasi sintaks yang dipakai**
+- Di QML, `backend.pesan` membaca properti, `backend.tambah()` memanggil method, dan `onSelesai` menanggapi signal `selesai`.
+- Di C++, `QObject::property`, `QMetaObject::invokeMethod`, dan `QObject::connect` berbicara ke meta-object yang sama.
+- `required property T nama` di QML menyatakan "nilai ini wajib diberikan dari luar".
+
+## 10.4.1 Properti dan binding ke objek C++
+
+> *Satu ikatan yang benar membuat UI memperbarui dirinya sendiri.*
+
+**Konsep.** Semua properti kelas turunan `QObject` atau `Q_GADGET` dapat diakses dari QML. Binding bekerja karena sinyal `NOTIFY`. Untuk interoperabilitas maksimum, properti yang bisa ditulis sebaiknya punya `NOTIFY` yang dipancarkan setiap kali nilainya berubah. Bila tidak, nilai awalnya terbaca tetapi perubahan berikutnya tidak, dan upaya mengikatnya dari QML menghasilkan peringatan runtime.
+
+```qml
+import QtQuick
+import QtQuick.Controls
+import Hello
+
+Item {
+    Backend { id: backend }
+
+    Label { text: backend.pesan }                           // binding: ikut berubah
+    Label { text: 'Hitungan: ' + backend.hitungan }          // ekspresi yang bergantung pada properti
+    Button { text: 'Atur'; onClicked: backend.pesan = 'baru' }   // menulis lewat WRITE
+}
+```
+
+**Bedah kode**
+- `Backend { id: backend }` membuat objek C++ dari QML (10.3).
+- `text: backend.pesan` memanggil `Backend::pesan()` dan berlangganan ke `pesanChanged`. Setiap emit memicu evaluasi ulang.
+- `backend.pesan = 'baru'` memanggil `Backend::setPesan()`. Setter yang menjaga nilai sama (10.2) mencegah emit berlebih.
+
+**Tiga cara menyediakan objek backend ke QML**
+
+| Cara | Pemilik | Jangkauan | Cocok untuk |
+| --- | --- | --- | --- |
+| `Backend { id: backend }` di QML | QML | Komponen itu | Objek sederhana, satu pemakai |
+| Singleton `QML_SINGLETON` (10.3.3) | Engine | Seluruh modul | Tema, konfigurasi, layanan |
+| *Initial property* dari C++ | C++ | Komponen akar | Backend yang dibuat dan dimiliki C++ |
+
+```cpp
+// main.cpp: backend dimiliki C++, dikirim ke QML sebagai properti awal
+Backend backend;                                           // dideklarasikan SEBELUM engine
+QQmlApplicationEngine engine;
+engine.setInitialProperties({ { u"backend"_s, QVariant::fromValue(&backend) } });
+engine.loadFromModule("Hello", "Main");
+```
+
+```qml
+// Main.qml
+ApplicationWindow {
+    required property Backend backend       // wajib diisi dari luar
+    Label { text: backend.pesan }
+}
+```
+
+Properti `required` melindungi komponen agar tak dibuat tanpa properti itu. Untuk menginisialisasi, panggil `createWithInitialProperties`, `QQmlApplicationEngine::setInitialProperties`, atau `QQuickView::setInitialProperties`. Karena `backend` dideklarasikan sebelum `engine`, ia dihancurkan setelah engine (urutan terbalik), jadi QML tak pernah memegang pointer menggantung.
+
+**Properti bertipe objek**
+
+Properti bertipe objek bisa diakses dari QML bila tipenya terdaftar. Bila `MessageBody` juga terdaftar, Anda dapat menetapkannya dari QML.
+
+```qml
+Pesan {
+    isi: IsiPesan { teks: 'Halo, dunia!' }     // mengisi properti bertipe objek
+}
+```
+
+**Daftar objek: `QQmlListProperty`**
+
+Untuk properti berisi daftar `QObject`, gunakan `QQmlListProperty`, bukan `QList<T>`, karena `QList` bukan turunan `QObject` dan tak dapat memberi karakteristik properti QML seperti notifikasi saat daftar berubah. Parameter templat (`Message`) harus terdaftar. Contoh sederhana ada di 10.3.7.
+
+**Properti kelompok (*grouped property*)**
+
+```cpp
+class Kredensial : public QObject {          // objek anak
+    Q_OBJECT
+    QML_ANONYMOUS
+    Q_PROPERTY(QString nama  READ nama  WRITE setNama  NOTIFY namaChanged FINAL)
+    Q_PROPERTY(QString surel READ surel WRITE setSurel NOTIFY surelChanged FINAL)
+    // ...
+};
+
+class Akun : public QObject {
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(Kredensial *kredensial READ kredensial CONSTANT FINAL)
+public:
+    explicit Akun(QObject *parent = nullptr)
+        : QObject(parent), m_kredensial(new Kredensial(this)) {}   // dibuat di konstruktor
+    Kredensial *kredensial() const { return m_kredensial; }
+private:
+    Kredensial *m_kredensial;
+};
+```
+
+```qml
+Akun {
+    kredensial.nama: 'Alexandra'
+    kredensial.surel: 'alexandra@contoh.id'
+}
+```
+
+Penulisan berkelompok tidak membuat objek, hanya menulis ke objek yang dikembalikan getter. Nama sub-properti dicocokkan dengan tipe yang *dideklarasikan*, dan objek harus sudah ada saat penugasan, kalau tidak muncul galat bahwa properti tak bisa diatur karena null. Praktik baik: jaga objek properti kelompok tetap hanya-baca, dan hindari sintaks kelompok bila Anda juga memanipulasi properti induknya.
+
+**Penanda tipe.** Tulis tipe langsung di `Q_PROPERTY` (`Foo::Enum`), jangan lewat `typedef`/`using`, karena membingungkan moc.
+
+**Opsi lain**
+- **`BINDABLE`** (10.2.7) untuk properti yang saling bergantung di sisi C++.
+- **`CONSTANT`** untuk sub-objek yang dibuat sekali. Atribut ini hanya untuk properti yang nilainya ditetapkan dan final di konstruktor.
+- **Singleton** untuk keadaan global yang memang satu.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| Properti dapat ditulis tanpa `NOTIFY` | Tambah `NOTIFY` (atau `CONSTANT` bila memang tetap) |
+| Mengubah anggota data langsung dari C++ | Pakai setter/`setProperty`; anggota langsung tak memberi kabar |
+| `Q_PROPERTY` dengan tipe `using` | Tulis tipe aslinya |
+| Properti kelompok dengan sub-objek `nullptr` | Buat sub-objek di konstruktor |
+| `QList<T *>` sebagai tipe properti | `QQmlListProperty<T>` |
+
+## 10.4.2 Memanggil `Q_INVOKABLE`
+
+> *Perintah yang jelas membuat antarmuka tak perlu menebak.*
+
+**Konsep.** Method dapat dipanggil dari QML bila ia method publik bertanda `Q_INVOKABLE`, atau slot publik. Nilai kembalian dikonversi ke nilai JavaScript.
+
+```qml
+Button {
+    text: 'Hitung'
+    onClicked: {
+        const hasil = backend.tambahDengan(5)         // Q_INVOKABLE int tambahDengan(int)
+        console.log('hasil:', hasil, '| format:', backend.format(hasil))
+    }
+}
+```
+
+**Aturan yang sering dilupakan**
+- **Overload:** QML mendukung pemanggilan fungsi C++ yang ditumpuk-nama. Fungsi yang benar dipilih menurut jumlah dan tipe argumen.
+- **Parameter `QObject*`:** nilainya dapat diteruskan dari QML dengan `id` objek atau nilai JavaScript `var` yang merujuk ke objek.
+- **Mengganti `toString`:** method `Q_INVOKABLE` bernama `toString` tanpa argumen akan dipakai untuk mengubah objek menjadi string menggantikan implementasi JavaScript.
+- **Objek `this` pada method C++:** secara historis `this` dari method berbasis C++ terikat mati pada method. Sejak Qt 6.5 Anda bisa memilih perilaku benar dengan menambahkan `pragma NativeMethodBehavior: AcceptThisObject` di dokumen QML. Berguna bila memanggil `child.invoke.call(this)`.
+
+**Perintah yang lama: jangan blokir, kirim hasil lewat signal**
+
+```cpp
+class Pemuat : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+public:
+    Q_INVOKABLE void mulai(const QString &kunci);          // kembali segera
+signals:
+    void hasilSiap(const QString &kunci, int nilai);
+    void galat(const QString &pesan);
+};
+```
+
+```qml
+Pemuat {
+    id: pemuat
+    onHasilSiap: (kunci, nilai) => console.log(kunci, '=', nilai)
+    onGalat: (pesan) => console.warn('gagal:', pesan)
+}
+Button { text: 'Muat'; onClicked: pemuat.mulai('profil') }
+```
+
+Pola ini menjaga UI tetap mulus. Bagaimana pekerjaan sebenarnya dijalankan di thread lain dibahas di 10.7.
+
+**Keamanan: setiap `Q_INVOKABLE` adalah titik masuk.**
+- Jangan mengekspos perintah generik ("jalankan string ini", "baca berkas ini") yang parameternya bebas.
+- Validasi dan batasi setiap parameter dari QML: panjang, rentang, jalur yang diizinkan. Anggap isinya tak tepercaya, terutama bila QML berasal dari plugin atau berkas yang bisa diubah pengguna.
+- Beri nama tindakan sempit (`bukaProfil(id)`), bukan fungsi serbaguna (`jalankan(cmd)`). Ini tersambung langsung ke 10.6.
+
+**Opsi lain.** Slot publik (`public slots:`) sama-sama bisa dipanggil dan bisa disambungkan lewat gaya string. `QJSValue` callback (10.4.8) bila hasil dikembalikan ke fungsi.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| Method berat dan sinkron | Mulai asinkron, kirim hasil lewat signal (10.7) |
+| Parameter bertipe tak dikenal mesin | Pakai tipe dasar/terdaftar, `QVariant`, atau `QJSValue` |
+| Mengandalkan overload yang ambigu | Beri nama berbeda |
+| Menaruh perintah berbahaya tanpa validasi | Validasi di sisi C++ |
+| Mengharapkan `this` kustom pada method C++ | `pragma NativeMethodBehavior: AcceptThisObject` (≥ 6.5) |
+
+## 10.4.3 `Connections` ke signal C++
+
+> *Siapa pun boleh mendengar, pemancar tak perlu tahu siapa.*
+
+**Konsep.** Mesin QML otomatis membuat penangan signal untuk setiap signal tipe turunan `QObject` yang dipakai dari QML. Penangan bernama `on<Signal>` dengan huruf pertama dikapitalkan, dan semua parameter signal tersedia lewat nama parameternya.
+
+```qml
+Backend {
+    id: backend
+    // (1) handler langsung pada objek: bentuk fungsi panah dengan parameter eksplisit
+    onSelesai: (hasil) => console.log('selesai:', hasil)
+}
+
+// (2) objek terpisah yang mendengarkan target, termasuk target yang bisa berganti
+Connections {
+    target: backend
+    function onSelesai(hasil) { console.log('selesai (Connections):', hasil) }
+    function onPesanChanged() { console.log('pesan ->', backend.pesan) }
+}
+```
+
+**Bedah kode**
+- **Bentuk (1)** dipakai bila Anda memiliki objeknya di tempat itu. `(hasil) => ...` memberi nama parameter secara eksplisit, seperti contoh dokumentasi.
+- **Bentuk (2)** untuk mendengarkan objek yang dideklarasikan di tempat lain, atau yang `target`-nya berubah. `function onSelesai(hasil)` adalah bentuk Qt 6, dengan nama fungsi `on` + nama signal berawalan kapital.
+- Signal tanpa parameter (`pesanChanged`) tak butuh argumen.
+- Konvensi penamaan: nama `NOTIFY` yang disarankan `<properti>Changed`, karena handler yang dibuat mesin selalu `on<Properti>Changed` apa pun nama signal C++ yang bersangkutan.
+
+**Menyambung dari JavaScript (dinamis)**
+
+```qml
+Component.onCompleted: {
+    backend.selesai.connect(function (hasil) { console.log('dinamis:', hasil) })
+    // backend.selesai.disconnect(fungsi)   ← untuk memutus
+}
+```
+
+Bila signal C++ berparameter enum akan disambungkan ke fungsi QML lewat `connect()`, tipe enum itu harus didaftarkan lewat `qRegisterMetaType()`.
+
+**Aturan tentang signal**
+- Kelas boleh punya beberapa signal bernama sama, tetapi hanya yang terakhir yang terlihat sebagai signal QML, dan signal bernama sama dengan parameter berbeda tak bisa dibedakan. Beri nama signal yang unik.
+- Parameter signal bertipe yang tak didukung mesin tidak menimbulkan galat, tetapi nilainya tak dapat diakses dari handler. Jadi jika parameter tampak `undefined`, periksa kembali tipenya.
+- Method/signal berparameter enum hanya dapat dipakai bila enum dan method/signal dideklarasikan di kelas yang sama, atau bila enum itu berasal dari namespace Qt.
+
+**Opsi lain**
+- **`Connections { enabled: false }`** untuk menonaktifkan sementara.
+- **`target: null`** untuk target yang belum ada.
+- **Signal bertanda parameter-nama lama** (`onSelesai: console.log(hasil)` dengan penyuntikan implisit) adalah bentuk lama. Pilih bentuk eksplisit (`(hasil) =>` atau `function onSelesai(hasil)`) agar dapat diperiksa `qmllint`.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| Parameter handler `undefined` | Periksa tipe parameter terdaftar, dan pakai nama parameter eksplisit |
+| Salah huruf kapital pada nama handler | `onSelesai` untuk `selesai`, `onPesanChanged` untuk `pesanChanged` |
+| Dua signal senama dengan argumen berbeda | Beri nama berbeda |
+| Menyambung signal berparameter enum dari JS tanpa `qRegisterMetaType` | Daftarkan tipenya |
+
+## 10.4.4 Konversi tipe dan jebakannya
+
+> *Data yang menyeberang selalu berganti pakaian. Kenali pakaiannya.*
+
+**Konsep.** Data yang bertukar antara QML dan C++ dikonversi mesin ke tipe yang tepat, dan ini mensyaratkan tipe itu dikenali mesin.
+
+**Tipe dasar (otomatis)**
+
+| Qt (C++) | QML |
+| --- | --- |
+| `bool`, `int`/`unsigned int`, `double` | `bool`, `int`, `double` |
+| `float`, `qreal` | `real` |
+| `QString`, `QUrl` | `string`, `url` |
+| `QColor`, `QFont` | `color`, `font` |
+| `QDateTime` | `date` |
+| `QPoint(F)`, `QSize(F)`, `QRect(F)` | `point`, `size`, `rect` |
+| `QMatrix4x4`, `QQuaternion`, `QVector2D/3D/4D` | `matrix4x4`, `quaternion`, `vector2d/3d/4d` |
+
+Kelas dari modul Qt GUI seperti `QColor` dan `QFont` hanya tersedia di QML bila modul Qt Quick disertakan. Banyak tipe ini bisa ditulis dengan string, mis. `sourceSize: "100x200"`.
+
+**Tipe turunan `QObject`.** Kelas turunan `QObject` apa pun dapat dipakai sebagai tipe pertukaran data bila terdaftar di sistem tipe QML. Mesin mendukung tipe yang bisa dibuat maupun tidak.
+
+**Daftar dan peta**
+
+```cpp
+Q_INVOKABLE QString ringkas(const QVariantList &l, const QVariantMap &m) const;
+```
+
+```qml
+console.log(probe.ringkas([1, 'dua', true], { a: 1, b: 2 }))   // array/objek JS ⇄ QVariantList/Map
+```
+
+- Dari C++ ke QML, `QVariantList` dan wadah berurutan lain menjadi *array-like* yang punya metode array dan sinkron `length`, namun `Array.isArray()` tetap `false`. Pakai metode array (`.map`, `.filter`), jangan bergantung pada `Array.isArray`.
+- Dari QML ke C++, array/objek JS dikonversi otomatis ke `QVariantList`/`QVariantMap`.
+- Untuk daftar yang besar atau sering berubah, pakai model C++ (10.5), bukan `QVariantList` yang dikirim bolak-balik.
+
+**Tanggal dan waktu (jebakan besar)**
+
+```qml
+console.log(probe.tanggal.getUTCDate(), probe.tanggal.getDate())   // QDate → Date (UTC awal hari)
+console.log(probe.waktu.toISOString())                             // QDateTime → Date
+```
+
+- Untuk `QDate`, `getUTCFullYear()`, `getUTCMonth()`, dan `getUTCDate()` lebih mungkin memberi hasil yang diharapkan daripada versi tanpa UTC.
+- Lebih aman: pakai properti `QDateTime` dan tentukan sendiri UTC atau lokal di sisi C++.
+- Bulan JS 0–11, bulan Qt 1–12. Tulis `new Date(2026, 10, 27)` untuk 27 November.
+
+**`QByteArray` ↔ `ArrayBuffer`.** Dikonversi otomatis antara `QByteArray` dan `ArrayBuffer` JavaScript.
+
+**Tipe nilai (`Q_GADGET`).** Kelas yang diberi `Q_GADGET` dapat direpresentasikan sebagai objek JS dengan properti dari `Q_PROPERTY` dan fungsi dari `Q_INVOKABLE`. Registrasi diperlukan untuk gadget karena tak punya basis bersama yang dikenal. Perilaku nilai: bila QML mengubah satu properti sebuah properti gadget, seluruh gadget dibuat ulang dan dikirim kembali ke setter C++.
+
+**Enum**
+
+```cpp
+class Pesan : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged FINAL)
+public:
+    enum class Status { Siap, Memuat, Galat };
+    Q_ENUM(Status)
+    // ...
+};
+```
+
+```qml
+Pesan {
+    onStatusChanged: {
+        if (status === Pesan.Status.Siap) console.log('siap')     // bercakupan
+        // Pesan.Siap juga berlaku (tak bercakupan), selama tak bentrok nama
+    }
+}
+```
+
+Nama nilai enum harus berawalan huruf kapital agar dapat diakses dari QML. Daftarkan kelas induk enum secara eksplisit dengan `QML_ELEMENT`/`QML_NAMED_ELEMENT`, jangan bergantung pada enum yang disuntikkan ke tipe lain lewat tipe properti terkait (`RegisterEnumsFromRelatedTypes`).
+
+**Aturan batas**
+- Semua yang dikirim harus bertipe yang dikenal mesin: dasar Qt, tipe terdaftar, `QVariant`, atau `QJSValue`.
+- Hindari mengirim struktur besar bolak-balik tiap frame. Kirim *perubahan* (signal), atau pakai model (10.5).
+- Konversi bisa menyalin. Untuk data besar, simpan di C++ dan kirim kecil-kecil atau berdasarkan permintaan.
+
+**Opsi lain.** `QJSValue` untuk menyimpan nilai bebas dan fungsi (10.4.8). `QJSEngine::newArray()` bila ingin membuat array JS sebenarnya yang lolos `Array.isArray()` dan tak butuh konversi lagi.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| `Array.isArray(daftar)` bernilai `false` | Pakai metode array (array-like), atau `Array.from(daftar)` bila perlu array asli |
+| `QDate` bergeser sehari di zona barat UTC | `getUTC*`, atau pakai `QDateTime` |
+| Bulan off-by-one | JS 0–11, Qt 1–12 |
+| Enum tak ditemukan | `Q_ENUM`, kelas terdaftar, nama berawalan kapital |
+| Parameter signal `undefined` | Daftarkan tipenya |
+| Kirim `QVariantList` besar tiap frame | Model C++ atau perubahan bertahap |
+
+## 10.4.5 Memanggil QML dari C++
+
+> *Kadang jembatan dua arah memang diperlukan. Bangun dengan hati-hati.*
+
+**Konsep.** Semua objek QML adalah turunan `QObject`. Mesin QML dapat memakai sistem meta-objek untuk membuat dan memeriksa objek QML apa pun secara dinamis, sehingga objeknya bisa dibaca, ditulis, dipanggil, dan didengar dari C++. Pakai untuk **pengujian dan prototipe**, bukan sebagai arsitektur utama (10.4.6).
+
+**Memuat dokumen**
+
+```cpp
+QQmlEngine engine;
+QQmlComponent component(&engine, "Hello", "Main");      // modul + nama tipe
+QObject *objek = component.create();                      // atau createWithInitialProperties({...})
+// ... pakai objek ...
+delete objek;                                             // create() tak mengalihkan kepemilikan
+```
+
+`QQmlComponent` memuat dokumen QML sebagai objek C++ yang bisa diubah dari kode C++. `QQuickView` melakukan hal serupa sekaligus menampilkannya sebagai jendela. `QQmlComponent::create()` membuat instans baru, sedangkan `QQuickView` membuatnya otomatis dan menyediakan `rootObject()`.
+
+**Membaca dan menulis properti**
+
+```cpp
+objek->setProperty("width", 500);                 // tidak menghapus binding
+QQmlProperty(objek, "width").write(500);          // menghapus binding juga
+qDebug() << QQmlProperty::read(objek, "someNumber").toInt();
+```
+
+Beda keduanya: `QQmlProperty::write()` juga menghapus binding, sedangkan `setProperty()` tidak. Bila `width` terikat ke `height` dan Anda memakai `setProperty`, `width` akan diperbarui lagi saat `height` berubah, karena binding masih aktif.
+
+Selalu ubah properti QML lewat `setProperty()`, `QQmlProperty`, atau `QMetaProperty::write()`, supaya mesin tahu perubahannya. Mengubah anggota data langsung melewati meta-objek, sehingga binding tak diperbarui dan penangan `onXxxChanged` tak terpanggil.
+
+**Memanggil fungsi QML**
+
+```qml
+// Main.qml
+ApplicationWindow {
+    function sapa(nama: string): string { return 'Halo ' + nama }
+}
+```
+
+```cpp
+QString balasan;
+QMetaObject::invokeMethod(root, "sapa",
+                          Q_RETURN_ARG(QString, balasan),
+                          Q_ARG(QString, QStringLiteral("dari C++")));
+```
+
+Tipe parameter dan hasil dapat dinyatakan setelah titik dua di QML (`msg: string`). Tanpa tipe, atau dengan `var`, Anda harus memakai `QVariant` pada `Q_RETURN_ARG` dan `Q_ARG`.
+
+**Menyambung ke signal QML**
+
+```qml
+ApplicationWindow {
+    id: root
+    signal qmlSignal(msg: string)
+}
+```
+
+```cpp
+class Penerima : public QObject
+{
+    Q_OBJECT
+public slots:
+    void terima(const QString &pesan) { qDebug() << "dari QML:" << pesan; }
+};
+
+QObject::connect(root, SIGNAL(qmlSignal(QString)), penerima, SLOT(terima(QString)));
+```
+
+Semua signal QML otomatis tersedia di C++ dan dapat disambungkan dengan `QObject::connect()` seperti signal C++ biasa. Signal QML tak punya pointer fungsi anggota C++, jadi memakai sintaks string `SIGNAL`/`SLOT`. Tipe objek QML pada parameter signal diterjemahkan menjadi pointer ke kelasnya di C++; untuk itu sambungkan dengan `QVariant` pada signature dan terima di slot sebagai pointer.
+
+**Mencari anak (hindari)**
+
+```cpp
+QObject *rect = objek->findChild<QObject *>("rect");      // butuh objectName di QML
+if (rect) rect->setProperty("color", "red");
+```
+
+Satu `objectName` bisa dimiliki banyak objek (mis. delegate `ListView`), sehingga `findChildren()` dipakai untuk semuanya. Ini cara paling rapuh. Lihat 10.4.6.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| Mengira `create()` mengalihkan kepemilikan | Hapus objek atau beri induk sendiri |
+| `setProperty` dikira menghapus binding | Pakai `QQmlProperty::write` |
+| Mengubah anggota data langsung | Setter / `setProperty` |
+| `invokeMethod` tanpa tipe pada fungsi QML bertipe | Cocokkan tipe, atau pakai `QVariant` bila tak bertipe |
+| `findChild` pada delegate | `findChildren`, atau jangan lakukan |
+
+## 10.4.6 Prinsip: C++ tidak mencari anak QML
+
+> *Antarmuka yang sempit dan eksplisit membuat kedua dunia bebas berubah.*
+
+**Alasan.** Dengan cara lain, refactoring QML mudah memutus interaksi QML/C++. Memiliki interaksi yang digerakkan dari QML jauh lebih mudah dipikirkan oleh pengguna dan alat seperti `qmllint`. Mengakses QML dari C++ menghasilkan QML yang tak bisa dipahami tanpa memverifikasi secara manual bahwa tak ada kode C++ luar yang mengubah komponennya, dan cakupan akses itu bisa berubah seiring waktu sehingga menjadi beban perawatan.
+
+```
+ SALAH (C++ menguasai QML)          BENAR (QML memakai antarmuka C++)
+ C++ --findChild--> pohon QML       C++ mengekspos objek/model
+ C++ --setProperty--> Rectangle     QML mengikat dan menyambung ke objek itu
+ ubah QML => C++ patah              ubah QML => C++ tak terdampak
+```
+
+**Dua jalur resmi** (dokumentasi mendefinisikan antarmuka di C++ lalu mengaksesnya dari QML:)
+
+1. **Singleton:** daftarkan antarmuka dengan `QML_SINGLETON`. Pakai bila antarmuka dibutuhkan di lebih dari komponen akar, karena meneruskan objek ke bawah memerlukan properti eksplisit atau akses tanpa kualifikasi yang lambat dan tak disarankan.
+2. **Initial properties:** tandai antarmuka `QML_UNCREATABLE`, berikan ke komponen akar lewat `createWithInitialProperties()`/`setInitialProperties()`, dan pakai `required property` di QML. Metode ini dipilih bila antarmuka hanya perlu tersedia bagi komponen akar, dan memudahkan sambungan signal/slot dari sisi C++.
+
+Bila keduanya tak cukup: pertimbangkan model C++.
+
+**Mengubah keadaan singleton dari C++.** Gunakan `QQmlEngine::singletonInstance<T *>(modul, tipe)`.
+
+```cpp
+auto *tema = engine.singletonInstance<Tema *>("Hello", "Tema");
+```
+
+**Aturan praktis**
+- Mulai dari pertanyaan: "Apakah QML bisa memakai objek C++ ini?" Bukan: "Bagaimana C++ memanipulasi tombol itu?"
+- Boleh memakai akses C++→QML untuk pengujian otomatis, prototipe, dan alat bantu pengembangan.
+
+## 10.4.7 Kepemilikan objek lintas C++/QML `[TAMBAHAN]`
+
+> *Siapa yang menghapus objek ini? Jawablah sebelum menulis baris pertama.*
+
+**Aturan inti** (kepemilikan data dari C++ ke QML tetap di C++, kecuali `QObject` dari method C++ eksplisit, yang diambil mesin QML kecuali punya induk atau `CppOwnership` ditetapkan; mesin tak pernah menghapus `QObject` berinduk).
+
+| Situasi | Pemilik | Catatan |
+| --- | --- | --- |
+| `Probe { }` di QML | QML (pohon objek QML) | Dihancurkan bersama komponennya |
+| `Q_INVOKABLE QObject *buat()` tanpa induk | Mesin QML (JS GC) | Dihancurkan saat tak lagi dirujuk |
+| `Q_INVOKABLE QObject *buat()` dengan induk | Induk (C++) | Mesin tak menghapus |
+| Objek yang dikirim lewat properti/sinyal | C++ | Tetap milik C++ |
+| Setelah `QQmlEngine::setObjectOwnership(o, QQmlEngine::CppOwnership)` | C++ | Mesin tak akan menghapus |
+| `QQmlComponent::create()` | Pemanggil | Anda yang menghapus (`delete`) |
+| Singleton buatan engine | Engine | Dihancurkan bersama engine |
+
+```cpp
+Q_INVOKABLE QObject *buat(bool beriInduk)
+{
+    auto *o = new QObject(beriInduk ? this : nullptr);
+    return o;       // beriInduk=false → dimiliki mesin QML dan dihancurkan oleh GC
+}
+```
+
+**Dua bahaya simetris**
+- **Kebocoran:** objek tanpa induk yang kepemilikannya tidak jelas, disimpan C++ sementara mesin mengira boleh membuangnya, atau sebaliknya.
+- **Kerusakan:** C++ menyimpan pointer mentah ke objek yang kemudian dihapus GC QML (*use-after-free*).
+
+**Pegangan**
+1. Beri induk pada objek yang diserahkan ke QML, atau tetapkan `CppOwnership` secara eksplisit bila C++ yang menyimpannya.
+2. Jangan simpan pointer mentah ke objek hasil `Q_INVOKABLE` tanpa induk. Pakai `QPointer`.
+3. Objek yang dibuat C++ lalu dikirim ke QML sebaiknya dimiliki C++ lewat induk.
+4. Waspadai `destroyed`: tak aman memanggil fungsi `QObject` pada objek yang sedang dihancurkan dalam sinyal `destroyed`. Tangkap datanya sebelum itu.
+
+**Jebakan.** Mengembalikan `new X` dari `Q_INVOKABLE` tanpa induk dan menyimpannya di anggota C++. Menyimpan `QObject*` dari sinyal tanpa `QPointer`.
+
+## 10.4.8 `QJSValue` dan callback `[TAMBAHAN]`
+
+> *Fungsi yang bisa dibawa lintas dunia memberi fleksibilitas, dengan tanggung jawabnya.*
+
+**Konsep.** `QJSValue` adalah wadah tipe Qt/JavaScript, termasuk fungsi, array, dan objek, dipakai untuk mengirim nilai ke dan dari engine. `QJSManagedValue` dipakai untuk berinteraksi dengan nilai JavaScript, dan hidup singkat. Aturannya: **simpan dengan `QJSValue`, bekerja dengan `QJSManagedValue`.**
+
+```cpp
+Q_INVOKABLE void hitungLalu(int n, const QJSValue &callback)
+{
+    QJSManagedValue fn(callback, qjsEngine(this));         // engine dari objek terdaftar
+    if (!fn.isFunction()) return;
+    fn.call({ QJSValue(n * 2) });                          // panggil fungsi JS dari C++
+}
+```
+
+```qml
+probe.hitungLalu(21, function (hasil) { console.log('callback menerima', hasil) })   // 42
+```
+
+**Bedah kode**
+- `const QJSValue &callback` menerima fungsi JS apa pun dari QML.
+- `qjsEngine(this)` mendapatkan engine dari objek `QObject` yang terdaftar.
+- `QJSManagedValue fn(callback, engine)` membungkus nilai agar bisa dipanggil. Konstruktornya mensyaratkan pointer `QJSEngine`.
+- `fn.call({...})` memanggil fungsi dengan argumen. `QJSManagedValue` sebaiknya dibuat sementara di tumpukan dan dibuang setelah selesai, jangan dipakai sebagai tipe antarmuka (parameter, nilai kembali, atau properti).
+- Pengecualian JS di dalam callback tidak otomatis melempar ke C++. `QJSManagedValue` membiarkan pengecualian tetap utuh, dan `QJSEngine::catchError` dipakai untuk menanganinya.
+
+**Kapan callback, kapan signal?**
+
+| Kebutuhan | Pilihan |
+| --- | --- |
+| Hasil satu kali untuk satu pemanggil | Callback `QJSValue` |
+| Banyak pendengar atau hasil berulang | Signal |
+| Hasil dari thread lain | Signal (queued) lalu panggil callback di thread engine |
+
+**Jebakan.** Memanggil `QJSValue` dari thread lain (engine hanya aman di thread-nya). Menyimpan callback tanpa memikirkan siklus hidup. Mengabaikan galat yang dilempar callback.
+
+## 10.4.9 Lab terpadu `[TAMBAHAN]`
+
+Lab ini melanjutkan `apphello` dari 10.3 dan melatih konversi tipe, kepemilikan, callback, dan C++→QML. Berkas baru: `probe.h`, `penerima.h`. `backend.h/.cpp`, `tema.h`, `mode.h` tetap.
+
+```cpp
+// probe.h
+#pragma once
+#include <QByteArray>
+#include <QDate>
+#include <QDateTime>
+#include <QDebug>
+#include <QJSManagedValue>
+#include <QJSValue>
+#include <QObject>
+#include <QQmlEngine>
+#include <QTimeZone>
+#include <QVariantList>
+#include <QVariantMap>
+#include <QtQml/qqmlregistration.h>
+
+class Probe : public QObject
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(QDate tanggal READ tanggal CONSTANT FINAL)
+    Q_PROPERTY(QDateTime waktu READ waktu CONSTANT FINAL)
+    Q_PROPERTY(QVariantList daftar READ daftar CONSTANT FINAL)
+    Q_PROPERTY(QByteArray biner READ biner CONSTANT FINAL)
+
+public:
+    explicit Probe(QObject *parent = nullptr) : QObject(parent) {}
+
+    QDate tanggal() const { return QDate(2026, 11, 27); }
+    QDateTime waktu() const
+    {
+        return QDateTime(QDate(2026, 11, 27), QTime(8, 30), QTimeZone::UTC);
+    }
+    QVariantList daftar() const { return { 10, QStringLiteral("botol"), true }; }
+    QByteArray biner() const { return QByteArray("\x01\x02\x03", 3); }
+
+    Q_INVOKABLE QString ringkas(const QVariantList &l, const QVariantMap &m) const
+    {
+        return QStringLiteral("daftar=%1 elemen, peta=%2 kunci").arg(l.size()).arg(m.size());
+    }
+
+    Q_INVOKABLE QObject *buat(bool beriInduk)
+    {
+        auto *o = new QObject(beriInduk ? this : nullptr);
+        const QString nama = beriInduk ? QStringLiteral("berinduk")
+                                       : QStringLiteral("tanpa-induk");
+        o->setObjectName(nama);
+        connect(o, &QObject::destroyed, [nama] { qDebug() << "dihancurkan:" << nama; });
+        return o;
+    }
+
+    Q_INVOKABLE void hitungLalu(int n, const QJSValue &callback)
+    {
+        QJSManagedValue fn(callback, qjsEngine(this));
+        if (!fn.isFunction()) return;
+        fn.call({ QJSValue(n * 2) });
+    }
+};
+```
+
+```cpp
+// penerima.h
+#pragma once
+#include <QDebug>
+#include <QObject>
+
+class Penerima : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Penerima(QObject *parent = nullptr) : QObject(parent) {}
+public slots:
+    void terima(const QString &pesan) { qDebug() << "C++ menerima dari QML:" << pesan; }
+};
+```
+
+```cpp
+// main.cpp
+#include "penerima.h"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
+
+    QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
+                     &app, [] { QCoreApplication::exit(-1); }, Qt::QueuedConnection);
+    engine.loadFromModule("Hello", "Main");
+
+    // --- C++ -> QML (hanya untuk uji/pembelajaran; lihat 10.4.6) ---
+    if (QObject *root = engine.rootObjects().value(0)) {
+        QString balasan;
+        QMetaObject::invokeMethod(root, "sapa",
+                                  Q_RETURN_ARG(QString, balasan),
+                                  Q_ARG(QString, QStringLiteral("dari C++")));
+        qDebug() << "QML membalas:" << balasan;
+
+        auto *penerima = new Penerima(root);               // anak root: dihapus bersama root
+        QObject::connect(root, SIGNAL(qmlSignal(QString)), penerima, SLOT(terima(QString)));
+    }
+
+    return app.exec();
+}
+```
+
+Tambahkan `probe.h penerima.h` ke `SOURCES` di `CMakeLists.txt` (dari 10.3.8).
+
+```qml
+// Main.qml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Hello
+
+ApplicationWindow {
+    id: root
+    visible: true; width: 560; height: 520
+    title: 'Lab 10.4'
+    color: Tema.latar
+
+    signal qmlSignal(msg: string)
+    function sapa(nama: string): string { return 'Halo ' + nama }
+
+    property var anak: null
+
+    Backend { id: backend }
+    Probe { id: probe }
+
+    Component.onCompleted: {
+        console.log('QDate  : UTC', probe.tanggal.getUTCDate(), '| lokal', probe.tanggal.getDate())
+        console.log('QDateTime:', probe.waktu.toISOString())
+        console.log('daftar : isArray =', Array.isArray(probe.daftar), '| panjang', probe.daftar.length, '|', probe.daftar[1])
+        console.log('biner  : ArrayBuffer =', probe.biner instanceof ArrayBuffer, '| byteLength', probe.biner.byteLength)
+        console.log(probe.ringkas([1, 'dua', true], { a: 1, b: 2 }))
+        probe.hitungLalu(21, function (hasil) { console.log('callback menerima', hasil) })
+    }
+
+    ColumnLayout {
+        anchors.centerIn: parent
+        spacing: 10
+
+        Label { text: 'Pesan: ' + backend.pesan; color: Tema.teks }
+        Label { text: 'Hitungan: ' + backend.hitungan; color: Tema.teks }
+        Label { text: backend.status === Backend.Status.Siap ? 'Siap' : 'Sibuk'; color: Tema.aksen }
+
+        Button { text: 'Tambah'; onClicked: backend.tambah() }
+        Button { text: 'Muat ulang'; onClicked: backend.muatUlang() }
+        Button { text: 'Kirim sinyal QML ke C++'; onClicked: root.qmlSignal('klik dari QML') }
+        Button { text: 'Anak berinduk'; onClicked: root.anak = probe.buat(true) }
+        Button {
+            text: 'Anak tanpa induk lalu GC'
+            onClicked: { root.anak = probe.buat(false); root.anak = null; gc() }
+        }
+    }
+
+    Connections {
+        target: backend
+        function onSelesai(hasil) { console.log('selesai pada hitungan', hasil) }
+    }
+}
+```
+
+```bash
+cmake -S . -B build && cmake --build build && ./build/apphello
+TZ=America/Los_Angeles ./build/apphello          # lihat QDate bergeser di zona barat UTC
+```
+
+**Yang diamati**
+1. `QDate  : UTC 27 | lokal 27` di zona Anda, dan **`lokal 26`** dengan `TZ=America/Los_Angeles`. `UTC` selalu 27. Ini demonstrasi jebakan `QDate`.
+2. `daftar : isArray = false`, tetapi `.length` dan indeks bekerja.
+3. `biner : ArrayBuffer = true`, `byteLength 3`.
+4. `callback menerima 42`: C++ memanggil fungsi JS.
+5. Klik "Anak berinduk": tak ada pesan dihancurkan. Anak itu milik `probe` dan baru mati bersama `probe`.
+6. Klik "Anak tanpa induk lalu GC": muncul `dihancurkan: tanpa-induk`. Objek tak berinduk dimiliki mesin QML dan dibuang GC.
+7. Klik "Kirim sinyal QML ke C++": konsol menampilkan `C++ menerima dari QML: klik dari QML`.
+8. Klik "Tambah" tiga kali: pada klik ketiga muncul `selesai pada hitungan 3`.
+9. Saat start, `QML membalas: Halo dari C++` dicetak oleh `main.cpp`.
+
+**Percobaan yang disarankan (sengaja merusak)**
+1. Hapus `NOTIFY` dari properti `hitungan` dan amati label berhenti memperbarui, plus peringatan binding.
+2. Ganti `getUTCDate()` dengan `getDate()` dan jalankan dengan `TZ` lain.
+3. Beri `buat(false)` induk dengan `QQmlEngine::setObjectOwnership(o, QQmlEngine::CppOwnership)` dan amati bahwa objek tak dihapus GC.
+4. Ubah `Q_ARG(QString, ...)` menjadi tipe yang salah di `invokeMethod` dan lihat kegagalannya (nilai kembali `false`).
+5. Ganti `onSelesai` dengan bentuk lama (penyuntikan implisit) dan jalankan `qmllint`.
+
+**Latihan tambahan**
+1. Tambahkan `Q_PROPERTY(QDateTime ...)` yang dapat ditulis, dan kirim `new Date()` dari QML. Periksa nilainya di C++.
+2. Buat tipe `Q_GADGET` bernama `titik` dan ubah propertinya dari QML. Amati bahwa seluruh gadget dikirim ulang.
+3. Kirim `enum class` melalui signal dan sambungkan lewat `backend.sinyal.connect(...)` di JS. Daftarkan tipenya bila perlu.
+4. Pindahkan `Backend` menjadi initial property dengan `setInitialProperties` dan `required property`.
+
+## Terminologi esensial
+
+| Istilah | Penjelasan |
+| --- | --- |
+| **Binding** | Ekspresi QML yang dievaluasi ulang saat dependensinya berubah |
+| **`NOTIFY`** | Signal yang menandai perubahan properti, dasar binding |
+| **Handler `onXxx`** | Penanggap signal yang dibuat otomatis oleh mesin |
+| **`Connections`** | Objek QML yang mendengarkan signal target |
+| **`required property`** | Properti yang wajib diisi dari luar |
+| **Initial property** | Properti yang diberikan C++ saat membuat komponen |
+| **Array-like** | Objek mirip array hasil konversi wadah C++ (bukan `Array.isArray`) |
+| **`QVariant`** | Wadah nilai generik Qt |
+| **`QJSValue` / `QJSManagedValue`** | Wadah nilai JS / pembungkus untuk berinteraksi dengannya |
+| **`Q_GADGET`** | Tipe nilai berbasis meta-objek, dikirim sebagai salinan |
+| **`QQmlComponent`** | Pemuat dokumen QML dari C++ |
+| **`QQmlProperty`** | Akses properti QML dari C++ yang sadar binding |
+| **Kepemilikan (*ownership*)** | Pihak yang bertanggung jawab menghapus objek |
+| **`CppOwnership` / `JavaScriptOwnership`** | Penanda pemilik objek di mesin QML |
+| **Antarmuka C++ berpusat QML** | C++ mengekspos objek, QML yang menggunakannya |
+
+## Hubungan dengan modul lain
+
+- **Prasyarat:** 10.2 (properti, signal, `Q_INVOKABLE`, kepemilikan), 10.3 (registrasi tipe, singleton, `required property`), 9.x (komponen QML), 4.x–5.x (binding dan sinyal QML).
+- **Menjadi dasar untuk:** 10.5 (model C++ adalah objek yang dikirim ke QML, dan perubahan model memakai sinyal), 10.6 (layanan sistem dibungkus dalam objek yang diekspos lewat antarmuka sempit), 10.7 (hasil kerja thread dikirim lewat sinyal, callback harus dipanggil di thread engine).
+- **Menyambung ke:** 9.4 (`qsTr` di QML dan `tr()` di C++), 8.4 (`qmllint` memanfaatkan tipe terdaftar dan bentuk handler eksplisit).
+
+## Tips dan praktik terbaik
+
+1. **QML yang memakai C++,** bukan sebaliknya. Ekspos antarmuka kecil lewat singleton atau initial property.
+2. **Properti yang bisa ditulis selalu punya `NOTIFY`** yang dipancarkan hanya saat nilai berubah.
+3. **Pakai bentuk handler eksplisit** (`(x) =>` atau `function onX(x)`).
+4. **Pakai `QDateTime`, bukan `QDate`,** untuk tanggal yang melintas batas; baca `getUTC*` bila perlu.
+5. **Jangan kirim struktur besar bolak-balik.** Gunakan model (10.5) atau sinyal perubahan.
+6. **Tentukan pemilik tiap objek yang menyeberang.** Beri induk, atau `CppOwnership`.
+7. **Ekspos perintah sempit dan validasi semua parameter dari QML.**
+8. **Perintah lama berarti asinkron + signal hasil,** bukan method yang memblokir.
+9. **Akses C++→QML hanya untuk pengujian/prototipe,** dan simpan di bagian terpisah dari kode produksi.
+10. **Jalankan `qmllint`** untuk menangkap kesalahan akses yang tak diketahui.
+
+## Kesalahan umum dan solusi
+
+| Kesalahan | Akibat | Solusi |
+| --- | --- | --- |
+| Properti tulis tanpa `NOTIFY` | Binding tak diperbarui, peringatan | Tambah `NOTIFY` |
+| `findChild` pada pohon QML | Rapuh saat QML berubah | Antarmuka via singleton/initial property/model |
+| `Array.isArray` pada daftar C++ | `false` | Pakai metode array (array-like) |
+| `QDate` bergeser sehari | Tanggal salah di zona barat | `getUTC*` atau `QDateTime` |
+| Bulan off-by-one | Bulan keliru | JS 0–11, Qt 1–12 |
+| Parameter signal `undefined` | Tak bisa dipakai | Daftarkan tipenya |
+| Enum tak terlihat | `undefined` | `Q_ENUM` + kelas terdaftar + nama kapital |
+| Mengembalikan `new QObject` tanpa induk lalu menyimpannya | *Use-after-free* | Induk atau `CppOwnership`, atau `QPointer` |
+| `setProperty` dikira menghapus binding | Binding masih aktif | `QQmlProperty::write` |
+| Mengubah anggota data langsung | Tak ada notifikasi | Setter/`setProperty` |
+| `create()` tanpa `delete` | Kebocoran | Hapus atau beri induk |
+| `Q_INVOKABLE` serbaguna tanpa validasi | Titik masuk serangan | Perintah sempit + validasi |
+| Struktur besar bolak-balik tiap frame | UI lambat | Model C++, perubahan bertahap |
+
+## Cek pemahaman: jawaban
+
+**Mengapa C++ sebaiknya tidak memanggil `findChild` di pohon QML?**
+- **Merusak pemisahan.** QML dibuat untuk tampilan dan C++ untuk logika. `findChild` membuat logika C++ bergantung pada nama dan struktur pohon QML, sehingga mengubah tata letak QML bisa memutus C++ tanpa peringatan kompilator. Refactoring QML mudah memutus interaksi QML/C++ pada cara itu.
+- **Sulit dipahami dan diperiksa.** Interaksi yang digerakkan QML lebih mudah dipikirkan oleh manusia dan alat seperti `qmllint`. Bila C++ mengubah komponen QML dari luar, QML-nya tak bisa dipahami tanpa memeriksa seluruh C++.
+- **Beban perawatan.** Cakupan akses itu bisa berubah seiring waktu, sehingga menjadi beban yang terus tumbuh. Ada juga jebakan teknis: banyak objek bisa berbagi satu `objectName` (delegate `ListView`), dan objek itu bisa dibuat dan dihancurkan kapan saja.
+- **Alternatif yang benar:** C++ mengekspos antarmuka sempit (singleton atau initial property bertipe terdaftar, atau model C++), dan QML yang memakainya. Dokumentasi hanya menyisakan akses langsung untuk pengujian dan prototipe.
+
+## Referensi
+
+*Halaman Data Type Conversion, Exposing Attributes of C++ Types, Exposing State from C++, Interacting with QML Objects from C++, dan Integrating with JavaScript values saya baca langsung dari dokumentasi Qt 6.12. Tautan lain mengikuti pola URL resmi.*
+
+- **Dari kurikulum:** [Data Type Conversion](https://doc.qt.io/qt-6/qtqml-cppintegration-data.html) · [Exposing Attributes of C++ Classes](https://doc.qt.io/qt-6/qtqml-cppintegration-exposecppattributes.html)
+- **Pendamping:** [Exposing State from C++ to QML](https://doc.qt.io/qt-6/qtqml-cppintegration-exposecppstate.html) · [Interacting with QML Objects from C++](https://doc.qt.io/qt-6/qtqml-cppintegration-interactqmlfromcpp.html) · [Integrating with JavaScript values from C++](https://doc.qt.io/qt-6/qtqml-integrating-with-js-values-from-cpp.html) · [Overview: QML and C++ Integration](https://doc.qt.io/qt-6/qtqml-cppintegration-overview.html)
+- **QML:** [Connections](https://doc.qt.io/qt-6/qml-qtqml-connections.html) · [Signal and Handler Event System](https://doc.qt.io/qt-6/qtqml-syntax-signals.html) · [Property Binding](https://doc.qt.io/qt-6/qtqml-syntax-propertybinding.html) · [Required Properties](https://doc.qt.io/qt-6/qtqml-syntax-objectattributes.html#required-properties) · [QML Sequence Types](https://doc.qt.io/qt-6/qtqml-typesystem-sequencetypes.html) · [QML Value Types](https://doc.qt.io/qt-6/qtqml-typesystem-valuetypes.html)
+- **C++:** [QQmlComponent](https://doc.qt.io/qt-6/qqmlcomponent.html) · [QQmlProperty](https://doc.qt.io/qt-6/qqmlproperty.html) · [QQmlEngine](https://doc.qt.io/qt-6/qqmlengine.html) · [QQmlListProperty](https://doc.qt.io/qt-6/qqmllistproperty.html) · [QJSValue](https://doc.qt.io/qt-6/qjsvalue.html) · [QJSManagedValue](https://doc.qt.io/qt-6/qjsmanagedvalue.html) · [QMetaObject::invokeMethod](https://doc.qt.io/qt-6/qmetaobject.html#invokeMethod)
+- **Tutorial:** [Writing QML Extensions with C++](https://doc.qt.io/qt-6/qtqml-tutorials-extending-qml-example.html)
+- **Arch:** [Qt di ArchWiki](https://wiki.archlinux.org/title/Qt)
+
+---
+
+**Modul 10.4 selesai.**
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
