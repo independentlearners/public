@@ -3329,6 +3329,1177 @@ TZ=America/Los_Angeles ./build/apphello          # lihat QDate bergeser di zona 
 
 **Modul 10.4 selesai.**
 
+---
+
+# Audit Singkat Modul 10.5
+
+**Terverifikasi benar**
+- Kerangka dasar tepat. Saat membuat subkelas `QAbstractListModel`, Anda wajib menyediakan `rowCount()` dan `data()`. Bila model dipakai di QML dan butuh role selain bawaan, `roleNames()` harus ditimpa.
+- `rowCount` yang mengembalikan 0 untuk *parent* valid adalah praktik list-model yang benar.
+- Peringatan "ubah data tanpa `beginInsertRows`/`endInsertRows`" benar. Sinyal privat dari fungsi begin/end memberi komponen terhubung kesempatan bertindak sebelum data hilang. Penanganan seleksi hanya benar bila fungsi-fungsi itu dipanggil, dan view bisa berakhir di keadaan tak valid jika tidak.
+- Peringatan "role tak terdaftar" dan "`QVariant` kosong lalu delegate kosong" tepat. Bila tak ada nilai untuk dikembalikan, kembalikan `QVariant` tak valid.
+
+**Perlu penajaman atau penambahan**
+1. **Pemeriksaan indeks.** Kurikulum memakai `!index.isValid() || index.row() >= size`. Dokumentasi menyediakan `checkIndex()` sebagai alat bantu debug yang mengembalikan boolean dan bisa dipakai dalam `Q_ASSERT`, dengan opsi `IndexIsValid` dan `ParentIsInvalid` yang cocok untuk model datar. Indeks ilegal adalah perilaku tak terdefinisi, jadi jangan mengandalkan pemrograman defensif.
+2. **`dataChanged` bisa dipersempit.** Argumen `roles` menyatakan role mana yang berubah. Daftar kosong berarti semua role dianggap berubah. Kurikulum 10.5.4 hanya menyebutnya sekilas.
+3. **Edit dari QML.** `setData()` perlu `flags()` yang mengembalikan `ItemIsEditable`, dan `dataChanged()` harus dipancarkan secara eksplisit. Berbeda dengan view C++, `setData()` baru terpanggil dari QML bila delegate menetapkan nilai baru ke properti model yang bersangkutan.
+4. **Memindah dan mereset belum ada.** `beginMoveRows()` mengembalikan `false` bila pemindahan tak sah (mis. tujuan di dalam rentang sumber), dan Anda harus membatalkan pemindahan. `beginResetModel()`/`endResetModel()` dipakai bila data berubah drastis, tetapi item aktif dan seleksi menjadi tak valid.
+5. **Pembaruan bertahap (10.5.6).** Model yang mengisi data bertahap menimpa `canFetchMore()` dan `fetchMore()`, dan bila `fetchMore()` menambah baris, `beginInsertRows()`/`endInsertRows()` wajib dipanggil.
+6. **Keamanan thread.** `QAbstractItemModel` tidak thread-safe. API model hanya boleh dipanggil dari thread tempat model hidup. Thread latar boleh mengisi data, tetapi hasilnya harus diantrikan dan diterapkan di thread utama lewat koneksi queued. Ini tersambung langsung ke 10.7.
+7. **Alternatif tanpa subkelas (belum ada).**
+   - Model dapat berupa `QStringList`, `QVariantList`, daftar `QObject*`, atau `QAbstractItemModel`. Tiga yang pertama cocok untuk data sederhana.
+   - Tak ada cara bagi view untuk mengetahui isi `QList` berubah; Anda harus mereset model dengan menetapkan ulang properti `model`.
+   - `QRangeModel` (sejak Qt 6.10) menerapkan `QAbstractItemModel` untuk range C++ apa pun, sebagai list, tabel, atau pohon.
+8. **Proxy.** C++ `QSortFilterProxyModel` sudah ada di kurikulum. QML `SortFilterProxyModel` (`import QtQml.Models`, sejak 6.10) berstatus *Preliminary* dan dinyatakan tech preview yang bisa berubah atau dihapus. Sumber modelnya baru mendukung `QAbstractItemModel`. Cocok untuk kasus sederhana, tetapi jangan dijadikan fondasi produksi sebelum stabil.
+9. **Pengujian.** Kurikulum belum menyebut `QAbstractItemModelTester`. Saya tambahkan (10.5.8), dan saya tandai bahwa nama kelas itu berasal dari pengetahuan umum Qt, bukan halaman yang saya baca di sini.
+10. **Edit nilai kembalian `Q_INVOKABLE`.** Parameter dari QML tak tepercaya. Batasi rentangnya (contoh: jumlah isian di lab).
+
+## Daftar isi Modul 10.5 (pembaruan, salin ke README)
+
+| No | Sub-topik |
+| --- | --- |
+| 10.5.1 | Kerangka `QAbstractListModel` (+ `QModelIndex`, `checkIndex`, registrasi `QML_ELEMENT`) |
+| 10.5.2 | `roleNames` dan `data` (+ role bawaan, `QVariant` tak valid) |
+| 10.5.3 | Menambah, menghapus, memindah, dan mereset baris dengan benar |
+| 10.5.4 | `setData`, `flags`, dan `dataChanged` (+ edit dari QML) |
+| 10.5.5 | Sortir dan filter dengan proxy model (C++ dan QML `SortFilterProxyModel`) |
+| 10.5.6 | Model besar dan pembaruan bertahap (batch, `fetchMore`, thread, `ListView`) |
+| 10.5.7 | Alternatif tanpa subkelas: `QStringList`/`QObjectList`/`QRangeModel` `[TAMBAHAN]` |
+| 10.5.8 | Menguji model: `QAbstractItemModelTester`, `QSignalSpy` `[TAMBAHAN]` |
+| 10.5.9 | Lab terpadu: `PerangkatModel` + proxy + `ListView` `[TAMBAHAN]` |
+
+---
+
+# Modul 10.5 — Model C++ dengan `QAbstractListModel`
+
+## Deskripsi dan peran dalam kurikulum
+
+Backend Anda sering mengelola **kumpulan data**: perangkat, pesan, proses, berkas. `ListView`, `TableView`, dan `Repeater` di QML membutuhkan *model*. Modul ini membuat model berkinerja tinggi di C++ yang:
+- memegang datanya sendiri,
+- memberi tahu view tepat saat dan seperlunya ada yang berubah,
+- dan dapat diurut, disaring, serta diedit dari QML.
+
+Modul ini menyambung 7.2 (delegate dan `required property`) dengan 10.2–10.4 (properti, sinyal, tipe terdaftar).
+
+## Konsep kunci dan filosofi
+
+**Analogi.** Model C++ adalah pustakawan yang memegang katalog. View menanyakan "berapa baris?" dan "apa isi baris ke-n untuk role ini?", dan pustakawan wajib mengabari bila ada buku masuk atau keluar. Bila pustakawan diam-diam menukar buku tanpa memberi kabar, pengunjung (view) masih memegang daftar lama dan tersesat.
+
+**Kontrak model (tiga janji)**
+
+```
+  VIEW (ListView)                     MODEL (QAbstractListModel)
+  "berapa baris?"    ------------>    rowCount()
+  "isi baris n, role r?" -------->    data(index, role)
+  <-- "baris disisipkan/dihapus/diubah" -- begin*/end*/dataChanged
+  (view tidak pernah mengintip m_data langsung)
+```
+
+**Dua sumbu perubahan**
+- **Struktur** (jumlah dan urutan baris): `begin/endInsertRows`, `begin/endRemoveRows`, `begin/endMoveRows`, `begin/endResetModel`, `layoutChanged`.
+- **Isi** (nilai di baris yang ada): `dataChanged`.
+
+**Pondasi sintaks**
+- `QModelIndex`: alamat sebuah sel (baris, kolom, induk). Untuk model daftar, kolom selalu 0 dan induk tak valid.
+- **Role**: bilangan bulat yang menandai "sisi data" sebuah baris (nama, aktif). Role kustom dimulai dari `Qt::UserRole + 1`.
+- `override`: kata kunci C++ yang menegaskan bahwa fungsi menimpa fungsi virtual dari kelas induk. Kompilator akan menolak bila tanda tangannya salah.
+
+## 10.5.1 Kerangka `QAbstractListModel`
+
+> *Fondasi yang rapi membuat sepuluh ribu baris tak terasa.*
+
+**Konsep.** `QAbstractListModel` menyediakan antarmuka standar untuk model yang menyajikan datanya sebagai urutan item datar tanpa hierarki. Ia tak dipakai langsung, dan harus diwariskan. Ia tidak cocok untuk tree view; untuk itu wariskan `QAbstractItemModel`. Bila perlu banyak kolom, pertimbangkan `QAbstractTableModel`.
+
+```cpp
+// perangkatmodel.h  (rangka; isi lengkap ada di lab 10.5.9)
+#pragma once
+#include <QAbstractListModel>
+#include <QList>
+#include <QString>
+#include <QtQml/qqmlregistration.h>
+
+class PerangkatModel : public QAbstractListModel
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(int count READ count NOTIFY countChanged FINAL)
+
+public:
+    enum Role { KodeRole = Qt::UserRole + 1, NamaRole, AktifRole };
+    Q_ENUM(Role)
+
+    explicit PerangkatModel(QObject *parent = nullptr);
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QHash<int, QByteArray> roleNames() const override;
+
+    int count() const { return rowCount(); }
+
+signals:
+    void countChanged();
+
+private:
+    struct Item { int kode; QString nama; bool aktif; };
+    QList<Item> m_data;
+    int m_kodeBerikut = 1;
+};
+```
+
+**Bedah kode**
+- `QML_ELEMENT` mendaftarkan model sebagai tipe QML (10.3), sehingga bisa ditulis `PerangkatModel { id: sumber }`. Alternatifnya, mengirim model ke view lewat properti `required model`.
+- `enum Role { ... = Qt::UserRole + 1 }` mendefinisikan role kustom. Penomoran dimulai dari `Qt::UserRole` ke atas agar tak bentrok dengan role bawaan Qt.
+- `Q_ENUM(Role)` membuat nama role terlihat di meta-object (berguna untuk uji dan alat bantu).
+- `rowCount(...) const override`: jumlah baris. Tanda `const` wajib karena view memanggilnya lewat referensi konstan.
+- `data(...) const override`: nilai satu role untuk satu baris.
+- `roleNames() const override`: peta role ke nama untuk QML.
+- `Q_PROPERTY(int count ...)`: `ListView.count` ada di QML, tetapi memberi model sebuah `count` sendiri memudahkan label dan tombol yang bergantung pada jumlah.
+- `struct Item`: tipe data internal. Tak perlu terlihat di QML.
+
+**`QModelIndex` dalam model daftar**
+- `index.row()` adalah posisi baris. `index.column()` selalu 0.
+- Sebuah indeks hanya sah bila modelnya adalah model ini, barisnya ≥ 0 dan < jumlah baris induknya, dan demikian pula kolomnya.
+- Untuk daftar, kolom tunggal, dan `columnCount()` bawaan sudah menyatakannya.
+
+**Opsi lain**
+- **`QAbstractTableModel`** bila datanya bertabel (banyak kolom) untuk `TableView`.
+- **`QAbstractItemModel`** bila datanya berhierarki (pohon).
+- **`QRangeModel`** (10.5.7) bila cukup membungkus kontainer C++.
+
+**Jebakan dan solusi**
+
+| Jebakan | Solusi |
+| --- | --- |
+| Lupa `override` dan salah tanda tangan | Pakai `override` agar kompilator memeriksa |
+| `rowCount` tak mengembalikan 0 untuk *parent* valid | `parent.isValid() ? 0 : size` |
+| Role bernomor di bawah `Qt::UserRole` | Mulai `Qt::UserRole + 1` |
+| Model tak terdaftar ke QML | `QML_ELEMENT` + header di `SOURCES` (10.3) |
+
+## 10.5.2 `roleNames` dan `data`
+
+> *Nama yang jelas membuat delegate terbaca sendiri.*
+
+**Konsep.** QML memakai role sebagai **nama properti** di delegate. `roleNames()` menerjemahkan nomor role ke nama itu. Role subkelas `QAbstractItemModel` diekspos ke QML dengan menimpa `roleNames()`.
+
+```cpp
+QHash<int, QByteArray> PerangkatModel::roleNames() const
+{
+    auto roles = QAbstractListModel::roleNames();    // pertahankan "display", "edit", dst.
+    roles[KodeRole]  = "kode";
+    roles[NamaRole]  = "nama";
+    roles[AktifRole] = "aktif";
+    return roles;
+}
+
+QVariant PerangkatModel::data(const QModelIndex &index, int role) const
+{
+    if (!checkIndex(index, CheckIndexOption::IndexIsValid | CheckIndexOption::ParentIsInvalid))
+        return {};
+
+    const Item &it = m_data.at(index.row());
+    switch (role) {
+    case KodeRole:        return it.kode;
+    case NamaRole:        return it.nama;
+    case AktifRole:       return it.aktif;
+    case Qt::DisplayRole: return it.nama;     // tampilan standar untuk view lain
+    }
+    return {};                                  // role tak dikenal: QVariant tak valid
+}
+```
+
+**Bedah kode**
+- `QAbstractListModel::roleNames()` memanggil implementasi induk untuk mempertahankan role bawaan (`display`, `decoration`, `edit`, dan seterusnya). Lalu kita tambahkan role kustom.
+- Nama role adalah `QByteArray` (`"nama"`). Nama itulah yang menjadi properti di delegate.
+- `checkIndex(...)` memverifikasi indeks sah. Bila tidak, `data()` mengembalikan `{}` (`QVariant` tak valid). Bila gagal, peringatan dicetak di kategori log `qt.core.qabstractitemmodel.checkindex`.
+- `const Item &it = m_data.at(...)` mengambil data tanpa menyalin (10.1.3).
+- `switch (role)` memilih role. `return it.kode;` mengonversi `int` ke `QVariant` secara implisit.
+- Mengembalikan `{}` di akhir berarti "model tak punya nilai untuk role itu".
+
+**Memakainya di QML**
+
+```qml
+ListView {
+    model: sumber
+    delegate: ItemDelegate {
+        required property string nama
+        required property bool aktif
+        required property int kode
+        text: nama + (aktif ? '' : ' (nonaktif)')
+    }
+}
+```
+
+Properti `required` di delegate dipakai untuk menetapkan nilai model langsung di komponen QML. Nama properti harus sama persis dengan nama role.
+
+**Opsi lain**
+- **`modelData`** hanya untuk model sederhana (`QStringList`, `QObject*`). `QStringList` menyajikan isinya lewat role `modelData`.
+- **Satu role "peta"** (`QVariantMap`) untuk banyak atribut: praktis, tetapi lebih lambat dan tak diperiksa tipe. Hindari untuk model besar.
+- **`multiData`** (Qt 6.0): mengambil beberapa role sekaligus agar lebih efisien, opsional.
+
+**Jebakan dan solusi**
+
+| Jebakan | Akibat | Solusi |
+| --- | --- | --- |
+| Role tak terdaftar di `roleNames` | Properti `undefined` di delegate | Daftarkan semua role |
+| `data()` melakukan pekerjaan berat | Scroll patah-patah | Hitung sebelumnya, simpan di item |
+| Mengembalikan `QVariant` kosong untuk role valid | Delegate kosong | Kembalikan nilainya, `{}` hanya untuk role tak dikenal |
+| Nama role bentrok dengan kata terpakai (`id`) | Perilaku tak terduga | Pakai nama lain (`kode`) |
+| Tanpa `checkIndex` | Perilaku tak terdefinisi bila indeks ilegal | Pakai `checkIndex` |
+
+## 10.5.3 Menambah, menghapus, memindah, dan mereset baris
+
+> *Setiap perubahan struktur adalah janji kepada view. Tepati janjinya.*
+
+**Aturan emas.** `beginInsertRows()` harus dipanggil sebelum data disisipkan ke struktur data, dan `endInsertRows()` segera sesudahnya. Hal yang sama berlaku untuk `beginRemoveRows()`/`endRemoveRows()`.
+
+```
+ view tahu : [A, B, C]            model.m_data : [A, B, C]
+ beginInsertRows(0..., 3, 3)  --> view bersiap (rowsAboutToBeInserted)
+ m_data.append(D)                 model.m_data : [A, B, C, D]
+ endInsertRows()              --> view membuat delegate baru (rowsInserted)
+ view tahu : [A, B, C, D]
+```
+
+**Tambah satu**
+
+```cpp
+void PerangkatModel::tambah(const QString &nama)
+{
+    const int n = rowCount();
+    beginInsertRows({}, n, n);                          // parent tak valid, baris n..n
+    m_data.append({ m_kodeBerikut++, nama, true });
+    endInsertRows();
+    emit countChanged();
+}
+```
+
+`first` dan `last` adalah nomor baris yang akan dimiliki baris baru setelah disisipkan. Menyisipkan tiga baris sebelum baris 2 berarti `beginInsertRows(parent, 2, 4)`. Menambahkan dua baris pada koleksi berisi empat baris berarti `beginInsertRows(parent, 4, 5)`.
+
+**Tambah banyak sekaligus (satu pemberitahuan)**
+
+```cpp
+void PerangkatModel::isiBanyak(int jumlah)
+{
+    jumlah = qBound(0, jumlah, 100'000);                // parameter dari QML: batasi
+    if (jumlah == 0) return;
+
+    const int awal = rowCount();
+    beginInsertRows({}, awal, awal + jumlah - 1);       // SATU pemberitahuan untuk semuanya
+    for (int i = 0; i < jumlah; ++i) {
+        const int kode = m_kodeBerikut++;
+        m_data.append({ kode, QStringLiteral("Perangkat %1").arg(kode), i % 2 == 0 });
+    }
+    endInsertRows();
+    emit countChanged();
+}
+```
+
+Memanggil begin/end sekali untuk banyak baris jauh lebih murah daripada sekali per baris, karena view hanya memperbarui sekali.
+
+**Hapus**
+
+```cpp
+void PerangkatModel::hapus(int baris)
+{
+    if (baris < 0 || baris >= rowCount()) return;
+    beginRemoveRows({}, baris, baris);
+    m_data.removeAt(baris);
+    endRemoveRows();
+    emit countChanged();
+}
+
+void PerangkatModel::hapusKode(int kode)                 // aman terhadap proxy/urutan
+{
+    for (int i = 0; i < rowCount(); ++i)
+        if (m_data.at(i).kode == kode) { hapus(i); return; }
+}
+```
+
+`beginRemoveRows()` dipanggil sebelum baris dibuang dari struktur data, dan `endRemoveRows()` segera sesudahnya. `hapusKode` memakai **kode stabil**, bukan indeks. Alasannya dibahas di 10.5.5: bila di antara view dan model ada proxy, indeks di delegate bukan indeks di model sumber.
+
+**Pindah**
+
+```cpp
+void PerangkatModel::pindah(int dari, int ke)
+{
+    if (dari == ke || dari < 0 || ke < 0 || dari >= rowCount() || ke >= rowCount())
+        return;
+    const int tujuan = ke > dari ? ke + 1 : ke;         // aturan semantik beginMoveRows
+    if (!beginMoveRows({}, dari, dari, {}, tujuan)) return;
+    m_data.move(dari, ke);
+    endMoveRows();
+}
+```
+
+**Aturan pindah** (bila memindahkan baris ke bawah dalam induk yang sama, baris ditempatkan *sebelum* indeks tujuan; untuk memindahkan baris 0 dan 1 menjadi 1 dan 2, `destinationChild` harus 3. `beginMoveRows()` mengembalikan `false` bila tujuan berada dalam rentang sumber (atau sumber + 1), sehingga Anda harus membatalkan pemindahan.) Karena itu `tujuan = ke + 1` saat menggeser ke bawah.
+
+**Reset (palu terakhir)**
+
+```cpp
+void PerangkatModel::bersihkan()
+{
+    beginResetModel();
+    m_data.clear();
+    endResetModel();
+    emit countChanged();
+}
+```
+
+Reset berarti semua data lama yang pernah dilaporkan model menjadi tak valid dan harus ditanyakan ulang; item aktif dan seleksi menjadi tak valid. Pakai bila data berubah drastis, bukan untuk perubahan satu-dua baris.
+
+**Pilih operasi yang tepat**
+
+| Perubahan | Panggilan |
+| --- | --- |
+| 1+ baris ditambah | `beginInsertRows` / `endInsertRows` (sekali untuk seluruh rentang) |
+| 1+ baris dihapus | `beginRemoveRows` / `endRemoveRows` |
+| Baris dipindah | `beginMoveRows` / `endMoveRows` |
+| Nilai di baris yang ada | `dataChanged` (10.5.4) |
+| Data diganti total | `beginResetModel` / `endResetModel` |
+| Urutan berubah (sort) | `layoutAboutToBeChanged` + perbarui indeks persisten + `layoutChanged` |
+
+**Jebakan dan solusi**
+
+| Jebakan | Akibat | Solusi |
+| --- | --- | --- |
+| Mengubah `m_data` tanpa `begin/end` | View tak sinkron, seleksi salah, bisa *crash* | Selalu bungkus dengan `begin/end` |
+| `begin` dipanggil setelah mengubah data | View melihat data setengah jadi | `begin` sebelum, `end` segera sesudah |
+| Rentang `first/last` keliru | Delegate duplikat atau hilang | `first` = baris baru pertama, `last` = terakhir |
+| Satu `begin/end` per baris di loop | Lambat | Satu pasang untuk seluruh rentang |
+| Mengabaikan hasil `beginMoveRows` | Kerusakan indeks persisten | Batalkan bila `false` |
+| Indeks baris dipakai setelah model berubah | Menghapus baris yang salah | Pakai kode stabil |
+| Menyentuh model dari thread lain | *Race* dan *crash* | Antrikan ke thread utama (10.5.6) |
+
+## 10.5.4 `setData`, `flags`, dan `dataChanged`
+
+> *Data yang bisa diubah harus jujur memberi kabar bahwa ia berubah.*
+
+**Konsep.** Untuk model yang bisa diedit: Anda harus menyediakan `setData()` dan mengimplementasikan `flags()` agar mengembalikan nilai yang memuat `Qt::ItemIsEditable`. Sinyal `dataChanged()` harus dipancarkan secara eksplisit saat menimpa `setData()`.
+
+```cpp
+bool PerangkatModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!checkIndex(index, CheckIndexOption::IndexIsValid | CheckIndexOption::ParentIsInvalid))
+        return false;
+
+    Item &it = m_data[index.row()];
+    switch (role) {
+    case NamaRole: {
+        const QString n = value.toString().trimmed();
+        if (n.isEmpty()) return false;                   // tolak nilai tak sah
+        if (n != it.nama) {
+            it.nama = n;
+            emit dataChanged(index, index, { NamaRole, Qt::DisplayRole });
+        }
+        return true;
+    }
+    case AktifRole: {
+        const bool a = value.toBool();
+        if (a != it.aktif) {
+            it.aktif = a;
+            emit dataChanged(index, index, { AktifRole });
+        }
+        return true;
+    }
+    }
+    return false;                                         // role tak bisa diubah
+}
+
+Qt::ItemFlags PerangkatModel::flags(const QModelIndex &index) const
+{
+    auto f = QAbstractListModel::flags(index);
+    if (index.isValid()) f |= Qt::ItemIsEditable;
+    return f;
+}
+```
+
+**Bedah kode**
+- `setData` menerima indeks, nilai baru, dan role. Mengembalikan `true` bila diterima, `false` bila ditolak.
+- Validasi di sini: nama dipangkas (`trimmed()`) dan ditolak bila kosong. Selalu validasi input dari UI.
+- `if (n != it.nama)`: hanya memancarkan `dataChanged` bila nilai benar-benar berubah, seperti aturan setter di 10.2.
+- `emit dataChanged(index, index, { NamaRole, Qt::DisplayRole })`: `index, index` berarti satu sel. Argumen ketiga menyebut role yang berubah. Daftar role kosong berarti semua role dianggap berubah. Menyebut role spesifik menghemat evaluasi ulang di delegate.
+- `flags` memanggil versi induk lalu menambah `Qt::ItemIsEditable`.
+
+**Mengedit dari QML**
+
+```qml
+delegate: ItemDelegate {
+    id: baris
+    required property var model
+    contentItem: RowLayout {
+        Label { text: baris.model.nama; Layout.fillWidth: true }
+        Switch {
+            checked: baris.model.aktif
+            onToggled: baris.model.aktif = checked        // → memanggil setData(AktifRole)
+        }
+    }
+}
+```
+
+Penugasan nilai baru ke properti model yang bersangkutan inilah yang memanggil `setData()` dari delegate. Bila `setData` mengembalikan `false`, nilai di model tak berubah.
+
+**Memperbarui dari C++ (di luar `setData`)**
+
+Bila Anda mengubah item dari dalam model (mis. status berubah karena pekerjaan selesai), Anda tetap wajib memancarkan `dataChanged` agar view tahu:
+
+```cpp
+void PerangkatModel::setAktifKode(int kode, bool aktif)
+{
+    const int baris = cariBaris(kode);
+    if (baris < 0 || m_data[baris].aktif == aktif) return;
+    m_data[baris].aktif = aktif;
+    const QModelIndex idx = index(baris);
+    emit dataChanged(idx, idx, { AktifRole });
+}
+```
+
+**Opsi lain**
+- `setItemData` / `itemData` untuk beberapa role sekaligus.
+- Properti `QObject` per item dengan `NOTIFY` (lihat `QRangeModel::autoConnectPolicy`, 10.5.7), tetapi biaya memori per item besar.
+
+**Jebakan dan solusi**
+
+| Jebakan | Akibat | Solusi |
+| --- | --- | --- |
+| Lupa `emit dataChanged` di `setData` | UI tak berubah | Pancarkan, dengan role yang tepat |
+| Lupa `ItemIsEditable` di `flags` | Editor tak aktif di view C++ | Tambahkan flag |
+| Memancarkan `dataChanged` tanpa perubahan | Pembaruan berlebih | `if (berubah)` |
+| `setData` menerima input tanpa validasi | Data rusak | Validasi dan tolak (`return false`) |
+| `dataChanged` dengan indeks dari model sumber ke proxy | Indeks keliru | Pancarkan dari model yang mengubahnya |
+
+## 10.5.5 Sortir dan filter dengan proxy model
+
+> *Satu sumber kebenaran, banyak sudut pandang.*
+
+**Konsep.** Jangan mengurutkan atau menyaring `m_data` untuk satu tampilan. Biarkan model sumber tetap apa adanya, dan tempatkan **proxy** di antara model dan view. Proxy menerjemahkan indeks sumber ke indeks proxy.
+
+```
+ PerangkatModel  --->  QSortFilterProxyModel  --->  ListView
+ (data asli)           (urut + saring)             (menampilkan hasilnya)
+```
+
+**C++ `QSortFilterProxyModel`**
+
+```cpp
+// perangkatproxy.h
+#pragma once
+#include "perangkatmodel.h"
+#include <QSortFilterProxyModel>
+#include <QtQml/qqmlregistration.h>
+
+class PerangkatProxy : public QSortFilterProxyModel
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(QString teks READ teks WRITE setTeks NOTIFY teksChanged FINAL)
+
+public:
+    explicit PerangkatProxy(QObject *parent = nullptr) : QSortFilterProxyModel(parent)
+    {
+        setFilterRole(PerangkatModel::NamaRole);
+        setSortRole(PerangkatModel::NamaRole);
+        setFilterCaseSensitivity(Qt::CaseInsensitive);
+        sort(0);                                        // urut naik berdasarkan sortRole
+    }
+
+    QString teks() const { return m_teks; }
+    void setTeks(const QString &t)
+    {
+        if (t == m_teks) return;
+        m_teks = t;
+        setFilterFixedString(t);                        // teks apa adanya, bukan regex
+        emit teksChanged();
+    }
+
+signals:
+    void teksChanged();
+
+private:
+    QString m_teks;
+};
+```
+
+**Bedah kode**
+- `QSortFilterProxyModel` adalah kelas Qt siap pakai. `setSourceModel` (atau properti `sourceModel` dari QML) menyambungkannya ke model sumber.
+- `setFilterRole(...)` dan `setSortRole(...)` memilih role yang dipakai untuk menyaring dan mengurutkan.
+- `setFilterFixedString(t)` menyaring dengan teks apa adanya. Ini jauh lebih aman daripada `setFilterRegularExpression(t)` untuk masukan pengguna, karena karakter khusus regex tak menyebabkan galat atau pola mahal.
+- `sort(0)` menyalakan pengurutan. Bawaan `dynamicSortFilter` aktif, sehingga proxy mengikuti perubahan di model sumber otomatis.
+
+```qml
+PerangkatModel { id: sumber }
+PerangkatProxy { id: proxy; sourceModel: sumber; teks: cari.text }
+
+ListView { model: proxy; /* ... */ }
+```
+
+**Jebakan indeks (sangat penting).** Indeks (`index`) di delegate adalah indeks **proxy**, bukan indeks model sumber. Memanggil `sumber.hapus(index)` dari delegate berarti menghapus baris yang salah begitu urutan atau saringan berubah. Dua solusi:
+- **Kode stabil:** gunakan role `kode` dan `hapusKode(kode)` (seperti di atas).
+- **Petakan indeks:** `proxy.mapToSource(proxy.index(i, 0)).row()` (di C++), atau bungkus dalam `Q_INVOKABLE` proxy.
+
+**QML `SortFilterProxyModel` `[≥6.10, Preliminary]`**
+
+```qml
+import QtQml.Models
+
+SortFilterProxyModel {
+    id: sfpm
+    model: sumber
+    sorters: [ RoleSorter { roleName: 'nama' } ]
+    filters: [ FunctionFilter {
+        component Data: QtObject { property bool aktif }
+        function filter(data: Data): bool { return data.aktif }
+    } ]
+}
+```
+
+Sorter dan filter diatur lewat properti `sorters` dan `filters`; sorter yang tersedia antara lain `RoleSorter`, `StringSorter`, `FunctionSorter`, dan filter `ValueFilter` serta `FunctionFilter`. Proxy ini mengurutkan dan menyaring ulang secara dinamis saat model sumber berubah, dan bisa dimatikan lewat `dynamicSortFilter`. API ini tech preview dan bisa berubah atau dihapus. Untuk produksi, pakai proxy C++.
+
+**Opsi lain**
+- **`QSortFilterProxyModel` langsung di `main()`** lalu dikirim sebagai properti awal.
+- **Mengurutkan sumber sendiri** (`layoutAboutToBeChanged` + `changePersistentIndex` + `layoutChanged`) bila hanya satu tampilan dan urutan itu bagian dari model. Bila Anda menulis `sort()`, `compareData()` (sejak 6.12) menyediakan perbandingan bernilai tertib lemah yang aman untuk `std::sort`.
+- **Beberapa proxy** untuk beberapa tampilan dari satu sumber.
+
+**Jebakan dan solusi**
+
+| Jebakan | Akibat | Solusi |
+| --- | --- | --- |
+| Memakai `index` delegate untuk menyunting model sumber | Baris yang salah terhapus/berubah | Kode stabil, atau `mapToSource` |
+| Filter dari input pengguna lewat regex | Karakter khusus mengubah arti, pola mahal | `setFilterFixedString` |
+| `QML SortFilterProxyModel` di produksi | API bisa berubah | Proxy C++ |
+| Mengurutkan `m_data` mentah tanpa memberi tahu view | View tak sinkron | `layoutChanged`, atau pakai proxy |
+| Proxy tanpa `sourceModel` | Daftar kosong | Tetapkan `sourceModel` |
+
+## 10.5.6 Model besar dan pembaruan bertahap
+
+> *Kinerja adalah janji yang ditepati satu baris pada satu waktu.*
+
+**Prinsip kinerja**
+1. **Granularitas pemberitahuan.** Satu `begin/endInsertRows` untuk satu rentang, bukan satu per baris.
+2. **Pilih operasi paling sempit.** `dataChanged` untuk satu sel lebih murah daripada reset.
+3. **`data()` cepat.** Hanya pencarian dan pengembalian nilai, tanpa komputasi atau I/O.
+4. **View yang virtual.** `ListView` hanya membuat delegate untuk yang terlihat (plus penyangga).
+5. **Jangan `Q_INVOKABLE get(row)` ke `QVariantMap` per delegate.** Memakai role jauh lebih efisien.
+
+**Tips `ListView`**
+
+```qml
+ListView {
+    model: proxy
+    clip: true
+    reuseItems: true          // daur ulang delegate yang keluar layar
+    cacheBuffer: 200          // penyangga piksel di luar area terlihat; sesuaikan
+    delegate: /* delegate ringan: sedikit item, tanpa Loader berat */
+}
+```
+
+Delegate yang ringan (sedikit anak, binding sederhana) lebih penting daripada trik apa pun.
+
+**Pemuatan bertahap (`canFetchMore` / `fetchMore`)**
+
+Untuk model yang mengisi data bertahap, timpa `fetchMore()` dan `canFetchMore()`. Bila `fetchMore()` menambah baris, `beginInsertRows()` dan `endInsertRows()` harus dipanggil. Kedua fungsi ini bisa dipanggil lewat sistem meta-objek dan dari QML (invokable).
+
+```cpp
+bool canFetchMore(const QModelIndex &parent) const override
+{
+    return !parent.isValid() && m_dimuat < m_total;
+}
+
+void fetchMore(const QModelIndex &parent) override
+{
+    if (parent.isValid()) return;
+    const int n = std::min(100, m_total - m_dimuat);
+    if (n <= 0) return;
+    beginInsertRows({}, m_dimuat, m_dimuat + n - 1);
+    // ... ambil n item berikutnya dari sumber data ...
+    m_dimuat += n;
+    endInsertRows();
+}
+```
+
+Agar `rowCount` konsisten, ia harus mengembalikan jumlah yang **sudah dimuat** (`m_dimuat`), bukan total. Untuk QML, sediakan pembungkus sendiri dan panggil dari `ListView`:
+
+```cpp
+Q_INVOKABLE void muatLagi() { if (canFetchMore({})) fetchMore({}); }
+```
+
+```qml
+ListView {
+    onAtYEndChanged: if (atYEnd) sumber.muatLagi()      // muat saat mencapai ujung
+}
+```
+
+**Thread dan data berat**
+- API model hanya boleh dipanggil dari thread tempat model hidup. Thread latar boleh mengisi atau mengubah isi model, tetapi tak boleh memanggil API model secara langsung; antrikan pembaruan dan terapkan di thread utama lewat koneksi queued.
+- Pola: pekerjaan menghasilkan `QList<Item>` di thread kerja → signal (queued) → slot di model menerapkan satu `beginInsertRows` besar di thread utama. Detailnya di 10.7.
+
+**Reset vs perubahan granular**
+- Data baru seluruhnya (pencarian baru): reset (`beginResetModel`) wajar.
+- Perubahan kecil berulang (tick tiap detik): `dataChanged` dengan role spesifik.
+- Perubahan beruntun besar: kumpulkan jadi satu batch.
+
+**Batas dan keamanan.** Batasi ukuran tiap isian dari QML (`qBound`), dan batasi total baris yang bisa tumbuh dari masukan tak tepercaya, agar UI tak bisa dipaksa menghabiskan memori.
+
+**Opsi lain.** `QRangeModel` (10.5.7) menyederhanakan banyak operasi struktur. Untuk dataset yang sangat besar dan statis, pertimbangkan memuat dari basis data per halaman (`SQL` model) dan hanya menampilkan jendelanya.
+
+**Jebakan dan solusi**
+
+| Jebakan | Akibat | Solusi |
+| --- | --- | --- |
+| `begin/endInsertRows` per baris di loop | Lambat | Satu pasang untuk rentang |
+| `data()` berat | Scroll tersendat | Pre-komputasi |
+| Reset untuk perubahan kecil | Seleksi hilang, kedip | `dataChanged`/insert/remove |
+| `rowCount()` mengembalikan total, bukan yang dimuat | View meminta baris yang belum ada | Kembalikan jumlah yang dimuat |
+| Mengubah model dari thread kerja | *Crash* | Sinyal queued ke thread utama |
+| Delegate berat dengan banyak `Loader` | UI lambat | Sederhanakan delegate, `reuseItems` |
+
+## 10.5.7 Alternatif tanpa subkelas `[TAMBAHAN]`
+
+> *Pilih alat terkecil yang cukup untuk pekerjaannya.*
+
+| Pilihan | Cocok untuk | Catatan |
+| --- | --- | --- |
+| `ListModel` (QML) | Data statis kecil, prototipe | Murni QML |
+| `QStringList` / `QVariantList` | Daftar sederhana | Akses lewat `modelData` |
+| `QList<QObject*>` | Daftar objek dengan properti | Properti jadi role; view tak tahu `QList` berubah, jadi reset dengan menetapkan ulang `model` |
+| **`QRangeModel`** | Membungkus kontainer C++ jadi model | Sejak 6.10; tanpa subkelas |
+| `QAbstractListModel` subkelas | Kontrol penuh, notifikasi presisi, validasi | Paling banyak kode |
+
+**`QRangeModel` `[≥6.10]`**
+
+`QRangeModel` mengubah data pada tipe C++ yang dapat diiterasi berurutan menjadi tersedia bagi kerangka model/view Qt. Barisnya ditafsirkan sebagai list, tabel, atau pohon tergantung tipe elemen. Rancangan yang relevan untuk model daftar bergaya Anda:
+
+```cpp
+class Perangkat
+{
+    Q_GADGET
+    Q_PROPERTY(QString nama MEMBER nama)
+    Q_PROPERTY(bool aktif MEMBER aktif)
+public:
+    QString nama;
+    bool aktif = true;
+};
+
+template <>
+struct QRangeModel::RowOptions<Perangkat>
+{
+    static constexpr auto rowCategory = QRangeModel::RowCategory::MultiRoleItem;   // 1 baris = 1 item multi-role
+};
+
+QList<Perangkat> data = { ... };
+QRangeModel model(&data);                        // pointer: perubahan lewat model mengubah 'data'
+```
+
+**Hal penting tentang `QRangeModel`**
+- Rentang diberikan lewat nilai (disalin), pointer, atau `std::ref`. Cara pembuatan menentukan apakah perubahan lewat API model mengubah data asli.
+- Setelah model dibuat dan diberikan ke view, rentang aslinya tak boleh diubah langsung; view tak diberi tahu, dan perubahan struktur bisa merusak indeks persisten. `QRangeModelAdapter` disarankan untuk interaksi yang aman.
+- Pemanggil harus menjamin umur rentang lebih panjang dari umur model.
+- Bila baris berupa gadget atau `QObject`, `roleNames` otomatis berisi nama properti (dari `Qt::UserRole` ke atas) plus role `modelData` untuk instansnya. Dalam daftar, tipe ini bawaan menjadi baris multi-kolom, dan `MultiRoleItem` memaksanya jadi item multi-role.
+- Mengakses properti lewat sistem properti membawa overhead runtime; untuk model kritis kinerja, protokol tuple memberi kode akses saat kompilasi.
+- Item `QObject` punya overhead memori signifikan.
+- `autoConnectPolicy` (sejak 6.11) bisa menyambungkan sinyal perubahan properti `QObject` ke `dataChanged` otomatis, dengan biaya memori yang bisa besar.
+
+**Kapan memilih yang mana?**
+- Prototipe atau data kecil statis: `ListModel`, `QStringList`.
+- Data nyata di C++ dengan struktur sederhana: `QRangeModel`.
+- Notifikasi presisi, validasi, perilaku khusus, atau data yang berasal dari sumber luar: subkelas `QAbstractListModel` seperti modul ini.
+
+## 10.5.8 Menguji model: `QAbstractItemModelTester`, `QSignalSpy` `[TAMBAHAN]`
+
+> *Model yang tak diuji adalah bug yang menunggu seleksi pertama.*
+
+**Konsep.** Kesalahan model sering muncul jauh dari penyebabnya (delegate tampak aneh, seleksi melompat). `QAbstractItemModelTester` (dari QtTest) memeriksa kontrak model setiap kali model berubah. (Saya tandai: nama dan API ini berasal dari pengetahuan umum Qt, bukan halaman yang saya baca di sesi ini. Periksa dokumentasi `QAbstractItemModelTester`.) `QSignalSpy` memverifikasi bahwa sinyal yang tepat terpancar.
+
+```cpp
+// ujimodel.cpp
+#include "perangkatmodel.h"
+#include <QAbstractItemModelTester>
+#include <QSignalSpy>
+#include <QTest>
+
+class UjiModel : public QObject
+{
+    Q_OBJECT
+private slots:
+    void kontrakModel()
+    {
+        PerangkatModel m;
+        QAbstractItemModelTester tester(&m, QAbstractItemModelTester::FailureReportingMode::QtTest);
+        m.tambah(QStringLiteral("A"));
+        m.isiBanyak(10);
+        m.pindah(0, 5);
+        m.hapus(0);
+        m.bersihkan();                      // tester ikut memeriksa setiap perubahan
+    }
+
+    void isiBanyakSatuNotifikasi()
+    {
+        PerangkatModel m;
+        QSignalSpy spy(&m, SIGNAL(rowsInserted(QModelIndex,int,int)));
+        m.isiBanyak(10);
+        QCOMPARE(m.rowCount(), 10);
+        QCOMPARE(spy.count(), 1);           // satu begin/end untuk sepuluh baris
+    }
+
+    void aktifSamaTidakMemancarkan()
+    {
+        PerangkatModel m;
+        m.tambah(QStringLiteral("A"));
+        QSignalSpy spy(&m, SIGNAL(dataChanged(QModelIndex,QModelIndex,QList<int>)));
+        m.setData(m.index(0), true,  PerangkatModel::AktifRole);   // sudah true
+        QCOMPARE(spy.count(), 0);
+        m.setData(m.index(0), false, PerangkatModel::AktifRole);
+        QCOMPARE(spy.count(), 1);
+    }
+};
+
+QTEST_MAIN(UjiModel)
+#include "ujimodel.moc"
+```
+
+```cmake
+find_package(Qt6 REQUIRED COMPONENTS Core Qml Test)
+qt_add_executable(ujimodel ujimodel.cpp perangkatmodel.cpp perangkatmodel.h)
+target_link_libraries(ujimodel PRIVATE Qt6::Core Qt6::Qml Qt6::Test)
+enable_testing()
+add_test(NAME ujimodel COMMAND ujimodel)
+```
+
+```bash
+cmake --build build && QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure
+```
+
+**Bedah kode**
+- `QAbstractItemModelTester tester(&m, ...)` memantau model `m`, dan melaporkan pelanggaran kontrak (mis. `rowCount` tak cocok dengan notifikasi).
+- Mode `QtTest` melaporkan lewat kegagalan uji Qt Test.
+- `QSignalSpy(&m, SIGNAL(...))` memakai sintaks string karena sinyal model bersifat privat. `spy.count()` menghitung pemancaran.
+- Uji `isiBanyakSatuNotifikasi` menegakkan prinsip kinerja 10.5.6 sebagai kontrak.
+- Uji `aktifSamaTidakMemancarkan` menegakkan aturan 10.5.4: tanpa perubahan, tanpa sinyal.
+- `QT_QPA_PLATFORM=offscreen` menjalankan tanpa tampilan (CI).
+
+**Jebakan.** Tidak menguji `begin/end` pada operasi kasus tepi (hapus baris terakhir, pindah ke ujung). Hanya menguji lewat UI manual.
+
+## 10.5.9 Lab terpadu `[TAMBAHAN]`
+
+Proyek baru `labmodel`: model `PerangkatModel` (dengan `tambah`, `isiBanyak`, `hapus`, `hapusKode`, `pindah`, `bersihkan`, `setData`), proxy `PerangkatProxy`, dan antarmuka. Latihan kurikulum (`Q_INVOKABLE void hapus(int baris)`) ada di dalamnya.
+
+```cpp
+// perangkatmodel.h
+#pragma once
+#include <QAbstractListModel>
+#include <QList>
+#include <QString>
+#include <QtQml/qqmlregistration.h>
+
+class PerangkatModel : public QAbstractListModel
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(int count READ count NOTIFY countChanged FINAL)
+
+public:
+    enum Role { KodeRole = Qt::UserRole + 1, NamaRole, AktifRole };
+    Q_ENUM(Role)
+
+    explicit PerangkatModel(QObject *parent = nullptr);
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    QHash<int, QByteArray> roleNames() const override;
+
+    int count() const { return rowCount(); }
+
+    Q_INVOKABLE void tambah(const QString &nama);
+    Q_INVOKABLE void isiBanyak(int jumlah);
+    Q_INVOKABLE void hapus(int baris);
+    Q_INVOKABLE void hapusKode(int kode);
+    Q_INVOKABLE void pindah(int dari, int ke);
+    Q_INVOKABLE void bersihkan();
+
+signals:
+    void countChanged();
+
+private:
+    struct Item { int kode; QString nama; bool aktif; };
+    int cariBaris(int kode) const;
+
+    QList<Item> m_data;
+    int m_kodeBerikut = 1;
+};
+```
+
+```cpp
+// perangkatmodel.cpp
+#include "perangkatmodel.h"
+
+PerangkatModel::PerangkatModel(QObject *parent) : QAbstractListModel(parent) {}
+
+int PerangkatModel::rowCount(const QModelIndex &parent) const
+{
+    return parent.isValid() ? 0 : static_cast<int>(m_data.size());
+}
+
+QVariant PerangkatModel::data(const QModelIndex &index, int role) const
+{
+    if (!checkIndex(index, CheckIndexOption::IndexIsValid | CheckIndexOption::ParentIsInvalid))
+        return {};
+    const Item &it = m_data.at(index.row());
+    switch (role) {
+    case KodeRole:        return it.kode;
+    case NamaRole:        return it.nama;
+    case AktifRole:       return it.aktif;
+    case Qt::DisplayRole: return it.nama;
+    }
+    return {};
+}
+
+bool PerangkatModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (!checkIndex(index, CheckIndexOption::IndexIsValid | CheckIndexOption::ParentIsInvalid))
+        return false;
+    Item &it = m_data[index.row()];
+    switch (role) {
+    case NamaRole: {
+        const QString n = value.toString().trimmed();
+        if (n.isEmpty()) return false;
+        if (n != it.nama) {
+            it.nama = n;
+            emit dataChanged(index, index, { NamaRole, Qt::DisplayRole });
+        }
+        return true;
+    }
+    case AktifRole: {
+        const bool a = value.toBool();
+        if (a != it.aktif) {
+            it.aktif = a;
+            emit dataChanged(index, index, { AktifRole });
+        }
+        return true;
+    }
+    }
+    return false;
+}
+
+Qt::ItemFlags PerangkatModel::flags(const QModelIndex &index) const
+{
+    auto f = QAbstractListModel::flags(index);
+    if (index.isValid()) f |= Qt::ItemIsEditable;
+    return f;
+}
+
+QHash<int, QByteArray> PerangkatModel::roleNames() const
+{
+    auto roles = QAbstractListModel::roleNames();
+    roles[KodeRole]  = "kode";
+    roles[NamaRole]  = "nama";
+    roles[AktifRole] = "aktif";
+    return roles;
+}
+
+int PerangkatModel::cariBaris(int kode) const
+{
+    for (int i = 0; i < m_data.size(); ++i)
+        if (m_data.at(i).kode == kode) return i;
+    return -1;
+}
+
+void PerangkatModel::tambah(const QString &nama)
+{
+    const QString n = nama.trimmed();
+    if (n.isEmpty()) return;
+    const int baris = rowCount();
+    beginInsertRows({}, baris, baris);
+    m_data.append({ m_kodeBerikut++, n, true });
+    endInsertRows();
+    emit countChanged();
+}
+
+void PerangkatModel::isiBanyak(int jumlah)
+{
+    jumlah = qBound(0, jumlah, 100'000);
+    if (jumlah == 0) return;
+    const int awal = rowCount();
+    beginInsertRows({}, awal, awal + jumlah - 1);
+    for (int i = 0; i < jumlah; ++i) {
+        const int kode = m_kodeBerikut++;
+        m_data.append({ kode, QStringLiteral("Perangkat %1").arg(kode), i % 2 == 0 });
+    }
+    endInsertRows();
+    emit countChanged();
+}
+
+void PerangkatModel::hapus(int baris)
+{
+    if (baris < 0 || baris >= rowCount()) return;
+    beginRemoveRows({}, baris, baris);
+    m_data.removeAt(baris);
+    endRemoveRows();
+    emit countChanged();
+}
+
+void PerangkatModel::hapusKode(int kode)
+{
+    const int baris = cariBaris(kode);
+    if (baris >= 0) hapus(baris);
+}
+
+void PerangkatModel::pindah(int dari, int ke)
+{
+    if (dari == ke || dari < 0 || ke < 0 || dari >= rowCount() || ke >= rowCount())
+        return;
+    const int tujuan = ke > dari ? ke + 1 : ke;
+    if (!beginMoveRows({}, dari, dari, {}, tujuan)) return;
+    m_data.move(dari, ke);
+    endMoveRows();
+}
+
+void PerangkatModel::bersihkan()
+{
+    beginResetModel();
+    m_data.clear();
+    endResetModel();
+    emit countChanged();
+}
+```
+
+```cpp
+// perangkatproxy.h
+#pragma once
+#include "perangkatmodel.h"
+#include <QSortFilterProxyModel>
+#include <QtQml/qqmlregistration.h>
+
+class PerangkatProxy : public QSortFilterProxyModel
+{
+    Q_OBJECT
+    QML_ELEMENT
+    Q_PROPERTY(QString teks READ teks WRITE setTeks NOTIFY teksChanged FINAL)
+
+public:
+    explicit PerangkatProxy(QObject *parent = nullptr) : QSortFilterProxyModel(parent)
+    {
+        setFilterRole(PerangkatModel::NamaRole);
+        setSortRole(PerangkatModel::NamaRole);
+        setFilterCaseSensitivity(Qt::CaseInsensitive);
+        sort(0);
+    }
+
+    QString teks() const { return m_teks; }
+    void setTeks(const QString &t)
+    {
+        if (t == m_teks) return;
+        m_teks = t;
+        setFilterFixedString(t);
+        emit teksChanged();
+    }
+
+signals:
+    void teksChanged();
+
+private:
+    QString m_teks;
+};
+```
+
+```cmake
+# CMakeLists.txt
+cmake_minimum_required(VERSION 3.21)
+project(labmodel LANGUAGES CXX)
+
+find_package(Qt6 REQUIRED COMPONENTS Quick)
+qt_standard_project_setup(REQUIRES 6.5)
+
+qt_add_executable(applabmodel main.cpp)
+
+qt_add_qml_module(applabmodel
+    URI LabModel
+    QML_FILES Main.qml
+    SOURCES perangkatmodel.h perangkatmodel.cpp perangkatproxy.h
+)
+
+target_link_libraries(applabmodel PRIVATE Qt6::Quick)
+```
+
+`main.cpp` sama seperti di 10.3, dengan `engine.loadFromModule("LabModel", "Main");`.
+
+```qml
+// Main.qml
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import LabModel
+
+ApplicationWindow {
+    visible: true; width: 460; height: 560; title: 'Lab 10.5'
+
+    PerangkatModel { id: sumber }
+    PerangkatProxy { id: proxy; sourceModel: sumber; teks: cari.text }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 12
+        spacing: 8
+
+        TextField { id: cari; Layout.fillWidth: true; placeholderText: 'Cari nama...' }
+
+        RowLayout {
+            TextField {
+                id: nama
+                Layout.fillWidth: true
+                placeholderText: 'Perangkat baru'
+                onAccepted: tombolTambah.clicked()
+            }
+            Button {
+                id: tombolTambah
+                text: 'Tambah'
+                enabled: nama.text.trim().length > 0
+                onClicked: { sumber.tambah(nama.text); nama.clear() }
+            }
+        }
+
+        RowLayout {
+            Button { text: 'Isi 1000'; onClicked: sumber.isiBanyak(1000) }
+            Button { text: 'Kosongkan'; onClicked: sumber.bersihkan() }
+            Label { text: sumber.count + ' item, ' + lihat.count + ' tampil' }
+        }
+
+        ListView {
+            id: lihat
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            clip: true
+            reuseItems: true
+            model: proxy
+            ScrollBar.vertical: ScrollBar { }
+
+            delegate: ItemDelegate {
+                id: baris
+                required property var model
+                width: ListView.view.width
+
+                contentItem: RowLayout {
+                    Label { text: baris.model.nama; Layout.fillWidth: true; elide: Text.ElideRight }
+                    Switch {
+                        checked: baris.model.aktif
+                        onToggled: baris.model.aktif = checked        // → setData(AktifRole)
+                    }
+                    ToolButton {
+                        text: 'Hapus'
+                        onClicked: sumber.hapusKode(baris.model.kode)  // kode stabil, bukan index
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+```bash
+cmake -S . -B build && cmake --build build && ./build/applabmodel
+```
+
+**Yang diamati**
+1. Ketik nama lalu Enter: baris muncul terurut alfabet (proxy). Ketik di kolom cari: daftar tersaring.
+2. "Isi 1000" lalu gulir: mulus karena `ListView` hanya membuat delegate yang terlihat.
+3. Geser `Switch`: nilai `aktif` berubah lewat `setData`. Bila Anda menambah log di `setData`, Anda melihat hanya satu `dataChanged` per perubahan.
+4. Saat daftar tersaring, klik "Hapus": baris yang benar terhapus berkat `hapusKode`. Ganti dengan `sumber.hapus(baris.index)` untuk melihat baris yang salah terhapus.
+5. "Kosongkan": reset, seluruh daftar bersih.
+6. Label jumlah menunjukkan `count` model sumber vs `count` tampilan (hasil saringan).
+
+**Percobaan yang disarankan (sengaja merusak)**
+1. Hapus `beginInsertRows`/`endInsertRows` di `tambah` dan perhatikan view tak menampilkan baris baru (atau menampilkan keadaan kacau).
+2. Ubah `setFilterFixedString` menjadi `setFilterRegularExpression(t)` lalu ketik `(` di kolom cari. Lihat perilakunya.
+3. Hapus `roleNames()` dan lihat properti delegate jadi `undefined`.
+4. Panggil `beginInsertRows` per baris di `isiBanyak` dan ukur perbedaan kecepatan dengan 100.000 baris.
+5. Jalankan dengan `QT_LOGGING_RULES='qt.core.qabstractitemmodel.checkindex=true'` dan sengaja panggil `data()` dengan indeks ilegal untuk melihat peringatan `checkIndex`.
+
+**Latihan tambahan**
+1. Tambahkan `Q_INVOKABLE void setAktifKode(int kode, bool aktif)` yang memancarkan `dataChanged` dengan role `AktifRole`, lalu panggil dari tombol.
+2. Tambahkan tombol "Naik" dan "Turun" yang memanggil `pindah`. Perhatikan perilakunya bila proxy mengurutkan nama (urutan proxy menang).
+3. Ganti `PerangkatModel` dengan `QRangeModel` untuk daftar `Perangkat` gadget dan bandingkan jumlah kode.
+4. Ubah proxy menjadi `SortFilterProxyModel` QML (≥6.10) dan bandingkan.
+5. Tulis uji `QAbstractItemModelTester` dari 10.5.8.
+
+## Terminologi esensial
+
+| Istilah | Penjelasan |
+| --- | --- |
+| **Model / view / delegate** | Data / penampil / cetakan tampilan satu item |
+| **`QModelIndex`** | Alamat satu sel: baris, kolom, induk |
+| **Role** | Sisi data sebuah item (nama, aktif); nomor dari `Qt::UserRole + 1` |
+| **`roleNames`** | Peta nomor role ke nama properti untuk QML |
+| **`rowCount` / `data`** | Jumlah baris / nilai satu role satu baris |
+| **`begin*` / `end*`** | Pemberitahuan perubahan struktur sebelum dan sesudahnya |
+| **`dataChanged`** | Pemberitahuan perubahan isi sel |
+| **Reset** | Pemberitahuan "semua berubah", membatalkan seleksi |
+| **Proxy model** | Lapisan di antara model dan view untuk sortir/filter |
+| **`mapToSource`** | Mengubah indeks proxy menjadi indeks model sumber |
+| **`canFetchMore` / `fetchMore`** | Mekanisme pemuatan bertahap |
+| **`QRangeModel`** | Model siap pakai atas kontainer C++ (≥ 6.10) |
+| **Persistent index** | Indeks yang tetap valid saat model berubah |
+| **Kode stabil** | Pengenal unik item yang tak berubah saat urutan berubah |
+
+## Hubungan dengan modul lain
+
+- **Prasyarat:** 10.1 (RAII, `const&`, `QList`), 10.2 (properti, sinyal, `Q_INVOKABLE`), 10.3 (`QML_ELEMENT`, `qt_add_qml_module`), 10.4 (memakai objek C++ di QML, parameter tak tepercaya), 7.2 (delegate, `required property`, `ListView`).
+- **Menjadi dasar untuk:** 10.6 (daftar proses/berkas/koneksi disajikan sebagai model), 10.7 (pembaruan model dari thread kerja lewat sinyal queued).
+- **Menyambung ke:** 9.4 (`Accessible` pada baris daftar, teks terlokalisasi lewat `tr`), 9.1 (`ListView` + `ScrollBar`).
+
+## Tips dan praktik terbaik
+
+1. **Sumber kebenaran tunggal di model.** Jangan menyimpan salinan keadaan baris di delegate.
+2. **Setiap perubahan struktur lewat `begin/end`.** Tanpa pengecualian.
+3. **Pancarkan `dataChanged` hanya bila berubah,** dengan rentang dan role yang tersempit.
+4. **Pakai kode stabil untuk operasi dari UI,** bukan indeks, terutama dengan proxy.
+5. **Satu batch, satu pemberitahuan** untuk banyak baris.
+6. **`data()` cepat dan murni.** Hitung sebelumnya.
+7. **Validasi di `setData` dan `Q_INVOKABLE`.** Parameter dari QML tak tepercaya, batasi rentang dan ukuran.
+8. **Saring teks pengguna dengan `setFilterFixedString`,** bukan regex.
+9. **Uji model dengan `QAbstractItemModelTester` dan `QSignalSpy`.**
+10. **Pilih alat terkecil yang cukup:** `ListModel`, `QRangeModel`, baru subkelas.
+
+## Kesalahan umum dan solusi
+
+| Kesalahan | Akibat | Solusi |
+| --- | --- | --- |
+| Ubah `m_data` tanpa `begin/end` | View tak sinkron, *crash* | Bungkus dengan `begin/end` |
+| `roleNames` tak lengkap | Properti `undefined` | Daftarkan semua role |
+| `data()` mengembalikan `QVariant` kosong untuk role valid | Delegate kosong | Kembalikan nilainya |
+| Lupa `emit dataChanged` | UI tak berubah | Pancarkan dengan role tepat |
+| `dataChanged` tanpa perubahan | Evaluasi berlebih | Cek perubahan |
+| Memakai `index` delegate pada model sumber lewat proxy | Menyunting baris yang salah | Kode stabil / `mapToSource` |
+| Reset untuk perubahan kecil | Seleksi hilang | `insert/remove/dataChanged` |
+| `begin/endInsertRows` per baris | Lambat | Satu rentang |
+| `rowCount` ≠ jumlah yang dimuat | View meminta baris tak ada | Kembalikan jumlah termuat |
+| Menyentuh model dari thread kerja | Race, crash | Antrikan ke thread utama |
+| Mengabaikan hasil `beginMoveRows` | Indeks persisten rusak | Batalkan bila `false` |
+| Mengubah range `QRangeModel` langsung | View tak diberi tahu | Lewat API model atau `QRangeModelAdapter` |
+| Filter regex dari input pengguna | Perilaku tak terduga | `setFilterFixedString` |
+
+## Cek pemahaman: jawaban
+
+**Apa yang rusak bila Anda mengubah `m_data` tanpa memanggil `beginInsertRows`?**
+- **View kehilangan sinkronisasi.** Model dan view punya "kesepakatan" tentang jumlah baris. Tanpa `beginInsertRows`/`endInsertRows`, tak ada sinyal `rowsAboutToBeInserted`/`rowsInserted`. `ListView` tak membuat delegate untuk baris baru dan masih menyimpan daftar lama, sehingga baris yang ditambahkan tak muncul.
+- **Indeks dan seleksi rusak.** Fungsi begin/end juga memungkinkan model mengelola indeks persisten dengan benar, dan Anda harus memanggilnya bila ingin seleksi ditangani dengan benar. Item aktif dan seleksi bisa menunjuk baris yang salah.
+- **Risiko *crash*.** Dokumentasi memperingatkan bahwa view atau proxy bisa berakhir di keadaan tak valid bila tak menangani sinyal sebelum data disisipkan. Bila `rowCount()` kemudian mengembalikan angka yang lebih besar dari yang diketahui view, view akan memanggil `data()` untuk baris yang belum ia siapkan, atau sebaliknya. Ini bisa memicu akses tak sah atau galat.
+- **Solusi:** selalu `beginInsertRows(parent, first, last)` sebelum menyisipkan dan `endInsertRows()` segera sesudahnya. Untuk banyak baris, satu pasang begin/end.
+
+## Referensi
+
+*Halaman QAbstractListModel, QAbstractItemModel, QRangeModel, dan SortFilterProxyModel saya baca langsung dari dokumentasi Qt (6.12, kecuali SortFilterProxyModel dari 6.10). Pola tipe QML dari halaman "Using C++ Models with Qt Quick Views" saya verifikasi lewat hasil pencarian. Tautan lain mengikuti pola URL resmi.*
+
+- **Dari kurikulum:** [QAbstractListModel](https://doc.qt.io/qt-6/qabstractlistmodel.html) · [QAbstractItemModel](https://doc.qt.io/qt-6/qabstractitemmodel.html) · [Model/View Programming](https://doc.qt.io/qt-6/model-view-programming.html)
+- **Dengan Qt Quick:** [Using C++ Models with Qt Quick Views](https://doc.qt.io/qt-6/qtquick-modelviewsdata-cppmodels.html) · [Qt Quick Models and Views](https://doc.qt.io/qt-6/qtquick-modelviewsdata-modelview.html) · [ListView](https://doc.qt.io/qt-6/qml-qtquick-listview.html) · [Model Subclassing Reference](https://doc.qt.io/qt-6/model-view-programming.html#model-subclassing-reference)
+- **Alternatif:** [QRangeModel](https://doc.qt.io/qt-6/qrangemodel.html) · [QRangeModelAdapter](https://doc.qt.io/qt-6/qrangemodeladapter.html) · [SortFilterProxyModel (QML)](https://doc.qt.io/qt-6/qml-qtqml-models-sortfilterproxymodel.html) · [QSortFilterProxyModel](https://doc.qt.io/qt-6/qsortfilterproxymodel.html) · [QAbstractTableModel](https://doc.qt.io/qt-6/qabstracttablemodel.html)
+- **Pengujian:** [QAbstractItemModelTester](https://doc.qt.io/qt-6/qabstractitemmodeltester.html) · [QSignalSpy](https://doc.qt.io/qt-6/qsignalspy.html)
+- **Pendukung:** [QModelIndex](https://doc.qt.io/qt-6/qmodelindex.html) · [Qt::ItemDataRole](https://doc.qt.io/qt-6/qt.html#ItemDataRole-enum) · [Thread dan QObject](https://doc.qt.io/qt-6/threads-qobject.html)
+- **Arch:** [Qt di ArchWiki](https://wiki.archlinux.org/title/Qt)
+
+---
+
+**Modul 10.5 selesai.** Berikutnya, **Modul 10.6 (API Native dan Integrasi Sistem)**
+
 > - **[⬆️ Ke Atas](#)**
 > - **[➡️ Selanjutnya][selanjutnya]**
 > - **[⬅️ Sebelumnya][sebelumnya]**
